@@ -6,7 +6,6 @@ import { AppContext } from './AppContext';
 import { storeEvent } from '../Functions/DatabaseFunctions/Events';
 import { getRelays, Relay as RelayEntity, storeRelay } from '../Functions/DatabaseFunctions/Relays';
 import { showMessage } from 'react-native-flash-message';
-import { getReplyEventId } from '../Functions/RelayFunctions/Events';
 
 export interface RelayPoolContextProps {
   relayPool?: RelayPool;

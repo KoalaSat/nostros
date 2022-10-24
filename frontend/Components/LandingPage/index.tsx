@@ -62,7 +62,7 @@ export const LandingPage: React.FC = () => {
   }, [init, relayPool, loadingDb]);
 
   useEffect(() => {
-    if (usersReady && relayPool) {
+    if (usersReady && relayPool && !loadingDb) {
       initRelays()
       setPage('home');
     }

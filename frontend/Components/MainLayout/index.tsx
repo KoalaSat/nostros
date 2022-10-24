@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useContext, useState } from 'react';
 import { Layout } from '@ui-kitten/components';
 import { StyleSheet } from 'react-native';
 import { AppContext } from '../../Contexts/AppContext';
