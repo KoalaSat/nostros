@@ -1,5 +1,7 @@
-[![Codacy Badge](https://app.codacy.com/project/badge/Grade/db3100f978a542d588f8ae9a4abf2d55)](https://www.codacy.com/gh/KoalaSat/sats-4-likes-bot/dashboard?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=KoalaSat/sats-4-likes-bot&amp;utm_campaign=Badge_Grade)
-[![MIT license](https://img.shields.io/badge/license-MIT-green)](https://github.com/KoalaSat/sats-4-likes-bot/blob/main/LICENSE)
+[![Codacy Badge](https://app.codacy.com/project/badge/Grade/db3100f978a542d588f8ae9a4abf2d55)](https://www.codacy.com/gh/KoalaSat/nostros/dashboard?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=KoalaSat/nostros&amp;utm_campaign=Badge_Grade)
+[![Apache 2 license](https://img.shields.io/badge/license-Apache%202-blue)](https://github.com/KoalaSat/nostros/blob/main/LICENSE)
+
+https://img.shields.io/badge/license-Apache%202-blue
 
 ![nostros_logo](https://user-images.githubusercontent.com/111684255/197588983-2a196d74-0f1e-45e8-be56-0da8c1602835.png)
 
