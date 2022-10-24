@@ -1,0 +1,46 @@
+import React from 'react';
+import { ApplicationProvider, IconRegistry } from '@ui-kitten/components';
+import theme from './theme.json';
+import { EvaIconsPack } from '@ui-kitten/eva-icons';
+import * as eva from '@eva-design/eva';
+import { AppContextProvider } from './Contexts/AppContext';
+import MainLayout from './Components/MainLayout';
+import { I18nextProvider } from 'react-i18next';
+import i18n from 'i18next';
+import localeEN from './Locales/en.json';
+import { RelayPoolContextProvider } from './Contexts/RelayPoolContext';
+
+void i18n.init({
+  compatibilityJSON: 'v3',
+  defaultNS: 'common',
+  lng: 'en',
+  resources: {
+    en: localeEN,
+  },
+});
+
+export const Frontend: React.FC = () => {
+  const mapping = {
+    strict: {
+      'text-font-family': 'OpenSans-Regular',
+    },
+    components: {},
+  };
+
+  return (
+    <>
+      <IconRegistry icons={EvaIconsPack} />
+      <ApplicationProvider {...eva} theme={{ ...eva.dark, ...theme }} customMapping={mapping}>
+        <I18nextProvider i18n={i18n}>
+          <AppContextProvider>
+            <RelayPoolContextProvider>
+              <MainLayout />
+            </RelayPoolContextProvider>
+          </AppContextProvider>
+        </I18nextProvider>
+      </ApplicationProvider>
+    </>
+  );
+};
+
+export default Frontend;

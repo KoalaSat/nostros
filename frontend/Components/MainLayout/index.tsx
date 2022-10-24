@@ -1,0 +1,63 @@
+import React, { useContext, useEffect, useState } from 'react';
+import { Layout } from '@ui-kitten/components';
+import { StyleSheet } from 'react-native';
+import { AppContext } from '../../Contexts/AppContext';
+import HomePage from '../HomePage';
+import ProfilePage from '../ProfilePage';
+import NavigationBar from '../NavigationBar';
+import SendPage from '../SendPage';
+import ContactsPage from '../ContactsPage';
+import NotePage from '../NotePage';
+import LandingPage from '../LandingPage';
+import { RelayPoolContext } from '../../Contexts/RelayPoolContext';
+import ConfigPage from '../ConfigPage';
+
+export const MainLayout: React.FC = () => {
+  const { page } = useContext(AppContext);
+  const { relayPool } = useContext(RelayPoolContext);
+  const [lastPage, setLastPage] = useState<string>(page)
+
+  const styles = StyleSheet.create({
+    container: {
+      flex: 1,
+    },
+  });
+
+  const pagination: { [pageName: string]: JSX.Element } = {
+    landing: <LandingPage />,
+    home: <HomePage />,
+    send: <SendPage />,
+    profile: <ProfilePage />,
+    contacts: <ContactsPage />,
+    note: <NotePage />,
+    config: <ConfigPage />,
+  };
+
+  const breadcrump: string[] = page.split('%');
+  const pageToDisplay: string = breadcrump[breadcrump.length - 1].split('#')[0];
+
+  const clearSubscriptions: () => boolean = () => {
+    if (relayPool && lastPage && lastPage !== page) {
+      relayPool.unsubscribeAll()
+      relayPool.removeOn('event', lastPage)
+      setLastPage(page)
+    }
+
+    return true
+  }
+
+  return page === 'landing' ? (
+    <Layout style={styles.container} level='4'>
+      <LandingPage />
+    </Layout>
+  ) : (
+    <>
+      <Layout style={styles.container} level='4'>
+        {clearSubscriptions() && pagination[pageToDisplay]}
+      </Layout>
+      <NavigationBar />
+    </>
+  );
+};
+
+export default MainLayout;

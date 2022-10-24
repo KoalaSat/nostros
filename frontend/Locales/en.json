@@ -1,0 +1,18 @@
+{
+  "navigationBar": {
+    "home": "Home",
+    "profile": "Profile"
+  },
+  "homePage": {
+    "search": "Search",
+    "send": "Send"
+  },
+  "sendPage": {
+    "title": "Send a note",
+    "placeholder": "Say something to the world...",
+    "send": "Send"
+  },
+  "alerts": {
+    "relayAdded": "Relay added"
+  }
+}
