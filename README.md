@@ -30,6 +30,7 @@ yarn start
 - [ ] User info missing on first start
 - [ ] i18n not loading
 - [ ] Logging out and in again does not work
+- [ ] Clipboard library not working
 ### Basics
 - [ ] Infinite Load
 - [ ] Relays management (add, remove and recomend)
