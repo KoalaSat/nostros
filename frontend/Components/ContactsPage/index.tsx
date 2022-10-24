@@ -125,7 +125,4 @@ export const ContactsPage: React.FC = () => {
 };
 
 export default ContactsPage;
-function setIsContact(arg0: boolean) {
-  throw new Error('Function not implemented.');
-}
 

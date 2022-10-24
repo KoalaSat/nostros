@@ -1,0 +1,44 @@
+name: "Build: Android"
+on:
+  workflow_dispatch:
+  workflow_call:
+  push:
+    branches: [ "main" ]
+    paths: [ "frontend" ]
+  pull_request:
+    branches: [ "main" ]
+    paths: [ "frontend" ]
+
+jobs:
+  build-android:
+    runs-on: ubuntu-latest
+    steps: 
+      - name: 'Checkout'
+        uses: actions/checkout@v3
+
+      - name: 'Install yarn Dependencies'
+        run: |
+          yarn install
+
+      - uses: actions/setup-java@v3
+        with:
+          distribution: temurin
+          java-version: 11
+          
+      - name: Setup Gradle
+        uses: gradle/gradle-build-action@v2
+
+      - name: 'Build Android Release'
+        run: |
+          cd android
+          ./gradlew assembleRelease
+
+      - name: 'Get Commit Hash'
+        id: commit
+        uses: pr-mpt/actions-commit-hash@v1
+
+      - name: 'Upload .apk Release Artifact (for Release)'
+        uses: actions/upload-artifact@v3
+        with:
+          name: nostros-${{ github.ref_name }}.apk
+          path: android/app/build/outputs/apk/release/app-release.apk
