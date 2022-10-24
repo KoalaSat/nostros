@@ -5,15 +5,15 @@
 
 Wellcome to the NOSTROS project. 
 
-## Getting Started
+# Getting Started
 
-### Required Libraries and Framworks
+## Required Libraries and Framworks
 - Node 16.x
 - JDK 17.0.x
 - (Android) Android Studio SKD
 - yarn
 
-## Running
+# Running
 
 - Open a virtual device
 - Run Metro
@@ -21,26 +21,32 @@ Wellcome to the NOSTROS project.
 yarn start
 ```
 
-## Some Features to Work On
+# Some Features to Work On
 
-### Home
+## Home
 - [ ] Public Room
 - [ ] Other Rooms
-### Profile 
+## Profile 
 - [ ] Verify NIP-05
 - [ ] Verify LNURL https://github.com/andrerfneves/lightning-address
-### Contacts
+## Contacts
 - [ ] Direct Messages https://github.com/nostr-protocol/nips/blob/master/04.md
-### Note
+## Note
 - [ ] Mentions https://github.com/nostr-protocol/nips/blob/master/08.md
 - [ ] Reactions https://github.com/nostr-protocol/nips/blob/master/25.md
 - [ ] Deletion https://github.com/nostr-protocol/nips/blob/master/09.md
 - [ ] Tag Users https://github.com/nostr-protocol/nips/blob/master/10.md
-### Send
+## Send
 - [ ] Mentions https://github.com/nostr-protocol/nips/blob/master/08.md
-### Config
+## Config
 - [ ] Relays management (add, remove and recomend)
 - [ ] Private Key download
+
+# Kudos
+
+- Inspired on https://github.com/jb55/nostr-js and https://github.com/fiatjaf/nostr-tools
+- Discovered thanks to https://lunaticoin.com
+
 ------
 
 Made with 🐨 by https://getalby.com/p/koalasat
