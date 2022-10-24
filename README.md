@@ -27,26 +27,26 @@ yarn start
 
 # Some Features to Work On
 
-## Basics
+### Basics
 - [ ] Infinite Load
 - [ ] Relays management (add, remove and recomend)
 - [ ] Random Key Generator
-## Home
+### Home
 - [ ] Public Room
 - [ ] Other Rooms
-## Profile 
+### Profile 
 - [ ] Verify NIP-05
 - [ ] Verify LNURL https://github.com/andrerfneves/lightning-address
-## Contacts
+### Contacts
 - [ ] Direct Messages https://github.com/nostr-protocol/nips/blob/master/04.md
-## Note
+### Note
 - [ ] Mentions https://github.com/nostr-protocol/nips/blob/master/08.md
 - [ ] Reactions https://github.com/nostr-protocol/nips/blob/master/25.md
 - [ ] Deletion https://github.com/nostr-protocol/nips/blob/master/09.md
 - [ ] Tag Users https://github.com/nostr-protocol/nips/blob/master/10.md
-## Send
+### Send
 - [ ] Mentions https://github.com/nostr-protocol/nips/blob/master/08.md
-## Config
+### Config
 - [ ] Private Key download
 
 # Kudos
