@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { SQLiteDatabase } from 'react-native-sqlite-storage';
 import { initDatabase } from '../Functions/DatabaseFunctions';
 import { createInitDatabase } from '../Functions/DatabaseFunctions/Migrations';
