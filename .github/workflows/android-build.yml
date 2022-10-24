@@ -1,11 +1,5 @@
 name: "Build: Android"
 on:
-  workflow_dispatch:
-  workflow_call:
-    inputs:
-      semver:
-        required: true
-        type: string
   push:
     branches: [ "main" ]
     paths: [ "frontend" ]
