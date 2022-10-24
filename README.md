@@ -32,6 +32,7 @@ yarn start
 - [ ] Clipboard library not working
 ### Basics
 - [ ] Infinite Load
+- [ ] Go to replied event
 - [ ] Relays management (add, remove and recomend)
 - [ ] Random Key Generator
 ### Home
