@@ -27,6 +27,10 @@ yarn start
 
 # Some Features to Work On
 
+## Basics
+- [ ] Infinite Load
+- [ ] Relays management (add, remove and recomend)
+- [ ] Random Key Generator
 ## Home
 - [ ] Public Room
 - [ ] Other Rooms
@@ -43,7 +47,6 @@ yarn start
 ## Send
 - [ ] Mentions https://github.com/nostr-protocol/nips/blob/master/08.md
 ## Config
-- [ ] Relays management (add, remove and recomend)
 - [ ] Private Key download
 
 # Kudos
