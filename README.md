@@ -6,7 +6,7 @@ Wellcome to the NOSTROS project.
 
 # Getting Started
 
-## Required Libraries and Framworks
+## Required Libraries and Frameworks
 - Node 16.x
 - JDK 17.0.x
 - (Android) Android Studio SKD
@@ -17,7 +17,7 @@ Wellcome to the NOSTROS project.
 - Open a virtual device
 - Install
 ```
-yarn format
+yarn install
 ```
 - Run Metro
 ```
