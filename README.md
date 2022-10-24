@@ -26,7 +26,10 @@ yarn start
 ```
 
 # Some Features to Work On
-
+### Bugs
+- [ ] User info missing on first start
+- [ ] i18n not loading
+- [ ] Logging out and in again does not work
 ### Basics
 - [ ] Infinite Load
 - [ ] Relays management (add, remove and recomend)
