@@ -40,5 +40,5 @@ jobs:
       - name: 'Upload .apk Release Artifact (for Release)'
         uses: actions/upload-artifact@v3
         with:
-          name: nostros-$(git describe --tags --abbrev=0).apk
+          name: nostros-${{ github.ref_name }}.apk
           path: android/app/build/outputs/apk/release/app-release.apk
