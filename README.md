@@ -16,6 +16,10 @@ Wellcome to the NOSTROS project.
 # Running
 
 - Open a virtual device
+- Install
+```
+yarn format
+```
 - Run Metro
 ```
 yarn start
