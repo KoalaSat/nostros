@@ -36,6 +36,8 @@ export const AppContextProvider = ({ children }: AppContextProviderProps): JSX.E
         createInitDatabase(db).then(() => {
           setLoadingDb(false);
         });
+      } else {
+        setLoadingDb(false);
       }
     });
   }, []);

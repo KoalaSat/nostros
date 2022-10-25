@@ -16,13 +16,14 @@ import { RelayPoolContext } from '../../Contexts/RelayPoolContext';
 
 export const ConfigPage: React.FC = () => {
   const theme = useTheme();
-  const { setPage, page, database } = useContext(AppContext);
-  const { setPrivateKey, relayPool } = useContext(RelayPoolContext);
+  const { setPage, database } = useContext(AppContext);
+  const { setPrivateKey, relayPool, publicKey } = useContext(RelayPoolContext);
   const { t } = useTranslation('common');
-  const breadcrump = page.split('%');
 
   const onPressBack: () => void = () => {
-    setPage(breadcrump.slice(0, -1).join('%'));
+    if (publicKey) {
+      setPage(`profile#${publicKey}`);
+    }
   };
 
   const onPressLogout: () => void = () => {

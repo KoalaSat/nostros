@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react';
+import React, { useContext } from 'react';
 import { Layout } from '@ui-kitten/components';
 import { StyleSheet } from 'react-native';
 import { AppContext } from '../../Contexts/AppContext';
@@ -9,13 +9,10 @@ import SendPage from '../SendPage';
 import ContactsPage from '../ContactsPage';
 import NotePage from '../NotePage';
 import LandingPage from '../LandingPage';
-import { RelayPoolContext } from '../../Contexts/RelayPoolContext';
 import ConfigPage from '../ConfigPage';
 
 export const MainLayout: React.FC = () => {
   const { page } = useContext(AppContext);
-  const { relayPool } = useContext(RelayPoolContext);
-  const [lastPage, setLastPage] = useState<string>(page);
 
   const styles = StyleSheet.create({
     container: {
@@ -36,16 +33,6 @@ export const MainLayout: React.FC = () => {
   const breadcrump: string[] = page.split('%');
   const pageToDisplay: string = breadcrump[breadcrump.length - 1].split('#')[0];
 
-  const clearSubscriptions: () => boolean = () => {
-    if (relayPool && lastPage && lastPage !== page) {
-      relayPool.unsubscribeAll();
-      relayPool.removeOn('event', lastPage);
-      setLastPage(page);
-    }
-
-    return true;
-  };
-
   const view: () => JSX.Element = () => {
     if (page === '') {
       return <Layout style={styles.container} level='4' />;
@@ -59,7 +46,7 @@ export const MainLayout: React.FC = () => {
       return (
         <>
           <Layout style={styles.container} level='4'>
-            {clearSubscriptions() && (pagination[pageToDisplay] ?? <></>)}
+            {pagination[pageToDisplay]}
           </Layout>
           <NavigationBar />
         </>
@@ -67,7 +54,7 @@ export const MainLayout: React.FC = () => {
     }
   };
 
-  return view();
+  return <>{view()}</>;
 };
 
 export default MainLayout;

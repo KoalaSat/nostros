@@ -34,12 +34,13 @@ export const initialRelayPoolContext: RelayPoolContextProps = {
 export const RelayPoolContextProvider = ({
   children,
 }: RelayPoolContextProviderProps): JSX.Element => {
-  const { database, loadingDb, setPage } = useContext(AppContext);
+  const { database, loadingDb, setPage, page } = useContext(AppContext);
 
   const [publicKey, setPublicKey] = useState<string>();
   const [privateKey, setPrivateKey] = useState<string>();
   const [relayPool, setRelayPool] = useState<RelayPool>();
   const [lastEventId, setLastEventId] = useState<string>();
+  const [lastPage, setLastPage] = useState<string>(page);
 
   const loadRelayPool: () => void = () => {
     if (database && privateKey) {
@@ -95,8 +96,17 @@ export const RelayPoolContextProvider = ({
   }, [privateKey, loadingDb]);
 
   useEffect(() => {
+    if (relayPool && lastPage !== page) {
+      relayPool.unsubscribeAll();
+      relayPool.removeOn('event', lastPage);
+      setLastPage(page);
+    }
+  }, [page]);
+
+  useEffect(() => {
     EncryptedStorage.getItem('privateKey').then((result) => {
       if (result && result !== '') {
+        loadRelayPool();
         setPage('home');
         setPrivateKey(result);
       } else {

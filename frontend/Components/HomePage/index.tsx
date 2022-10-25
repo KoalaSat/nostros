@@ -41,7 +41,7 @@ export const HomePage: React.FC = () => {
             limit: 20,
           };
 
-          if (notes.length > 0) {
+          if (notes.length >= 20) {
             message = {
               ...message,
               since: notes[0].created_at,

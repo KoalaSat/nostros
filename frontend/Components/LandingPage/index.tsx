@@ -20,7 +20,6 @@ export const LandingPage: React.FC = () => {
   const [totalPets, setTotalPets] = useState<number>();
   const [inputValue, setInputValue] = useState<string>('');
   const [loadedUsers, setLoadedUsers] = useState<number>();
-  const [loadedNotes, setLoadedNotes] = useState<number>();
   const styles = StyleSheet.create({
     tab: {
       height: '100%',
@@ -43,7 +42,6 @@ export const LandingPage: React.FC = () => {
   });
 
   useEffect(() => {
-    // #1 STEP
     if (relayPool && publicKey) {
       setStatus(1);
       initEvents();
@@ -55,20 +53,20 @@ export const LandingPage: React.FC = () => {
   }, [relayPool, publicKey]);
 
   useEffect(() => {
-    if (status > 3) {
+    if (status > 2) {
       relayPool?.removeOn('event', 'landing');
       setPage('home');
     }
   }, [status]);
 
   useEffect(() => {
-    if (loadedUsers ?? loadedNotes) {
-      const timer = setTimeout(() => setStatus(4), 4000);
+    if (loadedUsers) {
+      const timer = setTimeout(() => setStatus(3), 4000);
       return () => {
         clearTimeout(timer);
       };
     }
-  }, [loadedUsers, loadedNotes]);
+  }, [loadedUsers]);
 
   const initEvents: () => void = () => {
     relayPool?.on('event', 'landing', (_relay: Relay, _subId?: string, event?: Event) => {
@@ -79,8 +77,6 @@ export const LandingPage: React.FC = () => {
         } else if (event.kind === EventKind.meta) {
           setLoadedUsers((prev) => (prev ? prev + 1 : 1));
           if (loadedUsers && loadedUsers - 1 === totalPets) setStatus(3);
-        } else if (event.kind === EventKind.textNote) {
-          setLoadedNotes((prev) => (prev ? prev + 1 : 1));
         }
       }
     });
@@ -95,7 +91,7 @@ export const LandingPage: React.FC = () => {
           requestUserData(event);
         });
       } else {
-        setStatus(4);
+        setStatus(3);
       }
     }
   };
@@ -106,16 +102,6 @@ export const LandingPage: React.FC = () => {
       relayPool?.subscribe('main-channel', {
         kinds: [EventKind.meta],
         authors,
-      });
-      relayPool?.subscribe('main-channel', {
-        kinds: [EventKind.textNote, EventKind.recommendServer],
-        authors,
-        limit: 20,
-      });
-      relayPool?.subscribe('main-channel', {
-        kinds: [EventKind.textNote, EventKind.recommendServer],
-        authors: [publicKey],
-        limit: 10,
       });
     }
   };
@@ -131,8 +117,7 @@ export const LandingPage: React.FC = () => {
     0: t('landing.connect'),
     1: t('landing.connecting'),
     2: t('landing.loadingContacts'),
-    3: t('landing.loadingTimeline'),
-    4: t('landing.ready'),
+    3: t('landing.ready'),
   };
 
   return (
