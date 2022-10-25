@@ -6,19 +6,18 @@ import { AppContext } from './AppContext';
 import { storeEvent } from '../Functions/DatabaseFunctions/Events';
 import { getRelays, Relay as RelayEntity, storeRelay } from '../Functions/DatabaseFunctions/Relays';
 import { showMessage } from 'react-native-flash-message';
+import EncryptedStorage from 'react-native-encrypted-storage';
+import { getPublickey } from '../lib/nostr/Bip';
 
 export interface RelayPoolContextProps {
   relayPool?: RelayPool;
   setRelayPool: (relayPool: RelayPool) => void;
-  publicKey: string;
+  publicKey?: string;
   setPublicKey: (privateKey: string) => void;
-  privateKey: string;
+  privateKey?: string;
   setPrivateKey: (privateKey: string) => void;
   lastEventId?: string;
   setLastEventId: (lastEventId: string) => void;
-  loadingRelays: boolean;
-  initRelays: () => void;
-  loadRelays: () => void;
 }
 
 export interface RelayPoolContextProviderProps {
@@ -26,56 +25,25 @@ export interface RelayPoolContextProviderProps {
 }
 
 export const initialRelayPoolContext: RelayPoolContextProps = {
-  publicKey: '',
   setPublicKey: () => {},
-  privateKey: '',
   setPrivateKey: () => {},
   setRelayPool: () => {},
   setLastEventId: () => {},
-  loadingRelays: true,
-  initRelays: () => {},
-  loadRelays: () => {},
 };
 
 export const RelayPoolContextProvider = ({
   children,
 }: RelayPoolContextProviderProps): JSX.Element => {
-  const { database, loadingDb } = useContext(AppContext);
+  const { database, loadingDb, setPage, page } = useContext(AppContext);
 
-  const [publicKey, setPublicKey] = useState<string>('');
-  const [privateKey, setPrivateKey] = useState<string>('');
+  const [publicKey, setPublicKey] = useState<string>();
+  const [privateKey, setPrivateKey] = useState<string>();
   const [relayPool, setRelayPool] = useState<RelayPool>();
   const [lastEventId, setLastEventId] = useState<string>();
-  const [loadingRelays, setLoadingRelays] = useState<boolean>(true);
+  const [lastPage, setLastPage] = useState<string>(page);
 
-  const initRelays: () => void = () => {
-    relayPool?.on(
-      'notice',
-      'RelayPoolContextProvider',
-      (relay: Relay, _subId?: string, event?: Event) => {
-        showMessage({
-          message: relay.url,
-          description: event?.content ?? '',
-          type: 'info',
-        });
-      },
-    );
-    relayPool?.on(
-      'event',
-      'RelayPoolContextProvider',
-      (relay: Relay, _subId?: string, event?: Event) => {
-        console.log('RELAYPOOL EVENT =======>', relay.url, event);
-        if (database && event?.id && event.kind !== EventKind.petNames) {
-          storeEvent(event, database).finally(() => setLastEventId(event.id));
-        }
-      },
-    );
-
-    setLoadingRelays(false);
-  };
-
-  const loadRelays: () => void = () => {
-    if (database) {
+  const loadRelayPool: () => void = () => {
+    if (database && privateKey) {
       getRelays(database).then((relays: RelayEntity[]) => {
         const initRelayPool = new RelayPool([], privateKey);
         if (relays.length > 0) {
@@ -88,16 +56,65 @@ export const RelayPoolContextProvider = ({
             storeRelay({ url: relayUrl }, database);
           });
         }
+
+        initRelayPool?.on(
+          'notice',
+          'RelayPoolContextProvider',
+          (relay: Relay, _subId?: string, event?: Event) => {
+            showMessage({
+              message: relay.url,
+              description: event?.content ?? '',
+              type: 'info',
+            });
+          },
+        );
+        initRelayPool?.on(
+          'event',
+          'RelayPoolContextProvider',
+          (relay: Relay, _subId?: string, event?: Event) => {
+            console.log('RELAYPOOL EVENT =======>', relay.url, event);
+            if (database && event?.id && event.kind !== EventKind.petNames) {
+              storeEvent(event, database).finally(() => setLastEventId(event.id));
+            }
+          },
+        );
         setRelayPool(initRelayPool);
-      })
+      });
     }
-  }
+  };
 
   useEffect(() => {
-    if (privateKey !== '' && !loadingDb && loadingRelays) {
-      loadRelays()
+    if (privateKey) {
+      setPublicKey(getPublickey(privateKey));
     }
-  }, [privateKey, loadingDb])
+  }, [privateKey]);
+
+  useEffect(() => {
+    if (privateKey !== '' && !loadingDb && !relayPool) {
+      loadRelayPool();
+    }
+  }, [privateKey, loadingDb]);
+
+  useEffect(() => {
+    if (relayPool && lastPage !== page) {
+      relayPool.unsubscribeAll();
+      relayPool.removeOn('event', lastPage);
+      setLastPage(page);
+    }
+  }, [page]);
+
+  useEffect(() => {
+    EncryptedStorage.getItem('privateKey').then((result) => {
+      if (result && result !== '') {
+        loadRelayPool();
+        setPage('home');
+        setPrivateKey(result);
+      } else {
+        setPrivateKey('');
+        setPage('landing');
+      }
+    });
+  }, []);
 
   return (
     <RelayPoolContext.Provider
@@ -110,9 +127,6 @@ export const RelayPoolContextProvider = ({
         setPrivateKey,
         lastEventId,
         setLastEventId,
-        loadingRelays,
-        initRelays,
-        loadRelays,
       }}
     >
       {children}

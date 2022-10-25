@@ -46,8 +46,8 @@ export const ProfilePage: React.FC = () => {
   const username = user?.name === '' ? user?.id : user?.name;
 
   useEffect(() => {
-    setUser(null)
-    setNotes([])
+    setUser(null);
+    setNotes([]);
     relayPool?.on('event', 'profile', (_relay: Relay, _subId?: string, event?: Event) => {
       console.log('PROFILE EVENT =======>', event);
       if (database && event?.id && event.pubkey === userId) {
@@ -56,7 +56,7 @@ export const ProfilePage: React.FC = () => {
           setContactsIds(ids);
         } else if (event.kind === EventKind.meta) {
           storeEvent(event, database).finally(() => {
-            if (event?.id) setLastEventId(event.id)
+            if (event?.id) setLastEventId(event.id);
           });
         }
       }
@@ -101,8 +101,8 @@ export const ProfilePage: React.FC = () => {
   const removeAuthor: () => void = () => {
     if (relayPool && database) {
       removeContact(userId, database).then(() => {
-        populatePets(relayPool, database, publicKey)
-        setIsContact(false)
+        populatePets(relayPool, database, publicKey);
+        setIsContact(false);
       });
     }
   };
@@ -110,8 +110,8 @@ export const ProfilePage: React.FC = () => {
   const addAuthor: () => void = () => {
     if (relayPool && database) {
       addContact(userId, database).then(() => {
-        populatePets(relayPool, database, publicKey)
-        setIsContact(true)
+        populatePets(relayPool, database, publicKey);
+        setIsContact(true);
       });
     }
   };
@@ -119,11 +119,11 @@ export const ProfilePage: React.FC = () => {
   const renderOptions: () => JSX.Element = () => {
     if (publicKey === userId) {
       return (
-            <TopNavigationAction
-              icon={<Icon name='dna' size={16} color={theme['text-basic-color']} solid />}
-              onPress={() => setPage('config')}
-            />
-          );
+        <TopNavigationAction
+          icon={<Icon name='dna' size={16} color={theme['text-basic-color']} solid />}
+          onPress={() => setPage('config')}
+        />
+      );
     } else {
       if (user) {
         if (isContact) {

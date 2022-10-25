@@ -75,7 +75,7 @@ export const SendPage: React.FC = () => {
         tags,
       };
       relayPool?.sendEvent(event);
-      setNoteId(note.id)
+      setNoteId(note.id);
       setSending(true);
     });
   };
