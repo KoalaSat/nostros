@@ -10,10 +10,11 @@ import { Event, EventKind } from '../../lib/nostr/Events';
 import { AppContext } from '../../Contexts/AppContext';
 import { insertUserContact } from '../../Functions/DatabaseFunctions/Users';
 import EncryptedStorage from 'react-native-encrypted-storage';
+import { getPublickey } from '../../lib/nostr/Bip';
 
 export const LandingPage: React.FC = () => {
   const { database, setPage } = useContext(AppContext);
-  const { privateKey, publicKey, relayPool, setPrivateKey } = useContext(RelayPoolContext);
+  const { privateKey, publicKey, relayPool, setPublicKey } = useContext(RelayPoolContext);
   const { t } = useTranslation('common');
   const [loading, setLoading] = useState<boolean>(false);
   const [status, setStatus] = useState<number>(0);
@@ -107,10 +108,12 @@ export const LandingPage: React.FC = () => {
   };
 
   const onPress: () => void = () => {
-    setLoading(true);
-    setPrivateKey(inputValue);
-    setStatus(1);
-    EncryptedStorage.setItem('privateKey', inputValue);
+    if (privateKey && privateKey !== '') {
+      setLoading(true);
+      setPublicKey(getPublickey(privateKey));
+      setStatus(1);
+      EncryptedStorage.setItem('privateKey', privateKey);
+    }
   };
 
   const statusName: { [status: number]: string } = {

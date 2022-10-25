@@ -29,10 +29,11 @@ export const ConfigPage: React.FC = () => {
   const onPressLogout: () => void = () => {
     if (database) {
       dropTables(database).then(() => {
-        setPrivateKey('');
-        relayPool?.unsubscribeAll();
-        EncryptedStorage.removeItem('privateKey');
-        setPage('landing');
+        EncryptedStorage.removeItem('privateKey').then(() => {
+          setPrivateKey('');
+          relayPool?.unsubscribeAll();
+          setPage('landing');
+        });
       });
     }
   };
