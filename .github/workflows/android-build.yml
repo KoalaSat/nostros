@@ -4,10 +4,8 @@ on:
   workflow_call:
   push:
     branches: [ "main" ]
-    paths: [ "frontend" ]
   pull_request:
     branches: [ "main" ]
-    paths: [ "frontend" ]
 
 jobs:
   build-android:
