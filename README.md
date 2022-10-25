@@ -50,8 +50,8 @@ yarn start
 - [ ] Other Rooms
 
 ### Profile
-
-- [ ] Verify NIP-05
+ 
+- [ ] Verify NIP-05 https://github.com/nostr-protocol/nips/blob/master/05.md
 - [ ] Verify LNURL https://github.com/andrerfneves/lightning-address
 
 ### Contacts
