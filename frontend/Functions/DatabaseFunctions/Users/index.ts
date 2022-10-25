@@ -1,7 +1,6 @@
 import { SQLiteDatabase } from 'react-native-sqlite-storage';
 import { getItems } from '..';
 import { Event, EventKind, verifySignature } from '../../../lib/nostr/Events';
-import { tagToUser } from '../../RelayFunctions/Users';
 import { errorCallback } from '../Errors';
 
 export interface User {
@@ -15,6 +14,14 @@ export interface User {
 
 const databaseToEntity: (object: object) => User = (object) => {
   return object as User;
+};
+
+export const tagToUser: (tag: string[]) => User = (tag) => {
+  return {
+    id: tag[1],
+    main_relay: tag[2],
+    name: tag[3],
+  };
 };
 
 export const insertUserMeta: (event: Event, db: SQLiteDatabase) => Promise<void> = async (

@@ -22,7 +22,7 @@ export const NavigationBar: React.FC = () => {
   };
 
   return (
-    page && (
+    page ? (
       <BottomNavigation
         selectedIndex={getIndex()}
         onSelect={(index: number) => setPage(pageIndex[index])}
@@ -37,7 +37,7 @@ export const NavigationBar: React.FC = () => {
           icon={<Icon name='user' size={24} color={theme['text-basic-color']} />}
         />
       </BottomNavigation>
-    )
+    ) : <></>
   );
 };
 
