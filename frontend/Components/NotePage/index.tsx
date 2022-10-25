@@ -16,8 +16,7 @@ import { EventKind } from '../../lib/nostr/Events';
 import { RelayFilters } from '../../lib/nostr/Relay';
 import { StyleSheet } from 'react-native';
 import Loading from '../Loading';
-import ActionButton from 'react-native-action-button';
-import { useTranslation } from 'react-i18next';
+import Fab from 'rn-fab';
 import { getDirectReplies, getReplyEventId } from '../../Functions/RelayFunctions/Events';
 
 export const NotePage: React.FC = () => {
@@ -26,30 +25,31 @@ export const NotePage: React.FC = () => {
   const [note, setNote] = useState<Note>();
   const [replies, setReplies] = useState<Note[]>([]);
   const theme = useTheme();
-  const { t } = useTranslation('common');
   const breadcrump = page.split('%');
   const eventId = breadcrump[breadcrump.length - 1].split('#')[1];
 
   useEffect(() => {
-    getNotes(database, { filters: { id: eventId } }).then((events) => {
-      if (events.length > 0) {
-        const event = events[0];
-        setNote(event);
-        getNotes(database, { filters: { reply_event_id: eventId } }).then((notes) => {
-          const rootReplies = getDirectReplies(notes, event);
-          if (rootReplies.length > 0) {
-            setReplies(rootReplies as Note[]);
-            const message: RelayFilters = {
-              kinds: [EventKind.meta],
-              authors: rootReplies.map((note) => note.pubkey),
-            };
-            relayPool?.subscribe('main-channel', message);
-          } else {
-            setReplies([]);
-          }
-        });
-      }
-    });
+    if (database) {
+      getNotes(database, { filters: { id: eventId } }).then((events) => {
+        if (events.length > 0) {
+          const event = events[0];
+          setNote(event);
+          getNotes(database, { filters: { reply_event_id: eventId } }).then((notes) => {
+            const rootReplies = getDirectReplies(notes, event);
+            if (rootReplies.length > 0) {
+              setReplies(rootReplies as Note[]);
+              const message: RelayFilters = {
+                kinds: [EventKind.meta],
+                authors: rootReplies.map((note) => note.pubkey),
+              };
+              relayPool?.subscribe('main-channel', message);
+            } else {
+              setReplies([]);
+            }
+          });
+        }
+      });
+    }
 
     relayPool?.subscribe('main-channel', {
       kinds: [EventKind.textNote, EventKind.recommendServer],
@@ -130,19 +130,27 @@ export const NotePage: React.FC = () => {
           <Loading style={styles.loading} />
         )}
       </Layout>
-      {/* <ActionButton
-        buttonColor={theme['color-primary-400']}
-        useNativeFeedback={true}
-        fixNativeFeedbackRadius={true}
-      >
-        <ActionButton.Item
-          buttonColor={theme['color-warning-500']}
-          title={t('notePage.reply')}
-          onPress={() => setPage(`send#${eventId}`)}
-        >
-          <Icon name='reply' size={30} color={theme['text-basic-color']} solid />
-        </ActionButton.Item>
-      </ActionButton> */}
+      <Fab
+        actions={[
+          {
+            icon: <Icon name='plus' size={20} color={theme['text-basic-color']} />,
+            name: 'btn_plus',
+            color: theme['color-primary-400'],
+          },
+          {
+            icon: <Icon name='reply' size={20} color={theme['text-basic-color']} solid />,
+            name: 'send',
+            color: theme['color-warning-500'],
+          },
+        ]}
+        style={{ right: 40, bottom: 80 }}
+        rotation={'45deg'}
+        onPress={(name: string) => {
+          if (name === 'send') {
+            setPage(`send#${eventId}`);
+          }
+        }}
+      />
     </>
   );
 };

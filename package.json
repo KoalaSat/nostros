@@ -33,6 +33,7 @@
     "react-native-svg": "^13.4.0",
     "react-native-user-avatar": "^1.0.8",
     "react-native-vector-icons": "^9.2.0",
+    "rn-fab": "^0.0.6",
     "safe-buffer": "^5.2.1",
     "sqlstring": "^2.3.3",
     "stream": "^0.0.2",

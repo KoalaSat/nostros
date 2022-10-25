@@ -145,8 +145,8 @@ export const addContact: (pubkey: string, db: SQLiteDatabase) => Promise<void> =
 
 export const getUsers: (
   db: SQLiteDatabase,
-  options: { exludeIds?: string[]; contacts?: boolean },
-) => Promise<User[]> = async (db, { exludeIds, contacts }) => {
+  options: { exludeIds?: string[]; contacts?: boolean; includeIds?: string[] },
+) => Promise<User[]> = async (db, { exludeIds, contacts, includeIds }) => {
   let userQuery = `SELECT * FROM nostros_users `;
 
   if (contacts) {
@@ -162,8 +162,16 @@ export const getUsers: (
     userQuery += `id NOT IN ('${exludeIds.join("', '")}') `;
   }
 
-  userQuery += `ORDER BY name,id`;
+  if (includeIds && includeIds.length > 0) {
+    if (!contacts && !exludeIds) {
+      userQuery += `WHERE `;
+    } else {
+      userQuery += `OR `;
+    }
+    userQuery += `id IN ('${includeIds.join("', '")}') `;
+  }
 
+  userQuery += `ORDER BY name,id`;
   return await new Promise<User[]>((resolve, reject) => {
     db.readTransaction((transaction) => {
       transaction.executeSql(

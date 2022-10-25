@@ -21,23 +21,23 @@ export const NavigationBar: React.FC = () => {
     }
   };
 
-  return (
-    page ? (
-      <BottomNavigation
-        selectedIndex={getIndex()}
-        onSelect={(index: number) => setPage(pageIndex[index])}
-      >
-        <BottomNavigationTab
-          icon={<Icon name='home' size={24} color={theme['text-basic-color']} />}
-        />
-        <BottomNavigationTab
-          icon={<Icon name='address-book' size={24} color={theme['text-basic-color']} />}
-        />
-        <BottomNavigationTab
-          icon={<Icon name='user' size={24} color={theme['text-basic-color']} />}
-        />
-      </BottomNavigation>
-    ) : <></>
+  return page ? (
+    <BottomNavigation
+      selectedIndex={getIndex()}
+      onSelect={(index: number) => setPage(pageIndex[index])}
+    >
+      <BottomNavigationTab
+        icon={<Icon name='home' size={24} color={theme['text-basic-color']} />}
+      />
+      <BottomNavigationTab
+        icon={<Icon name='address-book' size={24} color={theme['text-basic-color']} />}
+      />
+      <BottomNavigationTab
+        icon={<Icon name='user' size={24} color={theme['text-basic-color']} />}
+      />
+    </BottomNavigation>
+  ) : (
+    <></>
   );
 };
 

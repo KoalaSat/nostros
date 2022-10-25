@@ -1,11 +1,10 @@
 import { Card, Layout, List, useTheme } from '@ui-kitten/components';
 import React, { useContext, useEffect, useState } from 'react';
-import { useTranslation } from 'react-i18next';
 import { StyleSheet } from 'react-native';
 import { AppContext } from '../../Contexts/AppContext';
 import { getNotes, Note } from '../../Functions/DatabaseFunctions/Notes';
 import NoteCard from '../NoteCard';
-import ActionButton from 'react-native-action-button';
+import Fab from 'rn-fab';
 import Icon from 'react-native-vector-icons/FontAwesome5';
 import { RelayPoolContext } from '../../Contexts/RelayPoolContext';
 import { EventKind } from '../../lib/nostr/Events';
@@ -20,11 +19,10 @@ export const HomePage: React.FC = () => {
   const theme = useTheme();
   const [notes, setNotes] = useState<Note[]>([]);
   const [totalContacts, setTotalContacts] = useState<number>(-1);
-  const { t } = useTranslation('common');
 
   const loadNotes: () => void = () => {
-    if (database) {
-      getNotes(database, { contacts: true }).then((notes) => {
+    if (database && publicKey) {
+      getNotes(database, { contacts: true, includeIds: [publicKey] }).then((notes) => {
         setNotes(notes);
       });
     }
@@ -33,15 +31,15 @@ export const HomePage: React.FC = () => {
   const subscribeNotes: () => void = () => {
     if (database && publicKey) {
       getNotes(database, { limit: 1 }).then((notes) => {
-        getUsers(database, { contacts: true }).then((users) => {
+        getUsers(database, { contacts: true, includeIds: [publicKey] }).then((users) => {
           setTotalContacts(users.length);
           let message: RelayFilters = {
             kinds: [EventKind.textNote, EventKind.recommendServer],
-            authors: [publicKey, ...users.map((user) => user.id)],
+            authors: users.map((user) => user.id),
             limit: 20,
           };
 
-          if (notes.length >= 20) {
+          if (notes.length !== 0) {
             message = {
               ...message,
               since: notes[0].created_at,
@@ -61,7 +59,7 @@ export const HomePage: React.FC = () => {
   useEffect(() => {
     loadNotes();
     subscribeNotes();
-  }, []);
+  }, [database]);
 
   const onPress: (note: Note) => void = (note) => {
     if (note.kind !== EventKind.recommendServer) {
@@ -101,19 +99,27 @@ export const HomePage: React.FC = () => {
           <List data={notes} renderItem={(item) => itemCard(item.item)} />
         )}
       </Layout>
-      {/* <ActionButton
-        buttonColor={theme['color-primary-400']}
-        useNativeFeedback={true}
-        fixNativeFeedbackRadius={true}
-      >
-        <ActionButton.Item
-          buttonColor={theme['color-warning-500']}
-          title={t('homePage.send')}
-          onPress={() => setPage(`${page}%send`)}
-        >
-          <Icon name='paper-plane' size={30} color={theme['text-basic-color']} solid />
-        </ActionButton.Item>
-      </ActionButton> */}
+      <Fab
+        actions={[
+          {
+            icon: <Icon name='plus' size={20} color={theme['text-basic-color']} />,
+            name: 'btn_plus',
+            color: theme['color-primary-400'],
+          },
+          {
+            icon: <Icon name='paper-plane' size={20} color={theme['text-basic-color']} solid />,
+            name: 'send',
+            color: theme['color-warning-500'],
+          },
+        ]}
+        style={{ right: 40, bottom: 80 }}
+        rotation={'45deg'}
+        onPress={(name: string) => {
+          if (name === 'send') {
+            setPage(`${page}%send`);
+          }
+        }}
+      />
     </>
   );
 };

@@ -26,8 +26,7 @@ import {
 import { EventKind, Event } from '../../lib/nostr/Events';
 import Relay from '../../lib/nostr/Relay';
 import Icon from 'react-native-vector-icons/FontAwesome5';
-import ActionButton from 'react-native-action-button';
-import { useTranslation } from 'react-i18next';
+import Fab from 'rn-fab';
 import { populatePets } from '../../Functions/RelayFunctions/Users';
 import { getReplyEventId } from '../../Functions/RelayFunctions/Events';
 import Loading from '../Loading';
@@ -38,7 +37,6 @@ export const ProfilePage: React.FC = () => {
   const { publicKey, lastEventId, relayPool, setLastEventId } = useContext(RelayPoolContext);
   const theme = useTheme();
   const [notes, setNotes] = useState<Note[]>([]);
-  const { t } = useTranslation('common');
   const [user, setUser] = useState<User | null>(null);
   const [contacts, setContactsIds] = useState<string[]>();
   const [isContact, setIsContact] = useState<boolean>();
@@ -178,7 +176,7 @@ export const ProfilePage: React.FC = () => {
       height: 48,
     },
     avatar: {
-      width: 140,
+      width: 130,
       marginBottom: 16,
     },
     profile: {
@@ -279,21 +277,29 @@ export const ProfilePage: React.FC = () => {
       <Layout style={styles.list} level='3'>
         <List data={notes} renderItem={(item) => itemCard(item.item)} />
       </Layout>
-      {/* {publicKey === userId && (
-        <ActionButton
-          buttonColor={theme['color-primary-400']}
-          useNativeFeedback={true}
-          fixNativeFeedbackRadius={true}
-        >
-          <ActionButton.Item
-            buttonColor={theme['color-warning-500']}
-            title={t('profilePage.send')}
-            onPress={() => setPage('send')}
-          >
-            <Icon name='paper-plane' size={30} color={theme['text-basic-color']} solid />
-          </ActionButton.Item>
-        </ActionButton>
-      )} */}
+      {publicKey === userId && (
+        <Fab
+          actions={[
+            {
+              icon: <Icon name='plus' size={20} color={theme['text-basic-color']} />,
+              name: 'btn_plus',
+              color: theme['color-primary-400'],
+            },
+            {
+              icon: <Icon name='paper-plane' size={20} color={theme['text-basic-color']} solid />,
+              name: 'send',
+              color: theme['color-warning-500'],
+            },
+          ]}
+          style={{ right: 40, bottom: 80 }}
+          rotation={'45deg'}
+          onPress={(name: string) => {
+            if (name === 'send') {
+              setPage('send');
+            }
+          }}
+        />
+      )}
     </>
   );
 };

@@ -35,7 +35,7 @@ export const NoteCard: React.FC<NoteCardProps> = ({ note }) => {
             <UserAvatar
               name={note.name && note.name !== '' ? note.name : note.pubkey}
               src={note.picture}
-              size={38}
+              size={39}
               textColor={theme['text-basic-color']}
             />
           </TouchableOpacity>

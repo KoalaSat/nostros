@@ -1,7 +1,7 @@
 import { Button, Card, Input, Layout, List, Modal, useTheme } from '@ui-kitten/components';
 import React, { useContext, useEffect, useState } from 'react';
 import { StyleSheet } from 'react-native';
-import ActionButton from 'react-native-action-button';
+import Fab from 'rn-fab';
 import { AppContext } from '../../Contexts/AppContext';
 import Icon from 'react-native-vector-icons/FontAwesome5';
 import { Event, EventKind } from '../../lib/nostr/Events';
@@ -111,19 +111,27 @@ export const ContactsPage: React.FC = () => {
           </Layout>
         </Card>
       </Modal>
-      {/* <ActionButton
-        buttonColor={theme['color-primary-400']}
-        useNativeFeedback={true}
-        fixNativeFeedbackRadius={true}
-      >
-        <ActionButton.Item
-          buttonColor={theme['color-warning-500']}
-          title={t('contactsPage.add')}
-          onPress={() => setShowAddContant(true)}
-        >
-          <Icon name='user-plus' size={30} color={theme['text-basic-color']} solid />
-        </ActionButton.Item>
-      </ActionButton> */}
+      <Fab
+        actions={[
+          {
+            icon: <Icon name='plus' size={20} color={theme['text-basic-color']} />,
+            name: 'btn_plus',
+            color: theme['color-primary-400'],
+          },
+          {
+            icon: <Icon name='user-plus' size={20} color={theme['text-basic-color']} solid />,
+            name: 'addContact',
+            color: theme['color-warning-500'],
+          },
+        ]}
+        style={{ right: 40, bottom: 80 }}
+        rotation={'45deg'}
+        onPress={(name: string) => {
+          if (name === 'addContact') {
+            setShowAddContant(true);
+          }
+        }}
+      />
     </>
   );
 };
