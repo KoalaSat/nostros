@@ -31,10 +31,10 @@ export const HomePage: React.FC = () => {
   };
 
   const subscribeNotes: () => void = () => {
-    if (database) {
+    if (database && publicKey) {
       getNotes(database, { limit: 1 }).then((notes) => {
         getUsers(database, { contacts: true }).then((users) => {
-          setTotalContacts(users.length)
+          setTotalContacts(users.length);
           let message: RelayFilters = {
             kinds: [EventKind.textNote, EventKind.recommendServer],
             authors: [publicKey, ...users.map((user) => user.id)],
@@ -55,7 +55,7 @@ export const HomePage: React.FC = () => {
   };
 
   useEffect(() => {
-    loadNotes()
+    loadNotes();
   }, [lastEventId]);
 
   useEffect(() => {

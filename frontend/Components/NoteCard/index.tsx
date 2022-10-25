@@ -76,7 +76,7 @@ export const NoteCard: React.FC<NoteCardProps> = ({ note }) => {
         relayPool.add(note.content);
         setRelayPool(relayPool);
         storeRelay({ url: note.content }, database);
-        populateRelay(relayPool, database, publicKey)
+        populateRelay(relayPool, database, publicKey);
         showMessage({
           message: t('alerts.relayAdded'),
           description: note.content,

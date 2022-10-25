@@ -15,7 +15,7 @@ import ConfigPage from '../ConfigPage';
 export const MainLayout: React.FC = () => {
   const { page } = useContext(AppContext);
   const { relayPool } = useContext(RelayPoolContext);
-  const [lastPage, setLastPage] = useState<string>(page)
+  const [lastPage, setLastPage] = useState<string>(page);
 
   const styles = StyleSheet.create({
     container: {
@@ -38,26 +38,36 @@ export const MainLayout: React.FC = () => {
 
   const clearSubscriptions: () => boolean = () => {
     if (relayPool && lastPage && lastPage !== page) {
-      relayPool.unsubscribeAll()
-      relayPool.removeOn('event', lastPage)
-      setLastPage(page)
+      relayPool.unsubscribeAll();
+      relayPool.removeOn('event', lastPage);
+      setLastPage(page);
     }
 
-    return true
-  }
+    return true;
+  };
 
-  return page === 'landing' ? (
-    <Layout style={styles.container} level='4'>
-      <LandingPage />
-    </Layout>
-  ) : (
-    <>
-      <Layout style={styles.container} level='4'>
-        {clearSubscriptions() && pagination[pageToDisplay]}
-      </Layout>
-      <NavigationBar />
-    </>
-  );
+  const view: () => JSX.Element = () => {
+    if (page === '') {
+      return <Layout style={styles.container} level='4' />;
+    } else if (page === 'landing') {
+      return (
+        <Layout style={styles.container} level='4'>
+          <LandingPage />
+        </Layout>
+      );
+    } else {
+      return (
+        <>
+          <Layout style={styles.container} level='4'>
+            {clearSubscriptions() && (pagination[pageToDisplay] ?? <></>)}
+          </Layout>
+          <NavigationBar />
+        </>
+      );
+    }
+  };
+
+  return view();
 };
 
 export default MainLayout;

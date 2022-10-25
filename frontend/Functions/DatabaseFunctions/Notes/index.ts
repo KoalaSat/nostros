@@ -20,7 +20,8 @@ export const insertNote: (event: Event, db: SQLiteDatabase) => Promise<void> = a
 ) => {
   return await new Promise<void>((resolve, reject) => {
     if (!verifySignature(event) || !event.id) return reject(new Error('Bad event'));
-    if (![EventKind.textNote, EventKind.recommendServer].includes(event.kind)) return reject(new Error('Bad Kind'));
+    if (![EventKind.textNote, EventKind.recommendServer].includes(event.kind))
+      return reject(new Error('Bad Kind'));
 
     getNotes(db, { filters: { id: event.id } }).then((notes) => {
       if (notes.length === 0 && event.id && event.sig) {
