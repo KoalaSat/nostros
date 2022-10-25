@@ -1,6 +1,6 @@
 [![Apache 2 license](https://img.shields.io/badge/license-Apache%202-blue)](https://github.com/KoalaSat/nostros/blob/main/LICENSE)
 
-![nostros_logo](https://user-images.githubusercontent.com/111684255/197588983-2a196d74-0f1e-45e8-be56-0da8c1602835.png)
+![nostros_logo](https://user-images.githubusercontent.com/111684255/197865267-1701b33b-2eb9-4704-86eb-a6ea8861fe1e.png)
 
 Wellcome to the NOSTROS project.
 
