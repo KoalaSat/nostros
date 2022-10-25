@@ -1,5 +1,7 @@
 [![Apache 2 license](https://img.shields.io/badge/license-Apache%202-blue)](https://github.com/KoalaSat/nostros/blob/main/LICENSE)
 [![Codacy Badge](https://app.codacy.com/project/badge/Grade/a3db59f4a45a43159cb129386b937a2a)](https://www.codacy.com/gh/KoalaSat/nostros/dashboard?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=KoalaSat/nostros&amp;utm_campaign=Badge_Grade)
+[![Frontend Build](https://github.com/KoalaSat/nostros/actions/workflows/android-build.yml/badge.svg?branch=main)](https://github.com/KoalaSat/nostros/actions/workflows/android-build.yml)
+[![release](https://img.shields.io/github/v/release/KoalaSat/nostros?include_prereleases)](https://github.com/KoalaSat/nostros/releases)
 
 ![nostros_logo](https://user-images.githubusercontent.com/111684255/197865267-1701b33b-2eb9-4704-86eb-a6ea8861fe1e.png)
 
