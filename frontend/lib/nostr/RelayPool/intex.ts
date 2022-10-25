@@ -110,12 +110,12 @@ class RelayPool {
         relay.sendEvent(signedEvent);
       });
 
-      return signedEvent
+      return signedEvent;
     } else {
       console.log('Not valid event', event);
     }
 
-    return null
+    return null;
   };
 
   public readonly subscribe: (subId: string, filters?: RelayFilters) => void = (subId, filters) => {

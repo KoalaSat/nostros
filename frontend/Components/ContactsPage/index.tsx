@@ -6,7 +6,12 @@ import { AppContext } from '../../Contexts/AppContext';
 import Icon from 'react-native-vector-icons/FontAwesome5';
 import { Event, EventKind } from '../../lib/nostr/Events';
 import { useTranslation } from 'react-i18next';
-import { addContact, getUsers, insertUserContact, User } from '../../Functions/DatabaseFunctions/Users';
+import {
+  addContact,
+  getUsers,
+  insertUserContact,
+  User,
+} from '../../Functions/DatabaseFunctions/Users';
 import UserCard from '../UserCard';
 import { RelayPoolContext } from '../../Contexts/RelayPoolContext';
 import Relay from '../../lib/nostr/Relay';
@@ -22,7 +27,7 @@ export const ContactsPage: React.FC = () => {
   const { t } = useTranslation('common');
 
   useEffect(() => {
-    if (database) {
+    if (database && publicKey) {
       getUsers(database, { contacts: true }).then((results) => {
         if (results) {
           setUsers(results);
@@ -37,19 +42,18 @@ export const ContactsPage: React.FC = () => {
 
   useEffect(() => {
     relayPool?.on('event', 'contacts', (relay: Relay, _subId?: string, event?: Event) => {
-        console.log('RELAYPOOL EVENT =======>', relay.url, event);
-        if (database && event?.id && event.kind === EventKind.petNames) {
-          insertUserContact(event, database).finally(() => setLastEventId(event?.id ?? ''));
-        }
-      },
-    );
-  }, [])
+      console.log('RELAYPOOL EVENT =======>', relay.url, event);
+      if (database && event?.id && event.kind === EventKind.petNames) {
+        insertUserContact(event, database).finally(() => setLastEventId(event?.id ?? ''));
+      }
+    });
+  }, []);
 
   const onPressAddContact: () => void = () => {
-    if (contactInput && relayPool && database) {
+    if (contactInput && relayPool && database && publicKey) {
       addContact(contactInput, database).then(() => {
-        populatePets(relayPool, database, publicKey)
-        setShowAddContant(false)
+        populatePets(relayPool, database, publicKey);
+        setShowAddContant(false);
       });
     }
   };
@@ -125,7 +129,3 @@ export const ContactsPage: React.FC = () => {
 };
 
 export default ContactsPage;
-function setIsContact(arg0: boolean) {
-  throw new Error('Function not implemented.');
-}
-

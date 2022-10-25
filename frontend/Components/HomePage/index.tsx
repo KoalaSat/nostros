@@ -12,12 +12,14 @@ import { EventKind } from '../../lib/nostr/Events';
 import { RelayFilters } from '../../lib/nostr/Relay';
 import { getReplyEventId } from '../../Functions/RelayFunctions/Events';
 import { getUsers } from '../../Functions/DatabaseFunctions/Users';
+import Loading from '../Loading';
 
 export const HomePage: React.FC = () => {
   const { database, setPage, page } = useContext(AppContext);
-  const { lastEventId, setLastEventId, relayPool, publicKey } = useContext(RelayPoolContext);
+  const { lastEventId, relayPool, publicKey } = useContext(RelayPoolContext);
   const theme = useTheme();
   const [notes, setNotes] = useState<Note[]>([]);
+  const [totalContacts, setTotalContacts] = useState<number>(-1);
   const { t } = useTranslation('common');
 
   const loadNotes: () => void = () => {
@@ -29,16 +31,17 @@ export const HomePage: React.FC = () => {
   };
 
   const subscribeNotes: () => void = () => {
-    if (database) {
+    if (database && publicKey) {
       getNotes(database, { limit: 1 }).then((notes) => {
         getUsers(database, { contacts: true }).then((users) => {
+          setTotalContacts(users.length);
           let message: RelayFilters = {
             kinds: [EventKind.textNote, EventKind.recommendServer],
             authors: [publicKey, ...users.map((user) => user.id)],
             limit: 20,
           };
 
-          if (notes.length > 0) {
+          if (notes.length >= 20) {
             message = {
               ...message,
               since: notes[0].created_at,
@@ -52,7 +55,7 @@ export const HomePage: React.FC = () => {
   };
 
   useEffect(() => {
-    loadNotes()
+    loadNotes();
   }, [lastEventId]);
 
   useEffect(() => {
@@ -92,7 +95,11 @@ export const HomePage: React.FC = () => {
   return (
     <>
       <Layout style={styles.container} level='4'>
-        <List data={notes} renderItem={(item) => itemCard(item.item)} />
+        {notes.length === 0 && totalContacts !== 0 ? (
+          <Loading />
+        ) : (
+          <List data={notes} renderItem={(item) => itemCard(item.item)} />
+        )}
       </Layout>
       <ActionButton
         buttonColor={theme['color-primary-400']}

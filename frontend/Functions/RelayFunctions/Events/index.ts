@@ -22,7 +22,7 @@ export const getReplyEventId: (event: Event) => string | null = (event) => {
   if (!mainTag) {
     mainTag = eTags[eTags.length - 1];
   }
-  
+
   return mainTag ? mainTag[1] : null;
 };
 
