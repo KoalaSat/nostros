@@ -59,11 +59,12 @@ yarn start
 - [ ] Direct Messages https://github.com/nostr-protocol/nips/blob/master/04.md
 
 ### Note
-
+- [ ] Autoscroll to reply
 - [ ] Mentions https://github.com/nostr-protocol/nips/blob/master/08.md
 - [ ] Reactions https://github.com/nostr-protocol/nips/blob/master/25.md
 - [ ] Deletion https://github.com/nostr-protocol/nips/blob/master/09.md
 - [ ] Tag Users https://github.com/nostr-protocol/nips/blob/master/10.md
+- [ ] Load entire thread
 
 ### Send
 
