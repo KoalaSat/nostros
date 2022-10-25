@@ -4,13 +4,12 @@ import { StyleSheet } from 'react-native';
 import Loading from '../Loading';
 import { RelayPoolContext } from '../../Contexts/RelayPoolContext';
 import { useTranslation } from 'react-i18next';
-import { tagToUser } from '../../Functions/RelayFunctions/Users';
 import Relay from '../../lib/nostr/Relay';
 import { Event, EventKind } from '../../lib/nostr/Events';
 import { AppContext } from '../../Contexts/AppContext';
-import { insertUserContact } from '../../Functions/DatabaseFunctions/Users';
-import EncryptedStorage from 'react-native-encrypted-storage';
+import { insertUserContact, tagToUser } from '../../Functions/DatabaseFunctions/Users';
 import { getPublickey } from '../../lib/nostr/Bip';
+import EncryptedStorage from 'react-native-encrypted-storage';
 
 export const LandingPage: React.FC = () => {
   const { database, setPage } = useContext(AppContext);

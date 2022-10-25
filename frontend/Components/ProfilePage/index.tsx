@@ -21,13 +21,14 @@ import {
   removeContact,
   addContact,
   User,
+  tagToUser,
 } from '../../Functions/DatabaseFunctions/Users';
 import { EventKind, Event } from '../../lib/nostr/Events';
 import Relay from '../../lib/nostr/Relay';
 import Icon from 'react-native-vector-icons/FontAwesome5';
 import ActionButton from 'react-native-action-button';
 import { useTranslation } from 'react-i18next';
-import { populatePets, tagToUser } from '../../Functions/RelayFunctions/Users';
+import { populatePets } from '../../Functions/RelayFunctions/Users';
 import { getReplyEventId } from '../../Functions/RelayFunctions/Events';
 import Loading from '../Loading';
 import { storeEvent } from '../../Functions/DatabaseFunctions/Events';
@@ -278,7 +279,7 @@ export const ProfilePage: React.FC = () => {
       <Layout style={styles.list} level='3'>
         <List data={notes} renderItem={(item) => itemCard(item.item)} />
       </Layout>
-      {publicKey === userId && (
+      {/* {publicKey === userId && (
         <ActionButton
           buttonColor={theme['color-primary-400']}
           useNativeFeedback={true}
@@ -292,7 +293,7 @@ export const ProfilePage: React.FC = () => {
             <Icon name='paper-plane' size={30} color={theme['text-basic-color']} solid />
           </ActionButton.Item>
         </ActionButton>
-      )}
+      )} */}
     </>
   );
 };
