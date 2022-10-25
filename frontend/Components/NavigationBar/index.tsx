@@ -13,7 +13,7 @@ export const NavigationBar: React.FC = () => {
 
   const getIndex: () => number = () => {
     if (page.includes('profile#')) {
-      return page === `profile#${publicKey}` ? 2 : 1;
+      return publicKey && page === `profile#${publicKey}` ? 2 : 1;
     } else if (page.includes('note#')) {
       return 0;
     } else {

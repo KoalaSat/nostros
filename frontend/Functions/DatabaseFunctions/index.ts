@@ -19,26 +19,24 @@ export const getItems: (resultSet: ResultSet) => object[] = (resultSet) => {
   return result;
 };
 
-export const simpleExecute: (query: string, db: SQLiteDatabase) => Promise<Transaction> = async (query, db) => {
+export const simpleExecute: (query: string, db: SQLiteDatabase) => Promise<Transaction> = async (
+  query,
+  db,
+) => {
   return await db.transaction((transaction) => {
     transaction.executeSql(query, [], () => {}, errorCallback(query));
-  })
+  });
 };
 
 export const dropTables: (db: SQLiteDatabase) => Promise<Transaction> = async (db) => {
   const dropQueries = [
     'DROP TABLE IF EXISTS nostros_notes;',
     'DROP TABLE IF EXISTS nostros_users;',
-    'DROP TABLE IF EXISTS nostros_relays;'
-  ]
+    'DROP TABLE IF EXISTS nostros_relays;',
+  ];
   return await db.transaction((transaction) => {
     dropQueries.forEach((query) => {
-      transaction.executeSql(
-        query,
-        [],
-        () => {},
-        errorCallback(query),
-      );
-    })
+      transaction.executeSql(query, [], () => {}, errorCallback(query));
+    });
   });
 };

@@ -5,25 +5,21 @@ import Loading from '../Loading';
 import { RelayPoolContext } from '../../Contexts/RelayPoolContext';
 import { useTranslation } from 'react-i18next';
 import { tagToUser } from '../../Functions/RelayFunctions/Users';
-import Relay, { RelayFilters } from '../../lib/nostr/Relay';
+import Relay from '../../lib/nostr/Relay';
 import { Event, EventKind } from '../../lib/nostr/Events';
 import { AppContext } from '../../Contexts/AppContext';
-import { getUsers, insertUserContact } from '../../Functions/DatabaseFunctions/Users';
-import { getPublickey } from '../../lib/nostr/Bip';
+import { insertUserContact } from '../../Functions/DatabaseFunctions/Users';
 import EncryptedStorage from 'react-native-encrypted-storage';
-import { SQLiteDatabase } from 'react-native-sqlite-storage';
 
 export const LandingPage: React.FC = () => {
-  const { privateKey, setPrivateKey, publicKey, setPublicKey, relayPool, initRelays } =
-    useContext(RelayPoolContext);
-  const { database, setPage, runMigrations, loadingDb } = useContext(AppContext);
+  const { database, setPage } = useContext(AppContext);
+  const { privateKey, publicKey, relayPool, setPrivateKey } = useContext(RelayPoolContext);
   const { t } = useTranslation('common');
-  const [init, setInit] = useState<boolean>(true);
   const [loading, setLoading] = useState<boolean>(false);
   const [status, setStatus] = useState<number>(0);
   const [totalPets, setTotalPets] = useState<number>();
-  const [loadedUsers, setLoadedUsers] = useState<number>(0);
-  const [usersReady, setUsersReady] = useState<boolean>(false);
+  const [inputValue, setInputValue] = useState<string>('');
+  const [loadedUsers, setLoadedUsers] = useState<number>();
   const styles = StyleSheet.create({
     tab: {
       height: '100%',
@@ -45,110 +41,83 @@ export const LandingPage: React.FC = () => {
     },
   });
 
-  useEffect(() => { // #1 STEP
-    if (init) {
-      EncryptedStorage.getItem('privateKey').then((result) => {
-        if (result && result !== '') {
-          setPrivateKey(result);
-          setPublicKey(getPublickey(result));
-          setUsersReady(true);
-        } if (!loadingDb) {
-          setInit(false);
-        } else {
-          runMigrations();
-        }
+  useEffect(() => {
+    if (relayPool && publicKey) {
+      setStatus(1);
+      initEvents();
+      relayPool?.subscribe('main-channel', {
+        kinds: [EventKind.petNames],
+        authors: [publicKey],
       });
     }
-  }, [init, relayPool, loadingDb]);
+  }, [relayPool, publicKey]);
 
   useEffect(() => {
-    if (usersReady && relayPool && !loadingDb) {
-      initRelays()
+    if (status > 2) {
+      relayPool?.removeOn('event', 'landing');
       setPage('home');
     }
-  }, [usersReady, relayPool]);
+  }, [status]);
 
   useEffect(() => {
-    if (loading && publicKey !== '') {
-      initEvents();
+    if (loadedUsers) {
+      const timer = setTimeout(() => setStatus(3), 4000);
+      return () => {
+        clearTimeout(timer);
+      };
     }
-  }, [loading, publicKey]);
-
-  useEffect(() => {
-    if (loading && loadedUsers) {
-      loadUsers();
-    }
-  }, [loading, totalPets, loadedUsers]);
+  }, [loadedUsers]);
 
   const initEvents: () => void = () => {
     relayPool?.on('event', 'landing', (_relay: Relay, _subId?: string, event?: Event) => {
-      if (database && event) {
+      console.log('LandingPage EVENT =======>', event);
+      if (event && database) {
         if (event.kind === EventKind.petNames) {
-            loadPets(event);
-        } else {     
-          if (event.kind === EventKind.meta && event.pubkey !== publicKey) {
-            setLoadedUsers((prev) => prev + 1)
-          }
+          loadPets(event);
+        } else if (event.kind === EventKind.meta) {
+          setLoadedUsers((prev) => (prev ? prev + 1 : 1));
+          if (loadedUsers && loadedUsers - 1 === totalPets) setStatus(3);
         }
       }
-    });
-    relayPool?.subscribe('main-channel', {
-      kinds: [EventKind.meta, EventKind.petNames],
-      authors: [publicKey],
     });
   };
 
   const loadPets: (event: Event) => void = (event) => {
     if (database) {
       setTotalPets(event.tags.length);
-      insertUserContact(event, database).then(() => {
-        relayPool?.subscribe('main-channel', {
-          kinds: [EventKind.meta],
-          authors: event.tags.map((tag) => tagToUser(tag).id),
+      if (event.tags.length > 0) {
+        setStatus(2);
+        insertUserContact(event, database).then(() => {
+          requestUserData(event);
         });
-      })
-      setStatus(2);
+      } else {
+        setStatus(3);
+      }
     }
   };
 
-  const requestUsers: (database: SQLiteDatabase) => void = () => {
-    if (database && status < 3) {
-      setUsersReady(true);
-      getUsers(database, { exludeIds: [publicKey], contacts: true }).then((users) => {
-        const message: RelayFilters = {
-          kinds: [EventKind.textNote, EventKind.recommendServer],
-          authors: [publicKey, ...users.map((user) => user.id)],
-          limit: 15,
-        };
-        relayPool?.subscribe('main-channel', message);
-        setStatus(3);
-      })
-    }
-  }
-
-  const loadUsers: () => void = () => {
-    if (database) {
-      getUsers(database, { exludeIds: [publicKey], contacts: true }).then((users) => {
-        if (loadedUsers === totalPets) {
-          requestUsers(database)
-        }
+  const requestUserData: (event: Event) => void = (event) => {
+    if (publicKey) {
+      const authors: string[] = [publicKey, ...event.tags.map((tag) => tagToUser(tag).id)];
+      relayPool?.subscribe('main-channel', {
+        kinds: [EventKind.meta],
+        authors,
       });
-      setTimeout(() => requestUsers(database), 10000);
     }
   };
 
   const onPress: () => void = () => {
     setLoading(true);
-    setPublicKey(getPublickey(privateKey));
+    setPrivateKey(inputValue);
     setStatus(1);
-    EncryptedStorage.setItem('privateKey', privateKey);
+    EncryptedStorage.setItem('privateKey', inputValue);
   };
 
   const statusName: { [status: number]: string } = {
     0: t('landing.connect'),
     1: t('landing.connecting'),
-    2: `${t('landing.loadingContacts')} ${loadedUsers}/${totalPets ?? 0}`,
-    3: t('landing.loadingTimeline'),
+    2: t('landing.loadingContacts'),
+    3: t('landing.ready'),
   };
 
   return (
@@ -159,15 +128,15 @@ export const LandingPage: React.FC = () => {
       <Text style={styles.title} category='h1'>
         NOSTROS
       </Text>
-      {!init && (
+      {(!privateKey || status !== 0) && (
         <>
           <Input
             style={styles.input}
             size='medium'
             label={t('landing.privateKey')}
             secureTextEntry={true}
-            onChangeText={setPrivateKey}
-            value={privateKey}
+            onChangeText={setInputValue}
+            value={inputValue}
             disabled={loading}
           />
           <Button onPress={onPress} disabled={loading}>

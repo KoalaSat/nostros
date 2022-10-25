@@ -40,8 +40,8 @@ export const createInitDatabase: (db: SQLiteDatabase) => Promise<void> = async (
             );
           `,
           db,
-        ).then(() => resolve())
-      })
-    })
-  })
+        ).then(() => resolve());
+      });
+    });
+  });
 };

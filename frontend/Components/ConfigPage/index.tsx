@@ -16,20 +16,24 @@ import { RelayPoolContext } from '../../Contexts/RelayPoolContext';
 
 export const ConfigPage: React.FC = () => {
   const theme = useTheme();
-  const { setPage, page, database } = useContext(AppContext);
-  const { setPrivateKey } = useContext(RelayPoolContext);
+  const { setPage, database } = useContext(AppContext);
+  const { setPrivateKey, relayPool, publicKey } = useContext(RelayPoolContext);
   const { t } = useTranslation('common');
-  const breadcrump = page.split('%');
 
   const onPressBack: () => void = () => {
-    setPage(breadcrump.slice(0, -1).join('%'));
+    if (publicKey) {
+      setPage(`profile#${publicKey}`);
+    }
   };
 
   const onPressLogout: () => void = () => {
-    setPrivateKey('')
-    EncryptedStorage.removeItem('privateKey');
     if (database) {
-      dropTables(database).then(() => setPage('landing'))
+      dropTables(database).then(() => {
+        setPrivateKey('');
+        relayPool?.unsubscribeAll();
+        EncryptedStorage.removeItem('privateKey');
+        setPage('landing');
+      });
     }
   };
 
@@ -67,7 +71,9 @@ export const ConfigPage: React.FC = () => {
             <Button
               onPress={onPressLogout}
               status='danger'
-              accessoryLeft={<Icon name='power-off' size={16} color={theme['text-basic-color']} solid />}
+              accessoryLeft={
+                <Icon name='power-off' size={16} color={theme['text-basic-color']} solid />
+              }
             >
               {t('configPage.logout')}
             </Button>
