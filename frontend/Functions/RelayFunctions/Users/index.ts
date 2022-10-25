@@ -24,7 +24,11 @@ export const tagToUser: (tag: string[]) => User = (tag) => {
   };
 };
 
-export const populatePets: (relayPool: RelayPool, database: SQLiteDatabase, publicKey: string) => void = (relayPool, database, publicKey) => {
+export const populatePets: (
+  relayPool: RelayPool,
+  database: SQLiteDatabase,
+  publicKey: string,
+) => void = (relayPool, database, publicKey) => {
   getUsers(database, { exludeIds: [publicKey], contacts: true }).then((results) => {
     if (results) {
       const event: Event = {
@@ -37,17 +41,21 @@ export const populatePets: (relayPool: RelayPool, database: SQLiteDatabase, publ
       relayPool?.sendEvent(event);
     }
   });
-}
+};
 
-export const populateProfile: (relayPool: RelayPool, database: SQLiteDatabase, publicKey: string) => void = (relayPool, database, publicKey) => {
+export const populateProfile: (
+  relayPool: RelayPool,
+  database: SQLiteDatabase,
+  publicKey: string,
+) => void = (relayPool, database, publicKey) => {
   getUser(publicKey, database).then((result) => {
     if (result) {
       const profile = {
         name: result.name,
         main_relay: result.main_relay,
         picture: result.picture,
-        about: result.about
-      }
+        about: result.about,
+      };
       const event: Event = {
         content: JSON.stringify(profile),
         created_at: moment().unix(),
@@ -58,6 +66,4 @@ export const populateProfile: (relayPool: RelayPool, database: SQLiteDatabase, p
       relayPool?.sendEvent(event);
     }
   });
-}
-
-
+};

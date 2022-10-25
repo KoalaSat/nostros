@@ -3,11 +3,11 @@ import { SQLiteDatabase } from 'react-native-sqlite-storage';
 import { initDatabase } from '../Functions/DatabaseFunctions';
 import { createInitDatabase } from '../Functions/DatabaseFunctions/Migrations';
 import FlashMessage from 'react-native-flash-message';
+import EncryptedStorage from 'react-native-encrypted-storage';
 
 export interface AppContextProps {
   page: string;
   setPage: (page: string) => void;
-  runMigrations: () => void;
   loadingDb: boolean;
   database: SQLiteDatabase | null;
 }
@@ -17,9 +17,8 @@ export interface AppContextProviderProps {
 }
 
 export const initialAppContext: AppContextProps = {
-  page: 'landing',
+  page: '',
   setPage: () => {},
-  runMigrations: () => {},
   loadingDb: true,
   database: null,
 };
@@ -29,13 +28,19 @@ export const AppContextProvider = ({ children }: AppContextProviderProps): JSX.E
   const [database, setDatabase] = useState<SQLiteDatabase | null>(null);
   const [loadingDb, setLoadingDb] = useState<boolean>(initialAppContext.loadingDb);
 
-  const runMigrations: () => void = async () => {
-    const db = initDatabase()
-    setDatabase(db)
-    createInitDatabase(db).then(() => {
-      setLoadingDb(false);
+  useEffect(() => {
+    EncryptedStorage.getItem('privateKey').then((result) => {
+      const db = initDatabase();
+      setDatabase(db);
+      if (!result || result === '') {
+        createInitDatabase(db).then(() => {
+          setLoadingDb(false);
+        });
+      } else {
+        setLoadingDb(false);
+      }
     });
-  };
+  }, []);
 
   return (
     <AppContext.Provider
@@ -44,7 +49,6 @@ export const AppContextProvider = ({ children }: AppContextProviderProps): JSX.E
         setPage,
         loadingDb,
         database,
-        runMigrations,
       }}
     >
       {children}

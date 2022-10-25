@@ -34,7 +34,7 @@ export const NotePage: React.FC = () => {
     getNotes(database, { filters: { id: eventId } }).then((events) => {
       if (events.length > 0) {
         const event = events[0];
-        setNote(event)
+        setNote(event);
         getNotes(database, { filters: { reply_event_id: eventId } }).then((notes) => {
           const rootReplies = getDirectReplies(notes, event);
           if (rootReplies.length > 0) {
@@ -62,7 +62,6 @@ export const NotePage: React.FC = () => {
   }, [lastEventId, page]);
 
   const onPressBack: () => void = () => {
-    console.log(breadcrump.slice(0, -1).join('%'))
     setPage(breadcrump.slice(0, -1).join('%'));
   };
 
@@ -83,7 +82,7 @@ export const NotePage: React.FC = () => {
       } else if (note.id) {
         setPage(`${page}%note#${note.id}`);
       }
-      setReplies([])
+      setReplies([]);
     }
   };
 
@@ -93,7 +92,7 @@ export const NotePage: React.FC = () => {
         <Layout style={styles.main} level='2'>
           <NoteCard note={note} />
         </Layout>
-      )
+      );
     } else if (note) {
       return (
         <Card onPress={() => onPressNote(note)}>

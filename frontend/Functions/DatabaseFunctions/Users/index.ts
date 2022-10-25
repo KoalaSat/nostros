@@ -49,7 +49,9 @@ export const insertUserMeta: (event: Event, db: SQLiteDatabase) => Promise<void>
           INSERT INTO nostros_users 
           (id, name, picture, about, main_relay) 
           VALUES 
-          ('${id}', '${name.split("'").join("''")}', '${picture.split("'").join("''")}', '${about.split("'").join("''")}', '');
+          ('${id}', '${name.split("'").join("''")}', '${picture.split("'").join("''")}', '${about
+          .split("'")
+          .join("''")}', '');
         `;
       }
       db.transaction((transaction) => {
