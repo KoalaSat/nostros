@@ -38,10 +38,21 @@ jobs:
       - name: Setup Gradle
         uses: gradle/gradle-build-action@v2
 
+      - name: 'Install npm Dependencies'
+        run: |
+          cd android
+          yarn install
+
       - name: Change wrapper permissions
         run: |
           cd android
           chmod +x ./gradlew
+
+      # Run Tests Build
+      - name: Run gradle tests
+        run: |
+          cd android
+          ./gradlew test
 
       # Run Build Project
       - name: Build gradle project
