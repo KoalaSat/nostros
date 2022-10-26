@@ -24,7 +24,7 @@ export const HomePage: React.FC = () => {
 
   const loadNotes: () => void = () => {
     if (database && publicKey) {
-      getNotes(database, { contacts: true, includeIds: [publicKey] }).then((notes) => {
+      getNotes(database, { contacts: true, includeIds: [publicKey], limit: 30 }).then((notes) => {
         setNotes(notes);
       });
     }
