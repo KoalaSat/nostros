@@ -51,6 +51,7 @@ yarn start
 - [ ] Go to replied event
 - [ ] Relays management (add, remove and recomend)
 - [ ] Random Key Generator
+- [ ] Watch only mode
 
 ### Home
 
