@@ -1,18 +1,7 @@
 name: "Build: Android"
-env:
-
-  # The name of the main module repository
-  main_project_module: app
-
-  # The name of the Play Store
-  playstore_name: Nostros
 on:
   workflow_dispatch:
   workflow_call:
-  push:
-    branches: [ "main" ]
-  pull_request:
-    branches: [ "main" ]
 
 jobs:
   build:
@@ -68,7 +57,7 @@ jobs:
           ./gradlew build
 
       # Create APK Release
-      - name: Build apk release project (APK) - ${{ env.main_project_module }} module
+      - name: Build apk release project (APK)
         run: |
           cd android
           ./gradlew assemble
@@ -77,5 +66,5 @@ jobs:
       - name: Upload APK Release - ${{ env.repository_name }}
         uses: actions/upload-artifact@v2
         with:
-          name: ${{ env.date_today }} - ${{ env.playstore_name }} - ${{ github.ref_name }} - APK(s) release generated
+          name: ${{ github.ref_name }} - APK(s) release generated
           path: ${{ env.main_project_module }}/build/outputs/apk/release/

@@ -30,7 +30,7 @@ jobs:
       - name: 'Download APK Artifact'
         uses: actions/download-artifact@v3
         with:
-          name: ${{ env.date_today }} - ${{ env.playstore_name }} - ${{ github.ref_name }} - APK(s) release generated
+          name: ${{ github.ref_name }} - APK(s) release generated
           path: ${{ env.main_project_module }}/build/outputs/apk/release/
       - name: 'Upload APK Asset'
         id: upload-release-asset
@@ -40,5 +40,5 @@ jobs:
         with:
           upload_url: ${{ steps.create-release.outputs.upload_url }}
           asset_path: ${{ env.main_project_module }}/build/outputs/apk/release/
-          asset_name: ${{ env.date_today }} - ${{ env.playstore_name }} - ${{ github.ref_name }} - APK(s) release generated
+          asset_name: ${{ github.ref_name }} - APK(s) release generated
           asset_content_type: application/apk
