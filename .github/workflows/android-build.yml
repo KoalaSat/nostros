@@ -37,6 +37,8 @@ jobs:
 
       - name: Setup Gradle
         uses: gradle/gradle-build-action@v2
+        with:
+          gradle-version: 7.4
 
       - name: 'Install npm Dependencies'
         run: |
