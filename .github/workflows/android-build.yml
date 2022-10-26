@@ -62,9 +62,9 @@ jobs:
           cd android
           ./gradlew assemble
 
-      # Noted For Output [main_project_module]/build/outputs/apk/release/
-      - name: Upload APK Release - ${{ env.repository_name }}
-        uses: actions/upload-artifact@v2
+      # Noted For Output
+      - name: 'Upload .apk Release Artifact (for Release)'
+        uses: actions/upload-artifact@v3
         with:
-          name: ${{ github.ref_name }} - APK(s) release generated
-          path: ${{ env.main_project_module }}/build/outputs/apk/release/
+          name: nostros-${{ github.ref_name }}.apk
+          path: android/app/build/outputs/apk/release/app-release.apk
