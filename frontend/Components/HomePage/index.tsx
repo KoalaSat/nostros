@@ -23,8 +23,8 @@ export const HomePage: React.FC = () => {
   const { t } = useTranslation('common');
 
   const loadNotes: () => void = () => {
-    if (database) {
-      getNotes(database, { contacts: true }).then((notes) => {
+    if (database && publicKey) {
+      getNotes(database, { contacts: true, includeIds: [publicKey] }).then((notes) => {
         setNotes(notes);
       });
     }
@@ -33,15 +33,15 @@ export const HomePage: React.FC = () => {
   const subscribeNotes: () => void = () => {
     if (database && publicKey) {
       getNotes(database, { limit: 1 }).then((notes) => {
-        getUsers(database, { contacts: true }).then((users) => {
+        getUsers(database, { contacts: true, includeIds: [publicKey] }).then((users) => {
           setTotalContacts(users.length);
           let message: RelayFilters = {
             kinds: [EventKind.textNote, EventKind.recommendServer],
-            authors: [publicKey, ...users.map((user) => user.id)],
+            authors: users.map((user) => user.id),
             limit: 20,
           };
 
-          if (notes.length >= 20) {
+          if (notes.length !== 0) {
             message = {
               ...message,
               since: notes[0].created_at,
@@ -61,7 +61,7 @@ export const HomePage: React.FC = () => {
   useEffect(() => {
     loadNotes();
     subscribeNotes();
-  }, []);
+  }, [database]);
 
   const onPress: (note: Note) => void = (note) => {
     if (note.kind !== EventKind.recommendServer) {

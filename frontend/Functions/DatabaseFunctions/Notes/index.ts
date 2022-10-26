@@ -64,8 +64,9 @@ export const getNotes: (
     filters?: { [column: string]: string };
     limit?: number;
     contacts?: boolean;
+    includeIds?: string[];
   },
-) => Promise<Note[]> = async (db, { filters = {}, limit, contacts }) => {
+) => Promise<Note[]> = async (db, { filters = {}, limit, contacts, includeIds }) => {
   let notesQuery = `
     SELECT nostros_notes.*, nostros_users.name, nostros_users.picture, nostros_users.contact FROM nostros_notes 
     LEFT JOIN nostros_users ON nostros_users.id = nostros_notes.pubkey
@@ -83,15 +84,24 @@ export const getNotes: (
   }
   if (contacts) {
     if (Object.keys(filters).length > 0) {
-      notesQuery += 'AND nostros_users.contact = TRUE ';
+      notesQuery += 'AND ';
     } else {
-      notesQuery += 'WHERE nostros_users.contact = TRUE ';
+      notesQuery += 'WHERE ';
     }
+    notesQuery += 'nostros_users.contact = TRUE ';
   }
-  notesQuery += 'ORDER BY nostros_notes.created_at DESC ';
+  if (includeIds) {
+    if (Object.keys(filters).length > 0 || contacts) {
+      notesQuery += 'OR ';
+    } else {
+      notesQuery += 'WHERE ';
+    }
+    notesQuery += `nostros_users.id IN ('${includeIds.join("', '")}') `;
+  }
   if (limit) {
     notesQuery += `LIMIT ${limit}`;
   }
+
   return await new Promise<Note[]>((resolve, reject) => {
     db.readTransaction((transaction) => {
       transaction.executeSql(

@@ -177,7 +177,7 @@ export const ProfilePage: React.FC = () => {
       height: 48,
     },
     avatar: {
-      width: 140,
+      width: 130,
       marginBottom: 16,
     },
     profile: {
@@ -287,7 +287,7 @@ export const ProfilePage: React.FC = () => {
           <ActionButton.Item
             buttonColor={theme['color-warning-500']}
             title={t('profilePage.send')}
-            onPress={() => setPage('send')}
+            onPress={() => setPage(`${page}%send`)}
           >
             <Icon name='paper-plane' size={30} color={theme['text-basic-color']} solid />
           </ActionButton.Item>

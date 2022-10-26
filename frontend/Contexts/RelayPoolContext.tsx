@@ -109,6 +109,7 @@ export const RelayPoolContextProvider = ({
         loadRelayPool();
         setPage('home');
         setPrivateKey(result);
+        setPublicKey(getPublickey(result));
       } else {
         setPrivateKey('');
         setPage('landing');
