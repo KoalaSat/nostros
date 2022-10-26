@@ -43,6 +43,11 @@ jobs:
           cd android
           yarn install
 
+      - name: Gradle version
+        run: |
+          cd android
+          ./gradlew -version
+
       - name: Change wrapper permissions
         run: |
           cd android
