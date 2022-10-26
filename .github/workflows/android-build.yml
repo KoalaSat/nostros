@@ -50,17 +50,11 @@ jobs:
           cd android
           ./gradlew test
 
-      # Run Build Project
-      - name: Build gradle project
-        run: |
-          cd android
-          ./gradlew build
-
       # Create APK Release
       - name: Build apk release project (APK)
         run: |
           cd android
-          ./gradlew assemble
+          ./gradlew assembleRelease
 
       # Noted For Output
       - name: 'Upload .apk Release Artifact (for Release)'
