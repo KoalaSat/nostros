@@ -24,7 +24,7 @@
     },
     "configPage": {
       "title": "Configuration",
-      "logout": "Remove Private Key"
+      "logout": "Delete Private Key"
     },
     "contactsPage": {
       "add": "Add User",
