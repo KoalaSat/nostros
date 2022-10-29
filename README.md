@@ -15,6 +15,8 @@ e20c31f1601a6baabb4a32b7bdf0ed30161a433d3fa84069faffd54355505bab
 
 # Getting Started
 
+What is Nostr: https://github.com/nostr-protocol/nostr
+
 ## Required Libraries and Frameworks
 
 - Node 16.x
