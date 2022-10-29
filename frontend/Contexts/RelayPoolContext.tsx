@@ -13,9 +13,9 @@ export interface RelayPoolContextProps {
   relayPool?: RelayPool;
   setRelayPool: (relayPool: RelayPool) => void;
   publicKey?: string;
-  setPublicKey: (privateKey: string) => void;
+  setPublicKey: (privateKey: string | undefined) => void;
   privateKey?: string;
-  setPrivateKey: (privateKey: string) => void;
+  setPrivateKey: (privateKey: string | undefined) => void;
   lastEventId?: string;
   setLastEventId: (lastEventId: string) => void;
 }
@@ -84,7 +84,7 @@ export const RelayPoolContextProvider = ({
   };
 
   useEffect(() => {
-    if (privateKey) {
+    if (privateKey && privateKey !== '') {
       setPublicKey(getPublickey(privateKey));
     }
   }, [privateKey]);
@@ -110,7 +110,6 @@ export const RelayPoolContextProvider = ({
         setPrivateKey(result);
         setPublicKey(getPublickey(result));
       } else {
-        setPrivateKey('');
         goToPage('landing', true);
       }
     });

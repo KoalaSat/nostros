@@ -93,7 +93,9 @@ export const ProfilePage: React.FC = () => {
           setContactsIds(users.map((user) => user.id));
         });
       }
-      getNotes(database, { filters: { pubkey: userId } }).then(setNotes);
+      getNotes(database, { filters: { pubkey: userId } }).then((results) => {
+        if (results.length > 0) setNotes(results);
+      });
     }
   }, [lastEventId, database]);
 

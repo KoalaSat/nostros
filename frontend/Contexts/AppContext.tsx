@@ -9,6 +9,7 @@ export interface AppContextProps {
   page: string;
   goToPage: (path: string, root?: boolean) => void;
   goBack: () => void;
+  init: () => void;
   loadingDb: boolean;
   database: SQLiteDatabase | null;
 }
@@ -19,6 +20,7 @@ export interface AppContextProviderProps {
 
 export const initialAppContext: AppContextProps = {
   page: '',
+  init: () => {},
   goToPage: () => {},
   goBack: () => {},
   loadingDb: true,
@@ -30,7 +32,7 @@ export const AppContextProvider = ({ children }: AppContextProviderProps): JSX.E
   const [database, setDatabase] = useState<SQLiteDatabase | null>(null);
   const [loadingDb, setLoadingDb] = useState<boolean>(initialAppContext.loadingDb);
 
-  useEffect(() => {
+  const init: () => void = () => {
     EncryptedStorage.getItem('privateKey').then((result) => {
       const db = initDatabase();
       setDatabase(db);
@@ -42,7 +44,9 @@ export const AppContextProvider = ({ children }: AppContextProviderProps): JSX.E
         setLoadingDb(false);
       }
     });
-  }, []);
+  };
+
+  useEffect(init, []);
 
   const goToPage: (path: string, root?: boolean) => void = (path, root) => {
     if (page !== '' && !root) {
@@ -61,6 +65,7 @@ export const AppContextProvider = ({ children }: AppContextProviderProps): JSX.E
     <AppContext.Provider
       value={{
         page,
+        init,
         goToPage,
         goBack,
         loadingDb,
