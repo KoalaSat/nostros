@@ -23,7 +23,7 @@ import {
   getUsers,
 } from '../../Functions/DatabaseFunctions/Users';
 import { EventKind, Event } from '../../lib/nostr/Events';
-import Relay from '../../lib/nostr/Relay';
+import Relay, { RelayFilters } from '../../lib/nostr/Relay';
 import Icon from 'react-native-vector-icons/FontAwesome5';
 import ActionButton from 'react-native-action-button';
 import { useTranslation } from 'react-i18next';
@@ -67,12 +67,17 @@ export const ProfilePage: React.FC = () => {
         }
         getNotes(database, { filters: { pubkey: userId }, limit: 1 }).then((results) => {
           if (results) {
-            relayPool?.subscribe('main-channel', {
+            const notesEvent: RelayFilters = {
               kinds: [EventKind.textNote, EventKind.recommendServer],
               authors: [userId],
-              limit: 10,
-              since: results[0]?.created_at,
-            });
+              limit: 15,
+            };
+
+            if (results.length >= 15) {
+              notesEvent.since = results[0]?.created_at;
+            }
+
+            relayPool?.subscribe('main-channel', notesEvent);
           }
         });
       }
