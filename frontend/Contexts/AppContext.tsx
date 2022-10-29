@@ -7,7 +7,8 @@ import EncryptedStorage from 'react-native-encrypted-storage';
 
 export interface AppContextProps {
   page: string;
-  setPage: (page: string) => void;
+  goToPage: (path: string, root?: boolean) => void;
+  goBack: () => void;
   loadingDb: boolean;
   database: SQLiteDatabase | null;
 }
@@ -18,7 +19,8 @@ export interface AppContextProviderProps {
 
 export const initialAppContext: AppContextProps = {
   page: '',
-  setPage: () => {},
+  goToPage: () => {},
+  goBack: () => {},
   loadingDb: true,
   database: null,
 };
@@ -42,11 +44,25 @@ export const AppContextProvider = ({ children }: AppContextProviderProps): JSX.E
     });
   }, []);
 
+  const goToPage: (path: string, root?: boolean) => void = (path, root) => {
+    if (page !== '' && !root) {
+      setPage(`${page}%${path}`);
+    } else {
+      setPage(path);
+    }
+  };
+
+  const goBack: () => void = () => {
+    const breadcrump = page.split('%');
+    setPage(breadcrump.slice(0, -1).join('%') || 'home');
+  };
+
   return (
     <AppContext.Provider
       value={{
         page,
-        setPage,
+        goToPage,
+        goBack,
         loadingDb,
         database,
       }}

@@ -17,10 +17,10 @@ import NoteCard from '../NoteCard';
 import { RelayPoolContext } from '../../Contexts/RelayPoolContext';
 import {
   getUser,
-  getUsers,
   removeContact,
   addContact,
   User,
+  getUsers,
 } from '../../Functions/DatabaseFunctions/Users';
 import { EventKind, Event } from '../../lib/nostr/Events';
 import Relay from '../../lib/nostr/Relay';
@@ -33,10 +33,10 @@ import Loading from '../Loading';
 import { storeEvent } from '../../Functions/DatabaseFunctions/Events';
 
 export const ProfilePage: React.FC = () => {
-  const { database, page, setPage } = useContext(AppContext);
+  const { database, page, goToPage, goBack } = useContext(AppContext);
   const { publicKey, lastEventId, relayPool, setLastEventId } = useContext(RelayPoolContext);
   const theme = useTheme();
-  const [notes, setNotes] = useState<Note[]>([]);
+  const [notes, setNotes] = useState<Note[]>();
   const { t } = useTranslation('common');
   const [user, setUser] = useState<User | null>(null);
   const [contacts, setContactsIds] = useState<string[]>();
@@ -46,38 +46,37 @@ export const ProfilePage: React.FC = () => {
   const username = user?.name === '' ? user?.id : user?.name;
 
   useEffect(() => {
-    setUser(null);
-    setNotes([]);
-    relayPool?.on('event', 'profile', (_relay: Relay, _subId?: string, event?: Event) => {
-      console.log('PROFILE EVENT =======>', event);
-      if (database && event?.id && event.pubkey === userId) {
-        if (event.kind === EventKind.petNames) {
-          const ids = event.tags.map((tag) => tagToUser(tag).id);
-          setContactsIds(ids);
-        } else if (event.kind === EventKind.meta) {
-          storeEvent(event, database).finally(() => {
-            if (event?.id) setLastEventId(event.id);
-          });
-        }
-      }
-    });
-    if (database) {
-      getNotes(database, { filters: { pubkey: userId }, limit: 1 }).then((notes) => {
-        if (notes) {
-          relayPool?.subscribe('main-channel', {
-            kinds: [EventKind.textNote, EventKind.recommendServer],
-            authors: [userId],
-            limit: 10,
-            since: notes[0]?.created_at,
-          });
-        }
-      });
-    }
+    relayPool?.unsubscribeAll();
     relayPool?.subscribe('main-channel', {
       kinds: [EventKind.meta, EventKind.petNames],
       authors: [userId],
     });
-  }, [page]);
+    relayPool?.on('event', 'profile', (_relay: Relay, _subId?: string, event?: Event) => {
+      console.log('PROFILE EVENT =======>', event);
+      if (database) {
+        if (event?.id && event.pubkey === userId) {
+          if (event.kind === EventKind.petNames) {
+            const ids = event.tags.map((tag) => tagToUser(tag).id);
+            setContactsIds(ids);
+          } else if (event.kind === EventKind.meta) {
+            storeEvent(event, database).finally(() => {
+              if (event?.id) setLastEventId(event.id);
+            });
+          }
+        }
+        getNotes(database, { filters: { pubkey: userId }, limit: 1 }).then((results) => {
+          if (results) {
+            relayPool?.subscribe('main-channel', {
+              kinds: [EventKind.textNote, EventKind.recommendServer],
+              authors: [userId],
+              limit: 10,
+              since: results[0]?.created_at,
+            });
+          }
+        });
+      }
+    });
+  }, [page, relayPool]);
 
   useEffect(() => {
     if (database) {
@@ -90,16 +89,13 @@ export const ProfilePage: React.FC = () => {
           setContactsIds(users.map((user) => user.id));
         });
       }
-      getNotes(database, { filters: { pubkey: userId } }).then((notes) => {
-        if (notes) {
-          setNotes(notes);
-        }
-      });
+
+      getNotes(database, { filters: { pubkey: userId } }).then(setNotes);
     }
-  }, [lastEventId, page]);
+  }, [lastEventId, database]);
 
   const removeAuthor: () => void = () => {
-    if (relayPool && database) {
+    if (relayPool && database && publicKey) {
       removeContact(userId, database).then(() => {
         populatePets(relayPool, database, publicKey);
         setIsContact(false);
@@ -108,7 +104,7 @@ export const ProfilePage: React.FC = () => {
   };
 
   const addAuthor: () => void = () => {
-    if (relayPool && database) {
+    if (relayPool && database && publicKey) {
       addContact(userId, database).then(() => {
         populatePets(relayPool, database, publicKey);
         setIsContact(true);
@@ -121,7 +117,7 @@ export const ProfilePage: React.FC = () => {
       return (
         <TopNavigationAction
           icon={<Icon name='dna' size={16} color={theme['text-basic-color']} solid />}
-          onPress={() => setPage('config')}
+          onPress={() => goToPage('config')}
         />
       );
     } else {
@@ -148,7 +144,7 @@ export const ProfilePage: React.FC = () => {
   };
 
   const onPressBack: () => void = () => {
-    setPage(breadcrump.slice(0, -1).join('%'));
+    goBack();
   };
 
   const renderBackAction = (): JSX.Element => {
@@ -219,9 +215,9 @@ export const ProfilePage: React.FC = () => {
     if (note.kind !== EventKind.recommendServer) {
       const mainEventId = getReplyEventId(note);
       if (mainEventId) {
-        setPage(`note#${mainEventId}`);
+        goToPage(`note#${mainEventId}`);
       } else if (note.id) {
-        setPage(`note#${note.id}`);
+        goToPage(`note#${note.id}`);
       }
     }
   };
@@ -234,15 +230,15 @@ export const ProfilePage: React.FC = () => {
   const profile: JSX.Element = (
     <Layout style={styles.profile} level='3'>
       <Layout style={styles.avatar} level='3'>
-        {user ? (
-          <UserAvatar
-            name={user?.name && user?.name !== '' ? user?.name : user.id}
-            src={user?.picture}
-            size={140}
-            textColor={theme['text-basic-color']}
-          />
-        ) : (
-          <Loading style={styles.loading} />
+        {user && (
+          <>
+            <UserAvatar
+              name={username}
+              src={user?.picture}
+              size={130}
+              textColor={theme['text-basic-color']}
+            />
+          </>
         )}
       </Layout>
       <TouchableOpacity onPress={onPressId}>
@@ -276,7 +272,7 @@ export const ProfilePage: React.FC = () => {
       />
       {profile}
       <Layout style={styles.list} level='3'>
-        <List data={notes} renderItem={(item) => itemCard(item.item)} />
+        {notes ? <List data={notes} renderItem={(item) => itemCard(item.item)} /> : <Loading />}
       </Layout>
       {publicKey === userId && (
         <ActionButton
@@ -287,7 +283,7 @@ export const ProfilePage: React.FC = () => {
           <ActionButton.Item
             buttonColor={theme['color-warning-500']}
             title={t('profilePage.send')}
-            onPress={() => setPage(`${page}%send`)}
+            onPress={() => goToPage(`${page}%send`)}
           >
             <Icon name='paper-plane' size={30} color={theme['text-basic-color']} solid />
           </ActionButton.Item>

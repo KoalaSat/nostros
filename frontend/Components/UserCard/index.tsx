@@ -10,7 +10,7 @@ interface NoteCardProps {
 }
 
 export const NoteCard: React.FC<NoteCardProps> = ({ user }) => {
-  const { setPage, page } = useContext(AppContext);
+  const { goToPage } = useContext(AppContext);
   const theme = useTheme();
 
   const styles = StyleSheet.create({
@@ -38,7 +38,7 @@ export const NoteCard: React.FC<NoteCardProps> = ({ user }) => {
 
   return (
     user && (
-      <Card onPress={() => setPage(`${page}%profile#${user.id}`)}>
+      <Card onPress={() => goToPage(`profile#${user.id}`)}>
         <Layout style={styles.layout} level='2'>
           <Layout style={styles.profile}>
             <UserAvatar

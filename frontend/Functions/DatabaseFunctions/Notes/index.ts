@@ -98,6 +98,9 @@ export const getNotes: (
     }
     notesQuery += `nostros_users.id IN ('${includeIds.join("', '")}') `;
   }
+
+  notesQuery += `ORDER BY created_at DESC `;
+
   if (limit) {
     notesQuery += `LIMIT ${limit}`;
   }

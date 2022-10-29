@@ -15,7 +15,7 @@ import { getUsers } from '../../Functions/DatabaseFunctions/Users';
 import Loading from '../Loading';
 
 export const HomePage: React.FC = () => {
-  const { database, setPage, page } = useContext(AppContext);
+  const { database, goToPage, page } = useContext(AppContext);
   const { lastEventId, relayPool, publicKey } = useContext(RelayPoolContext);
   const theme = useTheme();
   const [notes, setNotes] = useState<Note[]>([]);
@@ -31,7 +31,7 @@ export const HomePage: React.FC = () => {
   };
 
   const subscribeNotes: () => void = () => {
-    if (database && publicKey) {
+    if (database && publicKey && relayPool) {
       getNotes(database, { limit: 1 }).then((notes) => {
         getUsers(database, { contacts: true, includeIds: [publicKey] }).then((users) => {
           setTotalContacts(users.length);
@@ -47,12 +47,15 @@ export const HomePage: React.FC = () => {
               since: notes[0].created_at,
             };
           }
-
           relayPool?.subscribe('main-channel', message);
         });
       });
     }
   };
+
+  useEffect(() => {
+    relayPool?.unsubscribeAll();
+  }, []);
 
   useEffect(() => {
     loadNotes();
@@ -61,15 +64,15 @@ export const HomePage: React.FC = () => {
   useEffect(() => {
     loadNotes();
     subscribeNotes();
-  }, [database]);
+  }, [database, publicKey, relayPool]);
 
   const onPress: (note: Note) => void = (note) => {
     if (note.kind !== EventKind.recommendServer) {
       const replyEventId = getReplyEventId(note);
       if (replyEventId) {
-        setPage(`${page}%note#${replyEventId}`);
+        goToPage(`note#${replyEventId}`);
       } else if (note.id) {
-        setPage(`${page}%note#${note.id}`);
+        goToPage(`note#${note.id}`);
       }
     }
   };
@@ -109,7 +112,7 @@ export const HomePage: React.FC = () => {
         <ActionButton.Item
           buttonColor={theme['color-warning-500']}
           title={t('homePage.send')}
-          onPress={() => setPage(`${page}%send`)}
+          onPress={() => goToPage(`${page}%send`)}
         >
           <Icon name='paper-plane' size={30} color={theme['text-basic-color']} solid />
         </ActionButton.Item>

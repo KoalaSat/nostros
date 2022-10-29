@@ -21,7 +21,7 @@ import { useTranslation } from 'react-i18next';
 import { getDirectReplies, getReplyEventId } from '../../Functions/RelayFunctions/Events';
 
 export const NotePage: React.FC = () => {
-  const { page, setPage, database } = useContext(AppContext);
+  const { page, goBack, goToPage, database } = useContext(AppContext);
   const { lastEventId, relayPool } = useContext(RelayPoolContext);
   const [note, setNote] = useState<Note>();
   const [replies, setReplies] = useState<Note[]>([]);
@@ -31,26 +31,7 @@ export const NotePage: React.FC = () => {
   const eventId = breadcrump[breadcrump.length - 1].split('#')[1];
 
   useEffect(() => {
-    getNotes(database, { filters: { id: eventId } }).then((events) => {
-      if (events.length > 0) {
-        const event = events[0];
-        setNote(event);
-        getNotes(database, { filters: { reply_event_id: eventId } }).then((notes) => {
-          const rootReplies = getDirectReplies(notes, event);
-          if (rootReplies.length > 0) {
-            setReplies(rootReplies as Note[]);
-            const message: RelayFilters = {
-              kinds: [EventKind.meta],
-              authors: rootReplies.map((note) => note.pubkey),
-            };
-            relayPool?.subscribe('main-channel', message);
-          } else {
-            setReplies([]);
-          }
-        });
-      }
-    });
-
+    relayPool?.unsubscribeAll();
     relayPool?.subscribe('main-channel', {
       kinds: [EventKind.textNote, EventKind.recommendServer],
       ids: [eventId],
@@ -59,10 +40,34 @@ export const NotePage: React.FC = () => {
       kinds: [EventKind.textNote, EventKind.recommendServer],
       '#e': [eventId],
     });
+  }, []);
+
+  useEffect(() => {
+    if (database) {
+      getNotes(database, { filters: { id: eventId } }).then((events) => {
+        if (events.length > 0) {
+          const event = events[0];
+          setNote(event);
+          getNotes(database, { filters: { reply_event_id: eventId } }).then((notes) => {
+            const rootReplies = getDirectReplies(notes, event);
+            if (rootReplies.length > 0) {
+              setReplies(rootReplies as Note[]);
+              const message: RelayFilters = {
+                kinds: [EventKind.meta],
+                authors: rootReplies.map((note) => note.pubkey),
+              };
+              relayPool?.subscribe('main-channel', message);
+            } else {
+              setReplies([]);
+            }
+          });
+        }
+      });
+    }
   }, [lastEventId, page]);
 
   const onPressBack: () => void = () => {
-    setPage(breadcrump.slice(0, -1).join('%'));
+    goBack();
   };
 
   const renderBackAction = (): JSX.Element => {
@@ -78,9 +83,9 @@ export const NotePage: React.FC = () => {
     if (note.kind !== EventKind.recommendServer) {
       const replyEventId = getReplyEventId(note);
       if (replyEventId && replyEventId !== eventId) {
-        setPage(`${page}%note#${replyEventId}`);
+        goToPage(`note#${replyEventId}`);
       } else if (note.id) {
-        setPage(`${page}%note#${note.id}`);
+        goToPage(`note#${note.id}`);
       }
       setReplies([]);
     }
@@ -138,7 +143,7 @@ export const NotePage: React.FC = () => {
         <ActionButton.Item
           buttonColor={theme['color-warning-500']}
           title={t('notePage.reply')}
-          onPress={() => setPage(`send#${eventId}`)}
+          onPress={() => goToPage(`send#${eventId}`)}
         >
           <Icon name='reply' size={30} color={theme['text-basic-color']} solid />
         </ActionButton.Item>

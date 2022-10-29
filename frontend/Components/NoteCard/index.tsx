@@ -22,7 +22,7 @@ interface NoteCardProps {
 export const NoteCard: React.FC<NoteCardProps> = ({ note }) => {
   const theme = useTheme();
   const { relayPool, setRelayPool, publicKey } = useContext(RelayPoolContext);
-  const { database, setPage, page } = useContext(AppContext);
+  const { database, goToPage } = useContext(AppContext);
   const [relayAdded, setRelayAdded] = useState<boolean>(
     Object.keys(relayPool?.relays ?? {}).includes(note.content),
   );
@@ -72,7 +72,7 @@ export const NoteCard: React.FC<NoteCardProps> = ({ note }) => {
     const relayName = note.content.split('wss://')[1].split('/')[0];
 
     const addRelay: () => void = () => {
-      if (relayPool) {
+      if (relayPool && database && publicKey) {
         relayPool.add(note.content);
         setRelayPool(relayPool);
         storeRelay({ url: note.content }, database);
@@ -111,7 +111,7 @@ export const NoteCard: React.FC<NoteCardProps> = ({ note }) => {
   };
 
   const onPressUser: () => void = () => {
-    setPage(`${page}%profile#${note.pubkey}`);
+    goToPage(`profile#${note.pubkey}`);
   };
 
   const styles = StyleSheet.create({

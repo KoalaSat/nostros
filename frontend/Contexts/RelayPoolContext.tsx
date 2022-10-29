@@ -34,7 +34,7 @@ export const initialRelayPoolContext: RelayPoolContextProps = {
 export const RelayPoolContextProvider = ({
   children,
 }: RelayPoolContextProviderProps): JSX.Element => {
-  const { database, loadingDb, setPage, page } = useContext(AppContext);
+  const { database, loadingDb, goToPage, page } = useContext(AppContext);
 
   const [publicKey, setPublicKey] = useState<string>();
   const [privateKey, setPrivateKey] = useState<string>();
@@ -97,7 +97,6 @@ export const RelayPoolContextProvider = ({
 
   useEffect(() => {
     if (relayPool && lastPage !== page) {
-      relayPool.unsubscribeAll();
       relayPool.removeOn('event', lastPage);
       setLastPage(page);
     }
@@ -107,12 +106,12 @@ export const RelayPoolContextProvider = ({
     EncryptedStorage.getItem('privateKey').then((result) => {
       if (result && result !== '') {
         loadRelayPool();
-        setPage('home');
+        goToPage('home', true);
         setPrivateKey(result);
         setPublicKey(getPublickey(result));
       } else {
         setPrivateKey('');
-        setPage('landing');
+        goToPage('landing', true);
       }
     });
   }, []);

@@ -12,7 +12,7 @@ import { insertUserContact } from '../../Functions/DatabaseFunctions/Users';
 import EncryptedStorage from 'react-native-encrypted-storage';
 
 export const LandingPage: React.FC = () => {
-  const { database, setPage } = useContext(AppContext);
+  const { database, goToPage } = useContext(AppContext);
   const { privateKey, publicKey, relayPool, setPrivateKey } = useContext(RelayPoolContext);
   const { t } = useTranslation('common');
   const [loading, setLoading] = useState<boolean>(false);
@@ -43,6 +43,7 @@ export const LandingPage: React.FC = () => {
 
   useEffect(() => {
     if (relayPool && publicKey) {
+      relayPool?.unsubscribeAll();
       setStatus(1);
       initEvents();
       relayPool?.subscribe('main-channel', {
@@ -55,7 +56,7 @@ export const LandingPage: React.FC = () => {
   useEffect(() => {
     if (status > 2) {
       relayPool?.removeOn('event', 'landing');
-      setPage('home');
+      goToPage('home', true);
     }
   }, [status]);
 

@@ -5,7 +5,7 @@ import {
   TopNavigationAction,
   useTheme,
 } from '@ui-kitten/components';
-import React, { useContext } from 'react';
+import React, { useContext, useEffect } from 'react';
 import { StyleSheet } from 'react-native';
 import { AppContext } from '../../Contexts/AppContext';
 import Icon from 'react-native-vector-icons/FontAwesome5';
@@ -16,14 +16,16 @@ import { RelayPoolContext } from '../../Contexts/RelayPoolContext';
 
 export const ConfigPage: React.FC = () => {
   const theme = useTheme();
-  const { setPage, database } = useContext(AppContext);
-  const { setPrivateKey, relayPool, publicKey } = useContext(RelayPoolContext);
+  const { goToPage, goBack, database } = useContext(AppContext);
+  const { setPrivateKey, relayPool } = useContext(RelayPoolContext);
   const { t } = useTranslation('common');
 
+  useEffect(() => {
+    relayPool?.unsubscribeAll();
+  }, []);
+
   const onPressBack: () => void = () => {
-    if (publicKey) {
-      setPage(`profile#${publicKey}`);
-    }
+    goBack();
   };
 
   const onPressLogout: () => void = () => {
@@ -32,7 +34,7 @@ export const ConfigPage: React.FC = () => {
         EncryptedStorage.removeItem('privateKey').then(() => {
           setPrivateKey('');
           relayPool?.unsubscribeAll();
-          setPage('landing');
+          goToPage('landing', true);
         });
       });
     }

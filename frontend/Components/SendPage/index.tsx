@@ -20,7 +20,7 @@ import { getETags } from '../../Functions/RelayFunctions/Events';
 
 export const SendPage: React.FC = () => {
   const theme = useTheme();
-  const { setPage, page, database } = useContext(AppContext);
+  const { goBack, page, database } = useContext(AppContext);
   const { relayPool, publicKey, lastEventId } = useContext(RelayPoolContext);
   const { t } = useTranslation('common');
   const [content, setContent] = useState<string>('');
@@ -30,8 +30,12 @@ export const SendPage: React.FC = () => {
   const eventId = breadcrump[breadcrump.length - 1].split('#')[1];
 
   useEffect(() => {
+    relayPool?.unsubscribeAll();
+  }, []);
+
+  useEffect(() => {
     if (sending && noteId === lastEventId) {
-      setPage(breadcrump.slice(0, -1).join('%') || 'home');
+      goBack();
     }
   }, [lastEventId]);
 
@@ -50,34 +54,36 @@ export const SendPage: React.FC = () => {
   });
 
   const onPressBack: () => void = () => {
-    setPage(breadcrump.slice(0, -1).join('%'));
+    goBack();
   };
 
   const onPressSend: () => void = () => {
-    getNotes(database, { filters: { id: eventId } }).then((notes) => {
-      let tags: string[][] = [];
-      const note = notes[0];
+    if (database && publicKey) {
+      getNotes(database, { filters: { id: eventId } }).then((notes) => {
+        let tags: string[][] = [];
+        const note = notes[0];
 
-      if (note) {
-        tags = note.tags;
-        if (getETags(note).length === 0) {
-          tags.push(['e', eventId, '', 'root']);
-        } else {
-          tags.push(['e', eventId, '', 'reply']);
+        if (note) {
+          tags = note.tags;
+          if (getETags(note).length === 0) {
+            tags.push(['e', eventId, '', 'root']);
+          } else {
+            tags.push(['e', eventId, '', 'reply']);
+          }
         }
-      }
 
-      const event: Event = {
-        content,
-        created_at: moment().unix(),
-        kind: 1,
-        pubkey: publicKey,
-        tags,
-      };
-      relayPool?.sendEvent(event);
-      setNoteId(note.id);
-      setSending(true);
-    });
+        const event: Event = {
+          content,
+          created_at: moment().unix(),
+          kind: 1,
+          pubkey: publicKey,
+          tags,
+        };
+        relayPool?.sendEvent(event);
+        setNoteId(note.id);
+        setSending(true);
+      });
+    }
   };
 
   const renderBackAction = (): JSX.Element => (

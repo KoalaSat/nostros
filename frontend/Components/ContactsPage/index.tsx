@@ -41,6 +41,7 @@ export const ContactsPage: React.FC = () => {
   }, [lastEventId]);
 
   useEffect(() => {
+    relayPool?.unsubscribeAll();
     relayPool?.on('event', 'contacts', (relay: Relay, _subId?: string, event?: Event) => {
       console.log('RELAYPOOL EVENT =======>', relay.url, event);
       if (database && event?.id && event.kind === EventKind.petNames) {
