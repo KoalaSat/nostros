@@ -50,7 +50,7 @@ yarn start
 ### Basics
 
 - [ ] Infinite Load
-- [ ] Go to replied event
+- [x] Go to replied event
 - [ ] Relays management (add, remove and recomend)
 - [ ] Random Key Generator
 - [ ] Watch only mode
