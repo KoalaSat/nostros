@@ -26,14 +26,21 @@ export const getReplyEventId: (event: Event) => string | null = (event) => {
   return mainTag ? mainTag[1] : null;
 };
 
-export const getDirectReplies: (replies: Event[], event: Event) => Event[] = (replies, event) => {
-  const expectedTags: number = getETags(event).length + 1;
-  const filter = replies.filter((event) => {
-    const eventETags = getETags(event);
-    return eventETags.length === expectedTags;
-  });
+export const getDirectReplies: (event: Event, replies: Event[]) => Event[] = (event, replies) => {
+  return replies.filter((item) => isDirectReply(event, item));
+};
 
-  return filter;
+export const isDirectReply: (mainEvent: Event, reply: Event) => boolean = (mainEvent, reply) => {
+  const taggedMainEventsIds: string[] = getTaggedEventIds(mainEvent);
+  const taggedReplyEventsIds: string[] = getTaggedEventIds(reply);
+  const difference = taggedReplyEventsIds.filter((item) => !taggedMainEventsIds.includes(item));
+
+  return difference.length === 1 && difference[0] === mainEvent.id;
+};
+
+export const getTaggedEventIds: (event: Event) => string[] = (event) => {
+  const mainEventETags: string[][] = getETags(event);
+  return mainEventETags.map((item) => item[1] ?? '');
 };
 
 export const getETags: (event: Event) => string[][] = (event) => {

@@ -11,7 +11,7 @@ import React, { useContext, useEffect, useState } from 'react';
 import { StyleSheet } from 'react-native';
 import { AppContext } from '../../Contexts/AppContext';
 import Icon from 'react-native-vector-icons/FontAwesome5';
-import { Event } from '../../lib/nostr/Events';
+import { Event, EventKind } from '../../lib/nostr/Events';
 import { useTranslation } from 'react-i18next';
 import { RelayPoolContext } from '../../Contexts/RelayPoolContext';
 import moment from 'moment';
@@ -75,12 +75,19 @@ export const SendPage: React.FC = () => {
         const event: Event = {
           content,
           created_at: moment().unix(),
-          kind: 1,
+          kind: EventKind.textNote,
           pubkey: publicKey,
           tags,
         };
-        relayPool?.sendEvent(event);
-        setNoteId(note.id);
+        relayPool?.sendEvent(event).then((sentNote) => {
+          if (sentNote?.id) {
+            relayPool?.subscribe('main-channel', {
+              kinds: [EventKind.textNote],
+              ids: [sentNote.id],
+            });
+            setNoteId(sentNote.id);
+          }
+        });
         setSending(true);
       });
     }

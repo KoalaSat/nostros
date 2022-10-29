@@ -46,6 +46,7 @@ export const ContactsPage: React.FC = () => {
       console.log('RELAYPOOL EVENT =======>', relay.url, event);
       if (database && event?.id && event.kind === EventKind.petNames) {
         insertUserContact(event, database).finally(() => setLastEventId(event?.id ?? ''));
+        relayPool?.removeOn('event', 'contacts');
       }
     });
   }, []);

@@ -56,7 +56,7 @@ export const Logger: React.FC = () => {
 
   const initEvents: () => void = () => {
     relayPool?.on('event', 'landing', (_relay: Relay, _subId?: string, event?: Event) => {
-      console.log('LandingPage EVENT =======>', event);
+      console.log('LANDING EVENT =======>', event);
       if (event && database) {
         if (event.kind === EventKind.petNames) {
           loadPets(event);

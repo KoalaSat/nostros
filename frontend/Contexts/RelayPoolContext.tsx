@@ -74,7 +74,9 @@ export const RelayPoolContextProvider = ({
           (relay: Relay, _subId?: string, event?: Event) => {
             console.log('RELAYPOOL EVENT =======>', relay.url, event);
             if (database && event?.id && event.kind !== EventKind.petNames) {
-              storeEvent(event, database).finally(() => setLastEventId(event.id));
+              storeEvent(event, database)
+                .then(() => setLastEventId(event.id))
+                .catch(() => setLastEventId(event.id));
             }
           },
         );

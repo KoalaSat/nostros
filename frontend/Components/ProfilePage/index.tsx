@@ -48,7 +48,6 @@ export const ProfilePage: React.FC = () => {
   useEffect(() => {
     setNotes(undefined);
     setUser(undefined);
-    relayPool?.unsubscribeAll();
     relayPool?.subscribe('main-channel', {
       kinds: [EventKind.meta, EventKind.petNames],
       authors: [userId],
@@ -121,7 +120,7 @@ export const ProfilePage: React.FC = () => {
     if (publicKey === userId) {
       return (
         <TopNavigationAction
-          icon={<Icon name='dna' size={16} color={theme['text-basic-color']} solid />}
+          icon={<Icon name='cog' size={16} color={theme['text-basic-color']} solid />}
           onPress={() => goToPage('config')}
         />
       );
@@ -149,6 +148,8 @@ export const ProfilePage: React.FC = () => {
   };
 
   const onPressBack: () => void = () => {
+    relayPool?.removeOn('event', 'profile');
+    relayPool?.unsubscribeAll();
     goBack();
   };
 

@@ -25,6 +25,7 @@ export const ConfigPage: React.FC = () => {
   }, []);
 
   const onPressBack: () => void = () => {
+    relayPool?.unsubscribeAll();
     goBack();
   };
 

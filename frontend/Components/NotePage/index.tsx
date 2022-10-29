@@ -24,23 +24,23 @@ export const NotePage: React.FC = () => {
   const { page, goBack, goToPage, database } = useContext(AppContext);
   const { lastEventId, relayPool } = useContext(RelayPoolContext);
   const [note, setNote] = useState<Note>();
-  const [replies, setReplies] = useState<Note[]>([]);
+  const [replies, setReplies] = useState<Note[]>();
   const theme = useTheme();
   const { t } = useTranslation('common');
   const breadcrump = page.split('%');
   const eventId = breadcrump[breadcrump.length - 1].split('#')[1];
 
-  useEffect(() => {
+  const reload: () => void = () => {
+    setNote(undefined);
+    setReplies(undefined);
     relayPool?.unsubscribeAll();
     relayPool?.subscribe('main-channel', {
-      kinds: [EventKind.textNote, EventKind.recommendServer],
+      kinds: [EventKind.textNote],
       ids: [eventId],
     });
-    relayPool?.subscribe('main-channel', {
-      kinds: [EventKind.textNote, EventKind.recommendServer],
-      '#e': [eventId],
-    });
-  }, []);
+  };
+
+  useEffect(reload, []);
 
   useEffect(() => {
     if (database) {
@@ -48,13 +48,19 @@ export const NotePage: React.FC = () => {
         if (events.length > 0) {
           const event = events[0];
           setNote(event);
+          if (!replies) {
+            relayPool?.subscribe('main-channel', {
+              kinds: [EventKind.textNote],
+              '#e': [eventId],
+            });
+          }
           getNotes(database, { filters: { reply_event_id: eventId } }).then((notes) => {
-            const rootReplies = getDirectReplies(notes, event);
+            const rootReplies = getDirectReplies(event, notes);
             if (rootReplies.length > 0) {
               setReplies(rootReplies as Note[]);
               const message: RelayFilters = {
                 kinds: [EventKind.meta],
-                authors: rootReplies.map((note) => note.pubkey),
+                authors: [...rootReplies.map((note) => note.pubkey), event.pubkey],
               };
               relayPool?.subscribe('main-channel', message);
             } else {
@@ -67,7 +73,18 @@ export const NotePage: React.FC = () => {
   }, [lastEventId, page]);
 
   const onPressBack: () => void = () => {
+    relayPool?.unsubscribeAll();
     goBack();
+  };
+
+  const onPressGoParent: () => void = () => {
+    if (note) {
+      const replyId = getReplyEventId(note);
+      if (replyId) {
+        goToPage(`note#${replyId}`);
+        reload();
+      }
+    }
   };
 
   const renderBackAction = (): JSX.Element => {
@@ -79,6 +96,17 @@ export const NotePage: React.FC = () => {
     );
   };
 
+  const renderNoteActions = (): JSX.Element => {
+    return note && getReplyEventId(note) ? (
+      <TopNavigationAction
+        icon={<Icon name='arrow-up' size={16} color={theme['text-basic-color']} />}
+        onPress={onPressGoParent}
+      />
+    ) : (
+      <></>
+    );
+  };
+
   const onPressNote: (note: Note) => void = (note) => {
     if (note.kind !== EventKind.recommendServer) {
       const replyEventId = getReplyEventId(note);
@@ -87,7 +115,7 @@ export const NotePage: React.FC = () => {
       } else if (note.id) {
         goToPage(`note#${note.id}`);
       }
-      setReplies([]);
+      reload();
     }
   };
 
@@ -127,10 +155,11 @@ export const NotePage: React.FC = () => {
         alignment='center'
         title={`${eventId.slice(0, 12)}...${eventId.slice(-12)}`}
         accessoryLeft={renderBackAction}
+        accessoryRight={renderNoteActions}
       />
       <Layout level='4'>
         {note ? (
-          <List data={[note, ...replies]} renderItem={(item) => ItemCard(item?.item)} />
+          <List data={[note, ...(replies ?? [])]} renderItem={(item) => ItemCard(item?.item)} />
         ) : (
           <Loading style={styles.loading} />
         )}
