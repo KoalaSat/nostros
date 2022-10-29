@@ -38,7 +38,7 @@ export const ProfilePage: React.FC = () => {
   const theme = useTheme();
   const [notes, setNotes] = useState<Note[]>();
   const { t } = useTranslation('common');
-  const [user, setUser] = useState<User | null>(null);
+  const [user, setUser] = useState<User>();
   const [contacts, setContactsIds] = useState<string[]>();
   const [isContact, setIsContact] = useState<boolean>();
   const breadcrump = page.split('%');
@@ -46,6 +46,8 @@ export const ProfilePage: React.FC = () => {
   const username = user?.name === '' ? user?.id : user?.name;
 
   useEffect(() => {
+    setNotes(undefined);
+    setUser(undefined);
     relayPool?.unsubscribeAll();
     relayPool?.subscribe('main-channel', {
       kinds: [EventKind.meta, EventKind.petNames],
@@ -80,16 +82,17 @@ export const ProfilePage: React.FC = () => {
 
   useEffect(() => {
     if (database) {
-      getUser(userId, database).then((user) => {
-        setUser(user);
-        setIsContact(user?.contact);
+      getUser(userId, database).then((result) => {
+        if (result) {
+          setUser(result);
+          setIsContact(result?.contact);
+        }
       });
       if (userId === publicKey) {
         getUsers(database, { contacts: true }).then((users) => {
           setContactsIds(users.map((user) => user.id));
         });
       }
-
       getNotes(database, { filters: { pubkey: userId } }).then(setNotes);
     }
   }, [lastEventId, database]);

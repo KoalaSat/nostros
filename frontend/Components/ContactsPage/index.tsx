@@ -65,8 +65,9 @@ export const ContactsPage: React.FC = () => {
     },
     actionContainer: {
       marginTop: 30,
-      paddingLeft: 32,
-      paddingRight: 32,
+      marginBottom: 30,
+      paddingLeft: 12,
+      paddingRight: 12,
     },
     button: {
       marginTop: 30,
@@ -76,9 +77,9 @@ export const ContactsPage: React.FC = () => {
       height: 32,
     },
     modal: {
-      marginTop: -120,
       paddingLeft: 32,
       paddingRight: 32,
+      width: '100%',
     },
     backdrop: {
       backgroundColor: 'rgba(0, 0, 0, 0.5)',

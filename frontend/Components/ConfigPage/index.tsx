@@ -17,7 +17,7 @@ import { RelayPoolContext } from '../../Contexts/RelayPoolContext';
 export const ConfigPage: React.FC = () => {
   const theme = useTheme();
   const { goToPage, goBack, database } = useContext(AppContext);
-  const { setPrivateKey, relayPool } = useContext(RelayPoolContext);
+  const { setPrivateKey, setPublicKey, relayPool } = useContext(RelayPoolContext);
   const { t } = useTranslation('common');
 
   useEffect(() => {
@@ -30,10 +30,11 @@ export const ConfigPage: React.FC = () => {
 
   const onPressLogout: () => void = () => {
     if (database) {
+      relayPool?.unsubscribeAll();
+      setPrivateKey('');
+      setPublicKey('');
       dropTables(database).then(() => {
         EncryptedStorage.removeItem('privateKey').then(() => {
-          setPrivateKey('');
-          relayPool?.unsubscribeAll();
           goToPage('landing', true);
         });
       });

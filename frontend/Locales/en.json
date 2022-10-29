@@ -1,18 +1,45 @@
 {
-  "navigationBar": {
-    "home": "Home",
-    "profile": "Profile"
-  },
-  "homePage": {
-    "search": "Search",
-    "send": "Send"
-  },
-  "sendPage": {
-    "title": "Send a note",
-    "placeholder": "Say something to the world...",
-    "send": "Send"
-  },
-  "alerts": {
-    "relayAdded": "Relay added"
+  "common": {
+    "landing": {
+      "connect": "Connect",
+      "connecting": "Connecting",
+      "loadingContacts": "Loading Contacts",
+      "ready": "Ready",
+      "privateKey": "Private Key"
+    },
+    "navigationBar": {
+      "home": "Home",
+      "profile": "Profile"
+    },
+    "homePage": {
+      "search": "Search",
+      "send": "Send"
+    },
+    "profilePage": {
+      "search": "Search",
+      "send": "Send"
+    },
+    "notePage": {
+      "reply": "Reply"
+    },
+    "configPage": {
+      "title": "Configuration",
+      "logout": "Remove Private Key"
+    },
+    "contactsPage": {
+      "add": "Add User",
+      "addContact": {
+        "placeholder": "Public Key",
+        "add": "Add User"
+      }
+    },
+    "sendPage": {
+      "title": "Send a note",
+      "placeholder": "Say something to the world...",
+      "send": "Send"
+    },
+    "alerts": {
+      "relayAdded": "Relay added"
+    }
   }
 }

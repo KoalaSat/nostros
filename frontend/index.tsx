@@ -5,19 +5,9 @@ import { EvaIconsPack } from '@ui-kitten/eva-icons';
 import * as eva from '@eva-design/eva';
 import { AppContextProvider } from './Contexts/AppContext';
 import MainLayout from './Components/MainLayout';
-import { I18nextProvider } from 'react-i18next';
-import i18n from 'i18next';
-import localeEN from './Locales/en.json';
 import { RelayPoolContextProvider } from './Contexts/RelayPoolContext';
-
-void i18n.init({
-  compatibilityJSON: 'v3',
-  defaultNS: 'common',
-  lng: 'en',
-  resources: {
-    en: localeEN,
-  },
-});
+import { I18nextProvider } from 'react-i18next';
+import i18n from './i18n.config';
 
 export const Frontend: React.FC = () => {
   const mapping = {
