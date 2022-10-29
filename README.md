@@ -42,7 +42,7 @@ yarn start
 ### Bugs
 
 - [x] User info missing on first start
-- [ ] i18n not loading
+- [x] i18n not loading
 - [ ] Logging out and in again does not work
 - [ ] Clipboard library not working
 
