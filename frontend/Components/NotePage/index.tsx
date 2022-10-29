@@ -30,13 +30,13 @@ export const NotePage: React.FC = () => {
   const breadcrump = page.split('%');
   const eventId = breadcrump[breadcrump.length - 1].split('#')[1];
 
-  const reload: () => void = () => {
+  const reload: (newEventId?: string) => void = (newEventId) => {
     setNote(undefined);
     setReplies(undefined);
     relayPool?.unsubscribeAll();
     relayPool?.subscribe('main-channel', {
       kinds: [EventKind.textNote],
-      ids: [eventId],
+      ids: [newEventId ?? eventId],
     });
   };
 
@@ -82,7 +82,7 @@ export const NotePage: React.FC = () => {
       const replyId = getReplyEventId(note);
       if (replyId) {
         goToPage(`note#${replyId}`);
-        reload();
+        reload(replyId);
       }
     }
   };
