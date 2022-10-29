@@ -5,7 +5,7 @@
 
 ![nostros_logo](https://user-images.githubusercontent.com/111684255/197865267-1701b33b-2eb9-4704-86eb-a6ea8861fe1e.png)
 
-Wellcome to the NOSTROS project.
+Wellcome to the Nostros project, a NOSTR mobile client for and by the people.
 
 Chanel Id:
 
