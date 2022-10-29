@@ -43,8 +43,9 @@ yarn start
 
 - [x] User info missing on first start
 - [x] i18n not loading
-- [ ] Logging out and in again does not work
+- [x] Logging out and in again does not work
 - [ ] Clipboard library not working
+- [ ] Some user images are not loading
 
 ### Basics
 
