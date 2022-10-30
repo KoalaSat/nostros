@@ -121,7 +121,7 @@ export const HomePage: React.FC = () => {
           </ScrollView>
         )}
       </Layout>
-      <ActionButton
+      {/* <ActionButton
         buttonColor={theme['color-primary-400']}
         useNativeFeedback={true}
         fixNativeFeedbackRadius={true}
@@ -133,7 +133,7 @@ export const HomePage: React.FC = () => {
         >
           <Icon name='paper-plane' size={30} color={theme['text-basic-color']} solid />
         </ActionButton.Item>
-      </ActionButton>
+      </ActionButton> */}
     </>
   );
 };

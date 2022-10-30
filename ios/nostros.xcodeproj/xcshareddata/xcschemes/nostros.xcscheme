@@ -15,9 +15,9 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "13B07F861A680F5B00A75B9A"
-               BuildableName = "nostros.app"
-               BlueprintName = "nostros"
-               ReferencedContainer = "container:nostros.xcodeproj">
+               BuildableName = "Nostros.app"
+               BlueprintName = "Nostros"
+               ReferencedContainer = "container:Nostros.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
@@ -33,9 +33,9 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "00E356ED1AD99517003FC87E"
-               BuildableName = "nostrosTests.xctest"
-               BlueprintName = "nostrosTests"
-               ReferencedContainer = "container:nostros.xcodeproj">
+               BuildableName = "NostrosTests.xctest"
+               BlueprintName = "NostrosTests"
+               ReferencedContainer = "container:Nostros.xcodeproj">
             </BuildableReference>
          </TestableReference>
       </Testables>
@@ -55,9 +55,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "13B07F861A680F5B00A75B9A"
-            BuildableName = "nostros.app"
-            BlueprintName = "nostros"
-            ReferencedContainer = "container:nostros.xcodeproj">
+            BuildableName = "Nostros.app"
+            BlueprintName = "Nostros"
+            ReferencedContainer = "container:Nostros.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </LaunchAction>
@@ -72,9 +72,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "13B07F861A680F5B00A75B9A"
-            BuildableName = "nostros.app"
-            BlueprintName = "nostros"
-            ReferencedContainer = "container:nostros.xcodeproj">
+            BuildableName = "Nostros.app"
+            BlueprintName = "Nostros"
+            ReferencedContainer = "container:Nostros.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </ProfileAction>

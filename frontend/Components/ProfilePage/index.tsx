@@ -353,19 +353,20 @@ export const ProfilePage: React.FC = () => {
         )}
       </Layout>
       {publicKey === userId && (
-        <ActionButton
-          buttonColor={theme['color-primary-400']}
-          useNativeFeedback={true}
-          fixNativeFeedbackRadius={true}
-        >
-          <ActionButton.Item
-            buttonColor={theme['color-warning-500']}
-            title={t('profilePage.send')}
-            onPress={() => goToPage(`${page}%send`)}
-          >
-            <Icon name='paper-plane' size={30} color={theme['text-basic-color']} solid />
-          </ActionButton.Item>
-        </ActionButton>
+        // <ActionButton
+        //   buttonColor={theme['color-primary-400']}
+        //   useNativeFeedback={true}
+        //   fixNativeFeedbackRadius={true}
+        // >
+        //   <ActionButton.Item
+        //     buttonColor={theme['color-warning-500']}
+        //     title={t('profilePage.send')}
+        //     onPress={() => goToPage(`${page}%send`)}
+        //   >
+        //     <Icon name='paper-plane' size={30} color={theme['text-basic-color']} solid />
+        //   </ActionButton.Item>
+        // </ActionButton>
+        <></>
       )}
     </>
   );
