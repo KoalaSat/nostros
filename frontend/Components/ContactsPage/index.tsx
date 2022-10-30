@@ -15,7 +15,7 @@ import {
 import UserCard from '../UserCard';
 import { RelayPoolContext } from '../../Contexts/RelayPoolContext';
 import Relay from '../../lib/nostr/Relay';
-import { populatePets } from '../../Functions/RelayFunctions/Users';
+import { populatePets, tagToUser } from '../../Functions/RelayFunctions/Users';
 
 export const ContactsPage: React.FC = () => {
   const { database } = useContext(AppContext);
@@ -29,13 +29,7 @@ export const ContactsPage: React.FC = () => {
   useEffect(() => {
     if (database && publicKey) {
       getUsers(database, { contacts: true }).then((results) => {
-        if (results) {
-          setUsers(results);
-          relayPool?.subscribe('main-channel', {
-            kinds: [EventKind.petNames],
-            authors: [publicKey],
-          });
-        }
+        if (results) setUsers(results);
       });
     }
   }, [lastEventId]);
@@ -43,12 +37,22 @@ export const ContactsPage: React.FC = () => {
   useEffect(() => {
     relayPool?.unsubscribeAll();
     relayPool?.on('event', 'contacts', (relay: Relay, _subId?: string, event?: Event) => {
-      console.log('RELAYPOOL EVENT =======>', relay.url, event);
+      console.log('CONTACTS PAGE EVENT =======>', relay.url, event);
       if (database && event?.id && event.kind === EventKind.petNames) {
         insertUserContact(event, database).finally(() => setLastEventId(event?.id ?? ''));
+        relayPool?.subscribe('main-channel', {
+          kinds: [EventKind.meta],
+          authors: event.tags.map((tag) => tagToUser(tag).id),
+        });
         relayPool?.removeOn('event', 'contacts');
       }
     });
+    if (publicKey) {
+      relayPool?.subscribe('main-channel', {
+        kinds: [EventKind.petNames],
+        authors: [publicKey],
+      });
+    }
   }, []);
 
   const onPressAddContact: () => void = () => {

@@ -26,6 +26,7 @@
     "react-i18next": "^11.18.6",
     "react-native": "0.64.3",
     "react-native-action-button": "^2.8.5",
+    "react-native-bidirectional-infinite-scroll": "^0.3.3",
     "react-native-encrypted-storage": "^4.0.2",
     "react-native-flash-message": "^0.3.1",
     "react-native-markdown-display": "^7.0.0-alpha.2",
