@@ -26,6 +26,16 @@ buildscript {
         // NOTE: Do not place your application dependencies here; they belong
         // in the individual module build.gradle files
     }
+    configurations.all {
+        resolutionStrategy {
+            eachDependency {
+                // https://issuetracker.google.com/issues/109894262#comment9
+                if (requested.group == "org.jetbrains.trove4j" && requested.name == "trove4j" && requested.version == "20160824") {
+                    useTarget("org.jetbrains.intellij.deps:trove4j:1.0.20181211")
+                }
+            }
+        }
+    }
 }
 
 allprojects {
