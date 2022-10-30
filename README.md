@@ -70,6 +70,7 @@ yarn start
 
 ### Contacts
 
+- [ ] Followers list
 - [ ] Direct Messages https://github.com/nostr-protocol/nips/blob/master/04.md
 
 ### Note
