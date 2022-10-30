@@ -6,7 +6,7 @@ import { AppContext } from './AppContext';
 import { storeEvent } from '../Functions/DatabaseFunctions/Events';
 import { getRelays, Relay as RelayEntity, storeRelay } from '../Functions/DatabaseFunctions/Relays';
 import { showMessage } from 'react-native-flash-message';
-import EncryptedStorage from 'react-native-encrypted-storage';
+// import EncryptedStorage from 'react-native-encrypted-storage';
 import { getPublickey } from '../lib/nostr/Bip';
 
 export interface RelayPoolContextProps {
@@ -105,7 +105,8 @@ export const RelayPoolContextProvider = ({
   }, [page]);
 
   useEffect(() => {
-    EncryptedStorage.getItem('privateKey').then((result) => {
+    const result = ''
+    // EncryptedStorage.getItem('privateKey').then((result) => {
       if (result && result !== '') {
         loadRelayPool();
         goToPage('home', true);
@@ -114,7 +115,7 @@ export const RelayPoolContextProvider = ({
       } else {
         goToPage('landing', true);
       }
-    });
+    // });
   }, []);
 
   return (

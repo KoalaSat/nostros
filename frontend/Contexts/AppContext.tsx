@@ -3,7 +3,7 @@ import { SQLiteDatabase } from 'react-native-sqlite-storage';
 import { initDatabase } from '../Functions/DatabaseFunctions';
 import { createInitDatabase } from '../Functions/DatabaseFunctions/Migrations';
 import FlashMessage from 'react-native-flash-message';
-import EncryptedStorage from 'react-native-encrypted-storage';
+// import EncryptedStorage from 'react-native-encrypted-storage';
 
 export interface AppContextProps {
   page: string;
@@ -33,7 +33,8 @@ export const AppContextProvider = ({ children }: AppContextProviderProps): JSX.E
   const [loadingDb, setLoadingDb] = useState<boolean>(initialAppContext.loadingDb);
 
   const init: () => void = () => {
-    EncryptedStorage.getItem('privateKey').then((result) => {
+    const result = '';
+    // EncryptedStorage.getItem('privateKey').then((result) => {
       const db = initDatabase();
       setDatabase(db);
       if (!result || result === '') {
@@ -43,7 +44,7 @@ export const AppContextProvider = ({ children }: AppContextProviderProps): JSX.E
       } else {
         setLoadingDb(false);
       }
-    });
+    // });
   };
 
   useEffect(init, []);

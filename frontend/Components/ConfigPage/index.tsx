@@ -10,7 +10,7 @@ import { StyleSheet } from 'react-native';
 import { AppContext } from '../../Contexts/AppContext';
 import Icon from 'react-native-vector-icons/FontAwesome5';
 import { useTranslation } from 'react-i18next';
-import EncryptedStorage from 'react-native-encrypted-storage';
+// import EncryptedStorage from 'react-native-encrypted-storage';
 import { dropTables } from '../../Functions/DatabaseFunctions';
 import { RelayPoolContext } from '../../Contexts/RelayPoolContext';
 
@@ -35,10 +35,10 @@ export const ConfigPage: React.FC = () => {
       setPrivateKey(undefined);
       setPublicKey(undefined);
       dropTables(database).then(() => {
-        EncryptedStorage.removeItem('privateKey').then(() => {
+        // EncryptedStorage.removeItem('privateKey').then(() => {
           init();
           goToPage('landing', true);
-        });
+        // });
       });
     }
   };
