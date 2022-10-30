@@ -1,15 +1,14 @@
 import {
   Card,
   Layout,
-  List,
   Spinner,
   Text,
   TopNavigation,
   TopNavigationAction,
   useTheme,
 } from '@ui-kitten/components';
-import React, { useContext, useEffect, useState } from 'react';
-import { StyleSheet, TouchableOpacity } from 'react-native';
+import React, { useCallback, useContext, useEffect, useState } from 'react';
+import { RefreshControl, ScrollView, StyleSheet, TouchableOpacity } from 'react-native';
 import { AppContext } from '../../Contexts/AppContext';
 import UserAvatar from 'react-native-user-avatar';
 import { getNotes, Note } from '../../Functions/DatabaseFunctions/Notes';
@@ -39,50 +38,19 @@ export const ProfilePage: React.FC = () => {
   const [notes, setNotes] = useState<Note[]>();
   const { t } = useTranslation('common');
   const [user, setUser] = useState<User>();
-  const [contacts, setContactsIds] = useState<string[]>();
+  const [contactsIds, setContactsIds] = useState<string[]>();
   const [isContact, setIsContact] = useState<boolean>();
+  const [refreshing, setRefreshing] = useState(false);
   const breadcrump = page.split('%');
   const userId = breadcrump[breadcrump.length - 1].split('#')[1] ?? publicKey;
   const username = user?.name === '' ? user?.id : user?.name;
 
   useEffect(() => {
+    setContactsIds(undefined);
     setNotes(undefined);
     setUser(undefined);
-    relayPool?.subscribe('main-channel', {
-      kinds: [EventKind.meta, EventKind.petNames],
-      authors: [userId],
-    });
-    relayPool?.on('event', 'profile', (_relay: Relay, _subId?: string, event?: Event) => {
-      console.log('PROFILE EVENT =======>', event);
-      if (database) {
-        if (event?.id && event.pubkey === userId) {
-          if (event.kind === EventKind.petNames) {
-            const ids = event.tags.map((tag) => tagToUser(tag).id);
-            setContactsIds(ids);
-          } else if (event.kind === EventKind.meta) {
-            storeEvent(event, database).finally(() => {
-              if (event?.id) setLastEventId(event.id);
-            });
-          }
-        }
-        getNotes(database, { filters: { pubkey: userId }, limit: 1 }).then((results) => {
-          if (results) {
-            const notesEvent: RelayFilters = {
-              kinds: [EventKind.textNote, EventKind.recommendServer],
-              authors: [userId],
-              limit: 15,
-            };
-
-            if (results.length >= 15) {
-              notesEvent.since = results[0]?.created_at;
-            }
-
-            relayPool?.subscribe('main-channel', notesEvent);
-          }
-        });
-      }
-    });
-  }, [page, relayPool]);
+    loadProfile();
+  }, [page]);
 
   useEffect(() => {
     if (database) {
@@ -97,11 +65,11 @@ export const ProfilePage: React.FC = () => {
           setContactsIds(users.map((user) => user.id));
         });
       }
-      getNotes(database, { filters: { pubkey: userId } }).then((results) => {
+      getNotes(database, { filters: { pubkey: userId }, limit: 10 }).then((results) => {
         if (results.length > 0) setNotes(results);
       });
     }
-  }, [lastEventId, database]);
+  }, [lastEventId]);
 
   const removeAuthor: () => void = () => {
     if (relayPool && database && publicKey) {
@@ -171,6 +139,60 @@ export const ProfilePage: React.FC = () => {
     }
   };
 
+  const onRefresh = useCallback(() => {
+    setRefreshing(true);
+    relayPool?.unsubscribeAll();
+    loadProfile().finally(() => setRefreshing(false));
+  }, []);
+
+  const subscribeNotes: () => void = () => {
+    if (database) {
+      getNotes(database, { filters: { pubkey: userId }, limit: 10 }).then((results) => {
+        if (results) {
+          const notesEvent: RelayFilters = {
+            kinds: [EventKind.textNote, EventKind.recommendServer],
+            authors: [userId],
+            limit: 10,
+          };
+
+          if (results.length >= 10) {
+            notesEvent.since = results[0]?.created_at;
+          }
+
+          relayPool?.subscribe('main-channel', notesEvent);
+        }
+      });
+    }
+  };
+
+  const loadProfile: () => Promise<void> = async () => {
+    return await new Promise<void>((resolve, reject) => {
+      relayPool?.subscribe('main-channel', {
+        kinds: [EventKind.meta, EventKind.petNames],
+        authors: [userId],
+      });
+      relayPool?.on('event', 'profile', (_relay: Relay, _subId?: string, event?: Event) => {
+        console.log('PROFILE EVENT =======>', event);
+        if (database) {
+          if (event?.id && event.pubkey === userId) {
+            if (event.kind === EventKind.petNames) {
+              const ids = event.tags.map((tag) => tagToUser(tag).id);
+              setContactsIds(ids);
+            } else if (event.kind === EventKind.meta) {
+              storeEvent(event, database).finally(() => {
+                if (event?.id) setLastEventId(event.id);
+              });
+            }
+            subscribeNotes();
+          }
+        } else {
+          reject(new Error('Not Ready'));
+        }
+      });
+      resolve();
+    });
+  };
+
   const styles = StyleSheet.create({
     list: {
       flex: 1,
@@ -204,9 +226,11 @@ export const ProfilePage: React.FC = () => {
     },
     stats: {
       flex: 1,
+    },
+    statsItem: {
       flexDirection: 'row',
-      justifyContent: 'center',
       alignItems: 'center',
+      marginBottom: 5,
     },
     description: {
       marginTop: 16,
@@ -216,7 +240,7 @@ export const ProfilePage: React.FC = () => {
 
   const itemCard: (note: Note) => JSX.Element = (note) => {
     return (
-      <Card onPress={() => onPressNote(note)}>
+      <Card onPress={() => onPressNote(note)} key={note.id ?? ''}>
         <NoteCard note={note} />
       </Card>
     );
@@ -236,6 +260,44 @@ export const ProfilePage: React.FC = () => {
   const onPressId: () => void = () => {
     // FIXME
     // Clipboard.setString(user?.id ?? '');
+  };
+
+  const isFollowingUser: () => boolean = () => {
+    if (contactsIds !== undefined && publicKey) {
+      return contactsIds?.includes(publicKey);
+    }
+    return false;
+  };
+
+  const stats: () => JSX.Element = () => {
+    if (contactsIds === undefined) {
+      return (
+        <Layout style={styles.stats} level='3'>
+          <Spinner size='tiny' />
+        </Layout>
+      );
+    }
+
+    return (
+      <Layout style={styles.stats} level='3'>
+        <Layout style={styles.statsItem} level='3'>
+          <Icon name='address-book' size={16} color={theme['text-basic-color']} solid />
+          <Text>{` ${contactsIds?.length}`}</Text>
+        </Layout>
+        {publicKey !== userId && (
+          <Layout style={styles.statsItem} level='3'>
+            <Text>
+              <Icon
+                name='people-arrows'
+                size={16}
+                color={theme[isFollowingUser() ? 'text-basic-color' : 'color-primary-disabled']}
+                solid
+              />
+            </Text>
+          </Layout>
+        )}
+      </Layout>
+    );
   };
 
   const profile: JSX.Element = (
@@ -258,10 +320,7 @@ export const ProfilePage: React.FC = () => {
       <Layout style={styles.description} level='3'>
         {user && (
           <>
-            <Layout style={styles.stats} level='3'>
-              <Text>{contacts?.length ?? <Spinner size='tiny' />} </Text>
-              <Icon name='address-book' size={16} color={theme['text-basic-color']} solid />
-            </Layout>
+            {stats()}
             <Layout style={styles.about} level='3'>
               <Text numberOfLines={5} ellipsizeMode='tail'>
                 {user?.about}
@@ -283,7 +342,15 @@ export const ProfilePage: React.FC = () => {
       />
       {profile}
       <Layout style={styles.list} level='3'>
-        {notes ? <List data={notes} renderItem={(item) => itemCard(item.item)} /> : <Loading />}
+        {notes ? (
+          <ScrollView
+            refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
+          >
+            {notes.map((note) => itemCard(note))}
+          </ScrollView>
+        ) : (
+          <Loading />
+        )}
       </Layout>
       {publicKey === userId && (
         <ActionButton
