@@ -37,6 +37,8 @@ jobs:
 
       - name: 'Upload .apk Release Artifact (for Release)'
         uses: actions/upload-artifact@v3
+        if: ${{ github.event_name != 'pull_request' }}
         with:
           name: nostros-${{ github.ref_name }}.apk
           path: android/app/build/outputs/apk/release/app-release.apk
+
