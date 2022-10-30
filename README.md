@@ -10,7 +10,7 @@ Wellcome to the Nostros project, a NOSTR mobile client.
 Chanel Id:
 
 ```
-e20c31f1601a6baabb4a32b7bdf0ed30161a433d3fa84069faffd54355505bab
+efd25b6e556457448748f0bda99ebc505fb127baa939e5e7d61fdd6338fa1ab8
 ```
 
 # Getting Started
