@@ -48,6 +48,7 @@ yarn start
 - [x] Logging out and in again does not work
 - [ ] Clipboard library not working
 - [ ] Some user images are not loading
+- [ ] Websocket connections closed when the app goes to background for too long
 
 ### Basics
 
