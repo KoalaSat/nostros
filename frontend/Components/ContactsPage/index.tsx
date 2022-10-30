@@ -1,6 +1,6 @@
-import { Button, Card, Input, Layout, List, Modal, useTheme } from '@ui-kitten/components';
-import React, { useContext, useEffect, useState } from 'react';
-import { StyleSheet } from 'react-native';
+import { Button, Card, Input, Layout, Modal, useTheme } from '@ui-kitten/components';
+import React, { useCallback, useContext, useEffect, useState } from 'react';
+import { RefreshControl, ScrollView, StyleSheet } from 'react-native';
 import ActionButton from 'react-native-action-button';
 import { AppContext } from '../../Contexts/AppContext';
 import Icon from 'react-native-vector-icons/FontAwesome5';
@@ -22,6 +22,7 @@ export const ContactsPage: React.FC = () => {
   const { relayPool, publicKey, lastEventId, setLastEventId } = useContext(RelayPoolContext);
   const theme = useTheme();
   const [users, setUsers] = useState<User[]>([]);
+  const [refreshing, setRefreshing] = useState(false);
   const [showAddContact, setShowAddContant] = useState<boolean>(false);
   const [contactInput, setContactInput] = useState<string>();
   const { t } = useTranslation('common');
@@ -35,25 +36,32 @@ export const ContactsPage: React.FC = () => {
   }, [lastEventId]);
 
   useEffect(() => {
-    relayPool?.unsubscribeAll();
-    relayPool?.on('event', 'contacts', (relay: Relay, _subId?: string, event?: Event) => {
-      console.log('CONTACTS PAGE EVENT =======>', relay.url, event);
-      if (database && event?.id && event.kind === EventKind.petNames) {
-        insertUserContact(event, database).finally(() => setLastEventId(event?.id ?? ''));
-        relayPool?.subscribe('main-channel', {
-          kinds: [EventKind.meta],
-          authors: event.tags.map((tag) => tagToUser(tag).id),
-        });
-        relayPool?.removeOn('event', 'contacts');
-      }
-    });
-    if (publicKey) {
-      relayPool?.subscribe('main-channel', {
-        kinds: [EventKind.petNames],
-        authors: [publicKey],
-      });
-    }
+    subscribeContacts();
   }, []);
+
+  const subscribeContacts: () => Promise<void> = async () => {
+    return await new Promise<void>((resolve, _reject) => {
+      relayPool?.unsubscribeAll();
+      relayPool?.on('event', 'contacts', (relay: Relay, _subId?: string, event?: Event) => {
+        console.log('CONTACTS PAGE EVENT =======>', relay.url, event);
+        if (database && event?.id && event.kind === EventKind.petNames) {
+          insertUserContact(event, database).finally(() => setLastEventId(event?.id ?? ''));
+          relayPool?.subscribe('main-channel', {
+            kinds: [EventKind.meta],
+            authors: event.tags.map((tag) => tagToUser(tag).id),
+          });
+          relayPool?.removeOn('event', 'contacts');
+        }
+      });
+      if (publicKey) {
+        relayPool?.subscribe('main-channel', {
+          kinds: [EventKind.petNames],
+          authors: [publicKey],
+        });
+      }
+      resolve();
+    });
+  };
 
   const onPressAddContact: () => void = () => {
     if (contactInput && relayPool && database && publicKey) {
@@ -63,6 +71,12 @@ export const ContactsPage: React.FC = () => {
       });
     }
   };
+
+  const onRefresh = useCallback(() => {
+    setRefreshing(true);
+    relayPool?.unsubscribeAll();
+    subscribeContacts().finally(() => setRefreshing(false));
+  }, []);
 
   const styles = StyleSheet.create({
     container: {
@@ -94,7 +108,13 @@ export const ContactsPage: React.FC = () => {
   return (
     <>
       <Layout style={styles.container} level='3'>
-        <List data={users} renderItem={(item) => <UserCard user={item.item} />} />
+        <ScrollView
+          refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
+        >
+          {users.map((user) => (
+            <UserCard user={user} key={user.id} />
+          ))}
+        </ScrollView>
       </Layout>
       <Modal
         style={styles.modal}
