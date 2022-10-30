@@ -5,6 +5,7 @@ module.exports = {
     'plugin:react/recommended',
     'standard-with-typescript',
     'prettier',
+    '@react-native-community',
   ],
   parserOptions: {
     ecmaVersion: 8,

@@ -179,7 +179,7 @@ export const NotePage: React.FC = () => {
           <Loading style={styles.loading} />
         )}
       </Layout>
-      <ActionButton
+      {/* <ActionButton
         buttonColor={theme['color-primary-400']}
         useNativeFeedback={true}
         fixNativeFeedbackRadius={true}
@@ -191,7 +191,7 @@ export const NotePage: React.FC = () => {
         >
           <Icon name='reply' size={30} color={theme['text-basic-color']} solid />
         </ActionButton.Item>
-      </ActionButton>
+      </ActionButton> */}
     </>
   );
 };
