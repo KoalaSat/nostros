@@ -120,13 +120,21 @@ export const Logger: React.FC = () => {
       marginVertical: 10,
       padding: 32,
     },
+    buttonssContainer: {
+      flexDirection: 'row',
+      paddingLeft: 32,
+      paddingRight: 32,
+    },
     input: {
       flex: 4,
-      paddingLeft: 32,
     },
-    keyButton: {
-      flex: 1,
-      marginTop: 18,
+    buttonLeft: {
+      flex: 3,
+      paddingRight: 16,
+    },
+    buttonRight: {
+      flex: 3,
+      paddingLeft: 16,
     },
   })
 
@@ -137,14 +145,6 @@ export const Logger: React.FC = () => {
   return !privateKey || !publicKey || status !== 0 ? (
     <>
       <Layout style={styles.inputsContainer}>
-        <Layout style={styles.keyButton}>
-          <Button
-            onPress={() => setIsPrivate(!isPrivate)}
-            disabled={loading}
-            accessoryLeft={keyButton}
-            status={isPrivate ? 'warning' : 'default'}
-          />
-        </Layout>
         <Layout style={styles.input}>
           <Input
             size='medium'
@@ -156,9 +156,21 @@ export const Logger: React.FC = () => {
           />
         </Layout>
       </Layout>
-      <Button onPress={onPress} disabled={loading}>
-        {statusName[status]}
-      </Button>
+      <Layout style={styles.inputsContainer}>
+        <Layout style={styles.buttonLeft}>
+          <Button
+            onPress={() => setIsPrivate(!isPrivate)}
+            disabled={loading}
+            accessoryLeft={keyButton}
+            status={isPrivate ? 'warning' : 'default'}
+          />
+        </Layout>
+        <Layout style={styles.buttonRight}>
+          <Button onPress={onPress} disabled={loading}>
+            {statusName[status]}
+          </Button>
+        </Layout>
+      </Layout>
     </>
   ) : (
     <></>
