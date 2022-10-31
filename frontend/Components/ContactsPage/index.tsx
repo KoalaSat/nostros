@@ -18,7 +18,8 @@ import { populatePets, tagToUser } from '../../Functions/RelayFunctions/Users'
 
 export const ContactsPage: React.FC = () => {
   const { database } = useContext(AppContext)
-  const { relayPool, publicKey, lastEventId, setLastEventId } = useContext(RelayPoolContext)
+  const { relayPool, publicKey, lastEventId, setLastEventId, privateKey } =
+    useContext(RelayPoolContext)
   const theme = useTheme()
   const [users, setUsers] = useState<User[]>([])
   const [refreshing, setRefreshing] = useState(false)
@@ -137,24 +138,26 @@ export const ContactsPage: React.FC = () => {
           </Layout>
         </Card>
       </Modal>
-      <TouchableOpacity
-        style={{
-          borderWidth: 1,
-          borderColor: 'rgba(0,0,0,0.2)',
-          alignItems: 'center',
-          justifyContent: 'center',
-          width: 65,
-          position: 'absolute',
-          bottom: 20,
-          right: 20,
-          height: 65,
-          backgroundColor: theme['color-warning-500'],
-          borderRadius: 100,
-        }}
-        onPress={() => setShowAddContant(true)}
-      >
-        <Icon name='user-plus' size={30} color={theme['text-basic-color']} solid />
-      </TouchableOpacity>
+      {privateKey && (
+        <TouchableOpacity
+          style={{
+            borderWidth: 1,
+            borderColor: 'rgba(0,0,0,0.2)',
+            alignItems: 'center',
+            justifyContent: 'center',
+            width: 65,
+            position: 'absolute',
+            bottom: 20,
+            right: 20,
+            height: 65,
+            backgroundColor: theme['color-warning-500'],
+            borderRadius: 100,
+          }}
+          onPress={() => setShowAddContant(true)}
+        >
+          <Icon name='user-plus' size={30} color={theme['text-basic-color']} solid />
+        </TouchableOpacity>
+      )}
     </>
   )
 }

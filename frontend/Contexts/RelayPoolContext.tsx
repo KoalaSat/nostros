@@ -43,7 +43,7 @@ export const RelayPoolContextProvider = ({
   const [lastPage, setLastPage] = useState<string>(page)
 
   const loadRelayPool: () => void = () => {
-    if (database && privateKey) {
+    if (database) {
       getRelays(database).then((relays: RelayEntity[]) => {
         const initRelayPool = new RelayPool([], privateKey)
         if (relays.length > 0) {
@@ -86,13 +86,7 @@ export const RelayPoolContextProvider = ({
   }
 
   useEffect(() => {
-    if (privateKey && privateKey !== '') {
-      setPublicKey(getPublickey(privateKey))
-    }
-  }, [privateKey])
-
-  useEffect(() => {
-    if (privateKey !== '' && !loadingDb && !relayPool) {
+    if ((privateKey !== '' || publicKey !== '') && !loadingDb && !relayPool) {
       loadRelayPool()
     }
   }, [privateKey, loadingDb])
@@ -105,14 +99,22 @@ export const RelayPoolContextProvider = ({
   }, [page])
 
   useEffect(() => {
-    SInfo.getItem('privateKey', {}).then((result) => {
-      if (result && result !== '') {
+    SInfo.getItem('privateKey', {}).then((privateResult) => {
+      if (privateResult && privateResult !== '') {
         loadRelayPool()
         goToPage('home', true)
-        setPrivateKey(result)
-        setPublicKey(getPublickey(result))
+        setPrivateKey(privateResult)
+        setPublicKey(getPublickey(privateResult))
       } else {
-        goToPage('landing', true)
+        SInfo.getItem('publicKey', {}).then((publicResult) => {
+          if (publicResult && publicResult !== '') {
+            loadRelayPool()
+            goToPage('home', true)
+            setPublicKey(publicResult)
+          } else {
+            goToPage('landing', true)
+          }
+        })
       }
     })
   }, [])

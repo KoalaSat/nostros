@@ -14,7 +14,7 @@ import Loading from '../Loading'
 
 export const HomePage: React.FC = () => {
   const { database, goToPage, page } = useContext(AppContext)
-  const { lastEventId, relayPool, publicKey } = useContext(RelayPoolContext)
+  const { lastEventId, relayPool, publicKey, privateKey } = useContext(RelayPoolContext)
   const theme = useTheme()
   const [notes, setNotes] = useState<Note[]>([])
   const [totalContacts, setTotalContacts] = useState<number>(-1)
@@ -118,24 +118,26 @@ export const HomePage: React.FC = () => {
           </ScrollView>
         )}
       </Layout>
-      <TouchableOpacity
-        style={{
-          borderWidth: 1,
-          borderColor: 'rgba(0,0,0,0.2)',
-          alignItems: 'center',
-          justifyContent: 'center',
-          width: 65,
-          position: 'absolute',
-          bottom: 20,
-          right: 20,
-          height: 65,
-          backgroundColor: theme['color-warning-500'],
-          borderRadius: 100,
-        }}
-        onPress={() => goToPage(`${page}%send`)}
-      >
-        <Icon name='paper-plane' size={30} color={theme['text-basic-color']} solid />
-      </TouchableOpacity>
+      {privateKey && (
+        <TouchableOpacity
+          style={{
+            borderWidth: 1,
+            borderColor: 'rgba(0,0,0,0.2)',
+            alignItems: 'center',
+            justifyContent: 'center',
+            width: 65,
+            position: 'absolute',
+            bottom: 20,
+            right: 20,
+            height: 65,
+            backgroundColor: theme['color-warning-500'],
+            borderRadius: 100,
+          }}
+          onPress={() => goToPage(`${page}%send`)}
+        >
+          <Icon name='paper-plane' size={30} color={theme['text-basic-color']} solid />
+        </TouchableOpacity>
+      )}
     </>
   )
 }

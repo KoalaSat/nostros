@@ -5,7 +5,8 @@
       "connecting": "Connecting",
       "loadingContacts": "Loading Contacts",
       "ready": "Ready",
-      "privateKey": "Private Key"
+      "privateKey": "Private Key",
+      "publicKey": "Public Key"
     },
     "navigationBar": {
       "home": "Home",
@@ -24,7 +25,7 @@
     },
     "configPage": {
       "title": "Configuration",
-      "logout": "Delete Private Key"
+      "logout": "Delete Keys"
     },
     "contactsPage": {
       "add": "Add User",

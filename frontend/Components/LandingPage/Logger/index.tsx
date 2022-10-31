@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState } from 'react'
-import { Button, Input } from '@ui-kitten/components'
+import { Button, Input, Layout, useTheme } from '@ui-kitten/components'
 import { StyleSheet } from 'react-native'
 import { RelayPoolContext } from '../../../Contexts/RelayPoolContext'
 import { useTranslation } from 'react-i18next'
@@ -9,22 +9,21 @@ import { Event, EventKind } from '../../../lib/nostr/Events'
 import { AppContext } from '../../../Contexts/AppContext'
 import { insertUserContact } from '../../../Functions/DatabaseFunctions/Users'
 import SInfo from 'react-native-sensitive-info'
+import Icon from 'react-native-vector-icons/FontAwesome5'
+import { getPublickey } from '../../../lib/nostr/Bip'
 
 export const Logger: React.FC = () => {
   const { database, goToPage } = useContext(AppContext)
-  const { privateKey, publicKey, relayPool, setPrivateKey } = useContext(RelayPoolContext)
+  const { privateKey, publicKey, relayPool, setPrivateKey, setPublicKey } =
+    useContext(RelayPoolContext)
   const { t } = useTranslation('common')
+  const theme = useTheme()
   const [loading, setLoading] = useState<boolean>(false)
   const [status, setStatus] = useState<number>(0)
+  const [isPrivate, setIsPrivate] = useState<boolean>(true)
   const [totalPets, setTotalPets] = useState<number>()
   const [inputValue, setInputValue] = useState<string>('')
   const [loadedUsers, setLoadedUsers] = useState<number>()
-  const styles = StyleSheet.create({
-    input: {
-      marginVertical: 2,
-      padding: 32,
-    },
-  })
 
   useEffect(() => {
     if (relayPool && publicKey) {
@@ -95,9 +94,17 @@ export const Logger: React.FC = () => {
   const onPress: () => void = () => {
     if (inputValue && inputValue !== '') {
       setLoading(true)
-      setPrivateKey(inputValue)
       setStatus(1)
-      SInfo.setItem('privateKey', inputValue, {})
+      if (isPrivate) {
+        setPrivateKey(inputValue)
+        const publicKey: string = getPublickey(inputValue)
+        setPublicKey(publicKey)
+        SInfo.setItem('privateKey', inputValue, {})
+        SInfo.setItem('publicKey', publicKey, {})
+      } else {
+        setPublicKey(inputValue)
+        SInfo.setItem('publicKey', inputValue, {})
+      }
     }
   }
 
@@ -107,18 +114,48 @@ export const Logger: React.FC = () => {
     2: t('landing.loadingContacts'),
     3: t('landing.ready'),
   }
+  const styles = StyleSheet.create({
+    inputsContainer: {
+      flexDirection: 'row',
+      marginVertical: 10,
+      padding: 32,
+    },
+    input: {
+      flex: 4,
+      paddingLeft: 32,
+    },
+    keyButton: {
+      flex: 1,
+      marginTop: 18,
+    },
+  })
 
-  return !privateKey || status !== 0 ? (
+  const keyButton = (
+    <Icon name={isPrivate ? 'lock' : 'eye'} size={16} color={theme['text-basic-color']} solid />
+  )
+
+  return !privateKey || !publicKey || status !== 0 ? (
     <>
-      <Input
-        style={styles.input}
-        size='medium'
-        label={t('landing.privateKey')}
-        secureTextEntry={true}
-        onChangeText={setInputValue}
-        value={inputValue}
-        disabled={loading}
-      />
+      <Layout style={styles.inputsContainer}>
+        <Layout style={styles.keyButton}>
+          <Button
+            onPress={() => setIsPrivate(!isPrivate)}
+            disabled={loading}
+            accessoryLeft={keyButton}
+            status={isPrivate ? 'warning' : 'default'}
+          />
+        </Layout>
+        <Layout style={styles.input}>
+          <Input
+            size='medium'
+            label={isPrivate ? t('landing.privateKey') : t('landing.publicKey')}
+            secureTextEntry={true}
+            onChangeText={setInputValue}
+            value={inputValue}
+            disabled={loading}
+          />
+        </Layout>
+      </Layout>
       <Button onPress={onPress} disabled={loading}>
         {statusName[status]}
       </Button>
