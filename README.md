@@ -2,6 +2,7 @@
 [![Frontend Build](https://github.com/KoalaSat/nostros/actions/workflows/android-build.yml/badge.svg?branch=main)](https://github.com/KoalaSat/nostros/actions/workflows/android-build.yml)
 [![release](https://img.shields.io/github/v/release/KoalaSat/nostros)](https://github.com/KoalaSat/nostros/releases)
 [![Apache 2 license](https://img.shields.io/badge/license-Apache%202-blue)](https://github.com/KoalaSat/nostros/blob/main/LICENSE)
+[![Telegram](https://img.shields.io/badge/chat-telegram-brightgreen)](https://t.me/+zhvZAE9L0X40ZjI0)
 
 ![nostros_logo](https://user-images.githubusercontent.com/111684255/197865267-1701b33b-2eb9-4704-86eb-a6ea8861fe1e.png)
 
