@@ -4,8 +4,7 @@ module.exports = {
     'eslint:recommended',
     'plugin:react/recommended',
     'standard-with-typescript',
-    'prettier',
-    '@react-native-community',
+    'prettier'
   ],
   parserOptions: {
     ecmaVersion: 8,

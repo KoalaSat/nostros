@@ -1,21 +1,21 @@
-import React, { useEffect, useState } from 'react';
-import { SQLiteDatabase } from 'react-native-sqlite-storage';
-import { initDatabase } from '../Functions/DatabaseFunctions';
-import { createInitDatabase } from '../Functions/DatabaseFunctions/Migrations';
-import FlashMessage from 'react-native-flash-message';
+import React, { useEffect, useState } from 'react'
+import { SQLiteDatabase } from 'react-native-sqlite-storage'
+import { initDatabase } from '../Functions/DatabaseFunctions'
+import { createInitDatabase } from '../Functions/DatabaseFunctions/Migrations'
+import FlashMessage from 'react-native-flash-message'
 // import EncryptedStorage from 'react-native-encrypted-storage';
 
 export interface AppContextProps {
-  page: string;
-  goToPage: (path: string, root?: boolean) => void;
-  goBack: () => void;
-  init: () => void;
-  loadingDb: boolean;
-  database: SQLiteDatabase | null;
+  page: string
+  goToPage: (path: string, root?: boolean) => void
+  goBack: () => void
+  init: () => void
+  loadingDb: boolean
+  database: SQLiteDatabase | null
 }
 
 export interface AppContextProviderProps {
-  children: React.ReactNode;
+  children: React.ReactNode
 }
 
 export const initialAppContext: AppContextProps = {
@@ -24,43 +24,43 @@ export const initialAppContext: AppContextProps = {
   goToPage: () => {},
   goBack: () => {},
   loadingDb: true,
-  database: null,
-};
+  database: null
+}
 
 export const AppContextProvider = ({ children }: AppContextProviderProps): JSX.Element => {
-  const [page, setPage] = useState<string>(initialAppContext.page);
-  const [database, setDatabase] = useState<SQLiteDatabase | null>(null);
-  const [loadingDb, setLoadingDb] = useState<boolean>(initialAppContext.loadingDb);
+  const [page, setPage] = useState<string>(initialAppContext.page)
+  const [database, setDatabase] = useState<SQLiteDatabase | null>(null)
+  const [loadingDb, setLoadingDb] = useState<boolean>(initialAppContext.loadingDb)
 
   const init: () => void = () => {
-    const result = '';
+    const result = ''
     // EncryptedStorage.getItem('privateKey').then((result) => {
-      const db = initDatabase();
-      setDatabase(db);
-      if (!result || result === '') {
-        createInitDatabase(db).then(() => {
-          setLoadingDb(false);
-        });
-      } else {
-        setLoadingDb(false);
-      }
+    const db = initDatabase()
+    setDatabase(db)
+    if (!result || result === '') {
+      createInitDatabase(db).then(() => {
+        setLoadingDb(false)
+      })
+    } else {
+      setLoadingDb(false)
+    }
     // });
-  };
+  }
 
-  useEffect(init, []);
+  useEffect(init, [])
 
   const goToPage: (path: string, root?: boolean) => void = (path, root) => {
     if (page !== '' && !root) {
-      setPage(`${page}%${path}`);
+      setPage(`${page}%${path}`)
     } else {
-      setPage(path);
+      setPage(path)
     }
-  };
+  }
 
   const goBack: () => void = () => {
-    const breadcrump = page.split('%');
-    setPage(breadcrump.slice(0, -1).join('%') || 'home');
-  };
+    const breadcrump = page.split('%')
+    setPage(breadcrump.slice(0, -1).join('%') || 'home')
+  }
 
   return (
     <AppContext.Provider
@@ -70,13 +70,13 @@ export const AppContextProvider = ({ children }: AppContextProviderProps): JSX.E
         goToPage,
         goBack,
         loadingDb,
-        database,
+        database
       }}
     >
       {children}
       <FlashMessage position='top' />
     </AppContext.Provider>
-  );
-};
+  )
+}
 
-export const AppContext = React.createContext(initialAppContext);
+export const AppContext = React.createContext(initialAppContext)

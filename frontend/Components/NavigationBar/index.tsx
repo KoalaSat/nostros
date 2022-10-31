@@ -1,26 +1,26 @@
-import React, { useContext } from 'react';
-import { BottomNavigation, BottomNavigationTab, useTheme } from '@ui-kitten/components';
-import { AppContext } from '../../Contexts/AppContext';
-import Icon from 'react-native-vector-icons/FontAwesome5';
-import { RelayPoolContext } from '../../Contexts/RelayPoolContext';
+import React, { useContext } from 'react'
+import { BottomNavigation, BottomNavigationTab, useTheme } from '@ui-kitten/components'
+import { AppContext } from '../../Contexts/AppContext'
+import Icon from 'react-native-vector-icons/FontAwesome5'
+import { RelayPoolContext } from '../../Contexts/RelayPoolContext'
 
 export const NavigationBar: React.FC = () => {
-  const { goToPage, page } = useContext(AppContext);
-  const { publicKey } = useContext(RelayPoolContext);
-  const theme = useTheme();
-  const profilePage = `profile#${publicKey ?? ''}`;
+  const { goToPage, page } = useContext(AppContext)
+  const { publicKey } = useContext(RelayPoolContext)
+  const theme = useTheme()
+  const profilePage = `profile#${publicKey ?? ''}`
 
-  const pageIndex: string[] = ['home', 'contacts', profilePage];
+  const pageIndex: string[] = ['home', 'contacts', profilePage]
 
   const getIndex: () => number = () => {
     if (page.includes('profile')) {
-      return page === profilePage ? 2 : 1;
+      return page === profilePage ? 2 : 1
     } else if (page.includes('note#')) {
-      return 0;
+      return 0
     } else {
-      return pageIndex.indexOf(page);
+      return pageIndex.indexOf(page)
     }
-  };
+  }
 
   return page ? (
     <BottomNavigation
@@ -39,7 +39,7 @@ export const NavigationBar: React.FC = () => {
     </BottomNavigation>
   ) : (
     <></>
-  );
-};
+  )
+}
 
-export default NavigationBar;
+export default NavigationBar

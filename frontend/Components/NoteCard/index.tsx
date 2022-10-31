@@ -1,31 +1,31 @@
-import React, { useContext, useState } from 'react';
-import { Button, Layout, Text, useTheme } from '@ui-kitten/components';
-import { Note } from '../../Functions/DatabaseFunctions/Notes';
-import { StyleSheet, TouchableOpacity } from 'react-native';
-import UserAvatar from 'react-native-user-avatar';
-import Markdown from 'react-native-markdown-display';
-import { EventKind } from '../../lib/nostr/Events';
-import Icon from 'react-native-vector-icons/FontAwesome5';
-import { RelayPoolContext } from '../../Contexts/RelayPoolContext';
-import { storeRelay } from '../../Functions/DatabaseFunctions/Relays';
-import { AppContext } from '../../Contexts/AppContext';
-import { showMessage } from 'react-native-flash-message';
-import { t } from 'i18next';
-import { getReplyEventId } from '../../Functions/RelayFunctions/Events';
-import moment from 'moment';
-import { populateRelay } from '../../Functions/RelayFunctions';
+import React, { useContext, useState } from 'react'
+import { Button, Layout, Text, useTheme } from '@ui-kitten/components'
+import { Note } from '../../Functions/DatabaseFunctions/Notes'
+import { StyleSheet, TouchableOpacity } from 'react-native'
+import UserAvatar from 'react-native-user-avatar'
+import Markdown from 'react-native-markdown-display'
+import { EventKind } from '../../lib/nostr/Events'
+import Icon from 'react-native-vector-icons/FontAwesome5'
+import { RelayPoolContext } from '../../Contexts/RelayPoolContext'
+import { storeRelay } from '../../Functions/DatabaseFunctions/Relays'
+import { AppContext } from '../../Contexts/AppContext'
+import { showMessage } from 'react-native-flash-message'
+import { t } from 'i18next'
+import { getReplyEventId } from '../../Functions/RelayFunctions/Events'
+import moment from 'moment'
+import { populateRelay } from '../../Functions/RelayFunctions'
 
 interface NoteCardProps {
-  note: Note;
+  note: Note
 }
 
 export const NoteCard: React.FC<NoteCardProps> = ({ note }) => {
-  const theme = useTheme();
-  const { relayPool, setRelayPool, publicKey } = useContext(RelayPoolContext);
-  const { database, goToPage } = useContext(AppContext);
+  const theme = useTheme()
+  const { relayPool, setRelayPool, publicKey } = useContext(RelayPoolContext)
+  const { database, goToPage } = useContext(AppContext)
   const [relayAdded, setRelayAdded] = useState<boolean>(
-    Object.keys(relayPool?.relays ?? {}).includes(note.content),
-  );
+    Object.keys(relayPool?.relays ?? {}).includes(note.content)
+  )
 
   const textNote: () => JSX.Element = () => {
     return (
@@ -65,26 +65,26 @@ export const NoteCard: React.FC<NoteCardProps> = ({ note }) => {
           </Layout>
         </Layout>
       </>
-    );
-  };
+    )
+  }
 
   const relayNote: () => JSX.Element = () => {
-    const relayName = note.content.split('wss://')[1].split('/')[0];
+    const relayName = note.content.split('wss://')[1].split('/')[0]
 
     const addRelay: () => void = () => {
       if (relayPool && database && publicKey) {
-        relayPool.add(note.content);
-        setRelayPool(relayPool);
-        storeRelay({ url: note.content }, database);
-        populateRelay(relayPool, database, publicKey);
+        relayPool.add(note.content)
+        setRelayPool(relayPool)
+        storeRelay({ url: note.content }, database)
+        populateRelay(relayPool, database, publicKey)
         showMessage({
           message: t('alerts.relayAdded'),
           description: note.content,
-          type: 'success',
-        });
-        setRelayAdded(true);
+          type: 'success'
+        })
+        setRelayAdded(true)
       }
-    };
+    }
 
     return (
       <>
@@ -107,97 +107,97 @@ export const NoteCard: React.FC<NoteCardProps> = ({ note }) => {
           )}
         </Layout>
       </>
-    );
-  };
+    )
+  }
 
   const onPressUser: () => void = () => {
-    goToPage(`profile#${note.pubkey}`);
-  };
+    goToPage(`profile#${note.pubkey}`)
+  }
 
   const styles = StyleSheet.create({
     layout: {
       flexDirection: 'row',
-      backgroundColor: 'transparent',
+      backgroundColor: 'transparent'
     },
     profile: {
       flex: 1,
       width: 38,
       alignItems: 'center',
-      backgroundColor: 'transparent',
+      backgroundColor: 'transparent'
     },
     content: {
       flex: 4,
       backgroundColor: 'transparent',
       paddingLeft: 16,
-      paddingRight: 16,
+      paddingRight: 16
     },
     contentNoAction: {
       flex: 5,
       backgroundColor: 'transparent',
       paddingLeft: 16,
-      paddingRight: 16,
+      paddingRight: 16
     },
     actions: {
       flex: 1,
-      backgroundColor: 'transparent',
+      backgroundColor: 'transparent'
     },
     pubkey: {
-      backgroundColor: 'transparent',
+      backgroundColor: 'transparent'
     },
     footer: {
-      backgroundColor: 'transparent',
+      backgroundColor: 'transparent'
     },
     tags: {
       backgroundColor: 'transparent',
-      marginLeft: 12,
+      marginLeft: 12
     },
     titleText: {
       backgroundColor: 'transparent',
-      flexDirection: 'row',
+      flexDirection: 'row'
     },
     text: {
       backgroundColor: 'transparent',
-      paddingRight: 10,
-    },
-  });
+      paddingRight: 10
+    }
+  })
 
   const markdownStyle = {
     text: {
-      color: theme['text-basic-color'],
+      color: theme['text-basic-color']
     },
     tr: {
-      borderColor: theme['border-primary-color-5'],
+      borderColor: theme['border-primary-color-5']
     },
     table: {
-      borderColor: theme['border-primary-color-5'],
+      borderColor: theme['border-primary-color-5']
     },
     blocklink: {
-      borderColor: theme['border-primary-color-5'],
+      borderColor: theme['border-primary-color-5']
     },
     hr: {
-      backgroundColor: theme['background-basic-color-3'],
+      backgroundColor: theme['background-basic-color-3']
     },
     blockquote: {
       backgroundColor: theme['background-basic-color-3'],
       borderColor: theme['border-primary-color-5'],
-      color: theme['text-basic-color'],
+      color: theme['text-basic-color']
     },
     code_inline: {
       borderColor: theme['border-primary-color-5'],
       backgroundColor: theme['background-basic-color-3'],
-      color: theme['text-basic-color'],
+      color: theme['text-basic-color']
     },
     code_block: {
       borderColor: theme['border-primary-color-5'],
       backgroundColor: theme['background-basic-color-3'],
-      color: theme['text-basic-color'],
+      color: theme['text-basic-color']
     },
     fence: {
       borderColor: theme['border-primary-color-5'],
       backgroundColor: theme['background-basic-color-3'],
-      color: theme['text-basic-color'],
-    },
-  };
+      color: theme['text-basic-color']
+    }
+  }
 
   return (
     note && (
@@ -205,7 +205,7 @@ export const NoteCard: React.FC<NoteCardProps> = ({ note }) => {
         {note.kind === EventKind.recommendServer ? relayNote() : textNote()}
       </Layout>
     )
-  );
-};
+  )
+}
 
-export default NoteCard;
+export default NoteCard

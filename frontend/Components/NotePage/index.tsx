@@ -1,59 +1,59 @@
-import { Card, Layout, TopNavigation, TopNavigationAction, useTheme } from '@ui-kitten/components';
-import React, { useCallback, useContext, useEffect, useState } from 'react';
-import { AppContext } from '../../Contexts/AppContext';
-import { getNotes, Note } from '../../Functions/DatabaseFunctions/Notes';
-import { RelayPoolContext } from '../../Contexts/RelayPoolContext';
-import Icon from 'react-native-vector-icons/FontAwesome5';
-import NoteCard from '../NoteCard';
-import { EventKind } from '../../lib/nostr/Events';
-import { RelayFilters } from '../../lib/nostr/Relay';
-import { RefreshControl, ScrollView, StyleSheet } from 'react-native';
-import Loading from '../Loading';
-import ActionButton from 'react-native-action-button';
-import { useTranslation } from 'react-i18next';
-import { getDirectReplies, getReplyEventId } from '../../Functions/RelayFunctions/Events';
+import { Card, Layout, TopNavigation, TopNavigationAction, useTheme } from '@ui-kitten/components'
+import React, { useCallback, useContext, useEffect, useState } from 'react'
+import { AppContext } from '../../Contexts/AppContext'
+import { getNotes, Note } from '../../Functions/DatabaseFunctions/Notes'
+import { RelayPoolContext } from '../../Contexts/RelayPoolContext'
+import Icon from 'react-native-vector-icons/FontAwesome5'
+import NoteCard from '../NoteCard'
+import { EventKind } from '../../lib/nostr/Events'
+import { RelayFilters } from '../../lib/nostr/Relay'
+import { RefreshControl, ScrollView, StyleSheet } from 'react-native'
+import Loading from '../Loading'
+import ActionButton from 'react-native-action-button'
+import { useTranslation } from 'react-i18next'
+import { getDirectReplies, getReplyEventId } from '../../Functions/RelayFunctions/Events'
 
 export const NotePage: React.FC = () => {
-  const { page, goBack, goToPage, database } = useContext(AppContext);
-  const { lastEventId, relayPool } = useContext(RelayPoolContext);
-  const [note, setNote] = useState<Note>();
-  const [replies, setReplies] = useState<Note[]>();
-  const [refreshing, setRefreshing] = useState(false);
-  const theme = useTheme();
-  const { t } = useTranslation('common');
-  const breadcrump = page.split('%');
-  const eventId = breadcrump[breadcrump.length - 1].split('#')[1];
+  const { page, goBack, goToPage, database } = useContext(AppContext)
+  const { lastEventId, relayPool } = useContext(RelayPoolContext)
+  const [note, setNote] = useState<Note>()
+  const [replies, setReplies] = useState<Note[]>()
+  const [refreshing, setRefreshing] = useState(false)
+  const theme = useTheme()
+  const { t } = useTranslation('common')
+  const breadcrump = page.split('%')
+  const eventId = breadcrump[breadcrump.length - 1].split('#')[1]
 
   const reload: (newEventId?: string) => void = (newEventId) => {
-    setNote(undefined);
-    setReplies(undefined);
-    relayPool?.unsubscribeAll();
+    setNote(undefined)
+    setReplies(undefined)
+    relayPool?.unsubscribeAll()
     relayPool?.subscribe('main-channel', {
       kinds: [EventKind.textNote],
-      ids: [newEventId ?? eventId],
-    });
-  };
+      ids: [newEventId ?? eventId]
+    })
+  }
 
-  useEffect(reload, []);
+  useEffect(reload, [])
 
   useEffect(() => {
-    subscribeNotes();
-  }, [lastEventId, page]);
+    subscribeNotes()
+  }, [lastEventId, page])
 
   const onPressBack: () => void = () => {
-    relayPool?.unsubscribeAll();
-    goBack();
-  };
+    relayPool?.unsubscribeAll()
+    goBack()
+  }
 
   const onPressGoParent: () => void = () => {
     if (note) {
-      const replyId = getReplyEventId(note);
+      const replyId = getReplyEventId(note)
       if (replyId) {
-        goToPage(`note#${replyId}`);
-        reload(replyId);
+        goToPage(`note#${replyId}`)
+        reload(replyId)
       }
     }
-  };
+  }
 
   const renderBackAction = (): JSX.Element => {
     return (
@@ -61,8 +61,8 @@ export const NotePage: React.FC = () => {
         icon={<Icon name='arrow-left' size={16} color={theme['text-basic-color']} />}
         onPress={onPressBack}
       />
-    );
-  };
+    )
+  }
 
   const renderNoteActions = (): JSX.Element => {
     return note && getReplyEventId(note) ? (
@@ -72,20 +72,20 @@ export const NotePage: React.FC = () => {
       />
     ) : (
       <></>
-    );
-  };
+    )
+  }
 
   const onPressNote: (note: Note) => void = (note) => {
     if (note.kind !== EventKind.recommendServer) {
-      const replyEventId = getReplyEventId(note);
+      const replyEventId = getReplyEventId(note)
       if (replyEventId && replyEventId !== eventId) {
-        goToPage(`note#${replyEventId}`);
+        goToPage(`note#${replyEventId}`)
       } else if (note.id) {
-        goToPage(`note#${note.id}`);
+        goToPage(`note#${note.id}`)
       }
-      reload();
+      reload()
     }
-  };
+  }
 
   const itemCard: (note?: Note) => JSX.Element = (note) => {
     if (note?.id === eventId) {
@@ -93,72 +93,72 @@ export const NotePage: React.FC = () => {
         <Layout style={styles.main} level='2' key={note.id ?? ''}>
           <NoteCard note={note} />
         </Layout>
-      );
+      )
     } else if (note) {
       return (
         <Card onPress={() => onPressNote(note)} key={note.id ?? ''}>
           <NoteCard note={note} />
         </Card>
-      );
+      )
     } else {
-      return <></>;
+      return <></>
     }
-  };
+  }
 
   const subscribeNotes: () => Promise<void> = async () => {
     return await new Promise<void>((resolve, reject) => {
       if (database) {
         getNotes(database, { filters: { id: eventId } }).then((events) => {
           if (events.length > 0) {
-            const event = events[0];
-            setNote(event);
+            const event = events[0]
+            setNote(event)
             if (!replies) {
               relayPool?.subscribe('main-channel', {
                 kinds: [EventKind.textNote],
-                '#e': [eventId],
-              });
+                '#e': [eventId]
+              })
             }
             getNotes(database, { filters: { reply_event_id: eventId } }).then((notes) => {
-              const rootReplies = getDirectReplies(event, notes);
+              const rootReplies = getDirectReplies(event, notes)
               if (rootReplies.length > 0) {
-                setReplies(rootReplies as Note[]);
+                setReplies(rootReplies as Note[])
                 const message: RelayFilters = {
                   kinds: [EventKind.meta],
-                  authors: [...rootReplies.map((note) => note.pubkey), event.pubkey],
-                };
-                relayPool?.subscribe('main-channel', message);
+                  authors: [...rootReplies.map((note) => note.pubkey), event.pubkey]
+                }
+                relayPool?.subscribe('main-channel', message)
               } else {
-                setReplies([]);
+                setReplies([])
               }
-              resolve();
-            });
+              resolve()
+            })
           } else {
-            resolve();
+            resolve()
           }
-        });
+        })
       } else {
-        reject(new Error('Not Ready'));
+        reject(new Error('Not Ready'))
       }
-    });
-  };
+    })
+  }
 
   const onRefresh = useCallback(() => {
-    setRefreshing(true);
-    relayPool?.unsubscribeAll();
-    subscribeNotes().finally(() => setRefreshing(false));
-  }, []);
+    setRefreshing(true)
+    relayPool?.unsubscribeAll()
+    subscribeNotes().finally(() => setRefreshing(false))
+  }, [])
 
   const styles = StyleSheet.create({
     main: {
       paddingBottom: 32,
       paddingTop: 26,
       paddingLeft: 26,
-      paddingRight: 26,
+      paddingRight: 26
     },
     loading: {
-      maxHeight: 160,
-    },
-  });
+      maxHeight: 160
+    }
+  })
 
   return (
     <>
@@ -193,7 +193,7 @@ export const NotePage: React.FC = () => {
         </ActionButton.Item>
       </ActionButton> */}
     </>
-  );
-};
+  )
+}
 
-export default NotePage;
+export default NotePage

@@ -1,5 +1,5 @@
-import { SQLiteDatabase } from 'react-native-sqlite-storage';
-import { simpleExecute } from '..';
+import { SQLiteDatabase } from 'react-native-sqlite-storage'
+import { simpleExecute } from '..'
 
 export const createInitDatabase: (db: SQLiteDatabase) => Promise<void> = async (db) => {
   return await new Promise<void>((resolve) => {
@@ -17,7 +17,7 @@ export const createInitDatabase: (db: SQLiteDatabase) => Promise<void> = async (
           reply_event_id TEXT
         );
       `,
-      db,
+      db
     ).then(() => {
       simpleExecute(
         `
@@ -30,7 +30,7 @@ export const createInitDatabase: (db: SQLiteDatabase) => Promise<void> = async (
           contact BOOLEAN DEFAULT FALSE
         );
       `,
-        db,
+        db
       ).then(() => {
         simpleExecute(
           `
@@ -39,9 +39,9 @@ export const createInitDatabase: (db: SQLiteDatabase) => Promise<void> = async (
               pet INTEGER
             );
           `,
-          db,
-        ).then(() => resolve());
-      });
-    });
-  });
-};
+          db
+        ).then(() => resolve())
+      })
+    })
+  })
+}

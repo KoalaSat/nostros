@@ -1,6 +1,6 @@
-import App from './frontend';
-import { Buffer as SafeBuffer } from 'safe-buffer';
+import App from './frontend'
+import { Buffer as SafeBuffer } from 'safe-buffer'
 
-global.Buffer = SafeBuffer;
+global.Buffer = SafeBuffer
 
-export default App;
+export default App

@@ -1,39 +1,39 @@
-import { SQLiteDatabase } from 'react-native-sqlite-storage';
-import { getItems } from '..';
-import { Event, EventKind, verifySignature } from '../../../lib/nostr/Events';
-import { tagToUser } from '../../RelayFunctions/Users';
-import { errorCallback } from '../Errors';
+import { SQLiteDatabase } from 'react-native-sqlite-storage'
+import { getItems } from '..'
+import { Event, EventKind, verifySignature } from '../../../lib/nostr/Events'
+import { tagToUser } from '../../RelayFunctions/Users'
+import { errorCallback } from '../Errors'
 
 export interface User {
-  id: string;
-  main_relay?: string;
-  name?: string;
-  picture?: string;
-  about?: string;
-  contact?: boolean;
+  id: string
+  main_relay?: string
+  name?: string
+  picture?: string
+  about?: string
+  contact?: boolean
 }
 
 const databaseToEntity: (object: object) => User = (object) => {
-  return object as User;
-};
+  return object as User
+}
 
 export const insertUserMeta: (event: Event, db: SQLiteDatabase) => Promise<void> = async (
   event,
-  db,
+  db
 ) => {
   return await new Promise<void>((resolve, reject) => {
-    if (!verifySignature(event)) return reject(new Error('Bad signature'));
-    if (event.kind !== EventKind.meta) return reject(new Error('Bad Kind'));
+    if (!verifySignature(event)) return reject(new Error('Bad signature'))
+    if (event.kind !== EventKind.meta) return reject(new Error('Bad Kind'))
 
-    const user: User = JSON.parse(event.content);
-    user.id = event.pubkey;
+    const user: User = JSON.parse(event.content)
+    user.id = event.pubkey
     getUser(user.id, db).then((userDb) => {
-      let userQuery = '';
-      const id = user.id?.replace("\\'", "'") ?? '';
-      const name = user.name?.replace("\\'", "'") ?? '';
-      const mainRelay = user.main_relay?.replace("\\'", "'") ?? '';
-      const about = user.about?.replace("\\'", "'") ?? '';
-      const picture = user.picture?.replace("\\'", "'") ?? '';
+      let userQuery = ''
+      const id = user.id?.replace("\\'", "'") ?? ''
+      const name = user.name?.replace("\\'", "'") ?? ''
+      const mainRelay = user.main_relay?.replace("\\'", "'") ?? ''
+      const about = user.about?.replace("\\'", "'") ?? ''
+      const picture = user.picture?.replace("\\'", "'") ?? ''
 
       if (userDb) {
         userQuery = `
@@ -43,7 +43,7 @@ export const insertUserMeta: (event: Event, db: SQLiteDatabase) => Promise<void>
           about = '${about.split("'").join("''")}',
           picture = '${picture.split("'").join("''")}'
           WHERE id = '${user.id}';
-        `;
+        `
       } else {
         userQuery = `
           INSERT INTO nostros_users 
@@ -52,35 +52,35 @@ export const insertUserMeta: (event: Event, db: SQLiteDatabase) => Promise<void>
           ('${id}', '${name.split("'").join("''")}', '${picture.split("'").join("''")}', '${about
           .split("'")
           .join("''")}', '');
-        `;
+        `
       }
       db.transaction((transaction) => {
-        transaction.executeSql(userQuery, [], () => resolve(), errorCallback(userQuery, reject));
-      });
-    });
-  });
-};
+        transaction.executeSql(userQuery, [], () => resolve(), errorCallback(userQuery, reject))
+      })
+    })
+  })
+}
 
 export const insertUserContact: (event: Event, db: SQLiteDatabase) => Promise<void> = async (
   event,
-  db,
+  db
 ) => {
   return await new Promise<void>((resolve, reject) => {
-    if (!verifySignature(event)) return reject(new Error('Bad signature'));
-    if (event.kind !== EventKind.petNames) return reject(new Error('Bad Kind'));
-    const userTags: string[] = event.tags.map((tag) => tagToUser(tag).id);
+    if (!verifySignature(event)) return reject(new Error('Bad signature'))
+    if (event.kind !== EventKind.petNames) return reject(new Error('Bad Kind'))
+    const userTags: string[] = event.tags.map((tag) => tagToUser(tag).id)
     userTags.forEach((userId) => {
-      addContact(userId, db);
-    });
-    resolve();
-  });
-};
+      addContact(userId, db)
+    })
+    resolve()
+  })
+}
 
 export const getUser: (pubkey: string, db: SQLiteDatabase) => Promise<User | null> = async (
   pubkey,
-  db,
+  db
 ) => {
-  const userQuery = `SELECT * FROM nostros_users WHERE id = '${pubkey}';`;
+  const userQuery = `SELECT * FROM nostros_users WHERE id = '${pubkey}';`
   return await new Promise<User | null>((resolve, reject) => {
     db.readTransaction((transaction) => {
       transaction.executeSql(
@@ -88,83 +88,83 @@ export const getUser: (pubkey: string, db: SQLiteDatabase) => Promise<User | nul
         [],
         (_transaction, resultSet) => {
           if (resultSet.rows.length > 0) {
-            const items: object[] = getItems(resultSet);
-            const user: User = databaseToEntity(items[0]);
-            resolve(user);
+            const items: object[] = getItems(resultSet)
+            const user: User = databaseToEntity(items[0])
+            resolve(user)
           } else {
-            resolve(null);
+            resolve(null)
           }
         },
-        errorCallback(userQuery, reject),
-      );
-    });
-  });
-};
+        errorCallback(userQuery, reject)
+      )
+    })
+  })
+}
 
 export const removeContact: (pubkey: string, db: SQLiteDatabase) => Promise<void> = async (
   pubkey,
-  db,
+  db
 ) => {
-  const userQuery = `UPDATE nostros_users SET contact = FALSE WHERE id = '${pubkey}'`;
+  const userQuery = `UPDATE nostros_users SET contact = FALSE WHERE id = '${pubkey}'`
   return await new Promise<void>((resolve, reject) => {
     db.transaction((transaction) => {
-      transaction.executeSql(userQuery, [], () => resolve(), errorCallback(userQuery, reject));
-    });
-  });
-};
+      transaction.executeSql(userQuery, [], () => resolve(), errorCallback(userQuery, reject))
+    })
+  })
+}
 
 export const addContact: (pubkey: string, db: SQLiteDatabase) => Promise<void> = async (
   pubkey,
-  db,
+  db
 ) => {
   return await new Promise<void>((resolve, reject) => {
     getUser(pubkey, db).then((userDb) => {
-      let userQuery = '';
+      let userQuery = ''
       if (userDb) {
         userQuery = `
           UPDATE nostros_users SET contact = TRUE WHERE id = '${pubkey}';
-        `;
+        `
       } else {
         userQuery = `
           INSERT INTO nostros_users (id, contact) VALUES ('${pubkey}', TRUE);
-        `;
+        `
       }
       db.transaction((transaction) => {
-        transaction.executeSql(userQuery, [], () => resolve(), errorCallback(userQuery, reject));
-      });
-    });
-  });
-};
+        transaction.executeSql(userQuery, [], () => resolve(), errorCallback(userQuery, reject))
+      })
+    })
+  })
+}
 
 export const getUsers: (
   db: SQLiteDatabase,
-  options: { exludeIds?: string[]; contacts?: boolean; includeIds?: string[] },
+  options: { exludeIds?: string[], contacts?: boolean, includeIds?: string[] },
 ) => Promise<User[]> = async (db, { exludeIds, contacts, includeIds }) => {
-  let userQuery = `SELECT * FROM nostros_users `;
+  let userQuery = 'SELECT * FROM nostros_users '
 
   if (contacts) {
-    userQuery += `WHERE contact = TRUE `;
+    userQuery += 'WHERE contact = TRUE '
   }
 
   if (exludeIds && exludeIds.length > 0) {
     if (!contacts) {
-      userQuery += `WHERE `;
+      userQuery += 'WHERE '
     } else {
-      userQuery += `AND `;
+      userQuery += 'AND '
     }
-    userQuery += `id NOT IN ('${exludeIds.join("', '")}') `;
+    userQuery += `id NOT IN ('${exludeIds.join("', '")}') `
   }
 
   if (includeIds && includeIds.length > 0) {
     if (!contacts && !exludeIds) {
-      userQuery += `WHERE `;
+      userQuery += 'WHERE '
     } else {
-      userQuery += `OR `;
+      userQuery += 'OR '
     }
-    userQuery += `id IN ('${includeIds.join("', '")}') `;
+    userQuery += `id IN ('${includeIds.join("', '")}') `
   }
 
-  userQuery += `ORDER BY name,id`;
+  userQuery += 'ORDER BY name,id'
 
   return await new Promise<User[]>((resolve, reject) => {
     db.readTransaction((transaction) => {
@@ -173,15 +173,15 @@ export const getUsers: (
         [],
         (_transaction, resultSet) => {
           if (resultSet.rows.length > 0) {
-            const items: object[] = getItems(resultSet);
-            const users: User[] = items.map((object) => databaseToEntity(object));
-            resolve(users);
+            const items: object[] = getItems(resultSet)
+            const users: User[] = items.map((object) => databaseToEntity(object))
+            resolve(users)
           } else {
-            resolve([]);
+            resolve([])
           }
         },
-        errorCallback(userQuery, reject),
-      );
-    });
-  });
-};
+        errorCallback(userQuery, reject)
+      )
+    })
+  })
+}
