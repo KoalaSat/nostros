@@ -13,7 +13,7 @@ import { getDirectReplies, getReplyEventId } from '../../Functions/RelayFunction
 
 export const NotePage: React.FC = () => {
   const { page, goBack, goToPage, database } = useContext(AppContext)
-  const { lastEventId, relayPool } = useContext(RelayPoolContext)
+  const { lastEventId, relayPool, privateKey } = useContext(RelayPoolContext)
   const [note, setNote] = useState<Note>()
   const [replies, setReplies] = useState<Note[]>()
   const [refreshing, setRefreshing] = useState(false)
@@ -176,24 +176,26 @@ export const NotePage: React.FC = () => {
           <Loading style={styles.loading} />
         )}
       </Layout>
-      <TouchableOpacity
-        style={{
-          borderWidth: 1,
-          borderColor: 'rgba(0,0,0,0.2)',
-          alignItems: 'center',
-          justifyContent: 'center',
-          width: 65,
-          position: 'absolute',
-          bottom: 10,
-          right: 10,
-          height: 65,
-          backgroundColor: theme['color-warning-500'],
-          borderRadius: 100,
-        }}
-        onPress={() => goToPage(`send#${eventId}`)}
-      >
-        <Icon name='reply' size={30} color={theme['text-basic-color']} solid />
-      </TouchableOpacity>
+      {privateKey && (
+        <TouchableOpacity
+          style={{
+            borderWidth: 1,
+            borderColor: 'rgba(0,0,0,0.2)',
+            alignItems: 'center',
+            justifyContent: 'center',
+            width: 65,
+            position: 'absolute',
+            bottom: 10,
+            right: 10,
+            height: 65,
+            backgroundColor: theme['color-warning-500'],
+            borderRadius: 100,
+          }}
+          onPress={() => goToPage(`send#${eventId}`)}
+        >
+          <Icon name='reply' size={30} color={theme['text-basic-color']} solid />
+        </TouchableOpacity>
+      )}
     </>
   )
 }

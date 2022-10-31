@@ -9,7 +9,7 @@ export interface OnFunctions {
 }
 
 class RelayPool {
-  constructor(relaysUrls: string[], privateKey: string, options: RelayOptions = {}) {
+  constructor(relaysUrls: string[], privateKey?: string, options: RelayOptions = {}) {
     this.relays = {}
     this.privateKey = privateKey
     this.options = options
@@ -28,7 +28,7 @@ class RelayPool {
     this.setupHandlers()
   }
 
-  private readonly privateKey: string
+  private readonly privateKey?: string
   private readonly options: RelayOptions
   private readonly onFunctions: OnFunctions
   public relays: { [url: string]: Relay }
@@ -102,6 +102,8 @@ class RelayPool {
   }
 
   public readonly sendEvent: (event: Event) => Promise<Event | null> = async (event) => {
+    if (!this.privateKey) return null
+
     const signedEvent: Event = await signEvent(event, this.privateKey)
 
     if (validateEvent(signedEvent)) {

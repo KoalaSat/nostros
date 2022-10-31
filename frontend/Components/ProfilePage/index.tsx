@@ -31,7 +31,8 @@ import { storeEvent } from '../../Functions/DatabaseFunctions/Events'
 
 export const ProfilePage: React.FC = () => {
   const { database, page, goToPage, goBack } = useContext(AppContext)
-  const { publicKey, lastEventId, relayPool, setLastEventId } = useContext(RelayPoolContext)
+  const { publicKey, privateKey, lastEventId, relayPool, setLastEventId } =
+    useContext(RelayPoolContext)
   const theme = useTheme()
   const [notes, setNotes] = useState<Note[]>()
   const [user, setUser] = useState<User>()
@@ -349,7 +350,7 @@ export const ProfilePage: React.FC = () => {
           <Loading />
         )}
       </Layout>
-      {publicKey === userId && (
+      {privateKey && publicKey === userId && (
         <TouchableOpacity
           style={{
             borderWidth: 1,

@@ -30,8 +30,10 @@ export const ConfigPage: React.FC = () => {
       setPublicKey(undefined)
       dropTables(database).then(() => {
         SInfo.deleteItem('privateKey', {}).then(() => {
-          init()
-          goToPage('landing', true)
+          SInfo.deleteItem('publicKey', {}).then(() => {
+            init()
+            goToPage('landing', true)
+          })
         })
       })
     }
