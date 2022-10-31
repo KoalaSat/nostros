@@ -24,7 +24,7 @@ export const initialAppContext: AppContextProps = {
   goToPage: () => {},
   goBack: () => {},
   loadingDb: true,
-  database: null
+  database: null,
 }
 
 export const AppContextProvider = ({ children }: AppContextProviderProps): JSX.Element => {
@@ -70,7 +70,7 @@ export const AppContextProvider = ({ children }: AppContextProviderProps): JSX.E
         goToPage,
         goBack,
         loadingDb,
-        database
+        database,
       }}
     >
       {children}

@@ -21,7 +21,7 @@ export interface RelayOptions {
 }
 
 class Relay {
-  constructor (relayUrl: string, options: RelayOptions = { reconnect: true }) {
+  constructor(relayUrl: string, options: RelayOptions = { reconnect: true }) {
     this.url = relayUrl
     this.options = options
     this.manualClose = false
@@ -110,11 +110,11 @@ class Relay {
 
   public readonly subscribe: (subId: string, filters?: RelayFilters) => void = (
     subId,
-    filters = {}
+    filters = {},
   ) => {
     const uuid = uuidv5(
       `${subId}${JSON.stringify(filters)}`,
-      '57003344-b2cb-4b6f-a579-fae9e82c370a'
+      '57003344-b2cb-4b6f-a579-fae9e82c370a',
     )
     if (this.subscriptions[subId]?.includes(uuid)) {
       console.log('Subscription already done!')

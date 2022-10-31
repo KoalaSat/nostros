@@ -19,7 +19,7 @@ const databaseToEntity: (object: object) => User = (object) => {
 
 export const insertUserMeta: (event: Event, db: SQLiteDatabase) => Promise<void> = async (
   event,
-  db
+  db,
 ) => {
   return await new Promise<void>((resolve, reject) => {
     if (!verifySignature(event)) return reject(new Error('Bad signature'))
@@ -63,7 +63,7 @@ export const insertUserMeta: (event: Event, db: SQLiteDatabase) => Promise<void>
 
 export const insertUserContact: (event: Event, db: SQLiteDatabase) => Promise<void> = async (
   event,
-  db
+  db,
 ) => {
   return await new Promise<void>((resolve, reject) => {
     if (!verifySignature(event)) return reject(new Error('Bad signature'))
@@ -78,7 +78,7 @@ export const insertUserContact: (event: Event, db: SQLiteDatabase) => Promise<vo
 
 export const getUser: (pubkey: string, db: SQLiteDatabase) => Promise<User | null> = async (
   pubkey,
-  db
+  db,
 ) => {
   const userQuery = `SELECT * FROM nostros_users WHERE id = '${pubkey}';`
   return await new Promise<User | null>((resolve, reject) => {
@@ -95,7 +95,7 @@ export const getUser: (pubkey: string, db: SQLiteDatabase) => Promise<User | nul
             resolve(null)
           }
         },
-        errorCallback(userQuery, reject)
+        errorCallback(userQuery, reject),
       )
     })
   })
@@ -103,7 +103,7 @@ export const getUser: (pubkey: string, db: SQLiteDatabase) => Promise<User | nul
 
 export const removeContact: (pubkey: string, db: SQLiteDatabase) => Promise<void> = async (
   pubkey,
-  db
+  db,
 ) => {
   const userQuery = `UPDATE nostros_users SET contact = FALSE WHERE id = '${pubkey}'`
   return await new Promise<void>((resolve, reject) => {
@@ -115,7 +115,7 @@ export const removeContact: (pubkey: string, db: SQLiteDatabase) => Promise<void
 
 export const addContact: (pubkey: string, db: SQLiteDatabase) => Promise<void> = async (
   pubkey,
-  db
+  db,
 ) => {
   return await new Promise<void>((resolve, reject) => {
     getUser(pubkey, db).then((userDb) => {
@@ -138,7 +138,7 @@ export const addContact: (pubkey: string, db: SQLiteDatabase) => Promise<void> =
 
 export const getUsers: (
   db: SQLiteDatabase,
-  options: { exludeIds?: string[], contacts?: boolean, includeIds?: string[] },
+  options: { exludeIds?: string[]; contacts?: boolean; includeIds?: string[] },
 ) => Promise<User[]> = async (db, { exludeIds, contacts, includeIds }) => {
   let userQuery = 'SELECT * FROM nostros_users '
 
@@ -180,7 +180,7 @@ export const getUsers: (
             resolve([])
           }
         },
-        errorCallback(userQuery, reject)
+        errorCallback(userQuery, reject),
       )
     })
   })

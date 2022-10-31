@@ -1,11 +1,9 @@
 import { Card, Layout, useTheme } from '@ui-kitten/components'
 import React, { useCallback, useContext, useEffect, useState } from 'react'
-import { useTranslation } from 'react-i18next'
-import { RefreshControl, ScrollView, StyleSheet } from 'react-native'
+import { RefreshControl, ScrollView, StyleSheet, TouchableOpacity } from 'react-native'
 import { AppContext } from '../../Contexts/AppContext'
 import { getNotes, Note } from '../../Functions/DatabaseFunctions/Notes'
 import NoteCard from '../NoteCard'
-import ActionButton from 'react-native-action-button'
 import Icon from 'react-native-vector-icons/FontAwesome5'
 import { RelayPoolContext } from '../../Contexts/RelayPoolContext'
 import { EventKind } from '../../lib/nostr/Events'
@@ -21,7 +19,6 @@ export const HomePage: React.FC = () => {
   const [notes, setNotes] = useState<Note[]>([])
   const [totalContacts, setTotalContacts] = useState<number>(-1)
   const [refreshing, setRefreshing] = useState(false)
-  const { t } = useTranslation('common')
 
   const loadNotes: () => void = () => {
     if (database && publicKey) {
@@ -40,13 +37,13 @@ export const HomePage: React.FC = () => {
             let message: RelayFilters = {
               kinds: [EventKind.textNote, EventKind.recommendServer],
               authors: users.map((user) => user.id),
-              limit: 15
+              limit: 15,
             }
 
             if (notes.length !== 0) {
               message = {
                 ...message,
-                since: notes[0].created_at
+                since: notes[0].created_at,
               }
             }
             relayPool?.subscribe('main-channel', message)
@@ -99,12 +96,12 @@ export const HomePage: React.FC = () => {
 
   const styles = StyleSheet.create({
     container: {
-      flex: 1
+      flex: 1,
     },
     icon: {
       width: 32,
-      height: 32
-    }
+      height: 32,
+    },
   })
 
   return (
@@ -121,19 +118,24 @@ export const HomePage: React.FC = () => {
           </ScrollView>
         )}
       </Layout>
-      {/* <ActionButton
-        buttonColor={theme['color-primary-400']}
-        useNativeFeedback={true}
-        fixNativeFeedbackRadius={true}
+      <TouchableOpacity
+        style={{
+          borderWidth: 1,
+          borderColor: 'rgba(0,0,0,0.2)',
+          alignItems: 'center',
+          justifyContent: 'center',
+          width: 65,
+          position: 'absolute',
+          bottom: 20,
+          right: 20,
+          height: 65,
+          backgroundColor: theme['color-warning-500'],
+          borderRadius: 100,
+        }}
+        onPress={() => goToPage(`${page}%send`)}
       >
-        <ActionButton.Item
-          buttonColor={theme['color-warning-500']}
-          title={t('homePage.send')}
-          onPress={() => goToPage(`${page}%send`)}
-        >
-          <Icon name='paper-plane' size={30} color={theme['text-basic-color']} solid />
-        </ActionButton.Item>
-      </ActionButton> */}
+        <Icon name='paper-plane' size={30} color={theme['text-basic-color']} solid />
+      </TouchableOpacity>
     </>
   )
 }

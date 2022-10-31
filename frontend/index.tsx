@@ -12,9 +12,9 @@ import i18n from './i18n.config'
 export const Frontend: React.FC = () => {
   const mapping = {
     strict: {
-      'text-font-family': 'OpenSans-Regular'
+      'text-font-family': 'OpenSans-Regular',
     },
-    components: {}
+    components: {},
   }
 
   return (

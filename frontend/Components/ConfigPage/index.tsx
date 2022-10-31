@@ -1,10 +1,4 @@
-import {
-  Button,
-  Layout,
-  TopNavigation,
-  TopNavigationAction,
-  useTheme
-} from '@ui-kitten/components'
+import { Button, Layout, TopNavigation, TopNavigationAction, useTheme } from '@ui-kitten/components'
 import React, { useContext, useEffect } from 'react'
 import { StyleSheet } from 'react-native'
 import { AppContext } from '../../Contexts/AppContext'
@@ -52,16 +46,16 @@ export const ConfigPage: React.FC = () => {
 
   const styles = StyleSheet.create({
     container: {
-      flex: 1
+      flex: 1,
     },
     actionContainer: {
       marginTop: 30,
       paddingLeft: 32,
-      paddingRight: 32
+      paddingRight: 32,
     },
     button: {
-      marginTop: 30
-    }
+      marginTop: 30,
+    },
   })
 
   return (

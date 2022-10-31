@@ -20,7 +20,7 @@ export const tagToUser: (tag: string[]) => User = (tag) => {
   return {
     id: tag[1],
     main_relay: tag[2],
-    name: tag[3]
+    name: tag[3],
   }
 }
 
@@ -36,7 +36,7 @@ export const populatePets: (
         created_at: moment().unix(),
         kind: 3,
         pubkey: publicKey,
-        tags: usersToTags(results)
+        tags: usersToTags(results),
       }
       relayPool?.sendEvent(event)
     }
@@ -54,14 +54,14 @@ export const populateProfile: (
         name: result.name,
         main_relay: result.main_relay,
         picture: result.picture,
-        about: result.about
+        about: result.about,
       }
       const event: Event = {
         content: JSON.stringify(profile),
         created_at: moment().unix(),
         kind: 0,
         pubkey: publicKey,
-        tags: usersToTags([result])
+        tags: usersToTags([result]),
       }
       relayPool?.sendEvent(event)
     }

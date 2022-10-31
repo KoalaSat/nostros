@@ -47,7 +47,7 @@ export const verifySignature: (event: Event) => Promise<boolean> = async (event)
     schnorr.verify(
       Buffer.from(event.pubkey, 'hex'),
       Buffer.from(event?.id, 'hex'),
-      Buffer.from(event?.sig, 'hex')
+      Buffer.from(event?.sig, 'hex'),
     )
     return true
   } catch (_e) {
@@ -58,13 +58,11 @@ export const verifySignature: (event: Event) => Promise<boolean> = async (event)
 
 export const signEvent: (event: Event, privateKey: string) => Promise<Event> = async (
   event,
-  privateKey
+  privateKey,
 ) => {
   const hash = getEventHash(event)
 
-  const signature: string = Buffer.from(await schnorr.sign(privateKey, hash), 'hex').toString(
-    'hex'
-  )
+  const signature: string = Buffer.from(await schnorr.sign(privateKey, hash), 'hex').toString('hex')
 
   event.id = hash.toString('hex')
   event.sig = signature

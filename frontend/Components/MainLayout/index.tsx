@@ -16,8 +16,8 @@ export const MainLayout: React.FC = () => {
 
   const styles = StyleSheet.create({
     container: {
-      flex: 1
-    }
+      flex: 1,
+    },
   })
 
   const pagination: { [pageName: string]: JSX.Element } = {
@@ -27,7 +27,7 @@ export const MainLayout: React.FC = () => {
     profile: <ProfilePage />,
     contacts: <ContactsPage />,
     note: <NotePage />,
-    config: <ConfigPage />
+    config: <ConfigPage />,
   }
 
   const breadcrump: string[] = page.split('%')

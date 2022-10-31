@@ -22,8 +22,8 @@ export const Logger: React.FC = () => {
   const styles = StyleSheet.create({
     input: {
       marginVertical: 2,
-      padding: 32
-    }
+      padding: 32,
+    },
   })
 
   useEffect(() => {
@@ -33,7 +33,7 @@ export const Logger: React.FC = () => {
       initEvents()
       relayPool?.subscribe('main-channel', {
         kinds: [EventKind.petNames],
-        authors: [publicKey]
+        authors: [publicKey],
       })
     }
   }, [relayPool, publicKey])
@@ -87,7 +87,7 @@ export const Logger: React.FC = () => {
       const authors: string[] = [publicKey, ...event.tags.map((tag) => tagToUser(tag).id)]
       relayPool?.subscribe('main-channel', {
         kinds: [EventKind.meta],
-        authors
+        authors,
       })
     }
   }
@@ -105,7 +105,7 @@ export const Logger: React.FC = () => {
     0: t('landing.connect'),
     1: t('landing.connecting'),
     2: t('landing.loadingContacts'),
-    3: t('landing.ready')
+    3: t('landing.ready'),
   }
 
   return !privateKey || status !== 0 ? (

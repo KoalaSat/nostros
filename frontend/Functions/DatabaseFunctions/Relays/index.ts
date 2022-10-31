@@ -26,12 +26,7 @@ export const storeRelay: (relay: Relay, db: SQLiteDatabase) => void = async (rel
 
       await new Promise<void>((resolve, reject) => {
         db.transaction((transaction) => {
-          transaction.executeSql(
-            eventQuery,
-            [],
-            () => resolve(),
-            errorCallback(eventQuery, reject)
-          )
+          transaction.executeSql(eventQuery, [], () => resolve(), errorCallback(eventQuery, reject))
         })
       })
     }
@@ -40,7 +35,7 @@ export const storeRelay: (relay: Relay, db: SQLiteDatabase) => void = async (rel
 
 export const searchRelays: (relayUrl: string, db: SQLiteDatabase) => Promise<Relay[]> = async (
   relayUrl,
-  db
+  db,
 ) => {
   const searchQuery = `
     SELECT * FROM nostros_relays WHERE url = '${relayUrl}';   
@@ -56,7 +51,7 @@ export const searchRelays: (relayUrl: string, db: SQLiteDatabase) => Promise<Rel
           const notes: Relay[] = items.map((object) => databaseToEntity(object))
           resolve(notes)
         },
-        errorCallback(searchQuery, reject)
+        errorCallback(searchQuery, reject),
       )
     })
   })
@@ -75,7 +70,7 @@ export const getRelays: (db: SQLiteDatabase) => Promise<Relay[]> = async (db) =>
           const relays: Relay[] = items.map((object) => databaseToEntity(object))
           resolve(relays)
         },
-        errorCallback(notesQuery, reject)
+        errorCallback(notesQuery, reject),
       )
     })
   })

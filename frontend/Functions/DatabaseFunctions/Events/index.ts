@@ -5,7 +5,7 @@ import { insertUserMeta } from '../Users'
 
 export const storeEvent: (event: Event, db: SQLiteDatabase) => Promise<void> = async (
   event,
-  db
+  db,
 ) => {
   return await new Promise<void>((resolve, reject) => {
     try {

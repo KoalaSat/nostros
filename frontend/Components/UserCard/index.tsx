@@ -17,23 +17,23 @@ export const NoteCard: React.FC<NoteCardProps> = ({ user }) => {
     layout: {
       flex: 1,
       flexDirection: 'row',
-      backgroundColor: 'transparent'
+      backgroundColor: 'transparent',
     },
     profile: {
       flex: 1,
       width: 38,
       justifyContent: 'center',
       alignItems: 'center',
-      backgroundColor: 'transparent'
+      backgroundColor: 'transparent',
     },
     content: {
       flex: 5,
-      backgroundColor: 'transparent'
+      backgroundColor: 'transparent',
     },
     actions: {
       flex: 1,
-      backgroundColor: 'transparent'
-    }
+      backgroundColor: 'transparent',
+    },
   })
 
   return (

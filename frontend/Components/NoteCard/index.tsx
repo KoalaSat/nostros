@@ -24,7 +24,7 @@ export const NoteCard: React.FC<NoteCardProps> = ({ note }) => {
   const { relayPool, setRelayPool, publicKey } = useContext(RelayPoolContext)
   const { database, goToPage } = useContext(AppContext)
   const [relayAdded, setRelayAdded] = useState<boolean>(
-    Object.keys(relayPool?.relays ?? {}).includes(note.content)
+    Object.keys(relayPool?.relays ?? {}).includes(note.content),
   )
 
   const textNote: () => JSX.Element = () => {
@@ -80,7 +80,7 @@ export const NoteCard: React.FC<NoteCardProps> = ({ note }) => {
         showMessage({
           message: t('alerts.relayAdded'),
           description: note.content,
-          type: 'success'
+          type: 'success',
         })
         setRelayAdded(true)
       }
@@ -117,86 +117,86 @@ export const NoteCard: React.FC<NoteCardProps> = ({ note }) => {
   const styles = StyleSheet.create({
     layout: {
       flexDirection: 'row',
-      backgroundColor: 'transparent'
+      backgroundColor: 'transparent',
     },
     profile: {
       flex: 1,
       width: 38,
       alignItems: 'center',
-      backgroundColor: 'transparent'
+      backgroundColor: 'transparent',
     },
     content: {
       flex: 4,
       backgroundColor: 'transparent',
       paddingLeft: 16,
-      paddingRight: 16
+      paddingRight: 16,
     },
     contentNoAction: {
       flex: 5,
       backgroundColor: 'transparent',
       paddingLeft: 16,
-      paddingRight: 16
+      paddingRight: 16,
     },
     actions: {
       flex: 1,
-      backgroundColor: 'transparent'
+      backgroundColor: 'transparent',
     },
     pubkey: {
-      backgroundColor: 'transparent'
+      backgroundColor: 'transparent',
     },
     footer: {
-      backgroundColor: 'transparent'
+      backgroundColor: 'transparent',
     },
     tags: {
       backgroundColor: 'transparent',
-      marginLeft: 12
+      marginLeft: 12,
     },
     titleText: {
       backgroundColor: 'transparent',
-      flexDirection: 'row'
+      flexDirection: 'row',
     },
     text: {
       backgroundColor: 'transparent',
-      paddingRight: 10
-    }
+      paddingRight: 10,
+    },
   })
 
   const markdownStyle = {
     text: {
-      color: theme['text-basic-color']
+      color: theme['text-basic-color'],
     },
     tr: {
-      borderColor: theme['border-primary-color-5']
+      borderColor: theme['border-primary-color-5'],
     },
     table: {
-      borderColor: theme['border-primary-color-5']
+      borderColor: theme['border-primary-color-5'],
     },
     blocklink: {
-      borderColor: theme['border-primary-color-5']
+      borderColor: theme['border-primary-color-5'],
     },
     hr: {
-      backgroundColor: theme['background-basic-color-3']
+      backgroundColor: theme['background-basic-color-3'],
     },
     blockquote: {
       backgroundColor: theme['background-basic-color-3'],
       borderColor: theme['border-primary-color-5'],
-      color: theme['text-basic-color']
+      color: theme['text-basic-color'],
     },
     code_inline: {
       borderColor: theme['border-primary-color-5'],
       backgroundColor: theme['background-basic-color-3'],
-      color: theme['text-basic-color']
+      color: theme['text-basic-color'],
     },
     code_block: {
       borderColor: theme['border-primary-color-5'],
       backgroundColor: theme['background-basic-color-3'],
-      color: theme['text-basic-color']
+      color: theme['text-basic-color'],
     },
     fence: {
       borderColor: theme['border-primary-color-5'],
       backgroundColor: theme['background-basic-color-3'],
-      color: theme['text-basic-color']
-    }
+      color: theme['text-basic-color'],
+    },
   }
 
   return (

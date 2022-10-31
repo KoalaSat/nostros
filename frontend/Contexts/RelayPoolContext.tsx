@@ -28,11 +28,11 @@ export const initialRelayPoolContext: RelayPoolContextProps = {
   setPublicKey: () => {},
   setPrivateKey: () => {},
   setRelayPool: () => {},
-  setLastEventId: () => {}
+  setLastEventId: () => {},
 }
 
 export const RelayPoolContextProvider = ({
-  children
+  children,
 }: RelayPoolContextProviderProps): JSX.Element => {
   const { database, loadingDb, goToPage, page } = useContext(AppContext)
 
@@ -51,7 +51,7 @@ export const RelayPoolContextProvider = ({
             initRelayPool.add(relay.url)
           })
         } else {
-          ['wss://relay.damus.io'].forEach((relayUrl) => {
+          ;['wss://relay.damus.io'].forEach((relayUrl) => {
             initRelayPool.add(relayUrl)
             storeRelay({ url: relayUrl }, database)
           })
@@ -64,9 +64,9 @@ export const RelayPoolContextProvider = ({
             showMessage({
               message: relay.url,
               description: event?.content ?? '',
-              type: 'info'
+              type: 'info',
             })
-          }
+          },
         )
         initRelayPool?.on(
           'event',
@@ -78,7 +78,7 @@ export const RelayPoolContextProvider = ({
                 .then(() => setLastEventId(event.id))
                 .catch(() => setLastEventId(event.id))
             }
-          }
+          },
         )
         setRelayPool(initRelayPool)
       })
@@ -128,7 +128,7 @@ export const RelayPoolContextProvider = ({
         privateKey,
         setPrivateKey,
         lastEventId,
-        setLastEventId
+        setLastEventId,
       }}
     >
       {children}

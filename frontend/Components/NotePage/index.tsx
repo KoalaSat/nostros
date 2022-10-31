@@ -7,10 +7,8 @@ import Icon from 'react-native-vector-icons/FontAwesome5'
 import NoteCard from '../NoteCard'
 import { EventKind } from '../../lib/nostr/Events'
 import { RelayFilters } from '../../lib/nostr/Relay'
-import { RefreshControl, ScrollView, StyleSheet } from 'react-native'
+import { RefreshControl, ScrollView, StyleSheet, TouchableOpacity } from 'react-native'
 import Loading from '../Loading'
-import ActionButton from 'react-native-action-button'
-import { useTranslation } from 'react-i18next'
 import { getDirectReplies, getReplyEventId } from '../../Functions/RelayFunctions/Events'
 
 export const NotePage: React.FC = () => {
@@ -20,7 +18,6 @@ export const NotePage: React.FC = () => {
   const [replies, setReplies] = useState<Note[]>()
   const [refreshing, setRefreshing] = useState(false)
   const theme = useTheme()
-  const { t } = useTranslation('common')
   const breadcrump = page.split('%')
   const eventId = breadcrump[breadcrump.length - 1].split('#')[1]
 
@@ -30,7 +27,7 @@ export const NotePage: React.FC = () => {
     relayPool?.unsubscribeAll()
     relayPool?.subscribe('main-channel', {
       kinds: [EventKind.textNote],
-      ids: [newEventId ?? eventId]
+      ids: [newEventId ?? eventId],
     })
   }
 
@@ -115,7 +112,7 @@ export const NotePage: React.FC = () => {
             if (!replies) {
               relayPool?.subscribe('main-channel', {
                 kinds: [EventKind.textNote],
-                '#e': [eventId]
+                '#e': [eventId],
               })
             }
             getNotes(database, { filters: { reply_event_id: eventId } }).then((notes) => {
@@ -124,7 +121,7 @@ export const NotePage: React.FC = () => {
                 setReplies(rootReplies as Note[])
                 const message: RelayFilters = {
                   kinds: [EventKind.meta],
-                  authors: [...rootReplies.map((note) => note.pubkey), event.pubkey]
+                  authors: [...rootReplies.map((note) => note.pubkey), event.pubkey],
                 }
                 relayPool?.subscribe('main-channel', message)
               } else {
@@ -153,11 +150,11 @@ export const NotePage: React.FC = () => {
       paddingBottom: 32,
       paddingTop: 26,
       paddingLeft: 26,
-      paddingRight: 26
+      paddingRight: 26,
     },
     loading: {
-      maxHeight: 160
-    }
+      maxHeight: 160,
+    },
   })
 
   return (
@@ -179,19 +176,24 @@ export const NotePage: React.FC = () => {
           <Loading style={styles.loading} />
         )}
       </Layout>
-      {/* <ActionButton
-        buttonColor={theme['color-primary-400']}
-        useNativeFeedback={true}
-        fixNativeFeedbackRadius={true}
+      <TouchableOpacity
+        style={{
+          borderWidth: 1,
+          borderColor: 'rgba(0,0,0,0.2)',
+          alignItems: 'center',
+          justifyContent: 'center',
+          width: 65,
+          position: 'absolute',
+          bottom: 10,
+          right: 10,
+          height: 65,
+          backgroundColor: theme['color-warning-500'],
+          borderRadius: 100,
+        }}
+        onPress={() => goToPage(`send#${eventId}`)}
       >
-        <ActionButton.Item
-          buttonColor={theme['color-warning-500']}
-          title={t('notePage.reply')}
-          onPress={() => goToPage(`send#${eventId}`)}
-        >
-          <Icon name='reply' size={30} color={theme['text-basic-color']} solid />
-        </ActionButton.Item>
-      </ActionButton> */}
+        <Icon name='reply' size={30} color={theme['text-basic-color']} solid />
+      </TouchableOpacity>
     </>
   )
 }

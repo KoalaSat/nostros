@@ -17,7 +17,7 @@ export const createInitDatabase: (db: SQLiteDatabase) => Promise<void> = async (
           reply_event_id TEXT
         );
       `,
-      db
+      db,
     ).then(() => {
       simpleExecute(
         `
@@ -30,7 +30,7 @@ export const createInitDatabase: (db: SQLiteDatabase) => Promise<void> = async (
           contact BOOLEAN DEFAULT FALSE
         );
       `,
-        db
+        db,
       ).then(() => {
         simpleExecute(
           `
@@ -39,7 +39,7 @@ export const createInitDatabase: (db: SQLiteDatabase) => Promise<void> = async (
               pet INTEGER
             );
           `,
-          db
+          db,
         ).then(() => resolve())
       })
     })

@@ -1,7 +1,6 @@
 import { Button, Card, Input, Layout, Modal, useTheme } from '@ui-kitten/components'
 import React, { useCallback, useContext, useEffect, useState } from 'react'
-import { RefreshControl, ScrollView, StyleSheet } from 'react-native'
-import ActionButton from 'react-native-action-button'
+import { RefreshControl, ScrollView, StyleSheet, TouchableOpacity } from 'react-native'
 import { AppContext } from '../../Contexts/AppContext'
 import Icon from 'react-native-vector-icons/FontAwesome5'
 import { Event, EventKind } from '../../lib/nostr/Events'
@@ -10,7 +9,7 @@ import {
   addContact,
   getUsers,
   insertUserContact,
-  User
+  User,
 } from '../../Functions/DatabaseFunctions/Users'
 import UserCard from '../UserCard'
 import { RelayPoolContext } from '../../Contexts/RelayPoolContext'
@@ -48,7 +47,7 @@ export const ContactsPage: React.FC = () => {
           insertUserContact(event, database).finally(() => setLastEventId(event?.id ?? ''))
           relayPool?.subscribe('main-channel', {
             kinds: [EventKind.meta],
-            authors: event.tags.map((tag) => tagToUser(tag).id)
+            authors: event.tags.map((tag) => tagToUser(tag).id),
           })
           relayPool?.removeOn('event', 'contacts')
         }
@@ -56,7 +55,7 @@ export const ContactsPage: React.FC = () => {
       if (publicKey) {
         relayPool?.subscribe('main-channel', {
           kinds: [EventKind.petNames],
-          authors: [publicKey]
+          authors: [publicKey],
         })
       }
       resolve()
@@ -80,29 +79,29 @@ export const ContactsPage: React.FC = () => {
 
   const styles = StyleSheet.create({
     container: {
-      flex: 1
+      flex: 1,
     },
     actionContainer: {
       marginTop: 30,
       marginBottom: 30,
       paddingLeft: 12,
-      paddingRight: 12
+      paddingRight: 12,
     },
     button: {
-      marginTop: 30
+      marginTop: 30,
     },
     icon: {
       width: 32,
-      height: 32
+      height: 32,
     },
     modal: {
       paddingLeft: 32,
       paddingRight: 32,
-      width: '100%'
+      width: '100%',
     },
     backdrop: {
-      backgroundColor: 'rgba(0, 0, 0, 0.5)'
-    }
+      backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    },
   })
 
   return (
@@ -138,19 +137,24 @@ export const ContactsPage: React.FC = () => {
           </Layout>
         </Card>
       </Modal>
-      {/* <ActionButton
-        buttonColor={theme['color-primary-400']}
-        useNativeFeedback={true}
-        fixNativeFeedbackRadius={true}
+      <TouchableOpacity
+        style={{
+          borderWidth: 1,
+          borderColor: 'rgba(0,0,0,0.2)',
+          alignItems: 'center',
+          justifyContent: 'center',
+          width: 65,
+          position: 'absolute',
+          bottom: 20,
+          right: 20,
+          height: 65,
+          backgroundColor: theme['color-warning-500'],
+          borderRadius: 100,
+        }}
+        onPress={() => setShowAddContant(true)}
       >
-        <ActionButton.Item
-          buttonColor={theme['color-warning-500']}
-          title={t('contactsPage.add')}
-          onPress={() => setShowAddContant(true)}
-        >
-          <Icon name='user-plus' size={30} color={theme['text-basic-color']} solid />
-        </ActionButton.Item>
-      </ActionButton> */}
+        <Icon name='user-plus' size={30} color={theme['text-basic-color']} solid />
+      </TouchableOpacity>
     </>
   )
 }

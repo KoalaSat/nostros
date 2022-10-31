@@ -9,18 +9,18 @@ export const LandingPage: React.FC = () => {
     tab: {
       height: '100%',
       alignItems: 'center',
-      justifyContent: 'center'
+      justifyContent: 'center',
     },
     svg: {
       height: 340,
-      width: 340
+      width: 340,
     },
     title: {
       marginTop: -40,
       marginBottom: -20,
       fontFamily: 'SpaceGrotesk-Bold',
-      fontSize: 45
-    }
+      fontSize: 45,
+    },
   })
 
   return (
@@ -28,9 +28,7 @@ export const LandingPage: React.FC = () => {
       <Layout style={styles.svg}>
         <Loading />
       </Layout>
-      <Text style={styles.title} category='h1'>
-        NOSTROS
-      </Text>
+      <Text style={styles.title}>NOSTROS</Text>
       <Logger />
     </Layout>
   )

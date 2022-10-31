@@ -5,7 +5,7 @@ export const initDatabase: () => SQLiteDatabase = () => {
   return SQLite.openDatabase(
     { name: 'nostros.db', location: 'default' },
     () => {},
-    () => {}
+    () => {},
   )
 }
 
@@ -21,7 +21,7 @@ export const getItems: (resultSet: ResultSet) => object[] = (resultSet) => {
 
 export const simpleExecute: (query: string, db: SQLiteDatabase) => Promise<Transaction> = async (
   query,
-  db
+  db,
 ) => {
   return await db.transaction((transaction) => {
     transaction.executeSql(query, [], () => {}, errorCallback(query))
@@ -32,7 +32,7 @@ export const dropTables: (db: SQLiteDatabase) => Promise<Transaction> = async (d
   const dropQueries = [
     'DROP TABLE IF EXISTS nostros_notes;',
     'DROP TABLE IF EXISTS nostros_users;',
-    'DROP TABLE IF EXISTS nostros_relays;'
+    'DROP TABLE IF EXISTS nostros_relays;',
   ]
   return await db.transaction((transaction) => {
     dropQueries.forEach((query) => {

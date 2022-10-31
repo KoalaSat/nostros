@@ -6,14 +6,14 @@ i18n.use(initReactI18next).init({
   compatibilityJSON: 'v3',
   fallbackLng: 'en',
   resources: {
-    en
+    en,
   },
   ns: ['common'],
   defaultNS: 'common',
   debug: true,
   interpolation: {
-    escapeValue: false
-  }
+    escapeValue: false,
+  },
 })
 
 export default i18n

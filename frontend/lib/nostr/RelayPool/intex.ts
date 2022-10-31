@@ -9,7 +9,7 @@ export interface OnFunctions {
 }
 
 class RelayPool {
-  constructor (relaysUrls: string[], privateKey: string, options: RelayOptions = {}) {
+  constructor(relaysUrls: string[], privateKey: string, options: RelayOptions = {}) {
     this.relays = {}
     this.privateKey = privateKey
     this.options = options
@@ -18,7 +18,7 @@ class RelayPool {
       open: {},
       event: {},
       esoe: {},
-      notice: {}
+      notice: {},
     }
 
     relaysUrls.forEach((relayUrl) => {
@@ -42,17 +42,17 @@ class RelayPool {
       }
       relay.onEvent = (eventRelay, subId, event) => {
         Object.keys(this.onFunctions.event).forEach((id) =>
-          this.onFunctions.event[id](eventRelay, subId, event)
+          this.onFunctions.event[id](eventRelay, subId, event),
         )
       }
       relay.onEsoe = (eventRelay, subId) => {
         Object.keys(this.onFunctions.esoe).forEach((id) =>
-          this.onFunctions.esoe[id](eventRelay, subId)
+          this.onFunctions.esoe[id](eventRelay, subId),
         )
       }
       relay.onNotice = (eventRelay, events) => {
         Object.keys(this.onFunctions.notice).forEach((id) =>
-          this.onFunctions.notice[id](eventRelay, events)
+          this.onFunctions.notice[id](eventRelay, events),
         )
       }
     })
@@ -68,7 +68,7 @@ class RelayPool {
 
   public removeOn: (method: 'open' | 'event' | 'esoe' | 'notice', id: string) => void = (
     method,
-    id
+    id,
   ) => {
     delete this.onFunctions[method][id]
   }

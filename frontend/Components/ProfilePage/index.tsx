@@ -5,7 +5,7 @@ import {
   Text,
   TopNavigation,
   TopNavigationAction,
-  useTheme
+  useTheme,
 } from '@ui-kitten/components'
 import React, { useCallback, useContext, useEffect, useState } from 'react'
 import { RefreshControl, ScrollView, StyleSheet, TouchableOpacity } from 'react-native'
@@ -19,13 +19,11 @@ import {
   removeContact,
   addContact,
   User,
-  getUsers
+  getUsers,
 } from '../../Functions/DatabaseFunctions/Users'
 import { EventKind, Event } from '../../lib/nostr/Events'
 import Relay, { RelayFilters } from '../../lib/nostr/Relay'
 import Icon from 'react-native-vector-icons/FontAwesome5'
-import ActionButton from 'react-native-action-button'
-import { useTranslation } from 'react-i18next'
 import { populatePets, tagToUser } from '../../Functions/RelayFunctions/Users'
 import { getReplyEventId } from '../../Functions/RelayFunctions/Events'
 import Loading from '../Loading'
@@ -36,7 +34,6 @@ export const ProfilePage: React.FC = () => {
   const { publicKey, lastEventId, relayPool, setLastEventId } = useContext(RelayPoolContext)
   const theme = useTheme()
   const [notes, setNotes] = useState<Note[]>()
-  const { t } = useTranslation('common')
   const [user, setUser] = useState<User>()
   const [contactsIds, setContactsIds] = useState<string[]>()
   const [isContact, setIsContact] = useState<boolean>()
@@ -152,7 +149,7 @@ export const ProfilePage: React.FC = () => {
           const notesEvent: RelayFilters = {
             kinds: [EventKind.textNote, EventKind.recommendServer],
             authors: [userId],
-            limit: 10
+            limit: 10,
           }
 
           if (results.length >= 10) {
@@ -169,7 +166,7 @@ export const ProfilePage: React.FC = () => {
     return await new Promise<void>((resolve, reject) => {
       relayPool?.subscribe('main-channel', {
         kinds: [EventKind.meta, EventKind.petNames],
-        authors: [userId]
+        authors: [userId],
       })
       relayPool?.on('event', 'profile', (_relay: Relay, _subId?: string, event?: Event) => {
         console.log('PROFILE EVENT =======>', event)
@@ -195,19 +192,19 @@ export const ProfilePage: React.FC = () => {
 
   const styles = StyleSheet.create({
     list: {
-      flex: 1
+      flex: 1,
     },
     icon: {
       width: 32,
-      height: 32
+      height: 32,
     },
     settingsIcon: {
       width: 48,
-      height: 48
+      height: 48,
     },
     avatar: {
       width: 130,
-      marginBottom: 16
+      marginBottom: 16,
     },
     profile: {
       flex: 1,
@@ -215,27 +212,27 @@ export const ProfilePage: React.FC = () => {
       alignItems: 'center',
       marginBottom: 2,
       paddingLeft: 32,
-      paddingRight: 32
+      paddingRight: 32,
     },
     loading: {
-      maxHeight: 160
+      maxHeight: 160,
     },
     about: {
       flex: 4,
-      maxHeight: 200
+      maxHeight: 200,
     },
     stats: {
-      flex: 1
+      flex: 1,
     },
     statsItem: {
       flexDirection: 'row',
       alignItems: 'center',
-      marginBottom: 5
+      marginBottom: 5,
     },
     description: {
       marginTop: 16,
-      flexDirection: 'row'
-    }
+      flexDirection: 'row',
+    },
   })
 
   const itemCard: (note: Note) => JSX.Element = (note) => {
@@ -353,20 +350,24 @@ export const ProfilePage: React.FC = () => {
         )}
       </Layout>
       {publicKey === userId && (
-        // <ActionButton
-        //   buttonColor={theme['color-primary-400']}
-        //   useNativeFeedback={true}
-        //   fixNativeFeedbackRadius={true}
-        // >
-        //   <ActionButton.Item
-        //     buttonColor={theme['color-warning-500']}
-        //     title={t('profilePage.send')}
-        //     onPress={() => goToPage(`${page}%send`)}
-        //   >
-        //     <Icon name='paper-plane' size={30} color={theme['text-basic-color']} solid />
-        //   </ActionButton.Item>
-        // </ActionButton>
-        <></>
+        <TouchableOpacity
+          style={{
+            borderWidth: 1,
+            borderColor: 'rgba(0,0,0,0.2)',
+            alignItems: 'center',
+            justifyContent: 'center',
+            width: 65,
+            position: 'absolute',
+            bottom: 20,
+            right: 20,
+            height: 65,
+            backgroundColor: theme['color-warning-500'],
+            borderRadius: 100,
+          }}
+          onPress={() => goToPage(`${page}%send`)}
+        >
+          <Icon name='paper-plane' size={30} color={theme['text-basic-color']} solid />
+        </TouchableOpacity>
       )}
     </>
   )

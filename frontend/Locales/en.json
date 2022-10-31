@@ -36,7 +36,8 @@
     "sendPage": {
       "title": "Send a note",
       "placeholder": "Say something to the world...",
-      "send": "Send"
+      "send": "Send",
+      "reply": "Send a reply"
     },
     "alerts": {
       "relayAdded": "Relay added"

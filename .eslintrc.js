@@ -4,7 +4,7 @@ module.exports = {
     'eslint:recommended',
     'plugin:react/recommended',
     'standard-with-typescript',
-    'prettier'
+    'prettier',
   ],
   parserOptions: {
     ecmaVersion: 8,
@@ -34,4 +34,4 @@ module.exports = {
       version: 'detect',
     },
   },
-};
+}

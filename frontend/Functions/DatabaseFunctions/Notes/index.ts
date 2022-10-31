@@ -16,7 +16,7 @@ const databaseToEntity: (object: any) => Note = (object) => {
 
 export const insertNote: (event: Event, db: SQLiteDatabase) => Promise<void> = async (
   event,
-  db
+  db,
 ) => {
   return await new Promise<void>((resolve, reject) => {
     if (!verifySignature(event) || !event.id) return reject(new Error('Bad event'))
@@ -44,12 +44,7 @@ export const insertNote: (event: Event, db: SQLiteDatabase) => Promise<void> = a
             '${replyEventId}'
           );`
         db.transaction((transaction) => {
-          transaction.executeSql(
-            eventQuery,
-            [],
-            () => resolve(),
-            errorCallback(eventQuery, reject)
-          )
+          transaction.executeSql(eventQuery, [], () => resolve(), errorCallback(eventQuery, reject))
         })
       } else {
         reject(new Error('Note already exists'))
@@ -115,7 +110,7 @@ export const getNotes: (
           const notes: Note[] = items.map((object) => databaseToEntity(object))
           resolve(notes)
         },
-        errorCallback(notesQuery, reject)
+        errorCallback(notesQuery, reject),
       )
     })
   })

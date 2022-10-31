@@ -5,7 +5,7 @@ import {
   Spinner,
   TopNavigation,
   TopNavigationAction,
-  useTheme
+  useTheme,
 } from '@ui-kitten/components'
 import React, { useContext, useEffect, useState } from 'react'
 import { StyleSheet } from 'react-native'
@@ -41,16 +41,16 @@ export const SendPage: React.FC = () => {
 
   const styles = StyleSheet.create({
     container: {
-      flex: 1
+      flex: 1,
     },
     actionContainer: {
       marginTop: 30,
       paddingLeft: 32,
-      paddingRight: 32
+      paddingRight: 32,
     },
     button: {
-      marginTop: 30
-    }
+      marginTop: 30,
+    },
   })
 
   const onPressBack: () => void = () => {
@@ -77,13 +77,13 @@ export const SendPage: React.FC = () => {
           created_at: moment().unix(),
           kind: EventKind.textNote,
           pubkey: publicKey,
-          tags
+          tags,
         }
         relayPool?.sendEvent(event).then((sentNote) => {
           if (sentNote?.id) {
             relayPool?.subscribe('main-channel', {
               kinds: [EventKind.textNote],
-              ids: [sentNote.id]
+              ids: [sentNote.id],
             })
             setNoteId(sentNote.id)
           }
@@ -105,7 +105,7 @@ export const SendPage: React.FC = () => {
       <Layout style={styles.container} level='2'>
         <TopNavigation
           alignment='center'
-          title={t('sendPage.title')}
+          title={eventId ? t('sendPage.reply') : t('sendPage.title')}
           accessoryLeft={renderBackAction}
         />
         <Layout style={styles.actionContainer} level='2'>
