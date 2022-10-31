@@ -8,7 +8,7 @@ import Relay from '../../../lib/nostr/Relay'
 import { Event, EventKind } from '../../../lib/nostr/Events'
 import { AppContext } from '../../../Contexts/AppContext'
 import { insertUserContact } from '../../../Functions/DatabaseFunctions/Users'
-// import EncryptedStorage from 'react-native-encrypted-storage';
+import SInfo from 'react-native-sensitive-info'
 
 export const Logger: React.FC = () => {
   const { database, goToPage } = useContext(AppContext)
@@ -97,7 +97,7 @@ export const Logger: React.FC = () => {
       setLoading(true)
       setPrivateKey(inputValue)
       setStatus(1)
-      // EncryptedStorage.setItem('privateKey', inputValue);
+      SInfo.setItem('privateKey', inputValue, {})
     }
   }
 
