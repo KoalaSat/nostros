@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useState } from 'react'
 import { Button, Input, Layout, useTheme } from '@ui-kitten/components'
-import { StyleSheet } from 'react-native'
+import { Clipboard, StyleSheet } from 'react-native'
 import { RelayPoolContext } from '../../../Contexts/RelayPoolContext'
 import { useTranslation } from 'react-i18next'
 import { tagToUser } from '../../../Functions/RelayFunctions/Users'
@@ -10,7 +10,8 @@ import { AppContext } from '../../../Contexts/AppContext'
 import { insertUserContact } from '../../../Functions/DatabaseFunctions/Users'
 import SInfo from 'react-native-sensitive-info'
 import Icon from 'react-native-vector-icons/FontAwesome5'
-import { getPublickey } from '../../../lib/nostr/Bip'
+import { generateRandomKey, getPublickey } from '../../../lib/nostr/Bip'
+import { showMessage } from 'react-native-flash-message'
 
 export const Logger: React.FC = () => {
   const { database, goToPage } = useContext(AppContext)
@@ -45,13 +46,13 @@ export const Logger: React.FC = () => {
   }, [status])
 
   useEffect(() => {
-    if (loadedUsers) {
-      const timer = setTimeout(() => setStatus(3), 4000)
+    if (status) {
+      const timer = setTimeout(() => setStatus(3), 8000)
       return () => {
         clearTimeout(timer)
       }
     }
-  }, [loadedUsers])
+  }, [status])
 
   const initEvents: () => void = () => {
     relayPool?.on('event', 'landing', (_relay: Relay, _subId?: string, event?: Event) => {
@@ -89,6 +90,33 @@ export const Logger: React.FC = () => {
         authors,
       })
     }
+  }
+
+  const randomKeyGenerator: () => JSX.Element = () => {
+    if (!isPrivate) return <></>
+
+    const storeRandomPrivateKey: () => void = () => {
+      generateRandomKey().then((string) => {
+        setInputValue(string)
+        Clipboard.setString(string)
+        showMessage({
+          message: t('logger.randomKeyGenerator.message'),
+          description: t('logger.randomKeyGenerator.description'),
+          duration: 8000,
+          type: 'info',
+        })
+      })
+    }
+
+    return (
+      <Icon
+        name={'dice'}
+        size={16}
+        color={theme['text-basic-color']}
+        solid
+        onPress={storeRandomPrivateKey}
+      />
+    )
   }
 
   const onPress: () => void = () => {
@@ -149,14 +177,14 @@ export const Logger: React.FC = () => {
           <Input
             size='medium'
             label={isPrivate ? t('landing.privateKey') : t('landing.publicKey')}
-            secureTextEntry={true}
             onChangeText={setInputValue}
             value={inputValue}
             disabled={loading}
+            accessoryRight={randomKeyGenerator}
           />
         </Layout>
       </Layout>
-      <Layout style={styles.inputsContainer}>
+      <Layout style={styles.buttonssContainer}>
         <Layout style={styles.buttonLeft}>
           <Button
             onPress={() => setIsPrivate(!isPrivate)}
