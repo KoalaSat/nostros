@@ -7,7 +7,14 @@ import Icon from 'react-native-vector-icons/FontAwesome5'
 import NoteCard from '../NoteCard'
 import { EventKind } from '../../lib/nostr/Events'
 import { RelayFilters } from '../../lib/nostr/Relay'
-import { RefreshControl, ScrollView, StyleSheet, TouchableOpacity } from 'react-native'
+import {
+  Clipboard,
+  RefreshControl,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+} from 'react-native'
 import Loading from '../Loading'
 import { getDirectReplies, getReplyEventId } from '../../Functions/RelayFunctions/Events'
 
@@ -145,6 +152,10 @@ export const NotePage: React.FC = () => {
     subscribeNotes().finally(() => setRefreshing(false))
   }, [])
 
+  const onPressTitle: () => void = () => {
+    Clipboard.setString(note?.id ?? '')
+  }
+
   const styles = StyleSheet.create({
     main: {
       paddingBottom: 32,
@@ -161,7 +172,11 @@ export const NotePage: React.FC = () => {
     <>
       <TopNavigation
         alignment='center'
-        title={`${eventId.slice(0, 12)}...${eventId.slice(-12)}`}
+        title={
+          <TouchableOpacity onPress={onPressTitle}>
+            <Text>{`${eventId.slice(0, 12)}...${eventId.slice(-12)}`}</Text>
+          </TouchableOpacity>
+        }
         accessoryLeft={renderBackAction}
         accessoryRight={renderNoteActions}
       />
