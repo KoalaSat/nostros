@@ -180,7 +180,7 @@ export const NotePage: React.FC = () => {
         accessoryLeft={renderBackAction}
         accessoryRight={renderNoteActions}
       />
-      <Layout level='4'>
+      <Layout level='3'>
         {note ? (
           <ScrollView
             horizontal={false}

@@ -63,7 +63,6 @@ export const HomePage: React.FC = () => {
     if (until) {
       message.until = until
     }
-    console.log('message', message)
     relayPool?.subscribe('main-channel', message)
   }
 
@@ -149,7 +148,7 @@ export const HomePage: React.FC = () => {
 
   return (
     <>
-      <Layout style={styles.container} level='4'>
+      <Layout style={styles.container} level='3'>
         {notes.length === 0 && authors.length !== 0 ? (
           <Loading />
         ) : (

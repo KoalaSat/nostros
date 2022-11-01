@@ -38,12 +38,14 @@ import { getReplyEventId } from '../../Functions/RelayFunctions/Events'
 import Loading from '../Loading'
 import { storeEvent } from '../../Functions/DatabaseFunctions/Events'
 import { handleInfinityScroll } from '../../Functions/NativeFunctions'
+import { useTranslation } from 'react-i18next'
 
 export const ProfilePage: React.FC = () => {
   const { database, page, goToPage, goBack } = useContext(AppContext)
   const { publicKey, privateKey, lastEventId, relayPool, setLastEventId } =
     useContext(RelayPoolContext)
   const theme = useTheme()
+  const { t } = useTranslation('common')
   const initialPageSize = 10
   const [notes, setNotes] = useState<Note[]>()
   const [user, setUser] = useState<User>()
@@ -345,7 +347,7 @@ export const ProfilePage: React.FC = () => {
   const profile: JSX.Element = (
     <Layout style={styles.profile} level='3'>
       <Layout style={styles.avatar} level='3'>
-        {user && (
+        {user ? (
           <>
             <UserAvatar
               name={username}
@@ -354,6 +356,8 @@ export const ProfilePage: React.FC = () => {
               textColor={theme['text-basic-color']}
             />
           </>
+        ) : (
+          <Text>{t('profilePage.profileNotCreated')}</Text>
         )}
       </Layout>
       <TouchableOpacity onPress={onPressId}>

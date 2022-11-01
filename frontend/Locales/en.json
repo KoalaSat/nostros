@@ -16,9 +16,16 @@
       "search": "Search",
       "send": "Send"
     },
+    "logger": {
+      "randomKeyGenerator": {
+        "message": "Your private key is on your clipboard",
+        "description": "Store it on a safe place to recover your user"
+      }
+    },
     "profilePage": {
       "search": "Search",
-      "send": "Send"
+      "send": "Send",
+      "profileNotCreated": "Profile not created"
     },
     "notePage": {
       "reply": "Reply"
