@@ -56,7 +56,7 @@ yarn start
 - [x] Infinite Load
 - [x] Go to replied event
 - [ ] Relays management (add, remove and recomend)
-- [ ] Random Key Generator
+- [x] Random Key Generator
 - [x] Watch only mode
 
 ### Home
