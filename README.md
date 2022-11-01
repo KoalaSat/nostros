@@ -53,7 +53,7 @@ yarn start
 
 ### Basics
 
-- [ ] Infinite Load
+- [x] Infinite Load
 - [x] Go to replied event
 - [ ] Relays management (add, remove and recomend)
 - [ ] Random Key Generator

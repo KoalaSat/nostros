@@ -183,6 +183,7 @@ export const NotePage: React.FC = () => {
       <Layout level='4'>
         {note ? (
           <ScrollView
+            horizontal={false}
             refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
           >
             {[note, ...(replies ?? [])].map((note) => itemCard(note))}

@@ -8,7 +8,16 @@ import {
   useTheme,
 } from '@ui-kitten/components'
 import React, { useCallback, useContext, useEffect, useState } from 'react'
-import { Clipboard, RefreshControl, ScrollView, StyleSheet, TouchableOpacity } from 'react-native'
+import {
+  Clipboard,
+  NativeScrollEvent,
+  NativeSyntheticEvent,
+  RefreshControl,
+  ScrollView,
+  StyleSheet,
+  TouchableOpacity,
+  View,
+} from 'react-native'
 import { AppContext } from '../../Contexts/AppContext'
 import UserAvatar from 'react-native-user-avatar'
 import { getNotes, Note } from '../../Functions/DatabaseFunctions/Notes'
@@ -28,14 +37,17 @@ import { populatePets, tagToUser } from '../../Functions/RelayFunctions/Users'
 import { getReplyEventId } from '../../Functions/RelayFunctions/Events'
 import Loading from '../Loading'
 import { storeEvent } from '../../Functions/DatabaseFunctions/Events'
+import { handleInfinityScroll } from '../../Functions/NativeFunctions'
 
 export const ProfilePage: React.FC = () => {
   const { database, page, goToPage, goBack } = useContext(AppContext)
   const { publicKey, privateKey, lastEventId, relayPool, setLastEventId } =
     useContext(RelayPoolContext)
   const theme = useTheme()
+  const initialPageSize = 10
   const [notes, setNotes] = useState<Note[]>()
   const [user, setUser] = useState<User>()
+  const [pageSize, setPageSize] = useState<number>(initialPageSize)
   const [contactsIds, setContactsIds] = useState<string[]>()
   const [isContact, setIsContact] = useState<boolean>()
   const [refreshing, setRefreshing] = useState(false)
@@ -63,9 +75,7 @@ export const ProfilePage: React.FC = () => {
           setContactsIds(users.map((user) => user.id))
         })
       }
-      getNotes(database, { filters: { pubkey: userId }, limit: 10 }).then((results) => {
-        if (results.length > 0) setNotes(results)
-      })
+      loadNotes()
     }
   }, [lastEventId])
 
@@ -113,7 +123,7 @@ export const ProfilePage: React.FC = () => {
           )
         }
       } else {
-        return <Spinner size='tiny' />
+        return <Spinner size='small' />
       }
     }
   }
@@ -143,21 +153,42 @@ export const ProfilePage: React.FC = () => {
     loadProfile().finally(() => setRefreshing(false))
   }, [])
 
-  const subscribeNotes: () => void = () => {
+  useEffect(() => {
+    if (pageSize > initialPageSize && notes) {
+      relayPool?.unsubscribeAll()
+      subscribeNotes(undefined, notes[notes.length - 1]?.created_at)
+      loadNotes()
+    }
+  }, [pageSize])
+
+  const loadNotes: () => void = () => {
     if (database) {
-      getNotes(database, { filters: { pubkey: userId }, limit: 10 }).then((results) => {
+      getNotes(database, { filters: { pubkey: userId }, limit: pageSize }).then((results) => {
+        if (results.length > 0) setNotes(results)
+      })
+    }
+  }
+
+  const subscribeNotes: (since?: number, until?: number) => void = (since, until) => {
+    const message: RelayFilters = {
+      kinds: [EventKind.textNote, EventKind.recommendServer],
+      authors: [userId],
+      limit: initialPageSize,
+    }
+    if (since) {
+      message.since = since
+    }
+    if (until) {
+      message.until = until
+    }
+    relayPool?.subscribe('main-channel', message)
+  }
+
+  const calculateInitialNotes: () => void = () => {
+    if (database) {
+      getNotes(database, { filters: { pubkey: userId }, limit: pageSize }).then((results) => {
         if (results) {
-          const notesEvent: RelayFilters = {
-            kinds: [EventKind.textNote, EventKind.recommendServer],
-            authors: [userId],
-            limit: 10,
-          }
-
-          if (results.length >= 10) {
-            notesEvent.since = results[0]?.created_at
-          }
-
-          relayPool?.subscribe('main-channel', notesEvent)
+          subscribeNotes(results[0]?.created_at)
         }
       })
     }
@@ -181,7 +212,7 @@ export const ProfilePage: React.FC = () => {
                 if (event?.id) setLastEventId(event.id)
               })
             }
-            subscribeNotes()
+            calculateInitialNotes()
           }
         } else {
           reject(new Error('Not Ready'))
@@ -189,6 +220,12 @@ export const ProfilePage: React.FC = () => {
       })
       resolve()
     })
+  }
+
+  const onScroll: (event: NativeSyntheticEvent<NativeScrollEvent>) => void = (event) => {
+    if (handleInfinityScroll(event)) {
+      setPageSize(pageSize + initialPageSize)
+    }
   }
 
   const styles = StyleSheet.create({
@@ -234,6 +271,14 @@ export const ProfilePage: React.FC = () => {
       marginTop: 16,
       flexDirection: 'row',
     },
+    loadingBottom: {
+      flex: 1,
+      flexDirection: 'row',
+      justifyContent: 'center',
+      alignItems: 'center',
+      flexWrap: 'wrap',
+      padding: 12,
+    },
   })
 
   const itemCard: (note: Note) => JSX.Element = (note) => {
@@ -270,7 +315,7 @@ export const ProfilePage: React.FC = () => {
     if (contactsIds === undefined) {
       return (
         <Layout style={styles.stats} level='3'>
-          <Spinner size='tiny' />
+          <Spinner size='small' />
         </Layout>
       )
     }
@@ -341,9 +386,16 @@ export const ProfilePage: React.FC = () => {
       <Layout style={styles.list} level='3'>
         {notes ? (
           <ScrollView
+            onScroll={onScroll}
+            horizontal={false}
             refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
           >
             {notes.map((note) => itemCard(note))}
+            {notes.length >= initialPageSize && (
+              <View style={styles.loadingBottom}>
+                <Spinner size='tiny' />
+              </View>
+            )}
           </ScrollView>
         ) : (
           <Loading />
@@ -364,7 +416,7 @@ export const ProfilePage: React.FC = () => {
             backgroundColor: theme['color-warning-500'],
             borderRadius: 100,
           }}
-          onPress={() => goToPage(`${page}%send`)}
+          onPress={() => goToPage('send')}
         >
           <Icon name='paper-plane' size={30} color={theme['text-basic-color']} solid />
         </TouchableOpacity>

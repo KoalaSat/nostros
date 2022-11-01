@@ -1,6 +1,14 @@
-import { Card, Layout, useTheme } from '@ui-kitten/components'
+import { Card, Layout, Spinner, useTheme } from '@ui-kitten/components'
 import React, { useCallback, useContext, useEffect, useState } from 'react'
-import { RefreshControl, ScrollView, StyleSheet, TouchableOpacity } from 'react-native'
+import {
+  NativeScrollEvent,
+  NativeSyntheticEvent,
+  RefreshControl,
+  ScrollView,
+  StyleSheet,
+  TouchableOpacity,
+  View,
+} from 'react-native'
 import { AppContext } from '../../Contexts/AppContext'
 import { getNotes, Note } from '../../Functions/DatabaseFunctions/Notes'
 import NoteCard from '../NoteCard'
@@ -9,44 +17,27 @@ import { RelayPoolContext } from '../../Contexts/RelayPoolContext'
 import { EventKind } from '../../lib/nostr/Events'
 import { RelayFilters } from '../../lib/nostr/Relay'
 import { getReplyEventId } from '../../Functions/RelayFunctions/Events'
-import { getUsers } from '../../Functions/DatabaseFunctions/Users'
+import { getUsers, User } from '../../Functions/DatabaseFunctions/Users'
 import Loading from '../Loading'
+import { handleInfinityScroll } from '../../Functions/NativeFunctions'
 
 export const HomePage: React.FC = () => {
-  const { database, goToPage, page } = useContext(AppContext)
+  const { database, goToPage } = useContext(AppContext)
+  const initialPageSize = 15
   const { lastEventId, relayPool, publicKey, privateKey } = useContext(RelayPoolContext)
   const theme = useTheme()
+  const [pageSize, setPageSize] = useState<number>(initialPageSize)
   const [notes, setNotes] = useState<Note[]>([])
-  const [totalContacts, setTotalContacts] = useState<number>(-1)
+  const [authors, setAuthors] = useState<User[]>([])
   const [refreshing, setRefreshing] = useState(false)
 
-  const loadNotes: () => void = () => {
-    if (database && publicKey) {
-      getNotes(database, { contacts: true, includeIds: [publicKey], limit: 15 }).then((notes) => {
-        setNotes(notes)
-      })
-    }
-  }
-
-  const subscribeNotes: () => Promise<void> = async () => {
+  const calculateInitialNotes: () => Promise<void> = async () => {
     return await new Promise<void>((resolve, reject) => {
       if (database && publicKey && relayPool) {
         getNotes(database, { limit: 1 }).then((notes) => {
           getUsers(database, { contacts: true, includeIds: [publicKey] }).then((users) => {
-            setTotalContacts(users.length)
-            let message: RelayFilters = {
-              kinds: [EventKind.textNote, EventKind.recommendServer],
-              authors: users.map((user) => user.id),
-              limit: 15,
-            }
-
-            if (notes.length !== 0) {
-              message = {
-                ...message,
-                since: notes[0].created_at,
-              }
-            }
-            relayPool?.subscribe('main-channel', message)
+            setAuthors(users)
+            subscribeNotes(users, notes[0]?.created_at)
             resolve()
           })
         })
@@ -54,6 +45,36 @@ export const HomePage: React.FC = () => {
         reject(new Error('Not Ready'))
       }
     })
+  }
+
+  const subscribeNotes: (users: User[], since?: number, until?: number) => void = (
+    users,
+    since,
+    until,
+  ) => {
+    const message: RelayFilters = {
+      kinds: [EventKind.textNote, EventKind.recommendServer],
+      authors: users.map((user) => user.id),
+      limit: initialPageSize,
+    }
+    if (since) {
+      message.since = since
+    }
+    if (until) {
+      message.until = until
+    }
+    console.log('message', message)
+    relayPool?.subscribe('main-channel', message)
+  }
+
+  const loadNotes: () => void = () => {
+    if (database && publicKey) {
+      getNotes(database, { contacts: true, includeIds: [publicKey], limit: pageSize }).then(
+        (notes) => {
+          setNotes(notes)
+        },
+      )
+    }
   }
 
   useEffect(() => {
@@ -65,14 +86,22 @@ export const HomePage: React.FC = () => {
   }, [lastEventId])
 
   useEffect(() => {
+    if (pageSize > initialPageSize) {
+      relayPool?.unsubscribeAll()
+      subscribeNotes(authors, undefined, notes[notes.length - 1]?.created_at)
+      loadNotes()
+    }
+  }, [pageSize])
+
+  useEffect(() => {
     loadNotes()
-    subscribeNotes()
+    calculateInitialNotes()
   }, [database, publicKey, relayPool])
 
   const onRefresh = useCallback(() => {
     setRefreshing(true)
     relayPool?.unsubscribeAll()
-    subscribeNotes().finally(() => setRefreshing(false))
+    calculateInitialNotes().finally(() => setRefreshing(false))
   }, [])
 
   const onPress: (note: Note) => void = (note) => {
@@ -94,6 +123,12 @@ export const HomePage: React.FC = () => {
     )
   }
 
+  const onScroll: (event: NativeSyntheticEvent<NativeScrollEvent>) => void = (event) => {
+    if (handleInfinityScroll(event)) {
+      setPageSize(pageSize + initialPageSize)
+    }
+  }
+
   const styles = StyleSheet.create({
     container: {
       flex: 1,
@@ -102,19 +137,33 @@ export const HomePage: React.FC = () => {
       width: 32,
       height: 32,
     },
+    loadingBottom: {
+      flex: 1,
+      flexDirection: 'row',
+      justifyContent: 'center',
+      alignItems: 'center',
+      flexWrap: 'wrap',
+      padding: 12,
+    },
   })
 
   return (
     <>
       <Layout style={styles.container} level='4'>
-        {notes.length === 0 && totalContacts !== 0 ? (
+        {notes.length === 0 && authors.length !== 0 ? (
           <Loading />
         ) : (
           <ScrollView
+            onScroll={onScroll}
             horizontal={false}
             refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
           >
             {notes.map((note) => itemCard(note))}
+            {notes.length >= initialPageSize && (
+              <View style={styles.loadingBottom}>
+                <Spinner size='tiny' />
+              </View>
+            )}
           </ScrollView>
         )}
       </Layout>
@@ -133,7 +182,7 @@ export const HomePage: React.FC = () => {
             backgroundColor: theme['color-warning-500'],
             borderRadius: 100,
           }}
-          onPress={() => goToPage(`${page}%send`)}
+          onPress={() => goToPage('send')}
         >
           <Icon name='paper-plane' size={30} color={theme['text-basic-color']} solid />
         </TouchableOpacity>

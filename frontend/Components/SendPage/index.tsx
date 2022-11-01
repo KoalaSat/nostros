@@ -125,7 +125,7 @@ export const SendPage: React.FC = () => {
             <Button
               onPress={onPressSend}
               disabled={sending}
-              accessoryLeft={sending ? <Spinner size='tiny' /> : <></>}
+              accessoryLeft={sending ? <Spinner size='small' /> : <></>}
             >
               {t('sendPage.send')}
             </Button>
