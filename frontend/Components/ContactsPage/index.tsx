@@ -109,6 +109,7 @@ export const ContactsPage: React.FC = () => {
     <>
       <Layout style={styles.container} level='3'>
         <ScrollView
+          horizontal={false}
           refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
         >
           {users.map((user) => (
