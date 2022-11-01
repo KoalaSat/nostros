@@ -47,7 +47,7 @@ yarn start
 - [x] User info missing on first start
 - [x] i18n not loading
 - [x] Logging out and in again does not work
-- [ ] Clipboard library not working
+- [x] Clipboard library not working
 - [ ] Some user images are not loading
 - [ ] Websocket connections closed when the app goes to background for too long
 

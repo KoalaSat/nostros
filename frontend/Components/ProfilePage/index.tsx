@@ -8,7 +8,7 @@ import {
   useTheme,
 } from '@ui-kitten/components'
 import React, { useCallback, useContext, useEffect, useState } from 'react'
-import { RefreshControl, ScrollView, StyleSheet, TouchableOpacity } from 'react-native'
+import { Clipboard, RefreshControl, ScrollView, StyleSheet, TouchableOpacity } from 'react-native'
 import { AppContext } from '../../Contexts/AppContext'
 import UserAvatar from 'react-native-user-avatar'
 import { getNotes, Note } from '../../Functions/DatabaseFunctions/Notes'
@@ -256,8 +256,7 @@ export const ProfilePage: React.FC = () => {
   }
 
   const onPressId: () => void = () => {
-    // FIXME
-    // Clipboard.setString(user?.id ?? '');
+    Clipboard.setString(user?.id ?? '')
   }
 
   const isFollowingUser: () => boolean = () => {
