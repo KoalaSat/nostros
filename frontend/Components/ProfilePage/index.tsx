@@ -416,7 +416,7 @@ export const ProfilePage: React.FC = () => {
             backgroundColor: theme['color-warning-500'],
             borderRadius: 100,
           }}
-          onPress={() => goToPage(`${page}%send`)}
+          onPress={() => goToPage('send')}
         >
           <Icon name='paper-plane' size={30} color={theme['text-basic-color']} solid />
         </TouchableOpacity>

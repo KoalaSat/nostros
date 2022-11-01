@@ -11,6 +11,7 @@ export const NavigationBar: React.FC = () => {
   const profilePage = `profile#${publicKey ?? ''}`
 
   const pageIndex: string[] = ['home', 'contacts', profilePage]
+  console.log(page)
 
   const getIndex: () => number = () => {
     if (page.includes('profile')) {

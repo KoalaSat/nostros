@@ -22,7 +22,7 @@ import Loading from '../Loading'
 import { handleInfinityScroll } from '../../Functions/NativeFunctions'
 
 export const HomePage: React.FC = () => {
-  const { database, goToPage, page } = useContext(AppContext)
+  const { database, goToPage } = useContext(AppContext)
   const initialPageSize = 15
   const { lastEventId, relayPool, publicKey, privateKey } = useContext(RelayPoolContext)
   const theme = useTheme()
@@ -182,7 +182,7 @@ export const HomePage: React.FC = () => {
             backgroundColor: theme['color-warning-500'],
             borderRadius: 100,
           }}
-          onPress={() => goToPage(`${page}%send`)}
+          onPress={() => goToPage('send')}
         >
           <Icon name='paper-plane' size={30} color={theme['text-basic-color']} solid />
         </TouchableOpacity>
