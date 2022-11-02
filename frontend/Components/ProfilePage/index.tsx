@@ -49,44 +49,100 @@ export const ProfilePage: React.FC = () => {
   const username = user?.name === '' ? user?.id : user?.name
 
   useEffect(() => {
-    if (page !== '') {
-      setContactsIds(undefined)
-      setNotes(undefined)
-      setUser(undefined)
-      loadProfile()
-    }
-  }, [page])
-
-  useEffect(() => {
-    loadUser()
-    loadNotes()
-  }, [lastEventId])
-
-  useEffect(() => {
-    if (pageSize > initialPageSize && notes) {
-      relayPool?.unsubscribeAll()
-      loadUser()
-      loadNotes()
-      subscribeNotes(undefined, notes[notes.length - 1]?.created_at)
-    }
-  }, [pageSize])
-
-  const onRefresh = useCallback(() => {
     setRefreshing(true)
     relayPool?.unsubscribeAll()
-    loadProfile().finally(() => setRefreshing(false))
-  }, [])
+    setContactsIds(undefined)
+    setNotes(undefined)
+    setUser(undefined)
+
+    loadUser()
+    loadNotes()
+    subscribeNotes()
+  }, [page])
 
   const loadUser: () => void = () => {
     if (database) {
       getUser(userId, database).then((result) => {
         if (result) {
+          subscribeProfile()
           setUser(result)
           setIsContact(result?.contact)
         }
       })
     }
   }
+
+  const loadNotes: (past?: boolean) => void = (past) => {
+    if (database) {
+      getNotes(database, { filters: { pubkey: userId }, limit: pageSize }).then((results) => {
+        setNotes(results)
+        setRefreshing(false)
+      })
+    }
+  }
+
+  const subscribeNotes: (past?: boolean) => void = (past) => {
+    if (!database) return
+    const limit  = past ? pageSize : 1
+    getNotes(database, { filters: { pubkey: userId }, limit }).then((results) => { 
+      const message: RelayFilters = {
+        kinds: [EventKind.textNote, EventKind.recommendServer],
+        authors: [userId],
+        limit: initialPageSize,
+      }
+      if (past) {
+        message.until = results[results.length - 1]?.created_at
+      } else {
+        message.since = results[0]?.created_at
+      }
+
+      relayPool?.subscribe('main-channel', message)
+    })
+  }
+
+  const subscribeProfile: () => Promise<void> = async () => {
+    return await new Promise<void>((resolve) => {
+      relayPool?.subscribe('main-channel', {
+        kinds: [EventKind.meta, EventKind.petNames],
+        authors: [userId],
+      })
+      relayPool?.on('event', 'profile', (_relay: Relay, _subId?: string, event?: Event) => {
+        console.log('PROFILE EVENT =======>', event)
+        if (database) {
+          if (event?.id && event.pubkey === userId) {
+            if (event.kind === EventKind.petNames) {
+              const ids = event.tags.map((tag) => tagToUser(tag).id)
+              setContactsIds(ids)
+            } else if (event.kind === EventKind.meta) {
+              storeEvent(event, database).then(() => setRefreshing(false))
+            }
+          }
+        }
+      })
+      resolve()
+    })
+  }
+
+  useEffect(() => {
+    if (notes) {
+      loadUser()
+      loadNotes()
+    }
+  }, [lastEventId])
+
+  useEffect(() => {
+    if (pageSize > initialPageSize && notes) {
+      loadUser()
+      loadNotes()
+      subscribeNotes(true)
+    }
+  }, [pageSize])
+
+  const onRefresh = useCallback(() => {
+    setRefreshing(true)
+    relayPool?.unsubscribeAll()
+    loadNotes(true)
+  }, [])
 
   const removeAuthor: () => void = () => {
     if (relayPool && database && publicKey) {
@@ -153,69 +209,6 @@ export const ProfilePage: React.FC = () => {
           onPress={onPressBack}
         />
       )
-    }
-  }
-
-  const loadNotes: () => void = () => {
-    if (database) {
-      getNotes(database, { filters: { pubkey: userId }, limit: pageSize }).then((results) => {
-        if (results.length > 0) setNotes(results)
-      })
-    }
-  }
-
-  const subscribeNotes: (since?: number, until?: number) => void = (since, until) => {
-    const message: RelayFilters = {
-      kinds: [EventKind.textNote, EventKind.recommendServer],
-      authors: [userId],
-      limit: initialPageSize,
-    }
-    if (since) {
-      message.since = since
-    }
-    if (until) {
-      message.until = until
-    }
-    relayPool?.subscribe('main-channel', message)
-  }
-
-  const calculateInitialNotes: () => void = () => {
-    if (database) {
-      getNotes(database, { filters: { pubkey: userId }, limit: pageSize }).then((results) => {
-        if (results) {
-          subscribeNotes(results[0]?.created_at)
-        }
-      })
-    }
-  }
-
-  const loadProfile: () => Promise<void> = async () => {
-    return await new Promise<void>((resolve) => {
-      relayPool?.subscribe('main-channel', {
-        kinds: [EventKind.meta, EventKind.petNames],
-        authors: [userId],
-      })
-      relayPool?.on('event', 'profile', (_relay: Relay, _subId?: string, event?: Event) => {
-        console.log('PROFILE EVENT =======>', event)
-        if (database) {
-          if (event?.id && event.pubkey === userId) {
-            if (event.kind === EventKind.petNames) {
-              const ids = event.tags.map((tag) => tagToUser(tag).id)
-              setContactsIds(ids)
-            } else if (event.kind === EventKind.meta) {
-              storeEvent(event, database)
-            }
-            calculateInitialNotes()
-          }
-        }
-      })
-      resolve()
-    })
-  }
-
-  const onScroll: (event: NativeSyntheticEvent<NativeScrollEvent>) => void = (event) => {
-    if (handleInfinityScroll(event)) {
-      setPageSize(pageSize + initialPageSize)
     }
   }
 
@@ -302,6 +295,13 @@ export const ProfilePage: React.FC = () => {
     return false
   }
 
+  const onScroll: (event: NativeSyntheticEvent<NativeScrollEvent>) => void = (event) => {
+    if (handleInfinityScroll(event)) {
+      const newSize: number = notes?.length === pageSize ? pageSize + initialPageSize : pageSize
+      setPageSize(newSize)
+    }
+  }
+
   const stats: () => JSX.Element = () => {
     if (contactsIds === undefined) {
       return (
@@ -339,7 +339,7 @@ export const ProfilePage: React.FC = () => {
         {user ? (
           <>
             <UserAvatar
-              name={username}
+              name={username ?? user.id}
               src={user?.picture}
               size={130}
               textColor={theme['text-basic-color']}
@@ -377,7 +377,7 @@ export const ProfilePage: React.FC = () => {
       />
       {profile}
       <Layout style={styles.list} level='3'>
-        {notes ? (
+        {notes && notes.length > 0 ? (
           <ScrollView
             onScroll={onScroll}
             horizontal={false}

@@ -1,3 +1,4 @@
+// import { spawnThread } from 'react-native-multithreading'
 import { signEvent, validateEvent, Event } from '../Events'
 import Relay, { RelayFilters, RelayOptions } from '../Relay'
 
@@ -41,9 +42,9 @@ class RelayPool {
         Object.keys(this.onFunctions.open).forEach((id) => this.onFunctions.open[id](openRelay))
       }
       relay.onEvent = (eventRelay, subId, event) => {
-        Object.keys(this.onFunctions.event).forEach((id) =>
-          this.onFunctions.event[id](eventRelay, subId, event),
-        )
+        Object.keys(this.onFunctions.event).forEach((id) => {
+          this.onFunctions.event[id](eventRelay, subId, event)
+        })
       }
       relay.onEsoe = (eventRelay, subId) => {
         Object.keys(this.onFunctions.esoe).forEach((id) =>

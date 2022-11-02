@@ -33,34 +33,35 @@ export const HomePage: React.FC = () => {
   const calculateInitialNotes: () => Promise<void> = async () => {
     return await new Promise<void>((resolve) => {
       if (database && publicKey) {
-        getNotes(database, { limit: 1 }).then((notes) => {
-          getUsers(database, { contacts: true, includeIds: [publicKey] }).then((users) => {
-            setAuthors(users)
-            subscribeNotes(users, notes[0]?.created_at)
-            resolve()
-          })
+        getUsers(database, { contacts: true, includeIds: [publicKey] }).then((users) => {
+          setAuthors(users)
+          subscribeNotes(users)
+          resolve()
         })
       }
     })
   }
 
-  const subscribeNotes: (users: User[], since?: number, until?: number) => void = (
+  const subscribeNotes: (users: User[], past?: boolean) => void = (
     users,
-    since,
-    until,
+    past
   ) => {
-    const message: RelayFilters = {
-      kinds: [EventKind.textNote, EventKind.recommendServer],
-      authors: users.map((user) => user.id),
-      limit: initialPageSize,
-    }
-    if (since) {
-      message.since = since
-    }
-    if (until) {
-      message.until = until
-    }
-    relayPool?.subscribe('main-channel', message)
+    if (!database || !publicKey) return
+    const limit  = past ? pageSize : 1
+    getNotes(database, { contacts: true, includeIds: [publicKey], limit }).then((results) => { 
+      const message: RelayFilters = {
+        kinds: [EventKind.textNote, EventKind.recommendServer],
+        authors: users.map((user) => user.id),
+        limit: initialPageSize,
+      }
+      if (past) {
+        message.until = results[results.length - 1]?.created_at
+      } else {
+        message.since = results[0]?.created_at
+      }
+
+      relayPool?.subscribe('main-channel', message)
+    })
   }
 
   const loadNotes: () => void = () => {
@@ -88,7 +89,7 @@ export const HomePage: React.FC = () => {
   useEffect(() => {
     if (pageSize > initialPageSize) {
       relayPool?.unsubscribeAll()
-      subscribeNotes(authors, undefined, notes[notes.length - 1]?.created_at)
+      subscribeNotes(authors, true)
       loadNotes()
     }
   }, [pageSize])

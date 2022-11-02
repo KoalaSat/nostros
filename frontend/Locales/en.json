@@ -4,6 +4,7 @@
       "connect": "Connect",
       "connecting": "Connecting",
       "loadingContacts": "Loading Contacts",
+      "loadingEvents": "Loading Events",
       "ready": "Ready",
       "privateKey": "Private Key",
       "publicKey": "Public Key"

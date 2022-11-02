@@ -98,21 +98,23 @@ export const RelayPoolContextProvider = ({
 
   useEffect(() => {
     if (publicKey && publicKey !== '') {
-      loadRelayPool()
+      if (!loadingRelayPool && page !== 'landing') {
+        goToPage('home', true)
+      } else {
+        loadRelayPool()
+      }
     }
-  }, [publicKey])
+  }, [publicKey, loadingRelayPool])
 
   useEffect(() => {
     if (!loadingDb) {
       SInfo.getItem('privateKey', {}).then((privateResult) => {
         if (privateResult && privateResult !== '') {
-          goToPage('home', true)
           setPrivateKey(privateResult)
           setPublicKey(getPublickey(privateResult))
         } else {
           SInfo.getItem('publicKey', {}).then((publicResult) => {
             if (publicResult && publicResult !== '') {
-              goToPage('home', true)
               setPublicKey(publicResult)
             } else {
               goToPage('landing', true)

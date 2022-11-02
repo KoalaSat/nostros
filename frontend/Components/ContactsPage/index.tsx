@@ -14,7 +14,7 @@ import {
 import UserCard from '../UserCard'
 import { RelayPoolContext } from '../../Contexts/RelayPoolContext'
 import Relay from '../../lib/nostr/Relay'
-import { populatePets, tagToUser } from '../../Functions/RelayFunctions/Users'
+import { populatePets } from '../../Functions/RelayFunctions/Users'
 
 export const ContactsPage: React.FC = () => {
   const { database } = useContext(AppContext)
@@ -23,22 +23,27 @@ export const ContactsPage: React.FC = () => {
   const theme = useTheme()
   const [users, setUsers] = useState<User[]>()
   const [refreshing, setRefreshing] = useState(true)
-  const [showAddContact, setShowAddContant] = useState<boolean>(false)
+  const [showAddContact, setShowAddContact] = useState<boolean>(false)
   const [contactInput, setContactInput] = useState<string>()
+
   const { t } = useTranslation('common')
 
   useEffect(() => {
+    loadUsers()
+  }, [lastEventId])
+
+  useEffect(() => {
+    subscribeContacts()
+  }, [])
+
+  const loadUsers: () => void = () => {
     if (database && publicKey) {
       getUsers(database, { contacts: true }).then((results) => {
         if (users) setRefreshing(false)
         if (results) setUsers(results)
       })
     }
-  }, [lastEventId])
-
-  useEffect(() => {
-    subscribeContacts()
-  }, [])
+  }
 
   const subscribeContacts: () => Promise<void> = async () => {
     return await new Promise<void>((resolve, _reject) => {
@@ -47,10 +52,6 @@ export const ContactsPage: React.FC = () => {
         console.log('CONTACTS PAGE EVENT =======>', relay.url, event)
         if (database && event?.id && event.kind === EventKind.petNames) {
           insertUserContact(event, database).finally(() => setLastEventId(event?.id ?? ''))
-          relayPool?.subscribe('main-channel', {
-            kinds: [EventKind.meta],
-            authors: event.tags.map((tag) => tagToUser(tag).id),
-          })
           relayPool?.removeOn('event', 'contacts')
         }
       })
@@ -68,7 +69,8 @@ export const ContactsPage: React.FC = () => {
     if (contactInput && relayPool && database && publicKey) {
       addContact(contactInput, database).then(() => {
         populatePets(relayPool, database, publicKey)
-        setShowAddContant(false)
+        setShowAddContact(false)
+        loadUsers()
       })
     }
   }
@@ -122,7 +124,7 @@ export const ContactsPage: React.FC = () => {
         style={styles.modal}
         visible={showAddContact}
         backdropStyle={styles.backdrop}
-        onBackdropPress={() => setShowAddContant(false)}
+        onBackdropPress={() => setShowAddContact(false)}
       >
         <Card disabled={true}>
           <Layout style={styles.actionContainer}>
@@ -155,7 +157,7 @@ export const ContactsPage: React.FC = () => {
             backgroundColor: theme['color-warning-500'],
             borderRadius: 100,
           }}
-          onPress={() => setShowAddContant(true)}
+          onPress={() => setShowAddContact(true)}
         >
           <Icon name='user-plus' size={30} color={theme['text-basic-color']} solid />
         </TouchableOpacity>

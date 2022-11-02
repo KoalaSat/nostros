@@ -22,13 +22,30 @@ export const Logger: React.FC = () => {
   const [loading, setLoading] = useState<boolean>(false)
   const [status, setStatus] = useState<number>(0)
   const [isPrivate, setIsPrivate] = useState<boolean>(true)
-  const [totalPets, setTotalPets] = useState<number>()
+  const [authors, setAuthors] = useState<string[]>([])
   const [inputValue, setInputValue] = useState<string>('')
   const [loadedUsers, setLoadedUsers] = useState<number>()
+  const [lastEventId, setLastEventId] = useState<string>('')
+
+  const onPress: () => void = () => {
+    if (inputValue && inputValue !== '') {
+      setLoading(true)
+      setStatus(1)
+      if (isPrivate) {
+        setPrivateKey(inputValue)
+        const publicKey: string = getPublickey(inputValue)
+        setPublicKey(publicKey)
+        SInfo.setItem('privateKey', inputValue, {})
+        SInfo.setItem('publicKey', publicKey, {})
+      } else {
+        setPublicKey(inputValue)
+        SInfo.setItem('publicKey', inputValue, {})
+      }
+    }
+  }
 
   useEffect(() => {
-    if (!loadingRelayPool && publicKey) {
-      relayPool?.unsubscribeAll()
+    if (!loadingRelayPool && !loadingDb && publicKey) {
       setStatus(1)
       initEvents()
       relayPool?.subscribe('main-channel', {
@@ -38,31 +55,16 @@ export const Logger: React.FC = () => {
     }
   }, [loadingRelayPool, publicKey, loadingDb])
 
-  useEffect(() => {
-    if (status > 2) {
-      relayPool?.removeOn('event', 'landing')
-      goToPage('home', true)
-    }
-  }, [status])
-
-  useEffect(() => {
-    if (status > 1) {
-      const timer = setTimeout(() => setStatus(3), 8000)
-      return () => {
-        clearTimeout(timer)
-      }
-    }
-  }, [status])
-
   const initEvents: () => void = () => {
     relayPool?.on('event', 'landing', (_relay: Relay, _subId?: string, event?: Event) => {
       console.log('LANDING EVENT =======>', event)
       if (event && database) {
+        setLastEventId(event?.id ?? '')
         if (event.kind === EventKind.petNames) {
           loadPets(event)
         } else if (event.kind === EventKind.meta) {
           setLoadedUsers((prev) => (prev ? prev + 1 : 1))
-          if (loadedUsers && loadedUsers - 1 === totalPets) setStatus(3)
+          if (loadedUsers && loadedUsers >= authors.length && status < 3) setStatus(3)
         }
       }
     })
@@ -70,14 +72,13 @@ export const Logger: React.FC = () => {
 
   const loadPets: (event: Event) => void = (event) => {
     if (database) {
-      setTotalPets(event.tags.length)
       if (event.tags.length > 0) {
         setStatus(2)
         insertUserContact(event, database).then(() => {
           requestUserData(event)
         })
       } else {
-        setStatus(3)
+        setStatus(4)
       }
     }
   }
@@ -85,12 +86,32 @@ export const Logger: React.FC = () => {
   const requestUserData: (event: Event) => void = (event) => {
     if (publicKey) {
       const authors: string[] = [publicKey, ...event.tags.map((tag) => tagToUser(tag).id)]
+      setAuthors(authors)
       relayPool?.subscribe('main-channel', {
         kinds: [EventKind.meta],
         authors,
       })
     }
   }
+
+  useEffect(() => {
+    if (status > 3) {
+      relayPool?.removeOn('event', 'landing')
+      goToPage('home', true)
+    } else if (status === 2) {
+      relayPool?.subscribe('main-channel', {
+        kinds: [EventKind.textNote, EventKind.recommendServer],
+        authors,
+        limit: 15
+      })
+    }
+    if (status > 1) {
+      const timer = setTimeout(() => setStatus(status + 1), 5000)
+      return () => {
+        clearTimeout(timer)
+      }
+    }
+  }, [status, lastEventId])
 
   const randomKeyGenerator: () => JSX.Element = () => {
     if (!isPrivate) return <></>
@@ -119,28 +140,12 @@ export const Logger: React.FC = () => {
     )
   }
 
-  const onPress: () => void = () => {
-    if (inputValue && inputValue !== '') {
-      setLoading(true)
-      setStatus(1)
-      if (isPrivate) {
-        setPrivateKey(inputValue)
-        const publicKey: string = getPublickey(inputValue)
-        setPublicKey(publicKey)
-        SInfo.setItem('privateKey', inputValue, {})
-        SInfo.setItem('publicKey', publicKey, {})
-      } else {
-        setPublicKey(inputValue)
-        SInfo.setItem('publicKey', inputValue, {})
-      }
-    }
-  }
-
   const statusName: { [status: number]: string } = {
     0: t('landing.connect'),
     1: t('landing.connecting'),
     2: t('landing.loadingContacts'),
-    3: t('landing.ready'),
+    3: t('landing.loadingEvents'),
+    4: t('landing.ready'),
   }
   const styles = StyleSheet.create({
     inputsContainer: {
