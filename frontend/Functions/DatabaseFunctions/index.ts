@@ -1,12 +1,11 @@
 import SQLite, { ResultSet, SQLiteDatabase, Transaction } from 'react-native-sqlite-storage'
 import { errorCallback } from './Errors'
 
-export const initDatabase: () => SQLiteDatabase = () => {
-  return SQLite.openDatabase(
-    { name: 'nostros.db', location: 'default' },
-    () => {},
-    () => {},
-  )
+export const initDatabase: (onReady: () => void, onError?: () => void) => SQLiteDatabase = (
+  onReady,
+  onError,
+) => {
+  return SQLite.openDatabase({ name: 'nostros.db' }, onReady, onError)
 }
 
 export const getItems: (resultSet: ResultSet) => object[] = (resultSet) => {

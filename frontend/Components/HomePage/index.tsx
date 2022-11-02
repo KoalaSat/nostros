@@ -18,7 +18,6 @@ import { EventKind } from '../../lib/nostr/Events'
 import { RelayFilters } from '../../lib/nostr/Relay'
 import { getReplyEventId } from '../../Functions/RelayFunctions/Events'
 import { getUsers, User } from '../../Functions/DatabaseFunctions/Users'
-import Loading from '../Loading'
 import { handleInfinityScroll } from '../../Functions/NativeFunctions'
 
 export const HomePage: React.FC = () => {
@@ -29,11 +28,11 @@ export const HomePage: React.FC = () => {
   const [pageSize, setPageSize] = useState<number>(initialPageSize)
   const [notes, setNotes] = useState<Note[]>([])
   const [authors, setAuthors] = useState<User[]>([])
-  const [refreshing, setRefreshing] = useState(false)
+  const [refreshing, setRefreshing] = useState(true)
 
   const calculateInitialNotes: () => Promise<void> = async () => {
-    return await new Promise<void>((resolve, reject) => {
-      if (database && publicKey && relayPool) {
+    return await new Promise<void>((resolve) => {
+      if (database && publicKey) {
         getNotes(database, { limit: 1 }).then((notes) => {
           getUsers(database, { contacts: true, includeIds: [publicKey] }).then((users) => {
             setAuthors(users)
@@ -41,8 +40,6 @@ export const HomePage: React.FC = () => {
             resolve()
           })
         })
-      } else {
-        reject(new Error('Not Ready'))
       }
     })
   }
@@ -71,6 +68,9 @@ export const HomePage: React.FC = () => {
       getNotes(database, { contacts: true, includeIds: [publicKey], limit: pageSize }).then(
         (notes) => {
           setNotes(notes)
+          if (notes.length > 0 || authors.length === 0) {
+            setRefreshing(false)
+          }
         },
       )
     }
@@ -78,7 +78,8 @@ export const HomePage: React.FC = () => {
 
   useEffect(() => {
     relayPool?.unsubscribeAll()
-  }, [])
+    calculateInitialNotes().then(() => loadNotes())
+  }, [publicKey])
 
   useEffect(() => {
     loadNotes()
@@ -92,15 +93,10 @@ export const HomePage: React.FC = () => {
     }
   }, [pageSize])
 
-  useEffect(() => {
-    loadNotes()
-    calculateInitialNotes()
-  }, [database, publicKey, relayPool])
-
   const onRefresh = useCallback(() => {
     setRefreshing(true)
     relayPool?.unsubscribeAll()
-    calculateInitialNotes().finally(() => setRefreshing(false))
+    calculateInitialNotes().then(() => loadNotes())
   }, [])
 
   const onPress: (note: Note) => void = (note) => {
@@ -149,22 +145,18 @@ export const HomePage: React.FC = () => {
   return (
     <>
       <Layout style={styles.container} level='3'>
-        {notes.length === 0 && authors.length !== 0 ? (
-          <Loading />
-        ) : (
-          <ScrollView
-            onScroll={onScroll}
-            horizontal={false}
-            refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
-          >
-            {notes.map((note) => itemCard(note))}
-            {notes.length >= initialPageSize && (
-              <View style={styles.loadingBottom}>
-                <Spinner size='tiny' />
-              </View>
-            )}
-          </ScrollView>
-        )}
+        <ScrollView
+          onScroll={onScroll}
+          horizontal={false}
+          refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
+        >
+          {notes.map((note) => itemCard(note))}
+          {notes.length >= initialPageSize && (
+            <View style={styles.loadingBottom}>
+              <Spinner size='tiny' />
+            </View>
+          )}
+        </ScrollView>
       </Layout>
       {privateKey && (
         <TouchableOpacity

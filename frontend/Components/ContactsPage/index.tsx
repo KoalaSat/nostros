@@ -21,8 +21,8 @@ export const ContactsPage: React.FC = () => {
   const { relayPool, publicKey, lastEventId, setLastEventId, privateKey } =
     useContext(RelayPoolContext)
   const theme = useTheme()
-  const [users, setUsers] = useState<User[]>([])
-  const [refreshing, setRefreshing] = useState(false)
+  const [users, setUsers] = useState<User[]>()
+  const [refreshing, setRefreshing] = useState(true)
   const [showAddContact, setShowAddContant] = useState<boolean>(false)
   const [contactInput, setContactInput] = useState<string>()
   const { t } = useTranslation('common')
@@ -30,6 +30,7 @@ export const ContactsPage: React.FC = () => {
   useEffect(() => {
     if (database && publicKey) {
       getUsers(database, { contacts: true }).then((results) => {
+        if (users) setRefreshing(false)
         if (results) setUsers(results)
       })
     }
@@ -75,7 +76,7 @@ export const ContactsPage: React.FC = () => {
   const onRefresh = useCallback(() => {
     setRefreshing(true)
     relayPool?.unsubscribeAll()
-    subscribeContacts().finally(() => setRefreshing(false))
+    subscribeContacts()
   }, [])
 
   const styles = StyleSheet.create({
@@ -112,7 +113,7 @@ export const ContactsPage: React.FC = () => {
           horizontal={false}
           refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
         >
-          {users.map((user) => (
+          {users?.map((user) => (
             <UserCard user={user} key={user.id} />
           ))}
         </ScrollView>

@@ -14,8 +14,8 @@ import { generateRandomKey, getPublickey } from '../../../lib/nostr/Bip'
 import { showMessage } from 'react-native-flash-message'
 
 export const Logger: React.FC = () => {
-  const { database, goToPage } = useContext(AppContext)
-  const { privateKey, publicKey, relayPool, setPrivateKey, setPublicKey } =
+  const { database, goToPage, loadingDb } = useContext(AppContext)
+  const { privateKey, publicKey, relayPool, loadingRelayPool, setPrivateKey, setPublicKey } =
     useContext(RelayPoolContext)
   const { t } = useTranslation('common')
   const theme = useTheme()
@@ -27,7 +27,7 @@ export const Logger: React.FC = () => {
   const [loadedUsers, setLoadedUsers] = useState<number>()
 
   useEffect(() => {
-    if (relayPool && publicKey) {
+    if (!loadingRelayPool && publicKey) {
       relayPool?.unsubscribeAll()
       setStatus(1)
       initEvents()
@@ -36,7 +36,7 @@ export const Logger: React.FC = () => {
         authors: [publicKey],
       })
     }
-  }, [relayPool, publicKey])
+  }, [loadingRelayPool, publicKey, loadingDb])
 
   useEffect(() => {
     if (status > 2) {
@@ -46,7 +46,7 @@ export const Logger: React.FC = () => {
   }, [status])
 
   useEffect(() => {
-    if (status) {
+    if (status > 1) {
       const timer = setTimeout(() => setStatus(3), 8000)
       return () => {
         clearTimeout(timer)

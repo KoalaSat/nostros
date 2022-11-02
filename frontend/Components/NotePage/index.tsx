@@ -110,7 +110,7 @@ export const NotePage: React.FC = () => {
   }
 
   const subscribeNotes: () => Promise<void> = async () => {
-    return await new Promise<void>((resolve, reject) => {
+    return await new Promise<void>((resolve) => {
       if (database) {
         getNotes(database, { filters: { id: eventId } }).then((events) => {
           if (events.length > 0) {
@@ -140,8 +140,6 @@ export const NotePage: React.FC = () => {
             resolve()
           }
         })
-      } else {
-        reject(new Error('Not Ready'))
       }
     })
   }

@@ -23,13 +23,7 @@ import UserAvatar from 'react-native-user-avatar'
 import { getNotes, Note } from '../../Functions/DatabaseFunctions/Notes'
 import NoteCard from '../NoteCard'
 import { RelayPoolContext } from '../../Contexts/RelayPoolContext'
-import {
-  getUser,
-  removeContact,
-  addContact,
-  User,
-  getUsers,
-} from '../../Functions/DatabaseFunctions/Users'
+import { getUser, removeContact, addContact, User } from '../../Functions/DatabaseFunctions/Users'
 import { EventKind, Event } from '../../lib/nostr/Events'
 import Relay, { RelayFilters } from '../../lib/nostr/Relay'
 import Icon from 'react-native-vector-icons/FontAwesome5'
@@ -38,14 +32,11 @@ import { getReplyEventId } from '../../Functions/RelayFunctions/Events'
 import Loading from '../Loading'
 import { storeEvent } from '../../Functions/DatabaseFunctions/Events'
 import { handleInfinityScroll } from '../../Functions/NativeFunctions'
-import { useTranslation } from 'react-i18next'
 
 export const ProfilePage: React.FC = () => {
   const { database, page, goToPage, goBack } = useContext(AppContext)
-  const { publicKey, privateKey, lastEventId, relayPool, setLastEventId } =
-    useContext(RelayPoolContext)
+  const { publicKey, privateKey, lastEventId, relayPool } = useContext(RelayPoolContext)
   const theme = useTheme()
-  const { t } = useTranslation('common')
   const initialPageSize = 10
   const [notes, setNotes] = useState<Note[]>()
   const [user, setUser] = useState<User>()
@@ -58,13 +49,35 @@ export const ProfilePage: React.FC = () => {
   const username = user?.name === '' ? user?.id : user?.name
 
   useEffect(() => {
-    setContactsIds(undefined)
-    setNotes(undefined)
-    setUser(undefined)
-    loadProfile()
+    if (page !== '') {
+      setContactsIds(undefined)
+      setNotes(undefined)
+      setUser(undefined)
+      loadProfile()
+    }
   }, [page])
 
   useEffect(() => {
+    loadUser()
+    loadNotes()
+  }, [lastEventId])
+
+  useEffect(() => {
+    if (pageSize > initialPageSize && notes) {
+      relayPool?.unsubscribeAll()
+      loadUser()
+      loadNotes()
+      subscribeNotes(undefined, notes[notes.length - 1]?.created_at)
+    }
+  }, [pageSize])
+
+  const onRefresh = useCallback(() => {
+    setRefreshing(true)
+    relayPool?.unsubscribeAll()
+    loadProfile().finally(() => setRefreshing(false))
+  }, [])
+
+  const loadUser: () => void = () => {
     if (database) {
       getUser(userId, database).then((result) => {
         if (result) {
@@ -72,14 +85,8 @@ export const ProfilePage: React.FC = () => {
           setIsContact(result?.contact)
         }
       })
-      if (userId === publicKey) {
-        getUsers(database, { contacts: true }).then((users) => {
-          setContactsIds(users.map((user) => user.id))
-        })
-      }
-      loadNotes()
     }
-  }, [lastEventId])
+  }
 
   const removeAuthor: () => void = () => {
     if (relayPool && database && publicKey) {
@@ -149,20 +156,6 @@ export const ProfilePage: React.FC = () => {
     }
   }
 
-  const onRefresh = useCallback(() => {
-    setRefreshing(true)
-    relayPool?.unsubscribeAll()
-    loadProfile().finally(() => setRefreshing(false))
-  }, [])
-
-  useEffect(() => {
-    if (pageSize > initialPageSize && notes) {
-      relayPool?.unsubscribeAll()
-      subscribeNotes(undefined, notes[notes.length - 1]?.created_at)
-      loadNotes()
-    }
-  }, [pageSize])
-
   const loadNotes: () => void = () => {
     if (database) {
       getNotes(database, { filters: { pubkey: userId }, limit: pageSize }).then((results) => {
@@ -197,7 +190,7 @@ export const ProfilePage: React.FC = () => {
   }
 
   const loadProfile: () => Promise<void> = async () => {
-    return await new Promise<void>((resolve, reject) => {
+    return await new Promise<void>((resolve) => {
       relayPool?.subscribe('main-channel', {
         kinds: [EventKind.meta, EventKind.petNames],
         authors: [userId],
@@ -210,14 +203,10 @@ export const ProfilePage: React.FC = () => {
               const ids = event.tags.map((tag) => tagToUser(tag).id)
               setContactsIds(ids)
             } else if (event.kind === EventKind.meta) {
-              storeEvent(event, database).finally(() => {
-                if (event?.id) setLastEventId(event.id)
-              })
+              storeEvent(event, database)
             }
             calculateInitialNotes()
           }
-        } else {
-          reject(new Error('Not Ready'))
         }
       })
       resolve()
@@ -357,7 +346,7 @@ export const ProfilePage: React.FC = () => {
             />
           </>
         ) : (
-          <Text>{t('profilePage.profileNotCreated')}</Text>
+          <></>
         )}
       </Layout>
       <TouchableOpacity onPress={onPressId}>

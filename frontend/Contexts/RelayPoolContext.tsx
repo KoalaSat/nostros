@@ -10,6 +10,7 @@ import SInfo from 'react-native-sensitive-info'
 import { getPublickey } from '../lib/nostr/Bip'
 
 export interface RelayPoolContextProps {
+  loadingRelayPool: boolean
   relayPool?: RelayPool
   setRelayPool: (relayPool: RelayPool) => void
   publicKey?: string
@@ -25,6 +26,7 @@ export interface RelayPoolContextProviderProps {
 }
 
 export const initialRelayPoolContext: RelayPoolContextProps = {
+  loadingRelayPool: true,
   setPublicKey: () => {},
   setPrivateKey: () => {},
   setRelayPool: () => {},
@@ -39,7 +41,10 @@ export const RelayPoolContextProvider = ({
   const [publicKey, setPublicKey] = useState<string>()
   const [privateKey, setPrivateKey] = useState<string>()
   const [relayPool, setRelayPool] = useState<RelayPool>()
-  const [lastEventId, setLastEventId] = useState<string>()
+  const [loadingRelayPool, setLoadingRelayPool] = useState<boolean>(
+    initialRelayPoolContext.loadingRelayPool,
+  )
+  const [lastEventId, setLastEventId] = useState<string>('')
   const [lastPage, setLastPage] = useState<string>(page)
 
   const loadRelayPool: () => void = () => {
@@ -74,22 +79,15 @@ export const RelayPoolContextProvider = ({
           (relay: Relay, _subId?: string, event?: Event) => {
             console.log('RELAYPOOL EVENT =======>', relay.url, event)
             if (database && event?.id && event.kind !== EventKind.petNames) {
-              storeEvent(event, database)
-                .then(() => setLastEventId(event.id))
-                .catch(() => setLastEventId(event.id))
+              storeEvent(event, database).finally(() => setLastEventId(event.id))
             }
           },
         )
         setRelayPool(initRelayPool)
+        setLoadingRelayPool(false)
       })
     }
   }
-
-  useEffect(() => {
-    if ((privateKey !== '' || publicKey !== '') && !loadingDb && !relayPool) {
-      loadRelayPool()
-    }
-  }, [privateKey, loadingDb])
 
   useEffect(() => {
     if (relayPool && lastPage !== page) {
@@ -99,29 +97,36 @@ export const RelayPoolContextProvider = ({
   }, [page])
 
   useEffect(() => {
-    SInfo.getItem('privateKey', {}).then((privateResult) => {
-      if (privateResult && privateResult !== '') {
-        loadRelayPool()
-        goToPage('home', true)
-        setPrivateKey(privateResult)
-        setPublicKey(getPublickey(privateResult))
-      } else {
-        SInfo.getItem('publicKey', {}).then((publicResult) => {
-          if (publicResult && publicResult !== '') {
-            loadRelayPool()
-            goToPage('home', true)
-            setPublicKey(publicResult)
-          } else {
-            goToPage('landing', true)
-          }
-        })
-      }
-    })
-  }, [])
+    if (publicKey && publicKey !== '') {
+      loadRelayPool()
+    }
+  }, [publicKey])
+
+  useEffect(() => {
+    if (!loadingDb) {
+      SInfo.getItem('privateKey', {}).then((privateResult) => {
+        if (privateResult && privateResult !== '') {
+          goToPage('home', true)
+          setPrivateKey(privateResult)
+          setPublicKey(getPublickey(privateResult))
+        } else {
+          SInfo.getItem('publicKey', {}).then((publicResult) => {
+            if (publicResult && publicResult !== '') {
+              goToPage('home', true)
+              setPublicKey(publicResult)
+            } else {
+              goToPage('landing', true)
+            }
+          })
+        }
+      })
+    }
+  }, [loadingDb])
 
   return (
     <RelayPoolContext.Provider
       value={{
+        loadingRelayPool,
         relayPool,
         setRelayPool,
         publicKey,

@@ -34,15 +34,17 @@ export const AppContextProvider = ({ children }: AppContextProviderProps): JSX.E
 
   const init: () => void = () => {
     SInfo.getItem('privateKey', {}).then((result) => {
-      const db = initDatabase()
-      setDatabase(db)
-      if (!result || result === '') {
-        createInitDatabase(db).then(() => {
+      const onReady: () => void = () => {
+        if (!result || result === '') {
+          createInitDatabase(db).then(() => {
+            setLoadingDb(false)
+          })
+        } else {
           setLoadingDb(false)
-        })
-      } else {
-        setLoadingDb(false)
+        }
       }
+      const db = initDatabase(onReady)
+      setDatabase(db)
     })
   }
 
