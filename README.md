@@ -48,7 +48,7 @@ yarn start
 - [x] i18n not loading
 - [x] Logging out and in again does not work
 - [x] Clipboard library not working
-- [ ] Some user images are not loading
+- [ ] Some user images are not loading (webp)
 - [ ] Websocket connections closed when the app goes to background for too long
 
 ### Basics
