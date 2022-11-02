@@ -1,7 +1,7 @@
 name: Post changelog
 on:
   release:
-    types: published
+    types: released
 
 jobs:
   post-changelog:
