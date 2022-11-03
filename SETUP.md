@@ -1,5 +1,7 @@
 # OSX
 
+Make sure you have Node 16.x
+
 ## Install JDK
 
 Make sure you install version 17
