@@ -35,7 +35,7 @@ brew install watchman
 ## Create Emulator (or connect Android phone and install adb)
 
 Use the GUI of Android studio to create a new virtual devide, make sure you add enought internal storage (>= 2 GB).
-As of 11/10/2022 we are using a Pixel 5 as template and System image R API level 30 Android 11.0
+Pixel 5 as template and System image R API level 30 Android 11.0 is the one we use on development.
 
 ## Run app
 
