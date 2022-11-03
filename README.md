@@ -18,27 +18,7 @@ Chanel Id:
 
 What is Nostr: https://github.com/nostr-protocol/nostr
 
-## Required Libraries and Frameworks
-
-- Node 16.x
-- JDK 17.0.x
-- (Android) Android Studio SKD
-- yarn
-
-# Running
-
-- Open a virtual device
-- Install
-
-```
-yarn install
-```
-
-- Run Metro
-
-```
-yarn start
-```
+Local setup: https://github.com/KoalaSat/nostros/blob/main/SETUP.md
 
 # Some Features to Work On
 
