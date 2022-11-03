@@ -45,7 +45,11 @@ As of 11/10/2022 we are using a Pixel 5 as template and System image R API level
 ```
 yarn install
 ```
-- Make sure your virtual device is running
+- Make sure your device is running, if you are using a physical one remember to run on a terminal:
+```
+adb reverse tcp:8081 tcp:8081
+```
+So it can connect to Metro.
 - Run Metro
 
 ```
