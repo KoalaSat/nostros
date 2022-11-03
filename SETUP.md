@@ -20,7 +20,8 @@ npm install -g react-native-cli
 brew install android-platform-tools
 ```
 
-Open `nostros/android` to automatically start the first build process
+Open `nostros/android` to automatically start the first build process.
+You'll probably need to `Sync with gradle files` (top-right corner)
 
 ## Install watchman
 
