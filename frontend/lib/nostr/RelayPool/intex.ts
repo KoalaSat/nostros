@@ -97,28 +97,29 @@ class RelayPool {
       relay.close()
       delete this.relays[relayUrl]
       return true
+    } else {
+      return false
     }
-
-    return false
   }
 
   public readonly sendEvent: (event: Event) => Promise<Event | null> = async (event) => {
-    if (!this.privateKey) return null
+    if (this.privateKey) {
+      const signedEvent: Event = await signEvent(event, this.privateKey)
 
-    const signedEvent: Event = await signEvent(event, this.privateKey)
+      if (validateEvent(signedEvent)) {
+        Object.keys(this.relays).forEach((relayUrl: string) => {
+          const relay: Relay = this.relays[relayUrl]
+          relay.sendEvent(signedEvent)
+        })
 
-    if (validateEvent(signedEvent)) {
-      Object.keys(this.relays).forEach((relayUrl: string) => {
-        const relay: Relay = this.relays[relayUrl]
-        relay.sendEvent(signedEvent)
-      })
-
-      return signedEvent
+        return signedEvent
+      } else {
+        console.log('Not valid event', event)
+        return null
+      } 
     } else {
-      console.log('Not valid event', event)
+      return null
     }
-
-    return null
   }
 
   public readonly subscribe: (subId: string, filters?: RelayFilters) => void = (subId, filters) => {

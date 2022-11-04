@@ -20,51 +20,55 @@ export const insertUserMeta: (
   event: Event,
   db: QuickSQLiteConnection,
 ) => Promise<QueryResult | null> = async (event, db) => {
-  if (!verifySignature(event)) return null
-  if (event.kind !== EventKind.meta) return null
+  const valid = await verifySignature(event)
 
-  const user: User = JSON.parse(event.content)
-  const id = event.pubkey
-  const name = user.name?.replace("\\'", "'") ?? ''
-  const mainRelay = user.main_relay?.replace("\\'", "'") ?? ''
-  const about = user.about?.replace("\\'", "'") ?? ''
-  const picture = user.picture?.replace("\\'", "'") ?? ''
+  if (valid && event.kind === EventKind.meta) {
+    const user: User = JSON.parse(event.content)
+    const id = event.pubkey
+    const name = user.name?.replace("\\'", "'") ?? ''
+    const mainRelay = user.main_relay?.replace("\\'", "'") ?? ''
+    const about = user.about?.replace("\\'", "'") ?? ''
+    const picture = user.picture?.replace("\\'", "'") ?? ''
 
-  const userDb = await getUser(user.id, db)
-  if (userDb) {
-    const userQuery = `
-      UPDATE nostros_users  
-      SET 
-        name = ?',
-        main_relay = ?,
-        about = ?,
-        picture = ?
-      WHERE 
-        id = ?;
-    `
-    const queryParams = [
-      name.split("'").join("''"),
-      mainRelay.split("'").join("''"),
-      about.split("'").join("''"),
-      picture.split("'").join("''"),
-      user.id,
-    ]
-    return db.execute(userQuery, queryParams)
+    const userDb = await getUser(user.id, db)
+    console.log('userDb', userDb)
+    if (userDb) {
+      const userQuery = `
+        UPDATE nostros_users  
+        SET 
+          name = ?',
+          main_relay = ?,
+          about = ?,
+          picture = ?
+        WHERE 
+          id = ?;
+      `
+      const queryParams = [
+        name.split("'").join("''"),
+        mainRelay.split("'").join("''"),
+        about.split("'").join("''"),
+        picture.split("'").join("''"),
+        user.id,
+      ]
+      return db.execute(userQuery, queryParams)
+    } else {
+      const userQuery = `
+        INSERT INTO nostros_users 
+          (id, name, picture, about, main_relay) 
+        VALUES 
+          (?,?,?,?,?);
+      `
+      const queryParams = [
+        id,
+        name.split("'").join("''"),
+        picture.split("'").join("''"),
+        about.split("'").join("''"),
+        '',
+      ]
+      return db.execute(userQuery, queryParams)
+    }
   } else {
-    const userQuery = `
-      INSERT INTO nostros_users 
-        (id, name, picture, about, main_relay) 
-      VALUES 
-        (?,?,?,?,?);
-    `
-    const queryParams = [
-      id,
-      name.split("'").join("''"),
-      picture.split("'").join("''"),
-      about.split("'").join("''"),
-      '',
-    ]
-    return db.execute(userQuery, queryParams)
+    return null
   }
 }
 
@@ -72,14 +76,17 @@ export const insertUserContact: (
   event: Event,
   db: QuickSQLiteConnection,
 ) => Promise<Array<Promise<QueryResult>> | null> = async (event, db) => {
-  if (!verifySignature(event)) return null
-  if (event.kind !== EventKind.petNames) return null
+  const valid = await verifySignature(event)
 
-  const userTags: string[] = event.tags.map((tag) => tagToUser(tag).id)
-  const users = userTags.map(async (userId) => {
-    return await addContact(userId, db)
-  })
-  return users
+  if (valid && event.kind === EventKind.petNames) {
+    const userTags: string[] = event.tags.map((tag) => tagToUser(tag).id)
+    const users = userTags.map(async (userId) => {
+      return await addContact(userId, db)
+    })
+    return users
+  } else {
+    return null
+  }
 }
 
 export const getUser: (pubkey: string, db: QuickSQLiteConnection) => Promise<User | null> = async (
@@ -87,13 +94,17 @@ export const getUser: (pubkey: string, db: QuickSQLiteConnection) => Promise<Use
   db,
 ) => {
   const userQuery = `SELECT * FROM nostros_users WHERE id = '${pubkey}';`
-  const resultSet = db.execute(userQuery)
+  const resultSet = await db.execute(userQuery)
+
   if (resultSet.rows && resultSet.rows?.length > 0) {
     const items: object[] = getItems(resultSet)
     const user: User = databaseToEntity(items[0])
+    console.log('if (resultSet.rows && resultSet.rows?.length > 0)', user)
     return user
+  } else {
+    console.log('NULL')
+    return null
   }
-  return null
 }
 
 export const removeContact: (
@@ -153,6 +164,7 @@ export const getUsers: (
     const items: object[] = getItems(resultSet)
     const users: User[] = items.map((object) => databaseToEntity(object))
     return users
+  } else {
+    return []
   }
-  return []
 }

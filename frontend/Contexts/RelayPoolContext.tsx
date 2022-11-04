@@ -4,7 +4,7 @@ import { Event, EventKind } from '../lib/nostr/Events'
 import RelayPool from '../lib/nostr/RelayPool/intex'
 import { AppContext } from './AppContext'
 import { storeEvent } from '../Functions/DatabaseFunctions/Events'
-import { getRelays, Relay as RelayEntity, storeRelay } from '../Functions/DatabaseFunctions/Relays'
+import { getRelays, storeRelay } from '../Functions/DatabaseFunctions/Relays'
 import { showMessage } from 'react-native-flash-message'
 import SInfo from 'react-native-sensitive-info'
 import { getPublickey } from '../lib/nostr/Bip'
@@ -47,45 +47,44 @@ export const RelayPoolContextProvider = ({
   const [lastEventId, setLastEventId] = useState<string>('')
   const [lastPage, setLastPage] = useState<string>(page)
 
-  const loadRelayPool: () => void = () => {
+  const loadRelayPool: () => void = async () => {
     if (database) {
-      getRelays(database).then((relays: RelayEntity[]) => {
-        const initRelayPool = new RelayPool([], privateKey)
-        if (relays.length > 0) {
-          relays.forEach((relay) => {
-            initRelayPool.add(relay.url)
-          })
-        } else {
-          ;['wss://relay.damus.io'].forEach((relayUrl) => {
-            initRelayPool.add(relayUrl)
-            storeRelay({ url: relayUrl }, database)
-          })
-        }
+      const relays = await getRelays(database)
+      const initRelayPool = new RelayPool([], privateKey)
+      if (relays && relays.length > 0) {
+        relays.forEach((relay) => {
+          initRelayPool.add(relay.url)
+        })
+      } else {
+        ;['wss://nostr.oxtr.dev'].forEach((relayUrl) => {
+          initRelayPool.add(relayUrl)
+          storeRelay({ url: relayUrl }, database)
+        })
+      }
 
-        initRelayPool?.on(
-          'notice',
-          'RelayPoolContextProvider',
-          (relay: Relay, _subId?: string, event?: Event) => {
-            showMessage({
-              message: relay.url,
-              description: event?.content ?? '',
-              type: 'info',
-            })
-          },
-        )
-        initRelayPool?.on(
-          'event',
-          'RelayPoolContextProvider',
-          (relay: Relay, _subId?: string, event?: Event) => {
-            console.log('RELAYPOOL EVENT =======>', relay.url, event)
-            if (database && event?.id && event.kind !== EventKind.petNames) {
-              storeEvent(event, database).finally(() => setLastEventId(event.id))
-            }
-          },
-        )
-        setRelayPool(initRelayPool)
-        setLoadingRelayPool(false)
-      })
+      initRelayPool?.on(
+        'notice',
+        'RelayPoolContextProvider',
+        (relay: Relay, _subId?: string, event?: Event) => {
+          showMessage({
+            message: relay.url,
+            description: event?.content ?? '',
+            type: 'info',
+          })
+        },
+      )
+      initRelayPool?.on(
+        'event',
+        'RelayPoolContextProvider',
+        (relay: Relay, _subId?: string, event?: Event) => {
+          console.log('RELAYPOOL EVENT =======>', relay.url, event)
+          if (database && event?.id && event.kind !== EventKind.petNames) {
+            storeEvent(event, database).finally(() => setLastEventId(event.id ?? ''))
+          }
+        },
+      )
+      setRelayPool(initRelayPool)
+      setLoadingRelayPool(false)
     }
   }
 

@@ -17,33 +17,36 @@ export const insertNote: (event: Event, db: QuickSQLiteConnection) => Promise<Qu
   event,
   db,
 ) => {
-  if (!verifySignature(event) || !event.id) return null
-  if (![EventKind.textNote, EventKind.recommendServer].includes(event.kind)) return null
-
-  const notes = await getNotes(db, { filters: { id: event.id } })
-  if (notes && notes.length === 0 && event.id && event.sig) {
-    const mainEventId = getMainEventId(event) ?? ''
-    const replyEventId = getReplyEventId(event) ?? ''
-    const content = event.content.split("'").join("''")
-    const tags = JSON.stringify(event.tags).split("'").join("''")
-    const query = `INSERT INTO nostros_notes
-        (id,content,created_at,kind,pubkey,sig,tags,main_event_id,reply_event_id)
-        VALUES 
-        (?,?,?,?,?,?,?,?,?);`
-    const queryValues = [
-      event.id,
-      content,
-      event.created_at,
-      event.kind,
-      event.pubkey,
-      event.sig,
-      tags,
-      mainEventId,
-      replyEventId,
-    ]
-    return db.executeAsync(query, queryValues)
+  const valid = await verifySignature(event)
+  if (valid && event.id && [EventKind.textNote, EventKind.recommendServer].includes(event.kind)) {
+    const notes = await getNotes(db, { filters: { id: event.id } })
+    if (notes && notes.length === 0 && event.id && event.sig) {
+      const mainEventId = getMainEventId(event) ?? ''
+      const replyEventId = getReplyEventId(event) ?? ''
+      const content = event.content.split("'").join("''")
+      const tags = JSON.stringify(event.tags).split("'").join("''")
+      const query = `INSERT INTO nostros_notes
+          (id,content,created_at,kind,pubkey,sig,tags,main_event_id,reply_event_id)
+          VALUES 
+          (?,?,?,?,?,?,?,?,?);`
+      const queryValues = [
+        event.id,
+        content,
+        event.created_at,
+        event.kind,
+        event.pubkey,
+        event.sig,
+        tags,
+        mainEventId,
+        replyEventId,
+      ]
+      return db.executeAsync(query, queryValues)
+    } else {
+      return null
+    }
+  } else {
+    return null
   }
-  return null
 }
 
 export const getNotes: (
