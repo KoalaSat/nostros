@@ -15,17 +15,20 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v2
-      - name: "Generate Release Changelog"
-        id: changelog
-        uses: heinrichreimer/github-changelog-generator-action@v2.3
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
       - name: Release
         id: create-release
         uses: softprops/action-gh-release@v1
         with:
-          body: ${{ steps.changelog.outputs.changelog }}
+          body:
+            New Release [${{ github.ref_name }}]
 
+            https://github.com/KoalaSat/nostros/releases/${{ github.ref_name }}
+
+            Changelog
+
+            Download
+
+            https://github.com/KoalaSat/nostros/releases/download/${{ github.ref_name }}/nostros-${{ github.ref_name }}.apk
       # Upload APK artifact asset
       - name: 'Download APK Artifact'
         uses: actions/download-artifact@v3
