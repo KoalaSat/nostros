@@ -45,24 +45,21 @@ export const ContactsPage: React.FC = () => {
     }
   }
 
-  const subscribeContacts: () => Promise<void> = async () => {
-    return await new Promise<void>((resolve, _reject) => {
-      relayPool?.unsubscribeAll()
-      relayPool?.on('event', 'contacts', (relay: Relay, _subId?: string, event?: Event) => {
-        console.log('CONTACTS PAGE EVENT =======>', relay.url, event)
-        if (database && event?.id && event.kind === EventKind.petNames) {
-          insertUserContact(event, database).finally(() => setLastEventId(event?.id ?? ''))
-          relayPool?.removeOn('event', 'contacts')
-        }
-      })
-      if (publicKey) {
-        relayPool?.subscribe('main-channel', {
-          kinds: [EventKind.petNames],
-          authors: [publicKey],
-        })
+  const subscribeContacts: () => void = async () => {
+    relayPool?.unsubscribeAll()
+    relayPool?.on('event', 'contacts', (relay: Relay, _subId?: string, event?: Event) => {
+      console.log('CONTACTS PAGE EVENT =======>', relay.url, event)
+      if (database && event?.id && event.kind === EventKind.petNames) {
+        insertUserContact(event, database).finally(() => setLastEventId(event?.id ?? ''))
+        relayPool?.removeOn('event', 'contacts')
       }
-      resolve()
     })
+    if (publicKey) {
+      relayPool?.subscribe('main-channel', {
+        kinds: [EventKind.petNames],
+        authors: [publicKey],
+      })
+    }
   }
 
   const onPressAddContact: () => void = () => {

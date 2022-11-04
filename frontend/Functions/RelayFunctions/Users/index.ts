@@ -1,5 +1,5 @@
 import moment from 'moment'
-import { SQLiteDatabase } from 'react-native-sqlite-storage'
+import { QuickSQLiteConnection } from 'react-native-quick-sqlite'
 import RelayPool from '../../../lib/nostr/RelayPool/intex'
 import { getUser, getUsers, User } from '../../DatabaseFunctions/Users'
 import { Event } from '../../../lib/nostr/Events'
@@ -26,44 +26,42 @@ export const tagToUser: (tag: string[]) => User = (tag) => {
 
 export const populatePets: (
   relayPool: RelayPool,
-  database: SQLiteDatabase,
+  database: QuickSQLiteConnection,
   publicKey: string,
-) => void = (relayPool, database, publicKey) => {
-  getUsers(database, { exludeIds: [publicKey], contacts: true }).then((results) => {
-    if (results) {
-      const event: Event = {
-        content: '',
-        created_at: moment().unix(),
-        kind: 3,
-        pubkey: publicKey,
-        tags: usersToTags(results),
-      }
-      relayPool?.sendEvent(event)
+) => void = async (relayPool, database, publicKey) => {
+  const results = await getUsers(database, { exludeIds: [publicKey], contacts: true })
+  if (results) {
+    const event: Event = {
+      content: '',
+      created_at: moment().unix(),
+      kind: 3,
+      pubkey: publicKey,
+      tags: usersToTags(results),
     }
-  })
+    relayPool?.sendEvent(event)
+  }
 }
 
 export const populateProfile: (
   relayPool: RelayPool,
-  database: SQLiteDatabase,
+  database: QuickSQLiteConnection,
   publicKey: string,
-) => void = (relayPool, database, publicKey) => {
-  getUser(publicKey, database).then((result) => {
-    if (result) {
-      const profile = {
-        name: result.name,
-        main_relay: result.main_relay,
-        picture: result.picture,
-        about: result.about,
-      }
-      const event: Event = {
-        content: JSON.stringify(profile),
-        created_at: moment().unix(),
-        kind: 0,
-        pubkey: publicKey,
-        tags: usersToTags([result]),
-      }
-      relayPool?.sendEvent(event)
+) => void = async (relayPool, database, publicKey) => {
+  const result = await getUser(publicKey, database)
+  if (result) {
+    const profile = {
+      name: result.name,
+      main_relay: result.main_relay,
+      picture: result.picture,
+      about: result.about,
     }
-  })
+    const event: Event = {
+      content: JSON.stringify(profile),
+      created_at: moment().unix(),
+      kind: 0,
+      pubkey: publicKey,
+      tags: usersToTags([result]),
+    }
+    relayPool?.sendEvent(event)
+  }
 }

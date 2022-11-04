@@ -102,7 +102,7 @@ export const Logger: React.FC = () => {
       relayPool?.subscribe('main-channel', {
         kinds: [EventKind.textNote, EventKind.recommendServer],
         authors,
-        limit: 15
+        limit: 15,
       })
     }
     if (status > 1) {

@@ -1,9 +1,8 @@
-import { SQLiteDatabase } from 'react-native-sqlite-storage'
+import { QuickSQLiteConnection } from 'react-native-quick-sqlite'
 import { simpleExecute } from '..'
 
-export const createInitDatabase: (db: SQLiteDatabase) => Promise<void> = async (db) => {
-  return await new Promise<void>((resolve) => {
-    simpleExecute(
+export const createInitDatabase: (db: QuickSQLiteConnection) => Promise<void> = async (db) => {
+    await simpleExecute(
       `
         CREATE TABLE IF NOT EXISTS nostros_notes(
           id TEXT PRIMARY KEY NOT NULL, 
@@ -18,30 +17,27 @@ export const createInitDatabase: (db: SQLiteDatabase) => Promise<void> = async (
         );
       `,
       db,
-    ).then(() => {
-      simpleExecute(
-        `
-        CREATE TABLE IF NOT EXISTS nostros_users(
-          id TEXT PRIMARY KEY NOT NULL,
-          name TEXT,
-          picture TEXT,
-          about TEXT,
-          main_relay TEXT,
-          contact BOOLEAN DEFAULT FALSE
+    )
+    await simpleExecute(
+      `
+      CREATE TABLE IF NOT EXISTS nostros_users(
+        id TEXT PRIMARY KEY NOT NULL,
+        name TEXT,
+        picture TEXT,
+        about TEXT,
+        main_relay TEXT,
+        contact BOOLEAN DEFAULT FALSE
+      );
+    `,
+      db,
+    )
+    await simpleExecute(
+      `
+        CREATE TABLE IF NOT EXISTS nostros_relays(
+          url TEXT PRIMARY KEY NOT NULL,
+          pet INTEGER
         );
       `,
-        db,
-      ).then(() => {
-        simpleExecute(
-          `
-            CREATE TABLE IF NOT EXISTS nostros_relays(
-              url TEXT PRIMARY KEY NOT NULL,
-              pet INTEGER
-            );
-          `,
-          db,
-        ).then(() => resolve())
-      })
-    })
-  })
+      db,
+    )
 }

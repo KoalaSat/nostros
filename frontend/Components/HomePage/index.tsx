@@ -31,24 +31,17 @@ export const HomePage: React.FC = () => {
   const [refreshing, setRefreshing] = useState(true)
 
   const calculateInitialNotes: () => Promise<void> = async () => {
-    return await new Promise<void>((resolve) => {
-      if (database && publicKey) {
-        getUsers(database, { contacts: true, includeIds: [publicKey] }).then((users) => {
-          setAuthors(users)
-          subscribeNotes(users)
-          resolve()
-        })
-      }
-    })
+    if (database && publicKey) {
+      const users = await getUsers(database, { contacts: true, includeIds: [publicKey] })
+      setAuthors(users)
+      subscribeNotes(users)
+    }
   }
 
-  const subscribeNotes: (users: User[], past?: boolean) => void = (
-    users,
-    past
-  ) => {
+  const subscribeNotes: (users: User[], past?: boolean) => void = (users, past) => {
     if (!database || !publicKey) return
-    const limit  = past ? pageSize : 1
-    getNotes(database, { contacts: true, includeIds: [publicKey], limit }).then((results) => { 
+    const limit = past ? pageSize : 1
+    getNotes(database, { contacts: true, includeIds: [publicKey], limit }).then((results) => {
       const message: RelayFilters = {
         kinds: [EventKind.textNote, EventKind.recommendServer],
         authors: users.map((user) => user.id),
