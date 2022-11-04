@@ -19,6 +19,7 @@ import { RelayFilters } from '../../lib/nostr/Relay'
 import { getReplyEventId } from '../../Functions/RelayFunctions/Events'
 import { getUsers, User } from '../../Functions/DatabaseFunctions/Users'
 import { handleInfinityScroll } from '../../Functions/NativeFunctions'
+import Loading from '../Loading'
 
 export const HomePage: React.FC = () => {
   const { database, goToPage } = useContext(AppContext)
@@ -31,28 +32,21 @@ export const HomePage: React.FC = () => {
   const [refreshing, setRefreshing] = useState(true)
 
   const calculateInitialNotes: () => Promise<void> = async () => {
-    return await new Promise<void>((resolve) => {
-      if (database && publicKey) {
-        getUsers(database, { contacts: true, includeIds: [publicKey] }).then((users) => {
-          setAuthors(users)
-          subscribeNotes(users)
-          resolve()
-        })
-      }
-    })
+    if (database && publicKey) {
+      const users = await getUsers(database, { contacts: true, includeIds: [publicKey] })
+      setAuthors(users)
+      subscribeNotes(users)
+    }
   }
 
-  const subscribeNotes: (users: User[], past?: boolean) => void = (
-    users,
-    past
-  ) => {
+  const subscribeNotes: (users: User[], past?: boolean) => void = (users, past) => {
     if (!database || !publicKey) return
-    const limit  = past ? pageSize : 1
-    getNotes(database, { contacts: true, includeIds: [publicKey], limit }).then((results) => { 
+    const limit = past ? pageSize : 1
+    getNotes(database, { contacts: true, includeIds: [publicKey], limit }).then((results) => {
       const message: RelayFilters = {
         kinds: [EventKind.textNote, EventKind.recommendServer],
         authors: users.map((user) => user.id),
-        limit: initialPageSize,
+        limit: initialPageSize * 2,
       }
       if (past) {
         message.until = results[results.length - 1]?.created_at
@@ -146,18 +140,22 @@ export const HomePage: React.FC = () => {
   return (
     <>
       <Layout style={styles.container} level='3'>
-        <ScrollView
-          onScroll={onScroll}
-          horizontal={false}
-          refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
-        >
-          {notes.map((note) => itemCard(note))}
-          {notes.length >= initialPageSize && (
-            <View style={styles.loadingBottom}>
-              <Spinner size='tiny' />
-            </View>
-          )}
-        </ScrollView>
+        {notes && notes.length > 0 ? (
+          <ScrollView
+            onScroll={onScroll}
+            horizontal={false}
+            refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
+          >
+            {notes.map((note) => itemCard(note))}
+            {notes.length >= initialPageSize && (
+              <View style={styles.loadingBottom}>
+                <Spinner size='tiny' />
+              </View>
+            )}
+          </ScrollView>
+        ) : (
+          <Loading />
+        )}
       </Layout>
       {privateKey && (
         <TouchableOpacity

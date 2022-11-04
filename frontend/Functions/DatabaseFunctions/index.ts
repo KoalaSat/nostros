@@ -1,41 +1,38 @@
-import SQLite, { ResultSet, SQLiteDatabase, Transaction } from 'react-native-sqlite-storage'
-import { errorCallback } from './Errors'
+import {
+  open,
+  QuickSQLiteConnection,
+  BatchQueryResult,
+  QueryResult,
+} from 'react-native-quick-sqlite'
 
-export const initDatabase: (onReady: () => void, onError?: () => void) => SQLiteDatabase = (
-  onReady,
-  onError,
-) => {
-  return SQLite.openDatabase({ name: 'nostros.db' }, onReady, onError)
+export const initDatabase: () => QuickSQLiteConnection = () => {
+  return open({ name: 'nostros.sqlite' })
 }
 
-export const getItems: (resultSet: ResultSet) => object[] = (resultSet) => {
+export const getItems: (resultSet: QueryResult) => object[] = (resultSet) => {
   const result: object[] = []
 
-  for (let i = 0; i < resultSet.rows.length; i++) {
-    result.push(resultSet.rows.item(i))
+  if (resultSet.rows) {
+    for (let i = 0; i < resultSet.rows.length; i++) {
+      result.push(resultSet.rows.item(i))
+    }
   }
 
   return result
 }
 
-export const simpleExecute: (query: string, db: SQLiteDatabase) => Promise<Transaction> = async (
-  query,
-  db,
-) => {
-  return await db.transaction((transaction) => {
-    transaction.executeSql(query, [], () => {}, errorCallback(query))
-  })
+export const simpleExecute: (
+  query: string,
+  db: QuickSQLiteConnection,
+) => Promise<QueryResult> = async (query, db) => {
+  return db.execute(query)
 }
 
-export const dropTables: (db: SQLiteDatabase) => Promise<Transaction> = async (db) => {
-  const dropQueries = [
-    'DROP TABLE IF EXISTS nostros_notes;',
-    'DROP TABLE IF EXISTS nostros_users;',
-    'DROP TABLE IF EXISTS nostros_relays;',
+export const dropTables: (db: QuickSQLiteConnection) => Promise<BatchQueryResult> = async (db) => {
+  const dropQueries: Array<[string, [any[] | any[][]]]> = [
+    ['DROP TABLE IF EXISTS nostros_notes;', [[]]],
+    ['DROP TABLE IF EXISTS nostros_users;', [[]]],
+    ['DROP TABLE IF EXISTS nostros_relays;', [[]]],
   ]
-  return await db.transaction((transaction) => {
-    dropQueries.forEach((query) => {
-      transaction.executeSql(query, [], () => {}, errorCallback(query))
-    })
-  })
+  return db.executeBatch(dropQueries)
 }

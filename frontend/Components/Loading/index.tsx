@@ -13,13 +13,13 @@ export const Loading: React.FC<LoadingProps> = ({ style = {} }) => {
   const spinValue = new Animated.Value(0)
   Animated.timing(spinValue, {
     toValue: 1,
-    duration: 100000,
+    duration: 200000,
     easing: Easing.linear, // Easing is an additional import from react-native
     useNativeDriver: true, // To make use of native driver for performance
   }).start()
   const spin = spinValue.interpolate({
     inputRange: [0, 1],
-    outputRange: ['0deg', '2016deg'],
+    outputRange: ['0deg', '4032deg'],
   })
 
   return (

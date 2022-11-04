@@ -7,7 +7,7 @@ import { tagToUser } from '../../../Functions/RelayFunctions/Users'
 import Relay from '../../../lib/nostr/Relay'
 import { Event, EventKind } from '../../../lib/nostr/Events'
 import { AppContext } from '../../../Contexts/AppContext'
-import { insertUserContact } from '../../../Functions/DatabaseFunctions/Users'
+import { insertUserContact, insertUserMeta } from '../../../Functions/DatabaseFunctions/Users'
 import SInfo from 'react-native-sensitive-info'
 import Icon from 'react-native-vector-icons/FontAwesome5'
 import { generateRandomKey, getPublickey } from '../../../lib/nostr/Bip'
@@ -59,11 +59,12 @@ export const Logger: React.FC = () => {
     relayPool?.on('event', 'landing', (_relay: Relay, _subId?: string, event?: Event) => {
       console.log('LANDING EVENT =======>', event)
       if (event && database) {
-        setLastEventId(event?.id ?? '')
+        setLastEventId(event.id ?? '')
         if (event.kind === EventKind.petNames) {
           loadPets(event)
         } else if (event.kind === EventKind.meta) {
           setLoadedUsers((prev) => (prev ? prev + 1 : 1))
+          insertUserMeta(event, database)
           if (loadedUsers && loadedUsers >= authors.length && status < 3) setStatus(3)
         }
       }
@@ -102,16 +103,19 @@ export const Logger: React.FC = () => {
       relayPool?.subscribe('main-channel', {
         kinds: [EventKind.textNote, EventKind.recommendServer],
         authors,
-        limit: 15
+        limit: 15,
       })
     }
+  }, [status])
+
+  useEffect(() => {
     if (status > 1) {
-      const timer = setTimeout(() => setStatus(status + 1), 5000)
+      const timer = setTimeout(() => setStatus(status + 1), 10000)
       return () => {
         clearTimeout(timer)
       }
     }
-  }, [status, lastEventId])
+  }, [lastEventId])
 
   const randomKeyGenerator: () => JSX.Element = () => {
     if (!isPrivate) return <></>

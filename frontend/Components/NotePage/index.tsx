@@ -110,38 +110,31 @@ export const NotePage: React.FC = () => {
   }
 
   const subscribeNotes: () => Promise<void> = async () => {
-    return await new Promise<void>((resolve) => {
-      if (database) {
-        getNotes(database, { filters: { id: eventId } }).then((events) => {
-          if (events.length > 0) {
-            const event = events[0]
-            setNote(event)
-            if (!replies) {
-              relayPool?.subscribe('main-channel', {
-                kinds: [EventKind.textNote],
-                '#e': [eventId],
-              })
-            }
-            getNotes(database, { filters: { reply_event_id: eventId } }).then((notes) => {
-              const rootReplies = getDirectReplies(event, notes)
-              if (rootReplies.length > 0) {
-                setReplies(rootReplies as Note[])
-                const message: RelayFilters = {
-                  kinds: [EventKind.meta],
-                  authors: [...rootReplies.map((note) => note.pubkey), event.pubkey],
-                }
-                relayPool?.subscribe('main-channel', message)
-              } else {
-                setReplies([])
-              }
-              resolve()
-            })
-          } else {
-            resolve()
+    if (database) {
+      const events = await getNotes(database, { filters: { id: eventId } })
+      if (events.length > 0) {
+        const event = events[0]
+        setNote(event)
+        if (!replies) {
+          relayPool?.subscribe('main-channel', {
+            kinds: [EventKind.textNote],
+            '#e': [eventId],
+          })
+        }
+        const notes = await getNotes(database, { filters: { reply_event_id: eventId } })
+        const rootReplies = getDirectReplies(event, notes)
+        if (rootReplies.length > 0) {
+          setReplies(rootReplies as Note[])
+          const message: RelayFilters = {
+            kinds: [EventKind.meta],
+            authors: [...rootReplies.map((note) => note.pubkey), event.pubkey],
           }
-        })
+          relayPool?.subscribe('main-channel', message)
+        } else {
+          setReplies([])
+        }
       }
-    })
+    }
   }
 
   const onRefresh = useCallback(() => {

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { SQLiteDatabase } from 'react-native-sqlite-storage'
+import { QuickSQLiteConnection } from 'react-native-quick-sqlite'
 import { initDatabase } from '../Functions/DatabaseFunctions'
 import { createInitDatabase } from '../Functions/DatabaseFunctions/Migrations'
 import FlashMessage from 'react-native-flash-message'
@@ -11,7 +11,7 @@ export interface AppContextProps {
   goBack: () => void
   init: () => void
   loadingDb: boolean
-  database: SQLiteDatabase | null
+  database: QuickSQLiteConnection | null
 }
 
 export interface AppContextProviderProps {
@@ -29,22 +29,20 @@ export const initialAppContext: AppContextProps = {
 
 export const AppContextProvider = ({ children }: AppContextProviderProps): JSX.Element => {
   const [page, setPage] = useState<string>(initialAppContext.page)
-  const [database, setDatabase] = useState<SQLiteDatabase | null>(null)
+  const [database, setDatabase] = useState<QuickSQLiteConnection | null>(null)
   const [loadingDb, setLoadingDb] = useState<boolean>(initialAppContext.loadingDb)
 
   const init: () => void = () => {
+    const db = initDatabase()
+    setDatabase(db)
     SInfo.getItem('privateKey', {}).then((result) => {
-      const onReady: () => void = () => {
-        if (!result || result === '') {
-          createInitDatabase(db).then(() => {
-            setLoadingDb(false)
-          })
-        } else {
+      if (!result || result === '') {
+        createInitDatabase(db).then(() => {
           setLoadingDb(false)
-        }
+        })
+      } else {
+        setLoadingDb(false)
       }
-      const db = initDatabase(onReady)
-      setDatabase(db)
     })
   }
 
