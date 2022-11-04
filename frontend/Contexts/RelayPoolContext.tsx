@@ -56,7 +56,7 @@ export const RelayPoolContextProvider = ({
           initRelayPool.add(relay.url)
         })
       } else {
-        ;['wss://nostr.oxtr.dev'].forEach((relayUrl) => {
+        ;['wss://relay.damus.io'].forEach((relayUrl) => {
           initRelayPool.add(relayUrl)
           storeRelay({ url: relayUrl }, database)
         })
@@ -77,8 +77,8 @@ export const RelayPoolContextProvider = ({
         'event',
         'RelayPoolContextProvider',
         (relay: Relay, _subId?: string, event?: Event) => {
-          console.log('RELAYPOOL EVENT =======>', relay.url, event)
           if (database && event?.id && event.kind !== EventKind.petNames) {
+            console.log('RELAYPOOL EVENT =======>', relay.url, event)
             storeEvent(event, database).finally(() => setLastEventId(event.id ?? ''))
           }
         },

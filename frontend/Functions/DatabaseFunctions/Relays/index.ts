@@ -18,7 +18,7 @@ export const storeRelay: (relay: Relay, db: QuickSQLiteConnection) => Promise<vo
     const relays: Relay[] = await searchRelays(relay.url, db)
     if (relays.length === 0) {
       const query = `
-        INSERT INTO nostros_relays
+        INSERT OR IGNORE INTO nostros_relays
           (url) 
         VALUES 
           (?);

@@ -13,10 +13,10 @@ const databaseToEntity: (object: any) => Note = (object) => {
   return object as Note
 }
 
-export const insertNote: (event: Event, db: QuickSQLiteConnection) => Promise<QueryResult | null> = async (
-  event,
-  db,
-) => {
+export const insertNote: (
+  event: Event,
+  db: QuickSQLiteConnection,
+) => Promise<QueryResult | null> = async (event, db) => {
   const valid = await verifySignature(event)
   if (valid && event.id && [EventKind.textNote, EventKind.recommendServer].includes(event.kind)) {
     const notes = await getNotes(db, { filters: { id: event.id } })
@@ -25,7 +25,7 @@ export const insertNote: (event: Event, db: QuickSQLiteConnection) => Promise<Qu
       const replyEventId = getReplyEventId(event) ?? ''
       const content = event.content.split("'").join("''")
       const tags = JSON.stringify(event.tags).split("'").join("''")
-      const query = `INSERT INTO nostros_notes
+      const query = `INSERT OR IGNORE INTO nostros_notes
           (id,content,created_at,kind,pubkey,sig,tags,main_event_id,reply_event_id)
           VALUES 
           (?,?,?,?,?,?,?,?,?);`
@@ -40,7 +40,7 @@ export const insertNote: (event: Event, db: QuickSQLiteConnection) => Promise<Qu
         mainEventId,
         replyEventId,
       ]
-      return db.executeAsync(query, queryValues)
+      return await db.executeAsync(query, queryValues)
     } else {
       return null
     }

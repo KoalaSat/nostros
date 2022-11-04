@@ -2,8 +2,8 @@ import { QuickSQLiteConnection } from 'react-native-quick-sqlite'
 import { simpleExecute } from '..'
 
 export const createInitDatabase: (db: QuickSQLiteConnection) => Promise<void> = async (db) => {
-    await simpleExecute(
-      `
+  await simpleExecute(
+    `
         CREATE TABLE IF NOT EXISTS nostros_notes(
           id TEXT PRIMARY KEY NOT NULL, 
           content TEXT NOT NULL,
@@ -16,10 +16,10 @@ export const createInitDatabase: (db: QuickSQLiteConnection) => Promise<void> = 
           reply_event_id TEXT
         );
       `,
-      db,
-    )
-    await simpleExecute(
-      `
+    db,
+  )
+  await simpleExecute(
+    `
       CREATE TABLE IF NOT EXISTS nostros_users(
         id TEXT PRIMARY KEY NOT NULL,
         name TEXT,
@@ -29,15 +29,15 @@ export const createInitDatabase: (db: QuickSQLiteConnection) => Promise<void> = 
         contact BOOLEAN DEFAULT FALSE
       );
     `,
-      db,
-    )
-    await simpleExecute(
-      `
+    db,
+  )
+  await simpleExecute(
+    `
         CREATE TABLE IF NOT EXISTS nostros_relays(
           url TEXT PRIMARY KEY NOT NULL,
           pet INTEGER
         );
       `,
-      db,
-    )
+    db,
+  )
 }

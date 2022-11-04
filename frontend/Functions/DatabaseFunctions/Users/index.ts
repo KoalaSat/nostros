@@ -30,43 +30,22 @@ export const insertUserMeta: (
     const about = user.about?.replace("\\'", "'") ?? ''
     const picture = user.picture?.replace("\\'", "'") ?? ''
 
-    const userDb = await getUser(user.id, db)
-    console.log('userDb', userDb)
-    if (userDb) {
-      const userQuery = `
-        UPDATE nostros_users  
-        SET 
-          name = ?',
-          main_relay = ?,
-          about = ?,
-          picture = ?
-        WHERE 
-          id = ?;
-      `
-      const queryParams = [
-        name.split("'").join("''"),
-        mainRelay.split("'").join("''"),
-        about.split("'").join("''"),
-        picture.split("'").join("''"),
-        user.id,
-      ]
-      return db.execute(userQuery, queryParams)
-    } else {
-      const userQuery = `
-        INSERT INTO nostros_users 
-          (id, name, picture, about, main_relay) 
-        VALUES 
-          (?,?,?,?,?);
-      `
-      const queryParams = [
-        id,
-        name.split("'").join("''"),
-        picture.split("'").join("''"),
-        about.split("'").join("''"),
-        '',
-      ]
-      return db.execute(userQuery, queryParams)
-    }
+    const query = `
+      INSERT OR REPLACE INTO nostros_users 
+        (id, name, picture, about, main_relay, contact)
+      VALUES
+        (?,?,?,?,?, (SELECT contact FROM nostros_users WHERE id = ?));
+    `
+    const queryParams = [
+      id,
+      name.split("'").join("''"),
+      picture.split("'").join("''"),
+      about.split("'").join("''"),
+      mainRelay.split("'").join("''"),
+      id,
+    ]
+
+    return db.execute(query, queryParams)
   } else {
     return null
   }
@@ -75,13 +54,13 @@ export const insertUserMeta: (
 export const insertUserContact: (
   event: Event,
   db: QuickSQLiteConnection,
-) => Promise<Array<Promise<QueryResult>> | null> = async (event, db) => {
+) => Promise<User[] | null> = async (event, db) => {
   const valid = await verifySignature(event)
 
   if (valid && event.kind === EventKind.petNames) {
-    const userTags: string[] = event.tags.map((tag) => tagToUser(tag).id)
-    const users = userTags.map(async (userId) => {
-      return await addContact(userId, db)
+    const users: User[] = event.tags.map((tag) => tagToUser(tag))
+    users.map(async (user) => {
+      return await addContact(user.id, db)
     })
     return users
   } else {
@@ -99,10 +78,8 @@ export const getUser: (pubkey: string, db: QuickSQLiteConnection) => Promise<Use
   if (resultSet.rows && resultSet.rows?.length > 0) {
     const items: object[] = getItems(resultSet)
     const user: User = databaseToEntity(items[0])
-    console.log('if (resultSet.rows && resultSet.rows?.length > 0)', user)
     return user
   } else {
-    console.log('NULL')
     return null
   }
 }
@@ -111,22 +88,23 @@ export const removeContact: (
   pubkey: string,
   db: QuickSQLiteConnection,
 ) => Promise<QueryResult> = async (pubkey, db) => {
-  const userQuery = `UPDATE nostros_users SET contact = FALSE WHERE id = '${pubkey}'`
-  return db.execute(userQuery)
+  const userQuery = `UPDATE nostros_users SET contact = FALSE WHERE id = ?`
+
+  return db.execute(userQuery, [pubkey])
 }
 
 export const addContact: (
-  pubkey: string,
+  pubKey: string,
   db: QuickSQLiteConnection,
-) => Promise<QueryResult> = async (pubkey, db) => {
-  const userDb = await getUser(pubkey, db)
-  let userQuery = ''
-  if (userDb) {
-    userQuery = `UPDATE nostros_users SET contact = TRUE WHERE id = ?;`
-  } else {
-    userQuery = `INSERT INTO nostros_users (id, contact) VALUES (?, TRUE);`
-  }
-  return db.execute(userQuery, [pubkey])
+) => Promise<QueryResult> = async (pubKey, db) => {
+  const query = `
+    INSERT INTO nostros_users (id, contact)
+    VALUES (?, ?)
+    ON CONFLICT (id) DO
+    UPDATE SET contact=excluded.contact;
+  `
+
+  return db.execute(query, [pubKey, '1'])
 }
 
 export const getUsers: (

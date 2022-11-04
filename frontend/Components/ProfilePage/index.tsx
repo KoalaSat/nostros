@@ -57,7 +57,6 @@ export const ProfilePage: React.FC = () => {
 
     loadUser()
     loadNotes()
-    subscribeNotes()
   }, [page])
 
   const loadUser: () => void = () => {
@@ -95,7 +94,6 @@ export const ProfilePage: React.FC = () => {
       } else {
         message.since = results[0]?.created_at
       }
-
       relayPool?.subscribe('main-channel', message)
     })
   }
@@ -114,6 +112,7 @@ export const ProfilePage: React.FC = () => {
             setContactsIds(ids)
           } else if (event.kind === EventKind.meta) {
             storeEvent(event, database).then(() => setRefreshing(false))
+            subscribeNotes()
           }
         }
       }

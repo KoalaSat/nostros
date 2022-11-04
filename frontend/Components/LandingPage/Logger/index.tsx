@@ -106,17 +106,11 @@ export const Logger: React.FC = () => {
         limit: 15,
       })
     }
-    if (status > 1) {
-      const timer = setTimeout(() => setStatus(status + 1), 5000)
-      return () => {
-        clearTimeout(timer)
-      }
-    }
   }, [status])
 
   useEffect(() => {
     if (status > 1) {
-      const timer = setTimeout(() => setStatus(status + 1), 5000)
+      const timer = setTimeout(() => setStatus(status + 1), 10000)
       return () => {
         clearTimeout(timer)
       }

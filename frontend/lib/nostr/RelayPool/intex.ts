@@ -116,7 +116,7 @@ class RelayPool {
       } else {
         console.log('Not valid event', event)
         return null
-      } 
+      }
     } else {
       return null
     }
