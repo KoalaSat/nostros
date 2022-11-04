@@ -28,7 +28,7 @@ Local setup: https://github.com/KoalaSat/nostros/blob/main/SETUP.md
 - [x] i18n not loading
 - [x] Logging out and in again does not work
 - [x] Clipboard library not working
-- [ ] Some user images are not loading (webp)
+- [x] Some user images are not loading (webp)
 - [ ] Websocket connections closed when the app goes to background for too long
 
 ### Basics
