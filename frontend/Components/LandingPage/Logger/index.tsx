@@ -79,7 +79,7 @@ export const Logger: React.FC = () => {
           requestUserData(event)
         })
       } else {
-        setStatus(4)
+        setStatus(3)
       }
     }
   }
@@ -96,21 +96,15 @@ export const Logger: React.FC = () => {
   }
 
   useEffect(() => {
-    if (status > 3) {
+    if (status > 2) {
       relayPool?.removeOn('event', 'landing')
       goToPage('home', true)
-    } else if (status === 2) {
-      relayPool?.subscribe('main-channel', {
-        kinds: [EventKind.textNote, EventKind.recommendServer],
-        authors,
-        limit: 15,
-      })
     }
   }, [status])
 
   useEffect(() => {
     if (status > 1) {
-      const timer = setTimeout(() => setStatus(status + 1), 10000)
+      const timer = setTimeout(() => setStatus(4), 8000)
       return () => {
         clearTimeout(timer)
       }
@@ -148,8 +142,7 @@ export const Logger: React.FC = () => {
     0: t('landing.connect'),
     1: t('landing.connecting'),
     2: t('landing.loadingContacts'),
-    3: t('landing.loadingEvents'),
-    4: t('landing.ready'),
+    3: t('landing.ready'),
   }
   const styles = StyleSheet.create({
     inputsContainer: {

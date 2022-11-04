@@ -45,7 +45,7 @@ export const insertUserMeta: (
       id,
     ]
 
-    return db.execute(query, queryParams)
+    return await db.executeAsync(query, queryParams)
   } else {
     return null
   }

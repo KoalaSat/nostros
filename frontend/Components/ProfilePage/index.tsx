@@ -19,7 +19,6 @@ import {
   View,
 } from 'react-native'
 import { AppContext } from '../../Contexts/AppContext'
-import UserAvatar from 'react-native-user-avatar'
 import { getNotes, Note } from '../../Functions/DatabaseFunctions/Notes'
 import NoteCard from '../NoteCard'
 import { RelayPoolContext } from '../../Contexts/RelayPoolContext'
@@ -32,6 +31,7 @@ import { getReplyEventId } from '../../Functions/RelayFunctions/Events'
 import Loading from '../Loading'
 import { storeEvent } from '../../Functions/DatabaseFunctions/Events'
 import { handleInfinityScroll } from '../../Functions/NativeFunctions'
+import Avatar from '../Avatar'
 
 export const ProfilePage: React.FC = () => {
   const { database, page, goToPage, goBack } = useContext(AppContext)
@@ -57,6 +57,7 @@ export const ProfilePage: React.FC = () => {
 
     loadUser()
     loadNotes()
+    subscribeNotes()
   }, [page])
 
   const loadUser: () => void = () => {
@@ -71,7 +72,7 @@ export const ProfilePage: React.FC = () => {
     }
   }
 
-  const loadNotes: (past?: boolean) => void = (past) => {
+  const loadNotes: (past?: boolean) => void = () => {
     if (database) {
       getNotes(database, { filters: { pubkey: userId }, limit: pageSize }).then((results) => {
         setNotes(results)
@@ -82,7 +83,7 @@ export const ProfilePage: React.FC = () => {
 
   const subscribeNotes: (past?: boolean) => void = (past) => {
     if (!database) return
-    const limit = past ? pageSize : 1
+    const limit = past ? pageSize : initialPageSize
     getNotes(database, { filters: { pubkey: userId }, limit }).then((results) => {
       const message: RelayFilters = {
         kinds: [EventKind.textNote, EventKind.recommendServer],
@@ -91,7 +92,7 @@ export const ProfilePage: React.FC = () => {
       }
       if (past) {
         message.until = results[results.length - 1]?.created_at
-      } else {
+      } else if (results.length >= pageSize) {
         message.since = results[0]?.created_at
       }
       relayPool?.subscribe('main-channel', message)
@@ -138,6 +139,7 @@ export const ProfilePage: React.FC = () => {
     setRefreshing(true)
     relayPool?.unsubscribeAll()
     loadNotes(true)
+    subscribeNotes()
   }, [])
 
   const removeAuthor: () => void = () => {
@@ -334,12 +336,7 @@ export const ProfilePage: React.FC = () => {
       <Layout style={styles.avatar} level='3'>
         {user ? (
           <>
-            <UserAvatar
-              name={username ?? user.id}
-              src={user?.picture}
-              size={130}
-              textColor={theme['text-basic-color']}
-            />
+            <Avatar src={user?.picture} name={username} size={130} pubKey={user.id} />
           </>
         ) : (
           <></>
@@ -380,11 +377,9 @@ export const ProfilePage: React.FC = () => {
             refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
           >
             {notes.map((note) => itemCard(note))}
-            {notes.length >= initialPageSize && (
-              <View style={styles.loadingBottom}>
-                <Spinner size='tiny' />
-              </View>
-            )}
+            <View style={styles.loadingBottom}>
+              <Spinner size='tiny' />
+            </View>
           </ScrollView>
         ) : (
           <Loading />

@@ -40,7 +40,7 @@ export const insertNote: (
         mainEventId,
         replyEventId,
       ]
-      return db.executeAsync(query, queryValues)
+      return await db.executeAsync(query, queryValues)
     } else {
       return null
     }

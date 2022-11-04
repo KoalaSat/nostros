@@ -23,7 +23,7 @@ import Loading from '../Loading'
 
 export const HomePage: React.FC = () => {
   const { database, goToPage } = useContext(AppContext)
-  const initialPageSize = 15
+  const initialPageSize = 10
   const { lastEventId, relayPool, publicKey, privateKey } = useContext(RelayPoolContext)
   const theme = useTheme()
   const [pageSize, setPageSize] = useState<number>(initialPageSize)
@@ -41,16 +41,17 @@ export const HomePage: React.FC = () => {
 
   const subscribeNotes: (users: User[], past?: boolean) => void = (users, past) => {
     if (!database || !publicKey) return
-    const limit = past ? pageSize : 1
+    const limit = past ? pageSize : initialPageSize
     getNotes(database, { contacts: true, includeIds: [publicKey], limit }).then((results) => {
       const message: RelayFilters = {
         kinds: [EventKind.textNote, EventKind.recommendServer],
         authors: users.map((user) => user.id),
-        limit: initialPageSize * 2,
+        limit: initialPageSize,
       }
+
       if (past) {
         message.until = results[results.length - 1]?.created_at
-      } else {
+      } else if (results.length >= pageSize) {
         message.since = results[0]?.created_at
       }
 
@@ -147,11 +148,9 @@ export const HomePage: React.FC = () => {
             refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
           >
             {notes.map((note) => itemCard(note))}
-            {notes.length >= initialPageSize && (
-              <View style={styles.loadingBottom}>
-                <Spinner size='tiny' />
-              </View>
-            )}
+            <View style={styles.loadingBottom}>
+              <Spinner size='tiny' />
+            </View>
           </ScrollView>
         ) : (
           <Loading />

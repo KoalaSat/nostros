@@ -65,7 +65,7 @@ export const RelayPoolContextProvider = ({
       initRelayPool?.on(
         'notice',
         'RelayPoolContextProvider',
-        (relay: Relay, _subId?: string, event?: Event) => {
+        async (relay: Relay, _subId?: string, event?: Event) => {
           showMessage({
             message: relay.url,
             description: event?.content ?? '',
@@ -76,7 +76,7 @@ export const RelayPoolContextProvider = ({
       initRelayPool?.on(
         'event',
         'RelayPoolContextProvider',
-        (relay: Relay, _subId?: string, event?: Event) => {
+        async (relay: Relay, _subId?: string, event?: Event) => {
           if (database && event?.id && event.kind !== EventKind.petNames) {
             console.log('RELAYPOOL EVENT =======>', relay.url, event)
             storeEvent(event, database).finally(() => setLastEventId(event.id ?? ''))

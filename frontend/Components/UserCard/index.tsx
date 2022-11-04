@@ -1,9 +1,9 @@
 import React, { useContext } from 'react'
-import { Card, Layout, Text, useTheme } from '@ui-kitten/components'
+import { Card, Layout, Text } from '@ui-kitten/components'
 import { User } from '../../Functions/DatabaseFunctions/Users'
 import { StyleSheet } from 'react-native'
-import UserAvatar from 'react-native-user-avatar'
 import { AppContext } from '../../Contexts/AppContext'
+import Avatar from '../Avatar'
 
 interface NoteCardProps {
   user: User
@@ -11,7 +11,6 @@ interface NoteCardProps {
 
 export const NoteCard: React.FC<NoteCardProps> = ({ user }) => {
   const { goToPage } = useContext(AppContext)
-  const theme = useTheme()
 
   const styles = StyleSheet.create({
     layout: {
@@ -41,12 +40,7 @@ export const NoteCard: React.FC<NoteCardProps> = ({ user }) => {
       <Card onPress={() => goToPage(`profile#${user.id}`)}>
         <Layout style={styles.layout} level='2'>
           <Layout style={styles.profile}>
-            <UserAvatar
-              name={user.name ?? user.id ?? ''}
-              src={user.picture}
-              size={38}
-              textColor={theme['text-basic-color']}
-            />
+            <Avatar name={user.name} src={user.picture} pubKey={user.id} />
           </Layout>
           <Layout style={styles.content} level='2'>
             <Text>{user.name}</Text>
