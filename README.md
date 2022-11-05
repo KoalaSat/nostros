@@ -35,7 +35,7 @@ Local setup: https://github.com/KoalaSat/nostros/blob/main/SETUP.md
 
 - [x] Infinite Load
 - [x] Go to replied event
-- [ ] Relays management (add, remove and recomend)
+- [x] Relays management (add, remove and recomend)
 - [x] Random Key Generator
 - [x] Watch only mode
 
