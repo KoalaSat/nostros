@@ -91,7 +91,7 @@ export const RelaysPage: React.FC = () => {
     ) : (
       <Button
         status='success'
-        disabled={loading || (relays?.length ?? 0) > 1}
+        disabled={loading || (relays?.length ?? 0) > 0}
         onPress={() => addRelayItem(relay.url)}
         accessoryLeft={<Icon name='plus' size={16} color={theme['text-basic-color']} solid />}
       />

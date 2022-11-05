@@ -59,7 +59,7 @@ export const NoteCard: React.FC<NoteCardProps> = ({ note }) => {
             <Markdown style={markdownStyle(theme)}>{note.content}</Markdown>
           </Layout>
           <Layout style={styles.footer}>
-            <Text appearance='hint'>{moment.unix(note.created_at).format('DD-MM-YY hh:mm')}</Text>
+            <Text appearance='hint'>{moment.unix(note.created_at).format('DD-MM-YY HH:mm')}</Text>
           </Layout>
         </Layout>
       </>

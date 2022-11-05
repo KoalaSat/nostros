@@ -27,30 +27,38 @@ import Loading from '../Loading'
 import { getDirectReplies, getReplyEventId } from '../../Functions/RelayFunctions/Events'
 
 export const NotePage: React.FC = () => {
-  const { page, goBack, goToPage, database } = useContext(AppContext)
+  const { page, goBack, goToPage, database, getActualPage } = useContext(AppContext)
   const { lastEventId, relayPool, privateKey } = useContext(RelayPoolContext)
   const [note, setNote] = useState<Note>()
   const [replies, setReplies] = useState<Note[]>()
   const [refreshing, setRefreshing] = useState(false)
+  const [eventId, setEventId] = useState(getActualPage().split('#')[1])
   const theme = useTheme()
-  const breadcrump = page.split('%')
-  const eventId = breadcrump[breadcrump.length - 1].split('#')[1]
 
-  const reload: (newEventId?: string) => void = (newEventId) => {
-    setNote(undefined)
-    setReplies(undefined)
+  const onRefresh = useCallback(() => {
+    setRefreshing(true)
     relayPool?.unsubscribeAll()
-    relayPool?.subscribe('main-channel', {
-      kinds: [EventKind.textNote],
-      ids: [newEventId ?? eventId],
-    })
-  }
+    subscribeNotes().finally(() => setRefreshing(false))
+  }, [])
 
-  useEffect(reload, [])
+  useEffect(() => {
+    reload(getActualPage().split('#')[1])
+  }, [page])
 
   useEffect(() => {
     subscribeNotes()
-  }, [lastEventId, page])
+  }, [lastEventId])
+
+  const reload: (newEventId: string) => void = (newEventId) => {
+    setNote(undefined)
+    setReplies(undefined)
+    setEventId(newEventId)
+    relayPool?.unsubscribeAll()
+    relayPool?.subscribe('main-channel', {
+      kinds: [EventKind.textNote],
+      ids: [newEventId],
+    })
+  }
 
   const onPressBack: () => void = () => {
     relayPool?.unsubscribeAll()
@@ -63,6 +71,38 @@ export const NotePage: React.FC = () => {
       if (replyId) {
         goToPage(`note#${replyId}`)
         reload(replyId)
+      }
+    }
+  }
+
+  const subscribeNotes: (past?: boolean) => Promise<void> = async (past) => {
+    if (database) {
+      const events = await getNotes(database, { filters: { id: eventId } })
+      const event = events[0]
+      if (event) {
+        setNote(event)
+        const notes = await getNotes(database, { filters: { reply_event_id: eventId } })
+        const eventMessages: RelayFilters = {
+          kinds: [EventKind.textNote],
+          '#e': [eventId],
+        }
+        if (past) {
+          eventMessages.until = notes[notes.length - 1]?.created_at
+        } else {
+          eventMessages.since = notes[0]?.created_at
+        }
+        relayPool?.subscribe('main-channel', eventMessages)
+        const rootReplies = getDirectReplies(event, notes)
+        if (rootReplies.length > 0) {
+          setReplies(rootReplies as Note[])
+          const message: RelayFilters = {
+            kinds: [EventKind.meta],
+            authors: [...rootReplies.map((note) => note.pubkey), event.pubkey],
+          }
+          relayPool?.subscribe('main-channel', message)
+        } else {
+          setReplies([])
+        }
       }
     }
   }
@@ -92,10 +132,11 @@ export const NotePage: React.FC = () => {
       const replyEventId = getReplyEventId(note)
       if (replyEventId && replyEventId !== eventId) {
         goToPage(`note#${replyEventId}`)
+        reload(replyEventId)
       } else if (note.id) {
         goToPage(`note#${note.id}`)
+        reload(note.id)
       }
-      reload()
     }
   }
 
@@ -116,40 +157,6 @@ export const NotePage: React.FC = () => {
       return <></>
     }
   }
-
-  const subscribeNotes: () => Promise<void> = async () => {
-    if (database) {
-      const events = await getNotes(database, { filters: { id: eventId } })
-      if (events.length > 0) {
-        const event = events[0]
-        setNote(event)
-        if (!replies) {
-          relayPool?.subscribe('main-channel', {
-            kinds: [EventKind.textNote],
-            '#e': [eventId],
-          })
-        }
-        const notes = await getNotes(database, { filters: { reply_event_id: eventId } })
-        const rootReplies = getDirectReplies(event, notes)
-        if (rootReplies.length > 0) {
-          setReplies(rootReplies as Note[])
-          const message: RelayFilters = {
-            kinds: [EventKind.meta],
-            authors: [...rootReplies.map((note) => note.pubkey), event.pubkey],
-          }
-          relayPool?.subscribe('main-channel', message)
-        } else {
-          setReplies([])
-        }
-      }
-    }
-  }
-
-  const onRefresh = useCallback(() => {
-    setRefreshing(true)
-    relayPool?.unsubscribeAll()
-    subscribeNotes().finally(() => setRefreshing(false))
-  }, [])
 
   const onPressTitle: () => void = () => {
     Clipboard.setString(note?.id ?? '')
