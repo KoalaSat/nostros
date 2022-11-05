@@ -69,7 +69,7 @@ Local setup: https://github.com/KoalaSat/nostros/blob/main/SETUP.md
 
 ### Config
 
-- [ ] Private Key download
+- [x] Private Key download
 
 # Kudos
 
