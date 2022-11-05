@@ -1,6 +1,14 @@
-import { Button, Layout, TopNavigation, TopNavigationAction, useTheme } from '@ui-kitten/components'
+import {
+  Button,
+  Divider,
+  Input,
+  Layout,
+  TopNavigation,
+  TopNavigationAction,
+  useTheme,
+} from '@ui-kitten/components'
 import React, { useContext, useEffect } from 'react'
-import { StyleSheet } from 'react-native'
+import { Clipboard, StyleSheet } from 'react-native'
 import { AppContext } from '../../Contexts/AppContext'
 import Icon from 'react-native-vector-icons/FontAwesome5'
 import { useTranslation } from 'react-i18next'
@@ -11,7 +19,8 @@ import SInfo from 'react-native-sensitive-info'
 export const ConfigPage: React.FC = () => {
   const theme = useTheme()
   const { goToPage, goBack, database, init } = useContext(AppContext)
-  const { setPrivateKey, setPublicKey, relayPool } = useContext(RelayPoolContext)
+  const { setPrivateKey, setPublicKey, relayPool, publicKey, privateKey } =
+    useContext(RelayPoolContext)
   const { t } = useTranslation('common')
 
   useEffect(() => {
@@ -46,6 +55,12 @@ export const ConfigPage: React.FC = () => {
     />
   )
 
+  const copyToClipboard: (value: string) => JSX.Element = (value) => {
+    const copy: () => void = () => Clipboard.setString(value)
+
+    return <Icon name={'copy'} size={16} color={theme['text-basic-color']} solid onPress={copy} />
+  }
+
   const styles = StyleSheet.create({
     container: {
       flex: 1,
@@ -55,7 +70,8 @@ export const ConfigPage: React.FC = () => {
       paddingLeft: 32,
       paddingRight: 32,
     },
-    button: {
+    action: {
+      backgroundColor: 'transparent',
       marginTop: 30,
     },
   })
@@ -69,14 +85,41 @@ export const ConfigPage: React.FC = () => {
           accessoryLeft={renderBackAction}
         />
         <Layout style={styles.actionContainer} level='2'>
-          <Layout style={styles.button}>
+          <Layout style={styles.action}>
             <Button
-              onPress={onPressLogout}
-              status='danger'
+              onPress={() => goToPage('relays')}
+              status='info'
               accessoryLeft={
-                <Icon name='power-off' size={16} color={theme['text-basic-color']} solid />
+                <Icon name='server' size={16} color={theme['text-basic-color']} solid />
               }
             >
+              {t('configPage.relays')}
+            </Button>
+          </Layout>
+          <Layout style={styles.action}>
+            <Divider />
+          </Layout>
+          <Layout style={styles.action}>
+            <Input
+              disabled={true}
+              placeholder={t('configPage.publicKey')}
+              accessoryRight={() => copyToClipboard(publicKey ?? '')}
+              value={publicKey}
+              label={t('configPage.publicKey')}
+            />
+          </Layout>
+          <Layout style={styles.action}>
+            <Input
+              disabled={true}
+              placeholder={t('configPage.privateKey')}
+              accessoryRight={() => copyToClipboard(privateKey ?? '')}
+              value={privateKey}
+              secureTextEntry={true}
+              label={t('configPage.privateKey')}
+            />
+          </Layout>
+          <Layout style={styles.action}>
+            <Button onPress={onPressLogout} status='danger'>
               {t('configPage.logout')}
             </Button>
           </Layout>

@@ -5,7 +5,7 @@ import Icon from 'react-native-vector-icons/FontAwesome5'
 import { RelayPoolContext } from '../../Contexts/RelayPoolContext'
 
 export const NavigationBar: React.FC = () => {
-  const { goToPage, page } = useContext(AppContext)
+  const { goToPage, getActualPage, page } = useContext(AppContext)
   const { publicKey } = useContext(RelayPoolContext)
   const theme = useTheme()
   const profilePage = `profile#${publicKey ?? ''}`
@@ -13,12 +13,15 @@ export const NavigationBar: React.FC = () => {
   const pageIndex: string[] = ['home', 'contacts', profilePage]
 
   const getIndex: () => number = () => {
-    if (page.includes('profile')) {
-      return page === profilePage ? 2 : 1
-    } else if (page.includes('note#')) {
+    const actualPage = getActualPage()
+    if (actualPage.includes('profile')) {
+      return actualPage === profilePage ? 2 : 1
+    } else if (actualPage.includes('note#')) {
       return 0
+    } else if (['config', 'relays'].includes(actualPage)) {
+      return 2
     } else {
-      return pageIndex.indexOf(page)
+      return pageIndex.indexOf(actualPage)
     }
   }
 

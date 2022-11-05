@@ -28,12 +28,18 @@
       "send": "Send",
       "profileNotCreated": "Profile not created"
     },
+    "relaysPage": {
+      "title": "Relays"
+    },
     "notePage": {
       "reply": "Reply"
     },
     "configPage": {
       "title": "Configuration",
-      "logout": "Delete Keys"
+      "logout": "Delete Keys",
+      "relays": "Relays",
+      "publicKey": "Public Key",
+      "privateKey": "Private Key"
     },
     "contactsPage": {
       "add": "Add User",
@@ -49,7 +55,8 @@
       "reply": "Send a reply"
     },
     "alerts": {
-      "relayAdded": "Relay added"
+      "relayAdded": "Relay added",
+      "relayRemoved": "Relay Removed"
     }
   }
 }

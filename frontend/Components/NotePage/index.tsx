@@ -1,4 +1,11 @@
-import { Card, Layout, TopNavigation, TopNavigationAction, useTheme } from '@ui-kitten/components'
+import {
+  Card,
+  Layout,
+  Spinner,
+  TopNavigation,
+  TopNavigationAction,
+  useTheme,
+} from '@ui-kitten/components'
 import React, { useCallback, useContext, useEffect, useState } from 'react'
 import { AppContext } from '../../Contexts/AppContext'
 import { getNotes, Note } from '../../Functions/DatabaseFunctions/Notes'
@@ -14,6 +21,7 @@ import {
   StyleSheet,
   Text,
   TouchableOpacity,
+  View,
 } from 'react-native'
 import Loading from '../Loading'
 import { getDirectReplies, getReplyEventId } from '../../Functions/RelayFunctions/Events'
@@ -157,6 +165,14 @@ export const NotePage: React.FC = () => {
     loading: {
       maxHeight: 160,
     },
+    loadingBottom: {
+      flex: 1,
+      flexDirection: 'row',
+      justifyContent: 'center',
+      alignItems: 'center',
+      flexWrap: 'wrap',
+      padding: 12,
+    },
   })
 
   return (
@@ -171,13 +187,16 @@ export const NotePage: React.FC = () => {
         accessoryLeft={renderBackAction}
         accessoryRight={renderNoteActions}
       />
-      <Layout level='3'>
+      <Layout level='4'>
         {note ? (
           <ScrollView
             horizontal={false}
             refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
           >
             {[note, ...(replies ?? [])].map((note) => itemCard(note))}
+            <View style={styles.loadingBottom}>
+              <Spinner size='tiny' />
+            </View>
           </ScrollView>
         ) : (
           <Loading style={styles.loading} />
