@@ -9,6 +9,7 @@ export interface AppContextProps {
   page: string
   goToPage: (path: string, root?: boolean) => void
   goBack: () => void
+  getActualPage: () => string
   init: () => void
   loadingDb: boolean
   database: QuickSQLiteConnection | null
@@ -22,6 +23,7 @@ export const initialAppContext: AppContextProps = {
   page: '',
   init: () => {},
   goToPage: () => {},
+  getActualPage: () => '',
   goBack: () => {},
   loadingDb: true,
   database: null,
@@ -61,6 +63,11 @@ export const AppContextProvider = ({ children }: AppContextProviderProps): JSX.E
     setPage(breadcrump.slice(0, -1).join('%') || 'home')
   }
 
+  const getActualPage: () => string = () => {
+    const breadcrump = page.split('%')
+    return breadcrump[breadcrump.length - 1]
+  }
+
   return (
     <AppContext.Provider
       value={{
@@ -68,6 +75,7 @@ export const AppContextProvider = ({ children }: AppContextProviderProps): JSX.E
         init,
         goToPage,
         goBack,
+        getActualPage,
         loadingDb,
         database,
       }}

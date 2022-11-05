@@ -4,10 +4,12 @@ import { Event, EventKind } from '../lib/nostr/Events'
 import RelayPool from '../lib/nostr/RelayPool/intex'
 import { AppContext } from './AppContext'
 import { storeEvent } from '../Functions/DatabaseFunctions/Events'
-import { getRelays, storeRelay } from '../Functions/DatabaseFunctions/Relays'
+import { getRelays, addRelay } from '../Functions/DatabaseFunctions/Relays'
 import { showMessage } from 'react-native-flash-message'
 import SInfo from 'react-native-sensitive-info'
 import { getPublickey } from '../lib/nostr/Bip'
+import { pickRandomItems } from '../Functions/NativeFunctions'
+import { defaultRelays } from '../Constants/RelayConstants'
 
 export interface RelayPoolContextProps {
   loadingRelayPool: boolean
@@ -56,9 +58,9 @@ export const RelayPoolContextProvider = ({
           initRelayPool.add(relay.url)
         })
       } else {
-        ;['wss://relay.damus.io'].forEach((relayUrl) => {
+        pickRandomItems(defaultRelays, 2).forEach((relayUrl) => {
           initRelayPool.add(relayUrl)
-          storeRelay({ url: relayUrl }, database)
+          addRelay({ url: relayUrl }, database)
         })
       }
 

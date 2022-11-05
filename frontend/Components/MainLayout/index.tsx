@@ -10,6 +10,7 @@ import ContactsPage from '../ContactsPage'
 import NotePage from '../NotePage'
 import LandingPage from '../LandingPage'
 import ConfigPage from '../ConfigPage'
+import RelaysPage from '../RelaysPage'
 
 export const MainLayout: React.FC = () => {
   const { page } = useContext(AppContext)
@@ -28,6 +29,7 @@ export const MainLayout: React.FC = () => {
     contacts: <ContactsPage />,
     note: <NotePage />,
     config: <ConfigPage />,
+    relays: <RelaysPage />,
   }
 
   const breadcrump: string[] = page.split('%')

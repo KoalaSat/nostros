@@ -20,13 +20,13 @@ jobs:
         uses: softprops/action-gh-release@v1
         with:
           body:
-            New Release [${{ github.ref_name }}]
+            \#  New Release [${{ github.ref_name }}]
 
             https://github.com/KoalaSat/nostros/releases/${{ github.ref_name }}
 
-            Changelog
+            \## Changelog
 
-            Download
+            \## Download
 
             https://github.com/KoalaSat/nostros/releases/download/${{ github.ref_name }}/nostros-${{ github.ref_name }}.apk
       # Upload APK artifact asset

@@ -6,7 +6,7 @@ import Markdown from 'react-native-markdown-display'
 import { EventKind } from '../../lib/nostr/Events'
 import Icon from 'react-native-vector-icons/FontAwesome5'
 import { RelayPoolContext } from '../../Contexts/RelayPoolContext'
-import { storeRelay } from '../../Functions/DatabaseFunctions/Relays'
+import { addRelay } from '../../Functions/DatabaseFunctions/Relays'
 import { AppContext } from '../../Contexts/AppContext'
 import { showMessage } from 'react-native-flash-message'
 import { t } from 'i18next'
@@ -14,6 +14,7 @@ import { getReplyEventId } from '../../Functions/RelayFunctions/Events'
 import moment from 'moment'
 import { populateRelay } from '../../Functions/RelayFunctions'
 import Avatar from '../Avatar'
+import { markdownStyle } from '../../Constants/AppConstants'
 
 interface NoteCardProps {
   note: Note
@@ -55,10 +56,10 @@ export const NoteCard: React.FC<NoteCardProps> = ({ note }) => {
             </Layout>
           </Layout>
           <Layout style={styles.text}>
-            <Markdown style={markdownStyle}>{note.content}</Markdown>
+            <Markdown style={markdownStyle(theme)}>{note.content}</Markdown>
           </Layout>
           <Layout style={styles.footer}>
-            <Text appearance='hint'>{moment.unix(note.created_at).format('DD-MM-YY hh:mm')}</Text>
+            <Text appearance='hint'>{moment.unix(note.created_at).format('DD-MM-YY HH:mm')}</Text>
           </Layout>
         </Layout>
       </>
@@ -68,11 +69,11 @@ export const NoteCard: React.FC<NoteCardProps> = ({ note }) => {
   const relayNote: () => JSX.Element = () => {
     const relayName = note.content.split('wss://')[1].split('/')[0]
 
-    const addRelay: () => void = () => {
+    const addRelayItem: () => void = () => {
       if (relayPool && database && publicKey) {
         relayPool.add(note.content)
         setRelayPool(relayPool)
-        storeRelay({ url: note.content }, database)
+        addRelay({ url: note.content }, database)
         populateRelay(relayPool, database, publicKey)
         showMessage({
           message: t('alerts.relayAdded'),
@@ -96,7 +97,7 @@ export const NoteCard: React.FC<NoteCardProps> = ({ note }) => {
           {!relayAdded && (
             <Button
               status='success'
-              onPress={addRelay}
+              onPress={addRelayItem}
               accessoryLeft={
                 <Icon name='plus-circle' size={16} color={theme['text-basic-color']} solid />
               }
@@ -157,44 +158,6 @@ export const NoteCard: React.FC<NoteCardProps> = ({ note }) => {
       paddingRight: 10,
     },
   })
-
-  const markdownStyle = {
-    text: {
-      color: theme['text-basic-color'],
-    },
-    tr: {
-      borderColor: theme['border-primary-color-5'],
-    },
-    table: {
-      borderColor: theme['border-primary-color-5'],
-    },
-    blocklink: {
-      borderColor: theme['border-primary-color-5'],
-    },
-    hr: {
-      backgroundColor: theme['background-basic-color-3'],
-    },
-    blockquote: {
-      backgroundColor: theme['background-basic-color-3'],
-      borderColor: theme['border-primary-color-5'],
-      color: theme['text-basic-color'],
-    },
-    code_inline: {
-      borderColor: theme['border-primary-color-5'],
-      backgroundColor: theme['background-basic-color-3'],
-      color: theme['text-basic-color'],
-    },
-    code_block: {
-      borderColor: theme['border-primary-color-5'],
-      backgroundColor: theme['background-basic-color-3'],
-      color: theme['text-basic-color'],
-    },
-    fence: {
-      borderColor: theme['border-primary-color-5'],
-      backgroundColor: theme['background-basic-color-3'],
-      color: theme['text-basic-color'],
-    },
-  }
 
   return (
     note && (
