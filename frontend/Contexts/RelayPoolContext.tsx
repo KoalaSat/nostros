@@ -8,7 +8,6 @@ import { getRelays, addRelay } from '../Functions/DatabaseFunctions/Relays'
 import { showMessage } from 'react-native-flash-message'
 import SInfo from 'react-native-sensitive-info'
 import { getPublickey } from '../lib/nostr/Bip'
-import { pickRandomItems } from '../Functions/NativeFunctions'
 import { defaultRelays } from '../Constants/RelayConstants'
 
 export interface RelayPoolContextProps {
@@ -58,10 +57,10 @@ export const RelayPoolContextProvider = ({
           initRelayPool.add(relay.url)
         })
       } else {
-        pickRandomItems(defaultRelays, 2).forEach((relayUrl) => {
-          initRelayPool.add(relayUrl)
-          addRelay({ url: relayUrl }, database)
-        })
+        // pickRandomItems(defaultRelays, 1).forEach((relayUrl) => {
+        initRelayPool.add(defaultRelays[4])
+        addRelay({ url: defaultRelays[4] }, database)
+        // })
       }
 
       initRelayPool?.on(

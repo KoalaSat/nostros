@@ -1,7 +1,8 @@
-import { QuickSQLiteConnection } from 'react-native-quick-sqlite'
-import { simpleExecute } from '..'
+import { ColumnMetadata, QuickSQLiteConnection } from 'react-native-quick-sqlite'
+import { dropTables, simpleExecute } from '..'
 
 export const createInitDatabase: (db: QuickSQLiteConnection) => Promise<void> = async (db) => {
+  dropTables(db)
   await simpleExecute(
     `
         CREATE TABLE IF NOT EXISTS nostros_notes(
@@ -40,4 +41,13 @@ export const createInitDatabase: (db: QuickSQLiteConnection) => Promise<void> = 
       `,
     db,
   )
+  await runMigrations(db)
+}
+
+export const runMigrations: (db: QuickSQLiteConnection) => Promise<void> = async (db) => {
+  const { metadata } = db.execute('SELECT * FROM nostros_users;')
+  // v0.1.8.1 alpha
+  if (!metadata?.some((meta: ColumnMetadata) => meta.columnName === 'follower')) {
+    await simpleExecute('ALTER TABLE nostros_users ADD COLUMN follower BOOLEAN DEFAULT FALSE;', db)
+  }
 }

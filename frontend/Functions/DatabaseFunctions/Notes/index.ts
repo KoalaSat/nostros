@@ -81,7 +81,7 @@ export const getNotes: (
     } else {
       notesQuery += 'WHERE '
     }
-    notesQuery += 'nostros_users.contact = TRUE '
+    notesQuery += 'nostros_users.contact = 1 '
   }
   if (includeIds) {
     if (Object.keys(filters).length > 0 || contacts) {

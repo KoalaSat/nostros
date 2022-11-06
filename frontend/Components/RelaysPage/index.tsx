@@ -22,7 +22,7 @@ export const RelaysPage: React.FC = () => {
   const { goBack, database } = useContext(AppContext)
   const { relayPool, publicKey, setRelayPool } = useContext(RelayPoolContext)
   const { t } = useTranslation('common')
-  const [relays, setRelays] = useState<Relay[]>()
+  const [relays, setRelays] = useState<Relay[]>([])
   const [loading, setLoading] = useState<boolean>(false)
 
   const loadRelays: () => void = () => {
@@ -157,7 +157,7 @@ export const RelaysPage: React.FC = () => {
         />
         <Layout style={styles.actionContainer} level='2'>
           <ScrollView refreshControl={<RefreshControl refreshing={loading} />}>
-            {relays?.length ? (
+            {relays ? (
               [...relays, ...defaultList()].map((item, index) => {
                 return renderItem(item, index)
               })

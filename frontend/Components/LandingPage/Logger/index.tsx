@@ -7,7 +7,7 @@ import { tagToUser } from '../../../Functions/RelayFunctions/Users'
 import Relay from '../../../lib/nostr/Relay'
 import { Event, EventKind } from '../../../lib/nostr/Events'
 import { AppContext } from '../../../Contexts/AppContext'
-import { insertUserContact, insertUserMeta } from '../../../Functions/DatabaseFunctions/Users'
+import { insertUserPets, insertUserMeta } from '../../../Functions/DatabaseFunctions/Users'
 import SInfo from 'react-native-sensitive-info'
 import Icon from 'react-native-vector-icons/FontAwesome5'
 import { generateRandomKey, getPublickey } from '../../../lib/nostr/Bip'
@@ -75,7 +75,7 @@ export const Logger: React.FC = () => {
     if (database) {
       if (event.tags.length > 0) {
         setStatus(2)
-        insertUserContact(event, database).then(() => {
+        insertUserPets(event, database).then(() => {
           requestUserData(event)
         })
       } else {
