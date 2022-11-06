@@ -41,15 +41,15 @@ export const ContactsPage: React.FC = () => {
 
   const loadUsers: () => void = () => {
     if (database && publicKey) {
-      setRefreshing(true)
-      setTimeout(() => setRefreshing(false), 5000)
       if (selectedTab === 0) {
         getUsers(database, { contacts: true }).then((results) => {
           if (results) setUsers(results)
+          setRefreshing(false)
         })
       } else {
         getUsers(database, { followers: true }).then((results) => {
           if (results) setUsers(results)
+          setRefreshing(false)
         })
       }
     }
@@ -65,9 +65,9 @@ export const ContactsPage: React.FC = () => {
           relayPool?.removeOn('event', 'contacts')
         } else {
           const isFollower = event.tags.some((tag) => tag[1] === publicKey)
-          updateUserFollower(event.pubkey, database, isFollower).finally(() =>
-            setLastEventId(event?.id ?? ''),
-          )
+          updateUserFollower(event.pubkey, database, isFollower).then((result) => {
+            setLastEventId(event?.id ?? '')
+          })
         }
       }
     })
@@ -81,6 +81,12 @@ export const ContactsPage: React.FC = () => {
         relayPool?.subscribe('main-channel', {
           kinds: [EventKind.petNames],
           '#p': [publicKey],
+        })
+      }
+      if (users && users.length > 0) {
+        relayPool?.subscribe('main-channel', {
+          kinds: [EventKind.meta],
+          authors: users?.map((user) => user.id),
         })
       }
     }
@@ -98,14 +104,7 @@ export const ContactsPage: React.FC = () => {
 
   const onRefresh = useCallback(() => {
     setRefreshing(true)
-    relayPool?.unsubscribeAll()
     subscribeContacts()
-    if (users && users?.length > 0) {
-      relayPool?.subscribe('main-channel', {
-        kinds: [EventKind.meta],
-        authors: users?.map((user) => user.id),
-      })
-    }
   }, [])
 
   const styles = StyleSheet.create({

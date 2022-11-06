@@ -33,7 +33,7 @@ export const HomePage: React.FC = () => {
 
   const calculateInitialNotes: () => Promise<void> = async () => {
     if (database && publicKey) {
-      setTimeout(() => setRefreshing(false), 5000)
+      setTimeout(() => setRefreshing(false), 3000)
       const users = await getUsers(database, { contacts: true, includeIds: [publicKey] })
       setAuthors(users)
       subscribeNotes(users)
