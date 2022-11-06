@@ -63,18 +63,18 @@ class RelayPool {
     method: 'open' | 'event' | 'esoe' | 'notice',
     id: string,
     fn: (relay: Relay, subId?: string, event?: Event) => void,
-  ) => void = (method, id, fn) => {
+  ) => void = async (method, id, fn) => {
     this.onFunctions[method][id] = fn
   }
 
-  public removeOn: (method: 'open' | 'event' | 'esoe' | 'notice', id: string) => void = (
+  public removeOn: (method: 'open' | 'event' | 'esoe' | 'notice', id: string) => void = async (
     method,
     id,
   ) => {
     delete this.onFunctions[method][id]
   }
 
-  public readonly add: (relayUrl: string) => boolean = (relayUrl) => {
+  public readonly add: (relayUrl: string) => Promise<boolean> = async (relayUrl) => {
     if (this.relays[relayUrl]) return false
 
     this.relays[relayUrl] = new Relay(relayUrl, this.options)
@@ -83,14 +83,14 @@ class RelayPool {
     return true
   }
 
-  public readonly close: () => void = () => {
+  public readonly close: () => void = async () => {
     Object.keys(this.relays).forEach((relayUrl: string) => {
       const relay: Relay = this.relays[relayUrl]
       relay.close()
     })
   }
 
-  public readonly remove: (relayUrl: string) => boolean = (relayUrl) => {
+  public readonly remove: (relayUrl: string) => Promise<boolean> = async (relayUrl) => {
     const relay: Relay | undefined = this.relays[relayUrl]
 
     if (relay) {
@@ -122,19 +122,22 @@ class RelayPool {
     }
   }
 
-  public readonly subscribe: (subId: string, filters?: RelayFilters) => void = (subId, filters) => {
+  public readonly subscribe: (subId: string, filters?: RelayFilters) => void = async (
+    subId,
+    filters,
+  ) => {
     Object.keys(this.relays).forEach((relayUrl: string) => {
       this.relays[relayUrl].subscribe(subId, filters)
     })
   }
 
-  public readonly unsubscribe: (subId: string) => void = (subId) => {
+  public readonly unsubscribe: (subId: string) => void = async (subId) => {
     Object.keys(this.relays).forEach((relayUrl: string) => {
       this.relays[relayUrl].unsubscribe(subId)
     })
   }
 
-  public readonly unsubscribeAll: () => void = () => {
+  public readonly unsubscribeAll: () => void = async () => {
     Object.keys(this.relays).forEach((relayUrl: string) => {
       this.relays[relayUrl].unsubscribeAll()
     })

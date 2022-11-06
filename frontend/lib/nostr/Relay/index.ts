@@ -41,7 +41,7 @@ class Relay {
   private manualClose: boolean
   private subscriptions: { [subId: string]: string[] }
 
-  private readonly initWebsocket: () => void = () => {
+  private readonly initWebsocket: () => void = async () => {
     this.socket.onmessage = (message) => {
       this.handleNostrMessage(message as RelayMessage)
     }
@@ -50,15 +50,15 @@ class Relay {
     this.socket.onopen = () => this.onOpen(this)
   }
 
-  private readonly onClose: () => void = () => {
+  private readonly onClose: () => void = async () => {
     if (!this.manualClose && this.options.reconnect) this.initWebsocket()
   }
 
-  private readonly onError: () => void = () => {
+  private readonly onError: () => void = async () => {
     if (this.options.reconnect) this.initWebsocket()
   }
 
-  private readonly handleNostrMessage: (message: RelayMessage) => void = (message) => {
+  private readonly handleNostrMessage: (message: RelayMessage) => void = async (message) => {
     const data: any[] = JSON.parse(message.data)
 
     if (data.length >= 2) {
@@ -97,18 +97,18 @@ class Relay {
   public onEsoe: (relay: Relay, subId: string) => void
   public onNotice: (relay: Relay, events: Event[]) => void
 
-  public readonly close: () => void = () => {
+  public readonly close: () => void = async () => {
     if (this.socket) {
       this.manualClose = true
       this.socket.close()
     }
   }
 
-  public readonly sendEvent: (event: Event) => void = (event) => {
+  public readonly sendEvent: (event: Event) => void = async (event) => {
     this.send(['EVENT', event])
   }
 
-  public readonly subscribe: (subId: string, filters?: RelayFilters) => void = (
+  public readonly subscribe: (subId: string, filters?: RelayFilters) => void = async (
     subId,
     filters = {},
   ) => {
@@ -125,12 +125,12 @@ class Relay {
     }
   }
 
-  public readonly unsubscribe: (subId: string) => void = (subId) => {
+  public readonly unsubscribe: (subId: string) => void = async (subId) => {
     this.send(['CLOSE', subId])
     delete this.subscriptions[subId]
   }
 
-  public readonly unsubscribeAll: () => void = () => {
+  public readonly unsubscribeAll: () => void = async () => {
     Object.keys(this.subscriptions).forEach((subId: string) => {
       this.send(['CLOSE', subId])
     })

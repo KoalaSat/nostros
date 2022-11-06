@@ -43,14 +43,15 @@ export const NotePage: React.FC = () => {
   }, [])
 
   useEffect(() => {
-    reload(getActualPage().split('#')[1])
+    reload()
   }, [page])
 
   useEffect(() => {
     subscribeNotes()
   }, [lastEventId])
 
-  const reload: (newEventId: string) => void = (newEventId) => {
+  const reload: () => void = () => {
+    const newEventId = getActualPage().split('#')[1]
     setNote(undefined)
     setReplies(undefined)
     setEventId(newEventId)
@@ -71,7 +72,7 @@ export const NotePage: React.FC = () => {
       const replyId = getReplyEventId(note)
       if (replyId) {
         goToPage(`note#${replyId}`)
-        reload(replyId)
+        reload()
       }
     }
   }
@@ -133,11 +134,10 @@ export const NotePage: React.FC = () => {
       const replyEventId = getReplyEventId(note)
       if (replyEventId && replyEventId !== eventId) {
         goToPage(`note#${replyEventId}`)
-        reload(replyEventId)
       } else if (note.id) {
         goToPage(`note#${note.id}`)
-        reload(note.id)
       }
+      reload()
     }
   }
 

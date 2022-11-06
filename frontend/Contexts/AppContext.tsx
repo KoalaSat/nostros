@@ -37,10 +37,6 @@ export const AppContextProvider = ({ children }: AppContextProviderProps): JSX.E
   const [loadingDb, setLoadingDb] = useState<boolean>(initialAppContext.loadingDb)
 
   const init: () => void = () => {
-    BackHandler.addEventListener('hardwareBackPress', () => {
-      goBack()
-      return true
-    })
     markdownIt.linkify
       .tlds('onion', true)
       .add('git:', 'http:')
@@ -60,6 +56,13 @@ export const AppContextProvider = ({ children }: AppContextProviderProps): JSX.E
   }
 
   useEffect(init, [])
+
+  useEffect(() => {
+    BackHandler.addEventListener('hardwareBackPress', () => {
+      goBack()
+      return true
+    })
+  }, [page])
 
   const goToPage: (path: string, root?: boolean) => void = (path, root) => {
     if (page !== '' && !root) {
