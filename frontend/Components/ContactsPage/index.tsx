@@ -65,7 +65,7 @@ export const ContactsPage: React.FC = () => {
           relayPool?.removeOn('event', 'contacts')
         } else {
           const isFollower = event.tags.some((tag) => tag[1] === publicKey)
-          updateUserFollower(event.pubkey, database, isFollower).then((result) => {
+          updateUserFollower(event.pubkey, database, isFollower).then(() => {
             setLastEventId(event?.id ?? '')
           })
         }
