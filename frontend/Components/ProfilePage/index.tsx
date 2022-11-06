@@ -106,10 +106,6 @@ export const ProfilePage: React.FC = () => {
   }
 
   const subscribeProfile: () => Promise<void> = async () => {
-    relayPool?.subscribe('main-channel', {
-      kinds: [EventKind.meta, EventKind.petNames],
-      authors: [userId],
-    })
     relayPool?.on('event', 'profile', (_relay: Relay, _subId?: string, event?: Event) => {
       console.log('PROFILE EVENT =======>', event)
       if (database) {
@@ -118,7 +114,7 @@ export const ProfilePage: React.FC = () => {
             const ids = event.tags.map((tag) => tagToUser(tag).id)
             setContactsIds(ids)
           } else if (event.kind === EventKind.meta) {
-            setTimeout(() => setRefreshing(false), 5000)
+            setTimeout(() => setRefreshing(false), 3000)
             storeEvent(event, database)
             subscribeNotes()
             if (publicKey && event.pubkey !== publicKey) {
@@ -130,6 +126,10 @@ export const ProfilePage: React.FC = () => {
           }
         }
       }
+    })
+    relayPool?.subscribe('main-channel', {
+      kinds: [EventKind.meta, EventKind.petNames],
+      authors: [userId],
     })
   }
 
