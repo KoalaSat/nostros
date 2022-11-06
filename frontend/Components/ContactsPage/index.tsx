@@ -36,6 +36,7 @@ export const ContactsPage: React.FC = () => {
 
   useEffect(() => {
     setUsers([])
+    loadUsers()
     subscribeContacts()
   }, [selectedTab])
 
