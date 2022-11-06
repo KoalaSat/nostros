@@ -10,6 +10,7 @@ export interface User {
   picture?: string
   about?: string
   contact?: boolean
+  follower?: boolean
 }
 
 const databaseToEntity: (object: object) => User = (object) => {
@@ -32,9 +33,9 @@ export const insertUserMeta: (
 
     const query = `
       INSERT OR REPLACE INTO nostros_users 
-        (id, name, picture, about, main_relay, contact)
+        (id, name, picture, about, main_relay, contact, follower)
       VALUES
-        (?,?,?,?,?, (SELECT contact FROM nostros_users WHERE id = ?));
+        (?,?,?,?,?,(SELECT contact FROM nostros_users WHERE id = ?),(SELECT follower FROM nostros_users WHERE id = ?));
     `
     const queryParams = [
       id,
@@ -43,15 +44,36 @@ export const insertUserMeta: (
       about.split("'").join("''"),
       mainRelay.split("'").join("''"),
       id,
+      id,
     ]
-
     return await db.executeAsync(query, queryParams)
   } else {
     return null
   }
 }
 
-export const insertUserContact: (
+export const updateUserFollower: (
+  userId: string,
+  db: QuickSQLiteConnection,
+  follower: boolean,
+) => Promise<QueryResult | null> = async (userId, db, follower) => {
+  const userQuery = `UPDATE nostros_users SET follower = ? WHERE id = ?`
+
+  await addUser(userId, db)
+  return db.execute(userQuery, [follower ? 1 : 0, userId])
+}
+export const updateUserContact: (
+  userId: string,
+  db: QuickSQLiteConnection,
+  contact: boolean,
+) => Promise<QueryResult | null> = async (userId, db, contact) => {
+  const userQuery = `UPDATE nostros_users SET contact = ? WHERE id = ?`
+
+  await addUser(userId, db)
+  return db.execute(userQuery, [contact ? 1 : 0, userId])
+}
+
+export const insertUserPets: (
   event: Event,
   db: QuickSQLiteConnection,
 ) => Promise<User[] | null> = async (event, db) => {
@@ -60,7 +82,7 @@ export const insertUserContact: (
   if (valid && event.kind === EventKind.petNames) {
     const users: User[] = event.tags.map((tag) => tagToUser(tag))
     users.map(async (user) => {
-      return await addContact(user.id, db)
+      return await updateUserContact(user.id, db, true)
     })
     return users
   } else {
@@ -88,51 +110,50 @@ export const removeContact: (
   pubkey: string,
   db: QuickSQLiteConnection,
 ) => Promise<QueryResult> = async (pubkey, db) => {
-  const userQuery = `UPDATE nostros_users SET contact = FALSE WHERE id = ?`
+  const userQuery = `UPDATE nostros_users SET contact = 0 WHERE id = ?`
 
   return db.execute(userQuery, [pubkey])
 }
 
-export const addContact: (
-  pubKey: string,
-  db: QuickSQLiteConnection,
-) => Promise<QueryResult> = async (pubKey, db) => {
+export const addUser: (pubKey: string, db: QuickSQLiteConnection) => Promise<QueryResult> = async (
+  pubKey,
+  db,
+) => {
   const query = `
-    INSERT INTO nostros_users (id, contact)
-    VALUES (?, ?)
-    ON CONFLICT (id) DO
-    UPDATE SET contact=excluded.contact;
+    INSERT OR IGNORE INTO nostros_users (id) VALUES (?)
   `
-
-  return db.execute(query, [pubKey, '1'])
+  return db.execute(query, [pubKey])
 }
 
 export const getUsers: (
   db: QuickSQLiteConnection,
-  options: { exludeIds?: string[]; contacts?: boolean; includeIds?: string[] },
-) => Promise<User[]> = async (db, { exludeIds, contacts, includeIds }) => {
+  options: { exludeIds?: string[]; contacts?: boolean; followers?: boolean; includeIds?: string[] },
+) => Promise<User[]> = async (db, { exludeIds, contacts, followers, includeIds }) => {
   let userQuery = 'SELECT * FROM nostros_users '
 
-  if (contacts) {
-    userQuery += 'WHERE contact = TRUE '
-  }
+  const filters = []
 
-  if (exludeIds && exludeIds.length > 0) {
-    if (!contacts) {
-      userQuery += 'WHERE '
-    } else {
-      userQuery += 'AND '
-    }
-    userQuery += `id NOT IN ('${exludeIds.join("', '")}') `
+  if (contacts) {
+    filters.push('contact = 1')
   }
 
   if (includeIds && includeIds.length > 0) {
-    if (!contacts && !exludeIds) {
-      userQuery += 'WHERE '
-    } else {
-      userQuery += 'OR '
+    filters.push(`id IN ('${includeIds.join("', '")}')`)
+  }
+
+  if (followers) {
+    filters.push('follower = 1')
+  }
+
+  if (filters.length > 0) {
+    userQuery += `WHERE ${filters.join(' OR ')} `
+    if (exludeIds && exludeIds.length > 0) {
+      userQuery += `AND id NOT IN ('${exludeIds.join("', '")}') `
     }
-    userQuery += `id IN ('${includeIds.join("', '")}') `
+  } else {
+    if (exludeIds && exludeIds.length > 0) {
+      userQuery += `WHERE id NOT IN ('${exludeIds.join("', '")}') `
+    }
   }
 
   userQuery += 'ORDER BY name,id'

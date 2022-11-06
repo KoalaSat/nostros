@@ -42,6 +42,8 @@
       "privateKey": "Private Key"
     },
     "contactsPage": {
+      "following": "Following",
+      "followers": "Followers",
       "add": "Add User",
       "addContact": {
         "placeholder": "Public Key",

@@ -22,7 +22,13 @@ import { AppContext } from '../../Contexts/AppContext'
 import { getNotes, Note } from '../../Functions/DatabaseFunctions/Notes'
 import NoteCard from '../NoteCard'
 import { RelayPoolContext } from '../../Contexts/RelayPoolContext'
-import { getUser, removeContact, addContact, User } from '../../Functions/DatabaseFunctions/Users'
+import {
+  getUser,
+  removeContact,
+  User,
+  updateUserFollower,
+  updateUserContact,
+} from '../../Functions/DatabaseFunctions/Users'
 import { EventKind, Event } from '../../lib/nostr/Events'
 import Relay, { RelayFilters } from '../../lib/nostr/Relay'
 import Icon from 'react-native-vector-icons/FontAwesome5'
@@ -35,7 +41,8 @@ import Avatar from '../Avatar'
 
 export const ProfilePage: React.FC = () => {
   const { database, page, goToPage, goBack } = useContext(AppContext)
-  const { publicKey, privateKey, lastEventId, relayPool } = useContext(RelayPoolContext)
+  const { publicKey, privateKey, lastEventId, relayPool, setLastEventId } =
+    useContext(RelayPoolContext)
   const theme = useTheme()
   const initialPageSize = 10
   const [notes, setNotes] = useState<Note[]>()
@@ -114,6 +121,12 @@ export const ProfilePage: React.FC = () => {
             setTimeout(() => setRefreshing(false), 5000)
             storeEvent(event, database)
             subscribeNotes()
+            if (publicKey && event.pubkey !== publicKey) {
+              const isFollower = event.tags.some((tag) => tag[1] === publicKey)
+              updateUserFollower(event.pubkey, database, isFollower).finally(() =>
+                setLastEventId(event?.id ?? ''),
+              )
+            }
           }
         }
       }
@@ -153,7 +166,7 @@ export const ProfilePage: React.FC = () => {
 
   const addAuthor: () => void = () => {
     if (relayPool && database && publicKey) {
-      addContact(userId, database).then(() => {
+      updateUserContact(userId, database, true).then(() => {
         populatePets(relayPool, database, publicKey)
         setIsContact(true)
       })

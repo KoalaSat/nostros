@@ -1,4 +1,4 @@
-import { Button, Card, Input, Layout, Modal, useTheme } from '@ui-kitten/components'
+import { Button, Card, Input, Layout, Modal, Tab, TabBar, useTheme } from '@ui-kitten/components'
 import React, { useCallback, useContext, useEffect, useState } from 'react'
 import { RefreshControl, ScrollView, StyleSheet, TouchableOpacity } from 'react-native'
 import { AppContext } from '../../Contexts/AppContext'
@@ -6,9 +6,10 @@ import Icon from 'react-native-vector-icons/FontAwesome5'
 import { Event, EventKind } from '../../lib/nostr/Events'
 import { useTranslation } from 'react-i18next'
 import {
-  addContact,
   getUsers,
-  insertUserContact,
+  insertUserPets,
+  updateUserContact,
+  updateUserFollower,
   User,
 } from '../../Functions/DatabaseFunctions/Users'
 import UserCard from '../UserCard'
@@ -25,6 +26,7 @@ export const ContactsPage: React.FC = () => {
   const [refreshing, setRefreshing] = useState(true)
   const [showAddContact, setShowAddContact] = useState<boolean>(false)
   const [contactInput, setContactInput] = useState<string>()
+  const [selectedTab, setSelectedTab] = useState(0)
 
   const { t } = useTranslation('common')
 
@@ -33,15 +35,23 @@ export const ContactsPage: React.FC = () => {
   }, [lastEventId])
 
   useEffect(() => {
+    setUsers([])
     subscribeContacts()
-  }, [])
+  }, [selectedTab])
 
   const loadUsers: () => void = () => {
     if (database && publicKey) {
+      setRefreshing(true)
       setTimeout(() => setRefreshing(false), 5000)
-      getUsers(database, { contacts: true }).then((results) => {
-        if (results) setUsers(results)
-      })
+      if (selectedTab === 0) {
+        getUsers(database, { contacts: true }).then((results) => {
+          if (results) setUsers(results)
+        })
+      } else {
+        getUsers(database, { followers: true }).then((results) => {
+          if (results) setUsers(results)
+        })
+      }
     }
   }
 
@@ -49,22 +59,36 @@ export const ContactsPage: React.FC = () => {
     relayPool?.unsubscribeAll()
     relayPool?.on('event', 'contacts', (relay: Relay, _subId?: string, event?: Event) => {
       console.log('CONTACTS PAGE EVENT =======>', relay.url, event)
-      if (database && event?.id && event.kind === EventKind.petNames) {
-        insertUserContact(event, database).finally(() => setLastEventId(event?.id ?? ''))
-        relayPool?.removeOn('event', 'contacts')
+      if (database && event?.id && publicKey && event.kind === EventKind.petNames) {
+        if (event.pubkey === publicKey) {
+          insertUserPets(event, database).finally(() => setLastEventId(event?.id ?? ''))
+          relayPool?.removeOn('event', 'contacts')
+        } else {
+          const isFollower = event.tags.some((tag) => tag[1] === publicKey)
+          updateUserFollower(event.pubkey, database, isFollower).finally(() =>
+            setLastEventId(event?.id ?? ''),
+          )
+        }
       }
     })
     if (publicKey) {
-      relayPool?.subscribe('main-channel', {
-        kinds: [EventKind.petNames],
-        authors: [publicKey],
-      })
+      if (selectedTab === 0) {
+        relayPool?.subscribe('main-channel', {
+          kinds: [EventKind.petNames],
+          authors: [publicKey],
+        })
+      } else if (selectedTab === 1) {
+        relayPool?.subscribe('main-channel', {
+          kinds: [EventKind.petNames],
+          '#p': [publicKey],
+        })
+      }
     }
   }
 
   const onPressAddContact: () => void = () => {
     if (contactInput && relayPool && database && publicKey) {
-      addContact(contactInput, database).then(() => {
+      updateUserContact(contactInput, database, true).then(() => {
         populatePets(relayPool, database, publicKey)
         setShowAddContact(false)
         loadUsers()
@@ -76,6 +100,12 @@ export const ContactsPage: React.FC = () => {
     setRefreshing(true)
     relayPool?.unsubscribeAll()
     subscribeContacts()
+    if (users && users?.length > 0) {
+      relayPool?.subscribe('main-channel', {
+        kinds: [EventKind.meta],
+        authors: users?.map((user) => user.id),
+      })
+    }
   }, [])
 
   const styles = StyleSheet.create({
@@ -103,10 +133,21 @@ export const ContactsPage: React.FC = () => {
     backdrop: {
       backgroundColor: 'rgba(0, 0, 0, 0.5)',
     },
+    topBar: {
+      height: 64,
+    },
   })
 
   return (
     <>
+      <TabBar
+        style={styles.topBar}
+        selectedIndex={selectedTab}
+        onSelect={(index) => setSelectedTab(index)}
+      >
+        <Tab title={t('contactsPage.following')} />
+        <Tab title={t('contactsPage.followers')} />
+      </TabBar>
       <Layout style={styles.container} level='3'>
         <ScrollView
           horizontal={false}
