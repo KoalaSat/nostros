@@ -1,4 +1,5 @@
 import { StyleSheet } from 'react-native'
+import { MarkdownIt } from 'react-native-markdown-display'
 
 export const markdownStyle: (theme: Record<string, string>) => StyleSheet.NamedStyles<any> = (
   theme,
@@ -41,3 +42,7 @@ export const markdownStyle: (theme: Record<string, string>) => StyleSheet.NamedS
     },
   }
 }
+
+export const markdownIt = new MarkdownIt({
+  linkify: true,
+})

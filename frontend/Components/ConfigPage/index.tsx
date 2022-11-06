@@ -88,7 +88,7 @@ export const ConfigPage: React.FC = () => {
           <Layout style={styles.action}>
             <Button
               onPress={() => goToPage('relays')}
-              status='info'
+              status='warning'
               accessoryLeft={
                 <Icon name='server' size={16} color={theme['text-basic-color']} solid />
               }

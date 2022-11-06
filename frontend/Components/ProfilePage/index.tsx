@@ -76,7 +76,6 @@ export const ProfilePage: React.FC = () => {
     if (database) {
       getNotes(database, { filters: { pubkey: userId }, limit: pageSize }).then((results) => {
         setNotes(results)
-        setRefreshing(false)
       })
     }
   }
@@ -112,7 +111,8 @@ export const ProfilePage: React.FC = () => {
             const ids = event.tags.map((tag) => tagToUser(tag).id)
             setContactsIds(ids)
           } else if (event.kind === EventKind.meta) {
-            storeEvent(event, database).then(() => setRefreshing(false))
+            setTimeout(() => setRefreshing(false), 5000)
+            storeEvent(event, database)
             subscribeNotes()
           }
         }

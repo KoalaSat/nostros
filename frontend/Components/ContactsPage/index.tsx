@@ -38,8 +38,8 @@ export const ContactsPage: React.FC = () => {
 
   const loadUsers: () => void = () => {
     if (database && publicKey) {
+      setTimeout(() => setRefreshing(false), 5000)
       getUsers(database, { contacts: true }).then((results) => {
-        if (users) setRefreshing(false)
         if (results) setUsers(results)
       })
     }

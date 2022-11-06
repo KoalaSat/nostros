@@ -4,6 +4,8 @@ import { initDatabase } from '../Functions/DatabaseFunctions'
 import { createInitDatabase } from '../Functions/DatabaseFunctions/Migrations'
 import FlashMessage from 'react-native-flash-message'
 import SInfo from 'react-native-sensitive-info'
+import { BackHandler } from 'react-native'
+import { markdownIt } from '../Constants/AppConstants'
 
 export interface AppContextProps {
   page: string
@@ -35,6 +37,15 @@ export const AppContextProvider = ({ children }: AppContextProviderProps): JSX.E
   const [loadingDb, setLoadingDb] = useState<boolean>(initialAppContext.loadingDb)
 
   const init: () => void = () => {
+    BackHandler.addEventListener('hardwareBackPress', () => {
+      goBack()
+      return true
+    })
+    markdownIt.linkify
+      .tlds('onion', true)
+      .add('git:', 'http:')
+      .add('ftp:', null)
+      .set({ fuzzyIP: true })
     const db = initDatabase()
     setDatabase(db)
     SInfo.getItem('privateKey', {}).then((result) => {
@@ -60,7 +71,9 @@ export const AppContextProvider = ({ children }: AppContextProviderProps): JSX.E
 
   const goBack: () => void = () => {
     const breadcrump = page.split('%')
-    setPage(breadcrump.slice(0, -1).join('%') || 'home')
+    if (breadcrump.length > 1) {
+      setPage(breadcrump.slice(0, -1).join('%'))
+    }
   }
 
   const getActualPage: () => string = () => {

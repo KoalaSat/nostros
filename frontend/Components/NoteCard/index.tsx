@@ -14,7 +14,7 @@ import { getReplyEventId } from '../../Functions/RelayFunctions/Events'
 import moment from 'moment'
 import { populateRelay } from '../../Functions/RelayFunctions'
 import Avatar from '../Avatar'
-import { markdownStyle } from '../../Constants/AppConstants'
+import { markdownIt, markdownStyle } from '../../Constants/AppConstants'
 
 interface NoteCardProps {
   note: Note
@@ -56,7 +56,9 @@ export const NoteCard: React.FC<NoteCardProps> = ({ note }) => {
             </Layout>
           </Layout>
           <Layout style={styles.text}>
-            <Markdown style={markdownStyle(theme)}>{note.content}</Markdown>
+            <Markdown style={markdownStyle(theme)} markdownit={markdownIt}>
+              {note.content}
+            </Markdown>
           </Layout>
           <Layout style={styles.footer}>
             <Text appearance='hint'>{moment.unix(note.created_at).format('DD-MM-YY HH:mm')}</Text>

@@ -37,8 +37,9 @@ export const NotePage: React.FC = () => {
 
   const onRefresh = useCallback(() => {
     setRefreshing(true)
+    setTimeout(() => setRefreshing(false), 5000)
     relayPool?.unsubscribeAll()
-    subscribeNotes().finally(() => setRefreshing(false))
+    subscribeNotes()
   }, [])
 
   useEffect(() => {
