@@ -6,6 +6,7 @@ import Icon from 'react-native-vector-icons/FontAwesome5'
 import { Event, EventKind } from '../../lib/nostr/Events'
 import { useTranslation } from 'react-i18next'
 import {
+  getUser,
   getUsers,
   insertUserPets,
   updateUserContact,
@@ -58,7 +59,7 @@ export const ContactsPage: React.FC = () => {
 
   const subscribeContacts: () => void = async () => {
     relayPool?.unsubscribeAll()
-    relayPool?.on('event', 'contacts', (relay: Relay, _subId?: string, event?: Event) => {
+    relayPool?.on('event', 'contacts', async (relay: Relay, _subId?: string, event?: Event) => {
       console.log('CONTACTS PAGE EVENT =======>', relay.url, event)
       if (database && event?.id && publicKey && event.kind === EventKind.petNames) {
         if (event.pubkey === publicKey) {
@@ -66,9 +67,17 @@ export const ContactsPage: React.FC = () => {
           relayPool?.removeOn('event', 'contacts')
         } else {
           const isFollower = event.tags.some((tag) => tag[1] === publicKey)
-          updateUserFollower(event.pubkey, database, isFollower).then(() => {
-            setLastEventId(event?.id ?? '')
-          })
+          await updateUserFollower(event.pubkey, database, isFollower)
+          setLastEventId(event?.id ?? '')
+          if (isFollower) {
+            const user = await getUser(event.pubkey, database)
+            if (!user?.name && user?.id) {
+              relayPool?.subscribe('main-channel', {
+                kinds: [EventKind.meta],
+                authors: [user.id],
+              })
+            }
+          }
         }
       }
     })
@@ -82,12 +91,6 @@ export const ContactsPage: React.FC = () => {
         relayPool?.subscribe('main-channel', {
           kinds: [EventKind.petNames],
           '#p': [publicKey],
-        })
-      }
-      if (users && users.length > 0) {
-        relayPool?.subscribe('main-channel', {
-          kinds: [EventKind.meta],
-          authors: users?.map((user) => user.id),
         })
       }
     }

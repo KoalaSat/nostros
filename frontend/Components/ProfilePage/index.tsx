@@ -24,7 +24,6 @@ import NoteCard from '../NoteCard'
 import { RelayPoolContext } from '../../Contexts/RelayPoolContext'
 import {
   getUser,
-  removeContact,
   User,
   updateUserFollower,
   updateUserContact,
@@ -157,7 +156,7 @@ export const ProfilePage: React.FC = () => {
 
   const removeAuthor: () => void = () => {
     if (relayPool && database && publicKey) {
-      removeContact(userId, database).then(() => {
+      updateUserContact(userId, database, false).then(() => {
         populatePets(relayPool, database, publicKey)
         setIsContact(false)
       })

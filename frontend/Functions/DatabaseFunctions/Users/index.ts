@@ -106,15 +106,6 @@ export const getUser: (pubkey: string, db: QuickSQLiteConnection) => Promise<Use
   }
 }
 
-export const removeContact: (
-  pubkey: string,
-  db: QuickSQLiteConnection,
-) => Promise<QueryResult> = async (pubkey, db) => {
-  const userQuery = `UPDATE nostros_users SET contact = 0 WHERE id = ?`
-
-  return db.execute(userQuery, [pubkey])
-}
-
 export const addUser: (pubKey: string, db: QuickSQLiteConnection) => Promise<QueryResult> = async (
   pubKey,
   db,
