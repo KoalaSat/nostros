@@ -69,7 +69,7 @@ export const NoteCard: React.FC<NoteCardProps> = ({ note }) => {
   }
 
   const relayNote: () => JSX.Element = () => {
-    const relayName = note.content.split('wss://')[1].split('/')[0]
+    const relayName = note.content.split('wss://')[1]?.split('/')[0]
 
     const addRelayItem: () => void = () => {
       if (relayPool && database && publicKey) {
