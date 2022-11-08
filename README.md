@@ -78,4 +78,4 @@ Local setup: https://github.com/KoalaSat/nostros/blob/main/SETUP.md
 
 ---
 
-Made with 🐨 by https://getalby.com/p/koalasat
+Project's Address: bc1q8xjlxxwpsck429zr7ff466yax0k3lhp9fmm2et
