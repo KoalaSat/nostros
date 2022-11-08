@@ -19,7 +19,7 @@ jobs:
         id: create-release
         uses: softprops/action-gh-release@v1
         with:
-          body:
+          body: |
             **New Release [${{ github.ref_name }}]**
 
             https://github.com/KoalaSat/nostros/releases/${{ github.ref_name }}
