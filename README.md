@@ -76,6 +76,7 @@ Local setup: https://github.com/KoalaSat/nostros/blob/main/SETUP.md
 - Inspired on https://github.com/jb55/nostr-js and https://github.com/fiatjaf/nostr-tools
 - Discovered thanks to https://lunaticoin.com
 
----
+# Support
 
 Project's Address: bc1q8xjlxxwpsck429zr7ff466yax0k3lhp9fmm2et
+LNURL: nostros@getalby.com
