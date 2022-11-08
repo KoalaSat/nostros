@@ -82,6 +82,7 @@ export const ProfilePage: React.FC = () => {
     if (database) {
       getNotes(database, { filters: { pubkey: userId }, limit: pageSize }).then((results) => {
         setNotes(results)
+        setRefreshing(false)
       })
     }
   }
