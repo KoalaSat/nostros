@@ -1,5 +1,6 @@
 import { Event } from '../Events'
 import { v5 as uuidv5 } from 'uuid'
+import WebsocketModule from '../Native/WebsocketModule'
 
 export interface RelayFilters {
   ids?: string[]
@@ -84,7 +85,7 @@ class Relay {
     } else {
       try {
         console.log('SEND =====>', tosend)
-        this.socket.send(tosend)
+        WebsocketModule.send(tosend)
       } catch (e) {
         console.log('Failed ot send Event', e)
       }

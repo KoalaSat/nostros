@@ -1,18 +1,5 @@
 import { Event } from '../../../lib/nostr/Events'
 
-export const getMainEventId: (event: Event) => string | null = (event) => {
-  const eTags = getETags(event)
-  let mainTag = eTags.find((tag) => {
-    return tag[3] === 'root'
-  })
-
-  if (!mainTag) {
-    mainTag = eTags[0]
-  }
-
-  return mainTag ? mainTag[1] : null
-}
-
 export const getReplyEventId: (event: Event) => string | null = (event) => {
   const eTags = getETags(event)
   let mainTag = eTags.find((tag) => {

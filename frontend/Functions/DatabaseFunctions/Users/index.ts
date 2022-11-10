@@ -17,41 +17,6 @@ const databaseToEntity: (object: object) => User = (object) => {
   return object as User
 }
 
-export const insertUserMeta: (
-  event: Event,
-  db: QuickSQLiteConnection,
-) => Promise<QueryResult | null> = async (event, db) => {
-  const valid = await verifySignature(event)
-
-  if (valid && event.kind === EventKind.meta) {
-    const user: User = JSON.parse(event.content)
-    const id = event.pubkey
-    const name = user.name?.replace("\\'", "'") ?? ''
-    const mainRelay = user.main_relay?.replace("\\'", "'") ?? ''
-    const about = user.about?.replace("\\'", "'") ?? ''
-    const picture = user.picture?.replace("\\'", "'") ?? ''
-
-    const query = `
-      INSERT OR REPLACE INTO nostros_users 
-        (id, name, picture, about, main_relay, contact, follower)
-      VALUES
-        (?,?,?,?,?,(SELECT contact FROM nostros_users WHERE id = ?),(SELECT follower FROM nostros_users WHERE id = ?));
-    `
-    const queryParams = [
-      id,
-      name.split("'").join("''"),
-      picture.split("'").join("''"),
-      about.split("'").join("''"),
-      mainRelay.split("'").join("''"),
-      id,
-      id,
-    ]
-    return await db.executeAsync(query, queryParams)
-  } else {
-    return null
-  }
-}
-
 export const updateUserFollower: (
   userId: string,
   db: QuickSQLiteConnection,

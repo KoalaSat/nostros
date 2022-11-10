@@ -7,7 +7,7 @@ import { tagToUser } from '../../../Functions/RelayFunctions/Users'
 import Relay from '../../../lib/nostr/Relay'
 import { Event, EventKind } from '../../../lib/nostr/Events'
 import { AppContext } from '../../../Contexts/AppContext'
-import { insertUserPets, insertUserMeta } from '../../../Functions/DatabaseFunctions/Users'
+import { insertUserPets } from '../../../Functions/DatabaseFunctions/Users'
 import SInfo from 'react-native-sensitive-info'
 import Icon from 'react-native-vector-icons/FontAwesome5'
 import { generateRandomKey, getPublickey } from '../../../lib/nostr/Bip'
@@ -64,7 +64,7 @@ export const Logger: React.FC = () => {
           loadPets(event)
         } else if (event.kind === EventKind.meta) {
           setLoadedUsers((prev) => (prev ? prev + 1 : 1))
-          insertUserMeta(event, database)
+          // insertUserMeta(event, database) FIXME
           if (loadedUsers && loadedUsers >= authors.length && status < 3) setStatus(3)
         }
       }

@@ -34,7 +34,6 @@ import Icon from 'react-native-vector-icons/FontAwesome5'
 import { populatePets, tagToUser } from '../../Functions/RelayFunctions/Users'
 import { getReplyEventId } from '../../Functions/RelayFunctions/Events'
 import Loading from '../Loading'
-import { storeEvent } from '../../Functions/DatabaseFunctions/Events'
 import { handleInfinityScroll } from '../../Functions/NativeFunctions'
 import Avatar from '../Avatar'
 
@@ -115,7 +114,7 @@ export const ProfilePage: React.FC = () => {
             setContactsIds(ids)
           } else if (event.kind === EventKind.meta) {
             setTimeout(() => setRefreshing(false), 3000)
-            storeEvent(event, database)
+            // storeEvent(event, database) FIXME
             subscribeNotes()
             if (publicKey && event.pubkey !== publicKey) {
               const isFollower = event.tags.some((tag) => tag[1] === publicKey)

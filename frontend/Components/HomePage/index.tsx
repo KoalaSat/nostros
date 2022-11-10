@@ -50,11 +50,12 @@ export const HomePage: React.FC = () => {
         limit: initialPageSize,
       }
 
-      if (past) {
-        message.until = results[results.length - 1]?.created_at
-      } else if (results.length >= pageSize) {
-        message.since = results[0]?.created_at
-      }
+      // TODO
+      // if (past) {
+      //   message.until = results[results.length - 1]?.created_at
+      // } else if (results.length >= pageSize) {
+      //   message.since = results[0]?.created_at
+      // }
 
       relayPool?.subscribe('main-channel', message)
     })
