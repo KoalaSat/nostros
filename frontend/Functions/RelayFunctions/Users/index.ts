@@ -10,12 +10,6 @@ export const usersToTags: (users: User[]) => string[][] = (users) => {
   })
 }
 
-export const tagsToUsers: (tags: string[][]) => User[] = (tags) => {
-  return tags.map((tag): User => {
-    return tagToUser(tag)
-  })
-}
-
 export const tagToUser: (tag: string[]) => User = (tag) => {
   return {
     id: tag[1],

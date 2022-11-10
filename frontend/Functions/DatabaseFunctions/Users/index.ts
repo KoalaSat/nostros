@@ -1,7 +1,5 @@
 import { getItems } from '..'
 import { QuickSQLiteConnection, QueryResult } from 'react-native-quick-sqlite'
-import { Event, EventKind, verifySignature } from '../../../lib/nostr/Events'
-import { tagToUser } from '../../RelayFunctions/Users'
 
 export interface User {
   id: string
@@ -36,23 +34,6 @@ export const updateUserContact: (
 
   await addUser(userId, db)
   return db.execute(userQuery, [contact ? 1 : 0, userId])
-}
-
-export const insertUserPets: (
-  event: Event,
-  db: QuickSQLiteConnection,
-) => Promise<User[] | null> = async (event, db) => {
-  const valid = await verifySignature(event)
-
-  if (valid && event.kind === EventKind.petNames) {
-    const users: User[] = event.tags.map((tag) => tagToUser(tag))
-    users.map(async (user) => {
-      return await updateUserContact(user.id, db, true)
-    })
-    return users
-  } else {
-    return null
-  }
 }
 
 export const getUser: (pubkey: string, db: QuickSQLiteConnection) => Promise<User | null> = async (

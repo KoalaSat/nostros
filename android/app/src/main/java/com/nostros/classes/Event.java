@@ -1,5 +1,6 @@
 package com.nostros.classes;
 
+import android.annotation.SuppressLint;
 import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -20,7 +21,7 @@ public class Event {
 
     public Event(JSONObject data) throws JSONException {
         created_at = data.getInt("created_at");
-        content = data.getString("content");
+        content = data.optString("content");
         id = data.getString("id");
         kind = data.getString("kind");
         pubkey = data.getString("pubkey");
@@ -28,23 +29,32 @@ public class Event {
         tags = data.getJSONArray("tags");
     }
 
-    public void save(SQLiteDatabase database) {
-        Log.d("EVENT", kind);
+    public void save(SQLiteDatabase database, String userPubKey) {
         if (isValid()) {
-            if (kind.equals("1") || kind.equals("2")) {
-                saveNote(database);
-            } else if (kind.equals("0")) {
-                saveUser(database);
+            try {
+                if (kind.equals("0")) {
+                    saveUserMeta(database);
+                } else if (kind.equals("1") || kind.equals("2")) {
+                    saveNote(database);
+                } else if (kind.equals("3")) {
+                    if (pubkey.equals(userPubKey)) {
+                        savePets(database);
+                    } else {
+                        saveFollower(database, userPubKey);
+                    }
+                }
+            } catch (JSONException e) {
+                e.printStackTrace();
             }
         }
     }
 
     protected boolean isValid() {
-        return !id.isEmpty() && !sig.isEmpty() && (kind.equals("1") || kind.equals("2"));
+        return !id.isEmpty() && !sig.isEmpty();
     }
 
     protected String getMainEventId() {
-        JSONArray eTags = getETags();
+        JSONArray eTags = filterTags("e");
         String mainEventId = null;
         try {
             for (int i = 0; i < eTags.length(); ++i) {
@@ -64,7 +74,7 @@ public class Event {
     }
 
     protected String getReplyEventId() {
-        JSONArray eTags = getETags();
+        JSONArray eTags = filterTags("e");
         String mainEventId = null;
         try {
             for (int i = 0; i < eTags.length(); ++i) {
@@ -83,14 +93,34 @@ public class Event {
         return mainEventId;
     }
 
-    protected JSONArray getETags() {
+    protected String saveFollower(String pubKey) {
+        JSONArray eTags = filterTags("p");
+        String mainEventId = null;
+        try {
+            for (int i = 0; i < eTags.length(); ++i) {
+                JSONArray tag = eTags.getJSONArray(i);
+                if (tag.getString(3).equals("reply")) {
+                    mainEventId = tag.getString(1);
+                }
+            }
+            if (mainEventId == null && eTags.length() > 0) {
+                mainEventId = eTags.getJSONArray(eTags.length() - 1).getString(1);
+            }
+        } catch (JSONException ignored) {
+
+        }
+
+        return mainEventId;
+    }
+
+    protected JSONArray filterTags(String kind) {
         JSONArray filtered = new JSONArray();
 
         try {
             for (int i = 0; i < tags.length(); ++i) {
                 JSONArray tag = tags.getJSONArray(i);
                 String tagKind = tag.getString(0);
-                if (tagKind.equals("e")) {
+                if (tagKind.equals(kind)) {
                     filtered.put(tag);
                 }
             }
@@ -102,39 +132,81 @@ public class Event {
     }
 
     protected void saveNote(SQLiteDatabase database) {
-        String query = "SELECT nostros_notes.id FROM nostros_notes WHERE id = " + this.id + ";";
-        Cursor cursor = database.rawQuery(query, null);
-        if (cursor.getInt(0) == 0) {
-            ContentValues values = new ContentValues();
-            values.put("id", id);
-            values.put("content", content.replace("'", "''"));
-            values.put("created_at", created_at);
-            values.put("kind", kind);
-            values.put("pubkey", pubkey);
-            values.put("sig", sig);
-            values.put("tags", tags.toString());
-            values.put("main_event_id", getMainEventId());
-            values.put("reply_event_id", getReplyEventId());
-            database.insert("nostros_notes", null, values);
-        }
+        ContentValues values = new ContentValues();
+        values.put("id", id);
+        values.put("content", content.replace("'", "''"));
+        values.put("created_at", created_at);
+        values.put("kind", kind);
+        values.put("pubkey", pubkey);
+        values.put("sig", sig);
+        values.put("tags", tags.toString());
+        values.put("main_event_id", getMainEventId());
+        values.put("reply_event_id", getReplyEventId());
+        database.replace("nostros_notes", null, values);
     }
 
-    protected void saveUser(SQLiteDatabase database) {
-        String queryCheck = "SELECT contact, follower FROM nostros_users WHERE id = " + this.pubkey + ";";
-        Cursor cursor = database.rawQuery(queryCheck, null);
-        try {
-            JSONObject userContent = new JSONObject(content);
+    protected void saveUserMeta(SQLiteDatabase database) throws JSONException {
+        String[] tableColumns = new String[] {
+                "contact",
+                "follower"
+        };
+        String whereClause = "id = ?";
+        String[] whereArgs = new String[] {
+                this.pubkey
+        };
+        @SuppressLint("Recycle") Cursor cursor = database.query("nostros_users", tableColumns, whereClause, whereArgs, null, null, null);
+
+        JSONObject userContent = new JSONObject(content);
+        ContentValues values = new ContentValues();
+        values.put("id", pubkey);
+        values.put("name", userContent.optString("name"));
+        values.put("picture", userContent.optString("picture"));
+        values.put("about", userContent.optString("about"));
+        values.put("main_relay", userContent.optString("main_relay"));
+        values.put("contact", cursor.getInt(0));
+        values.put("follower", cursor.getInt(1));
+        database.replace("nostros_users", null, values);
+    }
+
+    protected void savePets(SQLiteDatabase database) throws JSONException {
+            for (int i = 0; i < tags.length(); ++i) {
+                JSONArray tag = tags.getJSONArray(i);
+                String petId = tag.getString(1);
+                String query = "SELECT * FROM nostros_users WHERE id = ?";
+                Cursor cursor = database.rawQuery(query, new String[] {petId});
+                if (cursor.getCount() == 0) {
+                    ContentValues values = new ContentValues();
+                    values.put("id", petId);
+                    values.put("name", tag.getString(3));
+                    values.put("contact", true);
+                    database.insert("nostros_users", null, values);
+                }
+            }
+    }
+
+    protected void saveFollower(SQLiteDatabase database, String userPubKey) throws JSONException {
+        JSONArray pTags = filterTags("p");
+        for (int i = 0; i < pTags.length(); ++i) {
+            JSONArray tag = pTags.getJSONArray(i);
+
+            String query = "SELECT * FROM nostros_users WHERE id = ?";
+            Cursor cursor = database.rawQuery(query, new String[] {pubkey});
+
             ContentValues values = new ContentValues();
             values.put("id", pubkey);
-            values.put("name", userContent.getString("name").replace("'", "''"));
-            values.put("picture", userContent.getString("picture").replace("'", "''"));
-            values.put("about", userContent.getString("about").replace("'", "''"));
-            values.put("main_relay", userContent.getString("main_relay").replace("'", "''"));
-            values.put("contact", cursor.getInt(0));
-            values.put("follower", cursor.getInt(1));
-            database.replace("nostros_users", null, values);
-        } catch (JSONException ignored) {
-
+            if (tag.getString(1).equals(userPubKey)) {
+                if (cursor.getCount() == 0) {
+                    values.put("follower", true);
+                    database.insert("nostros_users", null, values);
+                } else {
+                    String whereClause = "id = ?";
+                    String[] whereArgs = new String[] {
+                            this.pubkey
+                    };
+                    values.put("follower", true);
+                    database.update("nostros_users", values, whereClause, whereArgs);
+                }
+            }
         }
     }
 }

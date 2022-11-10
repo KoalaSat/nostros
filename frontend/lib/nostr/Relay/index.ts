@@ -78,18 +78,8 @@ class Relay {
 
   private readonly send: (message: object) => void = async (message) => {
     const tosend = JSON.stringify(message)
-    if (this.socket.readyState !== WebSocket.OPEN) {
-      setTimeout(() => {
-        this.send(message)
-      }, 500)
-    } else {
-      try {
-        console.log('SEND =====>', tosend)
-        WebsocketModule.send(tosend)
-      } catch (e) {
-        console.log('Failed ot send Event', e)
-      }
-    }
+    console.log('SEND =====>', tosend)
+    WebsocketModule.send(tosend)
   }
 
   public url: string
@@ -133,9 +123,8 @@ class Relay {
 
   public readonly unsubscribeAll: () => void = async () => {
     Object.keys(this.subscriptions).forEach((subId: string) => {
-      this.send(['CLOSE', subId])
+      this.unsubscribe(subId)
     })
-    this.subscriptions = {}
   }
 }
 

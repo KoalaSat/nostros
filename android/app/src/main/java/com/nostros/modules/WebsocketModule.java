@@ -22,6 +22,7 @@ import java.util.Map;
 public class WebsocketModule extends ReactContextBaseJavaModule {
     private WebSocket webSocket;
     private DatabaseModule database;
+    private String userPubKey;
 
     public WebsocketModule(ReactApplicationContext reactContext) {
         super(reactContext);
@@ -36,7 +37,6 @@ public class WebsocketModule extends ReactContextBaseJavaModule {
     @ReactMethod
     public void send(String message) {
         webSocket.sendText(message);
-
     }
 
     @ReactMethod
@@ -52,10 +52,10 @@ public class WebsocketModule extends ReactContextBaseJavaModule {
 
             @Override
             public void onTextMessage(WebSocket websocket, String message) throws Exception {
+                Log.d("Websocket", message);
                 JSONArray jsonArray = new JSONArray(message);
                 if (jsonArray.get(0).toString().equals("EVENT")) {
-                    Log.d("JSON Event", jsonArray.get(0).toString());
-                    database.saveEvent(jsonArray.getJSONObject(2));
+                    database.saveEvent(jsonArray.getJSONObject(2), userPubKey);
                 }
             }
         });
@@ -76,5 +76,10 @@ public class WebsocketModule extends ReactContextBaseJavaModule {
         {
             Log.d("WebSocket", "Failed to establish a WebSocket connection.");
         }
+    }
+
+    @ReactMethod
+    public void setUserPubKey(String userPubKey) {
+        this.userPubKey = userPubKey;
     }
 }

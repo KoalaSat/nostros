@@ -3,18 +3,15 @@ import { Button, Input, Layout, useTheme } from '@ui-kitten/components'
 import { Clipboard, StyleSheet } from 'react-native'
 import { RelayPoolContext } from '../../../Contexts/RelayPoolContext'
 import { useTranslation } from 'react-i18next'
-import { tagToUser } from '../../../Functions/RelayFunctions/Users'
-import Relay from '../../../lib/nostr/Relay'
-import { Event, EventKind } from '../../../lib/nostr/Events'
+import { EventKind } from '../../../lib/nostr/Events'
 import { AppContext } from '../../../Contexts/AppContext'
-import { insertUserPets } from '../../../Functions/DatabaseFunctions/Users'
 import SInfo from 'react-native-sensitive-info'
 import Icon from 'react-native-vector-icons/FontAwesome5'
 import { generateRandomKey, getPublickey } from '../../../lib/nostr/Bip'
 import { showMessage } from 'react-native-flash-message'
 
 export const Logger: React.FC = () => {
-  const { database, goToPage, loadingDb } = useContext(AppContext)
+  const { goToPage, loadingDb } = useContext(AppContext)
   const { privateKey, publicKey, relayPool, loadingRelayPool, setPrivateKey, setPublicKey } =
     useContext(RelayPoolContext)
   const { t } = useTranslation('common')
@@ -22,10 +19,7 @@ export const Logger: React.FC = () => {
   const [loading, setLoading] = useState<boolean>(false)
   const [status, setStatus] = useState<number>(0)
   const [isPrivate, setIsPrivate] = useState<boolean>(true)
-  const [authors, setAuthors] = useState<string[]>([])
   const [inputValue, setInputValue] = useState<string>('')
-  const [loadedUsers, setLoadedUsers] = useState<number>()
-  const [lastEventId, setLastEventId] = useState<string>('')
 
   const onPress: () => void = () => {
     if (inputValue && inputValue !== '') {
@@ -46,70 +40,13 @@ export const Logger: React.FC = () => {
 
   useEffect(() => {
     if (!loadingRelayPool && !loadingDb && publicKey) {
-      setStatus(1)
-      initEvents()
       relayPool?.subscribe('main-channel', {
-        kinds: [EventKind.petNames],
+        kinds: [EventKind.petNames, EventKind.meta],
         authors: [publicKey],
       })
+      setTimeout(() => goToPage('home', true), 3000)
     }
   }, [loadingRelayPool, publicKey, loadingDb])
-
-  const initEvents: () => void = () => {
-    relayPool?.on('event', 'landing', (_relay: Relay, _subId?: string, event?: Event) => {
-      console.log('LANDING EVENT =======>', event)
-      if (event && database) {
-        setLastEventId(event.id ?? '')
-        if (event.kind === EventKind.petNames) {
-          loadPets(event)
-        } else if (event.kind === EventKind.meta) {
-          setLoadedUsers((prev) => (prev ? prev + 1 : 1))
-          // insertUserMeta(event, database) FIXME
-          if (loadedUsers && loadedUsers >= authors.length && status < 3) setStatus(3)
-        }
-      }
-    })
-  }
-
-  const loadPets: (event: Event) => void = (event) => {
-    if (database) {
-      if (event.tags.length > 0) {
-        setStatus(2)
-        insertUserPets(event, database).then(() => {
-          requestUserData(event)
-        })
-      } else {
-        setStatus(3)
-      }
-    }
-  }
-
-  const requestUserData: (event: Event) => void = (event) => {
-    if (publicKey) {
-      const authors: string[] = [publicKey, ...event.tags.map((tag) => tagToUser(tag).id)]
-      setAuthors(authors)
-      relayPool?.subscribe('main-channel', {
-        kinds: [EventKind.meta],
-        authors,
-      })
-    }
-  }
-
-  useEffect(() => {
-    if (status > 2) {
-      relayPool?.removeOn('event', 'landing')
-      goToPage('home', true)
-    }
-  }, [status])
-
-  useEffect(() => {
-    if (status > 1) {
-      const timer = setTimeout(() => setStatus(4), 8000)
-      return () => {
-        clearTimeout(timer)
-      }
-    }
-  }, [lastEventId])
 
   const randomKeyGenerator: () => JSX.Element = () => {
     if (!isPrivate) return <></>
@@ -141,8 +78,7 @@ export const Logger: React.FC = () => {
   const statusName: { [status: number]: string } = {
     0: t('landing.connect'),
     1: t('landing.connecting'),
-    2: t('landing.loadingContacts'),
-    3: t('landing.ready'),
+    2: t('landing.ready'),
   }
   const styles = StyleSheet.create({
     inputsContainer: {
@@ -172,13 +108,15 @@ export const Logger: React.FC = () => {
     <Icon name={isPrivate ? 'lock' : 'eye'} size={16} color={theme['text-basic-color']} solid />
   )
 
+  const label: string = isPrivate ? t('landing.privateKey') : t('landing.publicKey')
+
   return !privateKey || !publicKey || status !== 0 ? (
     <>
       <Layout style={styles.inputsContainer}>
         <Layout style={styles.input}>
           <Input
             size='medium'
-            label={isPrivate ? t('landing.privateKey') : t('landing.publicKey')}
+            label={label}
             onChangeText={setInputValue}
             value={inputValue}
             disabled={loading}

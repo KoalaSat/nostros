@@ -26,8 +26,8 @@ public class DatabaseModule extends ReactContextBaseJavaModule {
     }
 
     @ReactMethod
-    public void saveEvent(JSONObject data) throws JSONException {
+    public void saveEvent(JSONObject data, String userPubKey) throws JSONException {
         Event event = new Event(data);
-        event.save(database);
+        event.save(database, userPubKey);
     }
 }
