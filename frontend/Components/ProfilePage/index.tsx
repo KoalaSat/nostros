@@ -22,16 +22,11 @@ import { AppContext } from '../../Contexts/AppContext'
 import { getNotes, Note } from '../../Functions/DatabaseFunctions/Notes'
 import NoteCard from '../NoteCard'
 import { RelayPoolContext } from '../../Contexts/RelayPoolContext'
-import {
-  getUser,
-  User,
-  updateUserFollower,
-  updateUserContact,
-} from '../../Functions/DatabaseFunctions/Users'
-import { EventKind, Event } from '../../lib/nostr/Events'
-import Relay, { RelayFilters } from '../../lib/nostr/Relay'
+import { getUser, User, updateUserContact } from '../../Functions/DatabaseFunctions/Users'
+import { EventKind } from '../../lib/nostr/Events'
+import { RelayFilters } from '../../lib/nostr/Relay'
 import Icon from 'react-native-vector-icons/FontAwesome5'
-import { populatePets, tagToUser } from '../../Functions/RelayFunctions/Users'
+import { populatePets } from '../../Functions/RelayFunctions/Users'
 import { getReplyEventId } from '../../Functions/RelayFunctions/Events'
 import Loading from '../Loading'
 import { handleInfinityScroll } from '../../Functions/NativeFunctions'
@@ -39,14 +34,12 @@ import Avatar from '../Avatar'
 
 export const ProfilePage: React.FC = () => {
   const { database, page, goToPage, goBack } = useContext(AppContext)
-  const { publicKey, privateKey, lastEventId, relayPool, setLastEventId } =
-    useContext(RelayPoolContext)
+  const { publicKey, privateKey, lastEventId, relayPool } = useContext(RelayPoolContext)
   const theme = useTheme()
   const initialPageSize = 10
   const [notes, setNotes] = useState<Note[]>()
   const [user, setUser] = useState<User>()
   const [pageSize, setPageSize] = useState<number>(initialPageSize)
-  const [contactsIds, setContactsIds] = useState<string[]>()
   const [isContact, setIsContact] = useState<boolean>()
   const [refreshing, setRefreshing] = useState(false)
   const breadcrump = page.split('%')
@@ -56,12 +49,12 @@ export const ProfilePage: React.FC = () => {
   useEffect(() => {
     setRefreshing(true)
     relayPool?.unsubscribeAll()
-    setContactsIds(undefined)
     setNotes(undefined)
     setUser(undefined)
 
     loadUser()
     loadNotes()
+    subscribeProfile()
     subscribeNotes()
   }, [page])
 
@@ -69,7 +62,6 @@ export const ProfilePage: React.FC = () => {
     if (database) {
       getUser(userId, database).then((result) => {
         if (result) {
-          subscribeProfile()
           setUser(result)
           setIsContact(result?.contact)
         }
@@ -105,27 +97,6 @@ export const ProfilePage: React.FC = () => {
   }
 
   const subscribeProfile: () => Promise<void> = async () => {
-    relayPool?.on('event', 'profile', (_relay: Relay, _subId?: string, event?: Event) => {
-      console.log('PROFILE EVENT =======>', event)
-      if (database) {
-        if (event?.id && event.pubkey === userId) {
-          if (event.kind === EventKind.petNames) {
-            const ids = event.tags.map((tag) => tagToUser(tag).id)
-            setContactsIds(ids)
-          } else if (event.kind === EventKind.meta) {
-            setTimeout(() => setRefreshing(false), 3000)
-            // storeEvent(event, database) FIXME
-            subscribeNotes()
-            if (publicKey && event.pubkey !== publicKey) {
-              const isFollower = event.tags.some((tag) => tag[1] === publicKey)
-              updateUserFollower(event.pubkey, database, isFollower).finally(() =>
-                setLastEventId(event?.id ?? ''),
-              )
-            }
-          }
-        }
-      }
-    })
     relayPool?.subscribe('main-channel', {
       kinds: [EventKind.meta, EventKind.petNames],
       authors: [userId],
@@ -150,7 +121,9 @@ export const ProfilePage: React.FC = () => {
   const onRefresh = useCallback(() => {
     setRefreshing(true)
     relayPool?.unsubscribeAll()
-    loadNotes(true)
+    loadUser()
+    loadNotes()
+    subscribeProfile()
     subscribeNotes()
   }, [])
 
@@ -298,49 +271,11 @@ export const ProfilePage: React.FC = () => {
     Clipboard.setString(user?.id ?? '')
   }
 
-  const isFollowingUser: () => boolean = () => {
-    if (contactsIds !== undefined && publicKey) {
-      return contactsIds?.includes(publicKey)
-    }
-    return false
-  }
-
   const onScroll: (event: NativeSyntheticEvent<NativeScrollEvent>) => void = (event) => {
     if (handleInfinityScroll(event)) {
       const newSize: number = notes?.length === pageSize ? pageSize + initialPageSize : pageSize
       setPageSize(newSize)
     }
-  }
-
-  const stats: () => JSX.Element = () => {
-    if (contactsIds === undefined) {
-      return (
-        <Layout style={styles.stats} level='3'>
-          <Spinner size='small' />
-        </Layout>
-      )
-    }
-
-    return (
-      <Layout style={styles.stats} level='3'>
-        <Layout style={styles.statsItem} level='3'>
-          <Icon name='address-book' size={16} color={theme['text-basic-color']} solid />
-          <Text>{` ${contactsIds?.length}`}</Text>
-        </Layout>
-        {publicKey !== userId && (
-          <Layout style={styles.statsItem} level='3'>
-            <Text>
-              <Icon
-                name='people-arrows'
-                size={16}
-                color={theme[isFollowingUser() ? 'text-basic-color' : 'color-primary-disabled']}
-                solid
-              />
-            </Text>
-          </Layout>
-        )}
-      </Layout>
-    )
   }
 
   const profile: JSX.Element = (
@@ -360,7 +295,6 @@ export const ProfilePage: React.FC = () => {
       <Layout style={styles.description} level='3'>
         {user && (
           <>
-            {stats()}
             <Layout style={styles.about} level='3'>
               <Text numberOfLines={5} ellipsizeMode='tail'>
                 {user?.about}

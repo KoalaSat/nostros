@@ -4,7 +4,6 @@ import android.annotation.SuppressLint;
 import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.util.Log;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -59,15 +58,15 @@ public class Event {
         try {
             for (int i = 0; i < eTags.length(); ++i) {
                 JSONArray tag = eTags.getJSONArray(i);
-                if (tag.getString(3).equals("root")) {
+                if (tag.length() > 3 && tag.getString(3).equals("root")) {
                     mainEventId = tag.getString(1);
                 }
             }
             if (mainEventId == null && eTags.length() > 0) {
                 mainEventId = eTags.getJSONArray(0).getString(1);
             }
-        } catch (JSONException ignored) {
-
+        } catch (JSONException e) {
+            e.printStackTrace();
         }
 
         return mainEventId;
@@ -79,15 +78,15 @@ public class Event {
         try {
             for (int i = 0; i < eTags.length(); ++i) {
                 JSONArray tag = eTags.getJSONArray(i);
-                if (tag.getString(3).equals("reply")) {
+                if (tag.length() > 3 && tag.getString(3).equals("reply")) {
                     mainEventId = tag.getString(1);
                 }
             }
             if (mainEventId == null && eTags.length() > 0) {
                 mainEventId = eTags.getJSONArray(eTags.length() - 1).getString(1);
             }
-        } catch (JSONException ignored) {
-
+        } catch (JSONException e) {
+            e.printStackTrace();
         }
 
         return mainEventId;
@@ -106,8 +105,8 @@ public class Event {
             if (mainEventId == null && eTags.length() > 0) {
                 mainEventId = eTags.getJSONArray(eTags.length() - 1).getString(1);
             }
-        } catch (JSONException ignored) {
-
+        } catch (JSONException e) {
+            e.printStackTrace();
         }
 
         return mainEventId;
@@ -124,8 +123,8 @@ public class Event {
                     filtered.put(tag);
                 }
             }
-        } catch (JSONException ignored) {
-
+        } catch (JSONException e) {
+            e.printStackTrace();
         }
 
         return filtered;
@@ -146,26 +145,25 @@ public class Event {
     }
 
     protected void saveUserMeta(SQLiteDatabase database) throws JSONException {
-        String[] tableColumns = new String[] {
-                "contact",
-                "follower"
-        };
-        String whereClause = "id = ?";
-        String[] whereArgs = new String[] {
-                this.pubkey
-        };
-        @SuppressLint("Recycle") Cursor cursor = database.query("nostros_users", tableColumns, whereClause, whereArgs, null, null, null);
-
         JSONObject userContent = new JSONObject(content);
+        String query = "SELECT * FROM nostros_users WHERE id = ?";
+        @SuppressLint("Recycle") Cursor cursor = database.rawQuery(query, new String[] {pubkey});
+
         ContentValues values = new ContentValues();
-        values.put("id", pubkey);
         values.put("name", userContent.optString("name"));
         values.put("picture", userContent.optString("picture"));
         values.put("about", userContent.optString("about"));
         values.put("main_relay", userContent.optString("main_relay"));
-        values.put("contact", cursor.getInt(0));
-        values.put("follower", cursor.getInt(1));
-        database.replace("nostros_users", null, values);
+        if (cursor.getCount() == 0) {
+            values.put("id", pubkey);
+            database.insert("nostros_users", null, values);
+        } else {
+            String whereClause = "id = ?";
+            String[] whereArgs = new String[] {
+                    this.pubkey
+            };
+            database.update("nostros_users", values, whereClause, whereArgs);
+        }
     }
 
     protected void savePets(SQLiteDatabase database) throws JSONException {
@@ -188,14 +186,13 @@ public class Event {
         JSONArray pTags = filterTags("p");
         for (int i = 0; i < pTags.length(); ++i) {
             JSONArray tag = pTags.getJSONArray(i);
-
-            String query = "SELECT * FROM nostros_users WHERE id = ?";
-            Cursor cursor = database.rawQuery(query, new String[] {pubkey});
-
-            ContentValues values = new ContentValues();
-            values.put("id", pubkey);
             if (tag.getString(1).equals(userPubKey)) {
+                String query = "SELECT * FROM nostros_users WHERE id = ?";
+                Cursor cursor = database.rawQuery(query, new String[] {pubkey});
+
+                ContentValues values = new ContentValues();
                 if (cursor.getCount() == 0) {
+                    values.put("id", pubkey);
                     values.put("follower", true);
                     database.insert("nostros_users", null, values);
                 } else {

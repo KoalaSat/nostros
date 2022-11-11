@@ -28,7 +28,7 @@ import { getDirectReplies, getReplyEventId } from '../../Functions/RelayFunction
 
 export const NotePage: React.FC = () => {
   const { page, goBack, goToPage, database, getActualPage } = useContext(AppContext)
-  const { lastEventId, relayPool, privateKey } = useContext(RelayPoolContext)
+  const { relayPool, privateKey, lastEventId } = useContext(RelayPoolContext)
   const [note, setNote] = useState<Note>()
   const [replies, setReplies] = useState<Note[]>()
   const [refreshing, setRefreshing] = useState(false)
@@ -36,34 +36,28 @@ export const NotePage: React.FC = () => {
   const theme = useTheme()
 
   const onRefresh = useCallback(() => {
-    setRefreshing(true)
-    setTimeout(() => setRefreshing(false), 5000)
     relayPool?.unsubscribeAll()
-    subscribeNotes()
-  }, [])
-
-  useEffect(() => {
-    reload()
-  }, [page])
-
-  useEffect(() => {
-    subscribeNotes()
-  }, [lastEventId])
-
-  const reload: () => void = () => {
+    setRefreshing(true)
     const newEventId = getActualPage().split('#')[1]
     setNote(undefined)
     setReplies(undefined)
     setEventId(newEventId)
-    relayPool?.unsubscribeAll()
-    relayPool?.subscribe('main-channel', {
-      kinds: [EventKind.textNote],
-      ids: [newEventId],
-    })
-  }
+  }, [])
+
+  useEffect(() => {
+    onRefresh()
+  }, [page])
+
+  useEffect(() => {
+    subscribeNotes()
+    loadNote()
+  }, [eventId])
+
+  useEffect(() => {
+    loadNote()
+  }, [lastEventId])
 
   const onPressBack: () => void = () => {
-    relayPool?.unsubscribeAll()
     goBack()
   }
 
@@ -72,40 +66,48 @@ export const NotePage: React.FC = () => {
       const replyId = getReplyEventId(note)
       if (replyId) {
         goToPage(`note#${replyId}`)
-        reload()
       }
     }
   }
 
-  const subscribeNotes: (past?: boolean) => Promise<void> = async (past) => {
+  const loadNote: () => void = async () => {
     if (database) {
       const events = await getNotes(database, { filters: { id: eventId } })
       const event = events[0]
-      if (event) {
-        setNote(event)
-        const notes = await getNotes(database, { filters: { reply_event_id: eventId } })
-        const eventMessages: RelayFilters = {
-          kinds: [EventKind.textNote],
-          '#e': [eventId],
+      setNote(event)
+      const notes = await getNotes(database, { filters: { reply_event_id: eventId } })
+      const rootReplies = getDirectReplies(event, notes)
+      if (rootReplies.length > 0) {
+        setReplies(rootReplies as Note[])
+        const message: RelayFilters = {
+          kinds: [EventKind.meta],
+          authors: [...rootReplies.map((note) => note.pubkey), event.pubkey],
         }
-        if (past) {
-          eventMessages.until = notes[notes.length - 1]?.created_at
-        } else {
-          eventMessages.since = notes[0]?.created_at
-        }
-        relayPool?.subscribe('main-channel', eventMessages)
-        const rootReplies = getDirectReplies(event, notes)
-        if (rootReplies.length > 0) {
-          setReplies(rootReplies as Note[])
-          const message: RelayFilters = {
-            kinds: [EventKind.meta],
-            authors: [...rootReplies.map((note) => note.pubkey), event.pubkey],
-          }
-          relayPool?.subscribe('main-channel', message)
-        } else {
-          setReplies([])
-        }
+        relayPool?.subscribe('main-channel', message)
+      } else {
+        setReplies([])
       }
+      setRefreshing(false)
+    }
+  }
+
+  const subscribeNotes: (past?: boolean) => Promise<void> = async (past) => {
+    if (database && eventId) {
+      relayPool?.subscribe('main-channel', {
+        kinds: [EventKind.textNote],
+        ids: [eventId],
+      })
+      const notes = await getNotes(database, { filters: { reply_event_id: eventId } })
+      const eventMessages: RelayFilters = {
+        kinds: [EventKind.textNote],
+        '#e': [eventId],
+      }
+      if (past) {
+        eventMessages.until = notes[notes.length - 1]?.created_at
+      } else {
+        eventMessages.since = notes[0]?.created_at
+      }
+      relayPool?.subscribe('main-channel', eventMessages)
     }
   }
 
@@ -137,7 +139,6 @@ export const NotePage: React.FC = () => {
       } else if (note.id) {
         goToPage(`note#${note.id}`)
       }
-      reload()
     }
   }
 

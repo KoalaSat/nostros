@@ -15,16 +15,6 @@ const databaseToEntity: (object: object) => User = (object) => {
   return object as User
 }
 
-export const updateUserFollower: (
-  userId: string,
-  db: QuickSQLiteConnection,
-  follower: boolean,
-) => Promise<QueryResult | null> = async (userId, db, follower) => {
-  const userQuery = `UPDATE nostros_users SET follower = ? WHERE id = ?`
-
-  await addUser(userId, db)
-  return db.execute(userQuery, [follower ? 1 : 0, userId])
-}
 export const updateUserContact: (
   userId: string,
   db: QuickSQLiteConnection,

@@ -1,6 +1,6 @@
 import { Button, Card, Input, Layout, Modal, Tab, TabBar, useTheme } from '@ui-kitten/components'
 import React, { useCallback, useContext, useEffect, useState } from 'react'
-import { RefreshControl, ScrollView, StyleSheet, TouchableOpacity } from 'react-native'
+import { RefreshControl, ScrollView, StyleSheet, Text, TouchableOpacity } from 'react-native'
 import { AppContext } from '../../Contexts/AppContext'
 import Icon from 'react-native-vector-icons/FontAwesome5'
 import { EventKind } from '../../lib/nostr/Events'
@@ -117,8 +117,8 @@ export const ContactsPage: React.FC = () => {
         selectedIndex={selectedTab}
         onSelect={(index) => setSelectedTab(index)}
       >
-        <Tab title={t('contactsPage.following')} />
-        <Tab title={t('contactsPage.followers')} />
+        <Tab title={<Text>{t('contactsPage.following')}</Text>} />
+        <Tab title={<Text>{t('contactsPage.followers')}</Text>} />
       </TabBar>
       <Layout style={styles.container} level='3'>
         <ScrollView
@@ -147,7 +147,9 @@ export const ContactsPage: React.FC = () => {
               />
             </Layout>
             <Layout style={styles.button}>
-              <Button onPress={onPressAddContact}>{t('contactsPage.addContact.add')}</Button>
+              <Button onPress={onPressAddContact}>
+                {<Text>{t('contactsPage.addContact.add')}</Text>}
+              </Button>
             </Layout>
           </Layout>
         </Card>
