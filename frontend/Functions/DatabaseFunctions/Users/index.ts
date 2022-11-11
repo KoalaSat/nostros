@@ -1,7 +1,5 @@
 import { getItems } from '..'
 import { QuickSQLiteConnection, QueryResult } from 'react-native-quick-sqlite'
-import { Event, EventKind, verifySignature } from '../../../lib/nostr/Events'
-import { tagToUser } from '../../RelayFunctions/Users'
 
 export interface User {
   id: string
@@ -17,51 +15,6 @@ const databaseToEntity: (object: object) => User = (object) => {
   return object as User
 }
 
-export const insertUserMeta: (
-  event: Event,
-  db: QuickSQLiteConnection,
-) => Promise<QueryResult | null> = async (event, db) => {
-  const valid = await verifySignature(event)
-
-  if (valid && event.kind === EventKind.meta) {
-    const user: User = JSON.parse(event.content)
-    const id = event.pubkey
-    const name = user.name?.replace("\\'", "'") ?? ''
-    const mainRelay = user.main_relay?.replace("\\'", "'") ?? ''
-    const about = user.about?.replace("\\'", "'") ?? ''
-    const picture = user.picture?.replace("\\'", "'") ?? ''
-
-    const query = `
-      INSERT OR REPLACE INTO nostros_users 
-        (id, name, picture, about, main_relay, contact, follower)
-      VALUES
-        (?,?,?,?,?,(SELECT contact FROM nostros_users WHERE id = ?),(SELECT follower FROM nostros_users WHERE id = ?));
-    `
-    const queryParams = [
-      id,
-      name.split("'").join("''"),
-      picture.split("'").join("''"),
-      about.split("'").join("''"),
-      mainRelay.split("'").join("''"),
-      id,
-      id,
-    ]
-    return await db.executeAsync(query, queryParams)
-  } else {
-    return null
-  }
-}
-
-export const updateUserFollower: (
-  userId: string,
-  db: QuickSQLiteConnection,
-  follower: boolean,
-) => Promise<QueryResult | null> = async (userId, db, follower) => {
-  const userQuery = `UPDATE nostros_users SET follower = ? WHERE id = ?`
-
-  await addUser(userId, db)
-  return db.execute(userQuery, [follower ? 1 : 0, userId])
-}
 export const updateUserContact: (
   userId: string,
   db: QuickSQLiteConnection,
@@ -71,23 +24,6 @@ export const updateUserContact: (
 
   await addUser(userId, db)
   return db.execute(userQuery, [contact ? 1 : 0, userId])
-}
-
-export const insertUserPets: (
-  event: Event,
-  db: QuickSQLiteConnection,
-) => Promise<User[] | null> = async (event, db) => {
-  const valid = await verifySignature(event)
-
-  if (valid && event.kind === EventKind.petNames) {
-    const users: User[] = event.tags.map((tag) => tagToUser(tag))
-    users.map(async (user) => {
-      return await updateUserContact(user.id, db, true)
-    })
-    return users
-  } else {
-    return null
-  }
 }
 
 export const getUser: (pubkey: string, db: QuickSQLiteConnection) => Promise<User | null> = async (

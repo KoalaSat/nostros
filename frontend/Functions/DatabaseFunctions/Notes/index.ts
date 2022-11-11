@@ -1,7 +1,6 @@
-import { QuickSQLiteConnection, QueryResult } from 'react-native-quick-sqlite'
+import { QuickSQLiteConnection } from 'react-native-quick-sqlite'
 import { getItems } from '..'
-import { Event, EventKind, verifySignature } from '../../../lib/nostr/Events'
-import { getMainEventId, getReplyEventId } from '../../RelayFunctions/Events'
+import { Event } from '../../../lib/nostr/Events'
 
 export interface Note extends Event {
   name: string
@@ -11,42 +10,6 @@ export interface Note extends Event {
 const databaseToEntity: (object: any) => Note = (object) => {
   object.tags = JSON.parse(object.tags)
   return object as Note
-}
-
-export const insertNote: (
-  event: Event,
-  db: QuickSQLiteConnection,
-) => Promise<QueryResult | null> = async (event, db) => {
-  const valid = await verifySignature(event)
-  if (valid && event.id && [EventKind.textNote, EventKind.recommendServer].includes(event.kind)) {
-    const notes = await getNotes(db, { filters: { id: event.id } })
-    if (notes && notes.length === 0 && event.id && event.sig) {
-      const mainEventId = getMainEventId(event) ?? ''
-      const replyEventId = getReplyEventId(event) ?? ''
-      const content = event.content.split("'").join("''")
-      const tags = JSON.stringify(event.tags).split("'").join("''")
-      const query = `INSERT OR IGNORE INTO nostros_notes
-          (id,content,created_at,kind,pubkey,sig,tags,main_event_id,reply_event_id)
-          VALUES 
-          (?,?,?,?,?,?,?,?,?);`
-      const queryValues = [
-        event.id,
-        content,
-        event.created_at,
-        event.kind,
-        event.pubkey,
-        event.sig,
-        tags,
-        mainEventId,
-        replyEventId,
-      ]
-      return await db.executeAsync(query, queryValues)
-    } else {
-      return null
-    }
-  } else {
-    return null
-  }
 }
 
 export const getNotes: (

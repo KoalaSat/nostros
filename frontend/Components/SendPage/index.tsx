@@ -21,23 +21,16 @@ import { getETags } from '../../Functions/RelayFunctions/Events'
 export const SendPage: React.FC = () => {
   const theme = useTheme()
   const { goBack, page, database } = useContext(AppContext)
-  const { relayPool, publicKey, lastEventId } = useContext(RelayPoolContext)
+  const { relayPool, publicKey } = useContext(RelayPoolContext)
   const { t } = useTranslation('common')
   const [content, setContent] = useState<string>('')
   const [sending, setSending] = useState<boolean>(false)
-  const [noteId, setNoteId] = useState<string>()
   const breadcrump = page.split('%')
   const eventId = breadcrump[breadcrump.length - 1].split('#')[1]
 
   useEffect(() => {
     relayPool?.unsubscribeAll()
   }, [])
-
-  useEffect(() => {
-    if (sending && noteId === lastEventId) {
-      goBack()
-    }
-  }, [lastEventId])
 
   const styles = StyleSheet.create({
     container: {
@@ -85,7 +78,7 @@ export const SendPage: React.FC = () => {
               kinds: [EventKind.textNote],
               ids: [sentNote.id],
             })
-            setNoteId(sentNote.id)
+            goBack()
           }
         })
         setSending(true)

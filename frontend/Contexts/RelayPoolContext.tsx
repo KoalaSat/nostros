@@ -1,14 +1,15 @@
 import React, { useContext, useEffect, useState } from 'react'
 import Relay from '../lib/nostr/Relay'
-import { Event, EventKind } from '../lib/nostr/Events'
+import { Event } from '../lib/nostr/Events'
 import RelayPool from '../lib/nostr/RelayPool/intex'
 import { AppContext } from './AppContext'
-import { storeEvent } from '../Functions/DatabaseFunctions/Events'
 import { getRelays, addRelay } from '../Functions/DatabaseFunctions/Relays'
 import { showMessage } from 'react-native-flash-message'
 import SInfo from 'react-native-sensitive-info'
 import { getPublickey } from '../lib/nostr/Bip'
 import { defaultRelays } from '../Constants/RelayConstants'
+import WebsocketModule from '../lib/nostr/Native/WebsocketModule'
+import moment from 'moment'
 
 export interface RelayPoolContextProps {
   loadingRelayPool: boolean
@@ -74,20 +75,22 @@ export const RelayPoolContextProvider = ({
           })
         },
       )
-      initRelayPool?.on(
-        'event',
-        'RelayPoolContextProvider',
-        async (relay: Relay, _subId?: string, event?: Event) => {
-          if (database && event?.id && event.kind !== EventKind.petNames) {
-            console.log('RELAYPOOL EVENT =======>', relay.url, event)
-            storeEvent(event, database).finally(() => setLastEventId(event.id ?? ''))
-          }
-        },
-      )
       setRelayPool(initRelayPool)
       setLoadingRelayPool(false)
     }
   }
+
+  const setClock: () => void = () => {
+    setLastEventId(moment().unix().toString())
+    setTimeout(setClock, 500)
+  }
+
+  useEffect(() => {
+    WebsocketModule.connectWebsocket((message) => {
+      console.log('WEBSOCKET', message)
+      setClock()
+    })
+  }, [])
 
   useEffect(() => {
     if (relayPool && lastPage !== page) {
@@ -98,6 +101,7 @@ export const RelayPoolContextProvider = ({
 
   useEffect(() => {
     if (publicKey && publicKey !== '') {
+      WebsocketModule.setUserPubKey(publicKey)
       if (!loadingRelayPool && page !== 'landing') {
         goToPage('home', true)
       } else {

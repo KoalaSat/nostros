@@ -41,7 +41,8 @@ export const HomePage: React.FC = () => {
   }
 
   const subscribeNotes: (users: User[], past?: boolean) => void = (users, past) => {
-    if (!database || !publicKey) return
+    if (!database || !publicKey || users.length === 0) return
+
     const limit = past ? pageSize : initialPageSize
     getNotes(database, { contacts: true, includeIds: [publicKey], limit }).then((results) => {
       const message: RelayFilters = {
@@ -55,7 +56,6 @@ export const HomePage: React.FC = () => {
       } else if (results.length >= pageSize) {
         message.since = results[0]?.created_at
       }
-
       relayPool?.subscribe('main-channel', message)
     })
   }
@@ -72,8 +72,10 @@ export const HomePage: React.FC = () => {
 
   useEffect(() => {
     relayPool?.unsubscribeAll()
-    calculateInitialNotes().then(() => loadNotes())
-  }, [publicKey])
+    if (relayPool && publicKey) {
+      calculateInitialNotes().then(() => loadNotes())
+    }
+  }, [publicKey, relayPool])
 
   useEffect(() => {
     loadNotes()
