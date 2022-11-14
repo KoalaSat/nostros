@@ -48,7 +48,7 @@
     "@react-native-community/eslint-config": "^3.0.3",
     "@types/create-hash": "^1.2.2",
     "@types/jest": "^29.2.0",
-    "@types/react-native": "^0.64.5",
+    "@types/react-native": "^0.70.6",
     "@types/react-native-sqlite-storage": "^5.0.2",
     "@types/react-native-vector-icons": "^6.4.12",
     "@types/react-test-renderer": "^16.9.2",
