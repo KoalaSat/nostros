@@ -1,105 +1,60 @@
 // import { spawnThread } from 'react-native-multithreading'
 import { signEvent, validateEvent, Event } from '../Events'
-import Relay, { RelayFilters, RelayOptions } from '../Relay'
+import { v5 as uuidv5 } from 'uuid'
+import RelayPoolModule from '../../Native/WebsocketModule'
 
-export interface OnFunctions {
-  open: { [id: string]: (relay: Relay) => void }
-  event: { [id: string]: (relay: Relay, subId: string, event: Event) => void }
-  esoe: { [id: string]: (relay: Relay, subId: string) => void }
-  notice: { [id: string]: (relay: Relay, events: Event[]) => void }
+export interface RelayFilters {
+  ids?: string[]
+  authors?: string[]
+  kinds?: number[]
+  '#e'?: string[]
+  '#p'?: string[]
+  since?: number
+  limit?: number
+  until?: number
+}
+
+export interface RelayMessage {
+  data: string
 }
 
 class RelayPool {
-  constructor(relaysUrls: string[], privateKey?: string, options: RelayOptions = {}) {
-    this.relays = {}
+  constructor(relaysUrls: string[], privateKey?: string) {
     this.privateKey = privateKey
-    this.options = options
-
-    this.onFunctions = {
-      open: {},
-      event: {},
-      esoe: {},
-      notice: {},
-    }
+    this.subscriptions = {}
 
     relaysUrls.forEach((relayUrl) => {
       this.add(relayUrl)
     })
-
-    this.setupHandlers()
   }
 
   private readonly privateKey?: string
-  private readonly options: RelayOptions
-  private readonly onFunctions: OnFunctions
-  public relays: { [url: string]: Relay }
+  private subscriptions: { [subId: string]: string[] }
 
-  private readonly setupHandlers: () => void = () => {
-    Object.keys(this.relays).forEach((relayUrl: string) => {
-      const relay: Relay = this.relays[relayUrl]
-
-      relay.onOpen = (openRelay) => {
-        Object.keys(this.onFunctions.open).forEach((id) => this.onFunctions.open[id](openRelay))
-      }
-      relay.onEvent = (eventRelay, subId, event) => {
-        Object.keys(this.onFunctions.event).forEach((id) => {
-          this.onFunctions.event[id](eventRelay, subId, event)
-        })
-      }
-      relay.onEsoe = (eventRelay, subId) => {
-        Object.keys(this.onFunctions.esoe).forEach((id) =>
-          this.onFunctions.esoe[id](eventRelay, subId),
-        )
-      }
-      relay.onNotice = (eventRelay, events) => {
-        Object.keys(this.onFunctions.notice).forEach((id) =>
-          this.onFunctions.notice[id](eventRelay, events),
-        )
-      }
-    })
+  private readonly send: (message: object) => void = async (message) => {
+    const tosend = JSON.stringify(message)
+    RelayPoolModule.send(tosend)
   }
 
-  public on: (
-    method: 'open' | 'event' | 'esoe' | 'notice',
-    id: string,
-    fn: (relay: Relay, subId?: string, event?: Event) => void,
-  ) => void = async (method, id, fn) => {
-    this.onFunctions[method][id] = fn
-  }
-
-  public removeOn: (method: 'open' | 'event' | 'esoe' | 'notice', id: string) => void = async (
-    method,
-    id,
+  public readonly connect: (publicKey: string, callback?: () => void) => void = async (
+    publicKey,
+    callback = () => {},
   ) => {
-    delete this.onFunctions[method][id]
+    RelayPoolModule.connect(publicKey, callback)
   }
 
-  public readonly add: (relayUrl: string) => Promise<boolean> = async (relayUrl) => {
-    if (this.relays[relayUrl]) return false
-
-    this.relays[relayUrl] = new Relay(relayUrl, this.options)
-    this.setupHandlers()
-
-    return true
+  public readonly add: (relayUrl: string, callback?: () => void) => void = async (
+    relayUrl,
+    callback = () => {},
+  ) => {
+    RelayPoolModule.add(relayUrl, callback)
   }
 
-  public readonly close: () => void = async () => {
-    Object.keys(this.relays).forEach((relayUrl: string) => {
-      const relay: Relay = this.relays[relayUrl]
-      relay.close()
-    })
-  }
-
-  public readonly remove: (relayUrl: string) => Promise<boolean> = async (relayUrl) => {
-    const relay: Relay | undefined = this.relays[relayUrl]
-
-    if (relay) {
-      relay.close()
-      delete this.relays[relayUrl]
-      return true
-    } else {
-      return false
-    }
+  public readonly remove: (relayUrl: string, callback?: () => void) => void = async (
+    relayUrl,
+    callback = () => {},
+  ) => {
+    RelayPoolModule.remove(relayUrl, callback)
   }
 
   public readonly sendEvent: (event: Event) => Promise<Event | null> = async (event) => {
@@ -107,10 +62,7 @@ class RelayPool {
       const signedEvent: Event = await signEvent(event, this.privateKey)
 
       if (validateEvent(signedEvent)) {
-        Object.keys(this.relays).forEach((relayUrl: string) => {
-          const relay: Relay = this.relays[relayUrl]
-          relay.sendEvent(signedEvent)
-        })
+        this.send(['EVENT', event])
 
         return signedEvent
       } else {
@@ -126,20 +78,27 @@ class RelayPool {
     subId,
     filters,
   ) => {
-    Object.keys(this.relays).forEach((relayUrl: string) => {
-      this.relays[relayUrl].subscribe(subId, filters)
-    })
+    const uuid = uuidv5(
+      `${subId}${JSON.stringify(filters)}`,
+      '57003344-b2cb-4b6f-a579-fae9e82c370a',
+    )
+    if (this.subscriptions[subId]?.includes(uuid)) {
+      console.log('Subscription already done!', filters)
+    } else {
+      this.send(['REQ', subId, filters])
+      const newSubscriptions = [...(this.subscriptions[subId] ?? []), uuid]
+      this.subscriptions[subId] = newSubscriptions
+    }
   }
 
   public readonly unsubscribe: (subId: string) => void = async (subId) => {
-    Object.keys(this.relays).forEach((relayUrl: string) => {
-      this.relays[relayUrl].unsubscribe(subId)
-    })
+    this.send(['CLOSE', subId])
+    delete this.subscriptions[subId]
   }
 
   public readonly unsubscribeAll: () => void = async () => {
-    Object.keys(this.relays).forEach((relayUrl: string) => {
-      this.relays[relayUrl].unsubscribeAll()
+    Object.keys(this.subscriptions).forEach((subId: string) => {
+      this.unsubscribe(subId)
     })
   }
 }

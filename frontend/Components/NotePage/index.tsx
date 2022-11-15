@@ -1,11 +1,4 @@
-import {
-  Card,
-  Layout,
-  Spinner,
-  TopNavigation,
-  TopNavigationAction,
-  useTheme,
-} from '@ui-kitten/components'
+import { Button, Card, Layout, Spinner, TopNavigation, useTheme } from '@ui-kitten/components'
 import React, { useCallback, useContext, useEffect, useState } from 'react'
 import { AppContext } from '../../Contexts/AppContext'
 import { getNotes, Note } from '../../Functions/DatabaseFunctions/Notes'
@@ -13,7 +6,6 @@ import { RelayPoolContext } from '../../Contexts/RelayPoolContext'
 import Icon from 'react-native-vector-icons/FontAwesome5'
 import NoteCard from '../NoteCard'
 import { EventKind } from '../../lib/nostr/Events'
-import { RelayFilters } from '../../lib/nostr/Relay'
 import {
   Clipboard,
   RefreshControl,
@@ -25,6 +17,7 @@ import {
 } from 'react-native'
 import Loading from '../Loading'
 import { getDirectReplies, getReplyEventId } from '../../Functions/RelayFunctions/Events'
+import { RelayFilters } from '../../lib/nostr/RelayPool/intex'
 
 export const NotePage: React.FC = () => {
   const { page, goBack, goToPage, database, getActualPage } = useContext(AppContext)
@@ -113,18 +106,20 @@ export const NotePage: React.FC = () => {
 
   const renderBackAction = (): JSX.Element => {
     return (
-      <TopNavigationAction
-        icon={<Icon name='arrow-left' size={16} color={theme['text-basic-color']} />}
+      <Button
+        accessoryRight={<Icon name='arrow-left' size={16} color={theme['text-basic-color']} />}
         onPress={onPressBack}
+        appearance='ghost'
       />
     )
   }
 
   const renderNoteActions = (): JSX.Element => {
     return note && getReplyEventId(note) ? (
-      <TopNavigationAction
-        icon={<Icon name='arrow-up' size={16} color={theme['text-basic-color']} />}
+      <Button
+        accessoryRight={<Icon name='arrow-up' size={16} color={theme['text-basic-color']} />}
         onPress={onPressGoParent}
+        appearance='ghost'
       />
     ) : (
       <></>

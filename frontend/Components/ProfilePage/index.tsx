@@ -1,12 +1,4 @@
-import {
-  Card,
-  Layout,
-  Spinner,
-  Text,
-  TopNavigation,
-  TopNavigationAction,
-  useTheme,
-} from '@ui-kitten/components'
+import { Button, Card, Layout, Spinner, Text, TopNavigation, useTheme } from '@ui-kitten/components'
 import React, { useCallback, useContext, useEffect, useState } from 'react'
 import {
   Clipboard,
@@ -24,13 +16,13 @@ import NoteCard from '../NoteCard'
 import { RelayPoolContext } from '../../Contexts/RelayPoolContext'
 import { getUser, User, updateUserContact } from '../../Functions/DatabaseFunctions/Users'
 import { EventKind } from '../../lib/nostr/Events'
-import { RelayFilters } from '../../lib/nostr/Relay'
 import Icon from 'react-native-vector-icons/FontAwesome5'
 import { populatePets } from '../../Functions/RelayFunctions/Users'
 import { getReplyEventId } from '../../Functions/RelayFunctions/Events'
 import Loading from '../Loading'
 import { handleInfinityScroll } from '../../Functions/NativeFunctions'
 import Avatar from '../Avatar'
+import { RelayFilters } from '../../lib/nostr/RelayPool/intex'
 
 export const ProfilePage: React.FC = () => {
   const { database, page, goToPage, goBack } = useContext(AppContext)
@@ -80,20 +72,14 @@ export const ProfilePage: React.FC = () => {
 
   const subscribeNotes: (past?: boolean) => void = (past) => {
     if (!database) return
-    const limit = past ? pageSize : initialPageSize
-    getNotes(database, { filters: { pubkey: userId }, limit }).then((results) => {
-      const message: RelayFilters = {
-        kinds: [EventKind.textNote, EventKind.recommendServer],
-        authors: [userId],
-        limit: initialPageSize,
-      }
-      if (past) {
-        message.until = results[results.length - 1]?.created_at
-      } else if (results.length >= pageSize) {
-        message.since = results[0]?.created_at
-      }
-      relayPool?.subscribe('main-channel', message)
-    })
+
+    const message: RelayFilters = {
+      kinds: [EventKind.textNote, EventKind.recommendServer],
+      authors: [userId],
+      limit: pageSize,
+    }
+
+    relayPool?.subscribe('main-channel', message)
   }
 
   const subscribeProfile: () => Promise<void> = async () => {
@@ -148,25 +134,32 @@ export const ProfilePage: React.FC = () => {
   const renderOptions: () => JSX.Element = () => {
     if (publicKey === userId) {
       return (
-        <TopNavigationAction
-          icon={<Icon name='cog' size={16} color={theme['text-basic-color']} solid />}
+        <Button
+          accessoryRight={<Icon name='cog' size={16} color={theme['text-basic-color']} solid />}
           onPress={() => goToPage('config')}
+          appearance='ghost'
         />
       )
     } else {
       if (user) {
         if (isContact) {
           return (
-            <TopNavigationAction
-              icon={<Icon name='user-minus' size={16} color={theme['color-danger-500']} solid />}
+            <Button
+              accessoryRight={
+                <Icon name='user-minus' size={16} color={theme['color-danger-500']} solid />
+              }
               onPress={removeAuthor}
+              appearance='ghost'
             />
           )
         } else {
           return (
-            <TopNavigationAction
-              icon={<Icon name='user-plus' size={16} color={theme['color-success-500']} solid />}
+            <Button
+              accessoryRight={
+                <Icon name='user-plus' size={16} color={theme['color-success-500']} solid />
+              }
               onPress={addAuthor}
+              appearance='ghost'
             />
           )
         }
@@ -177,7 +170,6 @@ export const ProfilePage: React.FC = () => {
   }
 
   const onPressBack: () => void = () => {
-    relayPool?.removeOn('event', 'profile')
     relayPool?.unsubscribeAll()
     goBack()
   }
@@ -187,9 +179,10 @@ export const ProfilePage: React.FC = () => {
       return <></>
     } else {
       return (
-        <TopNavigationAction
-          icon={<Icon name='arrow-left' size={16} color={theme['text-basic-color']} />}
+        <Button
+          accessoryRight={<Icon name='arrow-left' size={16} color={theme['text-basic-color']} />}
           onPress={onPressBack}
+          appearance='ghost'
         />
       )
     }
@@ -273,8 +266,7 @@ export const ProfilePage: React.FC = () => {
 
   const onScroll: (event: NativeSyntheticEvent<NativeScrollEvent>) => void = (event) => {
     if (handleInfinityScroll(event)) {
-      const newSize: number = notes?.length === pageSize ? pageSize + initialPageSize : pageSize
-      setPageSize(newSize)
+      setPageSize(pageSize + initialPageSize)
     }
   }
 

@@ -1,12 +1,4 @@
-import {
-  Button,
-  Input,
-  Layout,
-  Spinner,
-  TopNavigation,
-  TopNavigationAction,
-  useTheme,
-} from '@ui-kitten/components'
+import { Button, Input, Layout, Spinner, TopNavigation, useTheme } from '@ui-kitten/components'
 import React, { useContext, useEffect, useState } from 'react'
 import { StyleSheet } from 'react-native'
 import { AppContext } from '../../Contexts/AppContext'
@@ -87,9 +79,10 @@ export const SendPage: React.FC = () => {
   }
 
   const renderBackAction = (): JSX.Element => (
-    <TopNavigationAction
-      icon={<Icon name='arrow-left' size={16} color={theme['text-basic-color']} />}
+    <Button
+      accessoryRight={<Icon name='arrow-left' size={16} color={theme['text-basic-color']} />}
       onPress={onPressBack}
+      appearance='ghost'
     />
   )
 

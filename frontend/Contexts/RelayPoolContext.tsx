@@ -1,14 +1,8 @@
 import React, { useContext, useEffect, useState } from 'react'
-import Relay from '../lib/nostr/Relay'
-import { Event } from '../lib/nostr/Events'
 import RelayPool from '../lib/nostr/RelayPool/intex'
 import { AppContext } from './AppContext'
-import { getRelays, addRelay } from '../Functions/DatabaseFunctions/Relays'
-import { showMessage } from 'react-native-flash-message'
 import SInfo from 'react-native-sensitive-info'
 import { getPublickey } from '../lib/nostr/Bip'
-import { defaultRelays } from '../Constants/RelayConstants'
-import WebsocketModule from '../lib/nostr/Native/WebsocketModule'
 import moment from 'moment'
 
 export interface RelayPoolContextProps {
@@ -50,31 +44,9 @@ export const RelayPoolContextProvider = ({
   const [lastPage, setLastPage] = useState<string>(page)
 
   const loadRelayPool: () => void = async () => {
-    if (database) {
-      const relays = await getRelays(database)
+    if (database && publicKey) {
       const initRelayPool = new RelayPool([], privateKey)
-      if (relays && relays.length > 0) {
-        relays.forEach((relay) => {
-          initRelayPool.add(relay.url)
-        })
-      } else {
-        // pickRandomItems(defaultRelays, 1).forEach((relayUrl) => {
-        initRelayPool.add(defaultRelays[4])
-        addRelay({ url: defaultRelays[4] }, database)
-        // })
-      }
-
-      initRelayPool?.on(
-        'notice',
-        'RelayPoolContextProvider',
-        async (relay: Relay, _subId?: string, event?: Event) => {
-          showMessage({
-            message: relay.url,
-            description: event?.content ?? '',
-            type: 'info',
-          })
-        },
-      )
+      initRelayPool.connect(publicKey)
       setRelayPool(initRelayPool)
       setLoadingRelayPool(false)
     }
@@ -86,22 +58,17 @@ export const RelayPoolContextProvider = ({
   }
 
   useEffect(() => {
-    WebsocketModule.connectWebsocket((message) => {
-      console.log('WEBSOCKET', message)
-      setClock()
-    })
+    setClock()
   }, [])
 
   useEffect(() => {
     if (relayPool && lastPage !== page) {
-      relayPool.removeOn('event', lastPage)
       setLastPage(page)
     }
   }, [page])
 
   useEffect(() => {
     if (publicKey && publicKey !== '') {
-      WebsocketModule.setUserPubKey(publicKey)
       if (!loadingRelayPool && page !== 'landing') {
         goToPage('home', true)
       } else {

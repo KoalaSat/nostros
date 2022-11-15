@@ -22,7 +22,7 @@ export const isDirectReply: (mainEvent: Event, reply: Event) => boolean = (mainE
   const taggedReplyEventsIds: string[] = getTaggedEventIds(reply)
   const difference = taggedReplyEventsIds.filter((item) => !taggedMainEventsIds.includes(item))
 
-  return difference.length === 1 && difference[0] === mainEvent.id
+  return difference.length === 1 && difference[0] === mainEvent?.id
 }
 
 export const getTaggedEventIds: (event: Event) => string[] = (event) => {
@@ -31,5 +31,5 @@ export const getTaggedEventIds: (event: Event) => string[] = (event) => {
 }
 
 export const getETags: (event: Event) => string[][] = (event) => {
-  return event.tags.filter((tag) => tag[0] === 'e')
+  return event?.tags.filter((tag) => tag[0] === 'e') || []
 }

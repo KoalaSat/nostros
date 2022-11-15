@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import { Button, Layout, Text, useTheme } from '@ui-kitten/components'
 import { Note } from '../../Functions/DatabaseFunctions/Notes'
 import { StyleSheet, TouchableOpacity } from 'react-native'
@@ -6,7 +6,6 @@ import Markdown from 'react-native-markdown-display'
 import { EventKind } from '../../lib/nostr/Events'
 import Icon from 'react-native-vector-icons/FontAwesome5'
 import { RelayPoolContext } from '../../Contexts/RelayPoolContext'
-import { addRelay } from '../../Functions/DatabaseFunctions/Relays'
 import { AppContext } from '../../Contexts/AppContext'
 import { showMessage } from 'react-native-flash-message'
 import { t } from 'i18next'
@@ -15,6 +14,7 @@ import moment from 'moment'
 import { populateRelay } from '../../Functions/RelayFunctions'
 import Avatar from '../Avatar'
 import { markdownIt, markdownStyle } from '../../Constants/AppConstants'
+import { searchRelays } from '../../Functions/DatabaseFunctions/Relays'
 
 interface NoteCardProps {
   note: Note
@@ -22,11 +22,17 @@ interface NoteCardProps {
 
 export const NoteCard: React.FC<NoteCardProps> = ({ note }) => {
   const theme = useTheme()
-  const { relayPool, setRelayPool, publicKey } = useContext(RelayPoolContext)
+  const { relayPool, publicKey } = useContext(RelayPoolContext)
   const { database, goToPage } = useContext(AppContext)
-  const [relayAdded, setRelayAdded] = useState<boolean>(
-    Object.keys(relayPool?.relays ?? {}).includes(note.content),
-  )
+  const [relayAdded, setRelayAdded] = useState<boolean>(false)
+
+  useEffect(() => {
+    if (database) {
+      searchRelays(note.content, database).then((result) => {
+        setRelayAdded(result.length > 0)
+      })
+    }
+  }, [database])
 
   const textNote: () => JSX.Element = () => {
     return (
@@ -73,16 +79,15 @@ export const NoteCard: React.FC<NoteCardProps> = ({ note }) => {
 
     const addRelayItem: () => void = () => {
       if (relayPool && database && publicKey) {
-        relayPool.add(note.content)
-        setRelayPool(relayPool)
-        addRelay({ url: note.content }, database)
-        populateRelay(relayPool, database, publicKey)
-        showMessage({
-          message: t('alerts.relayAdded'),
-          description: note.content,
-          type: 'success',
+        relayPool.add(note.content, () => {
+          populateRelay(relayPool, database, publicKey)
+          showMessage({
+            message: t('alerts.relayAdded'),
+            description: note.content,
+            type: 'success',
+          })
+          setRelayAdded(true)
         })
-        setRelayAdded(true)
       }
     }
 

@@ -1,12 +1,4 @@
-import {
-  Button,
-  Divider,
-  Input,
-  Layout,
-  TopNavigation,
-  TopNavigationAction,
-  useTheme,
-} from '@ui-kitten/components'
+import { Button, Divider, Input, Layout, TopNavigation, useTheme } from '@ui-kitten/components'
 import React, { useContext, useEffect } from 'react'
 import { Clipboard, StyleSheet } from 'react-native'
 import { AppContext } from '../../Contexts/AppContext'
@@ -49,9 +41,10 @@ export const ConfigPage: React.FC = () => {
   }
 
   const renderBackAction = (): JSX.Element => (
-    <TopNavigationAction
-      icon={<Icon name='arrow-left' size={16} color={theme['text-basic-color']} />}
+    <Button
+      accessoryRight={<Icon name='arrow-left' size={16} color={theme['text-basic-color']} />}
       onPress={onPressBack}
+      appearance='ghost'
     />
   )
 

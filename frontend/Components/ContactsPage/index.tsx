@@ -12,7 +12,7 @@ import { populatePets } from '../../Functions/RelayFunctions/Users'
 
 export const ContactsPage: React.FC = () => {
   const { database } = useContext(AppContext)
-  const { relayPool, publicKey, privateKey } = useContext(RelayPoolContext)
+  const { relayPool, publicKey, privateKey, lastEventId } = useContext(RelayPoolContext)
   const theme = useTheme()
   const [users, setUsers] = useState<User[]>()
   const [refreshing, setRefreshing] = useState(true)
@@ -21,6 +21,10 @@ export const ContactsPage: React.FC = () => {
   const [selectedTab, setSelectedTab] = useState(0)
 
   const { t } = useTranslation('common')
+
+  useEffect(() => {
+    loadUsers()
+  }, [lastEventId])
 
   useEffect(() => {
     setUsers([])
@@ -36,12 +40,15 @@ export const ContactsPage: React.FC = () => {
       }
 
       getUsers(database, filters).then((results) => {
-        if (results) {
+        if (results && results.length > 0) {
           setUsers(results)
-          relayPool?.subscribe('main-channel', {
-            kinds: [EventKind.meta],
-            authors: results.map((user) => user.id),
-          })
+          const missingDataUsers = results.filter((user) => !user.picture).map((user) => user.id)
+          if (missingDataUsers.length > 0) {
+            relayPool?.subscribe('main-channel', {
+              kinds: [EventKind.meta],
+              authors: missingDataUsers,
+            })
+          }
         }
         setRefreshing(false)
       })

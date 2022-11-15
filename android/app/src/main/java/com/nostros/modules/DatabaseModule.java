@@ -1,33 +1,57 @@
 package com.nostros.modules;
 
+import android.annotation.SuppressLint;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 
-import com.facebook.react.bridge.ReactApplicationContext;
-import com.facebook.react.bridge.ReactContextBaseJavaModule;
-import com.facebook.react.bridge.ReactMethod;
 import com.nostros.classes.Event;
+import com.nostros.classes.Relay;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
-public class DatabaseModule extends ReactContextBaseJavaModule {
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+
+public class DatabaseModule {
     private SQLiteDatabase database;
 
-    DatabaseModule(ReactApplicationContext reactContext) {
-        super(reactContext);
-        String dbPath = reactContext.getFilesDir().getAbsolutePath();
-        database = SQLiteDatabase.openDatabase( dbPath + "/nostros.sqlite", null, SQLiteDatabase.OPEN_READWRITE);
+    DatabaseModule(String absoluteFilesPath) {
+        database = SQLiteDatabase.openDatabase( absoluteFilesPath + "/nostros.sqlite", null, SQLiteDatabase.OPEN_READWRITE);
     }
 
-    @Override
-    public String getName() {
-        return "DatabaseModule";
-    }
-
-    @ReactMethod
     public void saveEvent(JSONObject data, String userPubKey) throws JSONException {
         Event event = new Event(data);
         event.save(database, userPubKey);
+    }
+
+    public void saveRelay(Relay relay) {
+        relay.save(database);
+    }
+
+    public void destroyRelay(Relay relay) {
+        relay.destroy(database);
+    }
+
+    public List<Relay> getRelays() {
+        List<Relay> relayList = new ArrayList<>();
+        String query = "SELECT url FROM nostros_relays;";
+        @SuppressLint("Recycle") Cursor cursor = database.rawQuery(query, new String[] {});
+        if (cursor.getCount() > 0) {
+            Log.d("WebSocket", String.valueOf(cursor.getCount()));
+            for (int i = 1; i < cursor.getCount(); i++) {
+                Log.d("WebSocket", String.valueOf(i));
+                try {
+                    String relayUrl = cursor.getString(i);
+                    Relay relay = new Relay(relayUrl, this);
+                    relayList.add(relay);
+                } catch (IOException e) {
+                    Log.d("WebSocket", e.toString());
+                }
+            }
+        }
+        return relayList;
     }
 }

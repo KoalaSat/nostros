@@ -1,26 +1,18 @@
-import {
-  Button,
-  Layout,
-  TopNavigation,
-  TopNavigationAction,
-  useTheme,
-  Text,
-} from '@ui-kitten/components'
+import { Button, Layout, TopNavigation, useTheme, Text } from '@ui-kitten/components'
 import React, { useContext, useEffect, useState } from 'react'
 import { RefreshControl, ScrollView, StyleSheet } from 'react-native'
 import { AppContext } from '../../Contexts/AppContext'
 import Icon from 'react-native-vector-icons/FontAwesome5'
 import { useTranslation } from 'react-i18next'
 import { RelayPoolContext } from '../../Contexts/RelayPoolContext'
-import { getRelays, Relay, addRelay, removeRelay } from '../../Functions/DatabaseFunctions/Relays'
+import { getRelays, Relay } from '../../Functions/DatabaseFunctions/Relays'
 import { defaultRelays } from '../../Constants/RelayConstants'
-import { populateRelay } from '../../Functions/RelayFunctions'
 import { showMessage } from 'react-native-flash-message'
 
 export const RelaysPage: React.FC = () => {
   const theme = useTheme()
   const { goBack, database } = useContext(AppContext)
-  const { relayPool, publicKey, setRelayPool } = useContext(RelayPoolContext)
+  const { relayPool, publicKey } = useContext(RelayPoolContext)
   const { t } = useTranslation('common')
   const [relays, setRelays] = useState<Relay[]>([])
   const [loading, setLoading] = useState<boolean>(false)
@@ -43,40 +35,38 @@ export const RelaysPage: React.FC = () => {
   }
 
   const renderBackAction = (): JSX.Element => (
-    <TopNavigationAction
-      icon={<Icon name='arrow-left' size={16} color={theme['text-basic-color']} />}
+    <Button
+      accessoryRight={<Icon name='arrow-left' size={16} color={theme['text-basic-color']} />}
       onPress={onPressBack}
+      appearance='ghost'
     />
   )
 
   const addRelayItem: (url: string) => void = async (url) => {
     if (relayPool && database && publicKey && (relays?.length ?? 0) < 2) {
       setLoading(true)
-      relayPool.add(url)
-      setRelayPool(relayPool)
-      await addRelay({ url }, database)
-      populateRelay(relayPool, database, publicKey)
-      showMessage({
-        message: t('alerts.relayAdded'),
-        description: url,
-        type: 'success',
+      relayPool.add(url, () => {
+        showMessage({
+          message: t('alerts.relayAdded'),
+          description: url,
+          type: 'success',
+        })
+        loadRelays()
       })
-      loadRelays()
     }
   }
 
   const removeRelayItem: (url: string) => void = async (url) => {
     if (relayPool && database && publicKey) {
       setLoading(true)
-      relayPool.remove(url)
-      setRelayPool(relayPool)
-      await removeRelay({ url }, database)
-      showMessage({
-        message: t('alerts.relayRemoved'),
-        description: url,
-        type: 'danger',
+      relayPool.remove(url, () => {
+        showMessage({
+          message: t('alerts.relayRemoved'),
+          description: url,
+          type: 'danger',
+        })
+        loadRelays()
       })
-      loadRelays()
     }
   }
 

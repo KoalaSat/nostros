@@ -1,58 +1,45 @@
-package com.nostros.modules;
+package com.nostros.classes;
 
 import android.util.Log;
 
-import com.facebook.react.bridge.Callback;
-import com.facebook.react.bridge.ReactApplicationContext;
-import com.facebook.react.bridge.ReactContextBaseJavaModule;
-import com.facebook.react.bridge.ReactMethod;
 import com.neovisionaries.ws.client.HostnameUnverifiedException;
 import com.neovisionaries.ws.client.OpeningHandshakeException;
 import com.neovisionaries.ws.client.WebSocket;
 import com.neovisionaries.ws.client.WebSocketAdapter;
 import com.neovisionaries.ws.client.WebSocketException;
 import com.neovisionaries.ws.client.WebSocketFactory;
+import com.nostros.modules.DatabaseModule;
 
 import org.json.JSONArray;
 
 import java.io.IOException;
-import java.util.List;
-import java.util.Map;
 
-public class WebsocketModule extends ReactContextBaseJavaModule {
+public class Websocket {
     private WebSocket webSocket;
     private DatabaseModule database;
-    private String userPubKey;
+    private String url;
 
-    public WebsocketModule(ReactApplicationContext reactContext) {
-        super(reactContext);
-        database = new DatabaseModule(reactContext);
+    public Websocket(String serverUrl, DatabaseModule databaseModule) {
+        database = databaseModule;
+        url = serverUrl;
     }
 
-    @Override
-    public String getName() {
-        return "WebsocketModule";
-    }
-
-    @ReactMethod
     public void send(String message) {
+        Log.d("Websocket", "SEND URL:" + url + " __ " + message);
         webSocket.sendText(message);
     }
 
-    @ReactMethod
-    public void connectWebsocket(Callback callBack) throws IOException {
+    public void disconnect() {
+        webSocket.disconnect();
+    }
+
+    public void connect(String userPubKey) throws IOException {
         WebSocketFactory factory = new WebSocketFactory();
-        webSocket = factory.createSocket("wss://relay.damus.io");
+        webSocket = factory.createSocket(url);
         webSocket.addListener(new WebSocketAdapter() {
             @Override
-            public void onConnected(WebSocket ws, Map<String, List<String>> headers) throws Exception
-            {
-                callBack.invoke("connected");
-            }
-
-            @Override
             public void onTextMessage(WebSocket websocket, String message) throws Exception {
-                Log.d("Websocket", message);
+                Log.d("Websocket", "RECEIVE URL:" + url + " __ " + message);
                 JSONArray jsonArray = new JSONArray(message);
                 if (jsonArray.get(0).toString().equals("EVENT")) {
                     database.saveEvent(jsonArray.getJSONObject(2), userPubKey);
@@ -76,10 +63,5 @@ public class WebsocketModule extends ReactContextBaseJavaModule {
         {
             Log.d("WebSocket", "Failed to establish a WebSocket connection.");
         }
-    }
-
-    @ReactMethod
-    public void setUserPubKey(String userPubKey) {
-        this.userPubKey = userPubKey;
     }
 }

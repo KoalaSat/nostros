@@ -44,7 +44,7 @@ export const Logger: React.FC = () => {
         kinds: [EventKind.petNames, EventKind.meta],
         authors: [publicKey],
       })
-      setTimeout(() => goToPage('home', true), 3000)
+      setTimeout(() => goToPage('home', true), 5000)
     }
   }, [loadingRelayPool, publicKey, loadingDb])
 

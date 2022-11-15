@@ -15,11 +15,11 @@ import NoteCard from '../NoteCard'
 import Icon from 'react-native-vector-icons/FontAwesome5'
 import { RelayPoolContext } from '../../Contexts/RelayPoolContext'
 import { EventKind } from '../../lib/nostr/Events'
-import { RelayFilters } from '../../lib/nostr/Relay'
 import { getReplyEventId } from '../../Functions/RelayFunctions/Events'
 import { getUsers, User } from '../../Functions/DatabaseFunctions/Users'
 import { handleInfinityScroll } from '../../Functions/NativeFunctions'
 import Loading from '../Loading'
+import { RelayFilters } from '../../lib/nostr/RelayPool/intex'
 
 export const HomePage: React.FC = () => {
   const { database, goToPage } = useContext(AppContext)
@@ -33,7 +33,7 @@ export const HomePage: React.FC = () => {
 
   const calculateInitialNotes: () => Promise<void> = async () => {
     if (database && publicKey) {
-      setTimeout(() => setRefreshing(false), 3000)
+      setTimeout(() => setRefreshing(false), 2000)
       const users = await getUsers(database, { contacts: true, includeIds: [publicKey] })
       setAuthors(users)
       subscribeNotes(users)
@@ -43,21 +43,12 @@ export const HomePage: React.FC = () => {
   const subscribeNotes: (users: User[], past?: boolean) => void = (users, past) => {
     if (!database || !publicKey || users.length === 0) return
 
-    const limit = past ? pageSize : initialPageSize
-    getNotes(database, { contacts: true, includeIds: [publicKey], limit }).then((results) => {
-      const message: RelayFilters = {
-        kinds: [EventKind.textNote, EventKind.recommendServer],
-        authors: users.map((user) => user.id),
-        limit: initialPageSize,
-      }
-
-      if (past) {
-        message.until = results[results.length - 1]?.created_at
-      } else if (results.length >= pageSize) {
-        message.since = results[0]?.created_at
-      }
-      relayPool?.subscribe('main-channel', message)
-    })
+    const message: RelayFilters = {
+      kinds: [EventKind.textNote, EventKind.recommendServer],
+      authors: users.map((user) => user.id),
+      limit: pageSize,
+    }
+    relayPool?.subscribe('main-channel', message)
   }
 
   const loadNotes: () => void = () => {
@@ -65,6 +56,15 @@ export const HomePage: React.FC = () => {
       getNotes(database, { contacts: true, includeIds: [publicKey], limit: pageSize }).then(
         (notes) => {
           setNotes(notes)
+          const missingDataNotes = notes
+            .filter((note) => !note.picture || note.picture === '')
+            .map((note) => note.pubkey)
+          if (missingDataNotes.length > 0) {
+            relayPool?.subscribe('main-channel', {
+              kinds: [EventKind.meta],
+              authors: missingDataNotes,
+            })
+          }
         },
       )
     }
