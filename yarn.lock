@@ -3248,10 +3248,10 @@ eslint-plugin-ft-flow@^2.0.1:
     lodash "^4.17.21"
     string-natural-compare "^3.0.1"
 
-eslint-plugin-i18next@^6.0.0-4:
-  version "6.0.0-4"
-  resolved "https://registry.yarnpkg.com/eslint-plugin-i18next/-/eslint-plugin-i18next-6.0.0-4.tgz#985be971145697dc083a99c5da07f655e52a1c32"
-  integrity sha512-QF0TpFuk5HkdzKBirXsWvueX50GIu/mhTUtYWSUSHjJcLPugap890XGsyDhOSUpX/tNzX32K43v96InZr7+mmg==
+eslint-plugin-i18next@^6.0.0-6:
+  version "6.0.0-6"
+  resolved "https://registry.yarnpkg.com/eslint-plugin-i18next/-/eslint-plugin-i18next-6.0.0-6.tgz#8fef8740ac14d52ad3eb41fdc6b475c634de4141"
+  integrity sha512-Wl9Ko3AUORoOXm8Gve8BlfasT2dyIcDu1WgPUpLK3G6D/CDDOH33mF5Nd+TThkRVFKIoFY8QObZtnmn9jf9qxA==
   dependencies:
     lodash "^4.17.21"
     requireindex "~1.1.0"
