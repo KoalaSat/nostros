@@ -23,7 +23,7 @@
     "crypto-browserify": "^3.12.0",
     "cryptr": "^6.0.3",
     "events": "^3.3.0",
-    "i18next": "^22.0.2",
+    "i18next": "^22.0.6",
     "lodash.debounce": "^4.0.8",
     "markdown-it": "^13.0.1",
     "moment": "^2.29.4",
@@ -51,7 +51,7 @@
   "devDependencies": {
     "@babel/core": "^7.20.2",
     "@babel/runtime": "^7.20.1",
-    "@react-native-community/eslint-config": "^3.0.3",
+    "@react-native-community/eslint-config": "^3.2.0",
     "@types/create-hash": "^1.2.2",
     "@types/jest": "^29.2.2",
     "@types/lodash.debounce": "^4.0.7",
@@ -67,7 +67,7 @@
     "eslint-config-prettier": "^8.5.0",
     "eslint-config-standard-with-typescript": "^23.0.0",
     "eslint-import-resolver-typescript": "^3.5.1",
-    "eslint-plugin-i18next": "^6.0.0-4",
+    "eslint-plugin-i18next": "^6.0.0-6",
     "eslint-plugin-import": "^2.26.0",
     "eslint-plugin-n": "^15.5.1",
     "eslint-plugin-prettier": "^4.2.1",
@@ -78,7 +78,7 @@
     "metro-react-native-babel-preset": "^0.73.3",
     "prettier": "^2.7.1",
     "react-test-renderer": "18.1.0",
-    "typescript": "^4.8.4"
+    "typescript": "^4.9.3"
   },
   "resolutions": {
     "@types/react": "^17"
