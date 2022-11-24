@@ -4,6 +4,8 @@ import android.content.ContentValues;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 
+import com.facebook.react.bridge.Callback;
+import com.facebook.react.bridge.ReactApplicationContext;
 import com.nostros.modules.DatabaseModule;
 
 import java.io.IOException;
@@ -12,8 +14,8 @@ public class Relay {
     private Websocket webSocket;
     public String url;
 
-    public Relay(String serverUrl, DatabaseModule database) throws IOException {
-        webSocket = new Websocket(serverUrl, database);
+    public Relay(String serverUrl, DatabaseModule database, ReactApplicationContext reactContext) throws IOException {
+        webSocket = new Websocket(serverUrl, database, reactContext);
         url = serverUrl;
     }
 

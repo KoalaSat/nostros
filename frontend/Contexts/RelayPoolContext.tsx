@@ -1,9 +1,10 @@
-import React, { useContext, useEffect, useState } from 'react'
+import React, { useContext, useEffect, useMemo, useState } from 'react'
 import RelayPool from '../lib/nostr/RelayPool/intex'
 import { AppContext } from './AppContext'
 import SInfo from 'react-native-sensitive-info'
 import { getPublickey } from '../lib/nostr/Bip'
-import moment from 'moment'
+import { DeviceEventEmitter } from 'react-native'
+import debounce from 'lodash.debounce'
 
 export interface RelayPoolContextProps {
   loadingRelayPool: boolean
@@ -17,8 +18,13 @@ export interface RelayPoolContextProps {
   setLastEventId: (lastEventId: string) => void
 }
 
+export interface WebsocketEvent {
+  eventId: string
+}
+
 export interface RelayPoolContextProviderProps {
   children: React.ReactNode
+  images?: string
 }
 
 export const initialRelayPoolContext: RelayPoolContextProps = {
@@ -31,6 +37,7 @@ export const initialRelayPoolContext: RelayPoolContextProps = {
 
 export const RelayPoolContextProvider = ({
   children,
+  images,
 }: RelayPoolContextProviderProps): JSX.Element => {
   const { database, loadingDb, goToPage, page } = useContext(AppContext)
 
@@ -43,23 +50,21 @@ export const RelayPoolContextProvider = ({
   const [lastEventId, setLastEventId] = useState<string>('')
   const [lastPage, setLastPage] = useState<string>(page)
 
+  const changeHandler: (event: WebsocketEvent) => void = (event) => {
+    setLastEventId(event.eventId)
+  }
+
+  const debouncedEventIdHandler = useMemo(() => debounce(changeHandler, 1000), [setLastEventId])
+
   const loadRelayPool: () => void = async () => {
     if (database && publicKey) {
+      DeviceEventEmitter.addListener('WebsocketEvent', debouncedEventIdHandler)
       const initRelayPool = new RelayPool([], privateKey)
-      initRelayPool.connect(publicKey)
+      initRelayPool.connect(publicKey, (eventId: string) => setLastEventId(eventId))
       setRelayPool(initRelayPool)
       setLoadingRelayPool(false)
     }
   }
-
-  const setClock: () => void = () => {
-    setLastEventId(moment().unix().toString())
-    setTimeout(setClock, 500)
-  }
-
-  useEffect(() => {
-    setClock()
-  }, [])
 
   useEffect(() => {
     if (relayPool && lastPage !== page) {

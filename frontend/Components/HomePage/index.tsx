@@ -1,9 +1,8 @@
 import { Card, Layout, Spinner, useTheme } from '@ui-kitten/components'
-import React, { useCallback, useContext, useEffect, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import {
   NativeScrollEvent,
   NativeSyntheticEvent,
-  RefreshControl,
   ScrollView,
   StyleSheet,
   TouchableOpacity,
@@ -29,14 +28,12 @@ export const HomePage: React.FC = () => {
   const [pageSize, setPageSize] = useState<number>(initialPageSize)
   const [notes, setNotes] = useState<Note[]>([])
   const [authors, setAuthors] = useState<User[]>([])
-  const [refreshing, setRefreshing] = useState(true)
 
   const calculateInitialNotes: () => Promise<void> = async () => {
     if (database && publicKey) {
-      setTimeout(() => setRefreshing(false), 2000)
       const users = await getUsers(database, { contacts: true, includeIds: [publicKey] })
-      setAuthors(users)
       subscribeNotes(users)
+      setAuthors(users)
     }
   }
 
@@ -89,12 +86,6 @@ export const HomePage: React.FC = () => {
     }
   }, [pageSize])
 
-  const onRefresh = useCallback(() => {
-    setRefreshing(true)
-    relayPool?.unsubscribeAll()
-    calculateInitialNotes().then(() => loadNotes())
-  }, [])
-
   const onPress: (note: Note) => void = (note) => {
     if (note.kind !== EventKind.recommendServer) {
       const replyEventId = getReplyEventId(note)
@@ -142,11 +133,7 @@ export const HomePage: React.FC = () => {
     <>
       <Layout style={styles.container} level='3'>
         {notes && notes.length > 0 ? (
-          <ScrollView
-            onScroll={onScroll}
-            horizontal={false}
-            refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
-          >
+          <ScrollView onScroll={onScroll} horizontal={false}>
             {notes.map((note) => itemCard(note))}
             <View style={styles.loadingBottom}>
               <Spinner size='tiny' />

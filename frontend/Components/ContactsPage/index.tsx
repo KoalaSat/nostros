@@ -1,4 +1,14 @@
-import { Button, Card, Input, Layout, Modal, Tab, TabBar, useTheme } from '@ui-kitten/components'
+import {
+  Button,
+  Card,
+  Input,
+  Layout,
+  Modal,
+  Tab,
+  TabBar,
+  TopNavigation,
+  useTheme,
+} from '@ui-kitten/components'
 import React, { useCallback, useContext, useEffect, useState } from 'react'
 import { RefreshControl, ScrollView, StyleSheet, Text, TouchableOpacity } from 'react-native'
 import { AppContext } from '../../Contexts/AppContext'
@@ -11,7 +21,7 @@ import { RelayPoolContext } from '../../Contexts/RelayPoolContext'
 import { populatePets } from '../../Functions/RelayFunctions/Users'
 
 export const ContactsPage: React.FC = () => {
-  const { database } = useContext(AppContext)
+  const { database, goBack } = useContext(AppContext)
   const { relayPool, publicKey, privateKey, lastEventId } = useContext(RelayPoolContext)
   const theme = useTheme()
   const [users, setUsers] = useState<User[]>()
@@ -82,10 +92,25 @@ export const ContactsPage: React.FC = () => {
     }
   }
 
+  const onPressBack: () => void = () => {
+    relayPool?.unsubscribeAll()
+    goBack()
+  }
+
   const onRefresh = useCallback(() => {
     setRefreshing(true)
     subscribeContacts()
   }, [])
+
+  const renderBackAction = (): JSX.Element => {
+    return (
+      <Button
+        accessoryRight={<Icon name='arrow-left' size={16} color={theme['text-basic-color']} />}
+        onPress={onPressBack}
+        appearance='ghost'
+      />
+    )
+  }
 
   const styles = StyleSheet.create({
     container: {
@@ -119,6 +144,7 @@ export const ContactsPage: React.FC = () => {
 
   return (
     <>
+      <TopNavigation alignment='center' accessoryLeft={renderBackAction} />
       <TabBar
         style={styles.topBar}
         selectedIndex={selectedTab}

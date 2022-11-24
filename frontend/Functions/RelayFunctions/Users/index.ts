@@ -18,6 +18,14 @@ export const tagToUser: (tag: string[]) => User = (tag) => {
   }
 }
 
+export const username: (user: User) => string = (user) => {
+  return user.name && user.name !== '' ? user.name : formatPubKey(user.id)
+}
+
+export const formatPubKey: (pubKey: string) => string = (pubKey) => {
+  return `${pubKey.slice(0, 8)}...${pubKey.slice(-8)}`
+}
+
 export const populatePets: (
   relayPool: RelayPool,
   database: QuickSQLiteConnection,

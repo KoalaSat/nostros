@@ -5,6 +5,8 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 
+import com.facebook.react.bridge.Callback;
+import com.facebook.react.bridge.ReactApplicationContext;
 import com.nostros.classes.Event;
 import com.nostros.classes.Relay;
 
@@ -35,17 +37,15 @@ public class DatabaseModule {
         relay.destroy(database);
     }
 
-    public List<Relay> getRelays() {
+    public List<Relay> getRelays(ReactApplicationContext reactContext) {
         List<Relay> relayList = new ArrayList<>();
         String query = "SELECT url FROM nostros_relays;";
         @SuppressLint("Recycle") Cursor cursor = database.rawQuery(query, new String[] {});
         if (cursor.getCount() > 0) {
-            Log.d("WebSocket", String.valueOf(cursor.getCount()));
             for (int i = 1; i < cursor.getCount(); i++) {
-                Log.d("WebSocket", String.valueOf(i));
                 try {
                     String relayUrl = cursor.getString(i);
-                    Relay relay = new Relay(relayUrl, this);
+                    Relay relay = new Relay(relayUrl, this, reactContext);
                     relayList.add(relay);
                 } catch (IOException e) {
                     Log.d("WebSocket", e.toString());

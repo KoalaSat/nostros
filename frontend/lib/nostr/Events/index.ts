@@ -4,7 +4,7 @@ export interface Event {
   content: string
   created_at: number
   id?: string
-  kind: 0 | 1 | 2 | 3
+  kind: EventKind
   pubkey: string
   sig?: string
   tags: string[][]
@@ -15,6 +15,7 @@ export enum EventKind {
   textNote = 1,
   recommendServer = 2,
   petNames = 3,
+  directMessage = 4,
 }
 
 export const serializeEvent: (event: Event) => string = (event) => {

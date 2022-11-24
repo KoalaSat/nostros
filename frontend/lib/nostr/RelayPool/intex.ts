@@ -36,12 +36,10 @@ class RelayPool {
     RelayPoolModule.send(tosend)
   }
 
-  public readonly connect: (publicKey: string, callback?: () => void) => void = async (
-    publicKey,
-    callback = () => {},
-  ) => {
-    RelayPoolModule.connect(publicKey, callback)
-  }
+  public readonly connect: (publicKey: string, onEventId: (eventId: string) => void) => void =
+    async (publicKey, onEventId) => {
+      RelayPoolModule.connect(publicKey, onEventId)
+    }
 
   public readonly add: (relayUrl: string, callback?: () => void) => void = async (
     relayUrl,

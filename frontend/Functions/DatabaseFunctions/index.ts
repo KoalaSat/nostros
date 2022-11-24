@@ -33,6 +33,7 @@ export const dropTables: (db: QuickSQLiteConnection) => Promise<BatchQueryResult
     ['DROP TABLE IF EXISTS nostros_notes;', [[]]],
     ['DROP TABLE IF EXISTS nostros_users;', [[]]],
     ['DROP TABLE IF EXISTS nostros_relays;', [[]]],
+    ['DROP TABLE IF EXISTS nostros_direct_messages;', [[]]],
   ]
   return db.executeBatch(dropQueries)
 }

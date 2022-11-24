@@ -11,6 +11,8 @@ import NotePage from '../NotePage'
 import LandingPage from '../LandingPage'
 import ConfigPage from '../ConfigPage'
 import RelaysPage from '../RelaysPage'
+import DirectMessagesPage from '../DirectMessagesPage'
+import ConversationPage from '../ConversationPage'
 
 export const MainLayout: React.FC = () => {
   const { page } = useContext(AppContext)
@@ -30,33 +32,21 @@ export const MainLayout: React.FC = () => {
     note: <NotePage />,
     config: <ConfigPage />,
     relays: <RelaysPage />,
+    messages: <DirectMessagesPage />,
+    conversation: <ConversationPage />,
   }
 
   const breadcrump: string[] = page.split('%')
   const pageToDisplay: string = breadcrump[breadcrump.length - 1].split('#')[0]
 
-  const view: () => JSX.Element = () => {
-    if (page === '') {
-      return <Layout style={styles.container} level='4' />
-    } else if (page === 'landing') {
-      return (
-        <Layout style={styles.container} level='4'>
-          <LandingPage />
-        </Layout>
-      )
-    } else {
-      return (
-        <>
-          <Layout style={styles.container} level='4'>
-            {pagination[pageToDisplay]}
-          </Layout>
-          <NavigationBar />
-        </>
-      )
-    }
-  }
-
-  return <>{view()}</>
+  return (
+    <>
+      <Layout style={styles.container} level='4'>
+        {pagination[pageToDisplay]}
+      </Layout>
+      {pageToDisplay === 'landing' ? <></> : <NavigationBar />}
+    </>
+  )
 }
 
 export default MainLayout

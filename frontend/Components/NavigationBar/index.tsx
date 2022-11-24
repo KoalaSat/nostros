@@ -6,11 +6,11 @@ import { RelayPoolContext } from '../../Contexts/RelayPoolContext'
 
 export const NavigationBar: React.FC = () => {
   const { goToPage, getActualPage, page } = useContext(AppContext)
-  const { publicKey } = useContext(RelayPoolContext)
+  const { publicKey, privateKey } = useContext(RelayPoolContext)
   const theme = useTheme()
   const profilePage = `profile#${publicKey ?? ''}`
 
-  const pageIndex: string[] = ['home', 'contacts', profilePage]
+  const pageIndex: string[] = ['home', 'messages', profilePage]
 
   const getIndex: () => number = () => {
     const actualPage = getActualPage()
@@ -18,8 +18,10 @@ export const NavigationBar: React.FC = () => {
       return actualPage === profilePage ? 2 : 1
     } else if (actualPage.includes('note#')) {
       return 0
-    } else if (['config', 'relays'].includes(actualPage)) {
+    } else if (['config', 'relays', 'contacts'].includes(actualPage)) {
       return 2
+    } else if (actualPage.includes('conversation#')) {
+      return 1
     } else {
       return pageIndex.indexOf(actualPage)
     }
@@ -34,7 +36,8 @@ export const NavigationBar: React.FC = () => {
         icon={<Icon name='home' size={24} color={theme['text-basic-color']} />}
       />
       <BottomNavigationTab
-        icon={<Icon name='address-book' size={24} color={theme['text-basic-color']} />}
+        icon={<Icon name='envelope' size={24} color={theme['text-basic-color']} />}
+        disabled={!privateKey}
       />
       <BottomNavigationTab
         icon={<Icon name='user' size={24} color={theme['text-basic-color']} />}

@@ -1,7 +1,15 @@
 package com.nostros.classes;
 
+import android.os.Bundle;
 import android.util.Log;
 
+import com.facebook.react.bridge.Arguments;
+import com.facebook.react.bridge.Callback;
+import com.facebook.react.bridge.ReactApplicationContext;
+import com.facebook.react.bridge.ReactContext;
+import com.facebook.react.bridge.WritableMap;
+import com.facebook.react.modules.core.DeviceEventManagerModule;
+import com.facebook.react.uimanager.events.RCTEventEmitter;
 import com.neovisionaries.ws.client.HostnameUnverifiedException;
 import com.neovisionaries.ws.client.OpeningHandshakeException;
 import com.neovisionaries.ws.client.WebSocket;
@@ -11,17 +19,21 @@ import com.neovisionaries.ws.client.WebSocketFactory;
 import com.nostros.modules.DatabaseModule;
 
 import org.json.JSONArray;
+import org.json.JSONObject;
 
 import java.io.IOException;
+import java.util.ArrayList;
 
 public class Websocket {
     private WebSocket webSocket;
     private DatabaseModule database;
     private String url;
+    private ReactApplicationContext context;
 
-    public Websocket(String serverUrl, DatabaseModule databaseModule) {
+    public Websocket(String serverUrl, DatabaseModule databaseModule, ReactApplicationContext reactContext) {
         database = databaseModule;
         url = serverUrl;
+        context = reactContext;
     }
 
     public void send(String message) {
@@ -42,7 +54,9 @@ public class Websocket {
                 Log.d("Websocket", "RECEIVE URL:" + url + " __ " + message);
                 JSONArray jsonArray = new JSONArray(message);
                 if (jsonArray.get(0).toString().equals("EVENT")) {
-                    database.saveEvent(jsonArray.getJSONObject(2), userPubKey);
+                    JSONObject data = jsonArray.getJSONObject(2);
+                    database.saveEvent(data, userPubKey);
+                    reactNativeEvent(data.getString("id"));
                 }
             }
         });
@@ -63,5 +77,13 @@ public class Websocket {
         {
             Log.d("WebSocket", "Failed to establish a WebSocket connection.");
         }
+    }
+
+    public void reactNativeEvent(String eventId) {
+        WritableMap payload = Arguments.createMap();
+        payload.putString("eventId", eventId);
+        context
+                .getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter.class)
+                .emit("WebsocketEvent", payload);
     }
 }

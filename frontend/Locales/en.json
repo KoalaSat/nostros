@@ -41,6 +41,13 @@
       "publicKey": "Public Key",
       "privateKey": "Private Key"
     },
+    "direcMessagesPage": {
+      "sendMessage": {
+        "placeholder": "Public Key",
+        "send": "Open Conversation",
+        "contacts": "Contacts"
+      }
+    },
     "contactsPage": {
       "following": "Following",
       "followers": "Followers",

@@ -9,6 +9,10 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.UUID;
+
 public class Event {
     private final int created_at;
     private final String content;
@@ -41,6 +45,8 @@ public class Event {
                     } else {
                         saveFollower(database, userPubKey);
                     }
+                } else if (kind.equals("4")) {
+                    saveDirectMessage(database);
                 }
             } catch (JSONException e) {
                 e.printStackTrace();
@@ -142,6 +148,38 @@ public class Event {
         values.put("main_event_id", getMainEventId());
         values.put("reply_event_id", getReplyEventId());
         database.replace("nostros_notes", null, values);
+    }
+
+    protected void saveDirectMessage(SQLiteDatabase database) throws JSONException {
+        JSONArray tag = tags.getJSONArray(0);
+        ArrayList<String> identifiers = new ArrayList<>();
+        identifiers.add(pubkey);
+        identifiers.add(tag.getString(1));
+        Collections.sort(identifiers);
+        String conversationId = UUID.nameUUIDFromBytes(identifiers.toString().getBytes()).toString();
+
+        ContentValues values = new ContentValues();
+        values.put("id", id);
+        values.put("content", content.replace("'", "''"));
+        values.put("created_at", created_at);
+        values.put("kind", kind);
+        values.put("pubkey", pubkey);
+        values.put("sig", sig);
+        values.put("tags", tags.toString());
+        values.put("conversation_id", conversationId);
+
+        String query = "SELECT read FROM nostros_direct_messages WHERE id = ?";
+        @SuppressLint("Recycle") Cursor cursor = database.rawQuery(query, new String[] {id});
+        if (cursor.getCount() == 0) {
+            database.insert("nostros_direct_messages", null, values);
+        } else {
+            String whereClause = "id = ?";
+            String[] whereArgs = new String[] {
+                    id
+            };
+            values.put("read", cursor.getInt(0));
+            database.update("nostros_direct_messages", values, whereClause, whereArgs);
+        }
     }
 
     protected void saveUserMeta(SQLiteDatabase database) throws JSONException {
