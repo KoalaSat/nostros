@@ -1,4 +1,4 @@
-import React, { useCallback, useContext, useEffect, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import {
   Card,
   Input,
@@ -10,7 +10,7 @@ import {
   Select,
   SelectItem,
 } from '@ui-kitten/components'
-import { RefreshControl, ScrollView, StyleSheet, TouchableOpacity } from 'react-native'
+import { ScrollView, StyleSheet, TouchableOpacity } from 'react-native'
 import { AppContext } from '../../Contexts/AppContext'
 import { RelayPoolContext } from '../../Contexts/RelayPoolContext'
 import { EventKind } from '../../lib/nostr/Events'
@@ -34,7 +34,6 @@ export const DirectMessagesPage: React.FC = () => {
   const { t } = useTranslation('common')
   const { database, goToPage } = useContext(AppContext)
   const { relayPool, publicKey, lastEventId, privateKey } = useContext(RelayPoolContext)
-  const [refreshing, setRefreshing] = useState<boolean>(true)
   const [sendMessage, showSendMessage] = useState<boolean>(false)
   const [contacts, setContacts] = useState<User[]>([])
   const [directMessages, settDirectMessages] = useState<DirectMessage[]>()
@@ -56,9 +55,12 @@ export const DirectMessagesPage: React.FC = () => {
         if (results && results.length > 0) {
           settDirectMessages(results)
           const otherUsers = results.map((message) => getOtherPubKey(message, publicKey))
+          relayPool?.subscribe('main-channel', {
+            kinds: [EventKind.meta],
+            authors: otherUsers,
+          })
           getUsers(database, { includeIds: otherUsers }).then(settUsers)
         }
-        setRefreshing(false)
       })
       getUsers(database, { contacts: true }).then(setContacts)
     }
@@ -77,11 +79,6 @@ export const DirectMessagesPage: React.FC = () => {
       })
     }
   }
-
-  const onRefresh = useCallback(() => {
-    setRefreshing(true)
-    subscribeDirectMessages()
-  }, [])
 
   const onPressOpenConversation: (sendPubKey: string) => void = (sendPubKey) => {
     if (sendPubKey !== '' && publicKey) {
@@ -177,12 +174,7 @@ export const DirectMessagesPage: React.FC = () => {
 
   return (
     <Layout style={styles.container}>
-      <ScrollView
-        horizontal={false}
-        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
-      >
-        {directMessages?.map(userCard)}
-      </ScrollView>
+      <ScrollView horizontal={false}>{directMessages?.map(userCard)}</ScrollView>
       <Modal
         style={styles.modal}
         visible={sendMessage}
