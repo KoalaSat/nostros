@@ -6799,10 +6799,10 @@ react-native-multithreading@^1.1.1:
   resolved "https://registry.yarnpkg.com/react-native-multithreading/-/react-native-multithreading-1.1.1.tgz#e1522ecd56115993d444a69c21bca49ca123bf4e"
   integrity sha512-ceJQRZAPjH5LfrDjb5svF4F18Ne7QR7QLQUFO0huAe+9w0hd2C3PR12ATxljo+590GXCzWRt2ruR9pY3EstFAQ==
 
-react-native-quick-sqlite@^5.0.3:
-  version "5.0.3"
-  resolved "https://registry.yarnpkg.com/react-native-quick-sqlite/-/react-native-quick-sqlite-5.0.3.tgz#52397e1f9d60b87fe6efb7048e43c81448d1b3aa"
-  integrity sha512-xaVPpVwFw0IB4+Tw63MhZJtUNr+CEF68grg2TWQMKK71oNjBffnL5uMMmVEmOgLKe6Wxto0JOPx/aWcgOeK9bQ==
+react-native-quick-sqlite@^6.0.0:
+  version "6.0.0"
+  resolved "https://registry.yarnpkg.com/react-native-quick-sqlite/-/react-native-quick-sqlite-6.0.0.tgz#b0c6366da6148812593d2faf055901e59c827b53"
+  integrity sha512-jKxiJS0WWwnxPBhg4gi6hFyA/lPMB7Bw3OG7LW69a+IHAvg7YtiHyuL0nMzZFmXxAcobiK+nANDe+8MdiSf8Aw==
 
 react-native-reanimated@^2.12.0:
   version "2.12.0"
