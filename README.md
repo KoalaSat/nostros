@@ -52,7 +52,7 @@ Local setup: https://github.com/KoalaSat/nostros/blob/main/SETUP.md
 ### Contacts
 
 - [x] Followers list
-- [ ] Direct Messages https://github.com/nostr-protocol/nips/blob/master/04.md
+- [x] Direct Messages https://github.com/nostr-protocol/nips/blob/master/04.md
 
 ### Note
 
