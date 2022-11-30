@@ -21,7 +21,42 @@ public class DatabaseModule {
     private SQLiteDatabase database;
 
     DatabaseModule(String absoluteFilesPath) {
-        database = SQLiteDatabase.openDatabase( absoluteFilesPath + "/nostros.sqlite", null, SQLiteDatabase.OPEN_READWRITE);
+        database = SQLiteDatabase.openDatabase( absoluteFilesPath + "/nostros.sqlite", null, SQLiteDatabase.CREATE_IF_NECESSARY);
+        database.execSQL("CREATE TABLE IF NOT EXISTS nostros_notes(\n" +
+                "          id TEXT PRIMARY KEY NOT NULL, \n" +
+                "          content TEXT NOT NULL,\n" +
+                "          created_at INT NOT NULL,\n" +
+                "          kind INT NOT NULL,\n" +
+                "          pubkey TEXT NOT NULL,\n" +
+                "          sig TEXT NOT NULL,\n" +
+                "          tags TEXT NOT NULL,\n" +
+                "          main_event_id TEXT,\n" +
+                "          reply_event_id TEXT\n" +
+                "        );");
+        database.execSQL("CREATE TABLE IF NOT EXISTS nostros_users(\n" +
+                "        id TEXT PRIMARY KEY NOT NULL,\n" +
+                "        name TEXT,\n" +
+                "        picture TEXT,\n" +
+                "        about TEXT,\n" +
+                "        main_relay TEXT,\n" +
+                "        contact BOOLEAN DEFAULT FALSE,\n" +
+                "        follower BOOLEAN DEFAULT FALSE\n" +
+                "      );");
+        database.execSQL("CREATE TABLE IF NOT EXISTS nostros_relays(\n" +
+                "          url TEXT PRIMARY KEY NOT NULL,\n" +
+                "          pet INTEGER\n" +
+                "        );");
+        database.execSQL("CREATE TABLE IF NOT EXISTS nostros_direct_messages(\n" +
+                "          id TEXT PRIMARY KEY NOT NULL, \n" +
+                "          content TEXT NOT NULL,\n" +
+                "          created_at INT NOT NULL,\n" +
+                "          kind INT NOT NULL,\n" +
+                "          pubkey TEXT NOT NULL,\n" +
+                "          sig TEXT NOT NULL,\n" +
+                "          tags TEXT NOT NULL,\n" +
+                "          conversation_id TEXT NOT NULL,\n" +
+                "          read BOOLEAN DEFAULT FALSE\n" +
+                "        );");
     }
 
     public void saveEvent(JSONObject data, String userPubKey) throws JSONException {

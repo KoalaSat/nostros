@@ -29,11 +29,6 @@ export const simpleExecute: (
 }
 
 export const dropTables: (db: QuickSQLiteConnection) => Promise<BatchQueryResult> = async (db) => {
-  const dropQueries: Array<[string, [any[] | any[][]]]> = [
-    ['DROP TABLE IF EXISTS nostros_notes;', [[]]],
-    ['DROP TABLE IF EXISTS nostros_users;', [[]]],
-    ['DROP TABLE IF EXISTS nostros_relays;', [[]]],
-    ['DROP TABLE IF EXISTS nostros_direct_messages;', [[]]],
-  ]
+  const dropQueries: Array<[string, [any[] | any[][]]]> = [['DELETE FROM nostros_users;', [[]]]]
   return db.executeBatch(dropQueries)
 }

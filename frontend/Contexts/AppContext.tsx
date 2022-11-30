@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { QuickSQLiteConnection } from 'react-native-quick-sqlite'
 import { initDatabase } from '../Functions/DatabaseFunctions'
-import { createInitDatabase, runMigrations } from '../Functions/DatabaseFunctions/Migrations'
 import FlashMessage from 'react-native-flash-message'
 import SInfo from 'react-native-sensitive-info'
 import { BackHandler } from 'react-native'
@@ -44,15 +43,8 @@ export const AppContextProvider = ({ children }: AppContextProviderProps): JSX.E
       .set({ fuzzyIP: true })
     const db = initDatabase()
     setDatabase(db)
-    SInfo.getItem('privateKey', {}).then((result) => {
-      if (!result || result === '') {
-        createInitDatabase(db).then(() => {
-          setLoadingDb(false)
-        })
-      } else {
-        runMigrations(db)
-        setLoadingDb(false)
-      }
+    SInfo.getItem('privateKey', {}).then(() => {
+      setLoadingDb(false)
     })
   }
 

@@ -10,7 +10,7 @@ import {
   Select,
   SelectItem,
 } from '@ui-kitten/components'
-import { ScrollView, StyleSheet, TouchableOpacity } from 'react-native'
+import { ScrollView, StyleSheet, TouchableOpacity, View } from 'react-native'
 import { AppContext } from '../../Contexts/AppContext'
 import { RelayPoolContext } from '../../Contexts/RelayPoolContext'
 import { EventKind } from '../../lib/nostr/Events'
@@ -96,12 +96,18 @@ export const DirectMessagesPage: React.FC = () => {
   }
 
   const userCard: (message: DirectMessage) => JSX.Element = (message) => {
-    if (!publicKey || !privateKey) return <></>
+    if (!publicKey || !privateKey) return <View key={message.id}></View>
 
     const otherPubKey = getOtherPubKey(message, publicKey)
     const user: User = users?.find((user) => user.id === otherPubKey) ?? { id: otherPubKey }
+    let decryptedContent = ''
 
-    const decryptedContent = decrypt(privateKey, otherPubKey, message.content ?? '')
+    try {
+      decryptedContent = decrypt(privateKey, otherPubKey, message.content ?? '')
+    } catch {
+      return <View key={message.id}></View>
+    }
+
     const content =
       decryptedContent.length > 35 ? `${decryptedContent.substring(0, 35)}...` : decryptedContent
 

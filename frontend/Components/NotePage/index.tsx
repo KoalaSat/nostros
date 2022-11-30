@@ -1,20 +1,12 @@
 import { Button, Card, Layout, Spinner, TopNavigation, useTheme } from '@ui-kitten/components'
-import React, { useCallback, useContext, useEffect, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import { AppContext } from '../../Contexts/AppContext'
 import { getNotes, Note } from '../../Functions/DatabaseFunctions/Notes'
 import { RelayPoolContext } from '../../Contexts/RelayPoolContext'
 import Icon from 'react-native-vector-icons/FontAwesome5'
 import NoteCard from '../NoteCard'
 import { EventKind } from '../../lib/nostr/Events'
-import {
-  Clipboard,
-  RefreshControl,
-  ScrollView,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
-} from 'react-native'
+import { Clipboard, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import Loading from '../Loading'
 import { getDirectReplies, getReplyEventId } from '../../Functions/RelayFunctions/Events'
 import { RelayFilters } from '../../lib/nostr/RelayPool/intex'
@@ -24,25 +16,20 @@ export const NotePage: React.FC = () => {
   const { relayPool, privateKey, lastEventId } = useContext(RelayPoolContext)
   const [note, setNote] = useState<Note>()
   const [replies, setReplies] = useState<Note[]>()
-  const [refreshing, setRefreshing] = useState(false)
   const [eventId, setEventId] = useState(getActualPage().split('#')[1])
   const theme = useTheme()
 
-  const onRefresh = useCallback(() => {
+  useEffect(() => {
     relayPool?.unsubscribeAll()
-    setRefreshing(true)
     const newEventId = getActualPage().split('#')[1]
     setNote(undefined)
     setReplies(undefined)
     setEventId(newEventId)
-  }, [])
-
-  useEffect(() => {
-    onRefresh()
+    subscribeNotes()
+    loadNote()
   }, [page])
 
   useEffect(() => {
-    subscribeNotes()
     loadNote()
   }, [eventId])
 
@@ -80,7 +67,6 @@ export const NotePage: React.FC = () => {
       } else {
         setReplies([])
       }
-      setRefreshing(false)
     }
   }
 
@@ -140,13 +126,13 @@ export const NotePage: React.FC = () => {
   const itemCard: (note?: Note) => JSX.Element = (note) => {
     if (note?.id === eventId) {
       return (
-        <Layout style={styles.main} level='2' key={note.id ?? ''}>
+        <Layout style={styles.main} level='2' key={note.id ?? note.created_at}>
           <NoteCard note={note} />
         </Layout>
       )
     } else if (note) {
       return (
-        <Card onPress={() => onPressNote(note)} key={note.id ?? ''}>
+        <Card onPress={() => onPressNote(note)} key={note.id ?? note.created_at}>
           <NoteCard note={note} />
         </Card>
       )
@@ -193,10 +179,7 @@ export const NotePage: React.FC = () => {
       />
       <Layout level='4'>
         {note ? (
-          <ScrollView
-            horizontal={false}
-            refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
-          >
+          <ScrollView horizontal={false}>
             {[note, ...(replies ?? [])].map((note) => itemCard(note))}
             <View style={styles.loadingBottom}>
               <Spinner size='tiny' />
