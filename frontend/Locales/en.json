@@ -15,7 +15,8 @@
     },
     "homePage": {
       "search": "Search",
-      "send": "Send"
+      "send": "Send",
+      "noContacts": "You have no contacts yet"
     },
     "logger": {
       "randomKeyGenerator": {

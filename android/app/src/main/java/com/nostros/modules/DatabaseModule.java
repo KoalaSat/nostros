@@ -77,14 +77,16 @@ public class DatabaseModule {
         String query = "SELECT url FROM nostros_relays;";
         @SuppressLint("Recycle") Cursor cursor = database.rawQuery(query, new String[] {});
         if (cursor.getCount() > 0) {
-            for (int i = 1; i < cursor.getCount(); i++) {
+            cursor.moveToFirst();
+            while (!cursor.isAfterLast()) {
                 try {
-                    String relayUrl = cursor.getString(i);
+                    String relayUrl = cursor.getString(0);
                     Relay relay = new Relay(relayUrl, this, reactContext);
                     relayList.add(relay);
                 } catch (IOException e) {
                     Log.d("WebSocket", e.toString());
                 }
+                cursor.moveToNext();
             }
         }
         return relayList;

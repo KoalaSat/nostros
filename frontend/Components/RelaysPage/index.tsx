@@ -43,7 +43,7 @@ export const RelaysPage: React.FC = () => {
   )
 
   const addRelayItem: (url: string) => void = async (url) => {
-    if (relayPool && database && publicKey && (relays?.length ?? 0) < 2) {
+    if (relayPool && database && publicKey) {
       setLoading(true)
       relayPool.add(url, () => {
         showMessage({
@@ -81,7 +81,7 @@ export const RelaysPage: React.FC = () => {
     ) : (
       <Button
         status='success'
-        disabled={loading || (relays?.length ?? 0) > 0}
+        disabled={loading}
         onPress={() => addRelayItem(relay.url)}
         accessoryLeft={<Icon name='plus' size={16} color={theme['text-basic-color']} solid />}
       />
