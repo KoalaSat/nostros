@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useState } from 'react'
-import { Button, Layout, Text, useTheme } from '@ui-kitten/components'
-import { Note } from '../../Functions/DatabaseFunctions/Notes'
+import { Button, Divider, Layout, Text, useTheme } from '@ui-kitten/components'
+import { getNotes, Note } from '../../Functions/DatabaseFunctions/Notes'
 import { StyleSheet, TouchableOpacity } from 'react-native'
 import Markdown from 'react-native-markdown-display'
 import { EventKind } from '../../lib/nostr/Events'
@@ -9,32 +9,56 @@ import { RelayPoolContext } from '../../Contexts/RelayPoolContext'
 import { AppContext } from '../../Contexts/AppContext'
 import { showMessage } from 'react-native-flash-message'
 import { t } from 'i18next'
-import { getReplyEventId } from '../../Functions/RelayFunctions/Events'
+import { getDirectReplies, getReplyEventId } from '../../Functions/RelayFunctions/Events'
 import moment from 'moment'
 import { populateRelay } from '../../Functions/RelayFunctions'
 import Avatar from '../Avatar'
 import { markdownIt, markdownStyle } from '../../Constants/AppConstants'
 import { searchRelays } from '../../Functions/DatabaseFunctions/Relays'
+import { RelayFilters } from '../../lib/nostr/RelayPool/intex'
 
 interface NoteCardProps {
   note: Note
+  showReplies?: boolean
+  onlyContactsReplies?: boolean
 }
 
-export const NoteCard: React.FC<NoteCardProps> = ({ note }) => {
+export const NoteCard: React.FC<NoteCardProps> = ({
+  note,
+  showReplies = false,
+  onlyContactsReplies = false,
+}) => {
   const theme = useTheme()
   const { relayPool, publicKey } = useContext(RelayPoolContext)
   const { database, goToPage } = useContext(AppContext)
   const [relayAdded, setRelayAdded] = useState<boolean>(false)
+  const [replies, setReplies] = useState<Note[]>([])
 
   useEffect(() => {
-    if (database) {
+    if (database && note) {
       searchRelays(note.content, database).then((result) => {
         setRelayAdded(result.length > 0)
       })
+      if (showReplies) {
+        getNotes(database, {
+          filters: { reply_event_id: note?.id ?? '' },
+          contacts: onlyContactsReplies,
+        }).then((notes) => {
+          const rootReplies = getDirectReplies(note, notes) as Note[]
+          setReplies(rootReplies)
+          if (rootReplies.length > 0) {
+            const message: RelayFilters = {
+              kinds: [EventKind.meta],
+              authors: [...rootReplies.map((reply) => reply.pubkey), note.pubkey],
+            }
+            relayPool?.subscribe('main-channel', message)
+          }
+        })
+      }
     }
   }, [database])
 
-  const textNote: () => JSX.Element = () => {
+  const textNote: (note: Note) => JSX.Element = (note) => {
     return (
       <>
         <Layout style={styles.profile} level='2'>
@@ -74,7 +98,7 @@ export const NoteCard: React.FC<NoteCardProps> = ({ note }) => {
     )
   }
 
-  const relayNote: () => JSX.Element = () => {
+  const relayNote: (note: Note) => JSX.Element = (note) => {
     const relayName = note.content.split('wss://')[1]?.split('/')[0]
 
     const addRelayItem: () => void = () => {
@@ -123,6 +147,15 @@ export const NoteCard: React.FC<NoteCardProps> = ({ note }) => {
     layout: {
       flexDirection: 'row',
       backgroundColor: 'transparent',
+      paddingBottom: 16,
+    },
+    replies: {
+      flexDirection: 'row',
+      backgroundColor: 'transparent',
+      paddingTop: 16,
+    },
+    divider: {
+      paddingTop: 16,
     },
     profile: {
       flex: 1,
@@ -168,9 +201,23 @@ export const NoteCard: React.FC<NoteCardProps> = ({ note }) => {
 
   return (
     note && (
-      <Layout style={styles.layout} level='2'>
-        {note.kind === EventKind.recommendServer ? relayNote() : textNote()}
-      </Layout>
+      <>
+        <Layout style={styles.layout} level='2'>
+          {note.kind === EventKind.recommendServer ? relayNote(note) : textNote(note)}
+        </Layout>
+        {replies.length > 0 ? (
+          <>
+            <Divider />
+            {replies.map((reply) => (
+              <Layout style={styles.replies} level='3' key={reply.id}>
+                {textNote(reply)}
+              </Layout>
+            ))}
+          </>
+        ) : (
+          <></>
+        )}
+      </>
     )
   )
 }

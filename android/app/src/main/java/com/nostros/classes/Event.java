@@ -80,22 +80,22 @@ public class Event {
 
     protected String getReplyEventId() {
         JSONArray eTags = filterTags("e");
-        String mainEventId = null;
+        String replyEventId = null;
         try {
             for (int i = 0; i < eTags.length(); ++i) {
                 JSONArray tag = eTags.getJSONArray(i);
                 if (tag.length() > 3 && tag.getString(3).equals("reply")) {
-                    mainEventId = tag.getString(1);
+                    replyEventId = tag.getString(1);
                 }
             }
-            if (mainEventId == null && eTags.length() > 0) {
-                mainEventId = eTags.getJSONArray(eTags.length() - 1).getString(1);
+            if (replyEventId == null && eTags.length() > 0) {
+                replyEventId = eTags.getJSONArray(eTags.length() - 1).getString(1);
             }
         } catch (JSONException e) {
             e.printStackTrace();
         }
 
-        return mainEventId;
+        return replyEventId;
     }
 
     protected String saveFollower(String pubKey) {

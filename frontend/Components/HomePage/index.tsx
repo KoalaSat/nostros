@@ -1,15 +1,15 @@
-import { Card, Layout, Spinner, useTheme } from '@ui-kitten/components'
+import { Card, Layout, Text, useTheme } from '@ui-kitten/components'
 import React, { useContext, useEffect, useState } from 'react'
+import { t } from 'i18next'
 import {
   NativeScrollEvent,
   NativeSyntheticEvent,
   ScrollView,
   StyleSheet,
   TouchableOpacity,
-  View,
 } from 'react-native'
 import { AppContext } from '../../Contexts/AppContext'
-import { getNotes, Note } from '../../Functions/DatabaseFunctions/Notes'
+import { getMainNotes, Note } from '../../Functions/DatabaseFunctions/Notes'
 import NoteCard from '../NoteCard'
 import Icon from 'react-native-vector-icons/FontAwesome5'
 import { RelayPoolContext } from '../../Contexts/RelayPoolContext'
@@ -17,7 +17,6 @@ import { EventKind } from '../../lib/nostr/Events'
 import { getReplyEventId } from '../../Functions/RelayFunctions/Events'
 import { getUsers, User } from '../../Functions/DatabaseFunctions/Users'
 import { handleInfinityScroll } from '../../Functions/NativeFunctions'
-import Loading from '../Loading'
 import { RelayFilters } from '../../lib/nostr/RelayPool/intex'
 
 export const HomePage: React.FC = () => {
@@ -37,33 +36,40 @@ export const HomePage: React.FC = () => {
     }
   }
 
-  const subscribeNotes: (users: User[], past?: boolean) => void = (users, past) => {
+  const subscribeNotes: (users: User[], past?: boolean) => void = async (users, past) => {
     if (!database || !publicKey || users.length === 0) return
+
+    const lastNotes: Note[] = await getMainNotes(database, publicKey, 1)
+    const lastNote: Note = lastNotes[0]
 
     const message: RelayFilters = {
       kinds: [EventKind.textNote, EventKind.recommendServer],
       authors: users.map((user) => user.id),
-      limit: pageSize,
     }
+
+    if (lastNote) {
+      message.since = lastNote.created_at
+    } else {
+      message.limit = pageSize
+    }
+
     relayPool?.subscribe('main-channel', message)
   }
 
   const loadNotes: () => void = () => {
     if (database && publicKey) {
-      getNotes(database, { contacts: true, includeIds: [publicKey], limit: pageSize }).then(
-        (notes) => {
-          setNotes(notes)
-          const missingDataNotes = notes
-            .filter((note) => !note.picture || note.picture === '')
-            .map((note) => note.pubkey)
-          if (missingDataNotes.length > 0) {
-            relayPool?.subscribe('main-channel', {
-              kinds: [EventKind.meta],
-              authors: missingDataNotes,
-            })
-          }
-        },
-      )
+      getMainNotes(database, publicKey, pageSize).then((notes) => {
+        setNotes(notes)
+        const missingDataNotes = notes
+          .filter((note) => !note.picture || note.picture === '')
+          .map((note) => note.pubkey)
+        if (missingDataNotes.length > 0) {
+          relayPool?.subscribe('main-channel', {
+            kinds: [EventKind.meta],
+            authors: missingDataNotes,
+          })
+        }
+      })
     }
   }
 
@@ -100,7 +106,7 @@ export const HomePage: React.FC = () => {
   const itemCard: (note: Note) => JSX.Element = (note) => {
     return (
       <Card onPress={() => onPress(note)} key={note.id ?? ''}>
-        <NoteCard note={note} />
+        <NoteCard note={note} onlyContactsReplies={true} showReplies={true} />
       </Card>
     )
   }
@@ -119,13 +125,10 @@ export const HomePage: React.FC = () => {
       width: 32,
       height: 32,
     },
-    loadingBottom: {
-      flex: 1,
-      flexDirection: 'row',
+    empty: {
+      height: 64,
       justifyContent: 'center',
       alignItems: 'center',
-      flexWrap: 'wrap',
-      padding: 12,
     },
   })
 
@@ -135,12 +138,11 @@ export const HomePage: React.FC = () => {
         {notes && notes.length > 0 ? (
           <ScrollView onScroll={onScroll} horizontal={false}>
             {notes.map((note) => itemCard(note))}
-            <View style={styles.loadingBottom}>
-              <Spinner size='tiny' />
-            </View>
           </ScrollView>
         ) : (
-          <Loading />
+          <Layout style={styles.empty} level='3'>
+            <Text>{t('homePage.noContacts')}</Text>
+          </Layout>
         )}
       </Layout>
       {privateKey && (

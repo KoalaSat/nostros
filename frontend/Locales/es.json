@@ -1,0 +1,72 @@
+{
+  "common": {
+    "landing": {
+      "connect": "Conectar",
+      "connecting": "Conectando",
+      "loadingContacts": "Cargando Contactos",
+      "loadingEvents": "Cargando Eventos",
+      "ready": "Listo",
+      "privateKey": "Clave Privada",
+      "publicKey": "Clave Pública"
+    },
+    "navigationBar": {
+      "home": "Home",
+      "profile": "Perfil"
+    },
+    "homePage": {
+      "search": "Buscar",
+      "send": "Enviar",
+      "noContacts": "Aún no tienes contactos"
+    },
+    "logger": {
+      "randomKeyGenerator": {
+        "message": "Tu clave privada ha sido copiada al porta-papeles",
+        "description": "Guardala en un ligar seguro para recuperar tu usuario"
+      }
+    },
+    "profilePage": {
+      "search": "Burcar",
+      "send": "Enviar",
+      "profileNotCreated": "Perfil aún no creado"
+    },
+    "relaysPage": {
+      "title": "Relays"
+    },
+    "notePage": {
+      "reply": "Responder"
+    },
+    "configPage": {
+      "title": "Configuraciónn",
+      "logout": "Borrar Claves",
+      "relays": "Relays",
+      "publicKey": "Clave Pública",
+      "privateKey": "Clave Privada"
+    },
+    "direcMessagesPage": {
+      "sendMessage": {
+        "placeholder": "Clave Pública",
+        "send": "Abrir Conversación",
+        "contacts": "Contactos"
+      }
+    },
+    "contactsPage": {
+      "following": "Siguiendo",
+      "followers": "Seguidores",
+      "add": "Añadir Usuario",
+      "addContact": {
+        "placeholder": "Clave Pública",
+        "add": "Añadir Usuario"
+      }
+    },
+    "sendPage": {
+      "title": "Enviar Nota",
+      "placeholder": "Di algo al mundo...",
+      "send": "Enviar",
+      "reply": "Enviar respuesta"
+    },
+    "alerts": {
+      "relayAdded": "Relay Agregado",
+      "relayRemoved": "Relay Eliminado"
+    }
+  }
+}

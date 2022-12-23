@@ -8,7 +8,6 @@ import {
   ScrollView,
   StyleSheet,
   TouchableOpacity,
-  View,
 } from 'react-native'
 import { AppContext } from '../../Contexts/AppContext'
 import { getNotes, Note } from '../../Functions/DatabaseFunctions/Notes'
@@ -231,20 +230,12 @@ export const ProfilePage: React.FC = () => {
       marginTop: 16,
       flexDirection: 'row',
     },
-    loadingBottom: {
-      flex: 1,
-      flexDirection: 'row',
-      justifyContent: 'center',
-      alignItems: 'center',
-      flexWrap: 'wrap',
-      padding: 12,
-    },
   })
 
   const itemCard: (note: Note) => JSX.Element = (note) => {
     return (
       <Card onPress={() => onPressNote(note)} key={note.id ?? ''}>
-        <NoteCard note={note} />
+        <NoteCard note={note} onlyContactsReplies={true} />
       </Card>
     )
   }
@@ -315,9 +306,6 @@ export const ProfilePage: React.FC = () => {
             refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
           >
             {notes.map((note) => itemCard(note))}
-            <View style={styles.loadingBottom}>
-              <Spinner size='tiny' />
-            </View>
           </ScrollView>
         ) : (
           <Loading />
