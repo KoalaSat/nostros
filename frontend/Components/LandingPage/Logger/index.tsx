@@ -9,9 +9,10 @@ import SInfo from 'react-native-sensitive-info'
 import Icon from 'react-native-vector-icons/FontAwesome5'
 import { generateRandomKey, getPublickey } from '../../../lib/nostr/Bip'
 import { showMessage } from 'react-native-flash-message'
+import { getUsers, User } from '../../../Functions/DatabaseFunctions/Users'
 
 export const Logger: React.FC = () => {
-  const { goToPage, loadingDb } = useContext(AppContext)
+  const { goToPage, loadingDb, database } = useContext(AppContext)
   const { privateKey, publicKey, relayPool, loadingRelayPool, setPrivateKey, setPublicKey } =
     useContext(RelayPoolContext)
   const { t } = useTranslation('common')
@@ -44,9 +45,23 @@ export const Logger: React.FC = () => {
         kinds: [EventKind.petNames, EventKind.meta],
         authors: [publicKey],
       })
-      setTimeout(() => goToPage('home', true), 7000)
+      setTimeout(loadPets, 4000)
     }
   }, [loadingRelayPool, publicKey, loadingDb])
+
+  const loadPets: () => void = () => {
+    if (database) {
+      getUsers(database, { contacts: true }).then((results) => {
+        if (results && results.length > 0) {
+          relayPool?.subscribe('main-channel', {
+            kinds: [EventKind.textNote, EventKind.recommendServer, EventKind.meta],
+            authors: results.map((user: User) => user.id),
+          })
+        }
+        setTimeout(() => goToPage('home', true), 5000)
+      })
+    }
+  }
 
   const randomKeyGenerator: () => JSX.Element = () => {
     if (!isPrivate) return <></>

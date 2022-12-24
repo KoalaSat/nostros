@@ -9,8 +9,8 @@ import {
   TopNavigation,
   useTheme,
 } from '@ui-kitten/components'
-import React, { useCallback, useContext, useEffect, useState } from 'react'
-import { RefreshControl, ScrollView, StyleSheet, Text, TouchableOpacity } from 'react-native'
+import React, { useContext, useEffect, useState } from 'react'
+import { ScrollView, StyleSheet, Text, TouchableOpacity } from 'react-native'
 import { AppContext } from '../../Contexts/AppContext'
 import Icon from 'react-native-vector-icons/FontAwesome5'
 import { EventKind } from '../../lib/nostr/Events'
@@ -25,7 +25,6 @@ export const ContactsPage: React.FC = () => {
   const { relayPool, publicKey, privateKey, lastEventId } = useContext(RelayPoolContext)
   const theme = useTheme()
   const [users, setUsers] = useState<User[]>()
-  const [refreshing, setRefreshing] = useState(true)
   const [showAddContact, setShowAddContact] = useState<boolean>(false)
   const [contactInput, setContactInput] = useState<string>()
   const [selectedTab, setSelectedTab] = useState(0)
@@ -60,7 +59,6 @@ export const ContactsPage: React.FC = () => {
             })
           }
         }
-        setRefreshing(false)
       })
     }
   }
@@ -96,11 +94,6 @@ export const ContactsPage: React.FC = () => {
     relayPool?.unsubscribeAll()
     goBack()
   }
-
-  const onRefresh = useCallback(() => {
-    setRefreshing(true)
-    subscribeContacts()
-  }, [])
 
   const renderBackAction = (): JSX.Element => {
     return (
@@ -154,10 +147,7 @@ export const ContactsPage: React.FC = () => {
         <Tab title={<Text>{t('contactsPage.followers')}</Text>} />
       </TabBar>
       <Layout style={styles.container} level='3'>
-        <ScrollView
-          horizontal={false}
-          refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
-        >
+        <ScrollView horizontal={false}>
           {users?.map((user) => (
             <UserCard user={user} key={user.id} />
           ))}

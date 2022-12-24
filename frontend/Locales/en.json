@@ -3,11 +3,11 @@
     "landing": {
       "connect": "Connect",
       "connecting": "Connecting",
-      "loadingContacts": "Loading Contacts",
-      "loadingEvents": "Loading Events",
+      "loadingContacts": "Loading contacts",
+      "loadingEvents": "Loading events",
       "ready": "Ready",
-      "privateKey": "Private Key",
-      "publicKey": "Public Key"
+      "privateKey": "Private key",
+      "publicKey": "Public key"
     },
     "navigationBar": {
       "home": "Home",
@@ -37,25 +37,25 @@
     },
     "configPage": {
       "title": "Configuration",
-      "logout": "Delete Keys",
+      "logout": "Delete keys",
       "relays": "Relays",
-      "publicKey": "Public Key",
-      "privateKey": "Private Key"
+      "publicKey": "Public key",
+      "privateKey": "Private key"
     },
     "direcMessagesPage": {
       "sendMessage": {
-        "placeholder": "Public Key",
-        "send": "Open Conversation",
+        "placeholder": "Public key",
+        "send": "Open conversation",
         "contacts": "Contacts"
       }
     },
     "contactsPage": {
       "following": "Following",
       "followers": "Followers",
-      "add": "Add User",
+      "add": "Add user",
       "addContact": {
-        "placeholder": "Public Key",
-        "add": "Add User"
+        "placeholder": "Public key",
+        "add": "Add user"
       }
     },
     "sendPage": {
@@ -66,7 +66,7 @@
     },
     "alerts": {
       "relayAdded": "Relay added",
-      "relayRemoved": "Relay Removed"
+      "relayRemoved": "Relay removed"
     }
   }
 }

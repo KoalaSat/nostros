@@ -39,7 +39,7 @@ export const HomePage: React.FC = () => {
   const subscribeNotes: (users: User[], past?: boolean) => void = async (users, past) => {
     if (!database || !publicKey || users.length === 0) return
 
-    const lastNotes: Note[] = await getMainNotes(database, publicKey, 1)
+    const lastNotes: Note[] = await getMainNotes(database, publicKey, initialPageSize)
     const lastNote: Note = lastNotes[0]
 
     const message: RelayFilters = {
@@ -47,7 +47,7 @@ export const HomePage: React.FC = () => {
       authors: users.map((user) => user.id),
     }
 
-    if (lastNote) {
+    if (lastNote && lastNotes.length >= initialPageSize) {
       message.since = lastNote.created_at
     } else {
       message.limit = pageSize
