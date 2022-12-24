@@ -3,11 +3,11 @@
     "landing": {
       "connect": "Conectar",
       "connecting": "Conectando",
-      "loadingContacts": "Cargando Contactos",
-      "loadingEvents": "Cargando Eventos",
+      "loadingContacts": "Cargando contactos",
+      "loadingEvents": "Cargando eventos",
       "ready": "Listo",
-      "privateKey": "Clave Privada",
-      "publicKey": "Clave Pública"
+      "privateKey": "Clave privada",
+      "publicKey": "Clave pública"
     },
     "navigationBar": {
       "home": "Home",
@@ -36,37 +36,37 @@
       "reply": "Responder"
     },
     "configPage": {
-      "title": "Configuraciónn",
-      "logout": "Borrar Claves",
+      "title": "Configuración",
+      "logout": "Borrar claves",
       "relays": "Relays",
-      "publicKey": "Clave Pública",
-      "privateKey": "Clave Privada"
+      "publicKey": "Clave pública",
+      "privateKey": "Clave privada"
     },
     "direcMessagesPage": {
       "sendMessage": {
-        "placeholder": "Clave Pública",
-        "send": "Abrir Conversación",
+        "placeholder": "Clave pública",
+        "send": "Abrir conversación",
         "contacts": "Contactos"
       }
     },
     "contactsPage": {
       "following": "Siguiendo",
       "followers": "Seguidores",
-      "add": "Añadir Usuario",
+      "add": "Añadir usuario",
       "addContact": {
-        "placeholder": "Clave Pública",
-        "add": "Añadir Usuario"
+        "placeholder": "Clave pública",
+        "add": "Añadir usuario"
       }
     },
     "sendPage": {
-      "title": "Enviar Nota",
+      "title": "Enviar nota",
       "placeholder": "Di algo al mundo...",
       "send": "Enviar",
       "reply": "Enviar respuesta"
     },
     "alerts": {
-      "relayAdded": "Relay Agregado",
-      "relayRemoved": "Relay Eliminado"
+      "relayAdded": "Relay agregado",
+      "relayRemoved": "Relay eliminado"
     }
   }
 }
