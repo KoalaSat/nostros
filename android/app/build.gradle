@@ -259,6 +259,8 @@ dependencies {
 
     implementation 'com.neovisionaries:nv-websocket-client:2.14'
 
+    implementation 'com.facebook.fresco:webpsupport:2.0.0'
+
     debugImplementation("com.facebook.flipper:flipper:${FLIPPER_VERSION}") {
         exclude group:'com.facebook.fbjni'
     }
