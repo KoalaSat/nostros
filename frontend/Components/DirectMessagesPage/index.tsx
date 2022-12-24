@@ -25,7 +25,6 @@ import {
 } from '../../Functions/RelayFunctions/DirectMessages'
 import Avatar from '../Avatar'
 import Icon from 'react-native-vector-icons/FontAwesome5'
-import { decrypt } from 'nostr-tools/nip04'
 import { useTranslation } from 'react-i18next'
 import { username } from '../../Functions/RelayFunctions/Users'
 
@@ -100,16 +99,6 @@ export const DirectMessagesPage: React.FC = () => {
 
     const otherPubKey = getOtherPubKey(message, publicKey)
     const user: User = users?.find((user) => user.id === otherPubKey) ?? { id: otherPubKey }
-    let decryptedContent = ''
-
-    try {
-      decryptedContent = decrypt(privateKey, otherPubKey, message.content ?? '')
-    } catch {
-      return <View key={message.id}></View>
-    }
-
-    const content =
-      decryptedContent.length > 35 ? `${decryptedContent.substring(0, 35)}...` : decryptedContent
 
     return (
       <Card
@@ -121,8 +110,7 @@ export const DirectMessagesPage: React.FC = () => {
             <Avatar name={user.name} src={user.picture} pubKey={user.id} />
           </Layout>
           <Layout style={styles.content} level='2'>
-            <Text>{username(user)}</Text>
-            <Text appearance='hint'>{content}</Text>
+            <Text category='h6'>{username(user)}</Text>
           </Layout>
           <Layout style={styles.layout}>
             {!message.read ? (
@@ -155,6 +143,7 @@ export const DirectMessagesPage: React.FC = () => {
     content: {
       flex: 6,
       backgroundColor: 'transparent',
+      justifyContent: 'center',
     },
     actionContainer: {
       marginTop: 30,

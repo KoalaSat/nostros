@@ -1,0 +1,72 @@
+{
+  "common": {
+    "landing": {
+      "connect": "Подключить",
+      "connecting": "Подключение",
+      "loadingContacts": "Загрузка контактов",
+      "loadingEvents": "Загрузка событий",
+      "ready": "Готова",
+      "privateKey": "Приватный ключ",
+      "publicKey": "Публичный ключ"
+    },
+    "navigationBar": {
+      "home": "Главная страницы",
+      "profile": "Профиль"
+    },
+    "homePage": {
+      "search": "Поиск",
+      "send": "Отправить",
+      "noContacts": "У Вас пока нет контактов"
+    },
+    "logger": {
+      "randomKeyGenerator": {
+        "message": "Ваш приватный ключ был скопирован",
+        "description": "Сохраните его в надеждном месте, чтобы восстановить доступ к акканунту"
+      }
+    },
+    "profilePage": {
+      "search": "Поиск",
+      "send": "Отправить",
+      "profileNotCreated": "Профиль не создан"
+    },
+    "relaysPage": {
+      "title": "Все реле"
+    },
+    "notePage": {
+      "reply": "Ответить"
+    },
+    "configPage": {
+      "title": "Настройки",
+      "logout": "Удалить ключи",
+      "relays": "Реле",
+      "publicKey": "Публичный ключ",
+      "privateKey": "Приватный ключ"
+    },
+    "direcMessagesPage": {
+      "sendMessage": {
+        "placeholder": "Публичный ключ",
+        "send": "Открыть диалог",
+        "contacts": "Контакты"
+      }
+    },
+    "contactsPage": {
+      "following": "Подписки",
+      "followers": "Подписчики",
+      "add": "Добавить контакт",
+      "addContact": {
+        "placeholder": "Публичный ключ",
+        "add": "Добавить контакт"
+      }
+    },
+    "sendPage": {
+      "title": "Опубликовать заметку",
+      "placeholder": "Поделитесь чем-нибудь с миром",
+      "send": "Опубликовать",
+      "reply": "Ответить"
+    },
+    "alerts": {
+      "relayAdded": "Реле добавлено",
+      "relayRemoved": "Реле удалено"
+    }
+  }
+}

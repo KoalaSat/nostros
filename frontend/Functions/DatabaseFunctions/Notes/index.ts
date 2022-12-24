@@ -12,6 +12,29 @@ const databaseToEntity: (object: any) => Note = (object) => {
   return object as Note
 }
 
+export const getMainNotes: (
+  db: QuickSQLiteConnection,
+  pubKey: string,
+  limit: number,
+) => Promise<Note[]> = async (db, pubKey, limit) => {
+  const notesQuery = `
+    SELECT 
+      nostros_notes.*, nostros_users.name, nostros_users.picture, nostros_users.contact FROM nostros_notes 
+    LEFT JOIN 
+      nostros_users ON nostros_users.id = nostros_notes.pubkey 
+    WHERE (nostros_users.contact = 1 OR nostros_users.id = '${pubKey}')
+    AND nostros_notes.main_event_id IS NULL 
+    ORDER BY created_at DESC 
+    LIMIT ${limit}
+  `
+
+  const resultSet = await db.execute(notesQuery)
+  const items: object[] = getItems(resultSet)
+  const notes: Note[] = items.map((object) => databaseToEntity(object))
+
+  return notes
+}
+
 export const getNotes: (
   db: QuickSQLiteConnection,
   options: {
