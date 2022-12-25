@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import ParsedText from 'react-native-parsed-text'
 import { useTheme } from '@ui-kitten/components'
 import { Event } from '../../lib/nostr/Events'
@@ -14,7 +14,10 @@ interface TextBoxProps {
 export const TextBox: React.FC<TextBoxProps> = ({ note }) => {
   const theme = useTheme()
   const { database, goToPage } = useContext(AppContext)
-  const [userNames, setUserNames] = useState<{ [index: number]: string }>({})
+  const [userNames, setUserNames] = useState<Record<number, string>>({})
+  const [loadedUsers, setLoadedUsers] = useState<number>(0)
+
+  useEffect(() => {}, [loadedUsers])
 
   const handleUrlPress: (url: string) => void = (url) => {
     Linking.openURL(url)
@@ -45,6 +48,7 @@ export const TextBox: React.FC<TextBoxProps> = ({ note }) => {
             if (user?.name) {
               prev[mentionIndex] = `@${user.name}`
             }
+            setLoadedUsers((prev) => prev  + 1)
             return prev
           })
         })

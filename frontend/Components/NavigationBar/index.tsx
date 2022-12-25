@@ -15,7 +15,7 @@ export const NavigationBar: React.FC = () => {
   const getIndex: () => number = () => {
     const actualPage = getActualPage()
     if (actualPage.includes('profile')) {
-      return actualPage === profilePage ? 2 : 1
+      return 3
     } else if (actualPage.includes('note#')) {
       return 0
     } else if (['config', 'relays', 'contacts'].includes(actualPage)) {

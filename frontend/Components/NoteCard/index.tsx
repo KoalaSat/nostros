@@ -40,13 +40,11 @@ export const NoteCard: React.FC<NoteCardProps> = ({
         setRelayAdded(result.length > 0)
       })
       if (showReplies) {
-        console.log(note)
         getNotes(database, {
           filters: { reply_event_id: note?.id ?? '' },
           contacts: onlyContactsReplies,
         }).then((notes) => {
           const rootReplies = getDirectReplies(note, notes) as Note[]
-          console.log(rootReplies)
           setReplies(rootReplies)
           if (rootReplies.length > 0) {
             const message: RelayFilters = {
