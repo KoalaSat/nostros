@@ -54,7 +54,13 @@ export const addUser: (pubKey: string, db: QuickSQLiteConnection) => Promise<Que
 
 export const getUsers: (
   db: QuickSQLiteConnection,
-  options: { name?: string, exludeIds?: string[]; contacts?: boolean; followers?: boolean; includeIds?: string[] },
+  options: {
+    name?: string
+    exludeIds?: string[]
+    contacts?: boolean
+    followers?: boolean
+    includeIds?: string[]
+  },
 ) => Promise<User[]> = async (db, { name, exludeIds, contacts, followers, includeIds }) => {
   let userQuery = 'SELECT * FROM nostros_users '
 
@@ -63,7 +69,7 @@ export const getUsers: (
   if (contacts) {
     filters.push('contact = 1')
   }
-  
+
   if (name) {
     filters.push(`name LIKE '%${name}%'`)
   }

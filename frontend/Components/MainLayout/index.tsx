@@ -14,6 +14,7 @@ import RelaysPage from '../RelaysPage'
 import DirectMessagesPage from '../DirectMessagesPage'
 import ConversationPage from '../ConversationPage'
 import Loading from '../Loading'
+import MentionsPage from '../MentionsPage'
 
 export const MainLayout: React.FC = () => {
   const { page } = useContext(AppContext)
@@ -26,6 +27,7 @@ export const MainLayout: React.FC = () => {
 
   const pagination: { [pageName: string]: JSX.Element } = {
     '': <Loading />,
+    mentions: <MentionsPage />,
     landing: <LandingPage />,
     home: <HomePage />,
     send: <SendPage />,

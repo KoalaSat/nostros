@@ -145,9 +145,9 @@ export const ConversationPage: React.FC = () => {
               )}
             </Layout>
           </Layout>
-            <TextBox note={message}>
-              <Text>{message.content}</Text>
-            </TextBox>
+          <TextBox note={message}>
+            <Text>{message.content}</Text>
+          </TextBox>
         </Layout>
       </Layout>
     )

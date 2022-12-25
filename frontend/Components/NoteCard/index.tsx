@@ -40,11 +40,13 @@ export const NoteCard: React.FC<NoteCardProps> = ({
         setRelayAdded(result.length > 0)
       })
       if (showReplies) {
+        console.log(note)
         getNotes(database, {
           filters: { reply_event_id: note?.id ?? '' },
           contacts: onlyContactsReplies,
         }).then((notes) => {
           const rootReplies = getDirectReplies(note, notes) as Note[]
+          console.log(rootReplies)
           setReplies(rootReplies)
           if (rootReplies.length > 0) {
             const message: RelayFilters = {
@@ -74,9 +76,7 @@ export const NoteCard: React.FC<NoteCardProps> = ({
           <Layout style={styles.titleText}>
             <TouchableOpacity onPress={onPressUser}>
               <Layout style={styles.pubkey}>
-                <Text appearance='hint'>
-                  {note.name ?? formatPubKey(note.pubkey)}
-                </Text>
+                <Text appearance='hint'>{note.name ?? formatPubKey(note.pubkey)}</Text>
               </Layout>
             </TouchableOpacity>
             <Layout style={styles.tags}>
@@ -153,7 +153,7 @@ export const NoteCard: React.FC<NoteCardProps> = ({
       flexDirection: 'row',
       backgroundColor: 'transparent',
       paddingTop: 16,
-      paddingLeft: 50
+      paddingLeft: 50,
     },
     divider: {
       paddingTop: 16,

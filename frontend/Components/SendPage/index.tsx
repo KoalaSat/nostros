@@ -1,6 +1,15 @@
-import { Button, Input, Layout, List, ListItem, Spinner, TopNavigation, useTheme } from '@ui-kitten/components'
+import {
+  Button,
+  Input,
+  Layout,
+  List,
+  ListItem,
+  Spinner,
+  TopNavigation,
+  useTheme,
+} from '@ui-kitten/components'
 import React, { useContext, useEffect, useRef, useState } from 'react'
-import { ScrollView, StyleSheet } from 'react-native'
+import { StyleSheet } from 'react-native'
 import { AppContext } from '../../Contexts/AppContext'
 import Icon from 'react-native-vector-icons/FontAwesome5'
 import { Event, EventKind } from '../../lib/nostr/Events'
@@ -109,33 +118,31 @@ export const SendPage: React.FC = () => {
       return prev
     })
     setContent((prev) => {
-      const splitText = prev.split("@")
+      const splitText = prev.split('@')
       splitText.pop()
-      return `${splitText.join("@")}${mentionText(user)}`
+      return `${splitText.join('@')}${mentionText(user)}`
     })
     setUserSuggestions([])
     scrollViewRef.current?.focus()
   }
 
   const suggestionsList: () => JSX.Element = () => {
-    const renderItem: (item: { item: User }) => JSX.Element = ({item}) => {
-      return <ListItem 
-        title={`${item.name ?? item.id}`} 
-        accessoryLeft={<Avatar name={item.name} src={item.picture} pubKey={item.id} size={25}/>}
-        onPress={() => addUserMention(item)}
-      />
-    };
-
-    return userSuggestions.length > 0 ?
-      (
-        <List
-          data={userSuggestions}
-          renderItem={renderItem}
+    const renderItem: (item: { item: User }) => JSX.Element = ({ item }) => {
+      return (
+        <ListItem
+          title={`${item.name ?? item.id}`}
+          accessoryLeft={<Avatar name={item.name} src={item.picture} pubKey={item.id} size={25} />}
+          onPress={() => addUserMention(item)}
         />
-      ) : (
-        <></>
       )
-  };
+    }
+
+    return userSuggestions.length > 0 ? (
+      <List data={userSuggestions} renderItem={renderItem} />
+    ) : (
+      <></>
+    )
+  }
 
   const renderBackAction = (): JSX.Element => (
     <Button

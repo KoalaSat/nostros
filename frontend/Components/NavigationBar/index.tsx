@@ -10,7 +10,7 @@ export const NavigationBar: React.FC = () => {
   const theme = useTheme()
   const profilePage = `profile#${publicKey ?? ''}`
 
-  const pageIndex: string[] = ['home', 'messages', profilePage]
+  const pageIndex: string[] = ['home', 'mentions', 'messages', profilePage]
 
   const getIndex: () => number = () => {
     const actualPage = getActualPage()
@@ -35,6 +35,7 @@ export const NavigationBar: React.FC = () => {
       <BottomNavigationTab
         icon={<Icon name='home' size={24} color={theme['text-basic-color']} />}
       />
+      <BottomNavigationTab icon={<Icon name='at' size={24} color={theme['text-basic-color']} />} />
       <BottomNavigationTab
         icon={<Icon name='envelope' size={24} color={theme['text-basic-color']} />}
         disabled={!privateKey}

@@ -1,37 +1,38 @@
 import React, { useContext, useState } from 'react'
-import ParsedText from 'react-native-parsed-text';
+import ParsedText from 'react-native-parsed-text'
 import { useTheme } from '@ui-kitten/components'
 import { Event } from '../../lib/nostr/Events'
-import { Linking, StyleSheet } from 'react-native';
-import { AppContext } from '../../Contexts/AppContext';
-import { getUser } from '../../Functions/DatabaseFunctions/Users';
-import { formatPubKey } from '../../Functions/RelayFunctions/Users';
+import { Linking, StyleSheet } from 'react-native'
+import { AppContext } from '../../Contexts/AppContext'
+import { getUser } from '../../Functions/DatabaseFunctions/Users'
+import { formatPubKey } from '../../Functions/RelayFunctions/Users'
 
 interface TextBoxProps {
   note: Event
 }
 
-export const TextBox: React.FC<TextBoxProps> = ({
-  note
-}) => {
+export const TextBox: React.FC<TextBoxProps> = ({ note }) => {
   const theme = useTheme()
   const { database, goToPage } = useContext(AppContext)
-  const [userNames, setUserNames] = useState<{[index: number]: string}>({})
+  const [userNames, setUserNames] = useState<{ [index: number]: string }>({})
 
   const handleUrlPress: (url: string) => void = (url) => {
-    Linking.openURL(url);
+    Linking.openURL(url)
   }
-  
+
   const handleEmailPress: (email: string) => void = (email) => {
-    Linking.openURL(email);
+    Linking.openURL(email)
   }
-  
+
   const handleMentionPress: (text: string) => void = (text) => {
     const mentionIndex: number = parseInt(text.substring(2, text.length - 1))
     goToPage(`profile#${note.tags[mentionIndex][1]}`)
   }
 
-  const renderMentionText: (matchingString: string, matches: string[]) => string = (_matchingString, matches) => {
+  const renderMentionText: (matchingString: string, matches: string[]) => string = (
+    _matchingString,
+    matches,
+  ) => {
     const mentionIndex: number = parseInt(matches[1])
     const pudKey = note.tags[mentionIndex][1]
 
@@ -74,19 +75,22 @@ export const TextBox: React.FC<TextBoxProps> = ({
   return (
     note && (
       <ParsedText
-          style={styles.text}
-          parse={
-            [
-              {type: 'url', style: styles.url, onPress: handleUrlPress},
-              {type: 'email', style: styles.email, onPress: handleEmailPress},
-              {pattern: /#\[(\d+)\]/, style: styles.mention, onPress: handleMentionPress, renderText: renderMentionText},
-              {pattern: /#(\w+)/, style: styles.hashTag},
-            ]
-          }
-          childrenProps={{allowFontScaling: false}}
-        >
-          {note.content}
-        </ParsedText>
+        style={styles.text}
+        parse={[
+          { type: 'url', style: styles.url, onPress: handleUrlPress },
+          { type: 'email', style: styles.email, onPress: handleEmailPress },
+          {
+            pattern: /#\[(\d+)\]/,
+            style: styles.mention,
+            onPress: handleMentionPress,
+            renderText: renderMentionText,
+          },
+          { pattern: /#(\w+)/, style: styles.hashTag },
+        ]}
+        childrenProps={{ allowFontScaling: false }}
+      >
+        {note.content}
+      </ParsedText>
     )
   )
 }
