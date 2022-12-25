@@ -57,6 +57,8 @@ public class DatabaseModule {
                 "          conversation_id TEXT NOT NULL,\n" +
                 "          read BOOLEAN DEFAULT FALSE\n" +
                 "        );");
+        database.execSQL("ALTER TABLE nostros_notes ADD COLUMN user_mentioned BOOLEAN DEFAULT FALSE;");
+        database.execSQL("ALTER TABLE nostros_notes ADD COLUMN seen BOOLEAN DEFAULT FALSE;");
     }
 
     public void saveEvent(JSONObject data, String userPubKey) throws JSONException {

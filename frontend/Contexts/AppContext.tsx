@@ -4,7 +4,6 @@ import { initDatabase } from '../Functions/DatabaseFunctions'
 import FlashMessage from 'react-native-flash-message'
 import SInfo from 'react-native-sensitive-info'
 import { BackHandler } from 'react-native'
-import { markdownIt } from '../Constants/AppConstants'
 
 export interface AppContextProps {
   page: string
@@ -36,11 +35,6 @@ export const AppContextProvider = ({ children }: AppContextProviderProps): JSX.E
   const [loadingDb, setLoadingDb] = useState<boolean>(initialAppContext.loadingDb)
 
   const init: () => void = () => {
-    markdownIt.linkify
-      .tlds('onion', true)
-      .add('git:', 'http:')
-      .add('ftp:', null)
-      .set({ fuzzyIP: true })
     const db = initDatabase()
     setDatabase(db)
     SInfo.getItem('privateKey', {}).then(() => {

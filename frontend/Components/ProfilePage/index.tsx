@@ -16,7 +16,7 @@ import { RelayPoolContext } from '../../Contexts/RelayPoolContext'
 import { getUser, User, updateUserContact } from '../../Functions/DatabaseFunctions/Users'
 import { EventKind } from '../../lib/nostr/Events'
 import Icon from 'react-native-vector-icons/FontAwesome5'
-import { populatePets } from '../../Functions/RelayFunctions/Users'
+import { formatPubKey, populatePets } from '../../Functions/RelayFunctions/Users'
 import { getReplyEventId } from '../../Functions/RelayFunctions/Events'
 import Loading from '../Loading'
 import { handleInfinityScroll } from '../../Functions/NativeFunctions'
@@ -35,7 +35,7 @@ export const ProfilePage: React.FC = () => {
   const [refreshing, setRefreshing] = useState(false)
   const breadcrump = page.split('%')
   const userId = breadcrump[breadcrump.length - 1].split('#')[1] ?? publicKey
-  const username = user?.name === '' ? user?.id : user?.name
+  const username = user?.name === '' ? formatPubKey(user.id) : user?.name
 
   useEffect(() => {
     setRefreshing(true)

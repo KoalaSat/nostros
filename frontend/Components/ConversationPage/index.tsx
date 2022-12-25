@@ -16,8 +16,7 @@ import Icon from 'react-native-vector-icons/FontAwesome5'
 import { username, usersToTags } from '../../Functions/RelayFunctions/Users'
 import moment from 'moment'
 import { encrypt } from '../../lib/nostr/Crypto'
-import Markdown from 'react-native-markdown-display'
-import { markdownIt, markdownStyle } from '../../Constants/AppConstants'
+import TextBox from '../TextBox'
 
 export const ConversationPage: React.FC = () => {
   const theme = useTheme()
@@ -124,9 +123,9 @@ export const ConversationPage: React.FC = () => {
                 {moment.unix(message.created_at).format('HH:mm DD-MM-YY')}
               </Text>
             </Layout>
-            <Markdown style={markdownStyle(theme)} markdownit={markdownIt}>
-              {message.content}
-            </Markdown>
+            <TextBox note={message}>
+              <Text>{message.content}</Text>
+            </TextBox>
           </Layout>
         </Layout>
       </Layout>
@@ -146,9 +145,9 @@ export const ConversationPage: React.FC = () => {
               )}
             </Layout>
           </Layout>
-          <Markdown style={markdownStyle(theme)} markdownit={markdownIt}>
-            {message.content}
-          </Markdown>
+            <TextBox note={message}>
+              <Text>{message.content}</Text>
+            </TextBox>
         </Layout>
       </Layout>
     )
