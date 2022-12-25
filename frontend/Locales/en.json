@@ -58,6 +58,9 @@
         "add": "Add user"
       }
     },
+    "mentionsPage": {
+      "noMentions": "No mentions found yet."
+    },
     "sendPage": {
       "title": "Send a note",
       "placeholder": "Say something to the world...",

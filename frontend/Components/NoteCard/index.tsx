@@ -2,7 +2,6 @@ import React, { useContext, useEffect, useState } from 'react'
 import { Button, Divider, Layout, Text, useTheme } from '@ui-kitten/components'
 import { getNotes, Note } from '../../Functions/DatabaseFunctions/Notes'
 import { StyleSheet, TouchableOpacity } from 'react-native'
-import Markdown from 'react-native-markdown-display'
 import { EventKind } from '../../lib/nostr/Events'
 import Icon from 'react-native-vector-icons/FontAwesome5'
 import { RelayPoolContext } from '../../Contexts/RelayPoolContext'
@@ -13,9 +12,10 @@ import { getDirectReplies, getReplyEventId } from '../../Functions/RelayFunction
 import moment from 'moment'
 import { populateRelay } from '../../Functions/RelayFunctions'
 import Avatar from '../Avatar'
-import { markdownIt, markdownStyle } from '../../Constants/AppConstants'
 import { searchRelays } from '../../Functions/DatabaseFunctions/Relays'
 import { RelayFilters } from '../../lib/nostr/RelayPool/intex'
+import TextBox from '../TextBox'
+import { formatPubKey } from '../../Functions/RelayFunctions/Users'
 
 interface NoteCardProps {
   note: Note
@@ -74,9 +74,7 @@ export const NoteCard: React.FC<NoteCardProps> = ({
           <Layout style={styles.titleText}>
             <TouchableOpacity onPress={onPressUser}>
               <Layout style={styles.pubkey}>
-                <Text appearance='hint'>
-                  {note.name ?? `${note.pubkey.slice(0, 6)}...${note.pubkey.slice(-6)}`}
-                </Text>
+                <Text appearance='hint'>{note.name ?? formatPubKey(note.pubkey)}</Text>
               </Layout>
             </TouchableOpacity>
             <Layout style={styles.tags}>
@@ -86,9 +84,9 @@ export const NoteCard: React.FC<NoteCardProps> = ({
             </Layout>
           </Layout>
           <Layout style={styles.text}>
-            <Markdown style={markdownStyle(theme)} markdownit={markdownIt}>
-              {note.content}
-            </Markdown>
+            <TextBox note={note}>
+              <Text>{note.content}</Text>
+            </TextBox>
           </Layout>
           <Layout style={styles.footer}>
             <Text appearance='hint'>{moment.unix(note.created_at).format('HH:mm DD-MM-YY')}</Text>
@@ -153,6 +151,7 @@ export const NoteCard: React.FC<NoteCardProps> = ({
       flexDirection: 'row',
       backgroundColor: 'transparent',
       paddingTop: 16,
+      paddingLeft: 50,
     },
     divider: {
       paddingTop: 16,

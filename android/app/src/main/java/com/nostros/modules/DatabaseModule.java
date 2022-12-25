@@ -2,6 +2,7 @@ package com.nostros.modules;
 
 import android.annotation.SuppressLint;
 import android.database.Cursor;
+import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 
@@ -57,6 +58,10 @@ public class DatabaseModule {
                 "          conversation_id TEXT NOT NULL,\n" +
                 "          read BOOLEAN DEFAULT FALSE\n" +
                 "        );");
+        try {
+            database.execSQL("ALTER TABLE nostros_notes ADD COLUMN user_mentioned BOOLEAN DEFAULT FALSE;");
+            database.execSQL("ALTER TABLE nostros_notes ADD COLUMN seen BOOLEAN DEFAULT FALSE;");
+        } catch (SQLException e) { }
     }
 
     public void saveEvent(JSONObject data, String userPubKey) throws JSONException {

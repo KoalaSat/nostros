@@ -23,7 +23,7 @@ export const username: (user: User) => string = (user) => {
 }
 
 export const formatPubKey: (pubKey: string) => string = (pubKey) => {
-  return `${pubKey.slice(0, 8)}...${pubKey.slice(-8)}`
+  return `${pubKey.slice(0, 4)}...${pubKey.slice(-4)}`
 }
 
 export const populatePets: (

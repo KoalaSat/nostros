@@ -58,6 +58,9 @@
         "add": "Añadir usuario"
       }
     },
+    "mentionsPage": {
+      "noMentions": "No se han encontrado menciones."
+    },
     "sendPage": {
       "title": "Enviar nota",
       "placeholder": "Di algo al mundo...",

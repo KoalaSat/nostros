@@ -38,7 +38,7 @@ public class Event {
                 if (kind.equals("0")) {
                     saveUserMeta(database);
                 } else if (kind.equals("1") || kind.equals("2")) {
-                    saveNote(database);
+                    saveNote(database, userPubKey);
                 } else if (kind.equals("3")) {
                     if (pubkey.equals(userPubKey)) {
                         savePets(database);
@@ -98,6 +98,23 @@ public class Event {
         return replyEventId;
     }
 
+    protected Boolean getUserMentioned(String userPubKey) {
+        JSONArray eTags = filterTags("p");
+        Boolean userMentioned = false;
+        try {
+            for (int i = 0; i < eTags.length(); ++i) {
+                JSONArray tag = eTags.getJSONArray(i);
+                if (tag.getString(1).equals(userPubKey)) {
+                    userMentioned = true;
+                }
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        return userMentioned;
+    }
+
     protected String saveFollower(String pubKey) {
         JSONArray eTags = filterTags("p");
         String mainEventId = null;
@@ -136,7 +153,7 @@ public class Event {
         return filtered;
     }
 
-    protected void saveNote(SQLiteDatabase database) {
+    protected void saveNote(SQLiteDatabase database, String userPubKey) {
         ContentValues values = new ContentValues();
         values.put("id", id);
         values.put("content", content.replace("'", "''"));
@@ -147,6 +164,7 @@ public class Event {
         values.put("tags", tags.toString());
         values.put("main_event_id", getMainEventId());
         values.put("reply_event_id", getReplyEventId());
+        values.put("user_mentioned", getUserMentioned(userPubKey));
         database.replace("nostros_notes", null, values);
     }
 

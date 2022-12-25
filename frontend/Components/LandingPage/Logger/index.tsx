@@ -142,7 +142,10 @@ export const Logger: React.FC = () => {
       <Layout style={styles.buttonssContainer}>
         <Layout style={styles.buttonLeft}>
           <Button
-            onPress={() => setIsPrivate(!isPrivate)}
+            onPress={() => {
+              setIsPrivate(!isPrivate)
+              setInputValue('')
+            }}
             disabled={loading}
             accessoryLeft={keyButton}
             status={isPrivate ? 'warning' : 'default'}
