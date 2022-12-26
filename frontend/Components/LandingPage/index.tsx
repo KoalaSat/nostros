@@ -1,15 +1,21 @@
-import React from 'react'
+import React, { useContext } from 'react'
 import { Layout, Text, useTheme } from '@ui-kitten/components'
 import { Linking, StyleSheet, TouchableOpacity } from 'react-native'
 import Loading from '../Loading'
 import Logger from './Logger'
 import Icon from 'react-native-vector-icons/FontAwesome5'
+import { AppContext } from '../../Contexts/AppContext'
 
 export const LandingPage: React.FC = () => {
   const theme = useTheme()
+  const { goToPage } = useContext(AppContext)
 
   const onPressQuestion: () => void = () => {
     Linking.openURL('https://usenostr.org')
+  }
+
+  const onPressRelay: () => void = () => {
+    goToPage('relays')
   }
 
   const styles = StyleSheet.create({
@@ -20,12 +26,16 @@ export const LandingPage: React.FC = () => {
     },
     info: {
       alignItems: 'flex-end',
-      padding: 12,
+      flexDirection: 'row',
+      padding: 24,
       paddingBottom: -12,
     },
     svg: {
       height: 340,
       width: 340,
+    },
+    icon: {
+      marginRight: 24,
     },
     title: {
       marginTop: -40,
@@ -39,7 +49,10 @@ export const LandingPage: React.FC = () => {
     <>
       <Layout style={styles.info}>
         <TouchableOpacity onPress={onPressQuestion}>
-          <Icon name='question' size={24} color={theme['text-basic-color']} />
+          <Icon name='question' style={styles.icon} size={24} color={theme['text-basic-color']} />
+        </TouchableOpacity>
+        <TouchableOpacity onPress={onPressRelay}>
+          <Icon name='server' style={styles.icon} size={24} color={theme['text-basic-color']} />
         </TouchableOpacity>
       </Layout>
       <Layout style={styles.tab}>

@@ -9,6 +9,7 @@ export interface User {
   about?: string
   contact?: boolean
   follower?: boolean
+  lnurl?: string
 }
 
 const databaseToEntity: (object: object) => User = (object) => {

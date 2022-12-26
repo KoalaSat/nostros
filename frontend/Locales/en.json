@@ -27,7 +27,8 @@
     "profilePage": {
       "search": "Search",
       "send": "Send",
-      "profileNotCreated": "Profile not created"
+      "profileNotCreated": "Profile not published",
+      "createProfile": "Go to configuration"
     },
     "relaysPage": {
       "title": "Relays"
@@ -40,7 +41,12 @@
       "logout": "Delete keys",
       "relays": "Relays",
       "publicKey": "Public key",
-      "privateKey": "Private key"
+      "privateKey": "Private key",
+      "username": "Username",
+      "picture": "Picture URL",
+      "lnurl": "LNURL",
+      "about": "About",
+      "publish": "Publish"
     },
     "direcMessagesPage": {
       "sendMessage": {
@@ -65,11 +71,15 @@
       "title": "Send a note",
       "placeholder": "Say something to the world...",
       "send": "Send",
-      "reply": "Send a reply"
+      "reply": "Send a reply",
+      "contentWarning": "Content Warning"
     },
     "alerts": {
       "relayAdded": "Relay added",
       "relayRemoved": "Relay removed"
+    },
+    "note": {
+      "contentWarning": "Content warning. Touch to show."
     }
   }
 }

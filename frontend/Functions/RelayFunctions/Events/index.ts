@@ -17,6 +17,10 @@ export const getDirectReplies: (event: Event, replies: Event[]) => Event[] = (ev
   return replies.filter((item) => isDirectReply(event, item))
 }
 
+export const isContentWarning: (event: Event) => boolean = (event) => {
+  return event.tags.some((item) => item[0] === 'content-warning')
+}
+
 export const isDirectReply: (mainEvent: Event, reply: Event) => boolean = (mainEvent, reply) => {
   const taggedMainEventsIds: string[] = getTaggedEventIds(mainEvent)
   const taggedReplyEventsIds: string[] = getTaggedEventIds(reply)

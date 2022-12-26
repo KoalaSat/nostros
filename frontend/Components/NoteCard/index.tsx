@@ -8,7 +8,11 @@ import { RelayPoolContext } from '../../Contexts/RelayPoolContext'
 import { AppContext } from '../../Contexts/AppContext'
 import { showMessage } from 'react-native-flash-message'
 import { t } from 'i18next'
-import { getDirectReplies, getReplyEventId } from '../../Functions/RelayFunctions/Events'
+import {
+  getDirectReplies,
+  getReplyEventId,
+  isContentWarning,
+} from '../../Functions/RelayFunctions/Events'
 import moment from 'moment'
 import { populateRelay } from '../../Functions/RelayFunctions'
 import Avatar from '../Avatar'
@@ -33,6 +37,7 @@ export const NoteCard: React.FC<NoteCardProps> = ({
   const { database, goToPage } = useContext(AppContext)
   const [relayAdded, setRelayAdded] = useState<boolean>(false)
   const [replies, setReplies] = useState<Note[]>([])
+  const [hide, setHide] = useState<boolean>(isContentWarning(note))
 
   useEffect(() => {
     if (database && note) {
@@ -84,9 +89,15 @@ export const NoteCard: React.FC<NoteCardProps> = ({
             </Layout>
           </Layout>
           <Layout style={styles.text}>
-            <TextBox note={note}>
-              <Text>{note.content}</Text>
-            </TextBox>
+            {hide ? (
+              <Button appearance='ghost' onPress={() => setHide(false)}>
+                {t('note.contentWarning')}
+              </Button>
+            ) : (
+              <TextBox note={note}>
+                <Text>{note.content}</Text>
+              </TextBox>
+            )}
           </Layout>
           <Layout style={styles.footer}>
             <Text appearance='hint'>{moment.unix(note.created_at).format('HH:mm DD-MM-YY')}</Text>

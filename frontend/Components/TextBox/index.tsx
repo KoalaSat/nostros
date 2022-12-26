@@ -48,7 +48,7 @@ export const TextBox: React.FC<TextBoxProps> = ({ note }) => {
             if (user?.name) {
               prev[mentionIndex] = `@${user.name}`
             }
-            setLoadedUsers((prev) => prev  + 1)
+            setLoadedUsers((prev) => prev + 1)
             return prev
           })
         })
