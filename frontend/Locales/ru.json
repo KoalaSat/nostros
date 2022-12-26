@@ -27,8 +27,8 @@
     "profilePage": {
       "search": "Поиск",
       "send": "Отправить",
-      "profileNotCreated": "Perfil aún no publicado",
-      "createProfile": "Ir a configuración"
+      "profileNotCreated": "Профиль еще не опубликован",
+      "createProfile": "Перейти в настройки"
     },
     "relaysPage": {
       "title": "Все реле"
@@ -42,11 +42,11 @@
       "relays": "Реле",
       "publicKey": "Публичный ключ",
       "privateKey": "Приватный ключ",
-      "username": "Nombre",
-      "picture": "URL de imagen",
+      "username": "Имя",
+      "picture": "URL изображения",
       "lnurl": "LNURL",
-      "about": "Descripción",
-      "publish": "Publicar"
+      "about": "Описание",
+      "publish": "Опубликовать"
     },
     "direcMessagesPage": {
       "sendMessage": {
@@ -77,7 +77,10 @@
     "alerts": {
       "relayAdded": "Реле добавлено",
       "relayRemoved": "Реле удалено",
-      "profilePublished": "Perfil publicado"
+      "profilePublished": "Профиль опубликован"
+    },
+    "note": {
+      "contentWarning": "Потенциально конфиденциальный контент.Нажмите, чтобы увидеть"
     }
   }
 }
