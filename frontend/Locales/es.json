@@ -78,6 +78,9 @@
       "relayAdded": "Relay agregado",
       "relayRemoved": "Relay eliminado",
       "profilePublished": "Perfil publicado"
+    },
+    "note": {
+      "contentWarning": "Contenido sensible. Toca para mostrar."
     }
   }
 }

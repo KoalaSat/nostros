@@ -72,16 +72,15 @@
       "placeholder": "Say something to the world...",
       "send": "Send",
       "reply": "Send a reply",
-      "contentWarning": "Content Warning"
+      "contentWarning": "Sensitive content"
     },
     "alerts": {
       "relayAdded": "Relay added",
       "relayRemoved": "Relay removed",
       "profilePublished": "Profile published"
-
     },
     "note": {
-      "contentWarning": "Content warning. Touch to show."
+      "contentWarning": "Sensitive content. Tap to show."
     }
   }
 }
