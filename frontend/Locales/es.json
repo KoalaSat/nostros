@@ -76,7 +76,8 @@
     },
     "alerts": {
       "relayAdded": "Relay agregado",
-      "relayRemoved": "Relay eliminado"
+      "relayRemoved": "Relay eliminado",
+      "profilePublished": "Perfil publicado"
     }
   }
 }

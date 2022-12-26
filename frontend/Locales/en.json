@@ -76,7 +76,9 @@
     },
     "alerts": {
       "relayAdded": "Relay added",
-      "relayRemoved": "Relay removed"
+      "relayRemoved": "Relay removed",
+      "profilePublished": "Profile published"
+
     },
     "note": {
       "contentWarning": "Content warning. Touch to show."

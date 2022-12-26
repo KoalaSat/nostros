@@ -76,7 +76,8 @@
     },
     "alerts": {
       "relayAdded": "Реле добавлено",
-      "relayRemoved": "Реле удалено"
+      "relayRemoved": "Реле удалено",
+      "profilePublished": "Perfil publicado"
     }
   }
 }

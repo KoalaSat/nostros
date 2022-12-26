@@ -75,7 +75,7 @@ export const ConfigPage: React.FC = () => {
         })
         .then(() => {
           showMessage({
-            message: t('configPage.profilePublished'),
+            message: t('alerts.profilePublished'),
             duration: 4000,
             type: 'success',
           })
