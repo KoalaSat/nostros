@@ -22,6 +22,7 @@ import Loading from '../Loading'
 import { handleInfinityScroll } from '../../Functions/NativeFunctions'
 import Avatar from '../Avatar'
 import { RelayFilters } from '../../lib/nostr/RelayPool/intex'
+import { t } from 'i18next'
 
 export const ProfilePage: React.FC = () => {
   const { database, page, goToPage, goBack } = useContext(AppContext)
@@ -230,6 +231,11 @@ export const ProfilePage: React.FC = () => {
       marginTop: 16,
       flexDirection: 'row',
     },
+    notCreated: {
+      height: 64,
+      justifyContent: 'center',
+      alignItems: 'center',
+    },
   })
 
   const itemCard: (note: Note) => JSX.Element = (note) => {
@@ -289,6 +295,21 @@ export const ProfilePage: React.FC = () => {
     </Layout>
   )
 
+  const createProfile: JSX.Element = (
+    <Layout style={styles.profile} level='3'>
+      <Layout style={styles.notCreated} level='3'>
+        <Text>{t('profilePage.profileNotCreated')}</Text>
+      </Layout>
+      <Button
+        onPress={() => goToPage('config')}
+        status='warning'
+        accessoryLeft={<Icon name='cog' size={16} color={theme['text-basic-color']} solid />}
+      >
+        {t('profilePage.createProfile')}
+      </Button>
+    </Layout>
+  )
+
   return (
     <>
       <TopNavigation
@@ -297,7 +318,7 @@ export const ProfilePage: React.FC = () => {
         accessoryLeft={renderBackAction}
         accessoryRight={renderOptions}
       />
-      {profile}
+      {!user && userId === publicKey ? createProfile : profile}
       <Layout style={styles.list} level='3'>
         {notes && notes.length > 0 ? (
           <ScrollView

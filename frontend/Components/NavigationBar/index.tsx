@@ -14,12 +14,13 @@ export const NavigationBar: React.FC = () => {
 
   const getIndex: () => number = () => {
     const actualPage = getActualPage()
-    if (actualPage.includes('profile')) {
-      return 3
-    } else if (actualPage.includes('note#')) {
+    if (actualPage.includes('note#')) {
       return 0
-    } else if (['config', 'relays', 'contacts'].includes(actualPage)) {
-      return 2
+    } else if (
+      actualPage.includes('profile') ||
+      ['config', 'relays', 'contacts'].includes(actualPage)
+    ) {
+      return 3
     } else if (actualPage.includes('conversation#')) {
       return 1
     } else {

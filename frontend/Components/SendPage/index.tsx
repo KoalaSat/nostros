@@ -5,6 +5,7 @@ import {
   List,
   ListItem,
   Spinner,
+  Toggle,
   TopNavigation,
   useTheme,
 } from '@ui-kitten/components'
@@ -29,6 +30,7 @@ export const SendPage: React.FC = () => {
   const { t } = useTranslation('common')
   const scrollViewRef = useRef<Input>()
   const [content, setContent] = useState<string>('')
+  const [contentWarning, setContentWarning] = useState<boolean>(false)
   const [sending, setSending] = useState<boolean>(false)
   const [userSuggestions, setUserSuggestions] = useState<User[]>([])
   const [userMentions, setUserMentions] = useState<User[]>([])
@@ -89,6 +91,8 @@ export const SendPage: React.FC = () => {
             tags.push(['e', eventId, '', 'reply'])
           }
         }
+        if (contentWarning) tags.push(['content-warning', ''])
+
         if (userMentions.length > 0) {
           userMentions.forEach((user) => {
             const userText = mentionText(user)
@@ -182,6 +186,11 @@ export const SendPage: React.FC = () => {
             >
               {t('sendPage.send')}
             </Button>
+          </Layout>
+          <Layout style={styles.button} level='2'>
+            <Toggle checked={contentWarning} onChange={setContentWarning}>
+              {t('sendPage.contentWarning')}
+            </Toggle>
           </Layout>
           {suggestionsList()}
         </Layout>

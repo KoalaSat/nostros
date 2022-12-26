@@ -22,9 +22,8 @@ export const Logger: React.FC = () => {
   const [isPrivate, setIsPrivate] = useState<boolean>(true)
   const [inputValue, setInputValue] = useState<string>('')
 
-  const onPress: () => void = () => {
-    if (inputValue && inputValue !== '') {
-      setLoading(true)
+  useEffect(() => {
+    if (loading) {
       setStatus(1)
       if (isPrivate) {
         setPrivateKey(inputValue)
@@ -37,7 +36,7 @@ export const Logger: React.FC = () => {
         SInfo.setItem('publicKey', inputValue, {})
       }
     }
-  }
+  }, [loading])
 
   useEffect(() => {
     if (!loadingRelayPool && !loadingDb && publicKey) {
@@ -48,6 +47,12 @@ export const Logger: React.FC = () => {
       setTimeout(loadPets, 4000)
     }
   }, [loadingRelayPool, publicKey, loadingDb])
+
+  const onPress: () => void = () => {
+    if (inputValue && inputValue !== '') {
+      setLoading(true)
+    }
+  }
 
   const loadPets: () => void = () => {
     if (database) {

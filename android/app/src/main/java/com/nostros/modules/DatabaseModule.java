@@ -62,6 +62,9 @@ public class DatabaseModule {
             database.execSQL("ALTER TABLE nostros_notes ADD COLUMN user_mentioned BOOLEAN DEFAULT FALSE;");
             database.execSQL("ALTER TABLE nostros_notes ADD COLUMN seen BOOLEAN DEFAULT FALSE;");
         } catch (SQLException e) { }
+        try {
+            database.execSQL("ALTER TABLE nostros_users ADD COLUMN lnurl TEXT;");
+        } catch (SQLException e) { }
     }
 
     public void saveEvent(JSONObject data, String userPubKey) throws JSONException {

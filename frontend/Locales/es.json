@@ -27,7 +27,8 @@
     "profilePage": {
       "search": "Burcar",
       "send": "Enviar",
-      "profileNotCreated": "Perfil aún no creado"
+      "profileNotCreated": "Perfil aún no publicado",
+      "createProfile": "Ir a configuración"
     },
     "relaysPage": {
       "title": "Relays"
@@ -40,7 +41,12 @@
       "logout": "Borrar claves",
       "relays": "Relays",
       "publicKey": "Clave pública",
-      "privateKey": "Clave privada"
+      "privateKey": "Clave privada",
+      "username": "Nombre",
+      "picture": "URL de imagen",
+      "lnurl": "LNURL",
+      "about": "Descripción",
+      "publish": "Publicar"
     },
     "direcMessagesPage": {
       "sendMessage": {
@@ -65,11 +71,13 @@
       "title": "Enviar nota",
       "placeholder": "Di algo al mundo...",
       "send": "Enviar",
-      "reply": "Enviar respuesta"
+      "reply": "Enviar respuesta",
+      "contentWarning": "Contenido sensible"
     },
     "alerts": {
       "relayAdded": "Relay agregado",
-      "relayRemoved": "Relay eliminado"
+      "relayRemoved": "Relay eliminado",
+      "profilePublished": "Perfil publicado"
     }
   }
 }
