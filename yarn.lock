@@ -3546,10 +3546,10 @@ eslint-plugin-jest@^26.5.3:
   dependencies:
     "@typescript-eslint/utils" "^5.10.0"
 
-eslint-plugin-n@^15.5.1:
-  version "15.5.1"
-  resolved "https://registry.yarnpkg.com/eslint-plugin-n/-/eslint-plugin-n-15.5.1.tgz#b3991857d1edaa47e0108ead825470ce63f391c1"
-  integrity sha512-kAd+xhZm7brHoFLzKLB7/FGRFJNg/srmv67mqb7tto22rpr4wv/LV6RuXzAfv3jbab7+k1wi42PsIhGviywaaw==
+eslint-plugin-n@^15.6.0:
+  version "15.6.0"
+  resolved "https://registry.yarnpkg.com/eslint-plugin-n/-/eslint-plugin-n-15.6.0.tgz#cfb1d2e2e427d620eb9008f8b3b5a40de0c84120"
+  integrity sha512-Hd/F7wz4Mj44Jp0H6Jtty13NcE69GNTY0rVlgTIj1XBnGGVI6UTdDrpE6vqu3AHo07bygq/N+7OH/lgz1emUJw==
   dependencies:
     builtins "^5.0.1"
     eslint-plugin-es "^4.1.0"
@@ -5512,13 +5512,6 @@ lines-and-columns@^1.1.6:
   resolved "https://registry.yarnpkg.com/lines-and-columns/-/lines-and-columns-1.2.4.tgz#eca284f75d2965079309dc0ad9255abb2ebc1632"
   integrity sha512-7ylylesZQ/PV29jhEDl3Ufjo6ZX7gCqJr5F7PKrqc93v7fzSymt1BpwEU8nAUXs8qzzvqhbjhK5QZg6Mt/HkBg==
 
-linkify-it@^4.0.1:
-  version "4.0.1"
-  resolved "https://registry.yarnpkg.com/linkify-it/-/linkify-it-4.0.1.tgz#01f1d5e508190d06669982ba31a7d9f56a5751ec"
-  integrity sha512-C7bfi1UZmoj8+PQx22XyeXCuBlokoyWQL5pWSP+EI6nzRylyThouddufc2c1NDIcP9k5agmN9fLpA7VNJfIiqw==
-  dependencies:
-    uc.micro "^1.0.1"
-
 locate-path@^3.0.0:
   version "3.0.0"
   resolved "https://registry.yarnpkg.com/locate-path/-/locate-path-3.0.0.tgz#dbec3b3ab759758071b58fe59fc41871af21400e"
@@ -5644,11 +5637,6 @@ mdn-data@2.0.14:
   version "2.0.14"
   resolved "https://registry.yarnpkg.com/mdn-data/-/mdn-data-2.0.14.tgz#7113fc4281917d63ce29b43446f701e68c25ba50"
   integrity sha512-dn6wd0uw5GsdswPFfsgMp5NSB0/aDe6fK94YJV/AJDYXL6HVLWBsxeq7js7Ad+mU2K9LAlwpk6kN2D5mwCPVow==
-
-mdurl@^1.0.1:
-  version "1.0.1"
-  resolved "https://registry.yarnpkg.com/mdurl/-/mdurl-1.0.1.tgz#fe85b2ec75a59037f2adfec100fd6c601761152e"
-  integrity sha512-/sKlQJCBYVY9Ers9hqzKou4H6V5UWc/M59TH2dvkt+84itfnq7uFOMLpOiOS4ujvHP4etln18fmIxA5R5fll0g==
 
 memoize-one@^5.0.0:
   version "5.2.1"
@@ -6840,14 +6828,6 @@ react-native-gradle-plugin@^0.70.3:
   resolved "https://registry.yarnpkg.com/react-native-gradle-plugin/-/react-native-gradle-plugin-0.70.3.tgz#cbcf0619cbfbddaa9128701aa2d7b4145f9c4fc8"
   integrity sha512-oOanj84fJEXUg9FoEAQomA8ISG+DVIrTZ3qF7m69VQUJyOGYyDZmPqKcjvRku4KXlEH6hWO9i4ACLzNBh8gC0A==
 
-react-native-hyperlink@^0.0.22:
-  version "0.0.22"
-  resolved "https://registry.yarnpkg.com/react-native-hyperlink/-/react-native-hyperlink-0.0.22.tgz#9f553390b5f96ae473d942639c40bce6579abc89"
-  integrity sha512-IVhG+aP2bAnllUEr08/+rGA3cbpzyl83PtOfe94higfWUR8E7rUGThj21tdhx8SWAyl+4XO1K864tA6ybVbMFA==
-  dependencies:
-    linkify-it "^4.0.1"
-    mdurl "^1.0.1"
-
 react-native-iphone-x-helper@^1.3.1:
   version "1.3.1"
   resolved "https://registry.yarnpkg.com/react-native-iphone-x-helper/-/react-native-iphone-x-helper-1.3.1.tgz#20c603e9a0e765fd6f97396638bdeb0e5a60b010"
@@ -7936,11 +7916,6 @@ typescript@^4.9.3:
   version "4.9.3"
   resolved "https://registry.yarnpkg.com/typescript/-/typescript-4.9.3.tgz#3aea307c1746b8c384435d8ac36b8a2e580d85db"
   integrity sha512-CIfGzTelbKNEnLpLdGFgdyKhG23CKdKgQPOBc+OUNrkJ2vr+KSzsSV5kq5iWhEQbok+quxgGzrAtGWCyU7tHnA==
-
-uc.micro@^1.0.1:
-  version "1.0.6"
-  resolved "https://registry.yarnpkg.com/uc.micro/-/uc.micro-1.0.6.tgz#9c411a802a409a91fc6cf74081baba34b24499ac"
-  integrity sha512-8Y75pvTYkLJW2hWQHXxoqRgV7qb9B+9vFEtidML+7koHUFapnVJAZ6cKs+Qjz5Aw3aZWHMC6u0wJE3At+nSGwA==
 
 uglify-es@^3.1.9:
   version "3.3.9"
