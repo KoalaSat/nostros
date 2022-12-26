@@ -94,9 +94,7 @@ export const NoteCard: React.FC<NoteCardProps> = ({
                 {t('note.contentWarning')}
               </Button>
             ) : (
-              <TextBox note={note}>
-                <Text>{note.content}</Text>
-              </TextBox>
+              <TextBox note={note} />
             )}
           </Layout>
           <Layout style={styles.footer}>

@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useState } from 'react'
 import ParsedText from 'react-native-parsed-text'
-import { useTheme } from '@ui-kitten/components'
+import { Text, useTheme } from '@ui-kitten/components'
 import { Event } from '../../lib/nostr/Events'
 import { Linking, StyleSheet } from 'react-native'
 import { AppContext } from '../../Contexts/AppContext'
@@ -33,22 +33,19 @@ export const TextBox: React.FC<TextBoxProps> = ({ note }) => {
   }
 
   const renderMentionText: (matchingString: string, matches: string[]) => string = (
-    _matchingString,
+    matchingString,
     matches,
   ) => {
     const mentionIndex: number = parseInt(matches[1])
-    const pudKey = note.tags[mentionIndex][1]
 
     if (userNames[mentionIndex]) {
       return userNames[mentionIndex]
     } else {
+      const pudKey = note.tags[mentionIndex][1]
       if (database) {
         getUser(pudKey, database).then((user) => {
           setUserNames((prev) => {
-            if (user?.name) {
-              prev[mentionIndex] = `@${user.name}`
-            }
-            setLoadedUsers((prev) => prev + 1)
+            if (user?.name) prev[mentionIndex] = `@${user.name}`
             return prev
           })
         })

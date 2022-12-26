@@ -22,7 +22,7 @@ export const NavigationBar: React.FC = () => {
     ) {
       return 3
     } else if (actualPage.includes('conversation#')) {
-      return 1
+      return 2
     } else {
       return pageIndex.indexOf(actualPage)
     }
