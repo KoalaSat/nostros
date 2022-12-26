@@ -56,15 +56,14 @@ Local setup: https://github.com/KoalaSat/nostros/blob/main/SETUP.md
 
 ### Note
 
-- [ ] Mentions https://github.com/nostr-protocol/nips/blob/master/08.md
+- [x] Mentions https://github.com/nostr-protocol/nips/blob/master/08.md
 - [ ] Reactions https://github.com/nostr-protocol/nips/blob/master/25.md
 - [ ] Deletion https://github.com/nostr-protocol/nips/blob/master/09.md
-- [ ] Tag Users https://github.com/nostr-protocol/nips/blob/master/10.md
-- [ ] Load entire thread
+- [x] Load entire thread
 
 ### Send
 
-- [ ] Mentions https://github.com/nostr-protocol/nips/blob/master/08.md
+- [x] Mentions https://github.com/nostr-protocol/nips/blob/master/08.md
 
 ### Config
 
