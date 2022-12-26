@@ -72,7 +72,7 @@
       "placeholder": "Поделитесь чем-нибудь с миром",
       "send": "Опубликовать",
       "reply": "Ответить",
-      "contentWarning": "Contenido sensible"
+      "contentWarning": "Деликатный контент."
     },
     "alerts": {
       "relayAdded": "Реле добавлено",
@@ -80,7 +80,7 @@
       "profilePublished": "Профиль опубликован"
     },
     "note": {
-      "contentWarning": "Потенциально конфиденциальный контент.Нажмите, чтобы увидеть"
+      "contentWarning": "Деликатный контент. Нажмите, чтобы увидеть"
     }
   }
 }

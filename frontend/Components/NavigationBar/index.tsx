@@ -31,7 +31,9 @@ export const NavigationBar: React.FC = () => {
   return page ? (
     <BottomNavigation
       selectedIndex={getIndex()}
-      onSelect={(index: number) => goToPage(pageIndex[index], true)}
+      onSelect={(index: number) => {
+        goToPage(pageIndex[index], true)
+      }}
     >
       <BottomNavigationTab
         icon={<Icon name='home' size={24} color={theme['text-basic-color']} />}

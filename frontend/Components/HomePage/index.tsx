@@ -1,9 +1,10 @@
 import { Card, Layout, Text, useTheme } from '@ui-kitten/components'
-import React, { useContext, useEffect, useState } from 'react'
+import React, { useCallback, useContext, useEffect, useState } from 'react'
 import { t } from 'i18next'
 import {
   NativeScrollEvent,
   NativeSyntheticEvent,
+  RefreshControl,
   ScrollView,
   StyleSheet,
   TouchableOpacity,
@@ -27,6 +28,7 @@ export const HomePage: React.FC = () => {
   const [pageSize, setPageSize] = useState<number>(initialPageSize)
   const [notes, setNotes] = useState<Note[]>([])
   const [authors, setAuthors] = useState<User[]>([])
+  const [refreshing, setRefreshing] = useState(true)
 
   const calculateInitialNotes: () => Promise<void> = async () => {
     if (database && publicKey) {
@@ -40,17 +42,17 @@ export const HomePage: React.FC = () => {
     if (!database || !publicKey || users.length === 0) return
 
     const lastNotes: Note[] = await getMainNotes(database, publicKey, initialPageSize)
-    const lastNote: Note = lastNotes[0]
+    const lastNote: Note = lastNotes[lastNotes.length - 1]
 
     const message: RelayFilters = {
       kinds: [EventKind.textNote, EventKind.recommendServer],
-      authors: users.map((user) => user.id),
+      authors: users.map((user) => user.id)
     }
 
-    if (lastNote && lastNotes.length >= initialPageSize) {
+    if (lastNote && lastNotes.length > 0 && !past) {
       message.since = lastNote.created_at
     } else {
-      message.limit = pageSize
+      message.limit = pageSize + initialPageSize
     }
 
     relayPool?.subscribe('main-channel', message)
@@ -60,15 +62,11 @@ export const HomePage: React.FC = () => {
     if (database && publicKey) {
       getMainNotes(database, publicKey, pageSize).then((notes) => {
         setNotes(notes)
-        const missingDataNotes = notes
-          .filter((note) => !note.picture || note.picture === '')
-          .map((note) => note.pubkey)
-        if (missingDataNotes.length > 0) {
-          relayPool?.subscribe('main-channel', {
-            kinds: [EventKind.meta],
-            authors: missingDataNotes,
-          })
-        }
+        setRefreshing(false)
+        relayPool?.subscribe('main-channel', {
+          kinds: [EventKind.meta],
+          authors: notes.map((note) => note.pubkey)
+        })
       })
     }
   }
@@ -117,6 +115,14 @@ export const HomePage: React.FC = () => {
     }
   }
 
+  const onRefresh = useCallback(() => {
+    setRefreshing(true)
+    relayPool?.unsubscribeAll()
+    if (relayPool && publicKey) {
+      calculateInitialNotes().then(() => loadNotes())
+    }
+  }, [])
+
   const styles = StyleSheet.create({
     container: {
       flex: 1,
@@ -136,7 +142,7 @@ export const HomePage: React.FC = () => {
     <>
       <Layout style={styles.container} level='3'>
         {notes && notes.length > 0 ? (
-          <ScrollView onScroll={onScroll} horizontal={false}>
+          <ScrollView onScroll={onScroll} horizontal={false} refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}>
             {notes.map((note) => itemCard(note))}
           </ScrollView>
         ) : (
