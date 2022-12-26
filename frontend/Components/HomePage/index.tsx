@@ -141,7 +141,7 @@ export const HomePage: React.FC = () => {
   return (
     <>
       <Layout style={styles.container} level='3'>
-        {notes && notes.length > 0 ? (
+        {notes.length > 0 ? (
           <ScrollView onScroll={onScroll} horizontal={false} refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}>
             {notes.map((note) => itemCard(note))}
           </ScrollView>

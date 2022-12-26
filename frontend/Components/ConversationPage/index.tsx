@@ -123,9 +123,7 @@ export const ConversationPage: React.FC = () => {
                 {moment.unix(message.created_at).format('HH:mm DD-MM-YY')}
               </Text>
             </Layout>
-            <TextBox note={message}>
-              <Text>{message.content}</Text>
-            </TextBox>
+            <TextBox note={message} />
           </Layout>
         </Layout>
       </Layout>
@@ -145,9 +143,7 @@ export const ConversationPage: React.FC = () => {
               )}
             </Layout>
           </Layout>
-          <TextBox note={message}>
-            <Text>{message.content}</Text>
-          </TextBox>
+          <TextBox note={message} />
         </Layout>
       </Layout>
     )
