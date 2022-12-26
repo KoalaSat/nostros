@@ -209,6 +209,7 @@ public class Event {
         values.put("name", userContent.optString("name"));
         values.put("picture", userContent.optString("picture"));
         values.put("about", userContent.optString("about"));
+        values.put("lnurl", userContent.optString("lnurl"));
         values.put("main_relay", userContent.optString("main_relay"));
         if (cursor.getCount() == 0) {
             values.put("id", pubkey);
