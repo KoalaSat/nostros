@@ -66,7 +66,7 @@ export const ConfigPage: React.FC = () => {
             name,
             about,
             picture,
-            lnurl,
+            lud06: lnurl,
           }),
           created_at: moment().unix(),
           kind: EventKind.meta,

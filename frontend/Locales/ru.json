@@ -17,7 +17,7 @@
       "search": "Поиск",
       "send": "Отправить",
       "noContacts": "У Вас пока нет контактов",
-      "addContacts": "Añadir contactos"
+      "addContacts": "Добавить контакты"
     },
     "logger": {
       "randomKeyGenerator": {
@@ -38,13 +38,13 @@
       "reply": "Ответить"
     },
     "loader": {
-      "searchingProfile": "Buscando tu perfil",
-      "profileFound": "Perfil encontrado",
-      "searchingContacts": "Buscando tus contactos:",
-      "help1": "¿Tienes problemas encontrando tus datos?",
-      "help2": "Intenta contectarte a otros Relays.",
-      "relays": "Relays",
-      "home": "Ir a Home"
+      "searchingProfile": "Поиск профиля",
+      "profileFound": "Профиль найден",
+      "searchingContacts": "Поиск контактов:",
+      "help1": "Проблемы с подключением?",
+      "help2": "Попробуйте подключиться к другим реле.",
+      "relays": "Реле",
+      "home": "На главную"
     },
     "configPage": {
       "title": "Настройки",

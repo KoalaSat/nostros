@@ -46,7 +46,7 @@ export const HomePage: React.FC = () => {
 
     const message: RelayFilters = {
       kinds: [EventKind.textNote, EventKind.recommendServer],
-      authors: users.map((user) => user.id),
+      authors: [...users.map((user) => user.id), publicKey],
     }
 
     if (lastNote && lastNotes.length > 0 && !past) {
