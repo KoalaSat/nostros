@@ -202,19 +202,20 @@ public class Event {
 
     protected void saveUserMeta(SQLiteDatabase database) throws JSONException {
         JSONObject userContent = new JSONObject(content);
-        String query = "SELECT * FROM nostros_users WHERE id = ?";
+        String query = "SELECT created_at FROM nostros_users WHERE id = ?";
         @SuppressLint("Recycle") Cursor cursor = database.rawQuery(query, new String[] {pubkey});
 
         ContentValues values = new ContentValues();
         values.put("name", userContent.optString("name"));
         values.put("picture", userContent.optString("picture"));
         values.put("about", userContent.optString("about"));
-        values.put("lnurl", userContent.optString("lnurl"));
+        values.put("lnurl", userContent.optString("lud06"));
         values.put("main_relay", userContent.optString("main_relay"));
+        values.put("created_at", created_at);
         if (cursor.getCount() == 0) {
             values.put("id", pubkey);
             database.insert("nostros_users", null, values);
-        } else {
+        } else if (cursor.moveToFirst() && created_at > cursor.getInt(0)) {
             String whereClause = "id = ?";
             String[] whereArgs = new String[] {
                     this.pubkey
@@ -233,7 +234,7 @@ public class Event {
                     ContentValues values = new ContentValues();
                     values.put("id", petId);
                     values.put("name", tag.getString(3));
-                    values.put("contact", true);
+                            values.put("contact", true);
                     database.insert("nostros_users", null, values);
                 }
             }

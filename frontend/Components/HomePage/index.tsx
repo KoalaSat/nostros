@@ -1,4 +1,4 @@
-import { Card, Layout, Text, useTheme } from '@ui-kitten/components'
+import { Button, Card, Layout, Text, useTheme } from '@ui-kitten/components'
 import React, { useCallback, useContext, useEffect, useState } from 'react'
 import { t } from 'i18next'
 import {
@@ -46,7 +46,7 @@ export const HomePage: React.FC = () => {
 
     const message: RelayFilters = {
       kinds: [EventKind.textNote, EventKind.recommendServer],
-      authors: users.map((user) => user.id)
+      authors: [...users.map((user) => user.id), publicKey],
     }
 
     if (lastNote && lastNotes.length > 0 && !past) {
@@ -65,7 +65,7 @@ export const HomePage: React.FC = () => {
         setRefreshing(false)
         relayPool?.subscribe('main-channel', {
           kinds: [EventKind.meta],
-          authors: notes.map((note) => note.pubkey)
+          authors: notes.map((note) => note.pubkey),
         })
       })
     }
@@ -132,6 +132,11 @@ export const HomePage: React.FC = () => {
       height: 32,
     },
     empty: {
+      height: 128,
+      justifyContent: 'center',
+      alignItems: 'center',
+    },
+    noContacts: {
       height: 64,
       justifyContent: 'center',
       alignItems: 'center',
@@ -142,12 +147,27 @@ export const HomePage: React.FC = () => {
     <>
       <Layout style={styles.container} level='3'>
         {notes.length > 0 ? (
-          <ScrollView onScroll={onScroll} horizontal={false} refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}>
+          <ScrollView
+            onScroll={onScroll}
+            horizontal={false}
+            refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
+          >
             {notes.map((note) => itemCard(note))}
           </ScrollView>
         ) : (
           <Layout style={styles.empty} level='3'>
-            <Text>{t('homePage.noContacts')}</Text>
+            <Layout style={styles.noContacts} level='3'>
+              <Text>{t('homePage.noContacts')}</Text>
+            </Layout>
+            <Button
+              onPress={() => goToPage('config')}
+              status='warning'
+              accessoryLeft={
+                <Icon name='address-book' size={16} color={theme['text-basic-color']} solid />
+              }
+            >
+              {t('homePage.addContacts')}
+            </Button>
           </Layout>
         )}
       </Layout>

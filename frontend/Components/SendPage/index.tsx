@@ -4,12 +4,11 @@ import {
   Layout,
   List,
   ListItem,
-  Spinner,
   Toggle,
   TopNavigation,
   useTheme,
 } from '@ui-kitten/components'
-import React, { useContext, useEffect, useRef, useState } from 'react'
+import React, { useContext, useRef, useState } from 'react'
 import { StyleSheet } from 'react-native'
 import { AppContext } from '../../Contexts/AppContext'
 import Icon from 'react-native-vector-icons/FontAwesome5'
@@ -31,15 +30,10 @@ export const SendPage: React.FC = () => {
   const scrollViewRef = useRef<Input>()
   const [content, setContent] = useState<string>('')
   const [contentWarning, setContentWarning] = useState<boolean>(false)
-  const [sending, setSending] = useState<boolean>(false)
   const [userSuggestions, setUserSuggestions] = useState<User[]>([])
   const [userMentions, setUserMentions] = useState<User[]>([])
   const breadcrump = page.split('%')
   const eventId = breadcrump[breadcrump.length - 1].split('#')[1]
-
-  useEffect(() => {
-    relayPool?.unsubscribeAll()
-  }, [])
 
   const styles = StyleSheet.create({
     container: {
@@ -54,10 +48,6 @@ export const SendPage: React.FC = () => {
       marginTop: 30,
     },
   })
-
-  const onPressBack: () => void = () => {
-    goBack()
-  }
 
   const onChangeText: (text: string) => void = (text) => {
     const match = text.match(/@(\S*)$/)
@@ -110,8 +100,7 @@ export const SendPage: React.FC = () => {
           pubkey: publicKey,
           tags,
         }
-        relayPool?.sendEvent(event)
-        setSending(true)
+        relayPool?.sendEvent(event).then(() => goBack())
       })
     }
   }
@@ -151,7 +140,7 @@ export const SendPage: React.FC = () => {
   const renderBackAction = (): JSX.Element => (
     <Button
       accessoryRight={<Icon name='arrow-left' size={16} color={theme['text-basic-color']} />}
-      onPress={onPressBack}
+      onPress={() => goBack()}
       appearance='ghost'
     />
   )
@@ -179,13 +168,7 @@ export const SendPage: React.FC = () => {
             />
           </Layout>
           <Layout style={styles.button}>
-            <Button
-              onPress={onPressSend}
-              disabled={sending}
-              accessoryLeft={sending ? <Spinner size='small' /> : <></>}
-            >
-              {t('sendPage.send')}
-            </Button>
+            <Button onPress={onPressSend}>{t('sendPage.send')}</Button>
           </Layout>
           <Layout style={styles.button} level='2'>
             <Toggle checked={contentWarning} onChange={setContentWarning}>

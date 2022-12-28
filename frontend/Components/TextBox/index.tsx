@@ -1,11 +1,12 @@
 import React, { useContext, useEffect, useState } from 'react'
 import ParsedText from 'react-native-parsed-text'
-import { Text, useTheme } from '@ui-kitten/components'
+import { useTheme } from '@ui-kitten/components'
 import { Event } from '../../lib/nostr/Events'
 import { Linking, StyleSheet } from 'react-native'
 import { AppContext } from '../../Contexts/AppContext'
 import { getUser } from '../../Functions/DatabaseFunctions/Users'
 import { formatPubKey } from '../../Functions/RelayFunctions/Users'
+import moment from 'moment'
 
 interface TextBoxProps {
   note: Event
@@ -44,6 +45,7 @@ export const TextBox: React.FC<TextBoxProps> = ({ note }) => {
       const pudKey = note.tags[mentionIndex][1]
       if (database) {
         getUser(pudKey, database).then((user) => {
+          setLoadedUsers(moment().unix())
           setUserNames((prev) => {
             if (user?.name) prev[mentionIndex] = `@${user.name}`
             return prev

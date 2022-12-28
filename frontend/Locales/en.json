@@ -16,7 +16,8 @@
     "homePage": {
       "search": "Search",
       "send": "Send",
-      "noContacts": "You have no contacts yet"
+      "noContacts": "You have no contacts yet",
+      "addContacts": "Add contacts"
     },
     "logger": {
       "randomKeyGenerator": {
@@ -33,6 +34,15 @@
     "relaysPage": {
       "title": "Relays"
     },
+    "loader": {
+      "searchingProfile": "Searching your profile",
+      "profileFound": "Profile found",
+      "searchingContacts": "Searching contacts:",
+      "help1": "Problems loading your data?",
+      "help2": "Try connecting to other relays.",
+      "relays": "Relays",
+      "home": "Go to Home"
+    },
     "notePage": {
       "reply": "Reply"
     },
@@ -44,7 +54,7 @@
       "privateKey": "Private key",
       "username": "Username",
       "picture": "Picture URL",
-      "lnurl": "LNURL",
+      "lnurl": "LNURL / Lightning address",
       "about": "About",
       "publish": "Publish"
     },

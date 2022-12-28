@@ -16,7 +16,8 @@
     "homePage": {
       "search": "Поиск",
       "send": "Отправить",
-      "noContacts": "У Вас пока нет контактов"
+      "noContacts": "У Вас пока нет контактов",
+      "addContacts": "Добавить контакты"
     },
     "logger": {
       "randomKeyGenerator": {
@@ -36,6 +37,15 @@
     "notePage": {
       "reply": "Ответить"
     },
+    "loader": {
+      "searchingProfile": "Поиск профиля",
+      "profileFound": "Профиль найден",
+      "searchingContacts": "Поиск контактов:",
+      "help1": "Проблемы с подключением?",
+      "help2": "Попробуйте подключиться к другим реле.",
+      "relays": "Реле",
+      "home": "На главную"
+    },
     "configPage": {
       "title": "Настройки",
       "logout": "Удалить ключи",
@@ -44,7 +54,7 @@
       "privateKey": "Приватный ключ",
       "username": "Имя",
       "picture": "URL изображения",
-      "lnurl": "LNURL",
+      "lnurl": "LNURL / Lightning address",
       "about": "Описание",
       "publish": "Опубликовать"
     },

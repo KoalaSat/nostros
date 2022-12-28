@@ -65,6 +65,9 @@ public class DatabaseModule {
         try {
             database.execSQL("ALTER TABLE nostros_users ADD COLUMN lnurl TEXT;");
         } catch (SQLException e) { }
+        try {
+            database.execSQL("ALTER TABLE nostros_users ADD COLUMN created_at INT DEFAULT 0;");
+        } catch (SQLException e) { }
     }
 
     public void saveEvent(JSONObject data, String userPubKey) throws JSONException {

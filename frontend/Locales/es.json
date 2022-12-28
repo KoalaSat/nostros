@@ -16,7 +16,8 @@
     "homePage": {
       "search": "Buscar",
       "send": "Enviar",
-      "noContacts": "Aún no tienes contactos"
+      "noContacts": "Aún no tienes contactos",
+      "addContacts": "Añadir contactos"
     },
     "logger": {
       "randomKeyGenerator": {
@@ -36,6 +37,15 @@
     "notePage": {
       "reply": "Responder"
     },
+    "loader": {
+      "searchingProfile": "Buscando tu perfil",
+      "profileFound": "Perfil encontrado",
+      "searchingContacts": "Buscando tus contactos:",
+      "help1": "¿Tienes problemas encontrando tus datos?",
+      "help2": "Intenta contectarte a otros Relays.",
+      "relays": "Relays",
+      "home": "Ir a Home"
+    },
     "configPage": {
       "title": "Configuración",
       "logout": "Borrar claves",
@@ -44,7 +54,7 @@
       "privateKey": "Clave privada",
       "username": "Nombre",
       "picture": "URL de imagen",
-      "lnurl": "LNURL",
+      "lnurl": "LNURL / Lightning address",
       "about": "Descripción",
       "publish": "Publicar"
     },

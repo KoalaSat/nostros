@@ -11,6 +11,7 @@ import com.nostros.classes.Relay;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.ListIterator;
 
 public class RelayPoolModule extends ReactContextBaseJavaModule {
     protected List<Relay> relays;
@@ -48,13 +49,16 @@ public class RelayPoolModule extends ReactContextBaseJavaModule {
 
     @ReactMethod
     public void remove(String url, Callback callback) {
-        for (Relay relay : relays) {
-            if (relay.url.equals(url)) {
+        ListIterator<Relay> iterator = relays.listIterator();
+        while(iterator.hasNext()){
+            Relay relay = iterator.next();
+            if(url.equals(relay.url)){
                 relay.disconnect();
-                relays.remove(relay);
+                iterator.remove();
                 database.destroyRelay(relay);
             }
         }
+
         callback.invoke();
     }
 
@@ -64,6 +68,7 @@ public class RelayPoolModule extends ReactContextBaseJavaModule {
         relays = database.getRelays(context);
         if (relays.isEmpty()) {
             add("wss://relay.damus.io");
+            add("wss://nostr-relay.wlvs.space");
         }
         for (Relay relay : relays) {
             try {
