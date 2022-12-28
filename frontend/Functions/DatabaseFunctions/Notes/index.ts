@@ -22,7 +22,7 @@ export const getMainNotes: (
       nostros_notes.*, nostros_users.name, nostros_users.picture, nostros_users.contact FROM nostros_notes 
     LEFT JOIN 
       nostros_users ON nostros_users.id = nostros_notes.pubkey 
-    WHERE (nostros_users.contact = 1 OR nostros_users.id = '${pubKey}')
+    WHERE (nostros_users.contact = 1 OR nostros_notes.pubkey = '${pubKey}')
     AND nostros_notes.main_event_id IS NULL 
     ORDER BY created_at DESC 
     LIMIT ${limit}
