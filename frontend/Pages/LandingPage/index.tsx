@@ -1,7 +1,7 @@
 import React, { useContext } from 'react'
 import { Layout, Text, useTheme } from '@ui-kitten/components'
 import { Linking, StyleSheet, TouchableOpacity } from 'react-native'
-import Loading from '../Loading'
+import Loading from '../../Components/Loading'
 import Logger from './Logger'
 import Loader from './Loader'
 import Icon from 'react-native-vector-icons/FontAwesome5'

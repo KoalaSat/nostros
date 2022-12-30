@@ -7,18 +7,27 @@ import { AppContext } from '../../Contexts/AppContext'
 import { getUser } from '../../Functions/DatabaseFunctions/Users'
 import { formatPubKey } from '../../Functions/RelayFunctions/Users'
 import moment from 'moment'
+import { LinkPreview, REGEX_LINK } from '@flyerhq/react-native-link-preview'
 
-interface TextBoxProps {
-  note: Event
+interface TextContentProps {
+  event?: Event
+  content?: string
+  preview?: boolean
 }
 
-export const TextBox: React.FC<TextBoxProps> = ({ note }) => {
+export const TextContent: React.FC<TextContentProps> = ({ event, content, preview = true }) => {
   const theme = useTheme()
   const { database, goToPage } = useContext(AppContext)
   const [userNames, setUserNames] = useState<Record<number, string>>({})
   const [loadedUsers, setLoadedUsers] = useState<number>(0)
+  const text = event?.content ?? content ?? ''
 
   useEffect(() => {}, [loadedUsers])
+
+  const containsUrl: () => boolean = () => {
+    const matches = text.match(REGEX_LINK) ?? []
+    return matches.length > 0
+  }
 
   const handleUrlPress: (url: string) => void = (url) => {
     Linking.openURL(url)
@@ -29,8 +38,10 @@ export const TextBox: React.FC<TextBoxProps> = ({ note }) => {
   }
 
   const handleMentionPress: (text: string) => void = (text) => {
+    if (!event) return
+
     const mentionIndex: number = parseInt(text.substring(2, text.length - 1))
-    goToPage(`profile#${note.tags[mentionIndex][1]}`)
+    goToPage(`profile#${event.tags[mentionIndex][1]}`)
   }
 
   const renderMentionText: (matchingString: string, matches: string[]) => string = (
@@ -41,8 +52,8 @@ export const TextBox: React.FC<TextBoxProps> = ({ note }) => {
 
     if (userNames[mentionIndex]) {
       return userNames[mentionIndex]
-    } else {
-      const pudKey = note.tags[mentionIndex][1]
+    } else if (event) {
+      const pudKey = event.tags[mentionIndex][1]
       if (database) {
         getUser(pudKey, database).then((user) => {
           setLoadedUsers(moment().unix())
@@ -53,6 +64,8 @@ export const TextBox: React.FC<TextBoxProps> = ({ note }) => {
         })
       }
       return `@${formatPubKey(pudKey)}`
+    } else {
+      return matchingString
     }
   }
 
@@ -76,26 +89,33 @@ export const TextBox: React.FC<TextBoxProps> = ({ note }) => {
   })
 
   return (
-    note && (
+    <>
       <ParsedText
         style={styles.text}
         parse={[
           { type: 'url', style: styles.url, onPress: handleUrlPress },
           { type: 'email', style: styles.email, onPress: handleEmailPress },
-          {
-            pattern: /#\[(\d+)\]/,
-            style: styles.mention,
-            onPress: handleMentionPress,
-            renderText: renderMentionText,
-          },
+          event
+            ? {
+                pattern: /#\[(\d+)\]/,
+                style: styles.mention,
+                onPress: handleMentionPress,
+                renderText: renderMentionText,
+              }
+            : {
+                pattern: /#\[(\d+)\]/,
+              },
           { pattern: /#(\w+)/, style: styles.hashTag },
         ]}
         childrenProps={{ allowFontScaling: false }}
       >
-        {note.content}
+        {text}
       </ParsedText>
-    )
+      {preview && containsUrl() && (
+        <LinkPreview text={text} renderText={() => ''} textContainerStyle={{ height: 0 }} />
+      )}
+    </>
   )
 }
 
-export default TextBox
+export default TextContent

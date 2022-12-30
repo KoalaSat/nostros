@@ -4,10 +4,10 @@ import { AppContext } from '../../Contexts/AppContext'
 import { getNotes, Note } from '../../Functions/DatabaseFunctions/Notes'
 import { RelayPoolContext } from '../../Contexts/RelayPoolContext'
 import Icon from 'react-native-vector-icons/FontAwesome5'
-import NoteCard from '../NoteCard'
+import NoteCard from '../../Components/NoteCard'
 import { EventKind } from '../../lib/nostr/Events'
 import { Clipboard, ScrollView, StyleSheet, Text, TouchableOpacity } from 'react-native'
-import Loading from '../Loading'
+import Loading from '../../Components/Loading'
 import { getDirectReplies, getReplyEventId } from '../../Functions/RelayFunctions/Events'
 import { RelayFilters } from '../../lib/nostr/RelayPool/intex'
 
@@ -146,6 +146,9 @@ export const NotePage: React.FC = () => {
   }
 
   const styles = StyleSheet.create({
+    container: {
+      marginBottom: 32,
+    },
     main: {
       paddingBottom: 32,
       paddingTop: 26,
@@ -169,7 +172,7 @@ export const NotePage: React.FC = () => {
         accessoryLeft={renderBackAction}
         accessoryRight={renderNoteActions}
       />
-      <Layout level='4'>
+      <Layout level='4' style={styles.container}>
         {note ? (
           <ScrollView horizontal={false}>
             {[note, ...(replies ?? [])].map((note) => itemCard(note))}

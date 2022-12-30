@@ -12,6 +12,7 @@
   },
   "dependencies": {
     "@eva-design/eva": "^2.1.0",
+    "@flyerhq/react-native-link-preview": "^1.6.0",
     "@ui-kitten/components": "5.1.2",
     "@ui-kitten/eva-icons": "5.1.2",
     "@ui-kitten/metro-config": "5.1.2",

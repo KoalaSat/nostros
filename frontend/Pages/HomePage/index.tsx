@@ -1,4 +1,4 @@
-import { Button, Card, Layout, Text, useTheme } from '@ui-kitten/components'
+import { Button, Card, Layout, Spinner, Text, useTheme } from '@ui-kitten/components'
 import React, { useCallback, useContext, useEffect, useState } from 'react'
 import { t } from 'i18next'
 import {
@@ -11,7 +11,7 @@ import {
 } from 'react-native'
 import { AppContext } from '../../Contexts/AppContext'
 import { getMainNotes, Note } from '../../Functions/DatabaseFunctions/Notes'
-import NoteCard from '../NoteCard'
+import NoteCard from '../../Components/NoteCard'
 import Icon from 'react-native-vector-icons/FontAwesome5'
 import { RelayPoolContext } from '../../Contexts/RelayPoolContext'
 import { EventKind } from '../../lib/nostr/Events'
@@ -141,6 +141,11 @@ export const HomePage: React.FC = () => {
       justifyContent: 'center',
       alignItems: 'center',
     },
+    spinner: {
+      justifyContent: 'center',
+      alignItems: 'center',
+      height: 64,
+    },
   })
 
   return (
@@ -153,6 +158,9 @@ export const HomePage: React.FC = () => {
             refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
           >
             {notes.map((note) => itemCard(note))}
+            <Layout style={styles.spinner}>
+              <Spinner size='small' />
+            </Layout>
           </ScrollView>
         ) : (
           <Layout style={styles.empty} level='3'>
@@ -160,7 +168,7 @@ export const HomePage: React.FC = () => {
               <Text>{t('homePage.noContacts')}</Text>
             </Layout>
             <Button
-              onPress={() => goToPage('config')}
+              onPress={() => goToPage('contacts')}
               status='warning'
               accessoryLeft={
                 <Icon name='address-book' size={16} color={theme['text-basic-color']} solid />

@@ -20,7 +20,7 @@ import { getNotes } from '../../Functions/DatabaseFunctions/Notes'
 import { getETags } from '../../Functions/RelayFunctions/Events'
 import { getUsers, User } from '../../Functions/DatabaseFunctions/Users'
 import { formatPubKey } from '../../Functions/RelayFunctions/Users'
-import Avatar from '../Avatar'
+import Avatar from '../../Components/Avatar'
 
 export const SendPage: React.FC = () => {
   const theme = useTheme()

@@ -1,10 +1,10 @@
-import { Card, Layout, Text } from '@ui-kitten/components'
+import { Card, Layout, Spinner, Text } from '@ui-kitten/components'
 import React, { useContext, useEffect, useState } from 'react'
 import { t } from 'i18next'
 import { NativeScrollEvent, NativeSyntheticEvent, ScrollView, StyleSheet } from 'react-native'
 import { AppContext } from '../../Contexts/AppContext'
 import { getMentionNotes, Note } from '../../Functions/DatabaseFunctions/Notes'
-import NoteCard from '../NoteCard'
+import NoteCard from '../../Components/NoteCard'
 import { RelayPoolContext } from '../../Contexts/RelayPoolContext'
 import { EventKind } from '../../lib/nostr/Events'
 import { getReplyEventId } from '../../Functions/RelayFunctions/Events'
@@ -112,6 +112,11 @@ export const MentionsPage: React.FC = () => {
       justifyContent: 'center',
       alignItems: 'center',
     },
+    spinner: {
+      justifyContent: 'center',
+      alignItems: 'center',
+      height: 64,
+    },
   })
 
   return (
@@ -119,6 +124,9 @@ export const MentionsPage: React.FC = () => {
       {notes && notes.length > 0 ? (
         <ScrollView onScroll={onScroll} horizontal={false}>
           {notes.map((note) => itemCard(note))}
+          <Layout style={styles.spinner}>
+            <Spinner size='small' />
+          </Layout>
         </ScrollView>
       ) : (
         <Layout style={styles.empty} level='3'>
