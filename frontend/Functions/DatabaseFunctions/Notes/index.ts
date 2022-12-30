@@ -63,7 +63,7 @@ export const getMentionNotes: (
 export const getNotes: (
   db: QuickSQLiteConnection,
   options: {
-    filters?: { [column: string]: string }
+    filters?: Record<string, string>
     limit?: number
     contacts?: boolean
     includeIds?: string[]
