@@ -10,13 +10,13 @@ import {
   updateConversationRead,
 } from '../../Functions/DatabaseFunctions/DirectMessages'
 import { getUser, User } from '../../Functions/DatabaseFunctions/Users'
-import Avatar from '../Avatar'
+import Avatar from '../../Components/Avatar'
 import { decrypt } from 'nostr-tools/nip04'
 import Icon from 'react-native-vector-icons/FontAwesome5'
 import { username, usersToTags } from '../../Functions/RelayFunctions/Users'
 import moment from 'moment'
 import { encrypt } from '../../lib/nostr/Crypto'
-import TextBox from '../TextBox'
+import TextContent from '../../Components/TextContent'
 
 export const ConversationPage: React.FC = () => {
   const theme = useTheme()
@@ -123,7 +123,7 @@ export const ConversationPage: React.FC = () => {
                 {moment.unix(message.created_at).format('HH:mm DD-MM-YY')}
               </Text>
             </Layout>
-            <TextBox note={message} />
+            <TextContent event={message} />
           </Layout>
         </Layout>
       </Layout>
@@ -143,7 +143,7 @@ export const ConversationPage: React.FC = () => {
               )}
             </Layout>
           </Layout>
-          <TextBox note={message} />
+          <TextContent event={message} />
         </Layout>
       </Layout>
     )

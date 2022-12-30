@@ -23,7 +23,7 @@ import {
   generateConversationId,
   getOtherPubKey,
 } from '../../Functions/RelayFunctions/DirectMessages'
-import Avatar from '../Avatar'
+import Avatar from '../../Components/Avatar'
 import Icon from 'react-native-vector-icons/FontAwesome5'
 import { useTranslation } from 'react-i18next'
 import { username } from '../../Functions/RelayFunctions/Users'

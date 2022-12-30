@@ -11,18 +11,19 @@ import {
 } from 'react-native'
 import { AppContext } from '../../Contexts/AppContext'
 import { getNotes, Note } from '../../Functions/DatabaseFunctions/Notes'
-import NoteCard from '../NoteCard'
+import NoteCard from '../../Components/NoteCard'
 import { RelayPoolContext } from '../../Contexts/RelayPoolContext'
 import { getUser, User, updateUserContact } from '../../Functions/DatabaseFunctions/Users'
 import { EventKind } from '../../lib/nostr/Events'
 import Icon from 'react-native-vector-icons/FontAwesome5'
 import { formatPubKey, populatePets } from '../../Functions/RelayFunctions/Users'
 import { getReplyEventId } from '../../Functions/RelayFunctions/Events'
-import Loading from '../Loading'
+import Loading from '../../Components/Loading'
 import { handleInfinityScroll } from '../../Functions/NativeFunctions'
-import Avatar from '../Avatar'
+import Avatar from '../../Components/Avatar'
 import { RelayFilters } from '../../lib/nostr/RelayPool/intex'
 import { t } from 'i18next'
+import TextContent from '../../Components/TextContent'
 
 export const ProfilePage: React.FC = () => {
   const { database, page, goToPage, goBack } = useContext(AppContext)
@@ -236,6 +237,11 @@ export const ProfilePage: React.FC = () => {
       justifyContent: 'center',
       alignItems: 'center',
     },
+    spinner: {
+      justifyContent: 'center',
+      alignItems: 'center',
+      height: 64,
+    },
   })
 
   const itemCard: (note: Note) => JSX.Element = (note) => {
@@ -285,9 +291,7 @@ export const ProfilePage: React.FC = () => {
         {user && (
           <>
             <Layout style={styles.about} level='3'>
-              <Text numberOfLines={5} ellipsizeMode='tail'>
-                {user?.about}
-              </Text>
+              <TextContent content={user?.about} preview={false} />
             </Layout>
           </>
         )}
@@ -327,6 +331,9 @@ export const ProfilePage: React.FC = () => {
             refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
           >
             {notes.map((note) => itemCard(note))}
+            <Layout style={styles.spinner}>
+              <Spinner size='small' />
+            </Layout>
           </ScrollView>
         ) : (
           <Loading />

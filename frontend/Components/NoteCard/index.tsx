@@ -18,7 +18,7 @@ import { populateRelay } from '../../Functions/RelayFunctions'
 import Avatar from '../Avatar'
 import { searchRelays } from '../../Functions/DatabaseFunctions/Relays'
 import { RelayFilters } from '../../lib/nostr/RelayPool/intex'
-import TextBox from '../TextBox'
+import TextContent from '../../Components/TextContent'
 import { formatPubKey } from '../../Functions/RelayFunctions/Users'
 
 interface NoteCardProps {
@@ -94,7 +94,7 @@ export const NoteCard: React.FC<NoteCardProps> = ({
                 {t('note.contentWarning')}
               </Button>
             ) : (
-              <TextBox note={note} />
+              <TextContent event={note} />
             )}
           </Layout>
           <Layout style={styles.footer}>

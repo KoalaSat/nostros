@@ -16,7 +16,7 @@ import Icon from 'react-native-vector-icons/FontAwesome5'
 import { EventKind } from '../../lib/nostr/Events'
 import { useTranslation } from 'react-i18next'
 import { getUsers, updateUserContact, User } from '../../Functions/DatabaseFunctions/Users'
-import UserCard from '../UserCard'
+import UserCard from '../../Components/UserCard'
 import { RelayPoolContext } from '../../Contexts/RelayPoolContext'
 import { populatePets } from '../../Functions/RelayFunctions/Users'
 
