@@ -29,7 +29,7 @@ class RelayPool {
   }
 
   private readonly privateKey?: string
-  private subscriptions: { [subId: string]: string[] }
+  private subscriptions: Record<string, string[]>
 
   private readonly send: (message: object) => void = async (message) => {
     const tosend = JSON.stringify(message)

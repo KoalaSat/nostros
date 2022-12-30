@@ -25,7 +25,7 @@ export const MainLayout: React.FC = () => {
     },
   })
 
-  const pagination: { [pageName: string]: JSX.Element } = {
+  const pagination: Record<string, JSX.Element> = {
     '': <Loading />,
     mentions: <MentionsPage />,
     landing: <LandingPage />,
