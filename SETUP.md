@@ -53,7 +53,9 @@ yarn install
 yarn start
 ```
 
-# Linux (Pop-OS / Ubuntu)
+# Linux
+
+Below instructions are for Ubuntu and other related Debian-based distributions. For other flavours, you'll probably just need to change the package manager.
 
 Make sure you have Node 16.x
 
@@ -84,7 +86,7 @@ You'll probably need to `Sync with gradle files` (top-right corner)
 
 ## Install watchman
 
-Check https://github.com/facebook/watchman/releases/download or use brew:
+Check https://github.com/facebook/watchman/releases/download or use package manager:
 
 ```
 sudo apt install watchman
