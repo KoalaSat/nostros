@@ -67,7 +67,8 @@ public class RelayPoolModule extends ReactContextBaseJavaModule {
         userPubKey = pubKey;
         relays = database.getRelays(context);
         if (relays.isEmpty()) {
-            add("wss://relay.damus.io");
+            add("wss://damus.io");
+            add("wss://brb.io");
             add("wss://nostr-relay.wlvs.space");
         }
         for (Relay relay : relays) {

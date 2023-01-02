@@ -32,7 +32,12 @@
       "createProfile": "Ir a configuración"
     },
     "relaysPage": {
-      "title": "Relays"
+      "title": "Relays",
+      "addRelay": {
+        "placeholder": "URL del relay",
+        "invalidFormat": "Format no válido",
+        "add": "Agregar relay"
+      }
     },
     "notePage": {
       "reply": "Responder"

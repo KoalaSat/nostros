@@ -32,7 +32,12 @@
       "createProfile": "Перейти в настройки"
     },
     "relaysPage": {
-      "title": "Все реле"
+      "title": "Все реле",
+      "addRelay": {
+        "placeholder": "URL del relay",
+        "invalidFormat": "Format no válido",
+        "add": "Agregar relay"
+      }
     },
     "notePage": {
       "reply": "Ответить"

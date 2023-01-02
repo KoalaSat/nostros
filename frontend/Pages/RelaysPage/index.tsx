@@ -1,12 +1,21 @@
-import { Button, Layout, TopNavigation, useTheme, Text } from '@ui-kitten/components'
+import {
+  Button,
+  Layout,
+  TopNavigation,
+  useTheme,
+  Text,
+  Modal,
+  Card,
+  Input,
+} from '@ui-kitten/components'
 import React, { useContext, useEffect, useState } from 'react'
-import { RefreshControl, ScrollView, StyleSheet } from 'react-native'
+import { RefreshControl, ScrollView, StyleSheet, TouchableOpacity } from 'react-native'
 import { AppContext } from '../../Contexts/AppContext'
 import Icon from 'react-native-vector-icons/FontAwesome5'
 import { useTranslation } from 'react-i18next'
 import { RelayPoolContext } from '../../Contexts/RelayPoolContext'
 import { getRelays, Relay } from '../../Functions/DatabaseFunctions/Relays'
-import { defaultRelays } from '../../Constants/RelayConstants'
+import { defaultRelays, REGEX_SOCKET_LINK } from '../../Constants/RelayConstants'
 import { showMessage } from 'react-native-flash-message'
 
 export const RelaysPage: React.FC = () => {
@@ -16,6 +25,9 @@ export const RelaysPage: React.FC = () => {
   const { t } = useTranslation('common')
   const [relays, setRelays] = useState<Relay[]>([])
   const [loading, setLoading] = useState<boolean>(false)
+  const [showAddRelay, setShowAddRelay] = useState<boolean>(false)
+  const [addRelayInput, setAddRelayInput] = useState<string>('')
+  const [showInvalidInput, setShowInvalidInput] = useState<boolean>(false)
 
   const loadRelays: () => void = () => {
     if (database) {
@@ -70,6 +82,17 @@ export const RelaysPage: React.FC = () => {
     }
   }
 
+  const onPressAddRelay: () => void = () => {
+    if ((addRelayInput.match(REGEX_SOCKET_LINK) ?? []).length > 0) {
+      addRelayItem(addRelayInput)
+      setAddRelayInput('')
+      setShowAddRelay(false)
+      setShowInvalidInput(false)
+    } else {
+      setShowInvalidInput(true)
+    }
+  }
+
   const relayActions: (relay: Relay) => JSX.Element = (relay) => {
     return relays?.find((item) => item.url === relay.url) ? (
       <Button
@@ -83,7 +106,7 @@ export const RelaysPage: React.FC = () => {
         status='success'
         disabled={loading}
         onPress={() => addRelayItem(relay.url)}
-        accessoryLeft={<Icon name='plus' size={16} color={theme['text-basic-color']} solid />}
+        accessoryLeft={<Icon name='power-off' size={16} color={theme['text-basic-color']} solid />}
       />
     )
   }
@@ -135,6 +158,23 @@ export const RelaysPage: React.FC = () => {
     text: {
       color: theme['text-basic-color'],
     },
+    modal: {
+      paddingLeft: 32,
+      paddingRight: 32,
+      width: '100%',
+    },
+    backdrop: {
+      backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    },
+    button: {
+      marginTop: 31,
+    },
+    modalContainer: {
+      marginTop: 30,
+      marginBottom: 30,
+      paddingLeft: 12,
+      paddingRight: 12,
+    },
   })
 
   return (
@@ -156,7 +196,54 @@ export const RelaysPage: React.FC = () => {
             )}
           </ScrollView>
         </Layout>
+        <Modal
+          style={styles.modal}
+          visible={showAddRelay}
+          backdropStyle={styles.backdrop}
+          onBackdropPress={() => setShowAddRelay(false)}
+        >
+          <Card disabled={true}>
+            <Layout style={styles.modalContainer}>
+              <Layout>
+                <Input
+                  placeholder={t('relaysPage.addRelay.placeholder')}
+                  value={addRelayInput}
+                  onChangeText={setAddRelayInput}
+                  size='large'
+                />
+              </Layout>
+              {showInvalidInput && (
+                <Layout style={styles.button}>
+                  <Text status='danger'>{t('relaysPage.addRelay.invalidFormat')}</Text>
+                </Layout>
+              )}
+              <Layout style={styles.button}>
+                <Button onPress={onPressAddRelay}>
+                  {<Text>{t('relaysPage.addRelay.add')}</Text>}
+                </Button>
+              </Layout>
+            </Layout>
+          </Card>
+        </Modal>
       </Layout>
+      <TouchableOpacity
+        style={{
+          borderWidth: 1,
+          borderColor: 'rgba(0,0,0,0.2)',
+          alignItems: 'center',
+          justifyContent: 'center',
+          width: 65,
+          position: 'absolute',
+          bottom: 20,
+          right: 20,
+          height: 65,
+          backgroundColor: theme['color-warning-500'],
+          borderRadius: 100,
+        }}
+        onPress={() => setShowAddRelay(true)}
+      >
+        <Icon name='plus' size={30} color={theme['text-basic-color']} solid />
+      </TouchableOpacity>
     </>
   )
 }

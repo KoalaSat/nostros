@@ -32,7 +32,12 @@
       "createProfile": "Go to configuration"
     },
     "relaysPage": {
-      "title": "Relays"
+      "title": "Relays",
+      "addRelay": {
+        "placeholder": "Relay URL",
+        "invalidFormat": "Invalid Format",
+        "add": "Add relay"
+      }
     },
     "loader": {
       "searchingProfile": "Searching your profile",
