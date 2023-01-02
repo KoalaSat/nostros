@@ -30,7 +30,7 @@
     "nostr-tools": "^0.24.1",
     "react": "18.1.0",
     "react-i18next": "^12.0.0",
-    "react-native": "0.70.5",
+    "react-native": "0.70.6",
     "react-native-action-button": "^2.8.5",
     "react-native-bidirectional-infinite-scroll": "^0.3.3",
     "react-native-flash-message": "^0.3.1",
