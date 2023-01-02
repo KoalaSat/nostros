@@ -13,6 +13,7 @@ import {
   getReplyEventId,
   isContentWarning,
 } from '../../Functions/RelayFunctions/Events'
+import { Event } from '../../../lib/nostr/Events'
 import moment from 'moment'
 import { populateRelay } from '../../Functions/RelayFunctions'
 import Avatar from '../Avatar'
@@ -20,6 +21,7 @@ import { searchRelays } from '../../Functions/DatabaseFunctions/Relays'
 import { RelayFilters } from '../../lib/nostr/RelayPool/intex'
 import TextContent from '../../Components/TextContent'
 import { formatPubKey } from '../../Functions/RelayFunctions/Users'
+import { getReactionsCount, getUserReaction } from '../../Functions/DatabaseFunctions/Reactions'
 
 interface NoteCardProps {
   note: Note
@@ -33,11 +35,35 @@ export const NoteCard: React.FC<NoteCardProps> = ({
   onlyContactsReplies = false,
 }) => {
   const theme = useTheme()
-  const { relayPool, publicKey } = useContext(RelayPoolContext)
+  const { relayPool, publicKey, lastEventId } = useContext(RelayPoolContext)
   const { database, goToPage } = useContext(AppContext)
   const [relayAdded, setRelayAdded] = useState<boolean>(false)
   const [replies, setReplies] = useState<Note[]>([])
+  const [positiveReactions, setPositiveReactions] = useState<number>(0)
+  const [negaiveReactions, setNegativeReactions] = useState<number>(0)
+  const [userUpvoted, setUserUpvoted] = useState<boolean>(false)
+  const [userDownvoted, setUserDownvoted] = useState<boolean>(false)
   const [hide, setHide] = useState<boolean>(isContentWarning(note))
+
+  useEffect(() => {
+    if (database && publicKey && note.id) {
+      getReactionsCount(database, { positive: true, eventId: note.id }).then((result) => {
+        setPositiveReactions(result ?? 0)
+      })
+      getReactionsCount(database, { positive: false, eventId: note.id }).then((result) => {
+        setNegativeReactions(result ?? 0)
+      })
+      getUserReaction(database, publicKey, { eventId: note.id }).then((results) => {
+        results.forEach((reaction) => {
+          if (reaction.positive) {
+            setUserUpvoted(true)
+          } else {
+            setUserDownvoted(true)
+          }
+        })
+      })
+    }
+  }, [lastEventId])
 
   useEffect(() => {
     if (database && note) {
@@ -62,6 +88,17 @@ export const NoteCard: React.FC<NoteCardProps> = ({
       }
     }
   }, [database])
+
+  const publishReaction: (positive: boolean) => void = (positive) => {
+    const event: Event = {
+      content: positive ? '+' : '-',
+      created_at: moment().unix(),
+      kind: EventKind.reaction,
+      pubkey: publicKey,
+      tags: [...note.tags, ['e', note.id], ['p', note.pubkey]],
+    }
+    relayPool?.sendEvent(event)
+  }
 
   const textNote: (note: Note) => JSX.Element = (note) => {
     return (
@@ -99,6 +136,54 @@ export const NoteCard: React.FC<NoteCardProps> = ({
           </Layout>
           <Layout style={styles.footer}>
             <Text appearance='hint'>{moment.unix(note.created_at).format('HH:mm DD-MM-YY')}</Text>
+            <Layout style={styles.reactions}>
+              <Button
+                appearance='ghost'
+                status={userUpvoted ? 'success' : 'primary'}
+                onPress={() => {
+                  if (!userUpvoted) {
+                    setUserUpvoted(true)
+                    setPositiveReactions((prev) => prev + 1)
+                    publishReaction(true)
+                  }
+                }}
+                accessoryLeft={
+                  <Icon
+                    name='arrow-up'
+                    size={16}
+                    color={userUpvoted ? theme['color-success-500'] : theme['color-primary-500']}
+                    solid
+                  />
+                }
+                size='small'
+              >
+                {positiveReactions === undefined || positiveReactions === 0
+                  ? '-'
+                  : positiveReactions}
+              </Button>
+              <Button
+                appearance='ghost'
+                status={userDownvoted ? 'danger' : 'primary'}
+                onPress={() => {
+                  if (!userDownvoted) {
+                    setUserDownvoted(true)
+                    setNegativeReactions((prev) => prev + 1)
+                    publishReaction(false)
+                  }
+                }}
+                accessoryLeft={
+                  <Icon
+                    name='arrow-down'
+                    size={16}
+                    color={userDownvoted ? theme['color-danger-500'] : theme['color-primary-500']}
+                    solid
+                  />
+                }
+                size='small'
+              >
+                {negaiveReactions === undefined || negaiveReactions === 0 ? '-' : negaiveReactions}
+              </Button>
+            </Layout>
           </Layout>
         </Layout>
       </>
@@ -192,6 +277,14 @@ export const NoteCard: React.FC<NoteCardProps> = ({
     },
     footer: {
       backgroundColor: 'transparent',
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'space-between',
+      marginTop: 10,
+    },
+    reactions: {
+      backgroundColor: 'transparent',
+      flexDirection: 'row',
     },
     tags: {
       backgroundColor: 'transparent',

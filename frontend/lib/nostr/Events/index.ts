@@ -16,6 +16,7 @@ export enum EventKind {
   recommendServer = 2,
   petNames = 3,
   directMessage = 4,
+  reaction = 7,
 }
 
 export const serializeEvent: (event: Event) => string = (event) => {

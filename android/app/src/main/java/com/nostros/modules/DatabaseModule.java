@@ -68,6 +68,18 @@ public class DatabaseModule {
         try {
             database.execSQL("ALTER TABLE nostros_users ADD COLUMN created_at INT DEFAULT 0;");
         } catch (SQLException e) { }
+        database.execSQL("CREATE TABLE IF NOT EXISTS nostros_reactions(\n" +
+                "          id TEXT PRIMARY KEY NOT NULL, \n" +
+                "          content TEXT NOT NULL,\n" +
+                "          created_at INT NOT NULL,\n" +
+                "          kind INT NOT NULL,\n" +
+                "          pubkey TEXT NOT NULL,\n" +
+                "          sig TEXT NOT NULL,\n" +
+                "          tags TEXT NOT NULL,\n" +
+                "          positive BOOLEAN DEFAULT TRUE,\n" +
+                "          reacted_event_id TEXT,\n" +
+                "          reacted_user_id TEXT\n" +
+                "        );");
     }
 
     public void saveEvent(JSONObject data, String userPubKey) throws JSONException {

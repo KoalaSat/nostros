@@ -42,6 +42,10 @@ export const MentionsPage: React.FC = () => {
     if (database && publicKey) {
       getMentionNotes(database, publicKey, pageSize).then((notes) => {
         setNotes(notes)
+        relayPool?.subscribe('main-channel', {
+          kinds: [EventKind.reaction],
+          '#e': notes.map((note) => note.id ?? ''),
+        })
         const missingDataNotes = notes
           .filter((note) => !note.picture || note.picture === '')
           .map((note) => note.pubkey)
@@ -124,9 +128,11 @@ export const MentionsPage: React.FC = () => {
       {notes && notes.length > 0 ? (
         <ScrollView onScroll={onScroll} horizontal={false}>
           {notes.map((note) => itemCard(note))}
-          <Layout style={styles.spinner}>
-            <Spinner size='small' />
-          </Layout>
+          {notes.length >= 10 && (
+            <Layout style={styles.spinner}>
+              <Spinner size='small' />
+            </Layout>
+          )}
         </ScrollView>
       ) : (
         <Layout style={styles.empty} level='3'>

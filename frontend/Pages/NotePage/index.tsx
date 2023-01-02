@@ -76,17 +76,10 @@ export const NotePage: React.FC = () => {
         kinds: [EventKind.textNote],
         ids: [eventId],
       })
-      const notes = await getNotes(database, { filters: { reply_event_id: eventId } })
-      const eventMessages: RelayFilters = {
-        kinds: [EventKind.textNote],
+      relayPool?.subscribe('main-channel', {
+        kinds: [EventKind.reaction, EventKind.textNote],
         '#e': [eventId],
-      }
-      if (past) {
-        eventMessages.until = notes[notes.length - 1]?.created_at
-      } else {
-        eventMessages.since = notes[0]?.created_at
-      }
-      relayPool?.subscribe('main-channel', eventMessages)
+      })
     }
   }
 

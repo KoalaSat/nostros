@@ -112,7 +112,12 @@ export const TextContent: React.FC<TextContentProps> = ({ event, content, previe
         {text}
       </ParsedText>
       {preview && containsUrl() && (
-        <LinkPreview text={text} renderText={() => ''} textContainerStyle={{ height: 0 }} />
+        <LinkPreview
+          text={text}
+          renderText={() => ''}
+          textContainerStyle={{ height: 0 }}
+          enableAnimation={true}
+        />
       )}
     </>
   )

@@ -22,6 +22,8 @@ export const isContentWarning: (event: Event) => boolean = (event) => {
 }
 
 export const isDirectReply: (mainEvent: Event, reply: Event) => boolean = (mainEvent, reply) => {
+  if (mainEvent.id === reply.id) return false
+
   const taggedMainEventsIds: string[] = getTaggedEventIds(mainEvent)
   const taggedReplyEventsIds: string[] = getTaggedEventIds(reply)
   const difference = taggedReplyEventsIds.filter((item) => !taggedMainEventsIds.includes(item))
