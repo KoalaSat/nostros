@@ -67,6 +67,10 @@ export const ProfilePage: React.FC = () => {
       getNotes(database, { filters: { pubkey: userId }, limit: pageSize }).then((results) => {
         setNotes(results)
         setRefreshing(false)
+        relayPool?.subscribe('main-channel', {
+          kinds: [EventKind.reaction],
+          '#e': results.map((note) => note.id ?? ''),
+        })
       })
     }
   }
@@ -79,7 +83,6 @@ export const ProfilePage: React.FC = () => {
       authors: [userId],
       limit: pageSize,
     }
-
     relayPool?.subscribe('main-channel', message)
   }
 
@@ -331,9 +334,11 @@ export const ProfilePage: React.FC = () => {
             refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
           >
             {notes.map((note) => itemCard(note))}
-            <Layout style={styles.spinner}>
-              <Spinner size='small' />
-            </Layout>
+            {notes.length >= 10 && (
+              <Layout style={styles.spinner}>
+                <Spinner size='small' />
+              </Layout>
+            )}
           </ScrollView>
         ) : (
           <Loading />

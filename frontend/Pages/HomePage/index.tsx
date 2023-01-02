@@ -49,7 +49,7 @@ export const HomePage: React.FC = () => {
       authors: [...users.map((user) => user.id), publicKey],
     }
 
-    if (lastNote && lastNotes.length > 0 && !past) {
+    if (lastNote && lastNotes.length >= pageSize && !past) {
       message.since = lastNote.created_at
     } else {
       message.limit = pageSize + initialPageSize
@@ -66,6 +66,10 @@ export const HomePage: React.FC = () => {
         relayPool?.subscribe('main-channel', {
           kinds: [EventKind.meta],
           authors: notes.map((note) => note.pubkey),
+        })
+        relayPool?.subscribe('main-channel', {
+          kinds: [EventKind.reaction],
+          '#e': notes.map((note) => note.id ?? ''),
         })
       })
     }
@@ -158,9 +162,11 @@ export const HomePage: React.FC = () => {
             refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
           >
             {notes.map((note) => itemCard(note))}
-            <Layout style={styles.spinner}>
-              <Spinner size='small' />
-            </Layout>
+            {notes.length >= 10 && (
+              <Layout style={styles.spinner}>
+                <Spinner size='small' />
+              </Layout>
+            )}
           </ScrollView>
         ) : (
           <Layout style={styles.empty} level='3'>
