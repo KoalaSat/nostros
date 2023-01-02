@@ -10,4 +10,6 @@ export const defaultRelays = [
   'wss://nostr.oxtr.dev',
   'wss://nostr.ono.re',
   'wss://relay.grunch.dev',
+  'wss://brb.io',
+  'wss://damus.io',
 ]
