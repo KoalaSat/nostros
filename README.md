@@ -57,7 +57,7 @@ Local setup: https://github.com/KoalaSat/nostros/blob/main/SETUP.md
 ### Note
 
 - [x] Mentions https://github.com/nostr-protocol/nips/blob/master/08.md
-- [ ] Reactions https://github.com/nostr-protocol/nips/blob/master/25.md
+- [x] Reactions https://github.com/nostr-protocol/nips/blob/master/25.md
 - [ ] Deletion https://github.com/nostr-protocol/nips/blob/master/09.md
 - [x] Load entire thread
 
