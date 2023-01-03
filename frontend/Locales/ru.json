@@ -40,9 +40,9 @@
     "relaysPage": {
       "title": "Все реле",
       "addRelay": {
-        "placeholder": "URL del relay",
-        "invalidFormat": "Format no válido",
-        "add": "Agregar relay"
+        "placeholder": "URL реле",
+        "invalidFormat": "Не действительный URL",
+        "add": "Добавить Реле"
       }
     },
     "notePage": {
@@ -99,8 +99,8 @@
       "relayAdded": "Реле добавлено",
       "relayRemoved": "Реле удалено",
       "profilePublished": "Профиль опубликован",
-      "invoiceCopied": "Factura copiada",
-      "invoiceError": "Se ha producido un error al tratar de obtener la factura"
+      "invoiceCopied": "Инвойс копирован",
+      "invoiceError": "Произошла ошибка при попытке получить инвойса."
     },
     "note": {
       "contentWarning": "Деликатный контент. Нажмите, чтобы увидеть"
