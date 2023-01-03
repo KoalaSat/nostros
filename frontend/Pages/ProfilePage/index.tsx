@@ -24,6 +24,7 @@ import Avatar from '../../Components/Avatar'
 import { RelayFilters } from '../../lib/nostr/RelayPool/intex'
 import { t } from 'i18next'
 import TextContent from '../../Components/TextContent'
+import LnPayment from '../../Components/LnPayment'
 
 export const ProfilePage: React.FC = () => {
   const { database, page, goToPage, goBack } = useContext(AppContext)
@@ -35,6 +36,7 @@ export const ProfilePage: React.FC = () => {
   const [pageSize, setPageSize] = useState<number>(initialPageSize)
   const [isContact, setIsContact] = useState<boolean>()
   const [refreshing, setRefreshing] = useState(false)
+  const [openPayment, setOpenPayment] = useState<boolean>(false)
   const breadcrump = page.split('%')
   const userId = breadcrump[breadcrump.length - 1].split('#')[1] ?? publicKey
   const username = user?.name === '' ? formatPubKey(user.id) : user?.name
@@ -136,37 +138,49 @@ export const ProfilePage: React.FC = () => {
   }
 
   const renderOptions: () => JSX.Element = () => {
+    const payment = user?.lnurl ? (
+      <Button appearance='ghost' onPress={() => setOpenPayment(true)} status='warning'>
+        <Icon name='bolt' size={16} color={theme['text-basic-color']} solid />
+      </Button>
+    ) : (
+      <></>
+    )
     if (publicKey === userId) {
       return (
-        <Button
-          accessoryRight={<Icon name='cog' size={16} color={theme['text-basic-color']} solid />}
-          onPress={() => goToPage('config')}
-          appearance='ghost'
-        />
+        <>
+          {payment}
+          <Button
+            accessoryRight={<Icon name='cog' size={16} color={theme['text-basic-color']} solid />}
+            onPress={() => goToPage('config')}
+            appearance='ghost'
+          />
+        </>
       )
     } else {
       if (user) {
-        if (isContact) {
-          return (
-            <Button
-              accessoryRight={
-                <Icon name='user-minus' size={16} color={theme['color-danger-500']} solid />
-              }
-              onPress={removeAuthor}
-              appearance='ghost'
-            />
-          )
-        } else {
-          return (
-            <Button
-              accessoryRight={
-                <Icon name='user-plus' size={16} color={theme['color-success-500']} solid />
-              }
-              onPress={addAuthor}
-              appearance='ghost'
-            />
-          )
-        }
+        const contact = isContact ? (
+          <Button
+            accessoryRight={
+              <Icon name='user-minus' size={16} color={theme['color-danger-500']} solid />
+            }
+            onPress={removeAuthor}
+            appearance='ghost'
+          />
+        ) : (
+          <Button
+            accessoryRight={
+              <Icon name='user-plus' size={16} color={theme['color-success-500']} solid />
+            }
+            onPress={addAuthor}
+            appearance='ghost'
+          />
+        )
+        return (
+          <>
+            {payment}
+            {contact}
+          </>
+        )
       } else {
         return <Spinner size='small' />
       }
@@ -343,6 +357,7 @@ export const ProfilePage: React.FC = () => {
         ) : (
           <Loading />
         )}
+        <LnPayment user={user} open={openPayment} setOpen={setOpenPayment} />
       </Layout>
       {privateKey && publicKey === userId && (
         <TouchableOpacity

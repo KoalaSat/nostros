@@ -31,6 +31,12 @@
       "profileNotCreated": "Perfil aún no publicado",
       "createProfile": "Ir a configuración"
     },
+    "lnPayment": {
+      "monto": "Cantidad",
+      "comment": "Comentario (opcional)",
+      "copy": "Copiar",
+      "openApp": "Abrir App"
+    },
     "relaysPage": {
       "title": "Relays",
       "addRelay": {
@@ -92,7 +98,9 @@
     "alerts": {
       "relayAdded": "Relay agregado",
       "relayRemoved": "Relay eliminado",
-      "profilePublished": "Perfil publicado"
+      "profilePublished": "Perfil publicado",
+      "invoiceCopied": "Factura copiada",
+      "invoiceError": "Se ha producido un error al tratar de obtener la factura"
     },
     "note": {
       "contentWarning": "Contenido sensible. Toca para mostrar."

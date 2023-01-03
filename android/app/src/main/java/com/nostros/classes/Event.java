@@ -84,15 +84,7 @@ public class Event {
         JSONArray eTags = filterTags("e");
         String replyEventId = null;
         try {
-            for (int i = 0; i < eTags.length(); ++i) {
-                JSONArray tag = eTags.getJSONArray(i);
-                if (tag.length() > 3 && tag.getString(3).equals("reply")) {
-                    replyEventId = tag.getString(1);
-                }
-            }
-            if (replyEventId == null && eTags.length() > 0) {
-                replyEventId = eTags.getJSONArray(eTags.length() - 1).getString(1);
-            }
+            replyEventId = eTags.getJSONArray(eTags.length() - 1).getString(1);
         } catch (JSONException e) {
             e.printStackTrace();
         }

@@ -31,6 +31,12 @@
       "profileNotCreated": "Профиль еще не опубликован",
       "createProfile": "Перейти в настройки"
     },
+    "lnPayment": {
+      "monto": "Cantidad",
+      "comment": "Comentario (opcional)",
+      "copy": "Copiar",
+      "openApp": "Abrir App"
+    },
     "relaysPage": {
       "title": "Все реле",
       "addRelay": {
@@ -92,7 +98,9 @@
     "alerts": {
       "relayAdded": "Реле добавлено",
       "relayRemoved": "Реле удалено",
-      "profilePublished": "Профиль опубликован"
+      "profilePublished": "Профиль опубликован",
+      "invoiceCopied": "Factura copiada",
+      "invoiceError": "Se ha producido un error al tratar de obtener la factura"
     },
     "note": {
       "contentWarning": "Деликатный контент. Нажмите, чтобы увидеть"

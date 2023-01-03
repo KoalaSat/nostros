@@ -10,6 +10,8 @@ import { Clipboard, ScrollView, StyleSheet, Text, TouchableOpacity } from 'react
 import Loading from '../../Components/Loading'
 import { getDirectReplies, getReplyEventId } from '../../Functions/RelayFunctions/Events'
 import { RelayFilters } from '../../lib/nostr/RelayPool/intex'
+import LnPayment from '../../Components/LnPayment'
+import { getUser, User } from '../../Functions/DatabaseFunctions/Users'
 
 export const NotePage: React.FC = () => {
   const { page, goBack, goToPage, database, getActualPage } = useContext(AppContext)
@@ -17,6 +19,8 @@ export const NotePage: React.FC = () => {
   const [note, setNote] = useState<Note>()
   const [replies, setReplies] = useState<Note[]>()
   const [eventId, setEventId] = useState(getActualPage().split('#')[1])
+  const [openPayment, setOpenPayment] = useState<boolean>(false)
+  const [user, setUser] = useState<User>()
   const theme = useTheme()
 
   useEffect(() => {
@@ -67,6 +71,11 @@ export const NotePage: React.FC = () => {
       } else {
         setReplies([])
       }
+      getUser(event.pubkey, database).then((user) => {
+        if (user) {
+          setUser(user)
+        }
+      })
     }
   }
 
@@ -93,17 +102,26 @@ export const NotePage: React.FC = () => {
     )
   }
 
-  const renderNoteActions = (): JSX.Element => {
-    return note && getReplyEventId(note) ? (
-      <Button
-        accessoryRight={<Icon name='arrow-up' size={16} color={theme['text-basic-color']} />}
-        onPress={onPressGoParent}
-        appearance='ghost'
-      />
-    ) : (
-      <></>
-    )
-  }
+  const renderNoteActions = (
+    <>
+      {user?.lnurl ? (
+        <Button appearance='ghost' onPress={() => setOpenPayment(true)} status='warning'>
+          <Icon name='bolt' size={16} color={theme['text-basic-color']} solid />
+        </Button>
+      ) : (
+        <></>
+      )}
+      {note && getReplyEventId(note) ? (
+        <Button
+          accessoryRight={<Icon name='arrow-up' size={16} color={theme['text-basic-color']} />}
+          onPress={onPressGoParent}
+          appearance='ghost'
+        />
+      ) : (
+        <></>
+      )}
+    </>
+  )
 
   const onPressNote: (note: Note) => void = (note) => {
     if (note.kind !== EventKind.recommendServer) {
@@ -159,7 +177,7 @@ export const NotePage: React.FC = () => {
         alignment='center'
         title={
           <TouchableOpacity onPress={onPressTitle}>
-            <Text>{`${eventId.slice(0, 12)}...${eventId.slice(-12)}`}</Text>
+            <Text>{`${eventId.slice(0, 8)}...${eventId.slice(-8)}`}</Text>
           </TouchableOpacity>
         }
         accessoryLeft={renderBackAction}
@@ -173,6 +191,7 @@ export const NotePage: React.FC = () => {
         ) : (
           <Loading style={styles.loading} />
         )}
+        <LnPayment event={note} open={openPayment} setOpen={setOpenPayment} user={user} />
       </Layout>
       {privateKey && (
         <TouchableOpacity
