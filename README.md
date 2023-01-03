@@ -24,20 +24,7 @@ Local setup: https://github.com/KoalaSat/nostros/blob/main/SETUP.md
 
 ### Bugs
 
-- [x] User info missing on first start
-- [x] i18n not loading
-- [x] Logging out and in again does not work
-- [x] Clipboard library not working
-- [x] Some user images are not loading (webp)
 - [ ] Websocket connections closed when the app goes to background for too long
-
-### Basics
-
-- [x] Infinite Load
-- [x] Go to replied event
-- [x] Relays management (add, remove and recomend)
-- [x] Random Key Generator
-- [x] Watch only mode
 
 ### Home
 
@@ -47,27 +34,10 @@ Local setup: https://github.com/KoalaSat/nostros/blob/main/SETUP.md
 ### Profile
 
 - [ ] Verify NIP-05 https://github.com/nostr-protocol/nips/blob/master/05.md
-- [ ] Verify LNURL https://github.com/andrerfneves/lightning-address
-
-### Contacts
-
-- [x] Followers list
-- [x] Direct Messages https://github.com/nostr-protocol/nips/blob/master/04.md
 
 ### Note
 
-- [x] Mentions https://github.com/nostr-protocol/nips/blob/master/08.md
-- [x] Reactions https://github.com/nostr-protocol/nips/blob/master/25.md
 - [ ] Deletion https://github.com/nostr-protocol/nips/blob/master/09.md
-- [x] Load entire thread
-
-### Send
-
-- [x] Mentions https://github.com/nostr-protocol/nips/blob/master/08.md
-
-### Config
-
-- [x] Private Key download
 
 # Kudos
 
