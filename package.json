@@ -25,6 +25,7 @@
     "cryptr": "^6.0.3",
     "events": "^3.3.0",
     "i18next": "^22.0.6",
+    "lnurl-pay": "^2.1.0",
     "lodash.debounce": "^4.0.8",
     "moment": "^2.29.4",
     "nostr-tools": "^0.24.1",

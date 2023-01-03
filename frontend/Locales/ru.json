@@ -31,12 +31,18 @@
       "profileNotCreated": "Профиль еще не опубликован",
       "createProfile": "Перейти в настройки"
     },
+    "lnPayment": {
+      "monto": "Cantidad",
+      "comment": "Comentario (opcional)",
+      "copy": "Copiar",
+      "openApp": "Abrir App"
+    },
     "relaysPage": {
       "title": "Все реле",
       "addRelay": {
-        "placeholder": "URL del relay",
-        "invalidFormat": "Format no válido",
-        "add": "Agregar relay"
+        "placeholder": "URL реле",
+        "invalidFormat": "Не действительный URL",
+        "add": "Добавить Реле"
       }
     },
     "notePage": {
@@ -92,7 +98,9 @@
     "alerts": {
       "relayAdded": "Реле добавлено",
       "relayRemoved": "Реле удалено",
-      "profilePublished": "Профиль опубликован"
+      "profilePublished": "Профиль опубликован",
+      "invoiceCopied": "Инвойс копирован",
+      "invoiceError": "Произошла ошибка при попытке получить инвойса."
     },
     "note": {
       "contentWarning": "Деликатный контент. Нажмите, чтобы увидеть"

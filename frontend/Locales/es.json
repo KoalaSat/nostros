@@ -31,12 +31,18 @@
       "profileNotCreated": "Perfil aún no publicado",
       "createProfile": "Ir a configuración"
     },
+    "lnPayment": {
+      "monto": "Cantidad",
+      "comment": "Comentario (opcional)",
+      "copy": "Copiar",
+      "openApp": "Abrir App"
+    },
     "relaysPage": {
-      "title": "Relays",
+      "title": "Relés",
       "addRelay": {
-        "placeholder": "URL del relay",
+        "placeholder": "URL del relé",
         "invalidFormat": "Format no válido",
-        "add": "Agregar relay"
+        "add": "Agregar relé"
       }
     },
     "notePage": {
@@ -48,13 +54,13 @@
       "searchingContacts": "Buscando tus contactos:",
       "help1": "¿Tienes problemas encontrando tus datos?",
       "help2": "Intenta contectarte a otros Relays.",
-      "relays": "Relays",
+      "relays": "Relés",
       "home": "Ir a Home"
     },
     "configPage": {
       "title": "Configuración",
       "logout": "Borrar claves",
-      "relays": "Relays",
+      "relays": "Relés",
       "publicKey": "Clave pública",
       "privateKey": "Clave privada",
       "username": "Nombre",
@@ -90,9 +96,11 @@
       "contentWarning": "Contenido sensible"
     },
     "alerts": {
-      "relayAdded": "Relay agregado",
-      "relayRemoved": "Relay eliminado",
-      "profilePublished": "Perfil publicado"
+      "relayAdded": "Relé agregado",
+      "relayRemoved": "Relé eliminado",
+      "profilePublished": "Perfil publicado",
+      "invoiceCopied": "Factura copiada",
+      "invoiceError": "Se ha producido un error al tratar de obtener la factura"
     },
     "note": {
       "contentWarning": "Contenido sensible. Toca para mostrar."

@@ -25,6 +25,12 @@
         "description": "Store it on a safe place to recover your user"
       }
     },
+    "lnPayment": {
+      "monto": "Amount",
+      "comment": "Comment (optional)",
+      "copy": "Copy",
+      "openApp": "Open App"
+    },
     "profilePage": {
       "search": "Search",
       "send": "Send",
@@ -92,7 +98,9 @@
     "alerts": {
       "relayAdded": "Relay added",
       "relayRemoved": "Relay removed",
-      "profilePublished": "Profile published"
+      "profilePublished": "Profile published",
+      "invoiceCopied": "Invoice copied",
+      "invoiceError": "There was an error while trying to obtain the invoice"
     },
     "note": {
       "contentWarning": "Sensitive content. Tap to show."

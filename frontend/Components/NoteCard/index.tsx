@@ -104,7 +104,7 @@ export const NoteCard: React.FC<NoteCardProps> = ({
     return (
       <>
         <Layout style={styles.profile} level='2'>
-          <TouchableOpacity onPress={onPressUser}>
+          <TouchableOpacity onPress={() => onPressUser(note.pubkey)}>
             <Avatar
               src={note.picture}
               name={note.name && note.name !== '' ? note.name : note.pubkey}
@@ -114,7 +114,7 @@ export const NoteCard: React.FC<NoteCardProps> = ({
         </Layout>
         <Layout style={styles.contentNoAction} level='2'>
           <Layout style={styles.titleText}>
-            <TouchableOpacity onPress={onPressUser}>
+            <TouchableOpacity onPress={() => onPressUser(note.pubkey)}>
               <Layout style={styles.pubkey}>
                 <Text appearance='hint'>{note.name ?? formatPubKey(note.pubkey)}</Text>
               </Layout>
@@ -231,8 +231,8 @@ export const NoteCard: React.FC<NoteCardProps> = ({
     )
   }
 
-  const onPressUser: () => void = () => {
-    goToPage(`profile#${note.pubkey}`)
+  const onPressUser: (pubKey: string) => void = (pubKey) => {
+    goToPage(`profile#${pubKey}`)
   }
 
   const styles = StyleSheet.create({
