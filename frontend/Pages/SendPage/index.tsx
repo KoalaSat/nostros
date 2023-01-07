@@ -1,5 +1,4 @@
 import {
-  Button,
   Input,
   Layout,
   List,
@@ -12,6 +11,7 @@ import React, { useContext, useRef, useState } from 'react'
 import { StyleSheet } from 'react-native'
 import { AppContext } from '../../Contexts/AppContext'
 import Icon from 'react-native-vector-icons/FontAwesome5'
+import { showMessage } from 'react-native-flash-message'
 import { Event, EventKind } from '../../lib/nostr/Events'
 import { useTranslation } from 'react-i18next'
 import { RelayPoolContext } from '../../Contexts/RelayPoolContext'
@@ -20,18 +20,22 @@ import { getNotes } from '../../Functions/DatabaseFunctions/Notes'
 import { getETags } from '../../Functions/RelayFunctions/Events'
 import { getUsers, User } from '../../Functions/DatabaseFunctions/Users'
 import { formatPubKey } from '../../Functions/RelayFunctions/Users'
-import Avatar from '../../Components/Avatar'
+import { Avatar, Button } from '../../Components'
 
 export const SendPage: React.FC = () => {
   const theme = useTheme()
   const { goBack, page, database } = useContext(AppContext)
   const { relayPool, publicKey } = useContext(RelayPoolContext)
   const { t } = useTranslation('common')
-  const scrollViewRef = useRef<Input>()
+  // state
   const [content, setContent] = useState<string>('')
   const [contentWarning, setContentWarning] = useState<boolean>(false)
   const [userSuggestions, setUserSuggestions] = useState<User[]>([])
   const [userMentions, setUserMentions] = useState<User[]>([])
+  const [isSending, setIsSending] = useState<boolean>(false)
+
+  const scrollViewRef = useRef<Input>()
+
   const breadcrump = page.split('%')
   const eventId = breadcrump[breadcrump.length - 1].split('#')[1]
 
@@ -67,41 +71,68 @@ export const SendPage: React.FC = () => {
 
   const onPressSend: () => void = () => {
     if (database && publicKey) {
-      getNotes(database, { filters: { id: eventId } }).then((notes) => {
-        let tags: string[][] = []
-        const note = notes[0]
+      setIsSending(true)
+      getNotes(database, { filters: { id: eventId } })
+        .then((notes) => {
+          let tags: string[][] = []
+          const note = notes[0]
 
-        let rawContent = content
+          let rawContent = content
 
-        if (note) {
-          tags = note.tags
-          if (getETags(note).length === 0) {
-            tags.push(['e', eventId, '', 'root'])
-          } else {
-            tags.push(['e', eventId, '', 'reply'])
-          }
-        }
-        if (contentWarning) tags.push(['content-warning', ''])
-
-        if (userMentions.length > 0) {
-          userMentions.forEach((user) => {
-            const userText = mentionText(user)
-            if (rawContent.includes(userText)) {
-              rawContent = rawContent.replace(userText, `#[${tags.length}]`)
-              tags.push(['p', user.id])
+          if (note) {
+            tags = note.tags
+            if (getETags(note).length === 0) {
+              tags.push(['e', eventId, '', 'root'])
+            } else {
+              tags.push(['e', eventId, '', 'reply'])
             }
-          })
-        }
+          }
+          if (contentWarning) tags.push(['content-warning', ''])
 
-        const event: Event = {
-          content: rawContent,
-          created_at: moment().unix(),
-          kind: EventKind.textNote,
-          pubkey: publicKey,
-          tags,
-        }
-        relayPool?.sendEvent(event).then(() => goBack())
-      })
+          if (userMentions.length > 0) {
+            userMentions.forEach((user) => {
+              const userText = mentionText(user)
+              if (rawContent.includes(userText)) {
+                rawContent = rawContent.replace(userText, `#[${tags.length}]`)
+                tags.push(['p', user.id])
+              }
+            })
+          }
+
+          const event: Event = {
+            content: rawContent,
+            created_at: moment().unix(),
+            kind: EventKind.textNote,
+            pubkey: publicKey,
+            tags,
+          }
+          relayPool
+            ?.sendEvent(event)
+            .then(() => {
+              showMessage({
+                message: t('alerts.sendNoteSuccess'),
+                type: 'success',
+              })
+              setIsSending(false) // restore sending status
+              goBack()
+            })
+            .catch((err) => {
+              showMessage({
+                message: t('alerts.sendNoteError'),
+                description: err.message,
+                type: 'danger',
+              })
+            })
+        })
+        .catch((err) => {
+          // error with getNotes
+          showMessage({
+            message: t('alerts.sendGetNotesError'),
+            description: err.message,
+            type: 'danger',
+          })
+          setIsSending(false) // restore sending status
+        })
     }
   }
 
@@ -168,7 +199,9 @@ export const SendPage: React.FC = () => {
             />
           </Layout>
           <Layout style={styles.button}>
-            <Button onPress={onPressSend}>{t('sendPage.send')}</Button>
+            <Button onPress={onPressSend} loading={isSending}>
+              {t('sendPage.send')}
+            </Button>
           </Layout>
           <Layout style={styles.button} level='2'>
             <Toggle checked={contentWarning} onChange={setContentWarning}>

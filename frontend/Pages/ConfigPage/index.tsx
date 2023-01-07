@@ -1,4 +1,4 @@
-import { Button, Divider, Input, Layout, TopNavigation, useTheme } from '@ui-kitten/components'
+import { Divider, Input, Layout, TopNavigation, useTheme } from '@ui-kitten/components'
 import React, { useContext, useEffect, useState } from 'react'
 import { Clipboard, ScrollView, StyleSheet } from 'react-native'
 import { AppContext } from '../../Contexts/AppContext'
@@ -11,16 +11,20 @@ import { getUser } from '../../Functions/DatabaseFunctions/Users'
 import { EventKind } from '../../lib/nostr/Events'
 import moment from 'moment'
 import { showMessage } from 'react-native-flash-message'
+import { Button } from '../../Components'
 
 export const ConfigPage: React.FC = () => {
   const theme = useTheme()
   const { goToPage, goBack, database, init } = useContext(AppContext)
   const { setPrivateKey, setPublicKey, relayPool, publicKey, privateKey } =
     useContext(RelayPoolContext)
+  // State
   const [name, setName] = useState<string>()
   const [picture, setPicture] = useState<string>()
   const [about, setAbout] = useState<string>()
   const [lnurl, setLnurl] = useState<string>()
+  const [isPublishingProfile, setIsPublishingProfile] = useState<boolean>(false)
+  
   const { t } = useTranslation('common')
 
   useEffect(() => {
@@ -60,6 +64,7 @@ export const ConfigPage: React.FC = () => {
 
   const onPushPublishProfile: () => void = () => {
     if (publicKey) {
+      setIsPublishingProfile(true)
       relayPool
         ?.sendEvent({
           content: JSON.stringify({
@@ -79,6 +84,15 @@ export const ConfigPage: React.FC = () => {
             duration: 4000,
             type: 'success',
           })
+          setIsPublishingProfile(false) // restore sending status
+        })
+        .catch((err) => {
+          showMessage({
+            message: t('alerts.profilePublishError'),
+            description: err.message,
+            type: 'danger',
+          })
+          setIsPublishingProfile(false) // restore sending status
         })
     }
   }
@@ -175,6 +189,7 @@ export const ConfigPage: React.FC = () => {
               <Button
                 onPress={onPushPublishProfile}
                 status='success'
+                loading={isPublishingProfile}
                 accessoryLeft={
                   <Icon name='paper-plane' size={16} color={theme['text-basic-color']} solid />
                 }

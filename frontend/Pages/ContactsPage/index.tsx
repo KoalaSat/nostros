@@ -1,5 +1,4 @@
 import {
-  Button,
   Card,
   Input,
   Layout,
@@ -13,10 +12,11 @@ import React, { useContext, useEffect, useState } from 'react'
 import { ScrollView, StyleSheet, Text, TouchableOpacity } from 'react-native'
 import { AppContext } from '../../Contexts/AppContext'
 import Icon from 'react-native-vector-icons/FontAwesome5'
+import { showMessage } from 'react-native-flash-message'
 import { EventKind } from '../../lib/nostr/Events'
 import { useTranslation } from 'react-i18next'
 import { getUsers, updateUserContact, User } from '../../Functions/DatabaseFunctions/Users'
-import UserCard from '../../Components/UserCard'
+import { Button, UserCard } from '../../Components'
 import { RelayPoolContext } from '../../Contexts/RelayPoolContext'
 import { populatePets } from '../../Functions/RelayFunctions/Users'
 
@@ -24,10 +24,12 @@ export const ContactsPage: React.FC = () => {
   const { database, goBack } = useContext(AppContext)
   const { relayPool, publicKey, privateKey, lastEventId } = useContext(RelayPoolContext)
   const theme = useTheme()
+  // State
   const [users, setUsers] = useState<User[]>()
   const [showAddContact, setShowAddContact] = useState<boolean>(false)
   const [contactInput, setContactInput] = useState<string>()
   const [selectedTab, setSelectedTab] = useState(0)
+  const [isAddingContact, setIsAddingContact] = useState<boolean>(false)
 
   const { t } = useTranslation('common')
 
@@ -82,11 +84,22 @@ export const ContactsPage: React.FC = () => {
 
   const onPressAddContact: () => void = () => {
     if (contactInput && relayPool && database && publicKey) {
-      updateUserContact(contactInput, database, true).then(() => {
-        populatePets(relayPool, database, publicKey)
-        setShowAddContact(false)
-        loadUsers()
-      })
+      setIsAddingContact(true)
+      updateUserContact(contactInput, database, true)
+        .then(() => {
+          populatePets(relayPool, database, publicKey)
+          setShowAddContact(false)
+          loadUsers()
+          setIsAddingContact(false) // restore sending status
+        })
+        .catch((err) => {
+          showMessage({
+            message: t('alerts.contactAddError'),
+            description: err.message,
+            type: 'danger',
+          })
+          setIsAddingContact(false) // restore sending status
+        })
     }
   }
 
@@ -170,7 +183,7 @@ export const ContactsPage: React.FC = () => {
               />
             </Layout>
             <Layout style={styles.button}>
-              <Button onPress={onPressAddContact}>
+              <Button onPress={onPressAddContact} loading={isAddingContact}>
                 {<Text>{t('contactsPage.addContact.add')}</Text>}
               </Button>
             </Layout>
