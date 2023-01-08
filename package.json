@@ -13,6 +13,7 @@
   "dependencies": {
     "@eva-design/eva": "^2.1.0",
     "@flyerhq/react-native-link-preview": "^1.6.0",
+    "@scure/base": "^1.1.1",
     "@ui-kitten/components": "5.1.2",
     "@ui-kitten/eva-icons": "5.1.2",
     "@ui-kitten/metro-config": "5.1.2",
@@ -28,7 +29,7 @@
     "lnurl-pay": "^2.1.0",
     "lodash.debounce": "^4.0.8",
     "moment": "^2.29.4",
-    "nostr-tools": "^0.24.1",
+    "nostr-tools": "^1.1.1",
     "react": "18.1.0",
     "react-i18next": "^12.0.0",
     "react-native": "0.70.6",
@@ -48,6 +49,7 @@
     "safe-buffer": "^5.2.1",
     "sqlstring": "^2.3.3",
     "stream": "^0.0.2",
+    "text-encoding-polyfill": "^0.6.7",
     "uuid": "^9.0.0"
   },
   "devDependencies": {

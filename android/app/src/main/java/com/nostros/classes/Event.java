@@ -84,7 +84,9 @@ public class Event {
         JSONArray eTags = filterTags("e");
         String replyEventId = null;
         try {
-            replyEventId = eTags.getJSONArray(eTags.length() - 1).getString(1);
+            if (eTags.length() > 0) {
+                replyEventId = eTags.getJSONArray(eTags.length() - 1).getString(1);
+            }
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -171,6 +173,15 @@ public class Event {
         JSONArray pTags = filterTags("p");
         JSONArray eTags = filterTags("e");
 
+        String reacted_event_id = "";
+        String reacted_user_id = "";
+        if (eTags.length() > 0) {
+            reacted_event_id = eTags.getJSONArray(eTags.length() - 1).getString(1);
+        }
+        if (pTags.length() > 0) {
+            reacted_user_id = pTags.getJSONArray(pTags.length() - 1).getString(1);
+        }
+
         ContentValues values = new ContentValues();
         values.put("id", id);
         values.put("content", content.replace("'", "''"));
@@ -180,8 +191,8 @@ public class Event {
         values.put("sig", sig);
         values.put("tags", tags.toString());
         values.put("positive", !content.equals("-"));
-        values.put("reacted_event_id", eTags.getJSONArray(eTags.length() - 1).getString(1));
-        values.put("reacted_user_id", pTags.getJSONArray(pTags.length() - 1).getString(1));
+        values.put("reacted_event_id", reacted_event_id);
+        values.put("reacted_user_id", reacted_user_id);
 
         String query = "SELECT id FROM nostros_reactions WHERE id = ?";
         @SuppressLint("Recycle") Cursor cursor = database.rawQuery(query, new String[] {id});
@@ -200,6 +211,7 @@ public class Event {
         values.put("picture", userContent.optString("picture"));
         values.put("about", userContent.optString("about"));
         values.put("lnurl", userContent.optString("lud06"));
+        values.put("nip05", userContent.optString("nip05"));
         values.put("main_relay", userContent.optString("main_relay"));
         values.put("created_at", created_at);
         if (cursor.getCount() == 0) {
@@ -218,13 +230,17 @@ public class Event {
             for (int i = 0; i < tags.length(); ++i) {
                 JSONArray tag = tags.getJSONArray(i);
                 String petId = tag.getString(1);
+                String name = "";
+                if (tag.length() >= 4) {
+                    name = tag.getString(3);
+                }
                 String query = "SELECT * FROM nostros_users WHERE id = ?";
                 Cursor cursor = database.rawQuery(query, new String[] {petId});
                 if (cursor.getCount() == 0) {
                     ContentValues values = new ContentValues();
                     values.put("id", petId);
-                    values.put("name", tag.getString(3));
-                            values.put("contact", true);
+                    values.put("name", name);
+                    values.put("contact", true);
                     database.insert("nostros_users", null, values);
                 }
             }

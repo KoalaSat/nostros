@@ -1,6 +1,7 @@
 export const defaultRelays = [
   'wss://brb.io',
   'wss://damus.io',
+  'wss://nostr.swiss-enigma.ch',
   'wss://nostr-pub.wellorder.net',
   'wss://nostr-relay.wlvs.space',
   'wss://nostr.onsats.org',

@@ -17,19 +17,17 @@ interface TextContentProps {
 export const LnPayment: React.FC<TextContentProps> = ({ open, setOpen, event, user }) => {
   const { t } = useTranslation('common')
   const [monto, setMonto] = useState<string>('')
-  const [comment, setComment] = useState<string>('')
+  const defaultComment = event?.id ? `Tip for Nostr event ${event?.id}` : ''
+  const [comment, setComment] = useState<string>(defaultComment)
   const [loading, setLoading] = useState<boolean>(false)
 
   useEffect(() => {
     setMonto('')
-    setComment('')
   }, [open])
 
   useEffect(() => {
-    if (event?.id) {
-      setComment(`Tip for Nostr event ${event?.id}`)
-    }
-  }, [event, user])
+    setComment(defaultComment)
+  }, [event, open])
 
   const styles = StyleSheet.create({
     modal: {
