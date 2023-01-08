@@ -11,6 +11,7 @@ export const defaultRelays = [
   'wss://nostr.oxtr.dev',
   'wss://nostr.ono.re',
   'wss://relay.grunch.dev',
+  'wss://nostr.developer.li',
 ]
 
 export const REGEX_SOCKET_LINK =
