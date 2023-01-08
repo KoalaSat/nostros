@@ -5,11 +5,11 @@ import { StyleSheet } from 'react-native'
 import { AppContext } from '../../Contexts/AppContext'
 import Avatar from '../Avatar'
 
-interface NoteCardProps {
+interface UserCardProps {
   user: User
 }
 
-export const NoteCard: React.FC<NoteCardProps> = ({ user }) => {
+export const UserCard: React.FC<UserCardProps> = ({ user }) => {
   const { goToPage } = useContext(AppContext)
 
   const styles = StyleSheet.create({
@@ -52,4 +52,4 @@ export const NoteCard: React.FC<NoteCardProps> = ({ user }) => {
   )
 }
 
-export default NoteCard
+export default UserCard

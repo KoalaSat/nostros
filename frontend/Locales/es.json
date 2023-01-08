@@ -100,8 +100,15 @@
       "relayAdded": "Relé agregado",
       "relayRemoved": "Relé eliminado",
       "profilePublished": "Perfil publicado",
+      "profilePublishError": "Se ha producido un error al tratar de publicar el perfil",
       "invoiceCopied": "Factura copiada",
-      "invoiceError": "Se ha producido un error al tratar de obtener la factura"
+      "invoiceError": "Se ha producido un error al tratar de obtener la factura",
+      "sendNoteSuccess": "Nota enviada",
+      "sendNoteError": "Se ha producido un error al tratar de enviar la nota",
+      "sendGetNotesError": "Se ha producido un error interno al tratar de obtener las notas",
+      "contactAddError": "Se ha producido un error al tratar de agregar el contacto",
+      "privateMessageEncryptError": "Se ha producido un error al tratar de encriptar el mensaje",
+      "privateMessageSendError": "Se ha producido un error al tratar de enviar el mensaje"
     },
     "note": {
       "contentWarning": "Contenido sensible. Toca para mostrar."

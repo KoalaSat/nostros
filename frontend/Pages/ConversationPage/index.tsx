@@ -12,6 +12,8 @@ import {
 import { getUser, User } from '../../Functions/DatabaseFunctions/Users'
 import Avatar from '../../Components/Avatar'
 import Icon from 'react-native-vector-icons/FontAwesome5'
+import { useTranslation } from 'react-i18next'
+import { showMessage } from 'react-native-flash-message'
 import { username, usersToTags } from '../../Functions/RelayFunctions/Users'
 import moment from 'moment'
 import TextContent from '../../Components/TextContent'
@@ -22,13 +24,17 @@ export const ConversationPage: React.FC = () => {
   const scrollViewRef = useRef<ScrollView>()
   const { database, getActualPage, goBack, goToPage } = useContext(AppContext)
   const { relayPool, publicKey, lastEventId, privateKey } = useContext(RelayPoolContext)
+
   const conversationId = getActualPage().split('#')[1]
   const otherPubKey = getActualPage().split('#')[2]
+  // State
   const [directMessages, setDirectMessages] = useState<DirectMessage[]>([])
   const [sendingMessages, setSendingMessages] = useState<DirectMessage[]>([])
   const [otherUser, setOtherUser] = useState<User>({ id: otherPubKey })
   const [user, setUser] = useState<User>()
   const [input, setInput] = useState<string>('')
+
+  const { t } = useTranslation('common')
 
   useEffect(() => {
     loadDirectMessages()
@@ -95,10 +101,28 @@ export const ConversationPage: React.FC = () => {
       }
       setSendingMessages((prev) => [...prev, event as DirectMessage])
       setInput('')
+      
       const encryptedcontent = encrypt(privateKey, otherPubKey, input)
-      relayPool?.sendEvent({
-        ...event,
-        content: encryptedcontent,
+      encrypt(privateKey, otherPubKey, input).then((content) => {
+        relayPool
+          ?.sendEvent({
+            ...event,
+            content: encryptedcontent,
+          })
+          .catch((err) => {
+            showMessage({
+              message: t('alerts.privateMessageSendError'),
+              description: err.message,
+              type: 'danger',
+            })
+          })
+      })
+      .catch((err) => {
+        showMessage({
+          message: t('alerts.privateMessageEncryptError'),
+          description: err.message,
+          type: 'danger',
+        })
       })
     }
   }

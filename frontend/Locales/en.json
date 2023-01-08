@@ -100,8 +100,15 @@
       "relayAdded": "Relay added",
       "relayRemoved": "Relay removed",
       "profilePublished": "Profile published",
+      "profilePublishError": "There was an error while publishing the profile",
       "invoiceCopied": "Invoice copied",
-      "invoiceError": "There was an error while trying to obtain the invoice"
+      "invoiceError": "There was an error while trying to obtain the invoice",
+      "sendNoteSuccess": "Note sent",
+      "sendNoteError": "There was an error while sending the note",
+      "sendGetNotesError": "There was an internal error retrieving notes",
+      "contactAddError": "There was an error while adding the contact",
+      "privateMessageEncryptError": "There was an error while encrypting the DM",
+      "privateMessageSendError": "There was an error while sending the DM"
     },
     "note": {
       "contentWarning": "Sensitive content. Tap to show."
