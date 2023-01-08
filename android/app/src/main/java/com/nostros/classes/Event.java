@@ -211,6 +211,7 @@ public class Event {
         values.put("picture", userContent.optString("picture"));
         values.put("about", userContent.optString("about"));
         values.put("lnurl", userContent.optString("lud06"));
+        values.put("nip05", userContent.optString("nip05"));
         values.put("main_relay", userContent.optString("main_relay"));
         values.put("created_at", created_at);
         if (cursor.getCount() == 0) {

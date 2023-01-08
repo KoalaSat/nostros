@@ -33,6 +33,10 @@ export const HomePage: React.FC = () => {
 
   const calculateInitialNotes: () => Promise<void> = async () => {
     if (database && publicKey) {
+      relayPool?.subscribe('main-channel', {
+        kinds: [EventKind.petNames],
+        authors: [publicKey],
+      })
       const users = await getUsers(database, { contacts: true, includeIds: [publicKey] })
       subscribeNotes(users)
       setAuthors(users)
