@@ -35,7 +35,7 @@ export const NoteCard: React.FC<NoteCardProps> = ({
   onlyContactsReplies = false,
 }) => {
   const theme = useTheme()
-  const { relayPool, publicKey, lastEventId } = useContext(RelayPoolContext)
+  const { relayPool, publicKey, privateKey, lastEventId } = useContext(RelayPoolContext)
   const { database, goToPage } = useContext(AppContext)
   const [relayAdded, setRelayAdded] = useState<boolean>(false)
   const [replies, setReplies] = useState<Note[]>([])
@@ -141,7 +141,7 @@ export const NoteCard: React.FC<NoteCardProps> = ({
                 appearance='ghost'
                 status={userUpvoted ? 'success' : 'primary'}
                 onPress={() => {
-                  if (!userUpvoted) {
+                  if (!userUpvoted && privateKey) {
                     setUserUpvoted(true)
                     setPositiveReactions((prev) => prev + 1)
                     publishReaction(true)
@@ -165,7 +165,7 @@ export const NoteCard: React.FC<NoteCardProps> = ({
                 appearance='ghost'
                 status={userDownvoted ? 'danger' : 'primary'}
                 onPress={() => {
-                  if (!userDownvoted) {
+                  if (!userDownvoted && privateKey) {
                     setUserDownvoted(true)
                     setNegativeReactions((prev) => prev + 1)
                     publishReaction(false)

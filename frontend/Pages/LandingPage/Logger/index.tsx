@@ -6,6 +6,7 @@ import { useTranslation } from 'react-i18next'
 import Icon from 'react-native-vector-icons/FontAwesome5'
 import { generateRandomKey } from '../../../lib/nostr/Bip'
 import { showMessage } from 'react-native-flash-message'
+import { getNip19Key, isPrivateKey, isPublicKey } from '../../../lib/nostr/Nip19'
 
 export const Logger: React.FC = () => {
   const { publicKey, setPrivateKey, setPublicKey } = useContext(RelayPoolContext)
@@ -16,10 +17,17 @@ export const Logger: React.FC = () => {
 
   const onPress: () => void = () => {
     if (inputValue && inputValue !== '') {
-      if (isPrivate) {
-        setPrivateKey(inputValue)
+      const isBenchPrivate = isPrivateKey(inputValue)
+      const isBenchPublic = isPublicKey(inputValue)
+      if (isBenchPrivate) setIsPrivate(true)
+      if (isBenchPublic) setIsPrivate(false)
+
+      const key = getNip19Key(inputValue)
+
+      if ((isPrivate && !isBenchPublic) || isBenchPrivate) {
+        setPrivateKey(key)
       } else {
-        setPublicKey(inputValue)
+        setPublicKey(key)
       }
     }
   }

@@ -80,6 +80,23 @@ public class DatabaseModule {
                 "          reacted_event_id TEXT,\n" +
                 "          reacted_user_id TEXT\n" +
                 "        );");
+        try {
+            database.execSQL("CREATE INDEX nostros_notes_pubkey_index ON nostros_notes(pubkey); ");
+            database.execSQL("CREATE INDEX nostros_notes_main_event_id_index ON nostros_notes(main_event_id); ");
+            database.execSQL("CREATE INDEX nostros_notes_reply_event_id_index ON nostros_notes(reply_event_id); ");
+            database.execSQL("CREATE INDEX nostros_notes_kind_index ON nostros_notes(kind); ");
+
+            database.execSQL("CREATE INDEX nostros_direct_messages_pubkey_index ON nostros_direct_messages(pubkey); ");
+            database.execSQL("CREATE INDEX nostros_direct_messages_conversation_id_index ON nostros_direct_messages(conversation_id); ");
+
+            database.execSQL("CREATE INDEX nostros_reactions_pubkey_index ON nostros_reactions(pubkey); ");
+            database.execSQL("CREATE INDEX nostros_reactions_reacted_event_id_index ON nostros_reactions(reacted_event_id); ");
+
+            database.execSQL("CREATE INDEX nostros_users_contact_index ON nostros_users(contact); ");
+        } catch (SQLException e) { }
+        try {
+            database.execSQL("ALTER TABLE nostros_users ADD COLUMN nip05 TEXT;");
+        } catch (SQLException e) { }
     }
 
     public void saveEvent(JSONObject data, String userPubKey) throws JSONException {
