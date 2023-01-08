@@ -21,6 +21,7 @@ export const ConfigPage: React.FC = () => {
   const [picture, setPicture] = useState<string>()
   const [about, setAbout] = useState<string>()
   const [lnurl, setLnurl] = useState<string>()
+  const [nip05, setNip05] = useState<string>()
   const { t } = useTranslation('common')
 
   useEffect(() => {
@@ -32,6 +33,7 @@ export const ConfigPage: React.FC = () => {
           setPicture(user.picture)
           setAbout(user.about)
           setLnurl(user.lnurl)
+          setNip05(user.nip05)
         }
       })
     }
@@ -67,6 +69,7 @@ export const ConfigPage: React.FC = () => {
             about,
             picture,
             lud06: lnurl,
+            nip05,
           }),
           created_at: moment().unix(),
           kind: EventKind.meta,
@@ -159,6 +162,14 @@ export const ConfigPage: React.FC = () => {
                 value={lnurl}
                 onChangeText={setLnurl}
                 label={t('configPage.lnurl')}
+              />
+            </Layout>
+            <Layout style={styles.action}>
+              <Input
+                placeholder={t('configPage.nip05')}
+                value={nip05}
+                onChangeText={setNip05}
+                label={t('configPage.nip05')}
               />
             </Layout>
             <Layout style={styles.action}>

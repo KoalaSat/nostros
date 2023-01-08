@@ -11,12 +11,11 @@ import {
 } from '../../Functions/DatabaseFunctions/DirectMessages'
 import { getUser, User } from '../../Functions/DatabaseFunctions/Users'
 import Avatar from '../../Components/Avatar'
-import { decrypt } from 'nostr-tools/nip04'
 import Icon from 'react-native-vector-icons/FontAwesome5'
 import { username, usersToTags } from '../../Functions/RelayFunctions/Users'
 import moment from 'moment'
-import { encrypt } from '../../lib/nostr/Crypto'
 import TextContent from '../../Components/TextContent'
+import { encrypt, decrypt } from '../../lib/nostr/Nip04'
 
 export const ConversationPage: React.FC = () => {
   const theme = useTheme()
@@ -96,20 +95,19 @@ export const ConversationPage: React.FC = () => {
       }
       setSendingMessages((prev) => [...prev, event as DirectMessage])
       setInput('')
-      encrypt(privateKey, otherPubKey, input).then((content) => {
-        relayPool?.sendEvent({
-          ...event,
-          content,
-        })
+      const encryptedcontent = encrypt(privateKey, otherPubKey, input)
+      relayPool?.sendEvent({
+        ...event,
+        content: encryptedcontent,
       })
     }
   }
 
-  const userCard: (message: DirectMessage) => JSX.Element = (message) => {
+  const userCard: (message: DirectMessage, index: number) => JSX.Element = (message, index) => {
     if (!publicKey || !privateKey || !otherUser || !user) return <></>
 
     return message.pubkey === otherPubKey ? (
-      <Layout key={message.id ?? message.created_at} style={styles.card} level='3'>
+      <Layout key={index} style={styles.card} level='3'>
         <Layout style={styles.layout} level='3'>
           <Layout style={styles.profile} level='3'>
             <TouchableOpacity onPress={onPressOtherUser}>
@@ -128,7 +126,7 @@ export const ConversationPage: React.FC = () => {
         </Layout>
       </Layout>
     ) : (
-      <Layout key={message.id ?? message.created_at} style={styles.card} level='2'>
+      <Layout key={index} style={styles.card} level='2'>
         <Layout style={styles.contentRight} level='2'>
           <Layout style={styles.title} level='2'>
             <Text appearance='hint'>
@@ -236,7 +234,7 @@ export const ConversationPage: React.FC = () => {
           onContentSizeChange={() => scrollViewRef.current?.scrollToEnd({ animated: true })}
           horizontal={false}
         >
-          {[...directMessages, ...sendingMessages].map((msg) => userCard(msg))}
+          {[...directMessages, ...sendingMessages].map((msg, index) => userCard(msg, index))}
         </ScrollView>
       </Layout>
       <Layout style={styles.form}>

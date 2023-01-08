@@ -29,9 +29,14 @@ export const HomePage: React.FC = () => {
   const [notes, setNotes] = useState<Note[]>([])
   const [authors, setAuthors] = useState<User[]>([])
   const [refreshing, setRefreshing] = useState(true)
+  const [firstLoad, setFirstLoad] = useState(true)
 
   const calculateInitialNotes: () => Promise<void> = async () => {
     if (database && publicKey) {
+      relayPool?.subscribe('main-channel', {
+        kinds: [EventKind.petNames],
+        authors: [publicKey],
+      })
       const users = await getUsers(database, { contacts: true, includeIds: [publicKey] })
       subscribeNotes(users)
       setAuthors(users)
@@ -78,12 +83,15 @@ export const HomePage: React.FC = () => {
   useEffect(() => {
     relayPool?.unsubscribeAll()
     if (relayPool && publicKey) {
+      setFirstLoad(false)
       calculateInitialNotes().then(() => loadNotes())
     }
   }, [publicKey, relayPool])
 
   useEffect(() => {
-    loadNotes()
+    if (!firstLoad) {
+      loadNotes()
+    }
   }, [lastEventId])
 
   useEffect(() => {

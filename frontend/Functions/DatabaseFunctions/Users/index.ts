@@ -10,6 +10,7 @@ export interface User {
   contact?: boolean
   follower?: boolean
   lnurl?: string
+  nip05?: string
 }
 
 const databaseToEntity: (object: object) => User = (object) => {
