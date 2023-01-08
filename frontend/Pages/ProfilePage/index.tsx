@@ -28,7 +28,7 @@ import LnPayment from '../../Components/LnPayment'
 
 export const ProfilePage: React.FC = () => {
   const { database, page, goToPage, goBack } = useContext(AppContext)
-  const { publicKey, privateKey, lastEventId, relayPool } = useContext(RelayPoolContext)
+  const { publicKey, lastEventId, relayPool } = useContext(RelayPoolContext)
   const theme = useTheme()
   const initialPageSize = 10
   const [notes, setNotes] = useState<Note[]>()
@@ -37,13 +37,13 @@ export const ProfilePage: React.FC = () => {
   const [isContact, setIsContact] = useState<boolean>()
   const [refreshing, setRefreshing] = useState(false)
   const [openPayment, setOpenPayment] = useState<boolean>(false)
+  const [firstLoad, setFirstLoad] = useState(true)
   const breadcrump = page.split('%')
   const userId = breadcrump[breadcrump.length - 1].split('#')[1] ?? publicKey
   const username = user?.name === '' ? formatPubKey(user.id) : user?.name
 
   useEffect(() => {
     setRefreshing(true)
-    relayPool?.unsubscribeAll()
     setNotes(undefined)
     setUser(undefined)
 
@@ -51,7 +51,23 @@ export const ProfilePage: React.FC = () => {
     loadNotes()
     subscribeProfile()
     subscribeNotes()
+    setFirstLoad(false)
   }, [page])
+
+  useEffect(() => {
+    if (notes && !firstLoad) {
+      loadUser()
+      loadNotes()
+    }
+  }, [lastEventId])
+
+  useEffect(() => {
+    if (pageSize > initialPageSize && !firstLoad) {
+      loadUser()
+      loadNotes()
+      subscribeNotes(true)
+    }
+  }, [pageSize])
 
   const loadUser: () => void = () => {
     if (database) {
@@ -94,21 +110,6 @@ export const ProfilePage: React.FC = () => {
       authors: [userId],
     })
   }
-
-  useEffect(() => {
-    if (notes) {
-      loadUser()
-      loadNotes()
-    }
-  }, [lastEventId])
-
-  useEffect(() => {
-    if (pageSize > initialPageSize && notes) {
-      loadUser()
-      loadNotes()
-      subscribeNotes(true)
-    }
-  }, [pageSize])
 
   const onRefresh = useCallback(() => {
     setRefreshing(true)
@@ -359,7 +360,7 @@ export const ProfilePage: React.FC = () => {
         )}
         <LnPayment user={user} open={openPayment} setOpen={setOpenPayment} />
       </Layout>
-      {privateKey && publicKey === userId && (
+      {publicKey === userId && (
         <TouchableOpacity
           style={{
             borderWidth: 1,

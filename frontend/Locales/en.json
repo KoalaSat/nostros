@@ -66,6 +66,7 @@
       "username": "Username",
       "picture": "Picture URL",
       "lnurl": "LNURL / Lightning address",
+      "nip05": "NIP05",
       "about": "About",
       "publish": "Publish"
     },
