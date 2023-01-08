@@ -35,7 +35,7 @@ export const Loader: React.FC = () => {
     if (database) {
       getUsers(database, { contacts: true }).then((results) => {
         setContactsCount(results.length)
-        if (publicKey && results && results.length > 1) {
+        if (publicKey && results && results.length > 0) {
           const authors = [...results.map((user: User) => user.id), publicKey]
           relayPool?.subscribe('main-channel', {
             kinds: [EventKind.meta, EventKind.textNote],
