@@ -7,6 +7,7 @@ import { AppContext } from '../../../Contexts/AppContext'
 import { getUser, getUsers, User } from '../../../Functions/DatabaseFunctions/Users'
 import Icon from 'react-native-vector-icons/FontAwesome5'
 import { useTranslation } from 'react-i18next'
+import moment from 'moment'
 
 export const Loader: React.FC = () => {
   const { goToPage, loadingDb, database } = useContext(AppContext)
@@ -19,7 +20,7 @@ export const Loader: React.FC = () => {
   useEffect(() => {
     if (!loadingRelayPool && !loadingDb && publicKey) {
       relayPool?.subscribe('main-channel', {
-        kinds: [EventKind.petNames, EventKind.meta, EventKind.directMessage],
+        kinds: [EventKind.petNames, EventKind.meta],
         authors: [publicKey],
       })
     }
@@ -34,16 +35,12 @@ export const Loader: React.FC = () => {
     if (database) {
       getUsers(database, { contacts: true }).then((results) => {
         setContactsCount(results.length)
-        if (publicKey && results && results.length > 0) {
+        if (publicKey && results && results.length > 1) {
           const authors = [...results.map((user: User) => user.id), publicKey]
           relayPool?.subscribe('main-channel', {
-            kinds: [EventKind.meta],
+            kinds: [EventKind.meta, EventKind.textNote],
             authors,
-          })
-          relayPool?.subscribe('main-channel', {
-            kinds: [EventKind.textNote],
-            authors,
-            limit: 50,
+            since: moment().unix() - 86400,
           })
         }
       })
