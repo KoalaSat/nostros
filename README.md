@@ -48,4 +48,4 @@ Local setup: https://github.com/KoalaSat/nostros/blob/main/SETUP.md
 
 Project's Address: bc1q8xjlxxwpsck429zr7ff466yax0k3lhp9fmm2et
 
-LNURL: nostros@getalby.com
+LN Address: nostros@getalby.com
