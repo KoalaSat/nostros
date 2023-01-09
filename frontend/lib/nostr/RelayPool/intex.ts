@@ -72,7 +72,7 @@ class RelayPool {
     }
   }
 
-  public readonly subscribe: (subId: string, filters?: RelayFilters) => void = async (
+  public readonly subscribe: (subId: string, filters?: RelayFilters[]) => void = async (
     subId,
     filters,
   ) => {
@@ -83,7 +83,7 @@ class RelayPool {
     if (this.subscriptions[subId]?.includes(uuid)) {
       console.log('Subscription already done!', filters)
     } else {
-      this.send(['REQ', subId, filters])
+      this.send([...['REQ', subId], ...(filters ?? [])])
       const newSubscriptions = [...(this.subscriptions[subId] ?? []), uuid]
       this.subscriptions[subId] = newSubscriptions
     }

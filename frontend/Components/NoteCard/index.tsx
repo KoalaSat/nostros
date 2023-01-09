@@ -82,7 +82,7 @@ export const NoteCard: React.FC<NoteCardProps> = ({
               kinds: [EventKind.meta],
               authors: [...rootReplies.map((reply) => reply.pubkey), note.pubkey],
             }
-            relayPool?.subscribe('notecard', message)
+            relayPool?.subscribe('notecard', [message])
           }
         })
       }

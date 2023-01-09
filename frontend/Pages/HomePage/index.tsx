@@ -33,10 +33,12 @@ export const HomePage: React.FC = () => {
 
   const calculateInitialNotes: () => Promise<void> = async () => {
     if (database && publicKey) {
-      relayPool?.subscribe('homepage-contacts', {
-        kinds: [EventKind.petNames],
-        authors: [publicKey],
-      })
+      relayPool?.subscribe('homepage-contacts', [
+        {
+          kinds: [EventKind.petNames],
+          authors: [publicKey],
+        },
+      ])
       const users = await getUsers(database, { contacts: true, includeIds: [publicKey] })
       subscribeNotes(users)
       setAuthors(users)
@@ -60,7 +62,7 @@ export const HomePage: React.FC = () => {
       message.limit = pageSize + initialPageSize
     }
 
-    relayPool?.subscribe('homepage-main', message)
+    relayPool?.subscribe('homepage-main', [message])
   }
 
   const loadNotes: () => void = () => {
@@ -68,14 +70,16 @@ export const HomePage: React.FC = () => {
       getMainNotes(database, publicKey, pageSize).then((notes) => {
         setNotes(notes)
         setRefreshing(false)
-        relayPool?.subscribe('homepage-contacts-meta', {
-          kinds: [EventKind.meta],
-          authors: notes.map((note) => note.pubkey),
-        })
-        relayPool?.subscribe('homepage-contacts-reactions', {
-          kinds: [EventKind.reaction],
-          '#e': notes.map((note) => note.id ?? ''),
-        })
+        relayPool?.subscribe('homepage-contacts-meta', [
+          {
+            kinds: [EventKind.meta],
+            authors: notes.map((note) => note.pubkey),
+          },
+          {
+            kinds: [EventKind.reaction],
+            '#e': notes.map((note) => note.id ?? ''),
+          },
+        ])
       })
     }
   }

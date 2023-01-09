@@ -26,35 +26,35 @@ export const MentionsPage: React.FC = () => {
   const subscribeNotes: () => void = async () => {
     if (!database || !publicKey) return
 
-    relayPool?.subscribe('mentions-user-user', {
-      kinds: [EventKind.textNote],
-      '#p': [publicKey],
-      limit: pageSize,
-    })
-    relayPool?.subscribe('mentions-user-answers', {
-      kinds: [EventKind.textNote],
-      '#e': [publicKey],
-      limit: pageSize,
-    })
+    relayPool?.subscribe('mentions-user', [
+      {
+        kinds: [EventKind.textNote],
+        '#p': [publicKey],
+        limit: pageSize,
+      },
+      {
+        kinds: [EventKind.textNote],
+        '#e': [publicKey],
+        limit: pageSize,
+      },
+    ])
   }
 
   const loadNotes: () => void = () => {
     if (database && publicKey) {
       getMentionNotes(database, publicKey, pageSize).then((notes) => {
         setNotes(notes)
-        relayPool?.subscribe('mentions-notes-answers', {
-          kinds: [EventKind.reaction],
-          '#e': notes.map((note) => note.id ?? ''),
-        })
-        const missingDataNotes = notes
-          .filter((note) => !note.picture || note.picture === '')
-          .map((note) => note.pubkey)
-        if (missingDataNotes.length > 0) {
-          relayPool?.subscribe('mentions-meta', {
+        const missingDataNotes = notes.map((note) => note.pubkey)
+        relayPool?.subscribe('mentions-answers', [
+          {
+            kinds: [EventKind.reaction],
+            '#e': notes.map((note) => note.id ?? ''),
+          },
+          {
             kinds: [EventKind.meta],
             authors: missingDataNotes,
-          })
-        }
+          },
+        ])
       })
     }
   }
