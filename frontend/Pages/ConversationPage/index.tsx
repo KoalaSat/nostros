@@ -56,7 +56,7 @@ export const ConversationPage: React.FC = () => {
         if (user) setOtherUser(user)
       })
       getDirectMessages(database, { conversationId, order: 'ASC' }).then((results) => {
-        if (results && results.length > 0) {
+        if (privateKey && results && results.length > 0) {
           setSendingMessages([])
           setDirectMessages(
             results.map((message) => {
@@ -101,29 +101,29 @@ export const ConversationPage: React.FC = () => {
       }
       setSendingMessages((prev) => [...prev, event as DirectMessage])
       setInput('')
-      
-      const encryptedcontent = encrypt(privateKey, otherPubKey, input)
-      encrypt(privateKey, otherPubKey, input).then((content) => {
-        relayPool
-          ?.sendEvent({
-            ...event,
-            content: encryptedcontent,
-          })
-          .catch((err) => {
-            showMessage({
-              message: t('alerts.privateMessageSendError'),
-              description: err.message,
-              type: 'danger',
+
+      encrypt(privateKey, otherPubKey, input)
+        .then((encryptedcontent) => {
+          relayPool
+            ?.sendEvent({
+              ...event,
+              content: encryptedcontent,
             })
-          })
-      })
-      .catch((err) => {
-        showMessage({
-          message: t('alerts.privateMessageEncryptError'),
-          description: err.message,
-          type: 'danger',
+            .catch((err) => {
+              showMessage({
+                message: t('alerts.privateMessageSendError'),
+                description: err.message,
+                type: 'danger',
+              })
+            })
         })
-      })
+        .catch((err) => {
+          showMessage({
+            message: t('alerts.privateMessageEncryptError'),
+            description: err.message,
+            type: 'danger',
+          })
+        })
     }
   }
 

@@ -15,7 +15,7 @@ export interface RelayPoolContextProps {
   privateKey?: string
   setPrivateKey: (privateKey: string | undefined) => void
   lastEventId?: string
-  setLastEventId: (lastEventId: string) => void
+  lastConfirmationtId?: string
 }
 
 export interface WebsocketEvent {
@@ -32,7 +32,6 @@ export const initialRelayPoolContext: RelayPoolContextProps = {
   setPublicKey: () => {},
   setPrivateKey: () => {},
   setRelayPool: () => {},
-  setLastEventId: () => {},
 }
 
 export const RelayPoolContextProvider = ({
@@ -48,17 +47,30 @@ export const RelayPoolContextProvider = ({
     initialRelayPoolContext.loadingRelayPool,
   )
   const [lastEventId, setLastEventId] = useState<string>('')
+  const [lastConfirmationtId, setLastConfirmationId] = useState<string>('')
   const [lastPage, setLastPage] = useState<string>(page)
 
-  const changeHandler: (event: WebsocketEvent) => void = (event) => {
+  const changeEventIdHandler: (event: WebsocketEvent) => void = (event) => {
     setLastEventId(event.eventId)
   }
+  const changeConfirmationIdHandler: (event: WebsocketEvent) => void = (event) => {
+    console.log('changeConfirmationIdHandler', event)
+    setLastConfirmationId(event.eventId)
+  }
 
-  const debouncedEventIdHandler = useMemo(() => debounce(changeHandler, 1000), [setLastEventId])
+  const debouncedEventIdHandler = useMemo(
+    () => debounce(changeEventIdHandler, 1000),
+    [setLastEventId],
+  )
+  const debouncedConfirmationHandler = useMemo(
+    () => debounce(changeConfirmationIdHandler, 500),
+    [setLastConfirmationId],
+  )
 
   const loadRelayPool: () => void = async () => {
     if (database && publicKey) {
       DeviceEventEmitter.addListener('WebsocketEvent', debouncedEventIdHandler)
+      DeviceEventEmitter.addListener('WebsocketConfirmation', debouncedConfirmationHandler)
       const initRelayPool = new RelayPool([], privateKey)
       initRelayPool.connect(publicKey, (eventId: string) => setLastEventId(eventId))
       setRelayPool(initRelayPool)
@@ -121,7 +133,7 @@ export const RelayPoolContextProvider = ({
         privateKey,
         setPrivateKey,
         lastEventId,
-        setLastEventId,
+        lastConfirmationtId,
       }}
     >
       {children}

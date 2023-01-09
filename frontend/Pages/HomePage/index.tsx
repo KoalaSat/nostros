@@ -44,7 +44,7 @@ export const HomePage: React.FC = () => {
   }
 
   const subscribeNotes: (users: User[], past?: boolean) => void = async (users, past) => {
-    if (!database || !publicKey || users.length === 0) return
+    if (!database || !publicKey) return
 
     const lastNotes: Note[] = await getMainNotes(database, publicKey, initialPageSize)
     const lastNote: Note = lastNotes[lastNotes.length - 1]

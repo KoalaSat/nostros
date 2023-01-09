@@ -15,8 +15,8 @@ const LoadingIndicator = (): ReactElement => (
 
 /**
  * Extension of the UI-Kitten button, with more features.
- * @param param0 
- * @returns 
+ * @param param0
+ * @returns
  */
 export const Button: React.FC<ButtonProps> = ({
   disabled,
@@ -25,7 +25,6 @@ export const Button: React.FC<ButtonProps> = ({
   accessoryLeft,
   ...otherProps
 }) => {
-  console.log('Is loading', loading)
   return (
     <UIKButton
       disabled={disabled ?? loading}
