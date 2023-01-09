@@ -54,13 +54,12 @@ export const ContactsPage: React.FC = () => {
       getUsers(database, filters).then((results) => {
         if (results && results.length > 0) {
           setUsers(results)
-          const missingDataUsers = results.filter((user) => !user.picture).map((user) => user.id)
-          if (missingDataUsers.length > 0) {
-            relayPool?.subscribe('contacts-meta', {
+          relayPool?.subscribe('contacts-meta', [
+            {
               kinds: [EventKind.meta],
-              authors: missingDataUsers,
-            })
-          }
+              authors: results.map((user) => user.id),
+            },
+          ])
         }
       })
     }
@@ -69,17 +68,16 @@ export const ContactsPage: React.FC = () => {
   const subscribeContacts: () => void = async () => {
     relayPool?.unsubscribeAll()
     if (publicKey) {
-      if (selectedTab === 0) {
-        relayPool?.subscribe('contacts-following', {
+      relayPool?.subscribe('contacts', [
+        {
           kinds: [EventKind.petNames],
           authors: [publicKey],
-        })
-      } else if (selectedTab === 1) {
-        relayPool?.subscribe('contacts-followers', {
+        },
+        {
           kinds: [EventKind.petNames],
           '#p': [publicKey],
-        })
-      }
+        },
+      ])
     }
   }
 

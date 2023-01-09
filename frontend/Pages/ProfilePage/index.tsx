@@ -85,10 +85,12 @@ export const ProfilePage: React.FC = () => {
       getNotes(database, { filters: { pubkey: userId }, limit: pageSize }).then((results) => {
         setNotes(results)
         setRefreshing(false)
-        relayPool?.subscribe('answers-profile', {
-          kinds: [EventKind.reaction],
-          '#e': results.map((note) => note.id ?? ''),
-        })
+        relayPool?.subscribe('answers-profile', [
+          {
+            kinds: [EventKind.reaction],
+            '#e': results.map((note) => note.id ?? ''),
+          },
+        ])
       })
     }
   }
@@ -101,14 +103,16 @@ export const ProfilePage: React.FC = () => {
       authors: [userId],
       limit: pageSize,
     }
-    relayPool?.subscribe('main-profile', message)
+    relayPool?.subscribe('main-profile', [message])
   }
 
   const subscribeProfile: () => Promise<void> = async () => {
-    relayPool?.subscribe('user-profile', {
-      kinds: [EventKind.meta, EventKind.petNames],
-      authors: [userId],
-    })
+    relayPool?.subscribe('user-profile', [
+      {
+        kinds: [EventKind.meta, EventKind.petNames],
+        authors: [userId],
+      },
+    ])
   }
 
   const onRefresh = useCallback(() => {
