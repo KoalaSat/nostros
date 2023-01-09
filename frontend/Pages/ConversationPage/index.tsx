@@ -73,12 +73,12 @@ export const ConversationPage: React.FC = () => {
   const subscribeDirectMessages: () => void = async () => {
     relayPool?.unsubscribeAll()
     if (publicKey && otherPubKey) {
-      relayPool?.subscribe('main-channel', {
+      relayPool?.subscribe('conversation-other', {
         kinds: [EventKind.directMessage],
         authors: [publicKey],
         '#p': [otherPubKey],
       })
-      relayPool?.subscribe('main-channel', {
+      relayPool?.subscribe('conversation-user', {
         kinds: [EventKind.directMessage],
         authors: [otherPubKey],
         '#p': [publicKey],

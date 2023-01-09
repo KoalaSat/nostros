@@ -26,12 +26,12 @@ export const MentionsPage: React.FC = () => {
   const subscribeNotes: () => void = async () => {
     if (!database || !publicKey) return
 
-    relayPool?.subscribe('main-channel', {
+    relayPool?.subscribe('mentions-user-user', {
       kinds: [EventKind.textNote],
       '#p': [publicKey],
       limit: pageSize,
     })
-    relayPool?.subscribe('main-channel', {
+    relayPool?.subscribe('mentions-user-answers', {
       kinds: [EventKind.textNote],
       '#e': [publicKey],
       limit: pageSize,
@@ -42,7 +42,7 @@ export const MentionsPage: React.FC = () => {
     if (database && publicKey) {
       getMentionNotes(database, publicKey, pageSize).then((notes) => {
         setNotes(notes)
-        relayPool?.subscribe('main-channel', {
+        relayPool?.subscribe('mentions-notes-answers', {
           kinds: [EventKind.reaction],
           '#e': notes.map((note) => note.id ?? ''),
         })
@@ -50,7 +50,7 @@ export const MentionsPage: React.FC = () => {
           .filter((note) => !note.picture || note.picture === '')
           .map((note) => note.pubkey)
         if (missingDataNotes.length > 0) {
-          relayPool?.subscribe('main-channel', {
+          relayPool?.subscribe('mentions-meta', {
             kinds: [EventKind.meta],
             authors: missingDataNotes,
           })

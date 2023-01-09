@@ -67,7 +67,7 @@ export const NotePage: React.FC = () => {
           kinds: [EventKind.meta],
           authors: [...rootReplies.map((note) => note.pubkey), event.pubkey],
         }
-        relayPool?.subscribe('main-channel', message)
+        relayPool?.subscribe('meta-notepage', message)
       } else {
         setReplies([])
       }
@@ -81,11 +81,11 @@ export const NotePage: React.FC = () => {
 
   const subscribeNotes: (past?: boolean) => Promise<void> = async (past) => {
     if (database && eventId) {
-      relayPool?.subscribe('main-channel', {
+      relayPool?.subscribe('main-notepage', {
         kinds: [EventKind.textNote],
         ids: [eventId],
       })
-      relayPool?.subscribe('main-channel', {
+      relayPool?.subscribe('answers-notepage', {
         kinds: [EventKind.reaction, EventKind.textNote],
         '#e': [eventId],
       })

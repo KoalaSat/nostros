@@ -55,7 +55,7 @@ export const DirectMessagesPage: React.FC = () => {
         if (results && results.length > 0) {
           settDirectMessages(results)
           const otherUsers = results.map((message) => getOtherPubKey(message, publicKey))
-          relayPool?.subscribe('main-channel', {
+          relayPool?.subscribe('directmessages-meta', {
             kinds: [EventKind.meta],
             authors: otherUsers,
           })
@@ -69,11 +69,11 @@ export const DirectMessagesPage: React.FC = () => {
   const subscribeDirectMessages: () => void = async () => {
     relayPool?.unsubscribeAll()
     if (publicKey) {
-      relayPool?.subscribe('main-channel', {
+      relayPool?.subscribe('directmessages-user', {
         kinds: [EventKind.directMessage],
         authors: [publicKey],
       })
-      relayPool?.subscribe('main-channel', {
+      relayPool?.subscribe('directmessages-others', {
         kinds: [EventKind.directMessage],
         '#p': [publicKey],
       })

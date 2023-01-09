@@ -19,7 +19,7 @@ export const Loader: React.FC = () => {
 
   useEffect(() => {
     if (!loadingRelayPool && !loadingDb && publicKey) {
-      relayPool?.subscribe('main-channel', {
+      relayPool?.subscribe('loading-meta', {
         kinds: [EventKind.petNames, EventKind.meta],
         authors: [publicKey],
       })
@@ -37,7 +37,7 @@ export const Loader: React.FC = () => {
         setContactsCount(results.length)
         if (publicKey && results && results.length > 0) {
           const authors = [...results.map((user: User) => user.id), publicKey]
-          relayPool?.subscribe('main-channel', {
+          relayPool?.subscribe('loading-notes', {
             kinds: [EventKind.meta, EventKind.textNote],
             authors,
             since: moment().unix() - 86400 * 2,
