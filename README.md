@@ -22,10 +22,6 @@ Local setup: https://github.com/KoalaSat/nostros/blob/main/SETUP.md
 
 # Some Features to Work On
 
-### Bugs
-
-- [ ] Websocket connections closed when the app goes to background for too long
-
 ### Home
 
 - [ ] Public Room

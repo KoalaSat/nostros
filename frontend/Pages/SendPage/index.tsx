@@ -7,7 +7,7 @@ import {
   TopNavigation,
   useTheme,
 } from '@ui-kitten/components'
-import React, { useContext, useRef, useState } from 'react'
+import React, { useContext, useEffect, useRef, useState } from 'react'
 import { StyleSheet } from 'react-native'
 import { AppContext } from '../../Contexts/AppContext'
 import Icon from 'react-native-vector-icons/FontAwesome5'
@@ -25,7 +25,7 @@ import { Avatar, Button } from '../../Components'
 export const SendPage: React.FC = () => {
   const theme = useTheme()
   const { goBack, page, database } = useContext(AppContext)
-  const { relayPool, publicKey } = useContext(RelayPoolContext)
+  const { relayPool, publicKey, lastConfirmationtId } = useContext(RelayPoolContext)
   const { t } = useTranslation('common')
   // state
   const [content, setContent] = useState<string>('')
@@ -38,6 +38,17 @@ export const SendPage: React.FC = () => {
 
   const breadcrump = page.split('%')
   const eventId = breadcrump[breadcrump.length - 1].split('#')[1]
+
+  useEffect(() => {
+    if (isSending) {
+      showMessage({
+        message: t('alerts.sendNoteSuccess'),
+        type: 'success',
+      })
+      setIsSending(false) // restore sending status
+      goBack()
+    }
+  }, [lastConfirmationtId])
 
   const styles = StyleSheet.create({
     container: {
@@ -106,23 +117,13 @@ export const SendPage: React.FC = () => {
             pubkey: publicKey,
             tags,
           }
-          relayPool
-            ?.sendEvent(event)
-            .then(() => {
-              showMessage({
-                message: t('alerts.sendNoteSuccess'),
-                type: 'success',
-              })
-              setIsSending(false) // restore sending status
-              goBack()
+          relayPool?.sendEvent(event).catch((err) => {
+            showMessage({
+              message: t('alerts.sendNoteError'),
+              description: err.message,
+              type: 'danger',
             })
-            .catch((err) => {
-              showMessage({
-                message: t('alerts.sendNoteError'),
-                description: err.message,
-                type: 'danger',
-              })
-            })
+          })
         })
         .catch((err) => {
           // error with getNotes

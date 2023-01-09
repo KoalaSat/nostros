@@ -40,7 +40,7 @@ export const Loader: React.FC = () => {
           relayPool?.subscribe('main-channel', {
             kinds: [EventKind.meta, EventKind.textNote],
             authors,
-            since: moment().unix() - 86400,
+            since: moment().unix() - 86400 * 2,
           })
         }
       })

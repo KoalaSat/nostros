@@ -19,6 +19,7 @@ import { getUsers, updateUserContact, User } from '../../Functions/DatabaseFunct
 import { Button, UserCard } from '../../Components'
 import { RelayPoolContext } from '../../Contexts/RelayPoolContext'
 import { populatePets } from '../../Functions/RelayFunctions/Users'
+import { getNip19Key } from '../../lib/nostr/Nip19'
 
 export const ContactsPage: React.FC = () => {
   const { database, goBack } = useContext(AppContext)
@@ -85,7 +86,8 @@ export const ContactsPage: React.FC = () => {
   const onPressAddContact: () => void = () => {
     if (contactInput && relayPool && database && publicKey) {
       setIsAddingContact(true)
-      updateUserContact(contactInput, database, true)
+      const hexKey = getNip19Key(contactInput)
+      updateUserContact(hexKey, database, true)
         .then(() => {
           populatePets(relayPool, database, publicKey)
           setShowAddContact(false)

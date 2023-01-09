@@ -1,14 +1,18 @@
 import { Buffer } from 'buffer'
-import { randomBytes } from '@noble/hashes/utils'
+import { generateSecureRandom } from 'react-native-securerandom'
 import * as secp256k1 from '@noble/secp256k1'
 // @ts-expect-error
 import aes from 'browserify-cipher'
 
-export function encrypt(privkey: string, pubkey: string, text: string): string {
+export const encrypt: (privkey: string, pubkey: string, text: string) => Promise<string> = async (
+  privkey,
+  pubkey,
+  text,
+) => {
   const key = secp256k1.getSharedSecret(privkey, '02' + pubkey)
-  const normalizedKey = getNormalizedX(key)
+  const normalizedKey = Buffer.from(key.slice(1, 33)).toString('hex')
 
-  const iv = Uint8Array.from(randomBytes(16))
+  const iv = await generateSecureRandom(16)
   const cipher = aes.createCipheriv('aes-256-cbc', Buffer.from(normalizedKey, 'hex'), iv)
   let encryptedMessage = cipher.update(text, 'utf8', 'base64')
   encryptedMessage += cipher.final('base64')
