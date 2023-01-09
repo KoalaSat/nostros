@@ -27,7 +27,7 @@ import Avatar from '../../Components/Avatar'
 import Icon from 'react-native-vector-icons/FontAwesome5'
 import { useTranslation } from 'react-i18next'
 import { username } from '../../Functions/RelayFunctions/Users'
-import { getPublicKey } from '../../lib/nostr/Nip19'
+import { getNip19Key } from '../../lib/nostr/Nip19'
 
 export const DirectMessagesPage: React.FC = () => {
   const theme = useTheme()
@@ -82,7 +82,7 @@ export const DirectMessagesPage: React.FC = () => {
 
   const onPressOpenConversation: (sendPubKey: string) => void = (sendPubKey) => {
     if (sendPubKey !== '' && publicKey) {
-      const contactPubKey = getPublicKey(sendPubKey)
+      const contactPubKey = getNip19Key(sendPubKey)
       const conversationId = generateConversationId(publicKey, contactPubKey)
       const conversationPath = getConversationPath(conversationId, contactPubKey)
       goToPage(conversationPath)
