@@ -56,7 +56,7 @@ export const ContactsPage: React.FC = () => {
           setUsers(results)
           const missingDataUsers = results.filter((user) => !user.picture).map((user) => user.id)
           if (missingDataUsers.length > 0) {
-            relayPool?.subscribe('main-channel', {
+            relayPool?.subscribe('contacts-meta', {
               kinds: [EventKind.meta],
               authors: missingDataUsers,
             })
@@ -70,12 +70,12 @@ export const ContactsPage: React.FC = () => {
     relayPool?.unsubscribeAll()
     if (publicKey) {
       if (selectedTab === 0) {
-        relayPool?.subscribe('main-channel', {
+        relayPool?.subscribe('contacts-following', {
           kinds: [EventKind.petNames],
           authors: [publicKey],
         })
       } else if (selectedTab === 1) {
-        relayPool?.subscribe('main-channel', {
+        relayPool?.subscribe('contacts-followers', {
           kinds: [EventKind.petNames],
           '#p': [publicKey],
         })
