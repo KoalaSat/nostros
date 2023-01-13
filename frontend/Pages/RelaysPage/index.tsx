@@ -65,7 +65,7 @@ export const RelaysPage: React.FC = () => {
   }
 
   const onPressAddRelay: () => void = () => {
-    if ((addRelayInput.match(REGEX_SOCKET_LINK) ?? []).length > 0) {
+    if (REGEX_SOCKET_LINK.test(addRelayInput)) {
       bottomSheetAddRef.current?.close()
       addRelayItem({
         url: addRelayInput,
@@ -100,7 +100,7 @@ export const RelaysPage: React.FC = () => {
   const renderItem: ListRenderItem<Relay> = ({ index, item }) => (
     <List.Item
       key={index}
-      title={item.url.split('wss://')[1].split('/')[0]}
+      title={item.url.split('wss://')[1]?.split('/')[0]}
       right={() => relayToggle(item)}
       onPress={() => {
         setSelectedRelay(item)
@@ -201,7 +201,7 @@ export const RelaysPage: React.FC = () => {
             </View>
           </View>
           <Divider style={styles.divider}/>
-          <Text variant='titleLarge'>{selectedRelay?.url.split('wss://')[1].split('/')[0]}</Text>
+          <Text variant='titleLarge'>{selectedRelay?.url.split('wss://')[1]?.split('/')[0]}</Text>
         </View>
       </RBSheet>
     </View>
