@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { QuickSQLiteConnection } from 'react-native-quick-sqlite'
 import { initDatabase } from '../Functions/DatabaseFunctions'
-import FlashMessage from 'react-native-flash-message'
 import SInfo from 'react-native-sensitive-info'
 import { BackHandler } from 'react-native'
 
@@ -84,7 +83,6 @@ export const AppContextProvider = ({ children }: AppContextProviderProps): JSX.E
       }}
     >
       {children}
-      <FlashMessage position='top' />
     </AppContext.Provider>
   )
 }

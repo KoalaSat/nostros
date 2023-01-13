@@ -54,7 +54,6 @@ export const RelayPoolContextProvider = ({
     setLastEventId(event.eventId)
   }
   const changeConfirmationIdHandler: (event: WebsocketEvent) => void = (event) => {
-    console.log('changeConfirmationIdHandler', event)
     setLastConfirmationId(event.eventId)
   }
 
