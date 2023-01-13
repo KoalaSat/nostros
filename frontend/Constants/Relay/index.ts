@@ -15,4 +15,4 @@ export const defaultRelays = [
 ]
 
 export const REGEX_SOCKET_LINK =
-  /((wss):\/\/)?([\w_-]+(?:(?:\.[\w_-]+)+))([\w.,@?^=%&:/~+#-]*[\w@?^=%&/~+#-])?/i
+  /^wss:\/\/.*\..*$/i
