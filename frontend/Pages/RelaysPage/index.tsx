@@ -15,7 +15,7 @@ import Icon from 'react-native-vector-icons/FontAwesome5'
 import { useTranslation } from 'react-i18next'
 import { RelayPoolContext } from '../../Contexts/RelayPoolContext'
 import { getRelays, Relay } from '../../Functions/DatabaseFunctions/Relays'
-import { defaultRelays, REGEX_SOCKET_LINK } from '../../Constants/RelayConstants'
+import { defaultRelays, REGEX_SOCKET_LINK } from '../../Constants/Relay'
 import { showMessage } from 'react-native-flash-message'
 
 export const RelaysPage: React.FC = () => {

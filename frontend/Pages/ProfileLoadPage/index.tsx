@@ -1,18 +1,14 @@
 import React, { useContext, useEffect, useState } from 'react'
-import { Button, Layout, Text, useTheme } from '@ui-kitten/components'
-import { StyleSheet } from 'react-native'
-import { RelayPoolContext } from '../../../Contexts/RelayPoolContext'
-import { EventKind } from '../../../lib/nostr/Events'
-import { AppContext } from '../../../Contexts/AppContext'
-import { getUser, getUsers, User } from '../../../Functions/DatabaseFunctions/Users'
-import Icon from 'react-native-vector-icons/FontAwesome5'
+import { RelayPoolContext } from '../../Contexts/RelayPoolContext'
+import { EventKind } from '../../lib/nostr/Events'
+import { AppContext } from '../../Contexts/AppContext'
+import { getUser, getUsers, User } from '../../Functions/DatabaseFunctions/Users'
 import { useTranslation } from 'react-i18next'
 import moment from 'moment'
 
-export const Loader: React.FC = () => {
+export const ProfileLoadPage: React.FC = () => {
   const { goToPage, loadingDb, database } = useContext(AppContext)
   const { publicKey, relayPool, lastEventId, loadingRelayPool } = useContext(RelayPoolContext)
-  const theme = useTheme()
   const { t } = useTranslation('common')
   const [profileFound, setProfileFound] = useState<boolean>(false)
   const [contactsCount, setContactsCount] = useState<number>()
@@ -61,25 +57,9 @@ export const Loader: React.FC = () => {
     }
   }
 
-  const styles = StyleSheet.create({
-    container: {
-      padding: 32,
-    },
-    text: {
-      marginVertical: 10,
-      padding: 32,
-      alignItems: 'center',
-      justifyContent: 'center',
-    },
-    action: {
-      backgroundColor: 'transparent',
-      marginTop: 12,
-    },
-  })
-
   return (
     <>
-      <Layout style={styles.text}>
+      {/* <Layout style={styles.text}>
         <Text>{profileFound ? t('loader.profileFound') : t('loader.searchingProfile')}</Text>
         <Text>{`${t('loader.searchingContacts')} ${contactsCount}`}</Text>
       </Layout>
@@ -103,9 +83,9 @@ export const Loader: React.FC = () => {
         >
           {t('loader.home')}
         </Button>
-      </Layout>
+      </Layout> */}
     </>
   )
 }
 
-export default Loader
+export default ProfileLoadPage

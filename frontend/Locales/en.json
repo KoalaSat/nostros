@@ -1,117 +1,12 @@
 {
   "common": {
-    "landing": {
-      "connect": "Connect",
-      "connecting": "Connecting",
-      "loadingContacts": "Loading contacts",
-      "loadingEvents": "Loading events",
-      "ready": "Ready",
-      "privateKey": "Private key",
-      "publicKey": "Public key"
+    "loggerPage": {
+      "Logger": ""
     },
-    "navigationBar": {
-      "home": "Home",
-      "profile": "Profile"
-    },
-    "homePage": {
-      "search": "Search",
-      "send": "Send",
-      "noContacts": "You have no contacts yet",
-      "addContacts": "Add contacts"
-    },
-    "logger": {
-      "randomKeyGenerator": {
-        "message": "Your private key is on your clipboard",
-        "description": "Store it on a safe place to recover your user"
-      }
-    },
-    "lnPayment": {
-      "monto": "Amount",
-      "comment": "Comment (optional)",
-      "copy": "Copy",
-      "openApp": "Open App"
-    },
-    "profilePage": {
-      "search": "Search",
-      "send": "Send",
-      "profileNotCreated": "Profile not published",
-      "createProfile": "Go to configuration"
-    },
-    "relaysPage": {
-      "title": "Relays",
-      "addRelay": {
-        "placeholder": "Relay URL",
-        "invalidFormat": "Invalid Format",
-        "add": "Add relay"
-      }
-    },
-    "loader": {
-      "searchingProfile": "Searching your profile",
-      "profileFound": "Profile found",
-      "searchingContacts": "Searching contacts:",
-      "help1": "Problems loading your data?",
-      "help2": "Try connecting to other relays.",
+    "menuItems": {
       "relays": "Relays",
-      "home": "Go to Home"
-    },
-    "notePage": {
-      "reply": "Reply"
-    },
-    "configPage": {
-      "title": "Configuration",
-      "logout": "Delete keys",
-      "relays": "Relays",
-      "publicKey": "Public key",
-      "privateKey": "Private key",
-      "username": "Username",
-      "picture": "Picture URL",
-      "lnurl": "LNURL / Lightning address",
-      "nip05": "NIP05",
-      "about": "About",
-      "publish": "Publish"
-    },
-    "direcMessagesPage": {
-      "sendMessage": {
-        "placeholder": "Public key",
-        "send": "Open conversation",
-        "contacts": "Contacts"
-      }
-    },
-    "contactsPage": {
-      "following": "Following",
-      "followers": "Followers",
-      "add": "Add user",
-      "addContact": {
-        "placeholder": "Public key",
-        "add": "Add user"
-      }
-    },
-    "mentionsPage": {
-      "noMentions": "No mentions found yet."
-    },
-    "sendPage": {
-      "title": "Send a note",
-      "placeholder": "Say something to the world...",
-      "send": "Send",
-      "reply": "Send a reply",
-      "contentWarning": "Sensitive content"
-    },
-    "alerts": {
-      "relayAdded": "Relay added",
-      "relayRemoved": "Relay removed",
-      "profilePublished": "Profile published",
-      "profilePublishError": "There was an error while publishing the profile",
-      "invoiceCopied": "Invoice copied",
-      "invoiceError": "There was an error while trying to obtain the invoice",
-      "sendNoteSuccess": "Note sent",
-      "sendNoteError": "There was an error while sending the note",
-      "sendGetNotesError": "There was an internal error retrieving notes",
-      "contactAddError": "There was an error while adding the contact",
-      "privateMessageEncryptError": "There was an error while encrypting the DM",
-      "privateMessageSendError": "There was an error while sending the DM"
-    },
-    "note": {
-      "contentWarning": "Sensitive content. Tap to show."
+      "notConnected": "Not connected",
+      "connectedRelays": "{{number}} connected"
     }
   }
 }

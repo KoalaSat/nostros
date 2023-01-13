@@ -1,55 +1,42 @@
 import React, { useContext } from 'react'
-import { Layout } from '@ui-kitten/components'
-import { StyleSheet } from 'react-native'
 import { AppContext } from '../../Contexts/AppContext'
-import HomePage from '../HomePage'
-import ProfilePage from '../ProfilePage'
-import NavigationBar from '../../Components/NavigationBar'
-import SendPage from '../SendPage'
-import ContactsPage from '../ContactsPage'
-import NotePage from '../NotePage'
-import LandingPage from '../LandingPage'
-import ConfigPage from '../ConfigPage'
-import RelaysPage from '../RelaysPage'
-import DirectMessagesPage from '../DirectMessagesPage'
-import ConversationPage from '../ConversationPage'
-import Loading from '../../Components/Loading'
-import MentionsPage from '../MentionsPage'
+import { createDrawerNavigator } from '@react-navigation/drawer';
+import { Appbar } from 'react-native-paper'
 
 export const MainLayout: React.FC = () => {
   const { page } = useContext(AppContext)
 
-  const styles = StyleSheet.create({
-    container: {
-      flex: 1,
-    },
-  })
-
-  const pagination: Record<string, JSX.Element> = {
-    '': <Loading />,
-    mentions: <MentionsPage />,
-    landing: <LandingPage />,
-    home: <HomePage />,
-    send: <SendPage />,
-    profile: <ProfilePage />,
-    contacts: <ContactsPage />,
-    note: <NotePage />,
-    config: <ConfigPage />,
-    relays: <RelaysPage />,
-    messages: <DirectMessagesPage />,
-    conversation: <ConversationPage />,
-  }
+  // const pagination: Record<string, JSX.Element> = {
+  //   '': <Loading />,
+  //   mentions: <MentionsPage />,
+  //   landing: <LandingPage />,
+  //   home: <HomePage />,
+  //   send: <SendPage />,
+  //   profile: <ProfilePage />,
+  //   contacts: <ContactsPage />,
+  //   note: <NotePage />,
+  //   config: <ConfigPage />,
+  //   relays: <RelaysPage />,
+  //   messages: <DirectMessagesPage />,
+  //   conversation: <ConversationPage />,
+  // }
 
   const breadcrump: string[] = page.split('%')
   const pageToDisplay: string = breadcrump[breadcrump.length - 1].split('#')[0]
 
+  const DrawerNavigator = createDrawerNavigator<{ Home: undefined }>();
+
   return (
-    <>
-      <Layout style={styles.container} level='4'>
-        {pagination[pageToDisplay]}
-      </Layout>
-      {pageToDisplay === 'landing' ? <></> : <NavigationBar />}
-    </>
+    // <>
+    //   {pagination[pageToDisplay]}
+    //   {pageToDisplay === 'landing' ? <></> : <NavigationBar />}
+    // </>
+    <Appbar.Header>
+      <Appbar.BackAction onPress={() => {}} />
+      <Appbar.Content title="Title" />
+      <Appbar.Action icon="calendar" onPress={() => {}} />
+      <Appbar.Action icon="magnify" onPress={() => {}} />
+    </Appbar.Header>
   )
 }
 
