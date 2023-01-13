@@ -6,13 +6,18 @@ import { SvgXml } from 'react-native-svg'
 
 interface LogoProps {
   onlyIcon?: boolean
-  size?: 'large' | 'small'
+  size?: 'large' | 'medium' | 'small'
 }
 
 export const Logo: React.FC<LogoProps> = ({onlyIcon = false, size = 'small' }) => {
+  const logoHeight = {
+    small: 60,
+    medium: 90,
+    large: 120
+  }
   return (
     <View style={styles.container}>
-      <SvgXml xml={nostrosLogoSvg} style={size === 'small' ? styles.logoSmall : styles.logoLarge} />
+      <SvgXml xml={nostrosLogoSvg} style={[styles.logo, { height: logoHeight[size] }]} />
       {!onlyIcon && (
         <Text style={styles.text} variant={size === 'small' ? 'headlineSmall' : 'displayMedium'}>
           NOSTROS
@@ -23,15 +28,8 @@ export const Logo: React.FC<LogoProps> = ({onlyIcon = false, size = 'small' }) =
 }
 
 const styles = StyleSheet.create({
-  logoSmall: {
-    maxHeight: 120,
-    flex: 1,
-    height: 40
-  },
-  logoLarge: {
-    maxHeight: 120,
-    flex: 1,
-    height: 60,
+  logo: {
+    flex: 1
   },
   container: {
     flexDirection: 'row',

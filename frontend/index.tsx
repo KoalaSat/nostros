@@ -13,15 +13,16 @@ import { adaptNavigationTheme, Provider as PaperProvider } from 'react-native-pa
 import { SafeAreaProvider, SafeAreaInsetsContext } from 'react-native-safe-area-context'
 import i18n from './i18n.config'
 import nostrosDarkTheme from './Constants/Theme/theme-dark.json'
-import RootNavigator from './Components/RootNavigator'
+import HomeNavigator from './Pages/HomeNavigator'
 import MenuItems from './Components/MenuItems'
+import FeedNavigator from './Pages/FeedNavigator'
 
 const DrawerNavigator = createDrawerNavigator()
 
 export const Frontend: React.FC = () => {
-  const [initialState, setInitialState] = React.useState<InitialState | undefined>()
+  const [initialState] = React.useState<InitialState | undefined>()
 
-  const { LightTheme, DarkTheme } = adaptNavigationTheme({
+  const { DarkTheme } = adaptNavigationTheme({
     reactNavigationLight: NavigationDefaultTheme,
     reactNavigationDark: NavigationDarkTheme,
   })
@@ -57,7 +58,12 @@ export const Frontend: React.FC = () => {
                         >
                           <DrawerNavigator.Screen
                             name='Home'
-                            component={RootNavigator}
+                            component={HomeNavigator}
+                            options={{ headerShown: false }}
+                          />
+                          <DrawerNavigator.Screen
+                            name='Feed'
+                            component={FeedNavigator}
                             options={{ headerShown: false }}
                           />
                         </DrawerNavigator.Navigator>

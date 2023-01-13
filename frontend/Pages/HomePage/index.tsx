@@ -1,4 +1,3 @@
-import { Button, Card, Layout, Spinner, Text, useTheme } from '@ui-kitten/components'
 import React, { useCallback, useContext, useEffect, useState } from 'react'
 import { t } from 'i18next'
 import {
@@ -119,9 +118,10 @@ export const HomePage: React.FC = () => {
 
   const itemCard: (note: Note) => JSX.Element = (note) => {
     return (
-      <Card onPress={() => onPress(note)} key={note.id ?? ''}>
-        <NoteCard note={note} onlyContactsReplies={true} showReplies={true} />
-      </Card>
+      // <Card onPress={() => onPress(note)} key={note.id ?? ''}>
+      //   <NoteCard note={note} onlyContactsReplies={true} showReplies={true} />
+      // </Card>
+      <></>
     )
   }
 
@@ -166,7 +166,7 @@ export const HomePage: React.FC = () => {
 
   return (
     <>
-      <Layout style={styles.container} level='3'>
+      {/* <Layout style={styles.container} level='3'>
         {notes.length > 0 ? (
           <ScrollView
             onScroll={onScroll}
@@ -216,7 +216,7 @@ export const HomePage: React.FC = () => {
         >
           <Icon name='paper-plane' size={30} color={theme['text-basic-color']} solid />
         </TouchableOpacity>
-      )}
+      )} */}
     </>
   )
 }

@@ -5,9 +5,17 @@ import { AppContext } from '../../Contexts/AppContext'
 import { getUser, getUsers, User } from '../../Functions/DatabaseFunctions/Users'
 import { useTranslation } from 'react-i18next'
 import moment from 'moment'
+import { StyleSheet, View } from 'react-native'
+import Logo from '../../Components/Logo'
+import { Button, Snackbar, Text } from 'react-native-paper'
+import { DrawerNavigationHelpers } from '@react-navigation/drawer/lib/typescript/src/types'
 
-export const ProfileLoadPage: React.FC = () => {
-  const { goToPage, loadingDb, database } = useContext(AppContext)
+interface ProfileLoadPageProps {
+  navigation: DrawerNavigationHelpers;
+}
+
+export const ProfileLoadPage: React.FC<ProfileLoadPageProps> = ({navigation}) => {
+  const { loadingDb, database } = useContext(AppContext)
   const { publicKey, relayPool, lastEventId, loadingRelayPool } = useContext(RelayPoolContext)
   const { t } = useTranslation('common')
   const [profileFound, setProfileFound] = useState<boolean>(false)
@@ -58,34 +66,38 @@ export const ProfileLoadPage: React.FC = () => {
   }
 
   return (
-    <>
-      {/* <Layout style={styles.text}>
-        <Text>{profileFound ? t('loader.profileFound') : t('loader.searchingProfile')}</Text>
-        <Text>{`${t('loader.searchingContacts')} ${contactsCount}`}</Text>
-      </Layout>
-      <Layout>
-        <Text>{t('loader.help1')}</Text>
-        <Text>{t('loader.help2')}</Text>
-      </Layout>
-      <Layout style={styles.action}>
-        <Button
-          onPress={() => goToPage('relays')}
-          status='warning'
-          accessoryLeft={<Icon name='server' size={16} color={theme['text-basic-color']} solid />}
-        >
-          {t('loader.relays')}
-        </Button>
-      </Layout>
-      <Layout style={styles.action}>
-        <Button
-          onPress={() => goToPage('home')}
-          accessoryLeft={<Icon name='home' size={16} color={theme['text-basic-color']} solid />}
-        >
-          {t('loader.home')}
-        </Button>
-      </Layout> */}
-    </>
+    <View style={styles.container}>
+      <Logo onlyIcon size='medium'/>
+      <Text variant='titleMedium'>
+        {profileFound ? t('profileLoadPage.foundProfile') : t('profileLoadPage.searchingProfile')}
+      </Text>
+      <Text variant='titleMedium'>
+        {t('profileLoadPage.foundContacts', { contactsCount })}
+      </Text>
+      <Button mode='contained' onPress={() => navigation}>
+        {t('profileLoadPage.home')}
+      </Button>
+
+      <Snackbar
+        style={styles.snackbar}
+        visible
+        onDismiss={() => {}}
+        action={{label: t('profileLoadPage.relays') ?? '', onPress: () => navigation.navigate('Relays')}}
+      >
+        Conéctate a otros relays si tienes problemas encontrando tus datos.
+      </Snackbar>
+    </View>
   )
 }
+
+const styles = StyleSheet.create({
+  container: {
+    padding: 16,
+  },
+  snackbar: {
+    top: 150,
+    flexDirection: 'column',
+  },
+})
 
 export default ProfileLoadPage

@@ -1,7 +1,11 @@
 {
   "common": {
     "loggerPage": {
-      "Logger": ""
+      "ProfileConnect": "",
+      "ProfileLoad": ""
+    },
+    "profileLoadPage": {
+      "foundContacts": "{{contactsCount}} contacts found"
     },
     "menuItems": {
       "relays": "Relays",

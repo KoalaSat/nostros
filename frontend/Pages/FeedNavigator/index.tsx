@@ -1,16 +1,13 @@
 import * as React from 'react'
 import { Platform, View } from 'react-native'
 import type { DrawerNavigationProp } from '@react-navigation/drawer'
-import { CardStyleInterpolators, createStackNavigator, StackNavigationProp } from '@react-navigation/stack'
+import { CardStyleInterpolators, createStackNavigator } from '@react-navigation/stack'
 import { Appbar, Snackbar, Text, useTheme } from 'react-native-paper'
-import ProfileConnectPage from '../../Pages/ProfileConnectPage'
-import ProfileLoadPage from '../../Pages/ProfileLoadPage'
 import RBSheet from "react-native-raw-bottom-sheet"
-import AboutPage from '../../Pages/AboutPage'
-import { ParamListBase } from '@react-navigation/native'
 import { useTranslation } from 'react-i18next'
+import HomePage from '../HomePage'
 
-export const RootNavigator: React.FC = () => {
+export const HomeNavigator: React.FC = () => {
   const theme = useTheme()
   const { t } = useTranslation('common')
   const bottomSheetRef = React.useRef<RBSheet>(null)
@@ -25,16 +22,6 @@ export const RootNavigator: React.FC = () => {
 
   const onPressQuestion: () => void = () => {
     bottomSheetRef.current?.open()
-  }
-
-  const rightAction: (routeName: string, navigation: StackNavigationProp<ParamListBase, string, undefined>) => JSX.Element = (routeName, navigation) => {
-    if (['Logger', 'Loader'].includes(routeName)) {
-      return <Appbar.Action icon='help-circle-outline' isLeading onPress={onPressQuestion} />
-    } else if (['About'].includes(routeName)) {
-      return <></>
-    } else {
-      return <Appbar.Action icon='cog-outline' isLeading onPress={onPressQuestion} />
-    }
   }
 
   return (
@@ -57,7 +44,7 @@ export const RootNavigator: React.FC = () => {
                     />
                   ) : null}
                   <Appbar.Content title={t(`loggerPage.${route.name}`)} />
-                  {rightAction(route.name, navigation)}
+                  <Appbar.Action icon='help-circle-outline' isLeading onPress={onPressQuestion} />
                 </Appbar.Header>
               )
             },
@@ -65,11 +52,7 @@ export const RootNavigator: React.FC = () => {
         }}
       >
         <Stack.Group>
-          <Stack.Screen name='Logger' component={ProfileConnectPage} />
-          <Stack.Screen name='Loader' component={ProfileLoadPage} />
-        </Stack.Group>
-        <Stack.Group>
-          <Stack.Screen name='About' component={AboutPage} />
+          <Stack.Screen name='Feed' component={HomePage} />
         </Stack.Group>
       </Stack.Navigator>
       <RBSheet
@@ -103,4 +86,4 @@ export const RootNavigator: React.FC = () => {
   )
 }
 
-export default RootNavigator
+export default HomeNavigator

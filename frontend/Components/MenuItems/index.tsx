@@ -46,7 +46,12 @@ export const MenuItems: React.FC<MenuItemsProps> = ({ navigation }) => {
 
   const onPressItem: (index:number) => void = (index) => {
     setDrawerItemIndex(index)
-    navigation.navigate('About')
+    const pagesIndex = [
+      'Relays',
+      'Config',
+      'About'
+    ]
+    navigation.navigate(pagesIndex[index])
   }
 
   const relaysRightButton: () => JSX.Element = () => {
@@ -82,6 +87,7 @@ export const MenuItems: React.FC<MenuItemsProps> = ({ navigation }) => {
           styles.drawerContent,
           {
             backgroundColor: theme.colors.background,
+            borderBottomRightRadius: publicKey ? 0 : 28,
           },
         ]}
       >
@@ -136,11 +142,12 @@ export const MenuItems: React.FC<MenuItemsProps> = ({ navigation }) => {
 const styles = StyleSheet.create({
   drawerContent: {
     flex: 1,
-    borderBottomRightRadius: 28,
     borderTopRightRadius: 28
   },
   bottomSection: {
     padding: 24,
+    marginBottom: 0,
+    borderBottomRightRadius: 28
   },
 })
 

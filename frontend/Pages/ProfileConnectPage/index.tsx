@@ -1,33 +1,52 @@
-import React, { useContext, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import { Clipboard, StyleSheet, View } from 'react-native'
 import { RelayPoolContext } from '../../Contexts/RelayPoolContext'
 import { useTranslation } from 'react-i18next'
 import { getNip19Key, isPrivateKey, isPublicKey } from '../../lib/nostr/Nip19'
 import { Button, Switch, Text, TextInput } from 'react-native-paper'
 import Logo from '../../Components/Logo'
+import { DrawerNavigationHelpers } from '@react-navigation/drawer/lib/typescript/src/types'
 
-export const ProfileConnectPage: React.FC = () => {
+interface ProfileConnectPageProps {
+  navigation: DrawerNavigationHelpers;
+}
+
+export const ProfileConnectPage: React.FC<ProfileConnectPageProps> = ({navigation}) => {
   const { setPrivateKey, setPublicKey } = useContext(RelayPoolContext)
   const { t } = useTranslation('common')
+  const [isNip19, setIsNip19] = useState<boolean>(false)
   const [isPublic, setIsPublic] = useState<boolean>(false)
   const [inputValue, setInputValue] = useState<string>('')
 
-  const onPress: () => void = () => {
+  useEffect(() => checkKey(), [inputValue])
+  useEffect(() => {
+    setPrivateKey(undefined)
+    setPublicKey(undefined)
+  }, [])
+
+  const checkKey: () => void = () => {
     if (inputValue && inputValue !== '') {
       const isBenchPrivate = isPrivateKey(inputValue)
       const isBenchPublic = isPublicKey(inputValue)
-      if (isBenchPrivate) setIsPublic(true)
-      if (isBenchPublic) setIsPublic(false)
-
-      const key = getNip19Key(inputValue)
-
-      if ((!isPublic && !isBenchPublic) || isBenchPrivate) {
-        setPrivateKey(key)
-      } else {
-        setPublicKey(key)
-      }
+      setIsPublic(!isBenchPrivate && isBenchPublic)
+      setIsNip19(isBenchPrivate || isBenchPublic)
     }
   }
+
+  const onPress: () => void = () => {
+    if (inputValue && inputValue !== '') {
+      const key = isNip19 ? getNip19Key(inputValue) : inputValue
+
+      if (isPublic) {
+        setPublicKey(key)
+      } else {
+        setPrivateKey(key)
+      }
+
+      navigation.navigate('ProfileLoad')
+    }
+  }
+  
 
   const pasteContent: () => void = () => {
     Clipboard.getString().then((value) => {
@@ -41,7 +60,7 @@ export const ProfileConnectPage: React.FC = () => {
   return (
     <>
       <View style={styles.container}>
-        <Logo size='large'/>
+        <Logo size='medium'/>
         <View>
           <TextInput
             mode='outlined'
@@ -74,7 +93,7 @@ export const ProfileConnectPage: React.FC = () => {
           </View>
           <View style={styles.row}>
             <Text>{t('loggerPage.notKeys')}</Text>
-            <Button mode='text' onPress={() => console.log('Pressed')}>
+            <Button mode='text' onPress={() => navigation.navigate('ProfileCreate')}>
               {t('loggerPage.createButton')}
             </Button>
           </View>
