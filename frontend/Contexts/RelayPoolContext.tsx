@@ -5,6 +5,7 @@ import SInfo from 'react-native-sensitive-info'
 import { getPublickey } from '../lib/nostr/Bip'
 import { DeviceEventEmitter } from 'react-native'
 import debounce from 'lodash.debounce'
+import { getRelays, Relay } from '../Functions/DatabaseFunctions/Relays'
 
 export interface RelayPoolContextProps {
   loadingRelayPool: boolean
@@ -16,6 +17,9 @@ export interface RelayPoolContextProps {
   setPrivateKey: (privateKey: string | undefined) => void
   lastEventId?: string
   lastConfirmationtId?: string
+  relays: Relay[]
+  addRelayItem: (relay: Relay) => Promise<void>
+  removeRelayItem: (relay: Relay) => Promise<void>
 }
 
 export interface WebsocketEvent {
@@ -32,13 +36,16 @@ export const initialRelayPoolContext: RelayPoolContextProps = {
   setPublicKey: () => {},
   setPrivateKey: () => {},
   setRelayPool: () => {},
+  addRelayItem: async () => await new Promise(() => {}),
+  removeRelayItem: async () => await new Promise(() => {}),
+  relays: []
 }
 
 export const RelayPoolContextProvider = ({
   children,
   images,
 }: RelayPoolContextProviderProps): JSX.Element => {
-  const { database, loadingDb, goToPage, page } = useContext(AppContext)
+  const { database, loadingDb } = useContext(AppContext)
 
   const [publicKey, setPublicKey] = useState<string>()
   const [privateKey, setPrivateKey] = useState<string>()
@@ -48,7 +55,7 @@ export const RelayPoolContextProvider = ({
   )
   const [lastEventId, setLastEventId] = useState<string>('')
   const [lastConfirmationtId, setLastConfirmationId] = useState<string>('')
-  const [lastPage, setLastPage] = useState<string>(page)
+  const [relays, setRelays] = React.useState<Relay[]>([])
 
   const changeEventIdHandler: (event: WebsocketEvent) => void = (event) => {
     setLastEventId(event.eventId)
@@ -74,25 +81,45 @@ export const RelayPoolContextProvider = ({
       initRelayPool.connect(publicKey, (eventId: string) => setLastEventId(eventId))
       setRelayPool(initRelayPool)
       setLoadingRelayPool(false)
+      loadRelays()
     }
   }
 
-  useEffect(() => {
-    if (relayPool && lastPage !== page) {
-      setLastPage(page)
+  const loadRelays: () => void = () => {
+    if (database) {
+      getRelays(database).then((results) => setRelays(results))
     }
-  }, [page])
+  }
+
+
+  const addRelayItem: (relay: Relay) => Promise<void> = async (relay) => {
+    return await new Promise((resolve, _reject) => {      
+      if (relayPool && database && publicKey) {
+        relayPool.add(relay.url, () => {
+          setRelays((prev) => [...prev, relay])
+          resolve()
+        })
+      }
+    })
+  }
+
+  const removeRelayItem: (relay: Relay) => Promise<void> = async (relay) => {
+    return await new Promise((resolve, _reject) => {      
+      if (relayPool && database && publicKey) {
+        relayPool.remove(relay.url, () => {
+          setRelays((prev) => prev.filter((item) => item.url !== relay.url))
+          resolve()
+        })
+      }
+    })
+  }
 
   useEffect(() => {
     if (publicKey && publicKey !== '') {
       SInfo.setItem('publicKey', publicKey, {})
-      if (!loadingRelayPool && page !== 'landing') {
-        goToPage('home', true)
-      } else {
-        loadRelayPool()
-      }
+      loadRelayPool()
     }
-  }, [publicKey, loadingRelayPool])
+  }, [publicKey])
 
   useEffect(() => {
     if (privateKey && privateKey !== '') {
@@ -112,8 +139,6 @@ export const RelayPoolContextProvider = ({
           SInfo.getItem('publicKey', {}).then((publicResult) => {
             if (publicResult && publicResult !== '') {
               setPublicKey(publicResult)
-            } else {
-              goToPage('landing', true)
             }
           })
         }
@@ -133,6 +158,9 @@ export const RelayPoolContextProvider = ({
         setPrivateKey,
         lastEventId,
         lastConfirmationtId,
+        relays,
+        addRelayItem,
+        removeRelayItem
       }}
     >
       {children}

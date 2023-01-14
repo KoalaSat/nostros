@@ -13,6 +13,7 @@ import { adaptNavigationTheme, Provider as PaperProvider } from 'react-native-pa
 import { SafeAreaProvider, SafeAreaInsetsContext } from 'react-native-safe-area-context'
 import i18n from './i18n.config'
 import nostrosDarkTheme from './Constants/Theme/theme-dark.json'
+import { navigationRef } from './lib/Navigation'
 import HomeNavigator from './Pages/HomeNavigator'
 import MenuItems from './Components/MenuItems'
 import FeedNavigator from './Pages/FeedNavigator'
@@ -20,8 +21,6 @@ import FeedNavigator from './Pages/FeedNavigator'
 const DrawerNavigator = createDrawerNavigator()
 
 export const Frontend: React.FC = () => {
-  const [initialState] = React.useState<InitialState | undefined>()
-
   const { DarkTheme } = adaptNavigationTheme({
     reactNavigationLight: NavigationDefaultTheme,
     reactNavigationDark: NavigationDarkTheme,
@@ -41,18 +40,19 @@ export const Frontend: React.FC = () => {
     <PaperProvider theme={nostrosDarkTheme}>
       <SafeAreaProvider>
         <I18nextProvider i18n={i18n}>
-          <AppContextProvider>
-            <RelayPoolContextProvider>
-              <React.Fragment>
-                <NavigationContainer theme={CombinedDefaultTheme} initialState={initialState}>
+          <NavigationContainer theme={CombinedDefaultTheme} ref={navigationRef}>
+            <AppContextProvider>
+              <RelayPoolContextProvider>
+                <React.Fragment>
                   <SafeAreaInsetsContext.Consumer>
                     {() => {
                       return (
                         <DrawerNavigator.Navigator
-                          drawerContent={({navigation}) => <MenuItems navigation={navigation}/>}
+                          drawerContent={({ navigation }) => <MenuItems navigation={navigation} />}
                           screenOptions={{
                             drawerStyle: {
-                              borderRadius: 28
+                              borderRadius: 28,
+                              width: 296
                             },
                           }}
                         >
@@ -70,10 +70,10 @@ export const Frontend: React.FC = () => {
                       )
                     }}
                   </SafeAreaInsetsContext.Consumer>
-                </NavigationContainer>
-              </React.Fragment>
-            </RelayPoolContextProvider>
-          </AppContextProvider>
+                </React.Fragment>
+              </RelayPoolContextProvider>
+            </AppContextProvider>
+          </NavigationContainer>
         </I18nextProvider>
       </SafeAreaProvider>
     </PaperProvider>

@@ -8,13 +8,9 @@ import moment from 'moment'
 import { StyleSheet, View } from 'react-native'
 import Logo from '../../Components/Logo'
 import { Button, Snackbar, Text } from 'react-native-paper'
-import { DrawerNavigationHelpers } from '@react-navigation/drawer/lib/typescript/src/types'
+import { navigate } from '../../lib/Navigation'
 
-interface ProfileLoadPageProps {
-  navigation: DrawerNavigationHelpers;
-}
-
-export const ProfileLoadPage: React.FC<ProfileLoadPageProps> = ({navigation}) => {
+export const ProfileLoadPage: React.FC = () => {
   const { loadingDb, database } = useContext(AppContext)
   const { publicKey, relayPool, lastEventId, loadingRelayPool } = useContext(RelayPoolContext)
   const { t } = useTranslation('common')
@@ -27,6 +23,10 @@ export const ProfileLoadPage: React.FC<ProfileLoadPageProps> = ({navigation}) =>
         {
           kinds: [EventKind.petNames, EventKind.meta],
           authors: [publicKey],
+        },
+        {
+          kinds: [EventKind.petNames],
+          '#p': [publicKey],
         },
       ])
     }
@@ -74,15 +74,14 @@ export const ProfileLoadPage: React.FC<ProfileLoadPageProps> = ({navigation}) =>
       <Text variant='titleMedium'>
         {t('profileLoadPage.foundContacts', { contactsCount })}
       </Text>
-      <Button mode='contained' onPress={() => navigation}>
+      <Button mode='contained' onPress={() => navigate('Feed')}>
         {t('profileLoadPage.home')}
       </Button>
-
       <Snackbar
         style={styles.snackbar}
         visible
         onDismiss={() => {}}
-        action={{label: t('profileLoadPage.relays') ?? '', onPress: () => navigation.navigate('Relays')}}
+        action={{label: t('profileLoadPage.relays') ?? '', onPress: () => navigate('Relays')}}
       >
         Conéctate a otros relays si tienes problemas encontrando tus datos.
       </Snackbar>

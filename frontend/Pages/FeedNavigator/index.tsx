@@ -6,6 +6,10 @@ import { Appbar, Snackbar, Text, useTheme } from 'react-native-paper'
 import RBSheet from "react-native-raw-bottom-sheet"
 import { useTranslation } from 'react-i18next'
 import HomePage from '../HomePage'
+import RelaysPage from '../RelaysPage'
+import AboutPage from '../AboutPage'
+import ProfileConfigPage from '../ProfileConfigPage'
+import { navigate } from '../../lib/Navigation'
 
 export const HomeNavigator: React.FC = () => {
   const theme = useTheme()
@@ -19,10 +23,6 @@ export const HomeNavigator: React.FC = () => {
         : CardStyleInterpolators.forHorizontalIOS,
     [],
   )
-
-  const onPressQuestion: () => void = () => {
-    bottomSheetRef.current?.open()
-  }
 
   return (
     <>
@@ -43,8 +43,8 @@ export const HomeNavigator: React.FC = () => {
                       onPress={() => (navigation as any as DrawerNavigationProp<{}>).openDrawer()}
                     />
                   ) : null}
-                  <Appbar.Content title={t(`loggerPage.${route.name}`)} />
-                  <Appbar.Action icon='help-circle-outline' isLeading onPress={onPressQuestion} />
+                  <Appbar.Content title={t(`homeNavigator.${route.name}`)} />
+                  <Appbar.Action icon='cog-outline' isLeading onPress={() => navigate('Config')} />
                 </Appbar.Header>
               )
             },
@@ -52,7 +52,12 @@ export const HomeNavigator: React.FC = () => {
         }}
       >
         <Stack.Group>
-          <Stack.Screen name='Feed' component={HomePage} />
+          <Stack.Screen name='Landing' component={HomePage} />
+        </Stack.Group>
+        <Stack.Group>
+          <Stack.Screen name='Relays' component={RelaysPage} />
+          <Stack.Screen name='About' component={AboutPage} />
+          <Stack.Screen name='ProfileConfig' component={ProfileConfigPage} />
         </Stack.Group>
       </Stack.Navigator>
       <RBSheet

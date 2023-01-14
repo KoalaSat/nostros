@@ -1,6 +1,5 @@
-import { Divider, Input, Layout, TopNavigation, useTheme } from '@ui-kitten/components'
 import React, { useContext, useEffect, useState } from 'react'
-import { Clipboard, ScrollView, StyleSheet } from 'react-native'
+import { Clipboard, StyleSheet } from 'react-native'
 import { AppContext } from '../../Contexts/AppContext'
 import Icon from 'react-native-vector-icons/FontAwesome5'
 import { useTranslation } from 'react-i18next'
@@ -10,10 +9,9 @@ import SInfo from 'react-native-sensitive-info'
 import { getUser } from '../../Functions/DatabaseFunctions/Users'
 import { EventKind } from '../../lib/nostr/Events'
 import moment from 'moment'
-import { showMessage } from 'react-native-flash-message'
-import { Button } from '../../Components'
+import { useTheme } from 'react-native-paper'
 
-export const ConfigPage: React.FC = () => {
+export const ProfileConfigPage: React.FC = () => {
   const theme = useTheme()
   const { goToPage, goBack, database, init } = useContext(AppContext)
   const { setPrivateKey, setPublicKey, relayPool, publicKey, privateKey } =
@@ -81,31 +79,13 @@ export const ConfigPage: React.FC = () => {
           tags: [],
         })
         .then(() => {
-          showMessage({
-            message: t('alerts.profilePublished'),
-            duration: 4000,
-            type: 'success',
-          })
           setIsPublishingProfile(false) // restore sending status
         })
         .catch((err) => {
-          showMessage({
-            message: t('alerts.profilePublishError'),
-            description: err.message,
-            type: 'danger',
-          })
           setIsPublishingProfile(false) // restore sending status
         })
     }
   }
-
-  const renderBackAction = (): JSX.Element => (
-    <Button
-      accessoryRight={<Icon name='arrow-left' size={16} color={theme['text-basic-color']} />}
-      onPress={onPressBack}
-      appearance='ghost'
-    />
-  )
 
   const copyToClipboard: (value: string) => JSX.Element = (value) => {
     const copy: () => void = () => Clipboard.setString(value)
@@ -131,7 +111,7 @@ export const ConfigPage: React.FC = () => {
 
   return (
     <>
-      <Layout style={styles.container} level='2'>
+      {/* <Layout style={styles.container} level='2'>
         <TopNavigation
           alignment='center'
           title={t('configPage.title')}
@@ -236,9 +216,9 @@ export const ConfigPage: React.FC = () => {
             </Layout>
           </Layout>
         </ScrollView>
-      </Layout>
+      </Layout> */}
     </>
   )
 }
 
-export default ConfigPage
+export default ProfileConfigPage

@@ -11,13 +11,13 @@ import {
 import { AppContext } from '../../Contexts/AppContext'
 import { getMainNotes, Note } from '../../Functions/DatabaseFunctions/Notes'
 import NoteCard from '../../Components/NoteCard'
-import Icon from 'react-native-vector-icons/FontAwesome5'
 import { RelayPoolContext } from '../../Contexts/RelayPoolContext'
 import { EventKind } from '../../lib/nostr/Events'
 import { getReplyEventId } from '../../Functions/RelayFunctions/Events'
 import { getUsers, User } from '../../Functions/DatabaseFunctions/Users'
 import { handleInfinityScroll } from '../../Functions/NativeFunctions'
 import { RelayFilters } from '../../lib/nostr/RelayPool/intex'
+import { useTheme } from 'react-native-paper'
 
 export const HomePage: React.FC = () => {
   const { database, goToPage } = useContext(AppContext)
