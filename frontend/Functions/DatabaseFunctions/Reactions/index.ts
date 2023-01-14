@@ -37,7 +37,7 @@ export const getReactionsCount: (
   const resultSet = await db.execute(notesQuery)
   const item: { 'COUNT(*)': number } = resultSet?.rows?.item(0)
 
-  return item['COUNT(*)']
+  return item['COUNT(*)'] ?? 0
 }
 
 export const getUserReaction: (

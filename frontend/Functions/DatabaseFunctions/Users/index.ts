@@ -54,6 +54,22 @@ export const addUser: (pubKey: string, db: QuickSQLiteConnection) => Promise<Que
   return db.execute(query, [pubKey])
 }
 
+export const getContactsCount: (db: QuickSQLiteConnection) => Promise<number> = async (db) => {
+  const countQuery = 'SELECT COUNT(*) FROM nostros_users WHERE contact = 1'
+  const resultSet = db.execute(countQuery)
+  const item: { 'COUNT(*)': number } = resultSet?.rows?.item(0)
+
+  return item['COUNT(*)'] ?? 0
+}
+
+export const getFollowersCount: (db: QuickSQLiteConnection) => Promise<number> = async (db) => {
+  const countQuery = 'SELECT COUNT(*) FROM nostros_users WHERE follower = 1'
+  const resultSet = db.execute(countQuery)
+  const item: { 'COUNT(*)': number } = resultSet?.rows?.item(0)
+
+  return item['COUNT(*)'] ?? 0
+}
+
 export const getUsers: (
   db: QuickSQLiteConnection,
   options: {

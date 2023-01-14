@@ -1,6 +1,6 @@
 {
   "common": {
-    "loggerPage": {
+    "homeNavigator": {
       "ProfileConnect": "",
       "ProfileLoad": ""
     },
@@ -10,7 +10,12 @@
     "menuItems": {
       "relays": "Relays",
       "notConnected": "Not connected",
-      "connectedRelays": "{{number}} connected"
+      "connectedRelays": "{{number}} connected",
+      "following": "{{following}} following",
+      "followers": "{{followers}} followers",
+      "configuration": "Configuration",
+      "about": "About",
+      "logout": "Logout"
     }
   }
 }

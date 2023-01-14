@@ -107,7 +107,7 @@ export const HomeNavigator: React.FC = () => {
               return (
                 <Appbar.Header>
                   {leftAction()}
-                  <Appbar.Content title={t(`loggerPage.${route.name}`)} />
+                  <Appbar.Content title={t(`homeNavigator.${route.name}`)} />
                   <Appbar.Action icon='help-circle-outline' isLeading onPress={() => onPressQuestion(route.name)} />
                 </Appbar.Header>
               )

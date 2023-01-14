@@ -2,31 +2,39 @@ import React, { useContext, useEffect, useState } from 'react'
 import { RelayPoolContext } from '../../Contexts/RelayPoolContext'
 import { EventKind } from '../../lib/nostr/Events'
 import { AppContext } from '../../Contexts/AppContext'
-import { getUser, getUsers, User } from '../../Functions/DatabaseFunctions/Users'
+import { UserContext } from '../../Contexts/UserContext'
+import { getUsers, User } from '../../Functions/DatabaseFunctions/Users'
 import { useTranslation } from 'react-i18next'
 import moment from 'moment'
 import { StyleSheet, View } from 'react-native'
 import Logo from '../../Components/Logo'
 import { Button, Snackbar, Text } from 'react-native-paper'
-import { DrawerNavigationHelpers } from '@react-navigation/drawer/lib/typescript/src/types'
+import { navigate } from '../../lib/Navigation'
 
-interface ProfileLoadPageProps {
-  navigation: DrawerNavigationHelpers;
-}
-
-export const ProfileLoadPage: React.FC<ProfileLoadPageProps> = ({navigation}) => {
+export const ProfileLoadPage: React.FC = () => {
   const { loadingDb, database } = useContext(AppContext)
-  const { publicKey, relayPool, lastEventId, loadingRelayPool } = useContext(RelayPoolContext)
+  const { relayPool, lastEventId, loadingRelayPool } = useContext(RelayPoolContext)
+  const { publicKey, reloadUser, user } = useContext(UserContext)
   const { t } = useTranslation('common')
   const [profileFound, setProfileFound] = useState<boolean>(false)
-  const [contactsCount, setContactsCount] = useState<number>()
+  const [contactsCount, setContactsCount] = useState<number>(0)
 
   useEffect(() => {
     if (!loadingRelayPool && !loadingDb && publicKey) {
       relayPool?.subscribe('loading-meta', [
         {
-          kinds: [EventKind.petNames, EventKind.meta],
+          kinds: [EventKind.meta],
           authors: [publicKey],
+        }
+      ])
+      relayPool?.subscribe('loading-pets', [
+        {
+          kinds: [EventKind.petNames],
+          authors: [publicKey],
+        },
+        {
+          kinds: [EventKind.petNames],
+          '#p': [publicKey],
         },
       ])
     }
@@ -34,14 +42,19 @@ export const ProfileLoadPage: React.FC<ProfileLoadPageProps> = ({navigation}) =>
 
   useEffect(() => {
     loadPets()
-    loadProfile()
+    reloadUser()
   }, [lastEventId])
 
+  useEffect(() => {
+    if (user) setProfileFound(true)
+  }, [user])
+
   const loadPets: () => void = () => {
-    if (database) {
+    if (database && publicKey) {
       getUsers(database, { contacts: true }).then((results) => {
-        setContactsCount(results.length)
-        if (publicKey && results && results.length > 0) {
+        if (results && results.length > 0) {
+          reloadUser()
+          setContactsCount(results.length)
           const authors = [...results.map((user: User) => user.id), publicKey]
           relayPool?.subscribe('loading-notes', [
             {
@@ -50,16 +63,6 @@ export const ProfileLoadPage: React.FC<ProfileLoadPageProps> = ({navigation}) =>
               since: moment().unix() - 86400,
             },
           ])
-        }
-      })
-    }
-  }
-
-  const loadProfile: () => void = () => {
-    if (database && publicKey) {
-      getUser(publicKey, database).then((result) => {
-        if (result) {
-          setProfileFound(true)
         }
       })
     }
@@ -74,15 +77,14 @@ export const ProfileLoadPage: React.FC<ProfileLoadPageProps> = ({navigation}) =>
       <Text variant='titleMedium'>
         {t('profileLoadPage.foundContacts', { contactsCount })}
       </Text>
-      <Button mode='contained' onPress={() => navigation}>
+      <Button mode='contained' onPress={() => navigate('Feed')}>
         {t('profileLoadPage.home')}
       </Button>
-
       <Snackbar
         style={styles.snackbar}
         visible
         onDismiss={() => {}}
-        action={{label: t('profileLoadPage.relays') ?? '', onPress: () => navigation.navigate('Relays')}}
+        action={{label: t('profileLoadPage.relays') ?? '', onPress: () => navigate('Relays')}}
       >
         Conéctate a otros relays si tienes problemas encontrando tus datos.
       </Snackbar>

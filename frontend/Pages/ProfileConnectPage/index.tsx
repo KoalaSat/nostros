@@ -1,28 +1,20 @@
 import React, { useContext, useEffect, useState } from 'react'
 import { Clipboard, StyleSheet, View } from 'react-native'
-import { RelayPoolContext } from '../../Contexts/RelayPoolContext'
+import { UserContext } from '../../Contexts/UserContext'
 import { useTranslation } from 'react-i18next'
 import { getNip19Key, isPrivateKey, isPublicKey } from '../../lib/nostr/Nip19'
 import { Button, Switch, Text, TextInput } from 'react-native-paper'
 import Logo from '../../Components/Logo'
-import { DrawerNavigationHelpers } from '@react-navigation/drawer/lib/typescript/src/types'
+import { navigate } from '../../lib/Navigation'
 
-interface ProfileConnectPageProps {
-  navigation: DrawerNavigationHelpers;
-}
-
-export const ProfileConnectPage: React.FC<ProfileConnectPageProps> = ({navigation}) => {
-  const { setPrivateKey, setPublicKey } = useContext(RelayPoolContext)
+export const ProfileConnectPage: React.FC = () => {
+  const { setPrivateKey, setPublicKey } = useContext(UserContext)
   const { t } = useTranslation('common')
   const [isNip19, setIsNip19] = useState<boolean>(false)
   const [isPublic, setIsPublic] = useState<boolean>(false)
   const [inputValue, setInputValue] = useState<string>('')
 
   useEffect(() => checkKey(), [inputValue])
-  useEffect(() => {
-    setPrivateKey(undefined)
-    setPublicKey(undefined)
-  }, [])
 
   const checkKey: () => void = () => {
     if (inputValue && inputValue !== '') {
@@ -43,7 +35,7 @@ export const ProfileConnectPage: React.FC<ProfileConnectPageProps> = ({navigatio
         setPrivateKey(key)
       }
 
-      navigation.navigate('ProfileLoad')
+      navigate('ProfileLoad')
     }
   }
   
@@ -52,7 +44,6 @@ export const ProfileConnectPage: React.FC<ProfileConnectPageProps> = ({navigatio
     Clipboard.getString().then((value) => {
       setInputValue(value ?? '')
     })
-    
   }
 
   const label: string = React.useMemo(() => isPublic ? t('loggerPage.publicKey') : t('loggerPage.privateKey'), [isPublic])
@@ -93,7 +84,7 @@ export const ProfileConnectPage: React.FC<ProfileConnectPageProps> = ({navigatio
           </View>
           <View style={styles.row}>
             <Text>{t('loggerPage.notKeys')}</Text>
-            <Button mode='text' onPress={() => navigation.navigate('ProfileCreate')}>
+            <Button mode='text' onPress={() => navigate('ProfileCreate')}>
               {t('loggerPage.createButton')}
             </Button>
           </View>

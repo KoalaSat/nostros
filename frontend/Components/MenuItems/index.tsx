@@ -1,83 +1,51 @@
 import * as React from 'react'
-import { StyleSheet } from 'react-native'
+import { StyleSheet, View } from 'react-native'
 import { DrawerContentScrollView } from '@react-navigation/drawer'
-import { Button, Drawer, Text, useTheme } from 'react-native-paper'
+import {
+  Button,
+  Card,
+  Chip,
+  Drawer,
+  IconButton,
+  Text,
+  TouchableRipple,
+  useTheme,
+} from 'react-native-paper'
 import Logo from '../Logo'
 import { useTranslation } from 'react-i18next'
-import SInfo from 'react-native-sensitive-info'
 import { RelayPoolContext } from '../../Contexts/RelayPoolContext'
-import { dropTables } from '../../Functions/DatabaseFunctions'
-import { AppContext } from '../../Contexts/AppContext'
+import { UserContext } from '../../Contexts/UserContext'
 import { DrawerNavigationHelpers } from '@react-navigation/drawer/lib/typescript/src/types'
-
-interface ItemList {
-  label: string
-  icon: string
-  key: number 
-  right?: () => JSX.Element
-}
+import { navigate } from '../../lib/Navigation'
+import NostrosAvatar from '../Avatar'
+import { formatPubKey } from '../../Functions/RelayFunctions/Users'
 
 interface MenuItemsProps {
-  navigation: DrawerNavigationHelpers;
+  navigation: DrawerNavigationHelpers
 }
 
 export const MenuItems: React.FC<MenuItemsProps> = ({ navigation }) => {
   const [drawerItemIndex, setDrawerItemIndex] = React.useState<number>(-1)
-  const { goToPage, database, init } = React.useContext(AppContext)
-  const { setPrivateKey, setPublicKey, relayPool, publicKey } = React.useContext(RelayPoolContext)
+  const { relays } = React.useContext(RelayPoolContext)
+  const { nPub, publicKey, user, contactsCount, followersCount, logout } =
+    React.useContext(UserContext)
   const { t } = useTranslation('common')
   const theme = useTheme()
 
   const onPressLogout: () => void = () => {
-    if (database) {
-      relayPool?.unsubscribeAll()
-      setPrivateKey(undefined)
-      setPublicKey(undefined)
-      dropTables(database).then(() => {
-        SInfo.deleteItem('privateKey', {}).then(() => {
-          SInfo.deleteItem('publicKey', {}).then(() => {
-            init()
-            goToPage('landing', true)
-          })
-        })
-      })
-    }
+    logout()
   }
 
-  const onPressItem: (index:number) => void = (index) => {
+  const onPressItem: (key: string, index: number) => void = (key, index) => {
     setDrawerItemIndex(index)
-    const pagesIndex = [
-      'Relays',
-      'Config',
-      'About'
-    ]
-    navigation.navigate(pagesIndex[index])
-  }
-
-  const relaysRightButton: () => JSX.Element = () => {
-    if (!relayPool || relayPool?.relays.length < 1) {
-      return <Text style={{color: theme.colors.error}}>{t('menuItems.notConnected')}</Text>
+    if (key === 'relays') {
+      navigate('Relays')
+    } else if (key === 'config') {
+      navigate('Feed', { page: 'Config' })
+    } else if (key === 'about') {
+      navigate('About')
     }
-    return <Text style={{color: theme.colors.inversePrimary}}>{t('menuItems.connectedRelays', { number: relayPool?.relays.length.toString()})}</Text> 
   }
-
-  const DrawerItemsData = React.useMemo(
-    () => {
-      if (!publicKey) return []
-
-      const defaultList: ItemList[] = [
-        { label: t('menuItems.relays'), icon: 'message-question-outline', key: 0, right: relaysRightButton},
-        { label: t('menuItems.configuration'), icon: 'cog-outline', key: 1 }
-      ]
-
-      return defaultList
-    },
-    [publicKey],
-  )
-  const DrawerBottomItemsData = React.useMemo(
-    () => [{ label: t('menuItems.about'), icon: 'message-question-outline', key: 2 }],
-    [],
-  )
 
   return (
     <>
@@ -94,30 +62,85 @@ export const MenuItems: React.FC<MenuItemsProps> = ({ navigation }) => {
         <Drawer.Section showDivider={false}>
           <Logo />
         </Drawer.Section>
-        <Drawer.Section showDivider={publicKey !== undefined}>
-          {DrawerItemsData.map((props, index) => (
+        {nPub && (
+          <Card style={styles.cardContainer}>
+            <Card.Content style={styles.cardContent}>
+              <TouchableRipple onPress={() => navigate('Profile')}>
+                <View style={styles.cardContent}>
+                  <View style={styles.cardAvatar}>
+                    <NostrosAvatar
+                      name={user?.name}
+                      pubKey={nPub}
+                      src={user?.picture}
+                      lud06={user?.lnurl}
+                    />
+                  </View>
+                  <View>
+                    <Text variant='titleMedium'>{user?.name}</Text>
+                    <Text>{formatPubKey(nPub)}</Text>
+                  </View>
+                </View>
+              </TouchableRipple>
+              <View style={styles.cardEdit}>
+                <IconButton icon='pencil' size={20} onPress={() => navigate('ProfileConfig')} />
+              </View>
+            </Card.Content>
+            <Card.Content style={styles.cardActions}>
+              <Chip
+                compact={true}
+                style={styles.cardActionsChip}
+                onPress={() => console.log('Pressed')}
+              >
+                {t('menuItems.following', { following: contactsCount })}
+              </Chip>
+              <Chip
+                compact={true}
+                style={styles.cardActionsChip}
+                onPress={() => console.log('Pressed')}
+              >
+                {t('menuItems.followers', { followers: followersCount })}
+              </Chip>
+            </Card.Content>
+          </Card>
+        )}
+        {publicKey && (
+          <Drawer.Section>
             <Drawer.Item
-              label={props.label}
-              icon={props.icon}
-              key={props.key}
-              active={drawerItemIndex === index}
-              onPress={() => onPressItem(index)}
+              label={t('menuItems.relays')}
+              icon='message-question-outline'
+              key='relays'
+              active={drawerItemIndex === 0}
+              onPress={() => onPressItem('relays', 0)}
               onTouchEnd={() => setDrawerItemIndex(-1)}
-              right={props.right}
+              right={() =>
+                relays.length < 1 ? (
+                  <Text style={{ color: theme.colors.error }}>{t('menuItems.notConnected')}</Text>
+                ) : (
+                  <Text style={{ color: theme.colors.inversePrimary }}>
+                    {t('menuItems.connectedRelays', { number: relays.length })}
+                  </Text>
+                )
+              }
             />
-          ))}
-        </Drawer.Section>
+            {/* <Drawer.Item
+              label={t('menuItems.configuration')}
+              icon='cog-outline'
+              key='config'
+              active={drawerItemIndex === 1}
+              onPress={() => onPressItem('config', 1)}
+              onTouchEnd={() => setDrawerItemIndex(-1)}
+            /> */}
+          </Drawer.Section>
+        )}
         <Drawer.Section showDivider={false}>
-          {DrawerBottomItemsData.map((props, index) => (
-            <Drawer.Item
-              label={props.label}
-              icon={props.icon}
-              key={props.key}
-              active={drawerItemIndex === DrawerItemsData.length + index}
-              onPress={() => onPressItem(DrawerItemsData.length + index)}
-              onTouchEnd={() => setDrawerItemIndex(-1)}
-            />
-          ))}
+          <Drawer.Item
+            label={t('menuItems.about')}
+            icon='message-question-outline'
+            key='about'
+            active={drawerItemIndex === 2}
+            onPress={() => onPressItem('about', 2)}
+            onTouchEnd={() => setDrawerItemIndex(-1)}
+          />
         </Drawer.Section>
       </DrawerContentScrollView>
       {publicKey && (
@@ -142,12 +165,34 @@ export const MenuItems: React.FC<MenuItemsProps> = ({ navigation }) => {
 const styles = StyleSheet.create({
   drawerContent: {
     flex: 1,
-    borderTopRightRadius: 28
+    borderTopRightRadius: 28,
+  },
+  cardContainer: {
+    margin: 12,
+  },
+  cardActions: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+  },
+  cardActionsChip: {
+    width: '47%',
+  },
+  cardAvatar: {
+    marginRight: 14,
+  },
+  cardContent: {
+    width: '100%',
+    flexDirection: 'row',
+  },
+  cardEdit: {
+    flexDirection: 'row',
+    justifyContent: 'flex-end',
+    flex: 1,
   },
   bottomSection: {
-    padding: 24,
     marginBottom: 0,
-    borderBottomRightRadius: 28
+    borderBottomRightRadius: 28,
+    padding: 24,
   },
 })
 

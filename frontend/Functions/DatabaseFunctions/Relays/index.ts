@@ -28,3 +28,4 @@ export const getRelays: (db: QuickSQLiteConnection) => Promise<Relay[]> = async 
   const relays: Relay[] = items.map((object) => databaseToEntity(object))
   return relays
 }
+

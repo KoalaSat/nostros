@@ -4,8 +4,8 @@ import { Clipboard, StyleSheet, View } from 'react-native'
 import { Button, Snackbar, TextInput } from 'react-native-paper'
 import { useTranslation } from 'react-i18next'
 import { nsecEncode } from 'nostr-tools/nip19'
-import { RelayPoolContext } from '../../Contexts/RelayPoolContext'
 import { DrawerNavigationHelpers } from '@react-navigation/drawer/lib/typescript/src/types'
+import { UserContext } from '../../Contexts/UserContext'
 
 interface ProfileCreatePageProps {
   navigation: DrawerNavigationHelpers;
@@ -13,7 +13,7 @@ interface ProfileCreatePageProps {
 
 export const ProfileCreatePage: React.FC<ProfileCreatePageProps> = ({navigation}) => {
   const { t } = useTranslation('common')
-  const { setPrivateKey } = useContext(RelayPoolContext)
+  const { setPrivateKey } = useContext(UserContext)
   const [inputValue, setInputValue] = useState<string>()
   const [copied, setCopied] = useState<boolean>(false)
 

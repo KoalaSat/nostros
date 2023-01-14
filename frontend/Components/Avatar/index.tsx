@@ -1,48 +1,20 @@
 import React from 'react'
-import { Layout, useTheme } from '@ui-kitten/components'
-import { Image, StyleSheet, Text } from 'react-native'
-import { stringToColour } from '../../Functions/NativeFunctions'
+import { StyleSheet } from 'react-native'
+import { Avatar as PaperAvatar, useTheme } from 'react-native-paper'
 
 interface AvatarProps {
+  pubKey: string
   src?: string
   name?: string
-  pubKey: string
   size?: number
+  lud06?: string
 }
 
-export const Avatar: React.FC<AvatarProps> = ({ src, name, pubKey, size = 50 }) => {
+export const NostrosAvatar: React.FC<AvatarProps> = ({ src, name, pubKey, size = 40, lud06 }) => {
   const theme = useTheme()
   const displayName = name && name !== '' ? name : pubKey
-  const styles = StyleSheet.create({
-    layout: {
-      flexDirection: 'row',
-      alignContent: 'center',
-      width: size,
-      height: size,
-      backgroundColor: 'transparent',
-    },
-    image: {
-      width: size,
-      height: size,
-      borderRadius: 100,
-    },
-    textAvatarLayout: {
-      flex: 1,
-      alignItems: 'center',
-      justifyContent: 'center',
-      width: size,
-      height: size,
-      borderRadius: 100,
-      backgroundColor: stringToColour(pubKey),
-    },
-    textAvatar: {
-      fontSize: size / 2,
-      alignContent: 'center',
-      color: theme['text-basic-color'],
-      textTransform: 'uppercase',
-    },
-  })
-
+  const hasLud06 = lud06 && lud06 !== ''
+  const lud06IconSize = size / 2.85
   const validImage: () => boolean = () => {
     if (src) {
       const regexp = /^(https?:\/\/.*\.(?:png|jpg|jpeg))$/
@@ -53,16 +25,30 @@ export const Avatar: React.FC<AvatarProps> = ({ src, name, pubKey, size = 50 }) 
   }
 
   return (
-    <Layout style={styles.layout}>
+    <>
       {validImage() ? (
-        <Image style={styles.image} source={{ uri: src }} />
+        <PaperAvatar.Image size={size} source={{ uri: src }} />
       ) : (
-        <Layout style={styles.textAvatarLayout}>
-          <Text style={styles.textAvatar}>{displayName.substring(0, 2)}</Text>
-        </Layout>
+        <PaperAvatar.Text size={size} label={displayName} />
       )}
-    </Layout>
+      {hasLud06 && (
+        <PaperAvatar.Icon
+          size={lud06IconSize}
+          icon='lightning-bolt'
+          style={[
+            styles.iconLightning,
+            { right: -(size - lud06IconSize), backgroundColor: theme.colors.secondaryContainer, top: lud06IconSize * -1 },
+          ]}
+          color='#F5D112'
+        />
+      )}
+    </>
   )
 }
 
-export default Avatar
+const styles = StyleSheet.create({
+  iconLightning: {
+  },
+})
+
+export default NostrosAvatar

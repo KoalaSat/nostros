@@ -1,7 +1,6 @@
 import React from 'react'
 import { AppContextProvider } from './Contexts/AppContext'
 import {
-  InitialState,
   NavigationContainer,
   DefaultTheme as NavigationDefaultTheme,
   DarkTheme as NavigationDarkTheme,
@@ -13,15 +12,15 @@ import { adaptNavigationTheme, Provider as PaperProvider } from 'react-native-pa
 import { SafeAreaProvider, SafeAreaInsetsContext } from 'react-native-safe-area-context'
 import i18n from './i18n.config'
 import nostrosDarkTheme from './Constants/Theme/theme-dark.json'
+import { navigationRef } from './lib/Navigation'
 import HomeNavigator from './Pages/HomeNavigator'
 import MenuItems from './Components/MenuItems'
 import FeedNavigator from './Pages/FeedNavigator'
+import { UserContextProvider } from './Contexts/UserContext'
 
 const DrawerNavigator = createDrawerNavigator()
 
 export const Frontend: React.FC = () => {
-  const [initialState] = React.useState<InitialState | undefined>()
-
   const { DarkTheme } = adaptNavigationTheme({
     reactNavigationLight: NavigationDefaultTheme,
     reactNavigationDark: NavigationDarkTheme,
@@ -41,39 +40,42 @@ export const Frontend: React.FC = () => {
     <PaperProvider theme={nostrosDarkTheme}>
       <SafeAreaProvider>
         <I18nextProvider i18n={i18n}>
-          <AppContextProvider>
-            <RelayPoolContextProvider>
-              <React.Fragment>
-                <NavigationContainer theme={CombinedDefaultTheme} initialState={initialState}>
-                  <SafeAreaInsetsContext.Consumer>
-                    {() => {
-                      return (
-                        <DrawerNavigator.Navigator
-                          drawerContent={({navigation}) => <MenuItems navigation={navigation}/>}
-                          screenOptions={{
-                            drawerStyle: {
-                              borderRadius: 28
-                            },
-                          }}
-                        >
-                          <DrawerNavigator.Screen
-                            name='Home'
-                            component={HomeNavigator}
-                            options={{ headerShown: false }}
-                          />
-                          <DrawerNavigator.Screen
-                            name='Feed'
-                            component={FeedNavigator}
-                            options={{ headerShown: false }}
-                          />
-                        </DrawerNavigator.Navigator>
-                      )
-                    }}
-                  </SafeAreaInsetsContext.Consumer>
-                </NavigationContainer>
-              </React.Fragment>
-            </RelayPoolContextProvider>
-          </AppContextProvider>
+          <NavigationContainer theme={CombinedDefaultTheme} ref={navigationRef}>
+            <AppContextProvider>
+              <UserContextProvider>
+                <RelayPoolContextProvider>
+                  <React.Fragment>
+                    <SafeAreaInsetsContext.Consumer>
+                      {() => {
+                        return (
+                          <DrawerNavigator.Navigator
+                            drawerContent={({ navigation }) => <MenuItems navigation={navigation} />}
+                            screenOptions={{
+                              drawerStyle: {
+                                borderRadius: 28,
+                                width: 296
+                              },
+                            }}
+                          >
+                            <DrawerNavigator.Screen
+                              name='Home'
+                              component={HomeNavigator}
+                              options={{ headerShown: false }}
+                            />
+                            <DrawerNavigator.Screen
+                              name='Feed'
+                              component={FeedNavigator}
+                              options={{ headerShown: false }}
+                            />
+                          </DrawerNavigator.Navigator>
+                        )
+                      }}
+                    </SafeAreaInsetsContext.Consumer>
+                  </React.Fragment>
+                </RelayPoolContextProvider>
+              </UserContextProvider>
+            </AppContextProvider>
+          </NavigationContainer>
         </I18nextProvider>
       </SafeAreaProvider>
     </PaperProvider>
