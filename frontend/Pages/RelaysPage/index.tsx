@@ -48,7 +48,7 @@ export const RelaysPage: React.FC = () => {
   const onPressAddRelay: () => void = () => {
     if (REGEX_SOCKET_LINK.test(addRelayInput)) {
       bottomSheetAddRef.current?.close()
-      
+
       setAddRelayInput(defaultRelayInput)
     } else {
       bottomSheetAddRef.current?.close()
@@ -88,6 +88,16 @@ export const RelaysPage: React.FC = () => {
     />
   )
 
+  const rbSheetCustomStyles = React.useMemo(() => {
+    return {
+      container: {
+        ...styles.rbsheetContainer,
+        backgroundColor: theme.colors.background,
+      },
+      draggableIcon: styles.rbsheetDraggableIcon,
+    }
+  }, [])
+
   return (
     <View style={styles.container}>
       <FlatList style={styles.list} data={[...relays, ...defaultList()]} renderItem={renderItem} />
@@ -109,18 +119,7 @@ export const RelaysPage: React.FC = () => {
       >
         {t(`relaysPage.${showNotification}`)}
       </Snackbar>
-      <RBSheet
-        ref={bottomSheetAddRef}
-        closeOnDragDown={true}
-        height={260}
-        customStyles={{
-          container: {
-            ...styles.rbsheetContainer,
-            backgroundColor: theme.colors.background,
-          },
-          draggableIcon: styles.rbsheetDraggableIcon,
-        }}
-      >
+      <RBSheet ref={bottomSheetAddRef} closeOnDragDown={true} height={260} customStyles={rbSheetCustomStyles}>
         <View>
           <TextInput
             mode='outlined'
@@ -147,13 +146,7 @@ export const RelaysPage: React.FC = () => {
         ref={bottomSheetEditRef}
         closeOnDragDown={true}
         height={260}
-        customStyles={{
-          container: {
-            ...styles.rbsheetContainer,
-            backgroundColor: theme.colors.background,
-          },
-          draggableIcon: styles.rbsheetDraggableIcon,
-        }}
+        customStyles={rbSheetCustomStyles}
       >
         <View>
           <View style={styles.relayActions}>
@@ -179,7 +172,7 @@ export const RelaysPage: React.FC = () => {
               <Text>{t('relaysPage.copyRelay')}</Text>
             </View>
           </View>
-          <Divider style={styles.divider}/>
+          <Divider style={styles.divider} />
           <Text variant='titleLarge'>{selectedRelay?.url.split('wss://')[1]?.split('/')[0]}</Text>
         </View>
       </RBSheet>
@@ -217,12 +210,12 @@ const styles = StyleSheet.create({
   actionButton: {
     justifyContent: 'center',
     alignItems: 'center',
-    width: 80
+    width: 80,
   },
   divider: {
     marginBottom: 26,
-    marginTop: 26
-  }
+    marginTop: 26,
+  },
 })
 
 export default RelaysPage

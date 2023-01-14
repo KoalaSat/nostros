@@ -7,3 +7,9 @@ export const navigate: (name: string, params?: any) => void = (name, params ={})
     navigationRef.navigate(name as never, params as never);
   }
 }
+
+export const jumpTo: (name: string, params?: any) => void = (name, params ={}) => {
+  if (navigationRef.isReady()) {
+    navigationRef.jumpTo(name as never, params as never);
+  }
+}

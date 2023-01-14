@@ -3,10 +3,11 @@ import { BottomNavigation, BottomNavigationTab, useTheme } from '@ui-kitten/comp
 import { AppContext } from '../../Contexts/AppContext'
 import Icon from 'react-native-vector-icons/FontAwesome5'
 import { RelayPoolContext } from '../../Contexts/RelayPoolContext'
+import { UserContext } from '../../Contexts/UserContext'
 
 export const NavigationBar: React.FC = () => {
   const { goToPage, getActualPage, page } = useContext(AppContext)
-  const { publicKey, privateKey } = useContext(RelayPoolContext)
+  const { publicKey, privateKey } = React.useContext(UserContext)
   const theme = useTheme()
   const profilePage = `profile#${publicKey ?? ''}`
 

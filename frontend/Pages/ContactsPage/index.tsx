@@ -20,10 +20,12 @@ import { Button, UserCard } from '../../Components'
 import { RelayPoolContext } from '../../Contexts/RelayPoolContext'
 import { populatePets } from '../../Functions/RelayFunctions/Users'
 import { getNip19Key } from '../../lib/nostr/Nip19'
+import { UserContext } from '../../Contexts/UserContext'
 
 export const ContactsPage: React.FC = () => {
-  const { database, goBack } = useContext(AppContext)
-  const { relayPool, publicKey, privateKey, lastEventId } = useContext(RelayPoolContext)
+  const { database } = useContext(AppContext)
+  const { publicKey, privateKey } = React.useContext(UserContext)
+  const { relayPool, lastEventId } = useContext(RelayPoolContext)
   const theme = useTheme()
   // State
   const [users, setUsers] = useState<User[]>()

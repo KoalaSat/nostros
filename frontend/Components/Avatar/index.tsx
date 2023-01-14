@@ -14,6 +14,7 @@ export const NostrosAvatar: React.FC<AvatarProps> = ({ src, name, pubKey, size =
   const theme = useTheme()
   const displayName = name && name !== '' ? name : pubKey
   const hasLud06 = lud06 && lud06 !== ''
+  const lud06IconSize = size / 2.85
   const validImage: () => boolean = () => {
     if (src) {
       const regexp = /^(https?:\/\/.*\.(?:png|jpg|jpeg))$/
@@ -32,11 +33,11 @@ export const NostrosAvatar: React.FC<AvatarProps> = ({ src, name, pubKey, size =
       )}
       {hasLud06 && (
         <PaperAvatar.Icon
-          size={14}
+          size={lud06IconSize}
           icon='lightning-bolt'
           style={[
             styles.iconLightning,
-            { right: -(size - 14), backgroundColor: theme.colors.secondaryContainer },
+            { right: -(size - lud06IconSize), backgroundColor: theme.colors.secondaryContainer, top: lud06IconSize * -1 },
           ]}
           color='#F5D112'
         />
@@ -47,7 +48,6 @@ export const NostrosAvatar: React.FC<AvatarProps> = ({ src, name, pubKey, size =
 
 const styles = StyleSheet.create({
   iconLightning: {
-    top: -14,
   },
 })
 

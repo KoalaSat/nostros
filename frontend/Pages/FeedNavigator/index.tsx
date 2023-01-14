@@ -9,7 +9,7 @@ import HomePage from '../HomePage'
 import RelaysPage from '../RelaysPage'
 import AboutPage from '../AboutPage'
 import ProfileConfigPage from '../ProfileConfigPage'
-import { navigate } from '../../lib/Navigation'
+import ProfilePage from '../ProfilePage'
 
 export const HomeNavigator: React.FC = () => {
   const theme = useTheme()
@@ -44,7 +44,6 @@ export const HomeNavigator: React.FC = () => {
                     />
                   ) : null}
                   <Appbar.Content title={t(`homeNavigator.${route.name}`)} />
-                  <Appbar.Action icon='cog-outline' isLeading onPress={() => navigate('Config')} />
                 </Appbar.Header>
               )
             },
@@ -58,6 +57,7 @@ export const HomeNavigator: React.FC = () => {
           <Stack.Screen name='Relays' component={RelaysPage} />
           <Stack.Screen name='About' component={AboutPage} />
           <Stack.Screen name='ProfileConfig' component={ProfileConfigPage} />
+          <Stack.Screen name='Profile' component={ProfilePage} />
         </Stack.Group>
       </Stack.Navigator>
       <RBSheet

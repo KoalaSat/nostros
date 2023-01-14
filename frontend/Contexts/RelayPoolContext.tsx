@@ -1,20 +1,15 @@
 import React, { useContext, useEffect, useMemo, useState } from 'react'
 import RelayPool from '../lib/nostr/RelayPool/intex'
 import { AppContext } from './AppContext'
-import SInfo from 'react-native-sensitive-info'
-import { getPublickey } from '../lib/nostr/Bip'
 import { DeviceEventEmitter } from 'react-native'
 import debounce from 'lodash.debounce'
 import { getRelays, Relay } from '../Functions/DatabaseFunctions/Relays'
+import { UserContext } from './UserContext'
 
 export interface RelayPoolContextProps {
   loadingRelayPool: boolean
   relayPool?: RelayPool
   setRelayPool: (relayPool: RelayPool) => void
-  publicKey?: string
-  setPublicKey: (privateKey: string | undefined) => void
-  privateKey?: string
-  setPrivateKey: (privateKey: string | undefined) => void
   lastEventId?: string
   lastConfirmationtId?: string
   relays: Relay[]
@@ -33,8 +28,6 @@ export interface RelayPoolContextProviderProps {
 
 export const initialRelayPoolContext: RelayPoolContextProps = {
   loadingRelayPool: true,
-  setPublicKey: () => {},
-  setPrivateKey: () => {},
   setRelayPool: () => {},
   addRelayItem: async () => await new Promise(() => {}),
   removeRelayItem: async () => await new Promise(() => {}),
@@ -45,10 +38,9 @@ export const RelayPoolContextProvider = ({
   children,
   images,
 }: RelayPoolContextProviderProps): JSX.Element => {
-  const { database, loadingDb } = useContext(AppContext)
+  const { database } = useContext(AppContext)
+  const { publicKey, privateKey } = React.useContext(UserContext)
 
-  const [publicKey, setPublicKey] = useState<string>()
-  const [privateKey, setPrivateKey] = useState<string>()
   const [relayPool, setRelayPool] = useState<RelayPool>()
   const [loadingRelayPool, setLoadingRelayPool] = useState<boolean>(
     initialRelayPoolContext.loadingRelayPool,
@@ -116,35 +108,9 @@ export const RelayPoolContextProvider = ({
 
   useEffect(() => {
     if (publicKey && publicKey !== '') {
-      SInfo.setItem('publicKey', publicKey, {})
       loadRelayPool()
     }
   }, [publicKey])
-
-  useEffect(() => {
-    if (privateKey && privateKey !== '') {
-      SInfo.setItem('privateKey', privateKey, {})
-      const publicKey: string = getPublickey(privateKey)
-      setPublicKey(publicKey)
-    }
-  }, [privateKey])
-
-  useEffect(() => {
-    if (!loadingDb) {
-      SInfo.getItem('privateKey', {}).then((privateResult) => {
-        if (privateResult && privateResult !== '') {
-          setPrivateKey(privateResult)
-          setPublicKey(getPublickey(privateResult))
-        } else {
-          SInfo.getItem('publicKey', {}).then((publicResult) => {
-            if (publicResult && publicResult !== '') {
-              setPublicKey(publicResult)
-            }
-          })
-        }
-      })
-    }
-  }, [loadingDb])
 
   return (
     <RelayPoolContext.Provider
@@ -152,10 +118,6 @@ export const RelayPoolContextProvider = ({
         loadingRelayPool,
         relayPool,
         setRelayPool,
-        publicKey,
-        setPublicKey,
-        privateKey,
-        setPrivateKey,
         lastEventId,
         lastConfirmationtId,
         relays,

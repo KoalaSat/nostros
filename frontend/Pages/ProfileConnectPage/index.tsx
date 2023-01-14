@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useState } from 'react'
 import { Clipboard, StyleSheet, View } from 'react-native'
-import { RelayPoolContext } from '../../Contexts/RelayPoolContext'
+import { UserContext } from '../../Contexts/UserContext'
 import { useTranslation } from 'react-i18next'
 import { getNip19Key, isPrivateKey, isPublicKey } from '../../lib/nostr/Nip19'
 import { Button, Switch, Text, TextInput } from 'react-native-paper'
@@ -8,17 +8,13 @@ import Logo from '../../Components/Logo'
 import { navigate } from '../../lib/Navigation'
 
 export const ProfileConnectPage: React.FC = () => {
-  const { setPrivateKey, setPublicKey } = useContext(RelayPoolContext)
+  const { setPrivateKey, setPublicKey } = useContext(UserContext)
   const { t } = useTranslation('common')
   const [isNip19, setIsNip19] = useState<boolean>(false)
   const [isPublic, setIsPublic] = useState<boolean>(false)
   const [inputValue, setInputValue] = useState<string>('')
 
   useEffect(() => checkKey(), [inputValue])
-  useEffect(() => {
-    setPrivateKey(undefined)
-    setPublicKey(undefined)
-  }, [])
 
   const checkKey: () => void = () => {
     if (inputValue && inputValue !== '') {
@@ -48,7 +44,6 @@ export const ProfileConnectPage: React.FC = () => {
     Clipboard.getString().then((value) => {
       setInputValue(value ?? '')
     })
-    
   }
 
   const label: string = React.useMemo(() => isPublic ? t('loggerPage.publicKey') : t('loggerPage.privateKey'), [isPublic])
