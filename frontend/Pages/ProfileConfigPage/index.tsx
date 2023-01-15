@@ -15,10 +15,11 @@ import {
   Text,
   TouchableRipple,
   TextInput,
-  Snackbar,
 } from 'react-native-paper'
 import { RelayPoolContext } from '../../Contexts/RelayPoolContext'
 import RBSheet from 'react-native-raw-bottom-sheet'
+import NostrosNotification from '../../Components/NostrosNotification'
+import NostrosAvatar from '../../Components/Avatar'
 
 export const ProfileConfigPage: React.FC = () => {
   const theme = useTheme()
@@ -37,15 +38,7 @@ export const ProfileConfigPage: React.FC = () => {
   const [lnurl, setLnurl] = useState<string>()
   const [isPublishingProfile, setIsPublishingProfile] = useState<boolean>(false)
   const [nip05, setNip05] = useState<string>()
-  const [showNotification, setShowNotification] = useState<
-    | 'npubCopied'
-    | 'picturePublished'
-    | 'connectionError'
-    | 'nsecCopied'
-    | 'profilePublished'
-    | 'nip05Published'
-    | 'lud06Published'
-  >()
+  const [showNotification, setShowNotification] = useState<undefined | string>()
   const { t } = useTranslation('common')
 
   useEffect(() => {
@@ -59,7 +52,7 @@ export const ProfileConfigPage: React.FC = () => {
         setNip05(user.nip05)
       }
     }
-  }, [user])
+  }, [])
 
   const onPressSavePicture: () => void = () => {
     if (publicKey && database) {
@@ -143,7 +136,7 @@ export const ProfileConfigPage: React.FC = () => {
                 name: user.name,
                 about: user.about,
                 picture: user.picture,
-                lnurl,
+                lud06: lnurl,
                 nip05: user.nip05,
               }),
               created_at: moment().unix(),
@@ -200,9 +193,7 @@ export const ProfileConfigPage: React.FC = () => {
             ...user,
             name,
             about,
-            picture,
-            lnurl,
-            nip05,
+            picture
           })
         }
       })
@@ -239,7 +230,7 @@ export const ProfileConfigPage: React.FC = () => {
 
   return (
     <View style={styles.container}>
-      <ScrollView horizontal={false}>
+      <ScrollView horizontal={false} showsVerticalScrollIndicator={false}>
         <Card style={styles.cardContainer}>
           <Card.Content>
             <View style={styles.cardPicture}>
@@ -247,10 +238,12 @@ export const ProfileConfigPage: React.FC = () => {
                 {user?.picture ? (
                   <Avatar.Image size={100} source={{ uri: user.picture }} />
                 ) : (
-                  <Avatar.Icon
+                  <NostrosAvatar
+                    name={user?.name}
+                    pubKey={nPub ?? publicKey ?? ''}
+                    src={user?.picture}
+                    lud06={user?.lnurl}
                     size={100}
-                    icon='image-plus'
-                    style={{ backgroundColor: theme.colors.primaryContainer }}
                   />
                 )}
               </TouchableRipple>
@@ -318,12 +311,6 @@ export const ProfileConfigPage: React.FC = () => {
           label={t('profileConfigPage.about') ?? ''}
           onChangeText={setAbout}
           value={about}
-        />
-        <TextInput
-          mode='outlined'
-          label={t('profileConfigPage.lud06') ?? ''}
-          onChangeText={setLnurl}
-          value={lnurl}
         />
         <TextInput
           mode='outlined'
@@ -482,15 +469,14 @@ export const ProfileConfigPage: React.FC = () => {
           </Button>
         </View>
       </RBSheet>
-      <Snackbar
-        style={styles.snackbar}
-        visible={showNotification !== undefined}
-        duration={Snackbar.DURATION_SHORT}
-        onIconPress={() => setShowNotification(undefined)}
-        onDismiss={() => setShowNotification(undefined)}
+      <NostrosNotification
+        showNotification={showNotification}
+        setShowNotification={setShowNotification}
       >
-        {t(`profileConfigPage.${showNotification}`)}
-      </Snackbar>
+        <Text>{t(`profileConfigPage.${showNotification}`)}</Text>
+        {showNotification === 'nip05Published' && <Text>{nip05}</Text>}
+        {showNotification === 'lud06Published' && <Text>{lnurl}</Text>}
+      </NostrosNotification>
     </View>
   )
 }
@@ -518,7 +504,6 @@ const styles = StyleSheet.create({
     marginTop: 32,
     justifyContent: 'center',
     alignItems: 'center',
-    width: 80,
   },
   rbsheetDraggableIcon: {
     backgroundColor: '#000',

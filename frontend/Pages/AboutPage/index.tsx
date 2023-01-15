@@ -2,6 +2,7 @@ import * as React from 'react'
 import { useTranslation } from 'react-i18next'
 import { FlatList, Linking, ListRenderItem, StyleSheet } from 'react-native'
 import { Divider, List } from 'react-native-paper'
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'
 
 interface ItemList {
   key: number
@@ -18,19 +19,19 @@ export const AboutPage: React.FC = () => {
       {
         key: 1,
         title: t('aboutPage.gitHub'),
-        left: () => <List.Icon icon='chart-tree' />,
+        left: () => <List.Icon icon={() => <MaterialCommunityIcons name="file-tree-outline" size={25} />}/>,
         onPress: async () => await Linking.openURL('https://github.com/KoalaSat/nostros'),
       },
       {
         key: 2,
         title: t('aboutPage.nostr'),
-        left: () => <List.Icon icon='chart-tree' />,
+        left: () => <List.Icon icon={() => <MaterialCommunityIcons name="file-tree-outline" size={25} />}/>,
         onPress: async () => await Linking.openURL('https://usenostr.org'),
       },
       {
         key: 3,
         title: t('aboutPage.nips'),
-        left: () => <List.Icon icon='chart-tree' />,
+        left: () => <List.Icon icon={() => <MaterialCommunityIcons name="hammer-wrench" size={25} />}/>,
         onPress: async () => await Linking.openURL('https://github.com/nostr-protocol/nips'),
       },
     ],

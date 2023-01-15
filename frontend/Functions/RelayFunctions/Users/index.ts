@@ -23,6 +23,8 @@ export const username: (user: User) => string = (user) => {
 }
 
 export const formatPubKey: (pubKey: string) => string = (pubKey) => {
+  if (!pubKey) return ''
+
   return `${pubKey.slice(0, 4)}...${pubKey.slice(-4)}`
 }
 
