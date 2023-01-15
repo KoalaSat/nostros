@@ -16,7 +16,7 @@ import { push } from '../../lib/Navigation'
 import RBSheet from 'react-native-raw-bottom-sheet'
 
 interface ProfileCardProps {
-  userPubKey: string,
+  userPubKey: string
   bottomSheetRef: React.RefObject<RBSheet>
 }
 
@@ -73,7 +73,7 @@ export const ProfileCard: React.FC<ProfileCardProps> = ({ userPubKey, bottomShee
     <View>
       <Card onPress={goToProfile}>
         <Card.Content style={styles.card}>
-          <View>
+          <View style={styles.cardUser}>
             <View style={styles.cardUserMain}>
               <View>
                 <NostrosAvatar
@@ -93,10 +93,12 @@ export const ProfileCard: React.FC<ProfileCardProps> = ({ userPubKey, bottomShee
               </View>
             </View>
             <View>
-              <Text>{user?.about}</Text>
+              <Text>{`${user?.about?.slice(0, 75)}...`}</Text>
             </View>
           </View>
-          <MaterialCommunityIcons name="menu-right" size={25} />
+          <View>
+            <MaterialCommunityIcons name='menu-right' size={25} />
+          </View>
         </Card.Content>
       </Card>
       <View style={styles.mainLayout}>
@@ -160,6 +162,7 @@ const styles = StyleSheet.create({
   mainLayout: {
     flexDirection: 'row',
     alignItems: 'center',
+    justifyContent: 'space-around',
   },
   userName: {
     flexDirection: 'row',
@@ -168,7 +171,7 @@ const styles = StyleSheet.create({
   card: {
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'space-between'
+    justifyContent: 'space-between',
   },
   cardUserMain: {
     flexDirection: 'row',
@@ -177,10 +180,12 @@ const styles = StyleSheet.create({
   actionButton: {
     justifyContent: 'center',
     alignItems: 'center',
-    width: 100,
   },
   list: {
     padding: 16,
+  },
+  cardUser: {
+    flex: 1,
   },
 })
 

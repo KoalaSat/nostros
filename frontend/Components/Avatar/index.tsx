@@ -1,5 +1,5 @@
 import React from 'react'
-import { StyleSheet } from 'react-native'
+import { StyleSheet, View } from 'react-native'
 import { Avatar as PaperAvatar, useTheme } from 'react-native-paper'
 
 interface AvatarProps {
@@ -29,18 +29,19 @@ export const NostrosAvatar: React.FC<AvatarProps> = ({ src, name, pubKey, size =
       {validImage() ? (
         <PaperAvatar.Image size={size} source={{ uri: src }} />
       ) : (
-        <PaperAvatar.Text size={size} label={displayName} />
+        <PaperAvatar.Text size={size} label={displayName.substring(0, 2).toUpperCase()} />
       )}
-      {hasLud06 && (
+      {hasLud06 ? (
         <PaperAvatar.Icon
           size={lud06IconSize}
           icon='lightning-bolt'
           style={[
-            styles.iconLightning,
             { right: -(size - lud06IconSize), backgroundColor: theme.colors.secondaryContainer, top: lud06IconSize * -1 },
           ]}
           color='#F5D112'
         />
+      ) : (
+        <View style={styles.iconLightning}/>
       )}
     </>
   )
@@ -48,6 +49,7 @@ export const NostrosAvatar: React.FC<AvatarProps> = ({ src, name, pubKey, size =
 
 const styles = StyleSheet.create({
   iconLightning: {
+    marginBottom: 16
   },
 })
 

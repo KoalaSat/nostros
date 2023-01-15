@@ -175,7 +175,7 @@ export const ProfilePage: React.FC<ProfilePageProps> = ({ route }) => {
   }, [])
 
   return (
-    <View>
+    <View style={styles.content}>
       <Surface style={styles.container} elevation={1}>
         <View style={styles.mainLayout}>
           <View>
@@ -273,6 +273,9 @@ export const ProfilePage: React.FC<ProfilePageProps> = ({ route }) => {
 }
 
 const styles = StyleSheet.create({
+  content: {
+    paddingBottom: 60
+  },
   container: {
     padding: 16,
   },
