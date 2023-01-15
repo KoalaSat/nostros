@@ -12,7 +12,6 @@
   },
   "dependencies": {
     "@eva-design/eva": "^2.1.0",
-    "@flyerhq/react-native-link-preview": "^1.6.0",
     "@react-navigation/drawer": "^6.5.7",
     "@react-navigation/native": "^6.1.2",
     "@react-navigation/stack": "^6.3.11",
@@ -26,6 +25,7 @@
     "cryptr": "^6.0.3",
     "events": "^3.3.0",
     "i18next": "^22.0.6",
+    "link-preview-js": "^3.0.4",
     "lnurl-pay": "^2.1.0",
     "lodash.debounce": "^4.0.8",
     "moment": "^2.29.4",

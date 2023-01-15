@@ -28,7 +28,6 @@ export const LnPayment: React.FC<TextContentProps> = ({ open, setOpen, event, us
 
   useEffect(() => {
     setMonto('')
-    setInvoice(undefined)
     if (open) {
       bottomSheetLnPaymentRef.current?.open()
     } else {

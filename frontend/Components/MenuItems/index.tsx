@@ -15,16 +15,12 @@ import Logo from '../Logo'
 import { useTranslation } from 'react-i18next'
 import { RelayPoolContext } from '../../Contexts/RelayPoolContext'
 import { UserContext } from '../../Contexts/UserContext'
-import { DrawerNavigationHelpers } from '@react-navigation/drawer/lib/typescript/src/types'
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'
 import { navigate } from '../../lib/Navigation'
 import NostrosAvatar from '../Avatar'
 import { formatPubKey } from '../../Functions/RelayFunctions/Users'
 
-interface MenuItemsProps {
-  navigation: DrawerNavigationHelpers
-}
-
-export const MenuItems: React.FC<MenuItemsProps> = ({ navigation }) => {
+export const MenuItems: React.FC = () => {
   const [drawerItemIndex, setDrawerItemIndex] = React.useState<number>(-1)
   const { relays } = React.useContext(RelayPoolContext)
   const { nPub, publicKey, user, contactsCount, followersCount, logout } =
@@ -65,7 +61,7 @@ export const MenuItems: React.FC<MenuItemsProps> = ({ navigation }) => {
         {nPub && (
           <Card style={styles.cardContainer}>
             <Card.Content style={styles.cardContent}>
-              <TouchableRipple onPress={() => navigate('Profile')}>
+              <TouchableRipple onPress={() => navigate('Profile', { pubKey: user?.id })}>
                 <View style={styles.cardContent}>
                   <View style={styles.cardAvatar}>
                     <NostrosAvatar
@@ -107,7 +103,7 @@ export const MenuItems: React.FC<MenuItemsProps> = ({ navigation }) => {
           <Drawer.Section>
             <Drawer.Item
               label={t('menuItems.relays')}
-              icon='message-question-outline'
+              icon={() => <MaterialCommunityIcons name="chart-timeline-variant" size={25} />}
               key='relays'
               active={drawerItemIndex === 0}
               onPress={() => onPressItem('relays', 0)}

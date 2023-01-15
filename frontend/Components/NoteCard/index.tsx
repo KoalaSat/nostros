@@ -1,50 +1,46 @@
-import React, { useContext, useEffect, useState } from 'react'
-import { Button, Divider, Layout, Text, useTheme } from '@ui-kitten/components'
-import { getNotes, Note } from '../../Functions/DatabaseFunctions/Notes'
-import { StyleSheet, TouchableOpacity } from 'react-native'
+import React, { useContext, useEffect, useMemo, useState } from 'react'
+import { Note } from '../../Functions/DatabaseFunctions/Notes'
+import { StyleSheet, View } from 'react-native'
 import { EventKind } from '../../lib/nostr/Events'
-import Icon from 'react-native-vector-icons/FontAwesome5'
 import { RelayPoolContext } from '../../Contexts/RelayPoolContext'
 import { AppContext } from '../../Contexts/AppContext'
-import { showMessage } from 'react-native-flash-message'
 import { t } from 'i18next'
-import {
-  getDirectReplies,
-  getReplyEventId,
-  isContentWarning,
-} from '../../Functions/RelayFunctions/Events'
+import { isContentWarning } from '../../Functions/RelayFunctions/Events'
 import { Event } from '../../../lib/nostr/Events'
 import moment from 'moment'
 import { populateRelay } from '../../Functions/RelayFunctions'
-import Avatar from '../Avatar'
+import { NostrosAvatar } from '../Avatar'
 import { searchRelays } from '../../Functions/DatabaseFunctions/Relays'
-import { RelayFilters } from '../../lib/nostr/RelayPool/intex'
 import TextContent from '../../Components/TextContent'
-import { formatPubKey } from '../../Functions/RelayFunctions/Users'
+import { usernamePubKey } from '../../Functions/RelayFunctions/Users'
 import { getReactionsCount, getUserReaction } from '../../Functions/DatabaseFunctions/Reactions'
+import { UserContext } from '../../Contexts/UserContext'
+import { Button, Card, Text, useTheme, Avatar, IconButton } from 'react-native-paper'
+import { npubEncode } from 'nostr-tools/nip19'
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'
+import { REGEX_SOCKET_LINK } from '../../Constants/Relay'
 
 interface NoteCardProps {
   note: Note
-  showReplies?: boolean
-  onlyContactsReplies?: boolean
+  onPressOptions?: () => void
 }
 
 export const NoteCard: React.FC<NoteCardProps> = ({
   note,
-  showReplies = false,
-  onlyContactsReplies = false,
+  onPressOptions = () => {}
 }) => {
   const theme = useTheme()
   const { publicKey, privateKey } = React.useContext(UserContext)
   const { relayPool, lastEventId } = useContext(RelayPoolContext)
-  const { database, goToPage } = useContext(AppContext)
+  const { database } = useContext(AppContext)
   const [relayAdded, setRelayAdded] = useState<boolean>(false)
-  const [replies, setReplies] = useState<Note[]>([])
   const [positiveReactions, setPositiveReactions] = useState<number>(0)
   const [negaiveReactions, setNegativeReactions] = useState<number>(0)
   const [userUpvoted, setUserUpvoted] = useState<boolean>(false)
   const [userDownvoted, setUserDownvoted] = useState<boolean>(false)
   const [hide, setHide] = useState<boolean>(isContentWarning(note))
+  const nPub = useMemo(() => npubEncode(note.pubkey), [note])
+  const timestamp = useMemo(() => moment.unix(note.created_at).format('HH:mm DD-MM-YY'), [note])
 
   useEffect(() => {
     if (database && publicKey && note.id) {
@@ -71,22 +67,6 @@ export const NoteCard: React.FC<NoteCardProps> = ({
       searchRelays(note.content, database).then((result) => {
         setRelayAdded(result.length > 0)
       })
-      if (showReplies) {
-        getNotes(database, {
-          filters: { reply_event_id: note?.id ?? '' },
-          contacts: onlyContactsReplies,
-        }).then((notes) => {
-          const rootReplies = getDirectReplies(note, notes) as Note[]
-          setReplies(rootReplies)
-          if (rootReplies.length > 0) {
-            const message: RelayFilters = {
-              kinds: [EventKind.meta],
-              authors: [...rootReplies.map((reply) => reply.pubkey), note.pubkey],
-            }
-            relayPool?.subscribe('notecard', [message])
-          }
-        })
-      }
     }
   }, [database])
 
@@ -101,227 +81,149 @@ export const NoteCard: React.FC<NoteCardProps> = ({
     relayPool?.sendEvent(event)
   }
 
-  const textNote: (note: Note) => JSX.Element = (note) => {
-    return (
-      <>
-        <Layout style={styles.profile} level='2'>
-          <TouchableOpacity onPress={() => onPressUser(note.pubkey)}>
-            <Avatar
-              src={note.picture}
-              name={note.name && note.name !== '' ? note.name : note.pubkey}
-              pubKey={note.pubkey}
-            />
-          </TouchableOpacity>
-        </Layout>
-        <Layout style={styles.contentNoAction} level='2'>
-          <Layout style={styles.titleText}>
-            <TouchableOpacity onPress={() => onPressUser(note.pubkey)}>
-              <Layout style={styles.pubkey}>
-                <Text appearance='hint'>{note.name ?? formatPubKey(note.pubkey)}</Text>
-              </Layout>
-            </TouchableOpacity>
-            <Layout style={styles.tags}>
-              {getReplyEventId(note) && (
-                <Icon name='comment-dots' size={16} color={theme['text-basic-color']} solid />
-              )}
-            </Layout>
-          </Layout>
-          <Layout style={styles.text}>
-            {hide ? (
-              <Button appearance='ghost' onPress={() => setHide(false)}>
-                {t('note.contentWarning')}
-              </Button>
-            ) : (
-              <TextContent event={note} />
-            )}
-          </Layout>
-          <Layout style={styles.footer}>
-            <Text appearance='hint'>{moment.unix(note.created_at).format('HH:mm DD-MM-YY')}</Text>
-            <Layout style={styles.reactions}>
-              <Button
-                appearance='ghost'
-                status={userUpvoted ? 'success' : 'primary'}
-                onPress={() => {
-                  if (!userUpvoted && privateKey) {
-                    setUserUpvoted(true)
-                    setPositiveReactions((prev) => prev + 1)
-                    publishReaction(true)
-                  }
-                }}
-                accessoryLeft={
-                  <Icon
-                    name='arrow-up'
-                    size={16}
-                    color={userUpvoted ? theme['color-success-500'] : theme['color-primary-500']}
-                    solid
-                  />
-                }
-                size='small'
-              >
-                {positiveReactions === undefined || positiveReactions === 0
-                  ? '-'
-                  : positiveReactions}
-              </Button>
-              <Button
-                appearance='ghost'
-                status={userDownvoted ? 'danger' : 'primary'}
-                onPress={() => {
-                  if (!userDownvoted && privateKey) {
-                    setUserDownvoted(true)
-                    setNegativeReactions((prev) => prev + 1)
-                    publishReaction(false)
-                  }
-                }}
-                accessoryLeft={
-                  <Icon
-                    name='arrow-down'
-                    size={16}
-                    color={userDownvoted ? theme['color-danger-500'] : theme['color-primary-500']}
-                    solid
-                  />
-                }
-                size='small'
-              >
-                {negaiveReactions === undefined || negaiveReactions === 0 ? '-' : negaiveReactions}
-              </Button>
-            </Layout>
-          </Layout>
-        </Layout>
-      </>
+  const textNote: () => JSX.Element = () => {
+    return hide ? (
+      <Button mode='outlined' onPress={() => setHide(false)}>
+        {t('noteCard.contentWarning')}
+      </Button>
+    ) : (
+      <TextContent event={note} />
     )
   }
 
-  const relayNote: (note: Note) => JSX.Element = (note) => {
+  const recommendServer: () => JSX.Element = () => {
     const relayName = note.content.split('wss://')[1]?.split('/')[0]
 
     const addRelayItem: () => void = () => {
       if (relayPool && database && publicKey) {
         relayPool.add(note.content, () => {
           populateRelay(relayPool, database, publicKey)
-          showMessage({
-            message: t('alerts.relayAdded'),
-            description: note.content,
-            type: 'success',
-          })
           setRelayAdded(true)
         })
       }
     }
 
     return (
-      <>
-        <Layout style={styles.profile} level='2'>
-          <Icon name='server' size={30} color={theme['text-basic-color']} solid />
-        </Layout>
-        <Layout style={styles.content} level='2'>
-          <Text appearance='hint'>{note.name}</Text>
-          <Text>{relayName}</Text>
-        </Layout>
-        <Layout style={styles.actions} level='2'>
-          {!relayAdded && (
-            <Button
-              status='success'
-              onPress={addRelayItem}
-              accessoryLeft={
-                <Icon name='plus-circle' size={16} color={theme['text-basic-color']} solid />
-              }
+      <Card>
+        <Card.Content style={styles.title}>
+          <View>
+            <Avatar.Icon
+              size={54}
+              icon='chart-timeline-variant'
+              style={{
+                backgroundColor: theme.colors.tertiaryContainer,
+              }}
             />
-          )}
-        </Layout>
-      </>
+          </View>
+          <View>
+            <Text>{t('noteCard.recommendation')}</Text>
+            <Text>{relayName}</Text>
+          </View>
+        </Card.Content>
+        {!relayAdded && REGEX_SOCKET_LINK.test(note.content) && (
+          <Card.Content style={[styles.actions, { borderColor: theme.colors.onSecondary }]}>
+            <Button onPress={addRelayItem}>{t('noteCard.addRelay')}</Button>
+          </Card.Content>
+        )}
+      </Card>
     )
   }
 
-  const onPressUser: (pubKey: string) => void = (pubKey) => {
-    goToPage(`profile#${pubKey}`)
+  const getNoteContent: () => JSX.Element | undefined = () => {
+    if (note.kind === EventKind.textNote) {
+      return textNote()
+    } else if (note.kind === EventKind.recommendServer) return recommendServer()
   }
-
-  const styles = StyleSheet.create({
-    layout: {
-      flexDirection: 'row',
-      backgroundColor: 'transparent',
-      paddingBottom: 16,
-    },
-    replies: {
-      flexDirection: 'row',
-      backgroundColor: 'transparent',
-      paddingTop: 16,
-      paddingLeft: 50,
-    },
-    divider: {
-      paddingTop: 16,
-    },
-    profile: {
-      flex: 1,
-      width: 38,
-      alignItems: 'center',
-      backgroundColor: 'transparent',
-    },
-    content: {
-      flex: 4,
-      backgroundColor: 'transparent',
-      paddingLeft: 16,
-      paddingRight: 16,
-    },
-    contentNoAction: {
-      flex: 5,
-      backgroundColor: 'transparent',
-      paddingLeft: 16,
-      paddingRight: 16,
-    },
-    actions: {
-      flex: 1,
-      backgroundColor: 'transparent',
-    },
-    pubkey: {
-      backgroundColor: 'transparent',
-    },
-    footer: {
-      backgroundColor: 'transparent',
-      flexDirection: 'row',
-      alignItems: 'center',
-      justifyContent: 'space-between',
-      marginTop: 10,
-    },
-    reactions: {
-      backgroundColor: 'transparent',
-      flexDirection: 'row',
-    },
-    tags: {
-      backgroundColor: 'transparent',
-      marginLeft: 12,
-    },
-    titleText: {
-      backgroundColor: 'transparent',
-      flexDirection: 'row',
-    },
-    text: {
-      backgroundColor: 'transparent',
-      paddingRight: 10,
-    },
-  })
 
   return (
     note && (
-      <>
-        <Layout style={styles.layout} level='2'>
-          {note.kind === EventKind.recommendServer ? relayNote(note) : textNote(note)}
-        </Layout>
-        {replies.length > 0 ? (
-          <>
-            <Divider />
-            {replies.map((reply) => (
-              <Layout style={styles.replies} level='3' key={reply.id}>
-                {textNote(reply)}
-              </Layout>
-            ))}
-          </>
-        ) : (
-          <></>
-        )}
-      </>
+      <Card>
+        <Card.Content style={styles.title}>
+          <View style={styles.titleUser}>
+            <View>
+              <NostrosAvatar
+                name={note.name}
+                pubKey={nPub}
+                src={note.picture}
+                lud06={note.lnurl}
+                size={54}
+              />
+            </View>
+            <View>
+              <Text>{usernamePubKey(note.name, nPub)}</Text>
+              <Text>{timestamp}</Text>
+            </View>
+          </View>
+          <View>
+            <IconButton
+              icon="dots-vertical"
+              size={25}
+              onPress={onPressOptions}
+            />
+          </View>
+        </Card.Content>
+        <Card.Content style={[styles.content, { borderColor: theme.colors.onSecondary }]}>
+          {getNoteContent()}
+        </Card.Content>
+        <Card.Content style={[styles.actions, { borderColor: theme.colors.onSecondary }]}>
+          <Button
+            onPress={() => {
+              if (!userDownvoted && privateKey) {
+                setUserDownvoted(true)
+                setNegativeReactions((prev) => prev + 1)
+                publishReaction(false)
+              }
+            }}
+            icon={() => <MaterialCommunityIcons name='thumb-down-outline' size={25} />}
+          >
+            {negaiveReactions === undefined || negaiveReactions === 0 ? '-' : negaiveReactions}
+          </Button>
+          <Button
+            onPress={() => {
+              if (!userUpvoted && privateKey) {
+                setUserUpvoted(true)
+                setPositiveReactions((prev) => prev + 1)
+                publishReaction(true)
+              }
+            }}
+            icon={() => <MaterialCommunityIcons name='thumb-up-outline' size={25} />}
+          >
+            {positiveReactions === undefined || positiveReactions === 0 ? '-' : positiveReactions}
+          </Button>
+        </Card.Content>
+      </Card>
     )
   )
 }
+
+const styles = StyleSheet.create({
+  container: {
+    padding: 16,
+  },
+  title: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignContent: 'center',
+  },
+  titleUser: {
+    flexDirection: 'row',
+    alignContent: 'center',
+  },
+  actions: {
+    paddingTop: 16,
+    flexDirection: 'row',
+    justifyContent: 'flex-end',
+    borderTopWidth: 1,
+  },
+  relayActions: {
+    paddingTop: 16,
+    flexDirection: 'row',
+    justifyContent: 'flex-start',
+  },
+  content: {
+    borderTopWidth: 1,
+    padding: 16,
+  },
+})
 
 export default NoteCard

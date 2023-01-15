@@ -1,13 +1,14 @@
 import React, { useContext, useEffect, useState } from 'react'
 import ParsedText from 'react-native-parsed-text'
-import { useTheme } from '@ui-kitten/components'
 import { Event } from '../../lib/nostr/Events'
 import { Linking, StyleSheet } from 'react-native'
 import { AppContext } from '../../Contexts/AppContext'
 import { getUser } from '../../Functions/DatabaseFunctions/Users'
 import { formatPubKey } from '../../Functions/RelayFunctions/Users'
 import moment from 'moment'
-import { LinkPreview, REGEX_LINK } from '@flyerhq/react-native-link-preview'
+import { Card, Text, useTheme } from 'react-native-paper'
+import { getLinkPreview } from 'link-preview-js'
+import { push } from '../../lib/Navigation'
 
 interface TextContentProps {
   event?: Event
@@ -15,33 +16,51 @@ interface TextContentProps {
   preview?: boolean
 }
 
+interface LinkPreviewMedia {
+  url: string
+  title: string
+  siteName: string | undefined
+  description: string | undefined
+  mediaType: string
+  contentType: string | undefined
+  images: string[]
+  videos: Array<{
+    url: string | undefined
+    secureUrl: string | null | undefined
+    type: string | null | undefined
+    width: string | undefined
+    height: string | undefined
+  }>
+  favicons: string[]
+}
+
 export const TextContent: React.FC<TextContentProps> = ({ event, content, preview = true }) => {
   const theme = useTheme()
-  const { database, goToPage } = useContext(AppContext)
+  const { database } = useContext(AppContext)
   const [userNames, setUserNames] = useState<Record<number, string>>({})
   const [loadedUsers, setLoadedUsers] = useState<number>(0)
+  const [linkPreview, setLinkPreview] = useState<LinkPreviewMedia>()
   const text = event?.content ?? content ?? ''
 
-  useEffect(() => {}, [loadedUsers])
+  useEffect(() => {
+    getLinkPreview(text).then((data) => {
+      setLinkPreview(data as LinkPreviewMedia)
+    })
+  }, [])
 
-  const containsUrl: () => boolean = () => {
-    const matches = text.match(REGEX_LINK) ?? []
-    return matches.length > 0
-  }
+  useEffect(() => {}, [loadedUsers, linkPreview])
 
   const handleUrlPress: (url: string) => void = (url) => {
     Linking.openURL(url)
   }
 
-  const handleEmailPress: (email: string) => void = (email) => {
-    Linking.openURL(email)
-  }
-
   const handleMentionPress: (text: string) => void = (text) => {
     if (!event) return
-
+    
     const mentionIndex: number = parseInt(text.substring(2, text.length - 1))
-    goToPage(`profile#${event.tags[mentionIndex][1]}`)
+    const userPubKey = event.tags[mentionIndex][1]
+
+    push('Profile', { pubKey: userPubKey })
   }
 
   const renderMentionText: (matchingString: string, matches: string[]) => string = (
@@ -69,32 +88,29 @@ export const TextContent: React.FC<TextContentProps> = ({ event, content, previe
     }
   }
 
-  const styles = StyleSheet.create({
-    url: {
-      textDecorationLine: 'underline',
-    },
-    email: {
-      textDecorationLine: 'underline',
-    },
-    text: {
-      color: theme['text-basic-color'],
-    },
-    mention: {
-      fontWeight: 'bold',
-      textDecorationLine: 'underline',
-    },
-    hashTag: {
-      fontStyle: 'italic',
-    },
-  })
+  const generatePreview: () => JSX.Element = () => {
+    if (!linkPreview) return <></>
+    
+    const coverUrl = linkPreview.images?.length > 0 ? linkPreview.images[0] : linkPreview.url
+
+    return (
+      <Card style={styles.previewCard} onPress={() => handleUrlPress(linkPreview.url)}>
+        <Card.Cover source={{ uri: coverUrl }}/>
+        <Card.Content style={styles.previewContent}>
+          <Text variant='titleSmall'>{linkPreview.title || linkPreview.url}</Text>
+          {linkPreview.description && <Text variant='bodySmall'>{linkPreview.description}</Text>}
+        </Card.Content>
+      </Card>
+    )
+  }
 
   return (
     <>
       <ParsedText
-        style={styles.text}
+        style={{ color: theme.colors.onSurfaceVariant }}
         parse={[
           { type: 'url', style: styles.url, onPress: handleUrlPress },
-          { type: 'email', style: styles.email, onPress: handleEmailPress },
+          { type: 'email', style: styles.email, onPress: handleUrlPress },
           event
             ? {
                 pattern: /#\[(\d+)\]/,
@@ -111,16 +127,31 @@ export const TextContent: React.FC<TextContentProps> = ({ event, content, previe
       >
         {text}
       </ParsedText>
-      {preview && containsUrl() && (
-        <LinkPreview
-          text={text}
-          renderText={() => ''}
-          textContainerStyle={{ height: 0 }}
-          enableAnimation={true}
-        />
-      )}
+      {linkPreview && generatePreview()}
     </>
   )
 }
+
+const styles = StyleSheet.create({
+  url: {
+    textDecorationLine: 'underline',
+  },
+  email: {
+    textDecorationLine: 'underline',
+  },
+  mention: {
+    fontWeight: 'bold',
+    textDecorationLine: 'underline',
+  },
+  hashTag: {
+    fontStyle: 'italic',
+  },
+  previewContent: {
+    padding: 16,
+  },
+  previewCard: {
+    marginTop: 16
+  }
+})
 
 export default TextContent
