@@ -2427,7 +2427,7 @@ available-typed-arrays@^1.0.5:
   resolved "https://registry.yarnpkg.com/available-typed-arrays/-/available-typed-arrays-1.0.5.tgz#92f95616501069d07d10edb2fc37d3e1c65123b7"
   integrity sha512-DMD0KiN46eipeziST1LPP/STfDU0sufISXmjSgvVsoU2tqxctQeASejWcfNtxYKqETM1UxQ8sp2OrSBWpHY6sw==
 
-axios@^1.2.1:
+axios@^1.2.2:
   version "1.2.2"
   resolved "https://registry.yarnpkg.com/axios/-/axios-1.2.2.tgz#72681724c6e6a43a9fea860fc558127dbe32f9f1"
   integrity sha512-bz/J4gS2S3I7mpN/YZfGFTqhXTYzRho8Ay38w2otuuDR322KzFIWm/4W2K6gIwvWaws5n+mnb7D1lN9uD+QH6Q==
@@ -5822,15 +5822,15 @@ link-preview-js@^3.0.4:
     cross-fetch "3.1.5"
     url "0.11.0"
 
-lnurl-pay@^2.1.0:
-  version "2.1.0"
-  resolved "https://registry.yarnpkg.com/lnurl-pay/-/lnurl-pay-2.1.0.tgz#c3843aed328e4f6f6eb0ee413a830f8386d39523"
-  integrity sha512-Dd6ZGDDbyolyCWHaeaV9E2eCxUXahYjSYNZa7TM/+VAYRCmXVibGU2i6yjqtDbOtvlKF6X74dHtH36xEO8x2nw==
+lnurl-pay@^2.1.1:
+  version "2.1.1"
+  resolved "https://registry.yarnpkg.com/lnurl-pay/-/lnurl-pay-2.1.1.tgz#002be1b3c0e2e1bb4751ad2a81532b8103ce88b6"
+  integrity sha512-Bj/F3xfjMmcuaijIB570mYFqu5yjS2JKY25tifEWnBMTqaQJLtZvD9YydA1AxG2nrLyv2AxXBhb0grQCVIUriw==
   dependencies:
     "@aws-crypto/sha256-js" "^2.0.2"
     aes-js "^3.1.2"
     assert "^2.0.0"
-    axios "^1.2.1"
+    axios "^1.2.2"
     base64-js "^1.5.1"
     bech32 "^2.0.0"
     bolt11 "^1.4.0"
@@ -8310,12 +8310,7 @@ tslib@^1.11.1, tslib@^1.8.1:
   resolved "https://registry.yarnpkg.com/tslib/-/tslib-1.14.1.tgz#cf2d38bdc34a134bcaf1091c41f6619e2f672d00"
   integrity sha512-Xni35NKzjgMrwevysHTCArtLDpPvye8zV/0E4EyYn43P7/7qvQwPh9BGkHewbMulVntbigmcT7rdX3BNo9wRJg==
 
-tslib@^2.0.1, tslib@^2.4.0:
-  version "2.4.0"
-  resolved "https://registry.yarnpkg.com/tslib/-/tslib-2.4.0.tgz#7cecaa7f073ce680a05847aa77be941098f36dc3"
-  integrity sha512-d6xOpEDfsi2CZVlPQzGeux8XMwLT9hssAsaPYExaQMuYskwb+x1x7J371tWlbBdWHroy99KnVB6qIkUbs5X3UQ==
-
-tslib@^2.3.1, tslib@^2.4.1:
+tslib@^2.0.1, tslib@^2.3.1, tslib@^2.4.0, tslib@^2.4.1:
   version "2.4.1"
   resolved "https://registry.yarnpkg.com/tslib/-/tslib-2.4.1.tgz#0d0bfbaac2880b91e22df0768e55be9753a5b17e"
   integrity sha512-tGyy4dAjRIEwI7BzsB0lynWgOpfqjUdq91XXAlIWD2OwKBH7oCl/GZG/HT4BOHrTlPMOASlMQ7veyTqpmRcrNA==
