@@ -8,7 +8,7 @@ import {
   StyleSheet,
   View,
 } from 'react-native'
-import { Surface, Text, IconButton, ActivityIndicator } from 'react-native-paper'
+import { Surface, Text, IconButton, ActivityIndicator, useTheme } from 'react-native-paper'
 import NostrosAvatar from '../../Components/Avatar'
 import { AppContext } from '../../Contexts/AppContext'
 import { UserContext } from '../../Contexts/UserContext'
@@ -24,6 +24,8 @@ import { RelayFilters } from '../../lib/nostr/RelayPool/intex'
 import NoteCard from '../../Components/NoteCard'
 import LnPayment from '../../Components/LnPayment'
 import { handleInfinityScroll } from '../../Functions/NativeFunctions'
+import RBSheet from 'react-native-raw-bottom-sheet'
+import ProfileCard from '../../Components/ProfileCard'
 
 interface ProfilePageProps {
   route: { params: { pubKey: string } }
@@ -34,6 +36,8 @@ export const ProfilePage: React.FC<ProfilePageProps> = ({ route }) => {
   const { publicKey } = useContext(UserContext)
   const { lastEventId, relayPool } = useContext(RelayPoolContext)
   const { t } = useTranslation('common')
+  const bottomSheetProfileRef = React.useRef<RBSheet>(null)
+  const theme = useTheme()
   const initialPageSize = 10
   const [showNotification, setShowNotification] = useState<undefined | string>()
   const [notes, setNotes] = useState<Note[]>()
@@ -150,7 +154,25 @@ export const ProfilePage: React.FC<ProfilePageProps> = ({ route }) => {
     }
   }
 
-  const renderItem: (note: Note) => JSX.Element = (note) => <Text>{note.content}</Text>
+  const renderItem: (note: Note) => JSX.Element = (note) => (
+    <View style={styles.noteCard} key={note.id}>
+      <NoteCard note={note} onPressOptions={() => bottomSheetProfileRef.current?.open()}/>
+    </View>
+  )
+
+  const bottomSheetStyles = React.useMemo(() => {
+    return {
+      container: {
+        backgroundColor: theme.colors.background,
+        padding: 16,
+        borderTopRightRadius: 28,
+        borderTopLeftRadius: 28
+      },
+      draggableIcon: {
+        backgroundColor: '#000',
+      },
+    }
+  }, [])
 
   return (
     <View>
@@ -225,6 +247,7 @@ export const ProfilePage: React.FC<ProfilePageProps> = ({ route }) => {
           horizontal={false}
           showsVerticalScrollIndicator={false}
           refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
+          style={styles.list}
         >
           {notes.map((note) => renderItem(note))}
           {notes.length >= 10 && <ActivityIndicator animating={true} />}
@@ -237,6 +260,14 @@ export const ProfilePage: React.FC<ProfilePageProps> = ({ route }) => {
         <Text>{t(`profilePage.${showNotification}`)}</Text>
       </NostrosNotification>
       <LnPayment setOpen={setOpenLn} open={openLn} user={user} />
+      <RBSheet
+        ref={bottomSheetProfileRef}
+        closeOnDragDown={true}
+        height={280}
+        customStyles={bottomSheetStyles}
+      >
+        <ProfileCard userPubKey={route.params.pubKey ?? ''} bottomSheetRef={bottomSheetProfileRef}/>
+      </RBSheet>
     </View>
   )
 }
@@ -266,6 +297,9 @@ const styles = StyleSheet.create({
   list: {
     padding: 16,
   },
+  noteCard: {
+    marginBottom: 16
+  }
 })
 
 export default ProfilePage

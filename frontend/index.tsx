@@ -17,6 +17,9 @@ import HomeNavigator from './Pages/HomeNavigator'
 import MenuItems from './Components/MenuItems'
 import FeedNavigator from './Pages/FeedNavigator'
 import { UserContextProvider } from './Contexts/UserContext'
+import { LogBox } from 'react-native'
+
+LogBox.ignoreAllLogs()
 
 const DrawerNavigator = createDrawerNavigator()
 

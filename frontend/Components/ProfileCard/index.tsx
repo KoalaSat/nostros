@@ -12,7 +12,7 @@ import NostrosAvatar from '../Avatar'
 import NostrosNotification from '../NostrosNotification'
 import LnPayment from '../LnPayment'
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'
-import { navigate } from '../../lib/Navigation'
+import { push } from '../../lib/Navigation'
 import RBSheet from 'react-native-raw-bottom-sheet'
 
 interface ProfileCardProps {
@@ -66,7 +66,7 @@ export const ProfileCard: React.FC<ProfileCardProps> = ({ userPubKey, bottomShee
 
   const goToProfile: () => void = () => {
     bottomSheetRef.current?.close()
-    navigate('Profile', { pubKey: userPubKey })
+    push('Profile', { pubKey: userPubKey })
   }
 
   return (

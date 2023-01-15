@@ -22,6 +22,10 @@ export const username: (user: User) => string = (user) => {
   return user.name && user.name !== '' ? user.name : formatPubKey(user.id)
 }
 
+export const usernamePubKey: (name: string, pubKey: string) => string = (name, pubKey) => {
+  return name && name !== '' ? name : formatPubKey(pubKey)
+}
+
 export const formatPubKey: (pubKey: string) => string = (pubKey) => {
   if (!pubKey) return ''
 
