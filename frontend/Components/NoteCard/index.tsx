@@ -15,20 +15,26 @@ import TextContent from '../../Components/TextContent'
 import { usernamePubKey } from '../../Functions/RelayFunctions/Users'
 import { getReactionsCount, getUserReaction } from '../../Functions/DatabaseFunctions/Reactions'
 import { UserContext } from '../../Contexts/UserContext'
-import { Button, Card, Text, useTheme, Avatar, IconButton } from 'react-native-paper'
+import {
+  Button,
+  Card,
+  Text,
+  useTheme,
+  Avatar,
+  IconButton,
+  TouchableRipple,
+} from 'react-native-paper'
 import { npubEncode } from 'nostr-tools/nip19'
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'
 import { REGEX_SOCKET_LINK } from '../../Constants/Relay'
+import { push } from '../../lib/Navigation'
 
 interface NoteCardProps {
   note: Note
   onPressOptions?: () => void
 }
 
-export const NoteCard: React.FC<NoteCardProps> = ({
-  note,
-  onPressOptions = () => {}
-}) => {
+export const NoteCard: React.FC<NoteCardProps> = ({ note, onPressOptions = () => {} }) => {
   const theme = useTheme()
   const { publicKey, privateKey } = React.useContext(UserContext)
   const { relayPool, lastEventId } = useContext(RelayPoolContext)
@@ -155,16 +161,18 @@ export const NoteCard: React.FC<NoteCardProps> = ({
             </View>
           </View>
           <View>
-            <IconButton
-              icon="dots-vertical"
-              size={25}
-              onPress={onPressOptions}
-            />
+            <IconButton icon='dots-vertical' size={25} onPress={onPressOptions} />
           </View>
         </Card.Content>
-        <Card.Content style={[styles.content, { borderColor: theme.colors.onSecondary }]}>
-          {getNoteContent()}
-        </Card.Content>
+        <TouchableRipple
+          onPress={() =>
+            note.kind !== EventKind.recommendServer && push('Note', { noteId: note.id })
+          }
+        >
+          <Card.Content style={[styles.content, { borderColor: theme.colors.onSecondary }]}>
+            {getNoteContent()}
+          </Card.Content>
+        </TouchableRipple>
         <Card.Content style={[styles.actions, { borderColor: theme.colors.onSecondary }]}>
           <Button
             onPress={() => {
@@ -204,6 +212,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignContent: 'center',
+    paddingBottom: 16
   },
   titleUser: {
     flexDirection: 'row',
@@ -212,7 +221,7 @@ const styles = StyleSheet.create({
   actions: {
     paddingTop: 16,
     flexDirection: 'row',
-    justifyContent: 'flex-end',
+    justifyContent: 'space-around',
     borderTopWidth: 1,
   },
   relayActions: {

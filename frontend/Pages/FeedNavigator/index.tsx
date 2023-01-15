@@ -11,6 +11,7 @@ import AboutPage from '../AboutPage'
 import ProfileConfigPage from '../ProfileConfigPage'
 import ProfilePage from '../ProfilePage'
 import ProfileCard from '../../Components/ProfileCard'
+import NotePage from '../NotePage'
 
 export const HomeNavigator: React.FC = () => {
   const theme = useTheme()
@@ -84,6 +85,7 @@ export const HomeNavigator: React.FC = () => {
           <Stack.Screen name='About' component={AboutPage} />
           <Stack.Screen name='ProfileConfig' component={ProfileConfigPage} />
           <Stack.Screen name='Profile' component={ProfilePage} />
+          <Stack.Screen name='Note' component={NotePage} />
         </Stack.Group>
       </Stack.Navigator>
       <RBSheet

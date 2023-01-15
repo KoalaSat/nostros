@@ -1,7 +1,7 @@
 import React, { useContext, useEffect, useState } from 'react'
 import ParsedText from 'react-native-parsed-text'
 import { Event } from '../../lib/nostr/Events'
-import { Linking, StyleSheet } from 'react-native'
+import { Linking, StyleSheet, View } from 'react-native'
 import { AppContext } from '../../Contexts/AppContext'
 import { getUser } from '../../Functions/DatabaseFunctions/Users'
 import { formatPubKey } from '../../Functions/RelayFunctions/Users'
@@ -105,7 +105,7 @@ export const TextContent: React.FC<TextContentProps> = ({ event, content, previe
   }
 
   return (
-    <>
+    <View>
       <ParsedText
         style={{ color: theme.colors.onSurfaceVariant }}
         parse={[
@@ -128,7 +128,7 @@ export const TextContent: React.FC<TextContentProps> = ({ event, content, previe
         {text}
       </ParsedText>
       {linkPreview && generatePreview()}
-    </>
+    </View>
   )
 }
 

@@ -1,65 +1,90 @@
-import { Button, Card, Layout, TopNavigation, useTheme } from '@ui-kitten/components'
-import React, { useContext, useEffect, useState } from 'react'
+import React, { useCallback, useContext, useEffect, useState } from 'react'
 import { AppContext } from '../../Contexts/AppContext'
 import { getNotes, Note } from '../../Functions/DatabaseFunctions/Notes'
 import { RelayPoolContext } from '../../Contexts/RelayPoolContext'
-import Icon from 'react-native-vector-icons/FontAwesome5'
 import NoteCard from '../../Components/NoteCard'
 import { EventKind } from '../../lib/nostr/Events'
-import { Clipboard, ScrollView, StyleSheet, Text, TouchableOpacity } from 'react-native'
-import Loading from '../../Components/Loading'
+import { RefreshControl, ScrollView, StyleSheet, Text, View } from 'react-native'
+import { Event } from '../../../lib/nostr/Events'
 import { getDirectReplies, getReplyEventId } from '../../Functions/RelayFunctions/Events'
 import { RelayFilters } from '../../lib/nostr/RelayPool/intex'
-import LnPayment from '../../Components/LnPayment'
 import { getUser, User } from '../../Functions/DatabaseFunctions/Users'
+import { ActivityIndicator, Button, IconButton, Surface, useTheme } from 'react-native-paper'
+import { npubEncode } from 'nostr-tools/nip19'
+import moment from 'moment'
+import { usernamePubKey } from '../../Functions/RelayFunctions/Users'
+import NostrosAvatar from '../../Components/Avatar'
+import TextContent from '../../Components/TextContent'
+import { getReactionsCount, getUserReaction } from '../../Functions/DatabaseFunctions/Reactions'
+import { UserContext } from '../../Contexts/UserContext'
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'
+import RBSheet from 'react-native-raw-bottom-sheet'
+import ProfileCard from '../../Components/ProfileCard'
 
-export const NotePage: React.FC = () => {
-  const { page, goBack, goToPage, database, getActualPage } = useContext(AppContext)
-  const { relayPool, privateKey, lastEventId } = useContext(RelayPoolContext)
+interface NotePageProps {
+  route: { params: { noteId: string } }
+}
+
+export const NotePage: React.FC<NotePageProps> = ({ route }) => {
+  const { database } = useContext(AppContext)
+  const { publicKey, privateKey } = useContext(UserContext)
+  const { relayPool, lastEventId } = useContext(RelayPoolContext)
   const [note, setNote] = useState<Note>()
   const [replies, setReplies] = useState<Note[]>()
-  const [eventId, setEventId] = useState(getActualPage().split('#')[1])
-  const [openPayment, setOpenPayment] = useState<boolean>(false)
-  const [user, setUser] = useState<User>()
+  const [eventId, setEventId] = useState<string>()
+  const [refreshing, setRefreshing] = useState(false)
+  const [nPub, setNPub] = useState<string>()
+  const [positiveReactions, setPositiveReactions] = useState<number>(0)
+  const [negaiveReactions, setNegativeReactions] = useState<number>(0)
+  const [userUpvoted, setUserUpvoted] = useState<boolean>(false)
+  const [userDownvoted, setUserDownvoted] = useState<boolean>(false)
+  const [timestamp, setTimestamp] = useState<string>()
+  const [profileCardPubkey, setProfileCardPubKey] = useState<string>()
   const theme = useTheme()
+  const bottomSheetProfileRef = React.useRef<RBSheet>(null)
 
   useEffect(() => {
     relayPool?.unsubscribeAll()
-    const newEventId = getActualPage().split('#')[1]
     setNote(undefined)
     setReplies(undefined)
-    setEventId(newEventId)
+    setEventId(route.params.noteId)
     subscribeNotes()
     loadNote()
-  }, [page])
+  }, [])
 
   useEffect(() => {
-    loadNote()
-  }, [eventId])
-
-  useEffect(() => {
-    loadNote()
+    if (database && publicKey && note?.id) {
+      getReactionsCount(database, { positive: true, eventId: note.id }).then((result) => {
+        setPositiveReactions(result ?? 0)
+      })
+      getReactionsCount(database, { positive: false, eventId: note.id }).then((result) => {
+        setNegativeReactions(result ?? 0)
+      })
+      getUserReaction(database, publicKey, { eventId: note.id }).then((results) => {
+        results.forEach((reaction) => {
+          if (reaction.positive) {
+            setUserUpvoted(true)
+          } else {
+            setUserDownvoted(true)
+          }
+        })
+      })
+    }
   }, [lastEventId])
 
-  const onPressBack: () => void = () => {
-    goBack()
-  }
-
-  const onPressGoParent: () => void = () => {
-    if (note) {
-      const replyId = getReplyEventId(note)
-      if (replyId) {
-        goToPage(`note#${replyId}`)
-      }
-    }
-  }
+  useEffect(() => {
+    loadNote()
+  }, [eventId, lastEventId])
 
   const loadNote: () => void = async () => {
     if (database) {
-      const events = await getNotes(database, { filters: { id: eventId } })
+      const events = await getNotes(database, { filters: { id: route.params.noteId } })
       const event = events[0]
       setNote(event)
-      const notes = await getNotes(database, { filters: { reply_event_id: eventId } })
+      setNPub(npubEncode(event.pubkey))
+      setTimestamp(moment.unix(event.created_at).format('HH:mm DD-MM-YY'))
+
+      const notes = await getNotes(database, { filters: { reply_event_id: route.params.noteId } })
       const rootReplies = getDirectReplies(event, notes)
       if (rootReplies.length > 0) {
         setReplies(rootReplies as Note[])
@@ -76,147 +101,188 @@ export const NotePage: React.FC = () => {
           setUser(user)
         }
       })
+      setRefreshing(false)
     }
   }
 
+  const onRefresh = useCallback(() => {
+    setRefreshing(true)
+    relayPool?.unsubscribeAll()
+    subscribeNotes()
+    loadNote()
+  }, [])
+
   const subscribeNotes: (past?: boolean) => Promise<void> = async (past) => {
-    if (database && eventId) {
+    if (database && route.params.noteId) {
       relayPool?.subscribe('notepage', [
         {
           kinds: [EventKind.textNote],
-          ids: [eventId],
+          ids: [route.params.noteId],
         },
         {
           kinds: [EventKind.reaction, EventKind.textNote],
-          '#e': [eventId],
+          '#e': [route.params.noteId],
         },
       ])
     }
   }
 
-  const renderBackAction = (): JSX.Element => {
-    return (
-      <Button
-        accessoryRight={<Icon name='arrow-left' size={16} color={theme['text-basic-color']} />}
-        onPress={onPressBack}
-        appearance='ghost'
-      />
-    )
+  const publishReaction: (positive: boolean) => void = (positive) => {
+    if (note) {
+      const event: Event = {
+        content: positive ? '+' : '-',
+        created_at: moment().unix(),
+        kind: EventKind.reaction,
+        pubkey: publicKey,
+        tags: [...note.tags, ['e', note.id], ['p', note.pubkey]],
+      }
+      relayPool?.sendEvent(event)
+    }
   }
 
-  const renderNoteActions = (
-    <>
-      {user?.lnurl ? (
-        <Button appearance='ghost' onPress={() => setOpenPayment(true)} status='warning'>
-          <Icon name='bolt' size={16} color={theme['text-basic-color']} solid />
-        </Button>
-      ) : (
-        <></>
-      )}
-      {note && getReplyEventId(note) ? (
-        <Button
-          accessoryRight={<Icon name='arrow-up' size={16} color={theme['text-basic-color']} />}
-          onPress={onPressGoParent}
-          appearance='ghost'
-        />
-      ) : (
-        <></>
-      )}
-    </>
+  const renderItem: (note: Note) => JSX.Element = (note) => (
+    <View style={[styles.noteCard, { borderColor: theme.colors.onSecondary }]} key={note.id}>
+      <NoteCard
+        note={note}
+        onPressOptions={() => {
+          setProfileCardPubKey(note.pubkey)
+          bottomSheetProfileRef.current?.open()
+        }}
+      />
+    </View>
   )
 
-  const onPressNote: (note: Note) => void = (note) => {
-    if (note.kind !== EventKind.recommendServer) {
-      const replyEventId = getReplyEventId(note)
-      if (replyEventId && replyEventId !== eventId) {
-        goToPage(`note#${replyEventId}`)
-      } else if (note.id) {
-        goToPage(`note#${note.id}`)
-      }
+  const bottomSheetStyles = React.useMemo(() => {
+    return {
+      container: {
+        backgroundColor: theme.colors.background,
+        padding: 16,
+        borderTopRightRadius: 28,
+        borderTopLeftRadius: 28,
+      },
+      draggableIcon: {
+        backgroundColor: '#000',
+      },
     }
-  }
+  }, [])
 
-  const itemCard: (note?: Note) => JSX.Element = (note) => {
-    if (note?.id === eventId) {
-      return (
-        <Layout style={styles.main} level='2' key={note.id ?? note.created_at}>
-          <NoteCard note={note} />
-        </Layout>
-      )
-    } else if (note) {
-      return (
-        <Card onPress={() => onPressNote(note)} key={note.id ?? note.created_at}>
-          <NoteCard note={note} />
-        </Card>
-      )
-    } else {
-      return <></>
-    }
-  }
-
-  const onPressTitle: () => void = () => {
-    Clipboard.setString(note?.id ?? '')
-  }
-
-  const styles = StyleSheet.create({
-    container: {
-      marginBottom: 32,
-    },
-    main: {
-      paddingBottom: 32,
-      paddingTop: 26,
-      paddingLeft: 26,
-      paddingRight: 26,
-    },
-    loading: {
-      maxHeight: 160,
-    },
-  })
-
-  return (
-    <>
-      <TopNavigation
-        alignment='center'
-        title={
-          <TouchableOpacity onPress={onPressTitle}>
-            <Text>{`${eventId.slice(0, 8)}...${eventId.slice(-8)}`}</Text>
-          </TouchableOpacity>
-        }
-        accessoryLeft={renderBackAction}
-        accessoryRight={renderNoteActions}
-      />
-      <Layout level='4' style={styles.container}>
-        {note ? (
-          <ScrollView horizontal={false}>
-            {[note, ...(replies ?? [])].map((note) => itemCard(note))}
-          </ScrollView>
-        ) : (
-          <Loading style={styles.loading} />
+  return note && nPub ? (
+    <View style={styles.content}>
+      <Surface elevation={1}>
+        <View style={styles.title}>
+          <View style={styles.titleUser}>
+            <View>
+              <NostrosAvatar
+                name={note.name}
+                pubKey={nPub}
+                src={note.picture}
+                lud06={note.lnurl}
+                size={54}
+              />
+            </View>
+            <View>
+              <Text>{usernamePubKey(note.name, nPub)}</Text>
+              <Text>{timestamp}</Text>
+            </View>
+          </View>
+          <View>
+            <IconButton
+              icon='dots-vertical'
+              size={25}
+              onPress={() => {
+                setProfileCardPubKey(publicKey)
+                bottomSheetProfileRef.current?.open()
+              }}
+            />
+          </View>
+        </View>
+        <View style={[styles.titleContent, { borderColor: theme.colors.onSecondary }]}>
+          <TextContent event={note} />
+        </View>
+        {privateKey && (
+          <View style={[styles.titleContent, { borderColor: theme.colors.onSecondary }]}>
+            <Button
+              onPress={() => {
+                if (!userDownvoted && privateKey) {
+                  setUserDownvoted(true)
+                  setNegativeReactions((prev) => prev + 1)
+                  publishReaction(false)
+                }
+              }}
+              icon={() => <MaterialCommunityIcons name='thumb-down-outline' size={25} />}
+            >
+              {negaiveReactions === undefined || negaiveReactions === 0 ? '-' : negaiveReactions}
+            </Button>
+            <Button
+              onPress={() => {
+                if (!userUpvoted && privateKey) {
+                  setUserUpvoted(true)
+                  setPositiveReactions((prev) => prev + 1)
+                  publishReaction(true)
+                }
+              }}
+              icon={() => <MaterialCommunityIcons name='thumb-up-outline' size={25} />}
+            >
+              {positiveReactions === undefined || positiveReactions === 0 ? '-' : positiveReactions}
+            </Button>
+          </View>
         )}
-        <LnPayment event={note} open={openPayment} setOpen={setOpenPayment} user={user} />
-      </Layout>
-      {privateKey && (
-        <TouchableOpacity
-          style={{
-            borderWidth: 1,
-            borderColor: 'rgba(0,0,0,0.2)',
-            alignItems: 'center',
-            justifyContent: 'center',
-            width: 65,
-            position: 'absolute',
-            bottom: 20,
-            right: 20,
-            height: 65,
-            backgroundColor: theme['color-warning-500'],
-            borderRadius: 100,
-          }}
-          onPress={() => goToPage(`send#${eventId}`)}
+      </Surface>
+      {replies && replies.length > 0 && (
+        <ScrollView
+          horizontal={false}
+          showsVerticalScrollIndicator={false}
+          refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
+          style={styles.list}
         >
-          <Icon name='reply' size={30} color={theme['text-basic-color']} solid />
-        </TouchableOpacity>
+          {replies.map((note) => renderItem(note))}
+          {replies.length >= 10 && <ActivityIndicator style={styles.loading} animating={true} />}
+        </ScrollView>
       )}
-    </>
+      <RBSheet
+        ref={bottomSheetProfileRef}
+        closeOnDragDown={true}
+        height={280}
+        customStyles={bottomSheetStyles}
+      >
+        <ProfileCard userPubKey={profileCardPubkey ?? ''} bottomSheetRef={bottomSheetProfileRef} />
+      </RBSheet>
+    </View>
+  ) : (
+    <></>
   )
 }
+
+const styles = StyleSheet.create({
+  title: {
+    paddingRight: 16,
+    paddingLeft: 16,
+    paddingTop: 16,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignContent: 'center',
+  },
+  titleUser: {
+    flexDirection: 'row',
+    alignContent: 'center',
+  },
+  titleContent: {
+    borderTopWidth: 1,
+    padding: 16,
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+  },
+  list: {
+    padding: 16,
+  },
+  loading: {
+    paddingBottom: 60
+  },
+  noteCard: {
+    borderLeftWidth: 1,
+    paddingLeft: 32,
+    paddingBottom: 16,
+  },
+})
 
 export default NotePage
