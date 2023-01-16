@@ -54,13 +54,14 @@ export const ProfileConnectPage: React.FC = () => {
     <>
       <View style={styles.container}>
         <Logo size='medium' />
-        <View>
+        <View style={styles.loginMain}>
           <TextInput
             mode='outlined'
             label={label}
             onChangeText={setInputValue}
             value={inputValue}
             secureTextEntry={!isPublic}
+            style={styles.input}
             right={
               <TextInput.Icon
                 icon={inputValue ? 'close-circle-outline' : 'content-paste'}
@@ -73,7 +74,7 @@ export const ProfileConnectPage: React.FC = () => {
             {t('loggerPage.accessButton')}
           </Button>
         </View>
-        <View>
+        <View style={styles.loginOptions}>
           <View style={styles.row}>
             <Text>{t('loggerPage.isPublic')}</Text>
             <Switch value={isPublic} onValueChange={() => setIsPublic(!isPublic)} />
@@ -92,11 +93,24 @@ export const ProfileConnectPage: React.FC = () => {
 
 const styles = StyleSheet.create({
   container: {
+    flex: 1,
     padding: 16,
   },
+  loginMain: {
+    flex: 1,
+    justifyContent: 'center',
+  },
+  input: {
+    marginBottom: 16,
+    marginTop: 16,
+  },
+  loginOptions: {
+    marginTop: 16
+  },
   row: {
-    flexDirection: 'row',
     alignItems: 'center',
+    flexDirection: 'row',
+    height: 56,
     justifyContent: 'space-between',
   },
 })
