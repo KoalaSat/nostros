@@ -4,4 +4,4 @@
 
 export { Avatar } from './Avatar'
 export { Button } from './Button'
-export { UserCard } from './UserCard'
+export { UserCard } from '../Pages/HomeFeed'

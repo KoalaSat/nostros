@@ -1,18 +1,6 @@
-import {
-  Card,
-  Input,
-  Layout,
-  Modal,
-  Tab,
-  TabBar,
-  TopNavigation,
-  useTheme,
-} from '@ui-kitten/components'
 import React, { useContext, useEffect, useState } from 'react'
 import { ScrollView, StyleSheet, Text, TouchableOpacity } from 'react-native'
 import { AppContext } from '../../Contexts/AppContext'
-import Icon from 'react-native-vector-icons/FontAwesome5'
-import { showMessage } from 'react-native-flash-message'
 import { EventKind } from '../../lib/nostr/Events'
 import { useTranslation } from 'react-i18next'
 import { getUsers, updateUserContact, User } from '../../Functions/DatabaseFunctions/Users'
@@ -21,8 +9,9 @@ import { RelayPoolContext } from '../../Contexts/RelayPoolContext'
 import { populatePets } from '../../Functions/RelayFunctions/Users'
 import { getNip19Key } from '../../lib/nostr/Nip19'
 import { UserContext } from '../../Contexts/UserContext'
+import { useTheme } from 'react-native-paper'
 
-export const ContactsPage: React.FC = () => {
+export const ContactsFeed: React.FC = () => {
   const { database } = useContext(AppContext)
   const { publicKey, privateKey } = React.useContext(UserContext)
   const { relayPool, lastEventId } = useContext(RelayPoolContext)
@@ -95,64 +84,14 @@ export const ContactsPage: React.FC = () => {
           setIsAddingContact(false) // restore sending status
         })
         .catch((err) => {
-          showMessage({
-            message: t('alerts.contactAddError'),
-            description: err.message,
-            type: 'danger',
-          })
           setIsAddingContact(false) // restore sending status
         })
     }
   }
 
-  const onPressBack: () => void = () => {
-    relayPool?.unsubscribeAll()
-    goBack()
-  }
-
-  const renderBackAction = (): JSX.Element => {
-    return (
-      <Button
-        accessoryRight={<Icon name='arrow-left' size={16} color={theme['text-basic-color']} />}
-        onPress={onPressBack}
-        appearance='ghost'
-      />
-    )
-  }
-
-  const styles = StyleSheet.create({
-    container: {
-      flex: 1,
-    },
-    actionContainer: {
-      marginTop: 30,
-      marginBottom: 30,
-      paddingLeft: 12,
-      paddingRight: 12,
-    },
-    button: {
-      marginTop: 30,
-    },
-    icon: {
-      width: 32,
-      height: 32,
-    },
-    modal: {
-      paddingLeft: 32,
-      paddingRight: 32,
-      width: '100%',
-    },
-    backdrop: {
-      backgroundColor: 'rgba(0, 0, 0, 0.5)',
-    },
-    topBar: {
-      height: 64,
-    },
-  })
-
   return (
     <>
-      <TopNavigation alignment='center' accessoryLeft={renderBackAction} />
+      {/* <TopNavigation alignment='center' accessoryLeft={renderBackAction} />
       <TabBar
         style={styles.topBar}
         selectedIndex={selectedTab}
@@ -211,9 +150,9 @@ export const ContactsPage: React.FC = () => {
         >
           <Icon name='user-plus' size={30} color={theme['text-basic-color']} solid />
         </TouchableOpacity>
-      )}
+      )} */}
     </>
   )
 }
 
-export default ContactsPage
+export default ContactsFeed
