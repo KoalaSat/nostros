@@ -1,6 +1,7 @@
 import React, { useCallback, useContext, useEffect, useState } from 'react'
 import { t } from 'i18next'
 import {
+  Dimensions,
   NativeScrollEvent,
   NativeSyntheticEvent,
   RefreshControl,
@@ -17,7 +18,8 @@ import { getReplyEventId } from '../../Functions/RelayFunctions/Events'
 import { getUsers, User } from '../../Functions/DatabaseFunctions/Users'
 import { handleInfinityScroll } from '../../Functions/NativeFunctions'
 import { RelayFilters } from '../../lib/nostr/RelayPool/intex'
-import { useTheme } from 'react-native-paper'
+import { AnimatedFAB, BottomNavigation, Text, useTheme } from 'react-native-paper'
+import { navigate } from '../../lib/Navigation'
 
 export const HomePage: React.FC = () => {
   const { database, goToPage } = useContext(AppContext)
@@ -29,6 +31,10 @@ export const HomePage: React.FC = () => {
   const [authors, setAuthors] = useState<User[]>([])
   const [refreshing, setRefreshing] = useState(true)
   const [firstLoad, setFirstLoad] = useState(true)
+  const [index, setIndex] = React.useState(0);
+  const [routes] = React.useState([
+    { key: 'home', focusedIcon: 'home', unfocusedIcon: 'home-outline'},
+  ])
 
   const calculateInitialNotes: () => Promise<void> = async () => {
     if (database && publicKey) {
@@ -139,29 +145,10 @@ export const HomePage: React.FC = () => {
     }
   }, [])
 
-  const styles = StyleSheet.create({
-    container: {
-      flex: 1,
-    },
-    icon: {
-      width: 32,
-      height: 32,
-    },
-    empty: {
-      height: 128,
-      justifyContent: 'center',
-      alignItems: 'center',
-    },
-    noContacts: {
-      height: 64,
-      justifyContent: 'center',
-      alignItems: 'center',
-    },
-    spinner: {
-      justifyContent: 'center',
-      alignItems: 'center',
-      height: 64,
-    },
+  const HomeRoute: () => JSX.Element = () => <Text>MyFeedRoute</Text>
+
+  const renderScene = BottomNavigation.SceneMap({
+    home: HomeRoute,
   })
 
   return (
@@ -217,8 +204,30 @@ export const HomePage: React.FC = () => {
           <Icon name='paper-plane' size={30} color={theme['text-basic-color']} solid />
         </TouchableOpacity>
       )} */}
+      <BottomNavigation
+        navigationState={{ index, routes }}
+        onIndexChange={setIndex}
+        renderScene={renderScene}
+        labeled={false}
+      />
+      <AnimatedFAB
+        style={[styles.fab, { top: Dimensions.get('window').height - 220 }]}
+        icon='pencil-outline'
+        label='Label'
+        onPress={() => navigate('Send')}
+        animateFrom='right'
+        iconMode='static'
+        extended={false}
+      />
     </>
   )
 }
+
+const styles = StyleSheet.create({
+  fab: {
+    right: 16,
+    position: 'absolute',
+  },
+})
 
 export default HomePage

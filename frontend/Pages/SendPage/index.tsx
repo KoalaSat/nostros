@@ -1,31 +1,30 @@
-import {
-  Input,
-  Layout,
-  List,
-  ListItem,
-  Toggle,
-  TopNavigation,
-  useTheme,
-} from '@ui-kitten/components'
-import React, { useContext, useEffect, useRef, useState } from 'react'
-import { StyleSheet } from 'react-native'
+import React, { useContext, useEffect, useState } from 'react'
+import { FlatList, ListRenderItem, StyleSheet, View } from 'react-native'
 import { AppContext } from '../../Contexts/AppContext'
-import Icon from 'react-native-vector-icons/FontAwesome5'
-import { showMessage } from 'react-native-flash-message'
 import { Event, EventKind } from '../../lib/nostr/Events'
 import { useTranslation } from 'react-i18next'
 import { RelayPoolContext } from '../../Contexts/RelayPoolContext'
 import moment from 'moment'
-import { getNotes } from '../../Functions/DatabaseFunctions/Notes'
-import { getETags } from '../../Functions/RelayFunctions/Events'
+import { Note } from '../../Functions/DatabaseFunctions/Notes'
+import { getETags, getTaggedPubKeys } from '../../Functions/RelayFunctions/Events'
 import { getUsers, User } from '../../Functions/DatabaseFunctions/Users'
-import { formatPubKey } from '../../Functions/RelayFunctions/Users'
-import { Avatar, Button } from '../../Components'
+import { formatPubKey, username } from '../../Functions/RelayFunctions/Users'
+import { Button, Divider, Switch, Text, TextInput } from 'react-native-paper'
+import RBSheet from 'react-native-raw-bottom-sheet'
+import { UserContext } from '../../Contexts/UserContext'
+import NostrosAvatar from '../../Components/Avatar'
+import { TouchableHighlight } from 'react-native-gesture-handler'
+import { goBack } from '../../lib/Navigation'
 
-export const SendPage: React.FC = () => {
-  const theme = useTheme()
-  const { goBack, page, database } = useContext(AppContext)
-  const { relayPool, publicKey, lastConfirmationtId } = useContext(RelayPoolContext)
+interface SendPageProps {
+  route: { params: { note: Note } | undefined }
+}
+
+export const SendPage: React.FC<SendPageProps> = ({ route }) => {
+  const bottomSheetContactsRef = React.useRef<RBSheet>(null)
+  const { database } = useContext(AppContext)
+  const { publicKey } = useContext(UserContext)
+  const { relayPool, lastConfirmationtId } = useContext(RelayPoolContext)
   const { t } = useTranslation('common')
   // state
   const [content, setContent] = useState<string>('')
@@ -34,41 +33,24 @@ export const SendPage: React.FC = () => {
   const [userMentions, setUserMentions] = useState<User[]>([])
   const [isSending, setIsSending] = useState<boolean>(false)
 
-  const scrollViewRef = useRef<Input>()
-
-  const breadcrump = page.split('%')
-  const eventId = breadcrump[breadcrump.length - 1].split('#')[1]
-
   useEffect(() => {
-    if (isSending) {
-      showMessage({
-        message: t('alerts.sendNoteSuccess'),
-        type: 'success',
-      })
-      setIsSending(false) // restore sending status
-      goBack()
-    }
+    if (isSending) goBack()
   }, [lastConfirmationtId])
 
-  const styles = StyleSheet.create({
-    container: {
-      flex: 1,
-    },
-    actionContainer: {
-      marginTop: 30,
-      paddingLeft: 32,
-      paddingRight: 32,
-    },
-    button: {
-      marginTop: 30,
-    },
-  })
-
   const onChangeText: (text: string) => void = (text) => {
-    const match = text.match(/@(\S*)$/)
-    if (database && match && match[1].length > 0) {
-      getUsers(database, { name: match[1] }).then((results) => {
-        setUserSuggestions(results)
+    const match = text.match(/@(.*)$/)
+    const note: Note | undefined = route.params?.note
+    if (database && match && match?.length > 0) {
+      let request = getUsers(database, { name: match[1], order: 'contact' })
+
+      if (match[1] === '' && note) {
+        const taggedPubKeys = getTaggedPubKeys(note)
+        request = getUsers(database, { includeIds: [...taggedPubKeys, note.pubkey], order: 'contact' })
+      }
+
+      request.then((results) => {
+        setUserSuggestions(results.filter((item) => item.id !== publicKey))
+        bottomSheetContactsRef.current?.open()
       })
     } else {
       setUserSuggestions([])
@@ -82,58 +64,42 @@ export const SendPage: React.FC = () => {
 
   const onPressSend: () => void = () => {
     if (database && publicKey) {
+      const note: Note | undefined = route.params?.note
       setIsSending(true)
-      getNotes(database, { filters: { id: eventId } })
-        .then((notes) => {
-          let tags: string[][] = []
-          const note = notes[0]
+      let tags: string[][] = []
 
-          let rawContent = content
+      let rawContent = content
 
-          if (note) {
-            tags = note.tags
-            if (getETags(note).length === 0) {
-              tags.push(['e', eventId, '', 'root'])
-            } else {
-              tags.push(['e', eventId, '', 'reply'])
-            }
+      if (note?.id) {
+        tags = note.tags
+        if (getETags(note).length === 0) {
+          tags.push(['e', note.id, '', 'root'])
+        } else {
+          tags.push(['e', note.id, '', 'reply'])
+        }
+        tags.push(['p', note.pubkey])
+      }
+
+      if (contentWarning) tags.push(['content-warning', ''])
+
+      if (userMentions.length > 0) {
+        userMentions.forEach((user) => {
+          const userText = mentionText(user)
+          if (rawContent.includes(userText)) {
+            rawContent = rawContent.replace(userText, `#[${tags.length}]`)
+            tags.push(['p', user.id])
           }
-          if (contentWarning) tags.push(['content-warning', ''])
-
-          if (userMentions.length > 0) {
-            userMentions.forEach((user) => {
-              const userText = mentionText(user)
-              if (rawContent.includes(userText)) {
-                rawContent = rawContent.replace(userText, `#[${tags.length}]`)
-                tags.push(['p', user.id])
-              }
-            })
-          }
-
-          const event: Event = {
-            content: rawContent,
-            created_at: moment().unix(),
-            kind: EventKind.textNote,
-            pubkey: publicKey,
-            tags,
-          }
-          relayPool?.sendEvent(event).catch((err) => {
-            showMessage({
-              message: t('alerts.sendNoteError'),
-              description: err.message,
-              type: 'danger',
-            })
-          })
         })
-        .catch((err) => {
-          // error with getNotes
-          showMessage({
-            message: t('alerts.sendGetNotesError'),
-            description: err.message,
-            type: 'danger',
-          })
-          setIsSending(false) // restore sending status
-        })
+      }
+
+      const event: Event = {
+        content: rawContent,
+        created_at: moment().unix(),
+        kind: EventKind.textNote,
+        pubkey: publicKey,
+        tags,
+      }
+      relayPool?.sendEvent(event).catch(() => {})
     }
   }
 
@@ -148,72 +114,119 @@ export const SendPage: React.FC = () => {
       return `${splitText.join('@')}${mentionText(user)}`
     })
     setUserSuggestions([])
-    scrollViewRef.current?.focus()
+    bottomSheetContactsRef.current?.close()
   }
 
-  const suggestionsList: () => JSX.Element = () => {
-    const renderItem: (item: { item: User }) => JSX.Element = ({ item }) => {
-      return (
-        <ListItem
-          title={`${item.name ?? item.id}`}
-          accessoryLeft={<Avatar name={item.name} src={item.picture} pubKey={item.id} size={25} />}
-          onPress={() => addUserMention(item)}
-        />
-      )
-    }
-
-    return userSuggestions.length > 0 ? (
-      <List data={userSuggestions} renderItem={renderItem} />
-    ) : (
-      <></>
-    )
-  }
-
-  const renderBackAction = (): JSX.Element => (
-    <Button
-      accessoryRight={<Icon name='arrow-left' size={16} color={theme['text-basic-color']} />}
-      onPress={() => goBack()}
-      appearance='ghost'
-    />
+  const renderContactItem: ListRenderItem<User> = ({ index, item }) => (
+    <TouchableHighlight onPress={() => addUserMention(item)}>
+      <View key={index} style={styles.contactRow}>
+        <View style={styles.contactInfo}>
+          <NostrosAvatar
+            name={item.name}
+            pubKey={item.id}
+            src={item.picture}
+            lud06={item.lnurl}
+            size={34}
+          />
+          <View style={styles.contactName}>
+            <Text>{formatPubKey(item.id)}</Text>
+            {item.name && <Text variant='titleSmall'>{username(item)}</Text>}
+          </View>
+        </View>
+        <View style={styles.contactFollow}>
+          <Text>{item.contact ? t('sendPage.isContact') : t('sendPage.isNotContact')}</Text>
+        </View>
+      </View>
+    </TouchableHighlight>
   )
 
   return (
     <>
-      <Layout style={styles.container} level='2'>
-        <TopNavigation
-          alignment='center'
-          title={eventId ? t('sendPage.reply') : t('sendPage.title')}
-          accessoryLeft={renderBackAction}
+      <View style={styles.textInput}>
+        <TextInput
+          ref={(ref) => ref?.focus()}
+          mode='outlined'
+          multiline={true}
+          numberOfLines={30}
+          outlineStyle={{ borderColor: 'transparent' }}
+          value={content}
+          onChangeText={onChangeText}
         />
-        <Layout style={styles.actionContainer} level='2'>
-          <Layout>
-            <Input
-              ref={scrollViewRef}
-              multiline={true}
-              textStyle={{ minHeight: 64 }}
-              placeholder={t('sendPage.placeholder')}
-              value={content}
-              onChangeText={onChangeText}
-              size='large'
-              autoFocus={true}
-              keyboardType='twitter'
-            />
-          </Layout>
-          <Layout style={styles.button}>
-            <Button onPress={onPressSend} loading={isSending}>
-              {t('sendPage.send')}
-            </Button>
-          </Layout>
-          <Layout style={styles.button} level='2'>
-            <Toggle checked={contentWarning} onChange={setContentWarning}>
-              {t('sendPage.contentWarning')}
-            </Toggle>
-          </Layout>
-          {suggestionsList()}
-        </Layout>
-      </Layout>
+      </View>
+      {/* FIXME: can't find this color */}
+      <View style={styles.actions}>
+        {/* flexDirection: 'column-reverse' */}
+        {userSuggestions.length > 0 ? (
+          <FlatList
+            style={styles.contactsList}
+            ItemSeparatorComponent={Divider}
+            data={userSuggestions}
+            renderItem={renderContactItem}
+          />
+        ) : (
+          <View style={{ backgroundColor: '#001C37' }}>
+            <View style={styles.contentWarning}>
+              <Text>{t('sendPage.contentWarning')}</Text>
+              <Switch value={contentWarning} onValueChange={setContentWarning} />
+            </View>
+            <View style={styles.send}>
+              <Button
+                mode='contained'
+                onPress={onPressSend}
+                disabled={!content || content === ''}
+                loading={isSending}
+              >
+                {t('sendPage.send')}
+              </Button>
+            </View>
+          </View>
+        )}
+      </View>
     </>
   )
 }
+
+const styles = StyleSheet.create({
+  textInput: {
+    flex: 3,
+  },
+  actions: {
+    height: 200,
+    flexDirection: 'column-reverse',
+  },
+  contactsList: {
+    bottom: 0,
+  },
+  contactRow: {
+    paddingLeft: 16,
+    paddingRight: 16,
+    paddingTop: 16,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    width: '100%',
+    backgroundColor: '#001C37', // FIXME: somehow it can't be imported from theme
+  },
+  contactName: {
+    paddingLeft: 16,
+  },
+  contactInfo: {
+    flexDirection: 'row',
+    alignContent: 'center',
+  },
+  contactFollow: {
+    justifyContent: 'center',
+  },
+  contentWarning: {
+    flexDirection: 'row',
+    alignContent: 'center',
+    justifyContent: 'space-between',
+    paddingLeft: 16,
+    paddingRight: 16,
+    paddingTop: 16,
+  },
+  send: {
+    padding: 16,
+  },
+})
 
 export default SendPage

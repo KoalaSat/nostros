@@ -25,7 +25,7 @@ export const NostrosAvatar: React.FC<AvatarProps> = ({ src, name, pubKey, size =
   }
 
   return (
-    <>
+    <View>
       {validImage() ? (
         <PaperAvatar.Image size={size} source={{ uri: src }} />
       ) : (
@@ -43,7 +43,7 @@ export const NostrosAvatar: React.FC<AvatarProps> = ({ src, name, pubKey, size =
       ) : (
         <View style={styles.iconLightning}/>
       )}
-    </>
+    </View>
   )
 }
 

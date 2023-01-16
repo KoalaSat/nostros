@@ -13,3 +13,9 @@ export const push: (name: string, params?: any) => void = (name, params ={}) => 
     navigationRef.current?.dispatch(StackActions.push(name, params));
   }
 }
+
+export const goBack: () => void = () => {
+  if (navigationRef.isReady()) {
+    navigationRef.goBack()
+  }
+}
