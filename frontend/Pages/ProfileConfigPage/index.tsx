@@ -19,7 +19,7 @@ import {
 import { RelayPoolContext } from '../../Contexts/RelayPoolContext'
 import RBSheet from 'react-native-raw-bottom-sheet'
 import NostrosNotification from '../../Components/NostrosNotification'
-import NostrosAvatar from '../../Components/Avatar'
+import NostrosAvatar from '../../Components/NostrosAvatar'
 
 export const ProfileConfigPage: React.FC = () => {
   const theme = useTheme()

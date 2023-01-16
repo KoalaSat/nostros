@@ -9,7 +9,7 @@ import {
   View,
 } from 'react-native'
 import { Surface, Text, IconButton, ActivityIndicator, useTheme } from 'react-native-paper'
-import NostrosAvatar from '../../Components/Avatar'
+import NostrosAvatar from '../../Components/NostrosAvatar'
 import { AppContext } from '../../Contexts/AppContext'
 import { UserContext } from '../../Contexts/UserContext'
 import { RelayPoolContext } from '../../Contexts/RelayPoolContext'
@@ -26,6 +26,7 @@ import LnPayment from '../../Components/LnPayment'
 import { handleInfinityScroll } from '../../Functions/NativeFunctions'
 import RBSheet from 'react-native-raw-bottom-sheet'
 import ProfileCard from '../../Components/ProfileCard'
+import { navigate } from '../../lib/Navigation'
 
 interface ProfilePageProps {
   route: { params: { pubKey: string } }
@@ -211,7 +212,14 @@ export const ProfilePage: React.FC<ProfilePageProps> = ({ route }) => {
             <Text>{t('profilePage.copyNPub')}</Text>
           </View>
           <View style={styles.actionButton}>
-            <IconButton icon='message-plus-outline' size={28} onPress={() => {}} />
+            <IconButton
+              icon='message-plus-outline'
+              size={28}
+              onPress={() => {
+                navigate('Conversation', { pubKey: route.params.pubKey })
+                bottomSheetProfileRef.current?.close()
+              }}
+            />
             <Text>{t('profilePage.message')}</Text>
           </View>
           <View style={styles.actionButton}>

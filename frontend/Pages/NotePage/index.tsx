@@ -19,7 +19,7 @@ import {
 import { npubEncode } from 'nostr-tools/nip19'
 import moment from 'moment'
 import { usernamePubKey } from '../../Functions/RelayFunctions/Users'
-import NostrosAvatar from '../../Components/Avatar'
+import NostrosAvatar from '../../Components/NostrosAvatar'
 import TextContent from '../../Components/TextContent'
 import { getReactionsCount, getUserReaction } from '../../Functions/DatabaseFunctions/Reactions'
 import { UserContext } from '../../Contexts/UserContext'

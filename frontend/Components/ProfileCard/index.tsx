@@ -8,11 +8,11 @@ import { RelayPoolContext } from '../../Contexts/RelayPoolContext'
 import { UserContext } from '../../Contexts/UserContext'
 import { getUser, updateUserContact, User } from '../../Functions/DatabaseFunctions/Users'
 import { populatePets } from '../../Functions/RelayFunctions/Users'
-import NostrosAvatar from '../Avatar'
+import NostrosAvatar from '../NostrosAvatar'
 import NostrosNotification from '../NostrosNotification'
 import LnPayment from '../LnPayment'
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'
-import { push } from '../../lib/Navigation'
+import { navigate, push } from '../../lib/Navigation'
 import RBSheet from 'react-native-raw-bottom-sheet'
 
 interface ProfileCardProps {
@@ -104,7 +104,7 @@ export const ProfileCard: React.FC<ProfileCardProps> = ({ userPubKey, bottomShee
       <View style={styles.mainLayout}>
         <View style={styles.actionButton}>
           <IconButton
-            icon='account-multiple-plus-outline'
+            icon={isContact ? 'account-multiple-minus-outline' : 'account-multiple-plus-outline'}
             size={28}
             onPress={() => {
               isContact ? removeContact() : addContact()
@@ -114,7 +114,14 @@ export const ProfileCard: React.FC<ProfileCardProps> = ({ userPubKey, bottomShee
           <Text>{t('profilePage.copyNPub')}</Text>
         </View>
         <View style={styles.actionButton}>
-          <IconButton icon='message-plus-outline' size={28} onPress={() => {}} />
+          <IconButton
+            icon='message-plus-outline'
+            size={28}
+            onPress={() => {
+              navigate('Conversation', { pubKey: userPubKey })
+              bottomSheetRef.current?.close()
+            }}
+          />
           <Text>{t('profilePage.message')}</Text>
         </View>
         <View style={styles.actionButton}>
