@@ -2,7 +2,7 @@ import * as React from 'react'
 import { Platform, View } from 'react-native'
 import type { DrawerNavigationProp } from '@react-navigation/drawer'
 import { CardStyleInterpolators, createStackNavigator } from '@react-navigation/stack'
-import { Appbar, Snackbar, Text, useTheme } from 'react-native-paper'
+import { Appbar, Text, useTheme } from 'react-native-paper'
 import RBSheet from 'react-native-raw-bottom-sheet'
 import { useTranslation } from 'react-i18next'
 import HomePage from '../HomePage'
@@ -18,7 +18,8 @@ import ConversationPage from '../ConversationPage'
 export const HomeNavigator: React.FC = () => {
   const theme = useTheme()
   const { t } = useTranslation('common')
-  const bottomSheetKeysRef = React.useRef<RBSheet>(null)
+  const bottomSheetRef = React.useRef<RBSheet>(null)
+  const [bottomSheetPage, setBottomSheetPage] = React.useState<string>('keys')
   const bottomSheetProfileRef = React.useRef<RBSheet>(null)
   const Stack = React.useMemo(() => createStackNavigator(), [])
   const [showProfile, setShowProfile] = React.useState<string>()
@@ -42,6 +43,31 @@ export const HomeNavigator: React.FC = () => {
       },
     }
   }, [])
+
+  const onPressQuestion: (pageName: string) => void = (pageName) => {
+    bottomSheetRef.current?.open()
+    setBottomSheetPage(pageName === 'Relays' ? 'relays' : 'keys')
+  }
+
+  const BottomSheetRelays = React.useMemo(
+    () => (
+      <View>
+        <Text variant='headlineSmall'>{t('drawers.relaysTitle')}</Text>
+        <Text variant='bodyMedium'>
+          {t('drawers.relaysDescription')}
+        </Text>
+      </View>
+    ),
+    [],
+  )
+
+  const BottomSheets = {
+    relays: {
+      component: BottomSheetRelays,
+      height: 700,
+    },
+  }
+
   return (
     <>
       <Stack.Navigator
@@ -70,6 +96,13 @@ export const HomeNavigator: React.FC = () => {
                         setShowProfile(params?.pubKey ?? '')
                         bottomSheetProfileRef.current?.open()
                       }}
+                    />
+                  )}
+                  {['Relays'].includes(route.name) && (
+                    <Appbar.Action
+                      icon='help-circle-outline'
+                      isLeading
+                      onPress={() => onPressQuestion(route.name)}
                     />
                   )}
                 </Appbar.Header>
@@ -101,28 +134,12 @@ export const HomeNavigator: React.FC = () => {
         <ProfileCard userPubKey={showProfile ?? ''} bottomSheetRef={bottomSheetProfileRef} />
       </RBSheet>
       <RBSheet
-        ref={bottomSheetKeysRef}
+        ref={bottomSheetRef}
         closeOnDragDown={true}
-        height={380}
+        height={BottomSheets[bottomSheetPage]?.height}
         customStyles={bottomSheetStyles}
       >
-        <View>
-          <Text variant='headlineSmall'>¿Qué son las claves?</Text>
-          <Text variant='bodyMedium'>
-            En nostr tienes dos claves: tu clave pública y tu clave privada.
-          </Text>
-          <Text variant='titleMedium'>Clave pública</Text>
-          <Text variant='bodyMedium'>
-            Piensa en la clave pública como tu nombre de usuario (como tu @handle en Twitter).
-            Compártela con otras personas para que te añadan a su red.
-          </Text>
-          <Text variant='titleMedium'>Clave privada</Text>
-          <Text variant='bodyMedium'>Piensa en tu clave privada como tu contraseña.</Text>
-          <Snackbar visible onDismiss={() => {}}>
-            Muy importante. Guarda tu clave privada en un lugar seguro, si la pierdes no podrás
-            volver a acceder con ella ni recuperar tu cuenta.
-          </Snackbar>
-        </View>
+        {BottomSheets[bottomSheetPage]?.component}
       </RBSheet>
     </>
   )

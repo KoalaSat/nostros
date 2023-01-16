@@ -33,20 +33,18 @@ export const HomeNavigator: React.FC = () => {
   const BottomSheetKeys = React.useMemo(
     () => (
       <View>
-        <Text variant='headlineSmall'>¿Qué son las claves?</Text>
+        <Text variant='headlineSmall'>{t('drawers.keysTitle')}</Text>
         <Text variant='bodyMedium'>
-          En nostr tienes dos claves: tu clave pública y tu clave privada.
+          {t('drawers.keysDescription')}
         </Text>
-        <Text variant='titleMedium'>Clave pública</Text>
+        <Text variant='titleMedium'>{t('drawers.publicKeys')}</Text>
         <Text variant='bodyMedium'>
-          Piensa en la clave pública como tu nombre de usuario (como tu @handle en Twitter).
-          Compártela con otras personas para que te añadan a su red.
+          {t('drawers.publicKeysDescription')}
         </Text>
-        <Text variant='titleMedium'>Clave privada</Text>
-        <Text variant='bodyMedium'>Piensa en tu clave privada como tu contraseña.</Text>
+        <Text variant='titleMedium'>{t('drawers.privateKey')}</Text>
+        <Text variant='bodyMedium'>{t('drawers.privateKeyDescription')}</Text>
         <Snackbar visible onDismiss={() => {}}>
-          Muy importante. Guarda tu clave privada en un lugar seguro, si la pierdes no podrás volver
-          a acceder con ella ni recuperar tu cuenta.
+          {t('drawers.privateKeysSnackbar')}
         </Snackbar>
       </View>
     ),
@@ -56,19 +54,9 @@ export const HomeNavigator: React.FC = () => {
   const BottomSheetRelays = React.useMemo(
     () => (
       <View>
-        <Text variant='headlineSmall'>Relés</Text>
+        <Text variant='headlineSmall'>{t('drawers.relaysTitle')}</Text>
         <Text variant='bodyMedium'>
-          Los relés son nodos en la red que actúan como intermediarios para la transmisión de
-          mensajes entre aplicaciones. Los relés pueden ser utilizados para mejorar la resiliencia y
-          la disponibilidad de la red, ya que permiten que los mensajes sean entregados aun cuando
-          hay fallos o interrupciones en la conectividad. Los relés también pueden ser utilizados
-          para mejorar la privacidad y la seguridad de la red, ya que pueden ocultar la ubicación y
-          el identidad de las aplicaciones que se comunican entre sí a través de ellos. Esto puede
-          ser útil en entornos donde la censura o la vigilancia son un problema. Es importante tener
-          en cuenta que los relés también pueden ser utilizados para propósitos malintencionados,
-          como para rastrear o censurar el tráfico de la red. Por lo tanto, es importante evaluar
-          cuidadosamente el uso de relés y considerar medidas de seguridad adecuadas para proteger
-          la privacidad y la seguridad de la red.
+          {t('drawers.relaysDescription')}
         </Text>
       </View>
     ),

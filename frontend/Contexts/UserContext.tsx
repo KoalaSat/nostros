@@ -10,7 +10,7 @@ import {
   User,
 } from '../Functions/DatabaseFunctions/Users'
 import { dropTables } from '../Functions/DatabaseFunctions'
-import { navigate, jumpTo } from '../lib/Navigation'
+import { navigate } from '../lib/Navigation'
 import { npubEncode, nsecEncode } from 'nostr-tools/nip19'
 
 export interface UserContextProps {
@@ -104,22 +104,19 @@ export const UserContextProvider = ({ children }: UserContextProviderProps): JSX
   }, [publicKey])
 
   useEffect(() => {
-    if (user) {
-      navigate('Feed')
-    }
-  }, [user])
-
-  useEffect(() => {
     if (!loadingDb) {
       SInfo.getItem('privateKey', {}).then((privateResult) => {
         if (privateResult && privateResult !== '') {
           setPrivateKey(privateResult)
           setPublicKey(getPublickey(privateResult))
+          navigate('Feed')
         } else {
           SInfo.getItem('publicKey', {}).then((publicResult) => {
             if (publicResult && publicResult !== '') {
               setPublicKey(publicResult)
-              jumpTo('Feed')
+              navigate('Feed')
+            } else {
+              navigate('Home')
             }
           })
         }

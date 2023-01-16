@@ -58,7 +58,6 @@ export const ProfileConnectPage: React.FC = () => {
           <TextInput
             mode='outlined'
             label={label}
-            placeholder={t('loggerPage.placeholder') ?? ''}
             onChangeText={setInputValue}
             value={inputValue}
             secureTextEntry={!isPublic}

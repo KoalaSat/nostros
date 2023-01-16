@@ -17,13 +17,16 @@ import HomeNavigator from './Pages/HomeNavigator'
 import MenuItems from './Components/MenuItems'
 import FeedNavigator from './Pages/FeedNavigator'
 import { UserContextProvider } from './Contexts/UserContext'
-import { LogBox } from 'react-native'
+import { LogBox, StyleSheet, View } from 'react-native'
+import Logo from './Components/Logo'
 
 LogBox.ignoreAllLogs()
 
 const DrawerNavigator = createDrawerNavigator()
 
 export const Frontend: React.FC = () => {
+  
+
   const { DarkTheme } = adaptNavigationTheme({
     reactNavigationLight: NavigationDefaultTheme,
     reactNavigationDark: NavigationDarkTheme,
@@ -38,6 +41,8 @@ export const Frontend: React.FC = () => {
       },
     }
   }, [])
+
+  const Loading: React.FC = () => <View style={styles.logo}><Logo onlyIcon size='big'/></View>
 
   return (
     <PaperProvider theme={nostrosDarkTheme}>
@@ -63,6 +68,11 @@ export const Frontend: React.FC = () => {
                             }}
                           >
                             <DrawerNavigator.Screen
+                              name='Loading'
+                              component={Loading}
+                              options={{ headerShown: false }}
+                            />
+                            <DrawerNavigator.Screen
                               name='Home'
                               component={HomeNavigator}
                               options={{ headerShown: false }}
@@ -86,5 +96,12 @@ export const Frontend: React.FC = () => {
     </PaperProvider>
   )
 }
+const styles = StyleSheet.create({
+  logo: {
+    justifyContent: 'center',
+    alignContent: 'center',
+    flex: 1
+  }
+})
 
 export default Frontend

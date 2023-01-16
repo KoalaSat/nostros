@@ -159,7 +159,7 @@ export const ContactsFeed: React.FC = () => {
         </View>
         <View style={styles.contactFollow}>
           <Button onPress={() => (item.contact ? removeContact(item) : addContact(item))}>
-            {item.contact ? t('sendPage.stopFollowing') : t('sendPage.follow')}
+            {item.contact ? t('contactsFeed.stopFollowing') : t('contactsFeed.follow')}
           </Button>
         </View>
       </View>
@@ -227,7 +227,7 @@ export const ContactsFeed: React.FC = () => {
           <Text variant='bodyMedium'>{t('contactsFeed.addContactDescription')}</Text>
           <TextInput
             mode='outlined'
-            label={t('profileConfigPage.addContact') ?? ''}
+            label={t('contactsFeed.addContact') ?? ''}
             onChangeText={setContactInput}
             value={contactInput}
             right={
@@ -244,7 +244,16 @@ export const ContactsFeed: React.FC = () => {
             onPress={onPressAddContact}
             loading={isAddingContact}
           >
-            {t('addContact.add')}
+            {t('contactsFeed.addContact')}
+          </Button>
+          <Button
+            mode='outlined'
+            onPress={() => {
+              bottomSheetAddContactRef.current?.close()
+              setContactInput('')
+            }}
+          >
+            {t('contactsFeed.cancel')}
           </Button>
         </View>
       </RBSheet>
