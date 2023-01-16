@@ -1,11 +1,12 @@
 import React, { useContext, useEffect, useState } from 'react'
 import { generateRandomKey } from '../../lib/nostr/Bip'
 import { Clipboard, StyleSheet, View } from 'react-native'
-import { Button, Snackbar, TextInput } from 'react-native-paper'
+import { Button, Snackbar, Text, TextInput } from 'react-native-paper'
 import { useTranslation } from 'react-i18next'
 import { nsecEncode } from 'nostr-tools/nip19'
 import { DrawerNavigationHelpers } from '@react-navigation/drawer/lib/typescript/src/types'
 import { UserContext } from '../../Contexts/UserContext'
+import NostrosNotification from '../../Components/NostrosNotification'
 
 interface ProfileCreatePageProps {
   navigation: DrawerNavigationHelpers
@@ -14,11 +15,14 @@ interface ProfileCreatePageProps {
 export const ProfileCreatePage: React.FC<ProfileCreatePageProps> = ({ navigation }) => {
   const { t } = useTranslation('common')
   const { setPrivateKey } = useContext(UserContext)
+  const [key, setKey] = useState<string>()
   const [inputValue, setInputValue] = useState<string>()
   const [copied, setCopied] = useState<boolean>(false)
+  const [showNotification, setShowNotification] = useState<string>()
 
   useEffect(() => {
     generateRandomKey().then((string) => {
+      setKey(string)
       const nsec = nsecEncode(string)
       setInputValue(nsec)
     })
@@ -28,11 +32,12 @@ export const ProfileCreatePage: React.FC<ProfileCreatePageProps> = ({ navigation
     if (inputValue) {
       Clipboard.setString(inputValue)
       setCopied(true)
+      setShowNotification('copied')
     }
   }
 
   const onPress: () => void = () => {
-    setPrivateKey(inputValue)
+    setPrivateKey(key)
     navigation.jumpTo('Feed')
   }
 
@@ -49,7 +54,7 @@ export const ProfileCreatePage: React.FC<ProfileCreatePageProps> = ({ navigation
           right={
             <TextInput.Icon
               icon={'content-copy'}
-              onPress={() => copyContent()}
+              onPress={copyContent}
               forceTextInputFocus={false}
             />
           }
@@ -61,12 +66,21 @@ export const ProfileCreatePage: React.FC<ProfileCreatePageProps> = ({ navigation
       <Snackbar
         style={styles.snackbar}
         visible
-        onDismiss={() => {}}
+        onDismiss={copyContent}
         action={{ label: t('profileCreatePage.snackbarAction') ?? '', onPress: copyContent }}
       >
-        Muy importante. Guarda tu clave privada en un lugar seguro, si la pierdes no podrás volver a
-        acceder con ella ni recuperar tu cuenta.
+        
+        {t('profileCreatePage.snackbarDescription')}
       </Snackbar>
+      {showNotification && (
+        <NostrosNotification
+          showNotification={showNotification}
+          setShowNotification={setShowNotification}
+        >
+          <Text>{t(`relaysPage.notifications.${showNotification}`)}</Text>
+          <Text>{t('relaysPage.notifications.description')}</Text>
+        </NostrosNotification>
+      )}
     </View>
   )
 }

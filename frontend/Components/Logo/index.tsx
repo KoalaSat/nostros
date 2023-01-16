@@ -6,7 +6,7 @@ import { SvgXml } from 'react-native-svg'
 
 interface LogoProps {
   onlyIcon?: boolean
-  size?: 'large' | 'medium' | 'small'
+  size?: 'big' | 'large' | 'medium' | 'small'
 }
 
 export const Logo: React.FC<LogoProps> = ({ onlyIcon = false, size = 'small' }) => {
@@ -14,6 +14,7 @@ export const Logo: React.FC<LogoProps> = ({ onlyIcon = false, size = 'small' }) 
     small: 60,
     medium: 90,
     large: 120,
+    big: 280
   }
   return (
     <View style={styles.container}>

@@ -278,25 +278,21 @@ export const ProfileConfigPage: React.FC = () => {
               </View>
               <View style={styles.actionButton}>
                 <IconButton
-                  icon='lightning-bolt'
-                  size={28}
-                  iconColor='#F5D112'
-                  onPress={() => bottomSheetLud06Ref.current?.open()}
-                />
-                <Text>{t('profileConfigPage.invoice')}</Text>
-              </View>
-            </View>
-            <View style={styles.cardActions}>
-              <View style={styles.actionButton}>
-                <IconButton
                   icon='check-circle-outline'
                   size={28}
                   onPress={() => bottomSheetNip05Ref.current?.open()}
                 />
                 <Text>{t('profileConfigPage.nip05')}</Text>
               </View>
-              <View style={styles.actionButton}></View>
-              <View style={styles.actionButton}></View>
+              <View style={styles.actionButton}>
+                <IconButton
+                  icon='lightning-bolt'
+                  size={28}
+                  iconColor='#F5D112'
+                  onPress={() => bottomSheetLud06Ref.current?.open()}
+                />
+                <Text>{t('profileConfigPage.lud06')}</Text>
+              </View>
             </View>
           </Card.Content>
         </Card>
@@ -387,7 +383,7 @@ export const ProfileConfigPage: React.FC = () => {
       <RBSheet
         ref={bottomSheetDirectoryRef}
         closeOnDragDown={true}
-        height={230}
+        height={480}
         customStyles={rbSheetCustomStyles}
       >
         <View>
@@ -398,10 +394,10 @@ export const ProfileConfigPage: React.FC = () => {
             onPress={async () => await Linking.openURL('https://www.nostr.directory')}
             loading={isPublishingProfile}
           >
-            {t('profileConfigPage.continue')}
+            {t('profileConfigPage.directoryContinue')}
           </Button>
           <Button mode='outlined' onPress={() => bottomSheetDirectoryRef.current?.close()}>
-            {t('profileConfigPage.cancell')}
+            {t('profileConfigPage.directoryCancell')}
           </Button>
         </View>
       </RBSheet>
@@ -412,8 +408,19 @@ export const ProfileConfigPage: React.FC = () => {
         customStyles={rbSheetCustomStyles}
       >
         <View>
-          <Text variant='titleLarge'>{t('profileConfigPage.pictureTitle')}</Text>
-          <Text variant='bodyMedium'>{t('profileConfigPage.pictureDescription')}</Text>
+          <Text variant='titleLarge'>{t('profileConfigPage.nip05Title')}</Text>
+          <Text variant='bodyMedium'>
+            {t('profileConfigPage.nip05Description')}
+            <Text> </Text>
+            <Text
+              style={styles.link}
+              onPress={async () =>
+                await Linking.openURL('https://github.com/nostr-protocol/nips/blob/master/05.md')
+              }
+            >
+              {t('profileConfigPage.nip05Link')}
+            </Text>
+          </Text>
           <TextInput
             mode='outlined'
             label={t('profileConfigPage.nip05') ?? ''}
@@ -433,7 +440,7 @@ export const ProfileConfigPage: React.FC = () => {
             onPress={onPressSaveNip05}
             loading={isPublishingProfile}
           >
-            {t('profileConfigPage.publishPicture')}
+            {t('profileConfigPage.publishNip05')}
           </Button>
         </View>
       </RBSheet>
@@ -448,7 +455,7 @@ export const ProfileConfigPage: React.FC = () => {
           <Text variant='bodyMedium'>{t('profileConfigPage.lud06Description')}</Text>
           <TextInput
             mode='outlined'
-            label={t('profileConfigPage.lud06') ?? ''}
+            label={t('profileConfigPage.lud06Label') ?? ''}
             onChangeText={setLnurl}
             value={lnurl}
             right={
@@ -465,18 +472,20 @@ export const ProfileConfigPage: React.FC = () => {
             onPress={onPressSaveLnurl}
             loading={isPublishingProfile}
           >
-            {t('profileConfigPage.publishPicture')}
+            {t('profileConfigPage.publishLud06')}
           </Button>
         </View>
       </RBSheet>
-      <NostrosNotification
-        showNotification={showNotification}
-        setShowNotification={setShowNotification}
-      >
-        <Text>{t(`profileConfigPage.${showNotification}`)}</Text>
-        {showNotification === 'nip05Published' && <Text>{nip05}</Text>}
-        {showNotification === 'lud06Published' && <Text>{lnurl}</Text>}
-      </NostrosNotification>
+      {showNotification && (
+        <NostrosNotification
+          showNotification={showNotification}
+          setShowNotification={setShowNotification}
+        >
+          <Text>{t(`profileConfigPage.notifications.${showNotification}`)}</Text>
+          {showNotification === 'nip05Published' && <Text>{nip05}</Text>}
+          {showNotification === 'lud06Published' && <Text>{lnurl}</Text>}
+        </NostrosNotification>
+      )}
     </View>
   )
 }
@@ -516,6 +525,9 @@ const styles = StyleSheet.create({
   snackbar: {
     margin: 16,
     bottom: 70,
+  },
+  link: {
+    textDecorationLine: 'underline',
   },
 })
 

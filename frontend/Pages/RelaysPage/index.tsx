@@ -5,7 +5,6 @@ import { RelayPoolContext } from '../../Contexts/RelayPoolContext'
 import { Relay } from '../../Functions/DatabaseFunctions/Relays'
 import { defaultRelays, REGEX_SOCKET_LINK } from '../../Constants/Relay'
 import {
-  Snackbar,
   List,
   Switch,
   AnimatedFAB,
@@ -17,6 +16,7 @@ import {
   Divider,
 } from 'react-native-paper'
 import RBSheet from 'react-native-raw-bottom-sheet'
+import NostrosNotification from '../../Components/NostrosNotification'
 
 export const RelaysPage: React.FC = () => {
   const defaultRelayInput = React.useMemo(() => 'wss://', [])
@@ -27,7 +27,7 @@ export const RelaysPage: React.FC = () => {
   const bottomSheetEditRef = React.useRef<RBSheet>(null)
   const [selectedRelay, setSelectedRelay] = useState<Relay>()
   const [addRelayInput, setAddRelayInput] = useState<string>(defaultRelayInput)
-  const [showNotification, setShowNotification] = useState<'remove' | 'add' | 'badFormat'>()
+  const [showNotification, setShowNotification] = useState<string>()
 
   const addRelay: (url: string) => void = (url) => {
     addRelayItem({
@@ -110,15 +110,14 @@ export const RelaysPage: React.FC = () => {
         iconMode='static'
         extended={false}
       />
-      <Snackbar
-        style={styles.snackbar}
-        visible={showNotification !== undefined}
-        duration={Snackbar.DURATION_SHORT}
-        onIconPress={() => setShowNotification(undefined)}
-        onDismiss={() => setShowNotification(undefined)}
-      >
-        {t(`relaysPage.${showNotification}`)}
-      </Snackbar>
+      {showNotification && (
+        <NostrosNotification
+          showNotification={showNotification}
+          setShowNotification={setShowNotification}
+        >
+          {t(`relaysPage.notifications.${showNotification}`)}
+        </NostrosNotification>
+      )}
       <RBSheet
         ref={bottomSheetAddRef}
         closeOnDragDown={true}
@@ -129,7 +128,6 @@ export const RelaysPage: React.FC = () => {
           <TextInput
             mode='outlined'
             label={t('relaysPage.labelAdd') ?? ''}
-            placeholder={t('relaysPage.placeholderAdd') ?? ''}
             onChangeText={setAddRelayInput}
             value={addRelayInput}
           />

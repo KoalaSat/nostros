@@ -128,11 +128,11 @@ export const ConversationPage: React.FC<ConversationPageProps> = ({ route }) => 
               content: encryptedcontent,
             })
             .catch(() => {
-              setShowNotification('conversationPage.privateMessageSendError')
+              setShowNotification('privateMessageSendError')
             })
         })
         .catch(() => {
-          setShowNotification('conversationPage.privateMessageSendError')
+          setShowNotification('privateMessageSendError')
         })
     }
   }
@@ -232,7 +232,7 @@ export const ConversationPage: React.FC<ConversationPageProps> = ({ route }) => 
         onIconPress={() => setShowNotification(undefined)}
         onDismiss={() => setShowNotification(undefined)}
       >
-        {t(`conversationPage.${showNotification}`)}
+        {t(`conversationPage.notifications.${showNotification}`)}
       </Snackbar>
     </View>
   )
