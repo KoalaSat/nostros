@@ -93,7 +93,9 @@ export const ProfileCard: React.FC<ProfileCardProps> = ({ userPubKey, bottomShee
               </View>
             </View>
             <View>
-              <Text>{`${user?.about?.slice(0, 75)}...`}</Text>
+              <Text>{`${user?.about?.slice(0, 75)}${
+                user?.about && user?.about?.length > 75 && ' ...'
+              }`}</Text>
             </View>
           </View>
           <View>
@@ -102,17 +104,18 @@ export const ProfileCard: React.FC<ProfileCardProps> = ({ userPubKey, bottomShee
         </Card.Content>
       </Card>
       <View style={styles.mainLayout}>
-        <View style={styles.actionButton}>
-          <IconButton
-            icon={isContact ? 'account-multiple-minus-outline' : 'account-multiple-plus-outline'}
-            size={28}
-            onPress={() => {
-              isContact ? removeContact() : addContact()
-            }}
-            disabled={userPubKey === publicKey}
-          />
-          <Text>{t('profilePage.copyNPub')}</Text>
-        </View>
+        {userPubKey !== publicKey && (
+          <View style={styles.actionButton}>
+            <IconButton
+              icon={isContact ? 'account-multiple-remove-outline' : 'account-multiple-plus-outline'}
+              size={28}
+              onPress={() => {
+                isContact ? removeContact() : addContact()
+              }}
+            />
+            <Text>{isContact ? t('profileCard.unfollow') : t('profileCard.follow')}</Text>
+          </View>
+        )}
         <View style={styles.actionButton}>
           <IconButton
             icon='message-plus-outline'
@@ -122,19 +125,19 @@ export const ProfileCard: React.FC<ProfileCardProps> = ({ userPubKey, bottomShee
               bottomSheetRef.current?.close()
             }}
           />
-          <Text>{t('profilePage.message')}</Text>
+          <Text>{t('profileCard.message')}</Text>
         </View>
         <View style={styles.actionButton}>
           <IconButton
             icon='content-copy'
             size={28}
             onPress={() => {
-              setShowNotification('picturePublished')
+              setShowNotification('npubCopied')
               const profileNPud = npubEncode(userPubKey)
               Clipboard.setString(profileNPud ?? '')
             }}
           />
-          <Text>{t('profilePage.copyNPub')}</Text>
+          <Text>{t('profileCard.copyNPub')}</Text>
         </View>
         <View style={styles.actionButton}>
           <IconButton
@@ -143,14 +146,14 @@ export const ProfileCard: React.FC<ProfileCardProps> = ({ userPubKey, bottomShee
             onPress={() => setOpenLn(true)}
             iconColor='#F5D112'
           />
-          <Text>{t('profilePage.invoice')}</Text>
+          <Text>{t('profileCard.invoice')}</Text>
         </View>
       </View>
       <NostrosNotification
         showNotification={showNotification}
         setShowNotification={setShowNotification}
       >
-        <Text>{t(`profilePage.${showNotification}`)}</Text>
+        <Text>{t(`profileCard.notifications.${showNotification}`)}</Text>
       </NostrosNotification>
       <LnPayment setOpen={setOpenLn} open={openLn} user={user} />
     </View>

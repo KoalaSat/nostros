@@ -200,17 +200,21 @@ export const ProfilePage: React.FC<ProfilePageProps> = ({ route }) => {
           <Text>{user?.about}</Text>
         </View>
         <View style={styles.mainLayout}>
-          <View style={styles.actionButton}>
-            <IconButton
-              icon='account-multiple-plus-outline'
-              size={28}
-              onPress={() => {
-                isContact ? removeContact() : addContact()
-              }}
-              disabled={route.params.pubKey === publicKey}
-            />
-            <Text>{t('profilePage.copyNPub')}</Text>
-          </View>
+          {route.params.pubKey !== publicKey && (
+            <View style={styles.actionButton}>
+              <IconButton
+                icon={
+                  isContact ? 'account-multiple-remove-outline' : 'account-multiple-plus-outline'
+                }
+                size={28}
+                onPress={() => {
+                  isContact ? removeContact() : addContact()
+                }}
+                disabled={route.params.pubKey === publicKey}
+              />
+              <Text>{isContact ? t('profilePage.unfollow') : t('profilePage.follow')}</Text>
+            </View>
+          )}
           <View style={styles.actionButton}>
             <IconButton
               icon='message-plus-outline'
@@ -227,7 +231,7 @@ export const ProfilePage: React.FC<ProfilePageProps> = ({ route }) => {
               icon='content-copy'
               size={28}
               onPress={() => {
-                setShowNotification('picturePublished')
+                setShowNotification('copyNPub')
                 const profileNPud = npubEncode(route.params.pubKey)
                 Clipboard.setString(profileNPud ?? '')
               }}

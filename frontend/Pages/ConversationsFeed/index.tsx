@@ -256,7 +256,7 @@ export const ConversationsFeed: React.FC = () => {
           <Text variant='bodyMedium'>{t('conversationsFeed.openMessageDescription')}</Text>
           <TextInput
             mode='outlined'
-            label={t('conversationsFeed.openMessage') ?? ''}
+            label={t('conversationsFeed.openMessageLabel') ?? ''}
             onChangeText={setSendPubKeyInput}
             value={sendPubKeyInput}
             right={

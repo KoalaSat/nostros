@@ -1,117 +1,173 @@
 {
   "common": {
-    "landing": {
-      "connect": "Conectar",
-      "connecting": "Conectando",
-      "loadingContacts": "Cargando contactos",
-      "loadingEvents": "Cargando eventos",
-      "ready": "Listo",
+    "drawers": {
+      "relaysTitle": "Relays",
+      "relaysDescription": "Los relés son nodos en la red que actúan como intermediarios para la transmisión demensajes entre aplicaciones.\n\n\nLos relés pueden ser utilizados para mejorar la resiliencia yla disponibilidad de la red, ya que permiten que los mensajes sean entregados aun cuandohay fallos o interrupciones en la conectividad.\n\n\nLos relés también pueden ser utilizadospara mejorar la privacidad y la seguridad de la red, ya que pueden ocultar la ubicación yel identidad de las aplicaciones que se comunican entre sí a través de ellos. Esto puedeser útil en entornos donde la censura o la vigilancia son un problema.\n\n\nEs importante teneren cuenta que los relés también pueden ser utilizados para propósitos malintencionados,como para rastrear o censurar el tráfico de la red.\n\n\nPor lo tanto, es importante evaluarcuidadosamente el uso de relés y considerar medidas de seguridad adecuadas para protegerla privacidad y la seguridad de la red.",
+      "keysTitle": "What are these keys?",
+      "keysDescription": "En nostr tienes dos claves: tu clave pública y tu clave privada.",
+      "publicKeys": "Clave pública",
+      "publicKeysDescription": "Piensa en la clave pública como tu nombre de usuario (como tu @handle en Twitter). Compártela con otras personas para que te añadan a su red.",
       "privateKey": "Clave privada",
-      "publicKey": "Clave pública"
+      "privateKeyDescription": "Piensa en tu clave privada como tu contraseña.",
+      "privateKeysSnackbar": "Muy importante. Guarda tu clave privada en un lugar seguro, si la pierdes no podrás volver a acceder con ella ni recuperar tu cuenta."
     },
-    "navigationBar": {
-      "home": "Home",
-      "profile": "Perfil"
+    "homeNavigator": {
+      "ProfileCreate": "",
+      "ProfileConnect": "",
+      "ProfileLoad": "",
+      "Landing": "",
+      "Conversation": "Conversation",
+      "Reply": "Reply",
+      "Note": "Note",
+      "Profile": "Profile",
+      "About": "About",
+      "Send": "Send",
+      "Relays": "Relays",
+      "ProfileConfig": "My profile"
     },
-    "homePage": {
-      "search": "Buscar",
-      "send": "Enviar",
-      "noContacts": "Aún no tienes contactos",
-      "addContacts": "Añadir contactos"
-    },
-    "logger": {
-      "randomKeyGenerator": {
-        "message": "Tu clave privada ha sido copiada al porta-papeles",
-        "description": "Guardala en un ligar seguro para recuperar tu usuario"
+    "conversationPage": {
+      "typeMessage": "Type message",
+      "notifications": {
+        "privateMessageSendError": "There was an error sending your message."
       }
     },
-    "profilePage": {
-      "search": "Burcar",
-      "send": "Enviar",
-      "profileNotCreated": "Perfil aún no publicado",
-      "createProfile": "Ir a configuración"
-    },
-    "lnPayment": {
-      "monto": "Cantidad",
-      "comment": "Comentario (opcional)",
-      "copy": "Copiar",
-      "openApp": "Abrir App"
-    },
-    "relaysPage": {
-      "title": "Relés",
-      "addRelay": {
-        "placeholder": "URL del relé",
-        "invalidFormat": "Format no válido",
-        "add": "Agregar relé"
-      }
-    },
-    "notePage": {
-      "reply": "Responder"
-    },
-    "loader": {
-      "searchingProfile": "Buscando tu perfil",
-      "profileFound": "Perfil encontrado",
-      "searchingContacts": "Buscando tus contactos:",
-      "help1": "¿Tienes problemas encontrando tus datos?",
-      "help2": "Intenta contectarte a otros Relays.",
-      "relays": "Relés",
-      "home": "Ir a Home"
-    },
-    "configPage": {
-      "title": "Configuración",
-      "logout": "Borrar claves",
-      "relays": "Relés",
-      "publicKey": "Clave pública",
-      "privateKey": "Clave privada",
-      "username": "Nombre",
-      "picture": "URL de imagen",
-      "lnurl": "LNURL / Lightning address",
-      "nip05": "NIP05",
-      "about": "Descripción",
-      "publish": "Publicar"
-    },
-    "direcMessagesPage": {
-      "sendMessage": {
-        "placeholder": "Clave pública",
-        "send": "Abrir conversación",
-        "contacts": "Contactos"
-      }
-    },
-    "contactsPage": {
-      "following": "Siguiendo",
-      "followers": "Seguidores",
-      "add": "Añadir usuario",
-      "addContact": {
-        "placeholder": "Clave pública",
-        "add": "Añadir usuario"
-      }
-    },
-    "mentionsPage": {
-      "noMentions": "No se han encontrado menciones."
+    "profileLoadPage": {
+      "relaysDescripion": "Connect with other relays if you have problems finding your data.",
+      "relays": "See relays",
+      "home": "Access",
+      "searchingProfile": "Searching for your profile",
+      "foundProfile": "Found profile",
+      "foundContacts": "{{contactsCount}} contacts found"
     },
     "sendPage": {
-      "title": "Enviar nota",
-      "placeholder": "Di algo al mundo...",
-      "send": "Enviar",
-      "reply": "Enviar respuesta",
-      "contentWarning": "Contenido sensible"
+      "isContact": "Following",
+      "isNotContact": "Not following",
+      "contentWarning": "Sensitive content",
+      "send": "Send"
     },
-    "alerts": {
-      "relayAdded": "Relé agregado",
-      "relayRemoved": "Relé eliminado",
-      "profilePublished": "Perfil publicado",
-      "profilePublishError": "Se ha producido un error al tratar de publicar el perfil",
-      "invoiceCopied": "Factura copiada",
-      "invoiceError": "Se ha producido un error al tratar de obtener la factura",
-      "sendNoteSuccess": "Nota enviada",
-      "sendNoteError": "Se ha producido un error al tratar de enviar la nota",
-      "sendGetNotesError": "Se ha producido un error interno al tratar de obtener las notas",
-      "contactAddError": "Se ha producido un error al tratar de agregar el contacto",
-      "privateMessageEncryptError": "Se ha producido un error al tratar de encriptar el mensaje",
-      "privateMessageSendError": "Se ha producido un error al tratar de enviar el mensaje"
+    "menuItems": {
+      "relays": "Relays",
+      "notConnected": "Not connected",
+      "connectedRelays": "{{number}} connected",
+      "following": "{{following}} following",
+      "followers": "{{followers}} followers",
+      "configuration": "Configuration",
+      "about": "About",
+      "logout": "Logout"
     },
-    "note": {
-      "contentWarning": "Contenido sensible. Toca para mostrar."
+    "noteCard": {
+      "answering": "Answer to {{username}}"
+    },
+    "profileCreatePage": {
+      "snackbarDescription": "Important. Save your key on a safe place, if loose it, you won't be able to access or recover your profile.",
+      "snackbarAction": "Copy private key",
+      "accessButton": "Access",
+      "label": "Private key",
+      "copied": "Private key copied.",
+      "description": "Save this key on a safe place."
+    },
+    "loggerPage": {
+      "createButton": "Create keys",
+      "notKeys": "Don't have keys?",
+      "isPublic": "Access with public key",
+      "accessButton": "Access",
+      "privateKey": "Private key",
+      "publicKey": "Public key"
+    },
+    "contactsFeed": {
+      "cancel": "Cancel",
+      "addContact": "Add contact",
+      "addContactDescription": "Paste here the public key of the profile you want to add.",
+      "addContactTitle": "Add contact",
+      "followers": "Followers ({{count}})",
+      "following": "Following ({{count}})",
+      "stopFollowing": "Stop Following",
+      "follow": "Follow"
+    },
+    "aboutPage": {
+      "gitHub": "GitHub",
+      "nostr": "nostr",
+      "nips": "NIPs"
+    },
+    "relaysPage": {
+      "labelAdd": "Relay address",
+      "cancel": "Cancel",
+      "add": "Add",
+      "removeRelay": "Remove",
+      "copyRelay": "Copy",
+      "notifications": {
+        "add": "Relay connected.",
+        "remove": "Relay removed.",
+        "badFormat": "Relay URL has a bad format."
+      }
+    },
+    "profileConfigPage": {
+      "notifications": {
+        "nsecCopied": "Secret key copied.",
+        "npubCopied": "Public key copied.",
+        "profilePublished": "Profile published.",
+        "lud06Published": "LUD-06 published.",
+        "nip05Published": "NIP-05 published.",
+        "picturePublished": "Picture published.",
+        "connectionError": "Connection error."
+      },
+      "publishLud06": "Publish",
+      "lud06Label": "LNURL / Lightning Address",
+      "lud06Description": "Link your identity with a LNURL or Lightning Address.",
+      "lud06Title": "LUD-06",
+      "publishNip05": "Publish",
+      "nip05Link": "Learn more.",
+      "nip05Description": "Link your identity with a domain.",
+      "nip05Title": "NIP-05",
+      "directoryCancell": "Cancel",
+      "directoryContinue": "Continue",
+      "directoryDescription": "Nostr Directory es una base de datos de claves públicas de nostr asociadas a una cuenta de Twitter. Encuentra a las personas que sigues en Twitter en nostr y añade tu clave pública para que tus seguidores te encuentren si lo deseas.\n\n\nAl verificar tu cuenta de Twitter se añadirá un distintivo en tu perfil.\n\n\nSi continuas tendrás que llevar a cabo el proceso de verificación fuera de la aplicación.",
+      "directoryTitle": "Nostr Directory",
+      "publishPicture": "Publish",
+      "pictureUrl": "Picture URL",
+      "pictureDescription": "Paste here the URL for the image you would like to display on your public profile.",
+      "pictureTitle": "Link profile's picture",
+      "publish": "Publish",
+      "nsec": "Secret key",
+      "npub": "Public key",
+      "copyNPub": "Copy",
+      "directory": "Directory",
+      "lud06": "LUD-06",
+      "nip05": "NIP-05",
+      "name": "Name",
+      "about": "Description"
+    },
+    "profilePage": {
+      "notifications":{
+        "contactAdded": "Profile followed",
+        "contactRemoved": "Profile unfollowed",
+        "npubCopied": "Public key copied."
+      },
+      "invoice": "Tip",
+      "message": "Message",
+      "follow": "Follow",
+      "unfollow": "Following",
+      "copyNPub": "Copy key"
+    },
+    "profileCard": {
+      "notifications":{
+        "contactAdded": "Profile followed",
+        "contactRemoved": "Profile unfollowed",
+        "npubCopied": "Public key copied."
+      },
+      "invoice": "Tip",
+      "message": "Message",
+      "follow": "Follow",
+      "unfollow": "Following",
+      "copyNPub": "Copy key"
+    },
+    "conversationsFeed": {
+      "openMessage": "Open conversation",
+      "openMessageLabel": "Public key",
+      "openMessageDescription": "Paste here a public key to start a conversation",
+      "openMessageTitle": "Open conversation to public key",
+      "addPubKey": "Open conversation to public key",
+      "newMessageContact": "Open conversation to contact"
     }
   }
 }

@@ -84,7 +84,7 @@ export const ProfileLoadPage: React.FC = () => {
         onDismiss={() => {}}
         action={{ label: t('profileLoadPage.relays') ?? '', onPress: () => navigate('Relays') }}
       >
-        Conéctate a otros relays si tienes problemas encontrando tus datos.
+        {t('profileLoadPage.relaysDescripion')}
       </Snackbar>
     </View>
   )
