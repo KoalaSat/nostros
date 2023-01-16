@@ -16,6 +16,9 @@
       "configuration": "Configuration",
       "about": "About",
       "logout": "Logout"
+    },
+    "noteCard": {
+      "answering": "Answer to {{username}}"
     }
   }
 }

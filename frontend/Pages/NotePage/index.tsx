@@ -144,6 +144,7 @@ export const NotePage: React.FC<NotePageProps> = ({ route }) => {
           setProfileCardPubKey(note.pubkey)
           bottomSheetProfileRef.current?.open()
         }}
+        showAnswerData={false}
       />
     </View>
   )

@@ -12,7 +12,7 @@ import { populateRelay } from '../../Functions/RelayFunctions'
 import { NostrosAvatar } from '../Avatar'
 import { searchRelays } from '../../Functions/DatabaseFunctions/Relays'
 import TextContent from '../../Components/TextContent'
-import { usernamePubKey } from '../../Functions/RelayFunctions/Users'
+import { formatPubKey, usernamePubKey } from '../../Functions/RelayFunctions/Users'
 import { getReactionsCount, getUserReaction } from '../../Functions/DatabaseFunctions/Reactions'
 import { UserContext } from '../../Contexts/UserContext'
 import {
@@ -32,9 +32,10 @@ import { push } from '../../lib/Navigation'
 interface NoteCardProps {
   note: Note
   onPressOptions?: () => void
+  showAnswerData?: boolean
 }
 
-export const NoteCard: React.FC<NoteCardProps> = ({ note, onPressOptions = () => {} }) => {
+export const NoteCard: React.FC<NoteCardProps> = ({ note, showAnswerData = true, onPressOptions = () => {} }) => {
   const theme = useTheme()
   const { publicKey, privateKey } = React.useContext(UserContext)
   const { relayPool, lastEventId } = useContext(RelayPoolContext)
@@ -88,12 +89,43 @@ export const NoteCard: React.FC<NoteCardProps> = ({ note, onPressOptions = () =>
   }
 
   const textNote: () => JSX.Element = () => {
-    return hide ? (
-      <Button mode='outlined' onPress={() => setHide(false)}>
-        {t('noteCard.contentWarning')}
-      </Button>
-    ) : (
-      <TextContent event={note} />
+    return (
+      <>
+        {note.reply_event_id && showAnswerData && (
+          <TouchableRipple
+            onPress={() =>
+              note.kind !== EventKind.recommendServer && push('Note', { noteId: note.reply_event_id })
+            }
+          >
+            <Card.Content style={[styles.answerContent, { borderColor: theme.colors.onSecondary }]}>
+              <View style={styles.answerData}>
+                <MaterialCommunityIcons name='arrow-left-top' size={16} />
+                <Text>
+                  {t('noteCard.answering', { username: formatPubKey(note.reply_event_id) })}
+                </Text>
+              </View>
+              <View>
+                <Text style={styles.link}>{t('noteCard.seeParent')}</Text>
+              </View>
+            </Card.Content>
+          </TouchableRipple>
+        )}
+        <TouchableRipple
+          onPress={() =>
+            note.kind !== EventKind.recommendServer && push('Note', { noteId: note.id })
+          }
+        >
+          <Card.Content style={[styles.content, { borderColor: theme.colors.onSecondary }]}>
+            {hide ? (
+              <Button mode='outlined' onPress={() => setHide(false)}>
+                {t('noteCard.contentWarning')}
+              </Button>
+            ) : (
+              <TextContent event={note} />
+            )}
+          </Card.Content>
+        </TouchableRipple>
+      </>
     )
   }
 
@@ -110,28 +142,34 @@ export const NoteCard: React.FC<NoteCardProps> = ({ note, onPressOptions = () =>
     }
 
     return (
-      <Card>
-        <Card.Content style={styles.title}>
-          <View>
-            <Avatar.Icon
-              size={54}
-              icon='chart-timeline-variant'
-              style={{
-                backgroundColor: theme.colors.tertiaryContainer,
-              }}
-            />
-          </View>
-          <View>
-            <Text>{t('noteCard.recommendation')}</Text>
-            <Text>{relayName}</Text>
-          </View>
+      <TouchableRipple
+        onPress={() => note.kind !== EventKind.recommendServer && push('Note', { noteId: note.id })}
+      >
+        <Card.Content style={[styles.content, { borderColor: theme.colors.onSecondary }]}>
+          <Card>
+            <Card.Content style={styles.title}>
+              <View>
+                <Avatar.Icon
+                  size={54}
+                  icon='chart-timeline-variant'
+                  style={{
+                    backgroundColor: theme.colors.tertiaryContainer,
+                  }}
+                />
+              </View>
+              <View>
+                <Text>{t('noteCard.recommendation')}</Text>
+                <Text>{relayName}</Text>
+              </View>
+            </Card.Content>
+            {!relayAdded && REGEX_SOCKET_LINK.test(note.content) && (
+              <Card.Content style={[styles.actions, { borderColor: theme.colors.onSecondary }]}>
+                <Button onPress={addRelayItem}>{t('noteCard.addRelay')}</Button>
+              </Card.Content>
+            )}
+          </Card>
         </Card.Content>
-        {!relayAdded && REGEX_SOCKET_LINK.test(note.content) && (
-          <Card.Content style={[styles.actions, { borderColor: theme.colors.onSecondary }]}>
-            <Button onPress={addRelayItem}>{t('noteCard.addRelay')}</Button>
-          </Card.Content>
-        )}
-      </Card>
+      </TouchableRipple>
     )
   }
 
@@ -164,15 +202,7 @@ export const NoteCard: React.FC<NoteCardProps> = ({ note, onPressOptions = () =>
             <IconButton icon='dots-vertical' size={25} onPress={onPressOptions} />
           </View>
         </Card.Content>
-        <TouchableRipple
-          onPress={() =>
-            note.kind !== EventKind.recommendServer && push('Note', { noteId: note.id })
-          }
-        >
-          <Card.Content style={[styles.content, { borderColor: theme.colors.onSecondary }]}>
-            {getNoteContent()}
-          </Card.Content>
-        </TouchableRipple>
+        {getNoteContent()}
         <Card.Content style={[styles.actions, { borderColor: theme.colors.onSecondary }]}>
           <Button
             onPress={() => {
@@ -182,7 +212,12 @@ export const NoteCard: React.FC<NoteCardProps> = ({ note, onPressOptions = () =>
                 publishReaction(false)
               }
             }}
-            icon={() => <MaterialCommunityIcons name={userDownvoted ? 'thumb-down' : 'thumb-down-outline'} size={25} />}
+            icon={() => (
+              <MaterialCommunityIcons
+                name={userDownvoted ? 'thumb-down' : 'thumb-down-outline'}
+                size={25}
+              />
+            )}
           >
             {negaiveReactions === undefined || negaiveReactions === 0 ? '-' : negaiveReactions}
           </Button>
@@ -194,7 +229,12 @@ export const NoteCard: React.FC<NoteCardProps> = ({ note, onPressOptions = () =>
                 publishReaction(true)
               }
             }}
-            icon={() => <MaterialCommunityIcons name={userUpvoted ? 'thumb-up' : 'thumb-up-outline'} size={25} />}
+            icon={() => (
+              <MaterialCommunityIcons
+                name={userUpvoted ? 'thumb-up' : 'thumb-up-outline'}
+                size={25}
+              />
+            )}
           >
             {positiveReactions === undefined || positiveReactions === 0 ? '-' : positiveReactions}
           </Button>
@@ -212,11 +252,20 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignContent: 'center',
-    paddingBottom: 16
+    paddingBottom: 16,
   },
   titleUser: {
     flexDirection: 'row',
     alignContent: 'center',
+  },
+  answerData: {
+    flexDirection: 'row',
+  },
+  answerContent: {
+    flexDirection: 'row',
+    borderTopWidth: 1,
+    padding: 16,
+    justifyContent: 'space-between',
   },
   actions: {
     paddingTop: 16,
@@ -232,6 +281,9 @@ const styles = StyleSheet.create({
   content: {
     borderTopWidth: 1,
     padding: 16,
+  },
+  link: {
+    textDecorationLine: 'underline',
   },
 })
 

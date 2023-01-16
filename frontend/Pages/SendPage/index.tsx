@@ -41,11 +41,14 @@ export const SendPage: React.FC<SendPageProps> = ({ route }) => {
     const match = text.match(/@(.*)$/)
     const note: Note | undefined = route.params?.note
     if (database && match && match?.length > 0) {
-      let request = getUsers(database, { name: match[1], order: 'contact' })
+      let request = getUsers(database, { name: match[1], order: 'contact DESC,name ASC' })
 
       if (match[1] === '' && note) {
         const taggedPubKeys = getTaggedPubKeys(note)
-        request = getUsers(database, { includeIds: [...taggedPubKeys, note.pubkey], order: 'contact' })
+        request = getUsers(database, {
+          includeIds: [...taggedPubKeys, note.pubkey],
+          order: 'contact DESC,name ASC',
+        })
       }
 
       request.then((results) => {
@@ -153,17 +156,20 @@ export const SendPage: React.FC<SendPageProps> = ({ route }) => {
           onChangeText={onChangeText}
         />
       </View>
-      {/* FIXME: can't find this color */}
       <View style={styles.actions}>
         {/* flexDirection: 'column-reverse' */}
         {userSuggestions.length > 0 ? (
-          <FlatList
-            style={styles.contactsList}
-            ItemSeparatorComponent={Divider}
-            data={userSuggestions}
-            renderItem={renderContactItem}
-          />
+          // FIXME: can't find this color
+          <View style={{ backgroundColor: '#001C37' }}>
+            <FlatList
+              style={styles.contactsList}
+              ItemSeparatorComponent={Divider}
+              data={userSuggestions}
+              renderItem={renderContactItem}
+            />
+          </View>
         ) : (
+          // FIXME: can't find this color
           <View style={{ backgroundColor: '#001C37' }}>
             <View style={styles.contentWarning}>
               <Text>{t('sendPage.contentWarning')}</Text>
@@ -204,7 +210,6 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     width: '100%',
-    backgroundColor: '#001C37', // FIXME: somehow it can't be imported from theme
   },
   contactName: {
     paddingLeft: 16,

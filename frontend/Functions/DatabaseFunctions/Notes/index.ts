@@ -6,6 +6,7 @@ export interface Note extends Event {
   name: string
   picture: string
   lnurl: string
+  reply_event_id: string
 }
 
 const databaseToEntity: (object: any) => Note = (object) => {
