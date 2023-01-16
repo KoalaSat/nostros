@@ -1,5 +1,13 @@
 import React, { useContext, useEffect, useState } from 'react'
-import { Clipboard, Dimensions, ScrollView, StyleSheet, View } from 'react-native'
+import {
+  Clipboard,
+  Dimensions,
+  FlatList,
+  ListRenderItem,
+  ScrollView,
+  StyleSheet,
+  View,
+} from 'react-native'
 import { AppContext } from '../../Contexts/AppContext'
 import { EventKind } from '../../lib/nostr/Events'
 import { useTranslation } from 'react-i18next'
@@ -8,9 +16,17 @@ import { RelayPoolContext } from '../../Contexts/RelayPoolContext'
 import { formatPubKey, populatePets, username } from '../../Functions/RelayFunctions/Users'
 import { getNip19Key } from '../../lib/nostr/Nip19'
 import { UserContext } from '../../Contexts/UserContext'
-import { AnimatedFAB, Button, Text, TextInput, TouchableRipple, useTheme } from 'react-native-paper'
+import {
+  AnimatedFAB,
+  Button,
+  Divider,
+  Text,
+  TextInput,
+  TouchableRipple,
+  useTheme,
+} from 'react-native-paper'
 import { Tabs, TabScreen } from 'react-native-paper-tabs'
-import NostrosAvatar from '../../Components/Avatar'
+import NostrosAvatar from '../../Components/NostrosAvatar'
 import { navigate } from '../../lib/Navigation'
 import RBSheet from 'react-native-raw-bottom-sheet'
 import NostrosNotification from '../../Components/NostrosNotification'
@@ -125,25 +141,25 @@ export const ContactsFeed: React.FC = () => {
     }
   }
 
-  const renderContactItem: (user: User) => JSX.Element = (user) => (
-    <TouchableRipple onPress={() => navigate('Profile', { pubKey: user.id })}>
-      <View key={user.id} style={styles.contactRow}>
+  const renderContactItem: ListRenderItem<User> = ({ index, item }) => (
+    <TouchableRipple onPress={() => navigate('Profile', { pubKey: item.id })}>
+      <View key={item.id} style={styles.contactRow}>
         <View style={styles.contactInfo}>
           <NostrosAvatar
-            name={user.name}
-            pubKey={user.id}
-            src={user.picture}
-            lud06={user.lnurl}
+            name={item.name}
+            pubKey={item.id}
+            src={item.picture}
+            lud06={item.lnurl}
             size={40}
           />
           <View style={styles.contactName}>
-            <Text>{formatPubKey(user.id)}</Text>
-            {user.name && <Text variant='titleSmall'>{username(user)}</Text>}
+            <Text>{formatPubKey(item.id)}</Text>
+            {item.name && <Text variant='titleSmall'>{username(item)}</Text>}
           </View>
         </View>
         <View style={styles.contactFollow}>
-          <Button onPress={() => (user.contact ? removeContact(user) : addContact(user))}>
-            {user.contact ? t('sendPage.stopFollowing') : t('sendPage.follow')}
+          <Button onPress={() => (item.contact ? removeContact(item) : addContact(item))}>
+            {item.contact ? t('sendPage.stopFollowing') : t('sendPage.follow')}
           </Button>
         </View>
       </View>
@@ -170,14 +186,22 @@ export const ContactsFeed: React.FC = () => {
         <TabScreen label={t('contactsFeed.following', { count: following.length })}>
           <View style={styles.container}>
             <ScrollView horizontal={false}>
-              {following.map((user) => renderContactItem(user))}
+              <FlatList
+                data={following}
+                renderItem={renderContactItem}
+                ItemSeparatorComponent={Divider}
+              />
             </ScrollView>
           </View>
         </TabScreen>
         <TabScreen label={t('contactsFeed.followers', { count: followers.length })}>
           <View style={styles.container}>
             <ScrollView horizontal={false}>
-              {followers.map((user) => renderContactItem(user))}
+              <FlatList
+                data={followers}
+                renderItem={renderContactItem}
+                ItemSeparatorComponent={Divider}
+              />
             </ScrollView>
           </View>
         </TabScreen>

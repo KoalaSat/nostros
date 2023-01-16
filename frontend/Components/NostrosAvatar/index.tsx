@@ -2,7 +2,7 @@ import React from 'react'
 import { StyleSheet, View } from 'react-native'
 import { Avatar as PaperAvatar, useTheme } from 'react-native-paper'
 
-interface AvatarProps {
+interface NostrosAvatarProps {
   pubKey: string
   src?: string
   name?: string
@@ -10,7 +10,13 @@ interface AvatarProps {
   lud06?: string
 }
 
-export const NostrosAvatar: React.FC<AvatarProps> = ({ src, name, pubKey, size = 40, lud06 }) => {
+export const NostrosAvatar: React.FC<NostrosAvatarProps> = ({
+  src,
+  name,
+  pubKey,
+  size = 40,
+  lud06,
+}) => {
   const theme = useTheme()
   const displayName = name && name !== '' ? name : pubKey
   const hasLud06 = lud06 && lud06 !== ''

@@ -17,7 +17,7 @@ import { RelayPoolContext } from '../../Contexts/RelayPoolContext'
 import { UserContext } from '../../Contexts/UserContext'
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'
 import { navigate } from '../../lib/Navigation'
-import NostrosAvatar from '../Avatar'
+import NostrosAvatar from '../NostrosAvatar'
 import { formatPubKey } from '../../Functions/RelayFunctions/Users'
 
 export const MenuItems: React.FC = () => {

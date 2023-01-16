@@ -1,6 +1,5 @@
-import React, { useContext, useEffect, useRef, useState } from 'react'
-import { Button, Input, Layout, Text, TopNavigation, useTheme } from '@ui-kitten/components'
-import { ScrollView, StyleSheet, TouchableOpacity } from 'react-native'
+import React, { useContext, useEffect, useMemo, useRef, useState } from 'react'
+import { FlatList, ScrollView, StyleSheet, View } from 'react-native'
 import { AppContext } from '../../Contexts/AppContext'
 import { RelayPoolContext } from '../../Contexts/RelayPoolContext'
 import { EventKind, Event } from '../../lib/nostr/Events'
@@ -10,29 +9,43 @@ import {
   updateConversationRead,
 } from '../../Functions/DatabaseFunctions/DirectMessages'
 import { getUser, User } from '../../Functions/DatabaseFunctions/Users'
-import Avatar from '../../Components/Avatar'
-import Icon from 'react-native-vector-icons/FontAwesome5'
 import { useTranslation } from 'react-i18next'
-import { showMessage } from 'react-native-flash-message'
 import { username, usersToTags } from '../../Functions/RelayFunctions/Users'
 import moment from 'moment'
 import TextContent from '../../Components/TextContent'
 import { encrypt, decrypt } from '../../lib/nostr/Nip04'
+import {
+  Avatar,
+  Card,
+  useTheme,
+  TextInput,
+  Snackbar,
+  TouchableRipple,
+  Text,
+} from 'react-native-paper'
+import { UserContext } from '../../Contexts/UserContext'
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'
+import { navigate } from '../../lib/Navigation'
+import { generateConversationId } from '../../Functions/RelayFunctions/DirectMessages'
 
-export const ConversationPage: React.FC = () => {
+interface ConversationPageProps {
+  route: { params: { pubKey: string; conversationId: string } }
+}
+
+export const ConversationPage: React.FC<ConversationPageProps> = ({ route }) => {
   const theme = useTheme()
   const scrollViewRef = useRef<ScrollView>()
-  const { database, getActualPage, goBack, goToPage } = useContext(AppContext)
-  const { relayPool, publicKey, lastEventId, privateKey } = useContext(RelayPoolContext)
-
-  const conversationId = getActualPage().split('#')[1]
-  const otherPubKey = getActualPage().split('#')[2]
-  // State
+  const { database } = useContext(AppContext)
+  const { relayPool, lastEventId } = useContext(RelayPoolContext)
+  const { publicKey, privateKey } = useContext(UserContext)
+  const otherPubKey = useMemo(() => route.params.pubKey, [])
   const [directMessages, setDirectMessages] = useState<DirectMessage[]>([])
   const [sendingMessages, setSendingMessages] = useState<DirectMessage[]>([])
   const [otherUser, setOtherUser] = useState<User>({ id: otherPubKey })
   const [user, setUser] = useState<User>()
   const [input, setInput] = useState<string>('')
+  const [conversationId, setConversationId] = useState<string>(route.params?.conversationId)
+  const [showNotification, setShowNotification] = useState<string>()
 
   const { t } = useTranslation('common')
 
@@ -44,6 +57,9 @@ export const ConversationPage: React.FC = () => {
     loadDirectMessages()
     subscribeDirectMessages()
     if (database && publicKey) {
+      setConversationId(
+        route.params?.conversationId || generateConversationId(publicKey, otherPubKey),
+      )
       getUser(publicKey, database).then((user) => {
         if (user) setUser(user)
       })
@@ -89,7 +105,7 @@ export const ConversationPage: React.FC = () => {
   }
 
   const onPressOtherUser: () => void = () => {
-    goToPage(`profile#${otherPubKey}`)
+    navigate('Profile', { pubKey: otherPubKey })
   }
 
   const send: () => void = () => {
@@ -111,177 +127,159 @@ export const ConversationPage: React.FC = () => {
               ...event,
               content: encryptedcontent,
             })
-            .catch((err) => {
-              showMessage({
-                message: t('alerts.privateMessageSendError'),
-                description: err.message,
-                type: 'danger',
-              })
+            .catch(() => {
+              setShowNotification('conversationPage.privateMessageSendError')
             })
         })
-        .catch((err) => {
-          showMessage({
-            message: t('alerts.privateMessageEncryptError'),
-            description: err.message,
-            type: 'danger',
-          })
+        .catch(() => {
+          setShowNotification('conversationPage.privateMessageSendError')
         })
     }
   }
 
-  const userCard: (message: DirectMessage, index: number) => JSX.Element = (message, index) => {
+  const renderDirectMessageItem: (
+    index: number,
+    item: DirectMessage,
+    pending: boolean,
+  ) => JSX.Element = (index, item, pending) => {
     if (!publicKey || !privateKey || !otherUser || !user) return <></>
 
-    return message.pubkey === otherPubKey ? (
-      <Layout key={index} style={styles.card} level='3'>
-        <Layout style={styles.layout} level='3'>
-          <Layout style={styles.profile} level='3'>
-            <TouchableOpacity onPress={onPressOtherUser}>
-              <Avatar name={otherUser.name} src={otherUser.picture} pubKey={otherUser.id} />
-            </TouchableOpacity>
-          </Layout>
-          <Layout style={styles.contentLeft} level='3'>
-            <Layout style={styles.title} level='3'>
-              <Text appearance='hint'>{username(otherUser)}</Text>
-              <Text appearance='hint'>
-                {moment.unix(message.created_at).format('HH:mm DD-MM-YY')}
-              </Text>
-            </Layout>
-            <TextContent event={message} />
-          </Layout>
-        </Layout>
-      </Layout>
-    ) : (
-      <Layout key={index} style={styles.card} level='2'>
-        <Layout style={styles.contentRight} level='2'>
-          <Layout style={styles.title} level='2'>
-            <Text appearance='hint'>
-              {moment.unix(message.created_at).format('HH:mm DD-MM-YY')}
-            </Text>
-            <Layout style={styles.username} level='2'>
-              <Text appearance='hint'>{username(user)}</Text>
-              {message.id ? (
-                <></>
-              ) : (
-                <Icon name='clock' size={12} color={theme['text-basic-color']} />
-              )}
-            </Layout>
-          </Layout>
-          <TextContent event={message} />
-        </Layout>
-      </Layout>
-    )
-  }
+    const displayName = item.pubkey === publicKey ? username(user) : username(otherUser)
+    const lastIndex = directMessages.length - 1 === index
+    const nextItemHasdifferentPubKey =
+      !lastIndex && directMessages[index + 1].pubkey !== item.pubkey
 
-  const onPressBack: () => void = () => {
-    relayPool?.unsubscribeAll()
-    goBack()
-  }
-
-  const renderBackAction = (): JSX.Element => {
     return (
-      <Button
-        accessoryRight={<Icon name='arrow-left' size={16} color={theme['text-basic-color']} />}
-        onPress={onPressBack}
-        appearance='ghost'
-      />
+      <View style={styles.messageRow}>
+        <View style={styles.pictureSpace}>
+          {publicKey !== item.pubkey && (lastIndex || nextItemHasdifferentPubKey) && (
+            <TouchableRipple onPress={onPressOtherUser}>
+              <Avatar.Text size={40} label={username(otherUser).substring(0, 2).toUpperCase()} />
+            </TouchableRipple>
+          )}
+        </View>
+        <Card
+          style={[
+            styles.card,
+            // FIXME: can't find this color
+            {
+              backgroundColor:
+                publicKey === item.pubkey ? theme.colors.tertiaryContainer : '#001C37',
+            },
+          ]}
+        >
+          <Card.Content>
+            <View style={styles.cardContentInfo}>
+              <Text>{displayName}</Text>
+              <View style={styles.cardContentDate}>
+                {pending && (
+                  <View style={styles.cardContentPending}>
+                    <MaterialCommunityIcons name='clock-outline' size={14} />
+                  </View>
+                )}
+                <Text>{moment.unix(item.created_at).format('HH:mm DD-MM')}</Text>
+              </View>
+            </View>
+            <TextContent content={item.content} />
+          </Card.Content>
+        </Card>
+      </View>
     )
   }
-
-  const styles = StyleSheet.create({
-    card: {
-      flex: 1,
-      padding: 20,
-    },
-    container: {
-      flex: 1,
-      paddingBottom: 85,
-    },
-    layout: {
-      flex: 1,
-      flexDirection: 'row',
-    },
-    username: {
-      flex: 1,
-      flexDirection: 'row',
-      justifyContent: 'flex-end',
-    },
-    profile: {
-      flex: 1,
-      width: 38,
-      alignItems: 'center',
-      backgroundColor: 'transparent',
-    },
-    contentLeft: {
-      flex: 4,
-    },
-    contentRight: {
-      flex: 4,
-      alignItems: 'flex-end',
-    },
-    form: {
-      flex: 1,
-      padding: 15,
-      alignItems: 'center',
-      justifyContent: 'center',
-      position: 'absolute',
-      bottom: 0,
-      width: '100%',
-      flexDirection: 'row',
-    },
-    input: {
-      flex: 5,
-    },
-    sendButton: {
-      flex: 1,
-      paddingLeft: 15,
-    },
-    title: {
-      flexDirection: 'row',
-      width: '100%',
-      justifyContent: 'space-between',
-    },
-  })
 
   return (
-    <>
-      <TopNavigation
-        alignment='center'
-        title={
-          <TouchableOpacity onPress={onPressOtherUser}>
-            <Text>{username(otherUser)}</Text>
-          </TouchableOpacity>
-        }
-        accessoryLeft={renderBackAction}
-      />
-      <Layout style={styles.container}>
-        <ScrollView
-          ref={scrollViewRef}
-          onContentSizeChange={() => scrollViewRef.current?.scrollToEnd({ animated: true })}
-          horizontal={false}
-        >
-          {[...directMessages, ...sendingMessages].map((msg, index) => userCard(msg, index))}
-        </ScrollView>
-      </Layout>
-      <Layout style={styles.form}>
-        <Layout style={styles.input}>
-          <Input
-            multiline={true}
-            value={input}
-            onChangeText={setInput}
-            size='large'
-            keyboardType='twitter'
-            onPressOut={() => scrollViewRef.current?.scrollToEnd({ animated: true })}
-          />
-        </Layout>
-        <Layout style={styles.sendButton}>
-          <Button onPress={send}>
-            <Icon name={'paper-plane'} size={22} color={theme['text-basic-color']} solid />
-          </Button>
-        </Layout>
-      </Layout>
-    </>
+    <View style={styles.container}>
+      <ScrollView
+        horizontal={false}
+        ref={scrollViewRef}
+        onContentSizeChange={() => scrollViewRef.current?.scrollToEnd({ animated: true })}
+      >
+        <FlatList
+          data={directMessages}
+          renderItem={({ index, item }) => renderDirectMessageItem(index, item, false)}
+        />
+        <FlatList
+          data={sendingMessages}
+          renderItem={({ index, item }) => renderDirectMessageItem(index, item, true)}
+        />
+      </ScrollView>
+      <View
+        style={[
+          styles.input,
+          {
+            backgroundColor: '#001C37',
+          },
+        ]}
+      >
+        <TextInput
+          mode='outlined'
+          label={t('conversationPage.typeMessage') ?? ''}
+          value={input}
+          onChangeText={setInput}
+          onFocus={() => scrollViewRef.current?.scrollToEnd({ animated: true })}
+          right={
+            <TextInput.Icon
+              icon={() => <MaterialCommunityIcons name='send-outline' size={25} />}
+              onPress={send}
+            />
+          }
+        />
+      </View>
+      <Snackbar
+        style={styles.snackbar}
+        visible={showNotification !== undefined}
+        duration={Snackbar.DURATION_SHORT}
+        onIconPress={() => setShowNotification(undefined)}
+        onDismiss={() => setShowNotification(undefined)}
+      >
+        {t(`conversationPage.${showNotification}`)}
+      </Snackbar>
+    </View>
   )
 }
+
+const styles = StyleSheet.create({
+  scrollView: {
+    paddingBottom: 16,
+  },
+  messageRow: {
+    flexDirection: 'row',
+  },
+  cardContentDate: {
+    flexDirection: 'row',
+  },
+  container: {
+    padding: 16,
+    justifyContent: 'space-between',
+    flex: 1,
+  },
+  card: {
+    marginTop: 16,
+    flex: 6,
+  },
+  cardContentInfo: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+  },
+  cardContentPending: {
+    flexDirection: 'row',
+    alignContent: 'center',
+    justifyContent: 'center',
+    paddingRight: 5,
+    paddingTop: 3,
+  },
+  pictureSpace: {
+    justifyContent: 'flex-end',
+    flex: 1,
+  },
+  input: {
+    flexDirection: 'column-reverse',
+    marginTop: 16,
+  },
+  snackbar: {
+    margin: 16,
+    bottom: 70,
+  },
+})
 
 export default ConversationPage

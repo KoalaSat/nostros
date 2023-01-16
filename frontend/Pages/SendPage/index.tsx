@@ -12,7 +12,7 @@ import { formatPubKey, username } from '../../Functions/RelayFunctions/Users'
 import { Button, Divider, Switch, Text, TextInput, TouchableRipple } from 'react-native-paper'
 import RBSheet from 'react-native-raw-bottom-sheet'
 import { UserContext } from '../../Contexts/UserContext'
-import NostrosAvatar from '../../Components/Avatar'
+import NostrosAvatar from '../../Components/NostrosAvatar'
 import { goBack } from '../../lib/Navigation'
 
 interface SendPageProps {
