@@ -1,5 +1,14 @@
 {
   "common": {
+    "loggerPage": {
+      "privateKey": "Private key",
+      "publicKey": "Public key",
+      "placeholder": "Key",
+      "accessButton": "Access",
+      "isPublic": "Access with public key",
+      "notKeys": "Don't have keys?",
+      "createButton": "Create keys"
+    },
     "homeNavigator": {
       "ProfileConnect": "",
       "ProfileLoad": ""

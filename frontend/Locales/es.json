@@ -25,6 +25,15 @@
         "description": "Guardala en un ligar seguro para recuperar tu usuario"
       }
     },
+    "loggerPage": {
+      "privateKey": "Clave privada",
+      "publicKey": "Clave pública",
+      "placeholder": "Clave",
+      "accessButton": "Acceder",
+      "isPublic": "Acceder con clave pública",
+      "notKeys": "¿No tienes claves?",
+      "createButton": "Crear claves"
+    },
     "profilePage": {
       "search": "Burcar",
       "send": "Enviar",
