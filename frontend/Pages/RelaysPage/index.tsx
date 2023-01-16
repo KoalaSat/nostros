@@ -103,11 +103,11 @@ export const RelaysPage: React.FC = () => {
       <FlatList style={styles.list} data={[...relays, ...defaultList()]} renderItem={renderItem} />
       <AnimatedFAB
         style={styles.fab}
-        icon={'plus'}
-        label={'Label'}
+        icon='plus'
+        label='Add'
         onPress={() => bottomSheetAddRef.current?.open()}
-        animateFrom={'right'}
-        iconMode={'static'}
+        animateFrom='right'
+        iconMode='static'
         extended={false}
       />
       <Snackbar

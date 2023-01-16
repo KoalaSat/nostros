@@ -78,7 +78,7 @@ export const MenuItems: React.FC = () => {
                 </View>
               </TouchableRipple>
               <View style={styles.cardEdit}>
-                <IconButton icon='pencil' size={20} onPress={() => navigate('ProfileConfig')} />
+                <IconButton icon='pencil-outline' size={20} onPress={() => navigate('ProfileConfig')} />
               </View>
             </Card.Content>
             <Card.Content style={styles.cardActions}>

@@ -4,12 +4,18 @@ import { getNotes, Note } from '../../Functions/DatabaseFunctions/Notes'
 import { RelayPoolContext } from '../../Contexts/RelayPoolContext'
 import NoteCard from '../../Components/NoteCard'
 import { EventKind } from '../../lib/nostr/Events'
-import { RefreshControl, ScrollView, StyleSheet, Text, View } from 'react-native'
+import { Dimensions, RefreshControl, ScrollView, StyleSheet, Text, View } from 'react-native'
 import { Event } from '../../../lib/nostr/Events'
-import { getDirectReplies, getReplyEventId } from '../../Functions/RelayFunctions/Events'
+import { getDirectReplies } from '../../Functions/RelayFunctions/Events'
 import { RelayFilters } from '../../lib/nostr/RelayPool/intex'
-import { getUser, User } from '../../Functions/DatabaseFunctions/Users'
-import { ActivityIndicator, Button, IconButton, Surface, useTheme } from 'react-native-paper'
+import {
+  ActivityIndicator,
+  AnimatedFAB,
+  Button,
+  IconButton,
+  Surface,
+  useTheme,
+} from 'react-native-paper'
 import { npubEncode } from 'nostr-tools/nip19'
 import moment from 'moment'
 import { usernamePubKey } from '../../Functions/RelayFunctions/Users'
@@ -20,6 +26,7 @@ import { UserContext } from '../../Contexts/UserContext'
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'
 import RBSheet from 'react-native-raw-bottom-sheet'
 import ProfileCard from '../../Components/ProfileCard'
+import { navigate } from '../../lib/Navigation'
 
 interface NotePageProps {
   route: { params: { noteId: string } }
@@ -31,7 +38,6 @@ export const NotePage: React.FC<NotePageProps> = ({ route }) => {
   const { relayPool, lastEventId } = useContext(RelayPoolContext)
   const [note, setNote] = useState<Note>()
   const [replies, setReplies] = useState<Note[]>()
-  const [eventId, setEventId] = useState<string>()
   const [refreshing, setRefreshing] = useState(false)
   const [nPub, setNPub] = useState<string>()
   const [positiveReactions, setPositiveReactions] = useState<number>(0)
@@ -47,37 +53,16 @@ export const NotePage: React.FC<NotePageProps> = ({ route }) => {
     relayPool?.unsubscribeAll()
     setNote(undefined)
     setReplies(undefined)
-    setEventId(route.params.noteId)
     subscribeNotes()
     loadNote()
   }, [])
 
   useEffect(() => {
-    if (database && publicKey && note?.id) {
-      getReactionsCount(database, { positive: true, eventId: note.id }).then((result) => {
-        setPositiveReactions(result ?? 0)
-      })
-      getReactionsCount(database, { positive: false, eventId: note.id }).then((result) => {
-        setNegativeReactions(result ?? 0)
-      })
-      getUserReaction(database, publicKey, { eventId: note.id }).then((results) => {
-        results.forEach((reaction) => {
-          if (reaction.positive) {
-            setUserUpvoted(true)
-          } else {
-            setUserDownvoted(true)
-          }
-        })
-      })
-    }
+    loadNote()
   }, [lastEventId])
 
-  useEffect(() => {
-    loadNote()
-  }, [eventId, lastEventId])
-
   const loadNote: () => void = async () => {
-    if (database) {
+    if (database && publicKey) {
       const events = await getNotes(database, { filters: { id: route.params.noteId } })
       const event = events[0]
       setNote(event)
@@ -96,10 +81,21 @@ export const NotePage: React.FC<NotePageProps> = ({ route }) => {
       } else {
         setReplies([])
       }
-      getUser(event.pubkey, database).then((user) => {
-        if (user) {
-          setUser(user)
-        }
+
+      getReactionsCount(database, { positive: true, eventId: route.params.noteId }).then((result) => {
+        setPositiveReactions(result ?? 0)
+      })
+      getReactionsCount(database, { positive: false, eventId: route.params.noteId }).then((result) => {
+        setNegativeReactions(result ?? 0)
+      })
+      getUserReaction(database, publicKey, { eventId: route.params.noteId }).then((results) => {
+        results.forEach((reaction) => {
+          if (reaction.positive) {
+            setUserUpvoted(true)
+          } else {
+            setUserDownvoted(true)
+          }
+        })
       })
       setRefreshing(false)
     }
@@ -166,79 +162,99 @@ export const NotePage: React.FC<NotePageProps> = ({ route }) => {
     }
   }, [])
 
+  const openProfileDrawer: () => void = () => {
+    setProfileCardPubKey(note?.pubkey)
+    bottomSheetProfileRef.current?.open()
+  }
+
   return note && nPub ? (
-    <View style={styles.content}>
-      <Surface elevation={1}>
-        <View style={styles.title}>
-          <View style={styles.titleUser}>
-            <View>
-              <NostrosAvatar
-                name={note.name}
-                pubKey={nPub}
-                src={note.picture}
-                lud06={note.lnurl}
-                size={54}
-              />
+    <View>
+      <ScrollView
+        horizontal={false}
+        showsVerticalScrollIndicator={false}
+        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
+      >
+        <Surface elevation={1}>
+          <View style={styles.title}>
+            <View style={styles.titleUser}>
+              <View>
+                <NostrosAvatar
+                  name={note.name}
+                  pubKey={nPub}
+                  src={note.picture}
+                  lud06={note.lnurl}
+                  size={54}
+                />
+              </View>
+              <View>
+                <Text>{usernamePubKey(note.name, nPub)}</Text>
+                <Text>{timestamp}</Text>
+              </View>
             </View>
             <View>
-              <Text>{usernamePubKey(note.name, nPub)}</Text>
-              <Text>{timestamp}</Text>
+              <IconButton icon='dots-vertical' size={25} onPress={openProfileDrawer} />
             </View>
           </View>
-          <View>
-            <IconButton
-              icon='dots-vertical'
-              size={25}
-              onPress={() => {
-                setProfileCardPubKey(publicKey)
-                bottomSheetProfileRef.current?.open()
-              }}
-            />
+          <View style={[styles.titleComment, { borderColor: theme.colors.onSecondary }]}>
+            <TextContent event={note} />
           </View>
-        </View>
-        <View style={[styles.titleContent, { borderColor: theme.colors.onSecondary }]}>
-          <TextContent event={note} />
-        </View>
-        {privateKey && (
-          <View style={[styles.titleContent, { borderColor: theme.colors.onSecondary }]}>
-            <Button
-              onPress={() => {
-                if (!userDownvoted && privateKey) {
-                  setUserDownvoted(true)
-                  setNegativeReactions((prev) => prev + 1)
-                  publishReaction(false)
-                }
-              }}
-              icon={() => <MaterialCommunityIcons name='thumb-down-outline' size={25} />}
-            >
-              {negaiveReactions === undefined || negaiveReactions === 0 ? '-' : negaiveReactions}
-            </Button>
-            <Button
-              onPress={() => {
-                if (!userUpvoted && privateKey) {
-                  setUserUpvoted(true)
-                  setPositiveReactions((prev) => prev + 1)
-                  publishReaction(true)
-                }
-              }}
-              icon={() => <MaterialCommunityIcons name='thumb-up-outline' size={25} />}
-            >
-              {positiveReactions === undefined || positiveReactions === 0 ? '-' : positiveReactions}
-            </Button>
+          {privateKey && (
+            <View style={[styles.titleRecommend, { borderColor: theme.colors.onSecondary }]}>
+              <Button
+                onPress={() => {
+                  if (!userDownvoted && privateKey) {
+                    setUserDownvoted(true)
+                    setNegativeReactions((prev) => prev + 1)
+                    publishReaction(false)
+                  }
+                }}
+                icon={() => (
+                  <MaterialCommunityIcons
+                    name={userDownvoted ? 'thumb-down' : 'thumb-down-outline'}
+                    size={25}
+                  />
+                )}
+              >
+                {negaiveReactions === undefined || negaiveReactions === 0 ? '-' : negaiveReactions}
+              </Button>
+              <Button
+                onPress={() => {
+                  if (!userUpvoted && privateKey) {
+                    setUserUpvoted(true)
+                    setPositiveReactions((prev) => prev + 1)
+                    publishReaction(true)
+                  }
+                }}
+                icon={() => (
+                  <MaterialCommunityIcons
+                    name={userUpvoted ? 'thumb-up' : 'thumb-up-outline'}
+                    size={25}
+                  />
+                )}
+              >
+                {positiveReactions === undefined || positiveReactions === 0
+                  ? '-'
+                  : positiveReactions}
+              </Button>
+            </View>
+          )}
+        </Surface>
+        {replies && replies.length > 0 && (
+          <View style={styles.list}>
+            {replies.map((note) => renderItem(note))}
+            {replies.length >= 10 && <ActivityIndicator style={styles.loading} animating={true} />}
           </View>
         )}
-      </Surface>
-      {replies && replies.length > 0 && (
-        <ScrollView
-          horizontal={false}
-          showsVerticalScrollIndicator={false}
-          refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
-          style={styles.list}
-        >
-          {replies.map((note) => renderItem(note))}
-          {replies.length >= 10 && <ActivityIndicator style={styles.loading} animating={true} />}
-        </ScrollView>
-      )}
+      </ScrollView>
+      <AnimatedFAB
+        style={[styles.fab, { top: Dimensions.get('window').height - 140 }]}
+        icon='message-plus-outline'
+        label='Label'
+        onPress={() => navigate('Reply', { note })}
+        animateFrom='right'
+        iconMode='static'
+        extended={false}
+      />
       <RBSheet
         ref={bottomSheetProfileRef}
         closeOnDragDown={true}
@@ -266,17 +282,27 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignContent: 'center',
   },
-  titleContent: {
+  titleRecommend: {
     borderTopWidth: 1,
     padding: 16,
     flexDirection: 'row',
     justifyContent: 'space-around',
   },
+  titleComment: {
+    borderTopWidth: 1,
+    padding: 16,
+    flexDirection: 'row',
+    justifyContent: 'flex-start'
+  },
   list: {
     padding: 16,
   },
   loading: {
-    paddingBottom: 60
+    paddingBottom: 60,
+  },
+  fab: {
+    right: 16,
+    position: 'absolute',
   },
   noteCard: {
     borderLeftWidth: 1,

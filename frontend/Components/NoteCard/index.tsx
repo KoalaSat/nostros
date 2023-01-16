@@ -182,7 +182,7 @@ export const NoteCard: React.FC<NoteCardProps> = ({ note, onPressOptions = () =>
                 publishReaction(false)
               }
             }}
-            icon={() => <MaterialCommunityIcons name='thumb-down-outline' size={25} />}
+            icon={() => <MaterialCommunityIcons name={userDownvoted ? 'thumb-down' : 'thumb-down-outline'} size={25} />}
           >
             {negaiveReactions === undefined || negaiveReactions === 0 ? '-' : negaiveReactions}
           </Button>
@@ -194,7 +194,7 @@ export const NoteCard: React.FC<NoteCardProps> = ({ note, onPressOptions = () =>
                 publishReaction(true)
               }
             }}
-            icon={() => <MaterialCommunityIcons name='thumb-up-outline' size={25} />}
+            icon={() => <MaterialCommunityIcons name={userUpvoted ? 'thumb-up' : 'thumb-up-outline'} size={25} />}
           >
             {positiveReactions === undefined || positiveReactions === 0 ? '-' : positiveReactions}
           </Button>

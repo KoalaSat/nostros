@@ -78,8 +78,9 @@ export const getUsers: (
     contacts?: boolean
     followers?: boolean
     includeIds?: string[]
+    order?: string
   },
-) => Promise<User[]> = async (db, { name, exludeIds, contacts, followers, includeIds }) => {
+) => Promise<User[]> = async (db, { name, exludeIds, contacts, followers, includeIds, order }) => {
   let userQuery = 'SELECT * FROM nostros_users '
 
   const filters = []
@@ -111,7 +112,11 @@ export const getUsers: (
     }
   }
 
-  userQuery += 'ORDER BY name,id'
+  if (order) {
+    userQuery += `ORDER BY ${order}`
+  } else {
+    userQuery += 'ORDER BY name,id'
+  }
 
   const resultSet = db.execute(userQuery)
   if (resultSet.rows && resultSet.rows.length > 0) {

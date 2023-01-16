@@ -36,6 +36,15 @@ export const getTaggedEventIds: (event: Event) => string[] = (event) => {
   return mainEventETags.map((item) => item[1] ?? '')
 }
 
+export const getTaggedPubKeys: (event: Event) => string[] = (event) => {
+  const mainEventETags: string[][] = getPTags(event)
+  return mainEventETags.map((item) => item[1] ?? '')
+}
+
 export const getETags: (event: Event) => string[][] = (event) => {
   return event?.tags.filter((tag) => tag[0] === 'e') || []
+}
+
+export const getPTags: (event: Event) => string[][] = (event) => {
+  return event?.tags.filter((tag) => tag[0] === 'p') || []
 }

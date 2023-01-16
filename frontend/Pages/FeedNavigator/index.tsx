@@ -12,6 +12,7 @@ import ProfileConfigPage from '../ProfileConfigPage'
 import ProfilePage from '../ProfilePage'
 import ProfileCard from '../../Components/ProfileCard'
 import NotePage from '../NotePage'
+import SendPage from '../SendPage'
 
 export const HomeNavigator: React.FC = () => {
   const theme = useTheme()
@@ -86,6 +87,8 @@ export const HomeNavigator: React.FC = () => {
           <Stack.Screen name='ProfileConfig' component={ProfileConfigPage} />
           <Stack.Screen name='Profile' component={ProfilePage} />
           <Stack.Screen name='Note' component={NotePage} />
+          <Stack.Screen name='Send' component={SendPage} />
+          <Stack.Screen name='Reply' component={SendPage} />
         </Stack.Group>
       </Stack.Navigator>
       <RBSheet
