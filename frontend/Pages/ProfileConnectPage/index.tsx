@@ -38,7 +38,6 @@ export const ProfileConnectPage: React.FC = () => {
       navigate('ProfileLoad')
     }
   }
-  
 
   const pasteContent: () => void = () => {
     Clipboard.getString().then((value) => {
@@ -46,12 +45,15 @@ export const ProfileConnectPage: React.FC = () => {
     })
   }
 
-  const label: string = React.useMemo(() => isPublic ? t('loggerPage.publicKey') : t('loggerPage.privateKey'), [isPublic])
+  const label: string = React.useMemo(
+    () => (isPublic ? t('loggerPage.publicKey') : t('loggerPage.privateKey')),
+    [isPublic],
+  )
 
   return (
     <>
       <View style={styles.container}>
-        <Logo size='medium'/>
+        <Logo size='medium' />
         <View>
           <TextInput
             mode='outlined'
@@ -63,9 +65,7 @@ export const ProfileConnectPage: React.FC = () => {
             right={
               <TextInput.Icon
                 icon={inputValue ? 'close-circle-outline' : 'content-paste'}
-                onPress={() =>
-                  inputValue ? setInputValue('') : pasteContent()
-                }
+                onPress={() => (inputValue ? setInputValue('') : pasteContent())}
                 forceTextInputFocus={false}
               />
             }
@@ -77,10 +77,7 @@ export const ProfileConnectPage: React.FC = () => {
         <View>
           <View style={styles.row}>
             <Text>{t('loggerPage.isPublic')}</Text>
-            <Switch
-              value={isPublic}
-              onValueChange={() => setIsPublic(!isPublic)}
-            />
+            <Switch value={isPublic} onValueChange={() => setIsPublic(!isPublic)} />
           </View>
           <View style={styles.row}>
             <Text>{t('loggerPage.notKeys')}</Text>

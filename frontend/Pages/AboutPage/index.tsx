@@ -19,19 +19,25 @@ export const AboutPage: React.FC = () => {
       {
         key: 1,
         title: t('aboutPage.gitHub'),
-        left: () => <List.Icon icon={() => <MaterialCommunityIcons name="file-tree-outline" size={25} />}/>,
+        left: () => (
+          <List.Icon icon={() => <MaterialCommunityIcons name='file-tree-outline' size={25} />} />
+        ),
         onPress: async () => await Linking.openURL('https://github.com/KoalaSat/nostros'),
       },
       {
         key: 2,
         title: t('aboutPage.nostr'),
-        left: () => <List.Icon icon={() => <MaterialCommunityIcons name="file-tree-outline" size={25} />}/>,
+        left: () => (
+          <List.Icon icon={() => <MaterialCommunityIcons name='file-tree-outline' size={25} />} />
+        ),
         onPress: async () => await Linking.openURL('https://usenostr.org'),
       },
       {
         key: 3,
         title: t('aboutPage.nips'),
-        left: () => <List.Icon icon={() => <MaterialCommunityIcons name="hammer-wrench" size={25} />}/>,
+        left: () => (
+          <List.Icon icon={() => <MaterialCommunityIcons name='hammer-wrench' size={25} />} />
+        ),
         onPress: async () => await Linking.openURL('https://github.com/nostr-protocol/nips'),
       },
     ],

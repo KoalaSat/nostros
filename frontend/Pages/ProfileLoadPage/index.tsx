@@ -25,7 +25,7 @@ export const ProfileLoadPage: React.FC = () => {
         {
           kinds: [EventKind.meta],
           authors: [publicKey],
-        }
+        },
       ])
       relayPool?.subscribe('loading-pets', [
         {
@@ -70,13 +70,11 @@ export const ProfileLoadPage: React.FC = () => {
 
   return (
     <View style={styles.container}>
-      <Logo onlyIcon size='medium'/>
+      <Logo onlyIcon size='medium' />
       <Text variant='titleMedium'>
         {profileFound ? t('profileLoadPage.foundProfile') : t('profileLoadPage.searchingProfile')}
       </Text>
-      <Text variant='titleMedium'>
-        {t('profileLoadPage.foundContacts', { contactsCount })}
-      </Text>
+      <Text variant='titleMedium'>{t('profileLoadPage.foundContacts', { contactsCount })}</Text>
       <Button mode='contained' onPress={() => navigate('Feed')}>
         {t('profileLoadPage.home')}
       </Button>
@@ -84,7 +82,7 @@ export const ProfileLoadPage: React.FC = () => {
         style={styles.snackbar}
         visible
         onDismiss={() => {}}
-        action={{label: t('profileLoadPage.relays') ?? '', onPress: () => navigate('Relays')}}
+        action={{ label: t('profileLoadPage.relays') ?? '', onPress: () => navigate('Relays') }}
       >
         Conéctate a otros relays si tienes problemas encontrando tus datos.
       </Snackbar>

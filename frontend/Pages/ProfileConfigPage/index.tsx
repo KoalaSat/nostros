@@ -193,7 +193,7 @@ export const ProfileConfigPage: React.FC = () => {
             ...user,
             name,
             about,
-            picture
+            picture,
           })
         }
       })

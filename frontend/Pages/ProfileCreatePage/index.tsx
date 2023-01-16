@@ -8,10 +8,10 @@ import { DrawerNavigationHelpers } from '@react-navigation/drawer/lib/typescript
 import { UserContext } from '../../Contexts/UserContext'
 
 interface ProfileCreatePageProps {
-  navigation: DrawerNavigationHelpers;
+  navigation: DrawerNavigationHelpers
 }
 
-export const ProfileCreatePage: React.FC<ProfileCreatePageProps> = ({navigation}) => {
+export const ProfileCreatePage: React.FC<ProfileCreatePageProps> = ({ navigation }) => {
   const { t } = useTranslation('common')
   const { setPrivateKey } = useContext(UserContext)
   const [inputValue, setInputValue] = useState<string>()
@@ -62,7 +62,7 @@ export const ProfileCreatePage: React.FC<ProfileCreatePageProps> = ({navigation}
         style={styles.snackbar}
         visible
         onDismiss={() => {}}
-        action={{label: t('profileCreatePage.snackbarAction') ?? '', onPress: copyContent}}
+        action={{ label: t('profileCreatePage.snackbarAction') ?? '', onPress: copyContent }}
       >
         Muy importante. Guarda tu clave privada en un lugar seguro, si la pierdes no podrás volver a
         acceder con ella ni recuperar tu cuenta.

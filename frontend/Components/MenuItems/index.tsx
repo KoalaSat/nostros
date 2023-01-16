@@ -78,7 +78,11 @@ export const MenuItems: React.FC = () => {
                 </View>
               </TouchableRipple>
               <View style={styles.cardEdit}>
-                <IconButton icon='pencil-outline' size={20} onPress={() => navigate('ProfileConfig')} />
+                <IconButton
+                  icon='pencil-outline'
+                  size={20}
+                  onPress={() => navigate('ProfileConfig')}
+                />
               </View>
             </Card.Content>
             <Card.Content style={styles.cardActions}>
@@ -103,7 +107,7 @@ export const MenuItems: React.FC = () => {
           <Drawer.Section>
             <Drawer.Item
               label={t('menuItems.relays')}
-              icon={() => <MaterialCommunityIcons name="chart-timeline-variant" size={25} />}
+              icon={() => <MaterialCommunityIcons name='chart-timeline-variant' size={25} />}
               key='relays'
               active={drawerItemIndex === 0}
               onPress={() => onPressItem('relays', 0)}

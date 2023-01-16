@@ -31,7 +31,7 @@ export const initialRelayPoolContext: RelayPoolContextProps = {
   setRelayPool: () => {},
   addRelayItem: async () => await new Promise(() => {}),
   removeRelayItem: async () => await new Promise(() => {}),
-  relays: []
+  relays: [],
 }
 
 export const RelayPoolContextProvider = ({
@@ -83,9 +83,8 @@ export const RelayPoolContextProvider = ({
     }
   }
 
-
   const addRelayItem: (relay: Relay) => Promise<void> = async (relay) => {
-    return await new Promise((resolve, _reject) => {      
+    return await new Promise((resolve, _reject) => {
       if (relayPool && database && publicKey) {
         relayPool.add(relay.url, () => {
           setRelays((prev) => [...prev, relay])
@@ -96,7 +95,7 @@ export const RelayPoolContextProvider = ({
   }
 
   const removeRelayItem: (relay: Relay) => Promise<void> = async (relay) => {
-    return await new Promise((resolve, _reject) => {      
+    return await new Promise((resolve, _reject) => {
       if (relayPool && database && publicKey) {
         relayPool.remove(relay.url, () => {
           setRelays((prev) => prev.filter((item) => item.url !== relay.url))
@@ -122,7 +121,7 @@ export const RelayPoolContextProvider = ({
         lastConfirmationtId,
         relays,
         addRelayItem,
-        removeRelayItem
+        removeRelayItem,
       }}
     >
       {children}

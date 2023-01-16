@@ -82,12 +82,16 @@ export const NotePage: React.FC<NotePageProps> = ({ route }) => {
         setReplies([])
       }
 
-      getReactionsCount(database, { positive: true, eventId: route.params.noteId }).then((result) => {
-        setPositiveReactions(result ?? 0)
-      })
-      getReactionsCount(database, { positive: false, eventId: route.params.noteId }).then((result) => {
-        setNegativeReactions(result ?? 0)
-      })
+      getReactionsCount(database, { positive: true, eventId: route.params.noteId }).then(
+        (result) => {
+          setPositiveReactions(result ?? 0)
+        },
+      )
+      getReactionsCount(database, { positive: false, eventId: route.params.noteId }).then(
+        (result) => {
+          setNegativeReactions(result ?? 0)
+        },
+      )
       getUserReaction(database, publicKey, { eventId: route.params.noteId }).then((results) => {
         results.forEach((reaction) => {
           if (reaction.positive) {
@@ -293,7 +297,7 @@ const styles = StyleSheet.create({
     borderTopWidth: 1,
     padding: 16,
     flexDirection: 'row',
-    justifyContent: 'flex-start'
+    justifyContent: 'flex-start',
   },
   list: {
     padding: 16,

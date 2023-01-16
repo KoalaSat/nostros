@@ -34,7 +34,7 @@ export const HomeNavigator: React.FC = () => {
         backgroundColor: theme.colors.background,
         padding: 16,
         borderTopRightRadius: 28,
-        borderTopLeftRadius: 28
+        borderTopLeftRadius: 28,
       },
       draggableIcon: {
         backgroundColor: '#000',
@@ -66,7 +66,7 @@ export const HomeNavigator: React.FC = () => {
                     <Appbar.Action
                       icon='dots-vertical'
                       onPress={() => {
-                        const params = route?.params as { pubKey : string }
+                        const params = route?.params as { pubKey: string }
                         setShowProfile(params?.pubKey ?? '')
                         bottomSheetProfileRef.current?.open()
                       }}
@@ -97,7 +97,7 @@ export const HomeNavigator: React.FC = () => {
         height={280}
         customStyles={bottomSheetStyles}
       >
-        <ProfileCard userPubKey={showProfile ?? ''} bottomSheetRef={bottomSheetProfileRef}/>
+        <ProfileCard userPubKey={showProfile ?? ''} bottomSheetRef={bottomSheetProfileRef} />
       </RBSheet>
       <RBSheet
         ref={bottomSheetKeysRef}

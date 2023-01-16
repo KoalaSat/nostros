@@ -1,51 +1,59 @@
 import React, { useContext, useEffect, useState } from 'react'
-import { ScrollView, StyleSheet, Text, TouchableOpacity } from 'react-native'
+import { Clipboard, Dimensions, ScrollView, StyleSheet, View } from 'react-native'
 import { AppContext } from '../../Contexts/AppContext'
 import { EventKind } from '../../lib/nostr/Events'
 import { useTranslation } from 'react-i18next'
 import { getUsers, updateUserContact, User } from '../../Functions/DatabaseFunctions/Users'
-import { Button, UserCard } from '../../Components'
 import { RelayPoolContext } from '../../Contexts/RelayPoolContext'
-import { populatePets } from '../../Functions/RelayFunctions/Users'
+import { formatPubKey, populatePets, username } from '../../Functions/RelayFunctions/Users'
 import { getNip19Key } from '../../lib/nostr/Nip19'
 import { UserContext } from '../../Contexts/UserContext'
-import { useTheme } from 'react-native-paper'
+import { AnimatedFAB, Button, Text, TextInput, TouchableRipple, useTheme } from 'react-native-paper'
+import { Tabs, TabScreen } from 'react-native-paper-tabs'
+import NostrosAvatar from '../../Components/Avatar'
+import { navigate } from '../../lib/Navigation'
+import RBSheet from 'react-native-raw-bottom-sheet'
+import NostrosNotification from '../../Components/NostrosNotification'
 
 export const ContactsFeed: React.FC = () => {
   const { database } = useContext(AppContext)
-  const { publicKey, privateKey } = React.useContext(UserContext)
+  const { publicKey, setContantsCount, setFollowersCount } = React.useContext(UserContext)
   const { relayPool, lastEventId } = useContext(RelayPoolContext)
   const theme = useTheme()
+  const bottomSheetAddContactRef = React.useRef<RBSheet>(null)
   // State
-  const [users, setUsers] = useState<User[]>()
-  const [showAddContact, setShowAddContact] = useState<boolean>(false)
+  const [followers, setFollowers] = useState<User[]>([])
+  const [following, setFollowing] = useState<User[]>([])
   const [contactInput, setContactInput] = useState<string>()
-  const [selectedTab, setSelectedTab] = useState(0)
   const [isAddingContact, setIsAddingContact] = useState<boolean>(false)
+  const [showNotification, setShowNotification] = useState<undefined | string>()
 
   const { t } = useTranslation('common')
 
   useEffect(() => {
     loadUsers()
-  }, [lastEventId])
-
-  useEffect(() => {
-    setUsers([])
-    loadUsers()
     subscribeContacts()
-  }, [selectedTab])
+  }, [lastEventId])
 
   const loadUsers: () => void = () => {
     if (database && publicKey) {
-      let filters: object = { followers: true }
-      if (selectedTab === 0) {
-        filters = { contacts: true }
-      }
-
-      getUsers(database, filters).then((results) => {
+      getUsers(database, { contacts: true }).then((results) => {
         if (results && results.length > 0) {
-          setUsers(results)
-          relayPool?.subscribe('contacts-meta', [
+          setFollowing(results)
+          setContantsCount(results.length)
+          relayPool?.subscribe('contacts-meta-following', [
+            {
+              kinds: [EventKind.meta],
+              authors: results.map((user) => user.id),
+            },
+          ])
+        }
+      })
+      getUsers(database, { followers: true }).then((results) => {
+        if (results && results.length > 0) {
+          setFollowers(results)
+          setFollowersCount(results.length)
+          relayPool?.subscribe('contacts-meta-followers', [
             {
               kinds: [EventKind.meta],
               authors: results.map((user) => user.id),
@@ -79,80 +87,179 @@ export const ContactsFeed: React.FC = () => {
       updateUserContact(hexKey, database, true)
         .then(() => {
           populatePets(relayPool, database, publicKey)
-          setShowAddContact(false)
           loadUsers()
-          setIsAddingContact(false) // restore sending status
+          setIsAddingContact(false)
+          bottomSheetAddContactRef.current?.close()
+          setShowNotification('contactAdded')
         })
-        .catch((err) => {
-          setIsAddingContact(false) // restore sending status
+        .catch(() => {
+          setIsAddingContact(false)
+          setShowNotification('addContactError')
         })
     }
   }
 
+  const pasteContact: () => void = () => {
+    Clipboard.getString().then((value) => {
+      setContactInput(value ?? '')
+    })
+  }
+
+  const removeContact: (user: User) => void = (user) => {
+    if (relayPool && database && publicKey) {
+      updateUserContact(user.id, database, false).then(() => {
+        populatePets(relayPool, database, publicKey)
+        setShowNotification('contactRemoved')
+        loadUsers()
+      })
+    }
+  }
+
+  const addContact: (user: User) => void = (user) => {
+    if (relayPool && database && publicKey) {
+      updateUserContact(user.id, database, true).then(() => {
+        populatePets(relayPool, database, publicKey)
+        setShowNotification('contactAdded')
+        loadUsers()
+      })
+    }
+  }
+
+  const renderContactItem: (user: User) => JSX.Element = (user) => (
+    <TouchableRipple onPress={() => navigate('Profile', { pubKey: user.id })}>
+      <View key={user.id} style={styles.contactRow}>
+        <View style={styles.contactInfo}>
+          <NostrosAvatar
+            name={user.name}
+            pubKey={user.id}
+            src={user.picture}
+            lud06={user.lnurl}
+            size={40}
+          />
+          <View style={styles.contactName}>
+            <Text>{formatPubKey(user.id)}</Text>
+            {user.name && <Text variant='titleSmall'>{username(user)}</Text>}
+          </View>
+        </View>
+        <View style={styles.contactFollow}>
+          <Button onPress={() => (user.contact ? removeContact(user) : addContact(user))}>
+            {user.contact ? t('sendPage.stopFollowing') : t('sendPage.follow')}
+          </Button>
+        </View>
+      </View>
+    </TouchableRipple>
+  )
+
+  const bottomSheetStyles = React.useMemo(() => {
+    return {
+      container: {
+        backgroundColor: theme.colors.background,
+        padding: 16,
+        borderTopRightRadius: 28,
+        borderTopLeftRadius: 28,
+      },
+      draggableIcon: {
+        backgroundColor: '#000',
+      },
+    }
+  }, [])
+
   return (
     <>
-      {/* <TopNavigation alignment='center' accessoryLeft={renderBackAction} />
-      <TabBar
-        style={styles.topBar}
-        selectedIndex={selectedTab}
-        onSelect={(index) => setSelectedTab(index)}
+      <Tabs uppercase={false} theme={theme} style={{ backgroundColor: theme.colors.background }}>
+        <TabScreen label={t('contactsFeed.following', { count: following.length })}>
+          <View style={styles.container}>
+            <ScrollView horizontal={false}>
+              {following.map((user) => renderContactItem(user))}
+            </ScrollView>
+          </View>
+        </TabScreen>
+        <TabScreen label={t('contactsFeed.followers', { count: followers.length })}>
+          <View style={styles.container}>
+            <ScrollView horizontal={false}>
+              {followers.map((user) => renderContactItem(user))}
+            </ScrollView>
+          </View>
+        </TabScreen>
+      </Tabs>
+      <AnimatedFAB
+        style={[styles.fab, { top: Dimensions.get('window').height - 220 }]}
+        icon='account-multiple-plus-outline'
+        label='Label'
+        onPress={() => bottomSheetAddContactRef.current?.open()}
+        animateFrom='right'
+        iconMode='static'
+        extended={false}
+      />
+      <RBSheet
+        ref={bottomSheetAddContactRef}
+        closeOnDragDown={true}
+        height={280}
+        customStyles={bottomSheetStyles}
+        onClose={() => setContactInput('')}
       >
-        <Tab title={<Text>{t('contactsPage.following')}</Text>} />
-        <Tab title={<Text>{t('contactsPage.followers')}</Text>} />
-      </TabBar>
-      <Layout style={styles.container} level='3'>
-        <ScrollView horizontal={false}>
-          {users?.map((user) => (
-            <UserCard user={user} key={user.id} />
-          ))}
-        </ScrollView>
-      </Layout>
-      <Modal
-        style={styles.modal}
-        visible={showAddContact}
-        backdropStyle={styles.backdrop}
-        onBackdropPress={() => setShowAddContact(false)}
-      >
-        <Card disabled={true}>
-          <Layout style={styles.actionContainer}>
-            <Layout>
-              <Input
-                placeholder={t('contactsPage.addContact.placeholder')}
-                value={contactInput}
-                onChangeText={setContactInput}
-                size='large'
+        <View>
+          <Text variant='titleLarge'>{t('contactsFeed.addContactTitle')}</Text>
+          <Text variant='bodyMedium'>{t('contactsFeed.addContactDescription')}</Text>
+          <TextInput
+            mode='outlined'
+            label={t('profileConfigPage.addContact') ?? ''}
+            onChangeText={setContactInput}
+            value={contactInput}
+            right={
+              <TextInput.Icon
+                icon='content-paste'
+                onPress={pasteContact}
+                forceTextInputFocus={false}
               />
-            </Layout>
-            <Layout style={styles.button}>
-              <Button onPress={onPressAddContact} loading={isAddingContact}>
-                {<Text>{t('contactsPage.addContact.add')}</Text>}
-              </Button>
-            </Layout>
-          </Layout>
-        </Card>
-      </Modal>
-      {privateKey && (
-        <TouchableOpacity
-          style={{
-            borderWidth: 1,
-            borderColor: 'rgba(0,0,0,0.2)',
-            alignItems: 'center',
-            justifyContent: 'center',
-            width: 65,
-            position: 'absolute',
-            bottom: 20,
-            right: 20,
-            height: 65,
-            backgroundColor: theme['color-warning-500'],
-            borderRadius: 100,
-          }}
-          onPress={() => setShowAddContact(true)}
-        >
-          <Icon name='user-plus' size={30} color={theme['text-basic-color']} solid />
-        </TouchableOpacity>
-      )} */}
+            }
+          />
+          <Button
+            mode='contained'
+            disabled={!contactInput || contactInput === ''}
+            onPress={onPressAddContact}
+            loading={isAddingContact}
+          >
+            {t('addContact.add')}
+          </Button>
+        </View>
+      </RBSheet>
+      <NostrosNotification
+        showNotification={showNotification}
+        setShowNotification={setShowNotification}
+      >
+        <Text>{t(`profileConfigPage.${showNotification}`)}</Text>
+      </NostrosNotification>
     </>
   )
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+  },
+  contactRow: {
+    paddingLeft: 16,
+    paddingRight: 16,
+    paddingTop: 16,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    width: '100%',
+  },
+  contactName: {
+    paddingLeft: 16,
+  },
+  contactInfo: {
+    flexDirection: 'row',
+    alignContent: 'center',
+  },
+  contactFollow: {
+    justifyContent: 'center',
+  },
+  fab: {
+    right: 16,
+    position: 'absolute',
+  },
+})
 
 export default ContactsFeed

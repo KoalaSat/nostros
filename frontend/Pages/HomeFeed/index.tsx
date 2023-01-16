@@ -58,7 +58,7 @@ export const HomeFeed: React.FC = () => {
       loadNotes()
     }
   }, [pageSize])
-  
+
   const onRefresh = useCallback(() => {
     setRefreshing(true)
     relayPool?.unsubscribeAll()

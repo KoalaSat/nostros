@@ -42,12 +42,6 @@ export const TextContent: React.FC<TextContentProps> = ({ event, content, previe
   const [linkPreview, setLinkPreview] = useState<LinkPreviewMedia>()
   const text = event?.content ?? content ?? ''
 
-  useEffect(() => {
-    getLinkPreview(text).then((data) => {
-      setLinkPreview(data as LinkPreviewMedia)
-    })
-  }, [])
-
   useEffect(() => {}, [loadedUsers, linkPreview])
 
   const handleUrlPress: (url: string) => void = (url) => {
@@ -56,7 +50,7 @@ export const TextContent: React.FC<TextContentProps> = ({ event, content, previe
 
   const handleMentionPress: (text: string) => void = (text) => {
     if (!event) return
-    
+
     const mentionIndex: number = parseInt(text.substring(2, text.length - 1))
     const userPubKey = event.tags[mentionIndex][1]
 
@@ -88,14 +82,27 @@ export const TextContent: React.FC<TextContentProps> = ({ event, content, previe
     }
   }
 
+  const renderUrlText: (matchingString: string, matches: string[]) => string = (
+    matchingString,
+    matches,
+  ) => {
+    if (!linkPreview) {
+      getLinkPreview(matchingString).then((data) => {
+        setLinkPreview(data as LinkPreviewMedia)
+      })
+    }
+
+    return matchingString
+  }
+
   const generatePreview: () => JSX.Element = () => {
     if (!linkPreview) return <></>
-    
+
     const coverUrl = linkPreview.images?.length > 0 ? linkPreview.images[0] : linkPreview.url
 
     return (
       <Card style={styles.previewCard} onPress={() => handleUrlPress(linkPreview.url)}>
-        <Card.Cover source={{ uri: coverUrl }}/>
+        <Card.Cover source={{ uri: coverUrl }} />
         <Card.Content style={styles.previewContent}>
           <Text variant='titleSmall'>{linkPreview.title || linkPreview.url}</Text>
           {linkPreview.description && <Text variant='bodySmall'>{linkPreview.description}</Text>}
@@ -105,11 +112,11 @@ export const TextContent: React.FC<TextContentProps> = ({ event, content, previe
   }
 
   return (
-    <View>
+    <View style={styles.container}>
       <ParsedText
         style={{ color: theme.colors.onSurfaceVariant }}
         parse={[
-          { type: 'url', style: styles.url, onPress: handleUrlPress },
+          { type: 'url', style: styles.url, onPress: handleUrlPress, renderText: renderUrlText },
           { type: 'email', style: styles.email, onPress: handleUrlPress },
           event
             ? {
@@ -133,6 +140,9 @@ export const TextContent: React.FC<TextContentProps> = ({ event, content, previe
 }
 
 const styles = StyleSheet.create({
+  container: {
+    width: '100%',
+  },
   url: {
     textDecorationLine: 'underline',
   },
@@ -150,8 +160,8 @@ const styles = StyleSheet.create({
     padding: 16,
   },
   previewCard: {
-    marginTop: 16
-  }
+    marginTop: 16,
+  },
 })
 
 export default TextContent

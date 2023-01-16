@@ -3,12 +3,16 @@ import { StyleSheet } from 'react-native'
 import { Snackbar } from 'react-native-paper'
 
 interface NostrosNotificationProps {
-  children: React.ReactNode,
-  showNotification: string | undefined,
+  children: React.ReactNode
+  showNotification: string | undefined
   setShowNotification: (showNotification: string | undefined) => void
 }
 
-export const NostrosNotification: React.FC<NostrosNotificationProps> = ({ children, showNotification, setShowNotification }) => {
+export const NostrosNotification: React.FC<NostrosNotificationProps> = ({
+  children,
+  showNotification,
+  setShowNotification,
+}) => {
   return (
     <Snackbar
       style={styles.snackbar}
