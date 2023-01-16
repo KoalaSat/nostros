@@ -1,7 +1,7 @@
 import React, { useContext, useEffect, useState } from 'react'
 import { generateRandomKey } from '../../lib/nostr/Bip'
 import { Clipboard, StyleSheet, View } from 'react-native'
-import { Button, Snackbar, Text, TextInput } from 'react-native-paper'
+import { Button, Text, TextInput, useTheme } from 'react-native-paper'
 import { useTranslation } from 'react-i18next'
 import { nsecEncode } from 'nostr-tools/nip19'
 import { DrawerNavigationHelpers } from '@react-navigation/drawer/lib/typescript/src/types'
@@ -19,6 +19,7 @@ export const ProfileCreatePage: React.FC<ProfileCreatePageProps> = ({ navigation
   const [inputValue, setInputValue] = useState<string>()
   const [copied, setCopied] = useState<boolean>(false)
   const [showNotification, setShowNotification] = useState<string>()
+  const theme = useTheme()
 
   useEffect(() => {
     generateRandomKey().then((string) => {
@@ -59,19 +60,26 @@ export const ProfileCreatePage: React.FC<ProfileCreatePageProps> = ({ navigation
             />
           }
         />
-        <Button mode='contained' onPress={onPress} disabled={!copied}>
+        <Button style={styles.button} mode='contained' compact onPress={onPress} disabled={!copied}>
           {t('profileCreatePage.accessButton')}
         </Button>
+        <View style={[styles.warning, { backgroundColor: theme.colors.warningContainer }]}>
+          <Text variant='titleSmall' style={[styles.warningTitle, {color: theme.colors.onWarningContainer}]}>
+            {t('profileCreatePage.warningTitle')}
+          </Text>
+          <Text style={{color: theme.colors.onWarningContainer}}>
+            {t('profileCreatePage.warningDescription')}
+          </Text>
+          <View style={styles.warningActionOuterLayout}>
+            <Button
+                style={styles.warningAction}
+                mode='text'
+                onPress={copyContent}>
+              {t('profileCreatePage.warningAction')}
+            </Button>
+          </View>
+        </View>
       </View>
-      <Snackbar
-        style={styles.snackbar}
-        visible
-        onDismiss={copyContent}
-        action={{ label: t('profileCreatePage.snackbarAction') ?? '', onPress: copyContent }}
-      >
-        
-        {t('profileCreatePage.snackbarDescription')}
-      </Snackbar>
       {showNotification && (
         <NostrosNotification
           showNotification={showNotification}
@@ -87,12 +95,27 @@ export const ProfileCreatePage: React.FC<ProfileCreatePageProps> = ({ navigation
 
 const styles = StyleSheet.create({
   container: {
-    padding: 16,
+    flex: 1,
     justifyContent: 'center',
+    padding: 16,
   },
-  snackbar: {
-    top: 150,
-    flexDirection: 'column',
+  button: {
+    marginBottom: 24,
+    marginTop: 24,
+  },
+  warning: {
+    borderRadius: 4,
+    padding: 16,
+  },
+  warningTitle: {
+    marginBottom: 8,
+  },
+  warningAction: {
+    marginTop: 16,
+  },
+  warningActionOuterLayout: {
+    flexDirection: 'row',
+    justifyContent: 'flex-end',
   },
 })
 

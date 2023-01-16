@@ -59,8 +59,9 @@
       "answering": "Answer to {{username}}"
     },
     "profileCreatePage": {
-      "snackbarDescription": "Important. Save your key on a safe place, if loose it, you won't be able to access or recover your profile.",
-      "snackbarAction": "Copy private key",
+      "warningTitle": "Important",
+      "warningDescription": "Save your key on a safe place, if loose it, you won't be able to access or recover your profile.",
+      "warningAction": "Copy private key",
       "accessButton": "Access",
       "label": "Private key",
       "copied": "Private key copied.",
