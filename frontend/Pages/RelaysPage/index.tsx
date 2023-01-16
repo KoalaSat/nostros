@@ -119,7 +119,12 @@ export const RelaysPage: React.FC = () => {
       >
         {t(`relaysPage.${showNotification}`)}
       </Snackbar>
-      <RBSheet ref={bottomSheetAddRef} closeOnDragDown={true} height={260} customStyles={rbSheetCustomStyles}>
+      <RBSheet
+        ref={bottomSheetAddRef}
+        closeOnDragDown={true}
+        height={260}
+        customStyles={rbSheetCustomStyles}
+      >
         <View>
           <TextInput
             mode='outlined'

@@ -52,11 +52,13 @@ export const Frontend: React.FC = () => {
                       {() => {
                         return (
                           <DrawerNavigator.Navigator
-                            drawerContent={({ navigation }) => <MenuItems navigation={navigation} />}
+                            drawerContent={({ navigation }) => (
+                              <MenuItems navigation={navigation} />
+                            )}
                             screenOptions={{
                               drawerStyle: {
                                 borderRadius: 28,
-                                width: 296
+                                width: 296,
                               },
                             }}
                           >

@@ -9,11 +9,10 @@ import { Note } from '../../Functions/DatabaseFunctions/Notes'
 import { getETags, getTaggedPubKeys } from '../../Functions/RelayFunctions/Events'
 import { getUsers, User } from '../../Functions/DatabaseFunctions/Users'
 import { formatPubKey, username } from '../../Functions/RelayFunctions/Users'
-import { Button, Divider, Switch, Text, TextInput } from 'react-native-paper'
+import { Button, Divider, Switch, Text, TextInput, TouchableRipple } from 'react-native-paper'
 import RBSheet from 'react-native-raw-bottom-sheet'
 import { UserContext } from '../../Contexts/UserContext'
 import NostrosAvatar from '../../Components/Avatar'
-import { TouchableHighlight } from 'react-native-gesture-handler'
 import { goBack } from '../../lib/Navigation'
 
 interface SendPageProps {
@@ -121,7 +120,7 @@ export const SendPage: React.FC<SendPageProps> = ({ route }) => {
   }
 
   const renderContactItem: ListRenderItem<User> = ({ index, item }) => (
-    <TouchableHighlight onPress={() => addUserMention(item)}>
+    <TouchableRipple onPress={() => addUserMention(item)}>
       <View key={index} style={styles.contactRow}>
         <View style={styles.contactInfo}>
           <NostrosAvatar
@@ -140,7 +139,7 @@ export const SendPage: React.FC<SendPageProps> = ({ route }) => {
           <Text>{item.contact ? t('sendPage.isContact') : t('sendPage.isNotContact')}</Text>
         </View>
       </View>
-    </TouchableHighlight>
+    </TouchableRipple>
   )
 
   return (

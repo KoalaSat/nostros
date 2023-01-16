@@ -3,7 +3,12 @@ import { getPublickey } from '../lib/nostr/Bip'
 import SInfo from 'react-native-sensitive-info'
 import { RelayPoolContext } from './RelayPoolContext'
 import { AppContext } from './AppContext'
-import { getContactsCount, getFollowersCount, getUser, User } from '../Functions/DatabaseFunctions/Users'
+import {
+  getContactsCount,
+  getFollowersCount,
+  getUser,
+  User,
+} from '../Functions/DatabaseFunctions/Users'
 import { dropTables } from '../Functions/DatabaseFunctions'
 import { navigate, jumpTo } from '../lib/Navigation'
 import { npubEncode, nsecEncode } from 'nostr-tools/nip19'
@@ -16,9 +21,11 @@ export interface UserContextProps {
   privateKey?: string
   setPrivateKey: (privateKey: string | undefined) => void
   setUser: (user: User) => void
-  user?: User,
-  contactsCount: number,
-  followersCount: number,
+  user?: User
+  contactsCount: number
+  followersCount: number
+  setContantsCount: (count: number) => void
+  setFollowersCount: (count: number) => void
   reloadUser: () => void
   logout: () => void
 }
@@ -33,8 +40,10 @@ export const initialUserContext: UserContextProps = {
   setUser: () => {},
   reloadUser: () => {},
   logout: () => {},
+  setContantsCount: () => {},
+  setFollowersCount: () => {},
   contactsCount: 0,
-  followersCount: 0
+  followersCount: 0,
 }
 
 export const UserContextProvider = ({ children }: UserContextProviderProps): JSX.Element => {
@@ -101,7 +110,7 @@ export const UserContextProvider = ({ children }: UserContextProviderProps): JSX
   }, [user])
 
   useEffect(() => {
-    if (!loadingDb ) {
+    if (!loadingDb) {
       SInfo.getItem('privateKey', {}).then((privateResult) => {
         if (privateResult && privateResult !== '') {
           setPrivateKey(privateResult)
@@ -132,7 +141,9 @@ export const UserContextProvider = ({ children }: UserContextProviderProps): JSX
         contactsCount,
         followersCount,
         reloadUser,
-        logout
+        logout,
+        setContantsCount,
+        setFollowersCount,
       }}
     >
       {children}

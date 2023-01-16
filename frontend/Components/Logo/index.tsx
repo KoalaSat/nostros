@@ -9,11 +9,11 @@ interface LogoProps {
   size?: 'large' | 'medium' | 'small'
 }
 
-export const Logo: React.FC<LogoProps> = ({onlyIcon = false, size = 'small' }) => {
+export const Logo: React.FC<LogoProps> = ({ onlyIcon = false, size = 'small' }) => {
   const logoHeight = {
     small: 60,
     medium: 90,
-    large: 120
+    large: 120,
   }
   return (
     <View style={styles.container}>
@@ -29,12 +29,12 @@ export const Logo: React.FC<LogoProps> = ({onlyIcon = false, size = 'small' }) =
 
 const styles = StyleSheet.create({
   logo: {
-    flex: 1
+    flex: 1,
   },
   container: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    alignItems: 'center'
+    alignItems: 'center',
   },
   text: {
     fontFamily: 'SpaceGrotesk-Bold',

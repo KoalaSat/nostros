@@ -35,7 +35,11 @@ interface NoteCardProps {
   showAnswerData?: boolean
 }
 
-export const NoteCard: React.FC<NoteCardProps> = ({ note, showAnswerData = true, onPressOptions = () => {} }) => {
+export const NoteCard: React.FC<NoteCardProps> = ({
+  note,
+  showAnswerData = true,
+  onPressOptions = () => {},
+}) => {
   const theme = useTheme()
   const { publicKey, privateKey } = React.useContext(UserContext)
   const { relayPool, lastEventId } = useContext(RelayPoolContext)
@@ -94,7 +98,8 @@ export const NoteCard: React.FC<NoteCardProps> = ({ note, showAnswerData = true,
         {note.reply_event_id && showAnswerData && (
           <TouchableRipple
             onPress={() =>
-              note.kind !== EventKind.recommendServer && push('Note', { noteId: note.reply_event_id })
+              note.kind !== EventKind.recommendServer &&
+              push('Note', { noteId: note.reply_event_id })
             }
           >
             <Card.Content style={[styles.answerContent, { borderColor: theme.colors.onSecondary }]}>

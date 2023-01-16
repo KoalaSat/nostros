@@ -14,5 +14,4 @@ export const defaultRelays = [
   'wss://nostr.developer.li',
 ]
 
-export const REGEX_SOCKET_LINK =
-  /^wss:\/\/.*\..*$/i
+export const REGEX_SOCKET_LINK = /^wss:\/\/.*\..*$/i

@@ -36,12 +36,16 @@ export const NostrosAvatar: React.FC<AvatarProps> = ({ src, name, pubKey, size =
           size={lud06IconSize}
           icon='lightning-bolt'
           style={[
-            { right: -(size - lud06IconSize), backgroundColor: theme.colors.secondaryContainer, top: lud06IconSize * -1 },
+            {
+              right: -(size - lud06IconSize),
+              backgroundColor: theme.colors.secondaryContainer,
+              top: lud06IconSize * -1,
+            },
           ]}
           color='#F5D112'
         />
       ) : (
-        <View style={styles.iconLightning}/>
+        <View style={styles.iconLightning} />
       )}
     </View>
   )
@@ -49,7 +53,7 @@ export const NostrosAvatar: React.FC<AvatarProps> = ({ src, name, pubKey, size =
 
 const styles = StyleSheet.create({
   iconLightning: {
-    marginBottom: 16
+    marginBottom: 16,
   },
 })
 

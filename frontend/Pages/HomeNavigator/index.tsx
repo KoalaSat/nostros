@@ -52,17 +52,23 @@ export const HomeNavigator: React.FC = () => {
     ),
     [],
   )
-  
+
   const BottomSheetRelays = React.useMemo(
     () => (
       <View>
         <Text variant='headlineSmall'>Relés</Text>
         <Text variant='bodyMedium'>
-          Los relés son nodos en la red que actúan como intermediarios para la transmisión de mensajes entre aplicaciones. 
-          Los relés pueden ser utilizados para mejorar la resiliencia y la disponibilidad de la red, ya que permiten que los mensajes sean entregados aun cuando hay fallos o interrupciones en la conectividad.
-          Los relés también pueden ser utilizados para mejorar la privacidad y la seguridad de la red, ya que pueden ocultar la ubicación y el identidad de las aplicaciones que se comunican entre sí a través de ellos. Esto puede ser útil en entornos donde la censura o la vigilancia son un problema.
-          Es importante tener en cuenta que los relés también pueden ser utilizados para propósitos malintencionados, como para rastrear o censurar el tráfico de la red. 
-          Por lo tanto, es importante evaluar cuidadosamente el uso de relés y considerar medidas de seguridad adecuadas para proteger la privacidad y la seguridad de la red.
+          Los relés son nodos en la red que actúan como intermediarios para la transmisión de
+          mensajes entre aplicaciones. Los relés pueden ser utilizados para mejorar la resiliencia y
+          la disponibilidad de la red, ya que permiten que los mensajes sean entregados aun cuando
+          hay fallos o interrupciones en la conectividad. Los relés también pueden ser utilizados
+          para mejorar la privacidad y la seguridad de la red, ya que pueden ocultar la ubicación y
+          el identidad de las aplicaciones que se comunican entre sí a través de ellos. Esto puede
+          ser útil en entornos donde la censura o la vigilancia son un problema. Es importante tener
+          en cuenta que los relés también pueden ser utilizados para propósitos malintencionados,
+          como para rastrear o censurar el tráfico de la red. Por lo tanto, es importante evaluar
+          cuidadosamente el uso de relés y considerar medidas de seguridad adecuadas para proteger
+          la privacidad y la seguridad de la red.
         </Text>
       </View>
     ),
@@ -77,7 +83,7 @@ export const HomeNavigator: React.FC = () => {
     relays: {
       component: BottomSheetRelays,
       height: 600,
-    }
+    },
   }
 
   return (
@@ -108,7 +114,11 @@ export const HomeNavigator: React.FC = () => {
                 <Appbar.Header>
                   {leftAction()}
                   <Appbar.Content title={t(`homeNavigator.${route.name}`)} />
-                  <Appbar.Action icon='help-circle-outline' isLeading onPress={() => onPressQuestion(route.name)} />
+                  <Appbar.Action
+                    icon='help-circle-outline'
+                    isLeading
+                    onPress={() => onPressQuestion(route.name)}
+                  />
                 </Appbar.Header>
               )
             },
@@ -134,7 +144,7 @@ export const HomeNavigator: React.FC = () => {
             backgroundColor: theme.colors.background,
             padding: 16,
             borderTopRightRadius: 28,
-            borderTopLeftRadius: 28
+            borderTopLeftRadius: 28,
           },
           draggableIcon: {
             backgroundColor: '#000',

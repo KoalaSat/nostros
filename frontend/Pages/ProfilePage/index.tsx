@@ -156,7 +156,7 @@ export const ProfilePage: React.FC<ProfilePageProps> = ({ route }) => {
 
   const renderItem: (note: Note) => JSX.Element = (note) => (
     <View style={styles.noteCard} key={note.id}>
-      <NoteCard note={note} onPressOptions={() => bottomSheetProfileRef.current?.open()}/>
+      <NoteCard note={note} onPressOptions={() => bottomSheetProfileRef.current?.open()} />
     </View>
   )
 
@@ -166,7 +166,7 @@ export const ProfilePage: React.FC<ProfilePageProps> = ({ route }) => {
         backgroundColor: theme.colors.background,
         padding: 16,
         borderTopRightRadius: 28,
-        borderTopLeftRadius: 28
+        borderTopLeftRadius: 28,
       },
       draggableIcon: {
         backgroundColor: '#000',
@@ -266,7 +266,10 @@ export const ProfilePage: React.FC<ProfilePageProps> = ({ route }) => {
         height={280}
         customStyles={bottomSheetStyles}
       >
-        <ProfileCard userPubKey={route.params.pubKey ?? ''} bottomSheetRef={bottomSheetProfileRef}/>
+        <ProfileCard
+          userPubKey={route.params.pubKey ?? ''}
+          bottomSheetRef={bottomSheetProfileRef}
+        />
       </RBSheet>
     </View>
   )
@@ -274,7 +277,7 @@ export const ProfilePage: React.FC<ProfilePageProps> = ({ route }) => {
 
 const styles = StyleSheet.create({
   content: {
-    paddingBottom: 60
+    paddingBottom: 60,
   },
   container: {
     padding: 16,
@@ -301,8 +304,8 @@ const styles = StyleSheet.create({
     padding: 16,
   },
   noteCard: {
-    marginBottom: 16
-  }
+    marginBottom: 16,
+  },
 })
 
 export default ProfilePage
