@@ -66,14 +66,14 @@ export const MenuItems: React.FC = () => {
                   <View style={styles.cardAvatar}>
                     <NostrosAvatar
                       name={user?.name}
-                      pubKey={nPub}
+                      pubKey={user?.id ?? ''}
                       src={user?.picture}
                       lud06={user?.lnurl}
                     />
                   </View>
                   <View>
                     <Text variant='titleMedium'>{user?.name}</Text>
-                    <Text>{formatPubKey(nPub)}</Text>
+                    <Text>{formatPubKey(user?.id ?? '')}</Text>
                   </View>
                 </View>
               </TouchableRipple>

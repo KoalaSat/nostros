@@ -14,9 +14,9 @@ import {
   TextInput,
   IconButton,
   Divider,
+  Snackbar,
 } from 'react-native-paper'
 import RBSheet from 'react-native-raw-bottom-sheet'
-import NostrosNotification from '../../Components/NostrosNotification'
 
 export const RelaysPage: React.FC = () => {
   const defaultRelayInput = React.useMemo(() => 'wss://', [])
@@ -111,12 +111,15 @@ export const RelaysPage: React.FC = () => {
         extended={false}
       />
       {showNotification && (
-        <NostrosNotification
-          showNotification={showNotification}
-          setShowNotification={setShowNotification}
+        <Snackbar
+          style={styles.snackbar}
+          visible={showNotification !== undefined}
+          duration={Snackbar.DURATION_SHORT}
+          onIconPress={() => setShowNotification(undefined)}
+          onDismiss={() => setShowNotification(undefined)}
         >
           {t(`relaysPage.notifications.${showNotification}`)}
-        </NostrosNotification>
+        </Snackbar>
       )}
       <RBSheet
         ref={bottomSheetAddRef}

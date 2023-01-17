@@ -18,7 +18,7 @@ export const NostrosAvatar: React.FC<NostrosAvatarProps> = ({
   lud06,
 }) => {
   const theme = useTheme()
-  const displayName = name && name !== '' ? name : pubKey
+  const displayName = name && name !== '' ? name : pubKey ?? ''
   const hasLud06 = lud06 && lud06 !== ''
   const lud06IconSize = size / 2.85
   const validImage: () => boolean = () => {

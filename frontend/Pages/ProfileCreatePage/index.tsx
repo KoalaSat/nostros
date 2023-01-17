@@ -65,7 +65,12 @@ export const ProfileCreatePage: React.FC<ProfileCreatePageProps> = ({ navigation
           </Text>
           <Text style={{ color: '#FFDCBB' }}>{t('profileCreatePage.warningDescription')}</Text>
           <View style={styles.warningActionOuterLayout}>
-            <Button style={styles.warningAction} textColor='#FFDCBB' mode='text' onPress={copyContent}>
+            <Button
+              style={styles.warningAction}
+              textColor='#FFDCBB'
+              mode='text'
+              onPress={copyContent}
+            >
               {t('profileCreatePage.warningAction')}
             </Button>
           </View>
@@ -97,7 +102,7 @@ const styles = StyleSheet.create({
   },
   snackbar: {
     margin: 16,
-    width: '100%'
+    width: '100%',
   },
   warning: {
     borderRadius: 4,

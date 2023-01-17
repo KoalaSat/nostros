@@ -66,6 +66,11 @@
       "generateInvoice": "Generate invoice",
       "cancel": "Cancel"
     },
+    "notificationsFeed": {
+      "emptyTitle": "You don't have notifications",
+      "emptyDescription": "Write a message to get replies and reactions.",
+      "emptyButton": "Write a message"
+    },
     "profileCreatePage": {
       "notifications": {
         "copied": "Private key copied.\n\nSave this key on a safe place."
@@ -90,10 +95,17 @@
     },
     "contactsFeed": {
       "notifications": {
+        "keyCopied": "Public key copied.",
         "contactAdded": "Profile followed.",
         "addContactError": "There was an error publishing your changes.",
         "contactRemoved": "Profile unfollowed."
       },
+      "emptyTitleFollowing": "You are not following no one",
+      "emptyDescriptionFollowing": "Follow other profiles to see content.",
+      "emptyButtonFollowing": "Paste public key",
+      "emptyTitleFollower": "You have no followers",
+      "emptyDescriptionFollower": "Share your public key so people can start following you.",
+      "emptyButtonFollower": "Copy public key",
       "cancel": "Cancelar",
       "addContact": "Añadir contacto",
       "addContactDescription": "Pega la clave pública de quien desees añadir.",
@@ -107,6 +119,11 @@
       "gitHub": "GitHub",
       "nostr": "nostr",
       "nips": "NIPs"
+    },
+    "homeFeed": {
+      "emptyTitle": "You are not following no one",
+      "emptyDescription": "Follow other profiles to see content.",
+      "emptyButton": "Go to contacts"
     },
     "relaysPage": {
       "labelAdd": "Dirección de relay",
@@ -125,8 +142,8 @@
         "nsecCopied": "Clave secreta copiada.",
         "npubCopied": "Clave pública copiada.",
         "profilePublished": "Perfil publicado.",
-        "lud06Published": "LUD-06 publicado.",
-        "nip05Published": "NIP-05 publicado.",
+        "lud06Published": "LUD-06 publicado.\n\n{{lud06}}",
+        "nip05Published": "NIP-05 publicado.\n\n{{nip05}}",
         "picturePublished": "Picture publicado.",
         "connectionError": "Error de conexión"
       },
@@ -181,12 +198,15 @@
       "copyNPub": "Copiar clave"
     },
     "conversationsFeed": {
-      "openMessage": "Iniciar conversación",
-      "openMessageLabel": "Clave pública",
-      "openMessageDescription": "Pega una clave pública para iniciar una conversación.",
-      "openMessageTitle": "Iniciar conversación con clave pública",
-      "addPubKey": "Iniciar conversación con clave pública",
-      "newMessageContact": "Iniciar conversación con contacto"
+      "openMessage": "Start conversation",
+      "openMessageLabel": "Public key",
+      "openMessageDescription": "Paste a public key to start a conversation.",
+      "openMessageTitle": "Start conversation with public key",
+      "addPubKey": "Start conversation with public key",
+      "newMessageContact": "Start conversation with contact",
+      "emptyTitle": "You don't have any message",
+      "emptyDescription": "Write direct messages to your contacts or others.",
+      "emptyButton": "Open a conversation"
     }
   }
 }
