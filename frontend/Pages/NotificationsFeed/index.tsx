@@ -60,7 +60,7 @@ export const NotificationsFeed: React.FC = () => {
   const subscribeNotes: () => void = async () => {
     if (!database || !publicKey) return
 
-    relayPool?.subscribe('mentions-user', [
+    relayPool?.subscribe('notification-user', [
       {
         kinds: [EventKind.textNote],
         '#p': [publicKey],
@@ -80,15 +80,14 @@ export const NotificationsFeed: React.FC = () => {
         setNotes(notes)
         setRefreshing(false)
         if (notes.length > 0) {
-          const missingDataNotes = notes.map((note) => note.pubkey)
-          relayPool?.subscribe('mentions-answers', [
+          relayPool?.subscribe('notification-answers', [
             {
               kinds: [EventKind.reaction, EventKind.textNote, EventKind.recommendServer],
               '#e': notes.map((note) => note.id ?? ''),
             },
             {
               kinds: [EventKind.meta],
-              authors: missingDataNotes,
+              authors: notes.filter((note) => note.name !== undefined).map((note) => note.pubkey),
             },
           ])
         }
@@ -151,7 +150,7 @@ export const NotificationsFeed: React.FC = () => {
         </ScrollView>
       ) : (
         <View style={styles.blank}>
-          <MaterialCommunityIcons name='message-outline' size={64} style={styles.center} />
+          <MaterialCommunityIcons name='bell-outline' size={64} style={styles.center} />
           <Text variant='headlineSmall' style={styles.center}>
             {t('notificationsFeed.emptyTitle')}
           </Text>

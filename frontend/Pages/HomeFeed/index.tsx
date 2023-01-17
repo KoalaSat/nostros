@@ -105,7 +105,7 @@ export const HomeFeed: React.FC<HomeFeedProps> = ({ jumpTo }) => {
         setNotes(notes)
         setRefreshing(false)
         if (notes.length > 0) {
-          relayPool?.subscribe('homepage-contacts-meta', [
+          relayPool?.subscribe('homepage-reactions', [
             {
               kinds: [EventKind.reaction, EventKind.textNote, EventKind.recommendServer],
               '#e': notes.map((note) => note.id ?? ''),
