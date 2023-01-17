@@ -37,7 +37,12 @@
       "level4": "#16304F",
       "level5": "#193353"
     },
-    "warning": "#D69242",
-    "success": "#369734"
+    "warning": "#FFB869",
+    "warningContainer": "#683D00",
+    "onWarningContainer": "#FFDCBB",
+    "success": "#369734",
+    "successContainer": "#369734",
+    "onSuccessContainer": "#96FA89"
+
   }
 }

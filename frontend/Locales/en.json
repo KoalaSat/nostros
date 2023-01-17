@@ -68,13 +68,15 @@
     },
     "profileCreatePage": {
       "notifications": {
-        "copied": "Private key copied.",
-        "description": "Save this key on a safe place."
+        "copied": "Private key copied.\n\nSave this key on a safe place."
       },
       "snackbarDescription": "Important. Save your key on a safe place, if loose it, you won't be able to access or recover your profile.",
       "snackbarAction": "Copy private key",
       "accessButton": "Access",
-      "label": "Private key"
+      "label": "Private key",
+      "warningTitle": "Important",
+      "warningDescription": "Save your key on a safe place, if loose it, you won't be able to access or recover your profile.",
+      "warningAction": "Copy private key"
     },
     "loggerPage": {
       "createButton": "Create keys",
