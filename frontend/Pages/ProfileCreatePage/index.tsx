@@ -69,7 +69,6 @@ export const ProfileCreatePage: React.FC<ProfileCreatePageProps> = ({ navigation
         onDismiss={copyContent}
         action={{ label: t('profileCreatePage.snackbarAction') ?? '', onPress: copyContent }}
       >
-        
         {t('profileCreatePage.snackbarDescription')}
       </Snackbar>
       {showNotification && (
@@ -77,8 +76,8 @@ export const ProfileCreatePage: React.FC<ProfileCreatePageProps> = ({ navigation
           showNotification={showNotification}
           setShowNotification={setShowNotification}
         >
-          <Text>{t(`relaysPage.notifications.${showNotification}`)}</Text>
-          <Text>{t('relaysPage.notifications.description')}</Text>
+          <Text>{t(`profileCreatePage.notifications.${showNotification}`)}</Text>
+          <Text>{t('profileCreatePage.notifications.description')}</Text>
         </NostrosNotification>
       )}
     </View>

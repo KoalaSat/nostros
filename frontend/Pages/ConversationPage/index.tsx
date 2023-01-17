@@ -37,14 +37,12 @@ export const ConversationPage: React.FC<ConversationPageProps> = ({ route }) => 
   const scrollViewRef = useRef<ScrollView>()
   const { database } = useContext(AppContext)
   const { relayPool, lastEventId } = useContext(RelayPoolContext)
-  const { publicKey, privateKey } = useContext(UserContext)
+  const { publicKey, privateKey, user } = useContext(UserContext)
   const otherPubKey = useMemo(() => route.params.pubKey, [])
   const [directMessages, setDirectMessages] = useState<DirectMessage[]>([])
   const [sendingMessages, setSendingMessages] = useState<DirectMessage[]>([])
   const [otherUser, setOtherUser] = useState<User>({ id: otherPubKey })
-  const [user, setUser] = useState<User>()
   const [input, setInput] = useState<string>('')
-  const [conversationId, setConversationId] = useState<string>(route.params?.conversationId)
   const [showNotification, setShowNotification] = useState<string>()
 
   const { t } = useTranslation('common')
@@ -54,20 +52,17 @@ export const ConversationPage: React.FC<ConversationPageProps> = ({ route }) => 
   }, [lastEventId])
 
   useEffect(() => {
-    loadDirectMessages()
-    subscribeDirectMessages()
+    relayPool?.unsubscribeAll()
     if (database && publicKey) {
-      setConversationId(
-        route.params?.conversationId || generateConversationId(publicKey, otherPubKey),
-      )
-      getUser(publicKey, database).then((user) => {
-        if (user) setUser(user)
-      })
+      loadDirectMessages()
+      subscribeDirectMessages()
     }
   }, [])
 
   const loadDirectMessages: () => void = () => {
     if (database && publicKey) {
+      const conversationId =
+        route.params?.conversationId || generateConversationId(publicKey, otherPubKey)
       getUser(otherPubKey, database).then((user) => {
         if (user) setOtherUser(user)
       })
@@ -87,7 +82,6 @@ export const ConversationPage: React.FC<ConversationPageProps> = ({ route }) => 
   }
 
   const subscribeDirectMessages: () => void = async () => {
-    relayPool?.unsubscribeAll()
     if (publicKey && otherPubKey) {
       relayPool?.subscribe('conversation', [
         {
@@ -147,7 +141,7 @@ export const ConversationPage: React.FC<ConversationPageProps> = ({ route }) => 
     const displayName = item.pubkey === publicKey ? username(user) : username(otherUser)
     const lastIndex = directMessages.length - 1 === index
     const nextItemHasdifferentPubKey =
-      !lastIndex && directMessages[index + 1].pubkey !== item.pubkey
+      !lastIndex && directMessages[index + 1]?.pubkey !== item.pubkey
 
     return (
       <View style={styles.messageRow}>
@@ -194,14 +188,16 @@ export const ConversationPage: React.FC<ConversationPageProps> = ({ route }) => 
         ref={scrollViewRef}
         onContentSizeChange={() => scrollViewRef.current?.scrollToEnd({ animated: true })}
       >
-        <FlatList
-          data={directMessages}
-          renderItem={({ index, item }) => renderDirectMessageItem(index, item, false)}
-        />
-        <FlatList
-          data={sendingMessages}
-          renderItem={({ index, item }) => renderDirectMessageItem(index, item, true)}
-        />
+        <View>
+          <FlatList
+            data={directMessages}
+            renderItem={({ index, item }) => renderDirectMessageItem(index, item, false)}
+          />
+          <FlatList
+            data={sendingMessages}
+            renderItem={({ index, item }) => renderDirectMessageItem(index, item, true)}
+          />
+        </View>
       </ScrollView>
       <View
         style={[
@@ -225,15 +221,17 @@ export const ConversationPage: React.FC<ConversationPageProps> = ({ route }) => 
           }
         />
       </View>
-      <Snackbar
-        style={styles.snackbar}
-        visible={showNotification !== undefined}
-        duration={Snackbar.DURATION_SHORT}
-        onIconPress={() => setShowNotification(undefined)}
-        onDismiss={() => setShowNotification(undefined)}
-      >
-        {t(`conversationPage.notifications.${showNotification}`)}
-      </Snackbar>
+      {showNotification && (
+        <Snackbar
+          style={styles.snackbar}
+          visible={showNotification !== undefined}
+          duration={Snackbar.DURATION_SHORT}
+          onIconPress={() => setShowNotification(undefined)}
+          onDismiss={() => setShowNotification(undefined)}
+        >
+          {t(`conversationPage.notifications.${showNotification}`)}
+        </Snackbar>
+      )}
     </View>
   )
 }

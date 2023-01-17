@@ -12,54 +12,21 @@ const databaseToEntity: (object: object) => Reaction = (object) => {
   return object as Reaction
 }
 
-export const getReactionsCount: (
+export const getReactions: (
   db: QuickSQLiteConnection,
   filters: {
-    eventId?: string
-    pubKey?: string
-    positive: boolean
+    eventId: string
   },
-) => Promise<number> = async (db, { eventId, pubKey, positive }) => {
-  let notesQuery = `
-    SELECT 
-      COUNT(*)
-    FROM
-      nostros_reactions
-    WHERE positive = ${positive ? '1' : '0'} 
-  `
-
-  if (eventId) {
-    notesQuery += `AND reacted_event_id = "${eventId}" `
-  } else if (pubKey) {
-    notesQuery += `AND reacted_user_id = "${pubKey}" `
-  }
-
-  const resultSet = await db.execute(notesQuery)
-  const item: { 'COUNT(*)': number } = resultSet?.rows?.item(0)
-
-  return item['COUNT(*)'] ?? 0
-}
-
-export const getUserReaction: (
-  db: QuickSQLiteConnection,
-  pubKey: string,
-  filters: {
-    eventId?: string
-  },
-) => Promise<Reaction[]> = async (db, pubKey, { eventId }) => {
-  let notesQuery = `
+) => Promise<Reaction[]> = async (db, { eventId }) => {
+  const reactionsQuery = `
     SELECT 
       *
     FROM
-      nostros_reactions 
-    WHERE pubkey = '${pubKey}' 
+      nostros_reactions
+    WHERE reacted_event_id = "${eventId}"
   `
 
-  if (eventId) {
-    notesQuery += `AND reacted_event_id = "${eventId}" `
-  }
-
-  const resultSet = await db.execute(notesQuery)
+  const resultSet = await db.execute(reactionsQuery)
   const items: object[] = getItems(resultSet)
   const reactions: Reaction[] = items.map((object) => databaseToEntity(object))
 

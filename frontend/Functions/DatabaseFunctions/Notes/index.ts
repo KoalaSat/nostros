@@ -62,6 +62,22 @@ export const getMentionNotes: (
   return notes
 }
 
+export const getRepliesCount: (
+  db: QuickSQLiteConnection,
+  eventId: string,
+) => Promise<number> = async (db, eventId) => {
+  const repliesQuery = `
+    SELECT 
+      COUNT(*)
+    FROM nostros_notes
+    WHERE reply_event_id = "${eventId}"
+  `
+  const resultSet = db.execute(repliesQuery)
+  const item: { 'COUNT(*)': number } = resultSet?.rows?.item(0)
+
+  return item['COUNT(*)'] ?? 0
+}
+
 export const getNotes: (
   db: QuickSQLiteConnection,
   options: {

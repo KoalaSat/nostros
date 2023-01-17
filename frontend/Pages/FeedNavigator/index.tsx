@@ -53,9 +53,7 @@ export const HomeNavigator: React.FC = () => {
     () => (
       <View>
         <Text variant='headlineSmall'>{t('drawers.relaysTitle')}</Text>
-        <Text variant='bodyMedium'>
-          {t('drawers.relaysDescription')}
-        </Text>
+        <Text variant='bodyMedium'>{t('drawers.relaysDescription')}</Text>
       </View>
     ),
     [],

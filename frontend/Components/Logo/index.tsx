@@ -14,7 +14,7 @@ export const Logo: React.FC<LogoProps> = ({ onlyIcon = false, size = 'small' }) 
     small: 60,
     medium: 90,
     large: 120,
-    big: 280
+    big: 280,
   }
   return (
     <View style={styles.container}>

@@ -31,7 +31,6 @@ export const NotificationsFeed: React.FC = () => {
   const [profileCardPubkey, setProfileCardPubKey] = useState<string>()
 
   useEffect(() => {
-    relayPool?.unsubscribeAll()
     if (relayPool && publicKey) {
       calculateInitialNotes().then(() => loadNotes())
     }
@@ -43,7 +42,6 @@ export const NotificationsFeed: React.FC = () => {
 
   useEffect(() => {
     if (pageSize > initialPageSize) {
-      relayPool?.unsubscribeAll()
       subscribeNotes()
       loadNotes()
     }
@@ -77,24 +75,25 @@ export const NotificationsFeed: React.FC = () => {
       getMentionNotes(database, publicKey, pageSize).then((notes) => {
         setNotes(notes)
         setRefreshing(false)
-        const missingDataNotes = notes.map((note) => note.pubkey)
-        relayPool?.subscribe('mentions-answers', [
-          {
-            kinds: [EventKind.reaction],
-            '#e': notes.map((note) => note.id ?? ''),
-          },
-          {
-            kinds: [EventKind.meta],
-            authors: missingDataNotes,
-          },
-        ])
+        if (notes.length > 0) {
+          const missingDataNotes = notes.map((note) => note.pubkey)
+          relayPool?.subscribe('mentions-answers', [
+            {
+              kinds: [EventKind.reaction, EventKind.textNote, EventKind.recommendServer],
+              '#e': notes.map((note) => note.id ?? ''),
+            },
+            {
+              kinds: [EventKind.meta],
+              authors: missingDataNotes,
+            },
+          ])
+        }
       })
     }
   }
 
   const onRefresh = useCallback(() => {
     setRefreshing(true)
-    relayPool?.unsubscribeAll()
     if (relayPool && publicKey) {
       calculateInitialNotes().then(() => loadNotes())
     }

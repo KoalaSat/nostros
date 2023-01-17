@@ -51,16 +51,16 @@ export const ConversationsFeed: React.FC = () => {
   const bottomSheetPubKeyRef = React.useRef<RBSheet>(null)
 
   useEffect(() => {
-    loadDirectMessages()
-  }, [lastEventId])
-
-  useEffect(() => {
-    loadDirectMessages()
     subscribeDirectMessages()
   }, [])
 
+  useEffect(() => {
+    loadDirectMessages()
+  }, [lastEventId])
+
   const loadDirectMessages: () => void = () => {
     if (database && publicKey) {
+      getUsers(database, { contacts: true }).then(setUsers)
       getGroupedDirectMessages(database, {}).then((results) => {
         if (results && results.length > 0) {
           settDirectMessages(results)
@@ -71,14 +71,12 @@ export const ConversationsFeed: React.FC = () => {
               authors: otherUsers,
             },
           ])
-          getUsers(database, { contacts: true }).then(setUsers)
         }
       })
     }
   }
 
   const subscribeDirectMessages: () => void = async () => {
-    relayPool?.unsubscribeAll()
     if (publicKey) {
       relayPool?.subscribe('directmessages-user', [
         {
@@ -121,7 +119,7 @@ export const ConversationsFeed: React.FC = () => {
           <View style={styles.contactInfo}>
             <View style={styles.contactName}>
               <Text>{moment.unix(item.created_at).format('HH:mm DD-MM-YY')}</Text>
-              {!item.read && <Badge size={16}></Badge>}
+              {item.pubkey !== publicKey && !item.read && <Badge size={16}></Badge>}
             </View>
           </View>
         </View>
@@ -175,7 +173,13 @@ export const ConversationsFeed: React.FC = () => {
   }, [])
 
   const renderUserItem: ListRenderItem<User> = ({ index, item }) => (
-    <TouchableRipple onPress={() => {}}>
+    <TouchableRipple
+      onPress={() => {
+        bottomSheetUserListRef.current?.close()
+        bottomSheetPubKeyRef.current?.close()
+        navigate('Conversation', { pubKey: item.id })
+      }}
+    >
       <View key={item.id} style={styles.contactRow}>
         <View style={styles.contactUser}>
           <NostrosAvatar
@@ -270,7 +274,10 @@ export const ConversationsFeed: React.FC = () => {
           <Button
             mode='contained'
             disabled={!sendPubKeyInput || sendPubKeyInput === ''}
-            onPress={() => navigate('Conversation', { pubKey: sendPubKeyInput })}
+            onPress={() => {
+              navigate('Conversation', { pubKey: sendPubKeyInput })
+              bottomSheetPubKeyRef.current?.close()
+            }}
           >
             {t('conversationsFeed.openMessage')}
           </Button>

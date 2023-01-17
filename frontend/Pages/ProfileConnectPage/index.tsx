@@ -105,7 +105,7 @@ const styles = StyleSheet.create({
     marginTop: 16,
   },
   loginOptions: {
-    marginTop: 16
+    marginTop: 16,
   },
   row: {
     alignItems: 'center',

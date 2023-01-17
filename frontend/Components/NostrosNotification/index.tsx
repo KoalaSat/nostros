@@ -29,7 +29,7 @@ export const NostrosNotification: React.FC<NostrosNotificationProps> = ({
 const styles = StyleSheet.create({
   snackbar: {
     margin: 16,
-    bottom: 70
+    bottom: 70,
   },
 })
 

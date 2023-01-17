@@ -70,6 +70,20 @@ export const getFollowersCount: (db: QuickSQLiteConnection) => Promise<number> =
   return item['COUNT(*)'] ?? 0
 }
 
+export const getFollowersAndFollowing: (db: QuickSQLiteConnection) => Promise<User[]> = async (
+  db,
+) => {
+  const userQuery = 'SELECT * FROM nostros_users WHERE follower = 1 OR contact = 1'
+  const resultSet = db.execute(userQuery)
+  if (resultSet.rows && resultSet.rows.length > 0) {
+    const items: object[] = getItems(resultSet)
+    const users: User[] = items.map((object) => databaseToEntity(object))
+    return users
+  } else {
+    return []
+  }
+}
+
 export const getUsers: (
   db: QuickSQLiteConnection,
   options: {

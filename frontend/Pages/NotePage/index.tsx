@@ -7,7 +7,6 @@ import { EventKind } from '../../lib/nostr/Events'
 import { Dimensions, RefreshControl, ScrollView, StyleSheet, Text, View } from 'react-native'
 import { Event } from '../../../lib/nostr/Events'
 import { getDirectReplies } from '../../Functions/RelayFunctions/Events'
-import { RelayFilters } from '../../lib/nostr/RelayPool/intex'
 import {
   ActivityIndicator,
   AnimatedFAB,
@@ -21,7 +20,7 @@ import moment from 'moment'
 import { usernamePubKey } from '../../Functions/RelayFunctions/Users'
 import NostrosAvatar from '../../Components/NostrosAvatar'
 import TextContent from '../../Components/TextContent'
-import { getReactionsCount, getUserReaction } from '../../Functions/DatabaseFunctions/Reactions'
+import { getReactions } from '../../Functions/DatabaseFunctions/Reactions'
 import { UserContext } from '../../Contexts/UserContext'
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'
 import RBSheet from 'react-native-raw-bottom-sheet'
@@ -51,8 +50,6 @@ export const NotePage: React.FC<NotePageProps> = ({ route }) => {
 
   useEffect(() => {
     relayPool?.unsubscribeAll()
-    setNote(undefined)
-    setReplies(undefined)
     subscribeNotes()
     loadNote()
   }, [])
@@ -64,50 +61,42 @@ export const NotePage: React.FC<NotePageProps> = ({ route }) => {
   const loadNote: () => void = async () => {
     if (database && publicKey) {
       const events = await getNotes(database, { filters: { id: route.params.noteId } })
-      const event = events[0]
-      setNote(event)
-      setNPub(npubEncode(event.pubkey))
-      setTimestamp(moment.unix(event.created_at).format('HH:mm DD-MM-YY'))
+      if (events.length > 0) {
+        const event = events[0]
+        setNote(event)
+        setNPub(npubEncode(event.pubkey))
+        setTimestamp(moment.unix(event.created_at).format('HH:mm DD-MM-YY'))
 
-      const notes = await getNotes(database, { filters: { reply_event_id: route.params.noteId } })
-      const rootReplies = getDirectReplies(event, notes)
-      if (rootReplies.length > 0) {
-        setReplies(rootReplies as Note[])
-        const message: RelayFilters = {
-          kinds: [EventKind.meta],
-          authors: [...rootReplies.map((note) => note.pubkey), event.pubkey],
+        const notes = await getNotes(database, { filters: { reply_event_id: route.params.noteId } })
+        const rootReplies = getDirectReplies(event, notes)
+        if (rootReplies.length > 0) {
+          setReplies(rootReplies as Note[])
+          relayPool?.subscribe('meta-notepage', [
+            {
+              kinds: [EventKind.meta],
+              authors: [...rootReplies.map((note) => note.pubkey), event.pubkey],
+            },
+          ])
+        } else {
+          setReplies([])
         }
-        relayPool?.subscribe('meta-notepage', [message])
-      } else {
-        setReplies([])
-      }
-
-      getReactionsCount(database, { positive: true, eventId: route.params.noteId }).then(
-        (result) => {
-          setPositiveReactions(result ?? 0)
-        },
-      )
-      getReactionsCount(database, { positive: false, eventId: route.params.noteId }).then(
-        (result) => {
-          setNegativeReactions(result ?? 0)
-        },
-      )
-      getUserReaction(database, publicKey, { eventId: route.params.noteId }).then((results) => {
-        results.forEach((reaction) => {
-          if (reaction.positive) {
-            setUserUpvoted(true)
-          } else {
-            setUserDownvoted(true)
-          }
+        getReactions(database, { eventId: route.params.noteId }).then((result) => {
+          const total = result.length
+          let positive = 0
+          result.forEach((reaction) => {
+            if (reaction) positive = positive + 1
+            if (reaction.pubkey === publicKey) setUserUpvoted(reaction.positive)
+          })
+          setPositiveReactions(positive)
+          setNegativeReactions(total - positive)
         })
-      })
+      }
       setRefreshing(false)
     }
   }
 
   const onRefresh = useCallback(() => {
     setRefreshing(true)
-    relayPool?.unsubscribeAll()
     subscribeNotes()
     loadNote()
   }, [])
@@ -120,7 +109,7 @@ export const NotePage: React.FC<NotePageProps> = ({ route }) => {
           ids: [route.params.noteId],
         },
         {
-          kinds: [EventKind.reaction, EventKind.textNote],
+          kinds: [EventKind.reaction, EventKind.textNote, EventKind.recommendServer],
           '#e': [route.params.noteId],
         },
       ])
@@ -205,6 +194,9 @@ export const NotePage: React.FC<NotePageProps> = ({ route }) => {
           </View>
           {privateKey && (
             <View style={[styles.titleRecommend, { borderColor: theme.colors.onSecondary }]}>
+              <Button icon={() => <MaterialCommunityIcons name='message-outline' size={25} />}>
+                {replies?.length ?? 0}
+              </Button>
               <Button
                 onPress={() => {
                   if (!userDownvoted && privateKey) {
