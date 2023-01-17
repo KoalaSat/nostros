@@ -13,6 +13,7 @@ import com.neovisionaries.ws.client.WebSocketFrame;
 import com.nostros.modules.DatabaseModule;
 
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
@@ -40,6 +41,14 @@ public class Websocket {
             }
         }
         webSocket.sendText(message);
+        JSONArray jsonArray = null;
+        try {
+            jsonArray = new JSONArray(message);
+            JSONObject data = jsonArray.getJSONObject(2);
+            database.saveEvent(data, pubKey);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
     }
 
     public void disconnect() {

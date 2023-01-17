@@ -72,7 +72,13 @@ export const ProfileLoadPage: React.FC = () => {
         style={styles.snackbar}
         visible
         onDismiss={() => {}}
-        action={{ label: t('profileLoadPage.relays') ?? '', onPress: () => navigate('Relays') }}
+        action={{
+          label: t('profileLoadPage.relays') ?? '',
+          onPress: () => {
+            relayPool?.unsubscribeAll()
+            navigate('Relays')
+          },
+        }}
       >
         {t('profileLoadPage.relaysDescripion')}
       </Snackbar>
