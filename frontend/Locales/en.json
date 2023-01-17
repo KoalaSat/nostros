@@ -67,13 +67,12 @@
       "cancel": "Cancel"
     },
     "profileCreatePage": {
-      "warningTitle": "Important",
-      "warningDescription": "Save your key on a safe place, if loose it, you won't be able to access or recover your profile.",
-      "warningAction": "Copy private key",
       "notifications": {
-        "copied": "Copy private key",
-        "description": "Important. Save your key on a safe place, if loose it, you won't be able to access or recover your profile."
+        "copied": "Private key copied.",
+        "description": "Save this key on a safe place."
       },
+      "snackbarDescription": "Important. Save your key on a safe place, if loose it, you won't be able to access or recover your profile.",
+      "snackbarAction": "Copy private key",
       "accessButton": "Access",
       "label": "Private key"
     },
