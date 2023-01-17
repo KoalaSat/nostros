@@ -79,7 +79,6 @@ export const SendPage: React.FC<SendPageProps> = ({ route }) => {
         } else {
           tags.push(['e', note.id, '', 'reply'])
         }
-        tags.push(['p', note.pubkey])
       }
 
       if (contentWarning) tags.push(['content-warning', ''])

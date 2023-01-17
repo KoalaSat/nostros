@@ -27,16 +27,6 @@ export const ProfileLoadPage: React.FC = () => {
           authors: [publicKey],
         },
       ])
-      relayPool?.subscribe('loading-pets', [
-        {
-          kinds: [EventKind.petNames],
-          authors: [publicKey],
-        },
-        {
-          kinds: [EventKind.petNames],
-          '#p': [publicKey],
-        },
-      ])
     }
   }, [loadingRelayPool, publicKey, loadingDb])
 

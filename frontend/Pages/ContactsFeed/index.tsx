@@ -11,7 +11,11 @@ import {
 import { AppContext } from '../../Contexts/AppContext'
 import { EventKind } from '../../lib/nostr/Events'
 import { useTranslation } from 'react-i18next'
-import { getUsers, updateUserContact, User } from '../../Functions/DatabaseFunctions/Users'
+import {
+  getFollowersAndFollowing,
+  updateUserContact,
+  User,
+} from '../../Functions/DatabaseFunctions/Users'
 import { RelayPoolContext } from '../../Contexts/RelayPoolContext'
 import { formatPubKey, populatePets, username } from '../../Functions/RelayFunctions/Users'
 import { getNip19Key } from '../../lib/nostr/Nip19'
@@ -53,35 +57,32 @@ export const ContactsFeed: React.FC = () => {
 
   const loadUsers: () => void = () => {
     if (database && publicKey) {
-      getUsers(database, { contacts: true }).then((results) => {
+      getFollowersAndFollowing(database).then((results) => {
+        const followers: User[] = []
+        const following: User[] = []
         if (results && results.length > 0) {
-          setFollowing(results)
-          setContantsCount(results.length)
+          results.forEach((user) => {
+            if (user.id !== publicKey) {
+              if (user.follower) followers.push(user)
+              if (user.contact) following.push(user)
+            }
+          })
           relayPool?.subscribe('contacts-meta-following', [
             {
               kinds: [EventKind.meta],
               authors: results.map((user) => user.id),
             },
           ])
-        }
-      })
-      getUsers(database, { followers: true }).then((results) => {
-        if (results && results.length > 0) {
-          setFollowers(results)
-          setFollowersCount(results.length)
-          relayPool?.subscribe('contacts-meta-followers', [
-            {
-              kinds: [EventKind.meta],
-              authors: results.map((user) => user.id),
-            },
-          ])
+          setFollowers(followers)
+          setFollowing(following)
+          setContantsCount(following.length)
+          setFollowersCount(followers.length)
         }
       })
     }
   }
 
   const subscribeContacts: () => void = async () => {
-    relayPool?.unsubscribeAll()
     if (publicKey) {
       relayPool?.subscribe('contacts', [
         {
@@ -182,26 +183,36 @@ export const ContactsFeed: React.FC = () => {
 
   return (
     <>
-      <Tabs uppercase={false} theme={theme} style={{ backgroundColor: theme.colors.background }}>
+      <Tabs
+        value={0}
+        onChange={() => {}}
+        defaultIndex={0}
+        uppercase={false}
+        style={{ backgroundColor: theme.colors.background }}
+      >
         <TabScreen label={t('contactsFeed.following', { count: following.length })}>
           <View style={styles.container}>
             <ScrollView horizontal={false}>
-              <FlatList
-                data={following}
-                renderItem={renderContactItem}
-                ItemSeparatorComponent={Divider}
-              />
+              <View>
+                <FlatList
+                  data={following}
+                  renderItem={renderContactItem}
+                  ItemSeparatorComponent={Divider}
+                />
+              </View>
             </ScrollView>
           </View>
         </TabScreen>
         <TabScreen label={t('contactsFeed.followers', { count: followers.length })}>
           <View style={styles.container}>
             <ScrollView horizontal={false}>
-              <FlatList
-                data={followers}
-                renderItem={renderContactItem}
-                ItemSeparatorComponent={Divider}
-              />
+              <View>
+                <FlatList
+                  data={followers}
+                  renderItem={renderContactItem}
+                  ItemSeparatorComponent={Divider}
+                />
+              </View>
             </ScrollView>
           </View>
         </TabScreen>
@@ -257,12 +268,14 @@ export const ContactsFeed: React.FC = () => {
           </Button>
         </View>
       </RBSheet>
-      <NostrosNotification
-        showNotification={showNotification}
-        setShowNotification={setShowNotification}
-      >
-        <Text>{t(`profileConfigPage.${showNotification}`)}</Text>
-      </NostrosNotification>
+      {showNotification && (
+        <NostrosNotification
+          showNotification={showNotification}
+          setShowNotification={setShowNotification}
+        >
+          <Text>{t(`contactsFeed.notifications.${showNotification}`)}</Text>
+        </NostrosNotification>
+      )}
     </>
   )
 }

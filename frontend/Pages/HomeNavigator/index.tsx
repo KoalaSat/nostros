@@ -34,13 +34,9 @@ export const HomeNavigator: React.FC = () => {
     () => (
       <View>
         <Text variant='headlineSmall'>{t('drawers.keysTitle')}</Text>
-        <Text variant='bodyMedium'>
-          {t('drawers.keysDescription')}
-        </Text>
+        <Text variant='bodyMedium'>{t('drawers.keysDescription')}</Text>
         <Text variant='titleMedium'>{t('drawers.publicKeys')}</Text>
-        <Text variant='bodyMedium'>
-          {t('drawers.publicKeysDescription')}
-        </Text>
+        <Text variant='bodyMedium'>{t('drawers.publicKeysDescription')}</Text>
         <Text variant='titleMedium'>{t('drawers.privateKey')}</Text>
         <Text variant='bodyMedium'>{t('drawers.privateKeyDescription')}</Text>
         <Snackbar visible onDismiss={() => {}}>
@@ -55,9 +51,7 @@ export const HomeNavigator: React.FC = () => {
     () => (
       <View>
         <Text variant='headlineSmall'>{t('drawers.relaysTitle')}</Text>
-        <Text variant='bodyMedium'>
-          {t('drawers.relaysDescription')}
-        </Text>
+        <Text variant='bodyMedium'>{t('drawers.relaysDescription')}</Text>
       </View>
     ),
     [],

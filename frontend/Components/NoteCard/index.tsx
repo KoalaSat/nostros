@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useMemo, useState } from 'react'
-import { Note } from '../../Functions/DatabaseFunctions/Notes'
+import { getRepliesCount, Note } from '../../Functions/DatabaseFunctions/Notes'
 import { StyleSheet, View } from 'react-native'
 import { EventKind } from '../../lib/nostr/Events'
 import { RelayPoolContext } from '../../Contexts/RelayPoolContext'
@@ -13,7 +13,7 @@ import { NostrosAvatar } from '../NostrosAvatar'
 import { searchRelays } from '../../Functions/DatabaseFunctions/Relays'
 import TextContent from '../../Components/TextContent'
 import { formatPubKey, usernamePubKey } from '../../Functions/RelayFunctions/Users'
-import { getReactionsCount, getUserReaction } from '../../Functions/DatabaseFunctions/Reactions'
+import { getReactions } from '../../Functions/DatabaseFunctions/Reactions'
 import { UserContext } from '../../Contexts/UserContext'
 import {
   Button,
@@ -24,7 +24,6 @@ import {
   IconButton,
   TouchableRipple,
 } from 'react-native-paper'
-import { npubEncode } from 'nostr-tools/nip19'
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'
 import { REGEX_SOCKET_LINK } from '../../Constants/Relay'
 import { push } from '../../lib/Navigation'
@@ -49,27 +48,23 @@ export const NoteCard: React.FC<NoteCardProps> = ({
   const [negaiveReactions, setNegativeReactions] = useState<number>(0)
   const [userUpvoted, setUserUpvoted] = useState<boolean>(false)
   const [userDownvoted, setUserDownvoted] = useState<boolean>(false)
+  const [repliesCount, setRepliesCount] = React.useState<number>(0)
   const [hide, setHide] = useState<boolean>(isContentWarning(note))
-  const nPub = useMemo(() => npubEncode(note.pubkey), [note])
   const timestamp = useMemo(() => moment.unix(note.created_at).format('HH:mm DD-MM-YY'), [note])
 
   useEffect(() => {
     if (database && publicKey && note.id) {
-      getReactionsCount(database, { positive: true, eventId: note.id }).then((result) => {
-        setPositiveReactions(result ?? 0)
-      })
-      getReactionsCount(database, { positive: false, eventId: note.id }).then((result) => {
-        setNegativeReactions(result ?? 0)
-      })
-      getUserReaction(database, publicKey, { eventId: note.id }).then((results) => {
-        results.forEach((reaction) => {
-          if (reaction.positive) {
-            setUserUpvoted(true)
-          } else {
-            setUserDownvoted(true)
-          }
+      getReactions(database, { eventId: note.id }).then((result) => {
+        const total = result.length
+        let positive = 0
+        result.forEach((reaction) => {
+          if (reaction) positive = positive + 1
+          if (reaction.pubkey === publicKey) setUserUpvoted(reaction.positive)
         })
+        setPositiveReactions(positive)
+        setNegativeReactions(total - positive)
       })
+      getRepliesCount(database, note.id).then(setRepliesCount)
     }
   }, [lastEventId])
 
@@ -192,14 +187,14 @@ export const NoteCard: React.FC<NoteCardProps> = ({
             <View>
               <NostrosAvatar
                 name={note.name}
-                pubKey={nPub}
+                pubKey={note.pubkey}
                 src={note.picture}
                 lud06={note.lnurl}
                 size={54}
               />
             </View>
             <View>
-              <Text>{usernamePubKey(note.name, nPub)}</Text>
+              <Text>{usernamePubKey(note.name, note.pubkey)}</Text>
               <Text>{timestamp}</Text>
             </View>
           </View>
@@ -209,6 +204,9 @@ export const NoteCard: React.FC<NoteCardProps> = ({
         </Card.Content>
         {getNoteContent()}
         <Card.Content style={[styles.actions, { borderColor: theme.colors.onSecondary }]}>
+          <Button icon={() => <MaterialCommunityIcons name='message-outline' size={25} />}>
+            {repliesCount}
+          </Button>
           <Button
             onPress={() => {
               if (!userDownvoted && privateKey) {
