@@ -16,47 +16,47 @@
       "ProfileConnect": "",
       "ProfileLoad": "",
       "Landing": "",
-      "Conversation": "Conversation",
-      "Reply": "Reply",
-      "Note": "Note",
-      "Profile": "Profile",
+      "Conversation": "Conversación",
+      "Reply": "Responder",
+      "Note": "Nota",
+      "Profile": "Perfil",
       "About": "About",
       "Send": "Send",
       "Relays": "Relays",
       "ProfileConfig": "My profile"
     },
     "conversationPage": {
-      "typeMessage": "Type message",
+      "typeMessage": "Escribir mensaje",
       "notifications": {
-        "privateMessageSendError": "There was an error sending your message."
+        "privateMessageSendError": "Ha ocurrido un error enviando el mensaje."
       }
     },
     "profileLoadPage": {
-      "relaysDescripion": "Connect with other relays if you have problems finding your data.",
-      "relays": "See relays",
-      "home": "Access",
-      "searchingProfile": "Searching for your profile",
-      "foundProfile": "Found profile",
-      "foundContacts": "{{contactsCount}} contacts found"
+      "relaysDescripion": "Conéctate a otros relays si tienes problemas encontrando tus datos.",
+      "relays": "Ver relays",
+      "home": "Acceder",
+      "searchingProfile": "Buscando tu perfil",
+      "foundProfile": "Perfil encontrado",
+      "foundContacts": "{{contactsCount}} contactos encontrados"
     },
     "sendPage": {
-      "isContact": "Following",
-      "isNotContact": "Not following",
-      "contentWarning": "Sensitive content",
-      "send": "Send"
+      "isContact": "Siguiendo",
+      "isNotContact": "Sin seguir",
+      "contentWarning": "Contenido sensible",
+      "send": "Enviar"
     },
     "menuItems": {
       "relays": "Relays",
-      "notConnected": "Not connected",
-      "connectedRelays": "{{number}} connected",
-      "following": "{{following}} following",
-      "followers": "{{followers}} followers",
-      "configuration": "Configuration",
+      "notConnected": "No conectado",
+      "connectedRelays": "{{number}} conectados",
+      "following": "{{following}} siguiendo",
+      "followers": "{{followers}} seguidores",
+      "configuration": "Configuración",
       "about": "About",
-      "logout": "Logout"
+      "logout": "Salir"
     },
     "noteCard": {
-      "answering": "Answer to {{username}}",
+      "answering": "Responder a {{username}}",
       "seeParent": "See note",
       "contentWarning": "Sensitive content"
     },
@@ -72,19 +72,21 @@
       },
       "snackbarDescription": "Important. Save your key on a safe place, if loose it, you won't be able to access or recover your profile.",
       "snackbarAction": "Copy private key",
-      "accessButton": "Access",
-      "label": "Private key",
-      "warningTitle": "Important",
-      "warningDescription": "Save your key on a safe place, if loose it, you won't be able to access or recover your profile.",
-      "warningAction": "Copy private key"
+      "warningTitle": "Importante",
+      "warningDescription": "Guarda tu clave privada en un lugar seguro, si la pierdes, no podrás acceder a tu perfil ni recuperarlo.",
+      "warningAction": "Copiar clave",
+      "accessButton": "Acceder",
+      "label": "Clave privada",
+      "copied": "Clave copiada",
+      "description": "Guarda la clave en un lugar seguro."
     },
     "loggerPage": {
-      "createButton": "Create keys",
-      "notKeys": "Don't have keys?",
-      "isPublic": "Access with public key",
-      "accessButton": "Access",
-      "privateKey": "Private key",
-      "publicKey": "Public key"
+      "createButton": "Crear claves",
+      "notKeys": "No tienes claves",
+      "isPublic": "Acceder con clave pública",
+      "accessButton": "Acceder",
+      "privateKey": "Clave privada",
+      "publicKey": "Clave pública"
     },
     "contactsFeed": {
       "notifications": {
@@ -92,14 +94,14 @@
         "addContactError": "There was an error publishing your changes.",
         "contactRemoved": "Profile unfollowed."
       },
-      "cancel": "Cancel",
-      "addContact": "Add contact",
-      "addContactDescription": "Paste here the public key of the profile you want to add.",
-      "addContactTitle": "Add contact",
-      "followers": "Followers ({{count}})",
-      "following": "Following ({{count}})",
-      "stopFollowing": "Stop Following",
-      "follow": "Follow"
+      "cancel": "Cancelar",
+      "addContact": "Añadir contacto",
+      "addContactDescription": "Pega la clave pública de quien desees añadir.",
+      "addContactTitle": "Añadir contacto",
+      "followers": "Seguidores ({{count}})",
+      "following": "Siguiendo ({{count}})",
+      "stopFollowing": "Dejar de seguir",
+      "follow": "Seguir"
     },
     "aboutPage": {
       "gitHub": "GitHub",
@@ -107,84 +109,84 @@
       "nips": "NIPs"
     },
     "relaysPage": {
-      "labelAdd": "Relay address",
-      "cancel": "Cancel",
-      "add": "Add",
-      "removeRelay": "Remove",
-      "copyRelay": "Copy",
+      "labelAdd": "Dirección de relay",
+      "cancel": "Cancelar",
+      "add": "Añadir",
+      "removeRelay": "Borrar",
+      "copyRelay": "Copiar",
       "notifications": {
-        "add": "Relay connected.",
-        "remove": "Relay removed.",
-        "badFormat": "Relay URL has a bad format."
+        "add": "Relay conectado",
+        "remove": "Relay borrado",
+        "badFormat": "La URL del relay no tiene el formato adecuado."
       }
     },
     "profileConfigPage": {
       "notifications": {
-        "nsecCopied": "Secret key copied.",
-        "npubCopied": "Public key copied.",
-        "profilePublished": "Profile published.",
-        "lud06Published": "LUD-06 published.",
-        "nip05Published": "NIP-05 published.",
-        "picturePublished": "Picture published.",
-        "connectionError": "Connection error."
+        "nsecCopied": "Clave secreta copiada.",
+        "npubCopied": "Clave pública copiada.",
+        "profilePublished": "Perfil publicado.",
+        "lud06Published": "LUD-06 publicado.",
+        "nip05Published": "NIP-05 publicado.",
+        "picturePublished": "Picture publicado.",
+        "connectionError": "Error de conexión"
       },
-      "publishLud06": "Publish",
+      "publishLud06": "Publicar",
       "lud06Label": "LNURL / Lightning Address",
-      "lud06Description": "Link your identity with a LNURL or Lightning Address.",
+      "lud06Description": "Vincula tu perfil a LNURL or Lightning Address.",
       "lud06Title": "LUD-06",
-      "publishNip05": "Publish",
-      "nip05Link": "Learn more.",
-      "nip05Description": "Link your identity with a domain.",
+      "publishNip05": "Publicar",
+      "nip05Link": "Saber más.",
+      "nip05Description": "Vincula tu perfil con un dominio.",
       "nip05Title": "NIP-05",
-      "directoryCancell": "Cancel",
-      "directoryContinue": "Continue",
+      "directoryCancell": "Cancelar",
+      "directoryContinue": "Continuar",
       "directoryDescription": "Nostr Directory es una base de datos de claves públicas de nostr asociadas a una cuenta de Twitter. Encuentra a las personas que sigues en Twitter en nostr y añade tu clave pública para que tus seguidores te encuentren si lo deseas.\n\n\nAl verificar tu cuenta de Twitter se añadirá un distintivo en tu perfil.\n\n\nSi continuas tendrás que llevar a cabo el proceso de verificación fuera de la aplicación.",
       "directoryTitle": "Nostr Directory",
-      "publishPicture": "Publish",
-      "pictureUrl": "Picture URL",
-      "pictureDescription": "Paste here the URL for the image you would like to display on your public profile.",
-      "pictureTitle": "Link profile's picture",
-      "publish": "Publish",
-      "nsec": "Secret key",
-      "npub": "Public key",
-      "copyNPub": "Copy",
+      "publishPicture": "Publicar",
+      "pictureUrl": "URL de imagen",
+      "pictureDescription": "Pega la URL de la imagen que desees mostrar en tu perfil público",
+      "pictureTitle": "Enlaza tu imagen de perfil",
+      "publish": "Publicar",
+      "nsec": "Clave secreta",
+      "npub": "Clave pública",
+      "copyNPub": "Copiar",
       "directory": "Directory",
       "lud06": "LUD-06",
       "nip05": "NIP-05",
-      "name": "Name",
-      "about": "Description"
+      "name": "Nombre",
+      "about": "Descripción"
     },
     "profilePage": {
       "notifications": {
-        "contactAdded": "Profile followed",
-        "contactRemoved": "Profile unfollowed",
-        "npubCopied": "Public key copied."
+        "contactAdded": "Siguiendo",
+        "contactRemoved": "Dejando de seguir ",
+        "npubCopied": "Clave pública copiada."
       },
-      "invoice": "Tip",
-      "message": "Message",
-      "follow": "Follow",
-      "unfollow": "Following",
-      "copyNPub": "Copy key"
+      "invoice": "Propina",
+      "message": "Mensaje",
+      "follow": "Seguir",
+      "unfollow": "Siguiendo",
+      "copyNPub": "Copiar clave"
     },
     "profileCard": {
       "notifications": {
-        "contactAdded": "Profile followed",
-        "contactRemoved": "Profile unfollowed",
-        "npubCopied": "Public key copied."
+        "contactAdded": "Siguiendo",
+        "contactRemoved": "Dejando de seguir",
+        "npubCopied": "Clave pública copiada."
       },
-      "invoice": "Tip",
-      "message": "Message",
-      "follow": "Follow",
-      "unfollow": "Following",
-      "copyNPub": "Copy key"
+      "invoice": "Propina",
+      "message": "Mensaje",
+      "follow": "Seguir",
+      "unfollow": "Siguiendo",
+      "copyNPub": "Copiar clave"
     },
     "conversationsFeed": {
-      "openMessage": "Open conversation",
-      "openMessageLabel": "Public key",
-      "openMessageDescription": "Paste here a public key to start a conversation",
-      "openMessageTitle": "Open conversation to public key",
-      "addPubKey": "Open conversation to public key",
-      "newMessageContact": "Open conversation to contact"
+      "openMessage": "Iniciar conversación",
+      "openMessageLabel": "Clave pública",
+      "openMessageDescription": "Pega una clave pública para iniciar una conversación.",
+      "openMessageTitle": "Iniciar conversación con clave pública",
+      "addPubKey": "Iniciar conversación con clave pública",
+      "newMessageContact": "Iniciar conversación con contacto"
     }
   }
 }
