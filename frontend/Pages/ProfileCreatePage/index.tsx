@@ -6,7 +6,6 @@ import { useTranslation } from 'react-i18next'
 import { nsecEncode } from 'nostr-tools/nip19'
 import { DrawerNavigationHelpers } from '@react-navigation/drawer/lib/typescript/src/types'
 import { UserContext } from '../../Contexts/UserContext'
-import NostrosNotification from '../../Components/NostrosNotification'
 
 interface ProfileCreatePageProps {
   navigation: DrawerNavigationHelpers
@@ -43,7 +42,7 @@ export const ProfileCreatePage: React.FC<ProfileCreatePageProps> = ({ navigation
 
   return (
     <View style={styles.container}>
-      <View>
+      <View style={styles.form}>
         <TextInput
           mode='outlined'
           label={t('profileCreatePage.label') ?? ''}
@@ -59,26 +58,32 @@ export const ProfileCreatePage: React.FC<ProfileCreatePageProps> = ({ navigation
             />
           }
         />
-        <Button mode='contained' onPress={onPress} disabled={!copied}>
+        {/* FIXME: colors are not on the theme */}
+        <View style={[styles.warning, { backgroundColor: '#683D00' }]}>
+          <Text variant='titleSmall' style={[styles.warningTitle, { color: '#FFDCBB' }]}>
+            {t('profileCreatePage.warningTitle')}
+          </Text>
+          <Text style={{ color: '#FFDCBB' }}>{t('profileCreatePage.warningDescription')}</Text>
+          <View style={styles.warningActionOuterLayout}>
+            <Button style={styles.warningAction} textColor='#FFDCBB' mode='text' onPress={copyContent}>
+              {t('profileCreatePage.warningAction')}
+            </Button>
+          </View>
+        </View>
+        <Button mode='contained' compact onPress={onPress} disabled={!copied}>
           {t('profileCreatePage.accessButton')}
         </Button>
       </View>
-      <Snackbar
-        style={styles.snackbar}
-        visible
-        onDismiss={copyContent}
-        action={{ label: t('profileCreatePage.snackbarAction') ?? '', onPress: copyContent }}
-      >
-        {t('profileCreatePage.snackbarDescription')}
-      </Snackbar>
       {showNotification && (
-        <NostrosNotification
-          showNotification={showNotification}
-          setShowNotification={setShowNotification}
+        <Snackbar
+          style={styles.snackbar}
+          visible={showNotification !== undefined}
+          duration={Snackbar.DURATION_SHORT}
+          onIconPress={() => setShowNotification(undefined)}
+          onDismiss={() => setShowNotification(undefined)}
         >
-          <Text>{t(`profileCreatePage.notifications.${showNotification}`)}</Text>
-          <Text>{t('profileCreatePage.notifications.description')}</Text>
-        </NostrosNotification>
+          {t('profileCreatePage.notifications.copied')}
+        </Snackbar>
       )}
     </View>
   )
@@ -86,12 +91,35 @@ export const ProfileCreatePage: React.FC<ProfileCreatePageProps> = ({ navigation
 
 const styles = StyleSheet.create({
   container: {
+    flex: 1,
     padding: 16,
     justifyContent: 'center',
   },
   snackbar: {
-    top: 150,
+    margin: 16,
+    width: '100%'
+  },
+  warning: {
+    borderRadius: 4,
+    padding: 16,
+    marginTop: 16,
+    marginBottom: 16,
+  },
+  warningTitle: {
+    marginBottom: 8,
+  },
+  warningAction: {
+    marginTop: 16,
+  },
+  warningActionOuterLayout: {
+    flexDirection: 'row',
+    justifyContent: 'flex-end',
+  },
+  form: {
+    flex: 1,
     flexDirection: 'column',
+    justifyContent: 'center',
+    alignContent: 'center',
   },
 })
 
