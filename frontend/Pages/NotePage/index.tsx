@@ -3,9 +3,8 @@ import { AppContext } from '../../Contexts/AppContext'
 import { getNotes, Note } from '../../Functions/DatabaseFunctions/Notes'
 import { RelayPoolContext } from '../../Contexts/RelayPoolContext'
 import NoteCard from '../../Components/NoteCard'
-import { EventKind } from '../../lib/nostr/Events'
+import { Event, EventKind } from '../../lib/nostr/Events'
 import { Dimensions, RefreshControl, ScrollView, StyleSheet, Text, View } from 'react-native'
-import { Event } from '../../../lib/nostr/Events'
 import { getDirectReplies } from '../../Functions/RelayFunctions/Events'
 import {
   ActivityIndicator,
