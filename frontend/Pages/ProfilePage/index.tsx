@@ -8,7 +8,14 @@ import {
   StyleSheet,
   View,
 } from 'react-native'
-import { Surface, Text, IconButton, ActivityIndicator, useTheme } from 'react-native-paper'
+import {
+  Surface,
+  Text,
+  IconButton,
+  ActivityIndicator,
+  useTheme,
+  Snackbar,
+} from 'react-native-paper'
 import NostrosAvatar from '../../Components/NostrosAvatar'
 import { AppContext } from '../../Contexts/AppContext'
 import { UserContext } from '../../Contexts/UserContext'
@@ -16,9 +23,8 @@ import { RelayPoolContext } from '../../Contexts/RelayPoolContext'
 import { getNotes, Note } from '../../Functions/DatabaseFunctions/Notes'
 import { getUser, updateUserContact, User } from '../../Functions/DatabaseFunctions/Users'
 import { EventKind } from '../../lib/nostr/Events'
-import { populatePets } from '../../Functions/RelayFunctions/Users'
+import { populatePets, username } from '../../Functions/RelayFunctions/Users'
 import { useTranslation } from 'react-i18next'
-import NostrosNotification from '../../Components/NostrosNotification'
 import { npubEncode } from 'nostr-tools/nip19'
 import { RelayFilters } from '../../lib/nostr/RelayPool/intex'
 import NoteCard from '../../Components/NoteCard'
@@ -86,6 +92,10 @@ export const ProfilePage: React.FC<ProfilePageProps> = ({ route }) => {
         if (result) {
           setUser(result)
           setIsContact(result?.contact)
+        } else if (route.params.pubKey === publicKey) {
+          setUser({
+            id: publicKey,
+          })
         }
       })
     }
@@ -97,12 +107,14 @@ export const ProfilePage: React.FC<ProfilePageProps> = ({ route }) => {
         (results) => {
           setNotes(results)
           setRefreshing(false)
-          relayPool?.subscribe('answers-profile', [
-            {
-              kinds: [EventKind.reaction, EventKind.textNote, EventKind.recommendServer],
-              '#e': results.map((note) => note.id ?? ''),
-            },
-          ])
+          if (results.length > 0) {
+            relayPool?.subscribe('answers-profile', [
+              {
+                kinds: [EventKind.reaction, EventKind.textNote, EventKind.recommendServer],
+                '#e': results.map((note) => note.id ?? ''),
+              },
+            ])
+          }
         },
       )
     }
@@ -189,7 +201,7 @@ export const ProfilePage: React.FC<ProfilePageProps> = ({ route }) => {
           </View>
           <View>
             <View style={styles.userName}>
-              <Text variant='titleMedium'>{user?.name}</Text>
+              <Text variant='titleMedium'>{user && username(user)}</Text>
               {/* <MaterialCommunityIcons name="check-decagram-outline" size={16} /> */}
             </View>
             <Text>{user?.nip05}</Text>
@@ -265,12 +277,15 @@ export const ProfilePage: React.FC<ProfilePageProps> = ({ route }) => {
         </ScrollView>
       )}
       {showNotification && (
-        <NostrosNotification
-          showNotification={showNotification}
-          setShowNotification={setShowNotification}
+        <Snackbar
+          style={styles.snackbar}
+          visible={showNotification !== undefined}
+          duration={Snackbar.DURATION_SHORT}
+          onIconPress={() => setShowNotification(undefined)}
+          onDismiss={() => setShowNotification(undefined)}
         >
-          <Text>{t(`profilePage.${showNotification}`)}</Text>
-        </NostrosNotification>
+          {t(`profilePage.${showNotification}`)}
+        </Snackbar>
       )}
       <LnPayment setOpen={setOpenLn} open={openLn} user={user} />
       <RBSheet
@@ -312,6 +327,10 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     width: 100,
+  },
+  snackbar: {
+    margin: 16,
+    bottom: 70,
   },
   list: {
     padding: 16,
