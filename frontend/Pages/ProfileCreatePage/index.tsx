@@ -6,7 +6,6 @@ import { useTranslation } from 'react-i18next'
 import { nsecEncode } from 'nostr-tools/nip19'
 import { DrawerNavigationHelpers } from '@react-navigation/drawer/lib/typescript/src/types'
 import { UserContext } from '../../Contexts/UserContext'
-import NostrosNotification from '../../Components/NostrosNotification'
 
 interface ProfileCreatePageProps {
   navigation: DrawerNavigationHelpers
@@ -87,7 +86,8 @@ export const ProfileCreatePage: React.FC<ProfileCreatePageProps> = ({ navigation
           onDismiss={copyContent}
           action={{ label: t('profileCreatePage.snackbarAction') ?? '', onPress: copyContent }}
         >
-          {t('profileCreatePage.snackbarDescription')}
+          <Text variant={'titleSmall'} style={{ color: theme.colors.inverseOnSurface }}>{t('profileCreatePage.snackbarTitle')}</Text>
+          <Text variant={'bodySmall'} style={{ color: theme.colors.inverseOnSurface }}>{t('profileCreatePage.snackbarDescription')}</Text>
         </Snackbar>
       )}
     </View>
@@ -118,6 +118,10 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'flex-end',
   },
+  snackbar: {
+    width: '100%',
+    bottom: 24,
+  }
 })
 
 export default ProfileCreatePage
