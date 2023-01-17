@@ -48,7 +48,7 @@ export const initialUserContext: UserContextProps = {
 
 export const UserContextProvider = ({ children }: UserContextProviderProps): JSX.Element => {
   const { database, loadingDb, init } = useContext(AppContext)
-  const { relayPool } = React.useContext(RelayPoolContext)
+  const { relayPool } = useContext(RelayPoolContext)
   const [publicKey, setPublicKey] = useState<string>()
   const [nPub, setNpub] = useState<string>()
   const [nSec, setNsec] = useState<string>()

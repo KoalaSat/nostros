@@ -93,9 +93,11 @@ export const ProfileCard: React.FC<ProfileCardProps> = ({ userPubKey, bottomShee
               </View>
             </View>
             <View>
-              <Text>{`${user?.about?.slice(0, 75)}${
-                user?.about && user?.about?.length > 75 && ' ...'
-              }`}</Text>
+              <Text>
+                {`${user?.about?.slice(0, 75)}${
+                  user?.about && user?.about?.length > 75 ? ' ...' : ''
+                }`}
+              </Text>
             </View>
           </View>
           <View>
@@ -140,21 +142,27 @@ export const ProfileCard: React.FC<ProfileCardProps> = ({ userPubKey, bottomShee
           <Text>{t('profileCard.copyNPub')}</Text>
         </View>
         <View style={styles.actionButton}>
-          <IconButton
-            icon='lightning-bolt'
-            size={28}
-            onPress={() => setOpenLn(true)}
-            iconColor='#F5D112'
-          />
-          <Text>{t('profileCard.invoice')}</Text>
+          {user?.lnurl && (
+            <>
+              <IconButton
+                icon='lightning-bolt'
+                size={28}
+                onPress={() => setOpenLn(true)}
+                iconColor='#F5D112'
+              />
+              <Text>{t('profileCard.invoice')}</Text>
+            </>
+          )}
         </View>
       </View>
-      <NostrosNotification
-        showNotification={showNotification}
-        setShowNotification={setShowNotification}
-      >
-        <Text>{t(`profileCard.notifications.${showNotification}`)}</Text>
-      </NostrosNotification>
+      {showNotification && (
+        <NostrosNotification
+          showNotification={showNotification}
+          setShowNotification={setShowNotification}
+        >
+          <Text>{t(`profileCard.notifications.${showNotification}`)}</Text>
+        </NostrosNotification>
+      )}
       <LnPayment setOpen={setOpenLn} open={openLn} user={user} />
     </View>
   )
@@ -190,6 +198,7 @@ const styles = StyleSheet.create({
   actionButton: {
     justifyContent: 'center',
     alignItems: 'center',
+    minWidth: 58,
   },
   list: {
     padding: 16,

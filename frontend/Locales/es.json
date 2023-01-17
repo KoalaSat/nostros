@@ -57,15 +57,30 @@
     },
     "noteCard": {
       "answering": "Responder a {{username}}"
+      "seeParent": "See note",
+      "contentWarning": "Sensitive content"
+    },
+    "lnPayment": {
+      "monto": "Cantity (sats.)",
+      "comment": "Comment (optional)",
+      "generateInvoice": "Generate invoice",
+      "cancel": "Cancel"
     },
     "profileCreatePage": {
+      "notifications": {
+      "copied": "Clave copiada",
+      "description": "Guarda la clave en un lugar seguro."
+      },
+      "snackbarDescription": "Important. Save your key on a safe place, if loose it, you won't be able to access or recover your profile.",
+      "snackbarAction": "Copy private key",
+      "accessButton": "Access",
+      "label": "Private key"
+      
       "warningTitle": "Importante",
       "warningDescription": "Guarda tu clave privada en un lugar seguro, si la pierdes, no podrás acceder a tu perfil ni recuperarlo.",
       "warningAction": "Copiar clave",
       "accessButton": "Acceder",
       "label": "Clave privada",
-      "copied": "Clave copiada",
-      "description": "Guarda la clave en un lugar seguro."
     },
     "loggerPage": {
       "createButton": "Crear claves",
@@ -76,6 +91,11 @@
       "publicKey": "Clave pública"
     },
     "contactsFeed": {
+      "notifications": {
+        "contactAdded": "Profile followed.",
+        "addContactError": "There was an error publishing your changes.",
+        "contactRemoved": "Profile unfollowed."
+      },
       "cancel": "Cancelar",
       "addContact": "Añadir contacto",
       "addContactDescription": "Pega la clave pública de quien desees añadir.",

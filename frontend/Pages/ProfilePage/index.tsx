@@ -50,6 +50,7 @@ export const ProfilePage: React.FC<ProfilePageProps> = ({ route }) => {
   const [firstLoad, setFirstLoad] = useState(true)
 
   useEffect(() => {
+    relayPool?.unsubscribeAll()
     setRefreshing(true)
     setNotes(undefined)
     setUser(undefined)
@@ -73,7 +74,6 @@ export const ProfilePage: React.FC<ProfilePageProps> = ({ route }) => {
 
   const onRefresh = useCallback(() => {
     setRefreshing(true)
-    relayPool?.unsubscribeAll()
     loadUser()
     loadNotes()
     subscribeProfile()
@@ -84,7 +84,6 @@ export const ProfilePage: React.FC<ProfilePageProps> = ({ route }) => {
     if (database) {
       getUser(route.params.pubKey, database).then((result) => {
         if (result) {
-          console.log(result)
           setUser(result)
           setIsContact(result?.contact)
         }
@@ -100,7 +99,7 @@ export const ProfilePage: React.FC<ProfilePageProps> = ({ route }) => {
           setRefreshing(false)
           relayPool?.subscribe('answers-profile', [
             {
-              kinds: [EventKind.reaction],
+              kinds: [EventKind.reaction, EventKind.textNote, EventKind.recommendServer],
               '#e': results.map((note) => note.id ?? ''),
             },
           ])
@@ -265,12 +264,14 @@ export const ProfilePage: React.FC<ProfilePageProps> = ({ route }) => {
           {notes.length >= 10 && <ActivityIndicator animating={true} />}
         </ScrollView>
       )}
-      <NostrosNotification
-        showNotification={showNotification}
-        setShowNotification={setShowNotification}
-      >
-        <Text>{t(`profilePage.${showNotification}`)}</Text>
-      </NostrosNotification>
+      {showNotification && (
+        <NostrosNotification
+          showNotification={showNotification}
+          setShowNotification={setShowNotification}
+        >
+          <Text>{t(`profilePage.${showNotification}`)}</Text>
+        </NostrosNotification>
+      )}
       <LnPayment setOpen={setOpenLn} open={openLn} user={user} />
       <RBSheet
         ref={bottomSheetProfileRef}

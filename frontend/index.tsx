@@ -25,8 +25,6 @@ LogBox.ignoreAllLogs()
 const DrawerNavigator = createDrawerNavigator()
 
 export const Frontend: React.FC = () => {
-  
-
   const { DarkTheme } = adaptNavigationTheme({
     reactNavigationLight: NavigationDefaultTheme,
     reactNavigationDark: NavigationDarkTheme,
@@ -42,7 +40,11 @@ export const Frontend: React.FC = () => {
     }
   }, [])
 
-  const Loading: React.FC = () => <View style={styles.logo}><Logo onlyIcon size='big'/></View>
+  const Loading: React.FC = () => (
+    <View style={styles.logo}>
+      <Logo onlyIcon size='big' />
+    </View>
+  )
 
   return (
     <PaperProvider theme={nostrosDarkTheme}>
@@ -100,8 +102,8 @@ const styles = StyleSheet.create({
   logo: {
     justifyContent: 'center',
     alignContent: 'center',
-    flex: 1
-  }
+    flex: 1,
+  },
 })
 
 export default Frontend

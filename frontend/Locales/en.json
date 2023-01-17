@@ -56,16 +56,26 @@
       "logout": "Logout"
     },
     "noteCard": {
-      "answering": "Answer to {{username}}"
+      "answering": "Answer to {{username}}",
+      "seeParent": "See note",
+      "contentWarning": "Sensitive content"
+    },
+    "lnPayment": {
+      "monto": "Cantity (sats.)",
+      "comment": "Comment (optional)",
+      "generateInvoice": "Generate invoice",
+      "cancel": "Cancel"
     },
     "profileCreatePage": {
       "warningTitle": "Important",
       "warningDescription": "Save your key on a safe place, if loose it, you won't be able to access or recover your profile.",
       "warningAction": "Copy private key",
+      "notifications": {
+        "copied": "Copy private key",
+        "description": "Important. Save your key on a safe place, if loose it, you won't be able to access or recover your profile."
+      },
       "accessButton": "Access",
-      "label": "Private key",
-      "copied": "Private key copied.",
-      "description": "Save this key on a safe place."
+      "label": "Private key"
     },
     "loggerPage": {
       "createButton": "Create keys",
@@ -76,6 +86,11 @@
       "publicKey": "Public key"
     },
     "contactsFeed": {
+      "notifications": {
+        "contactAdded": "Profile followed.",
+        "addContactError": "There was an error publishing your changes.",
+        "contactRemoved": "Profile unfollowed."
+      },
       "cancel": "Cancel",
       "addContact": "Add contact",
       "addContactDescription": "Paste here the public key of the profile you want to add.",
@@ -139,7 +154,7 @@
       "about": "Description"
     },
     "profilePage": {
-      "notifications":{
+      "notifications": {
         "contactAdded": "Profile followed",
         "contactRemoved": "Profile unfollowed",
         "npubCopied": "Public key copied."
@@ -151,7 +166,7 @@
       "copyNPub": "Copy key"
     },
     "profileCard": {
-      "notifications":{
+      "notifications": {
         "contactAdded": "Profile followed",
         "contactRemoved": "Profile unfollowed",
         "npubCopied": "Public key copied."

@@ -27,78 +27,64 @@ export const HomeFeed: React.FC = () => {
   const theme = useTheme()
   const { database } = useContext(AppContext)
   const { publicKey } = useContext(UserContext)
-  const { lastEventId, relayPool } = useContext(RelayPoolContext)
+  const { lastEventId, relayPool, lastConfirmationtId } = useContext(RelayPoolContext)
   const initialPageSize = 10
   const [notes, setNotes] = useState<Note[]>([])
-  const [authors, setAuthors] = useState<User[]>([])
+  const [authors, setAuthors] = useState<string[]>([])
   const [pageSize, setPageSize] = useState<number>(initialPageSize)
   const [refreshing, setRefreshing] = useState(true)
-  const [firstLoad, setFirstLoad] = useState(true)
   const [profileCardPubkey, setProfileCardPubKey] = useState<string>()
   const bottomSheetProfileRef = React.useRef<RBSheet>(null)
 
   useEffect(() => {
-    relayPool?.unsubscribeAll()
     if (relayPool && publicKey) {
-      setFirstLoad(false)
-      calculateInitialNotes().then(() => loadNotes())
-    }
-  }, [publicKey, relayPool])
-
-  useEffect(() => {
-    if (!firstLoad) {
       loadNotes()
     }
-  }, [lastEventId])
+  }, [publicKey, relayPool, lastEventId, lastConfirmationtId])
 
   useEffect(() => {
     if (pageSize > initialPageSize) {
-      relayPool?.unsubscribeAll()
-      subscribeNotes(authors, true)
-      loadNotes()
+      subscribeNotes(true)
     }
   }, [pageSize])
 
   const onRefresh = useCallback(() => {
     setRefreshing(true)
-    relayPool?.unsubscribeAll()
     if (relayPool && publicKey) {
-      calculateInitialNotes().then(() => loadNotes())
+      subscribeNotes()
     }
   }, [])
 
-  const subscribeNotes: (users: User[], past?: boolean) => void = async (users, past) => {
+  const subscribeNotes: (past?: boolean) => void = async (past) => {
     if (!database || !publicKey) return
+
+    let newAuthors: string[] = authors
+
+    if (newAuthors.length === 0) {
+      const users: User[] = await getUsers(database, { contacts: true })
+      newAuthors = [...users.map((user) => user.id), publicKey]
+    }
 
     const lastNotes: Note[] = await getMainNotes(database, publicKey, initialPageSize)
     const lastNote: Note = lastNotes[lastNotes.length - 1]
 
     const message: RelayFilters = {
       kinds: [EventKind.textNote, EventKind.recommendServer],
-      authors: [...users.map((user) => user.id), publicKey],
+      authors: newAuthors,
     }
-
     if (lastNote && lastNotes.length >= pageSize && !past) {
       message.since = lastNote.created_at
     } else {
       message.limit = pageSize + initialPageSize
     }
-
     relayPool?.subscribe('homepage-main', [message])
-  }
-
-  const calculateInitialNotes: () => Promise<void> = async () => {
-    if (database && publicKey) {
-      relayPool?.subscribe('homepage-contacts', [
-        {
-          kinds: [EventKind.petNames],
-          authors: [publicKey],
-        },
-      ])
-      const users = await getUsers(database, { contacts: true, includeIds: [publicKey] })
-      subscribeNotes(users)
-      setAuthors(users)
-    }
+    relayPool?.subscribe('homepage-contacts', [
+      {
+        kinds: [EventKind.petNames],
+        authors: newAuthors,
+      },
+    ])
+    setAuthors(newAuthors)
   }
 
   const onScroll: (event: NativeSyntheticEvent<NativeScrollEvent>) => void = (event) => {
@@ -112,16 +98,14 @@ export const HomeFeed: React.FC = () => {
       getMainNotes(database, publicKey, pageSize).then((notes) => {
         setNotes(notes)
         setRefreshing(false)
-        relayPool?.subscribe('homepage-contacts-meta', [
-          {
-            kinds: [EventKind.meta],
-            authors: notes.map((note) => note.pubkey),
-          },
-          {
-            kinds: [EventKind.reaction],
-            '#e': notes.map((note) => note.id ?? ''),
-          },
-        ])
+        if (notes.length > 0) {
+          relayPool?.subscribe('homepage-contacts-meta', [
+            {
+              kinds: [EventKind.reaction, EventKind.textNote, EventKind.recommendServer],
+              '#e': notes.map((note) => note.id ?? ''),
+            },
+          ])
+        }
       })
     }
   }

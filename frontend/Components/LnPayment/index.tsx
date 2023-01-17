@@ -41,7 +41,6 @@ export const LnPayment: React.FC<TextContentProps> = ({ open, setOpen, event, us
   }, [event, open])
 
   const copyInvoice: () => void = () => {
-    console.log(invoice)
     Clipboard.setString(invoice ?? '')
   }
 

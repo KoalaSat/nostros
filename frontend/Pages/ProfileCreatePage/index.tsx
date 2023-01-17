@@ -81,13 +81,14 @@ export const ProfileCreatePage: React.FC<ProfileCreatePageProps> = ({ navigation
         </View>
       </View>
       {showNotification && (
-        <NostrosNotification
-          showNotification={showNotification}
-          setShowNotification={setShowNotification}
+        <Snackbar
+          style={styles.snackbar}
+          visible
+          onDismiss={copyContent}
+          action={{ label: t('profileCreatePage.snackbarAction') ?? '', onPress: copyContent }}
         >
-          <Text>{t(`relaysPage.notifications.${showNotification}`)}</Text>
-          <Text>{t('relaysPage.notifications.description')}</Text>
-        </NostrosNotification>
+          {t('profileCreatePage.snackbarDescription')}
+        </Snackbar>
       )}
     </View>
   )

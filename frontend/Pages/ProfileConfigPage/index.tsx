@@ -28,7 +28,7 @@ export const ProfileConfigPage: React.FC = () => {
   const bottomSheetNip05Ref = React.useRef<RBSheet>(null)
   const bottomSheetLud06Ref = React.useRef<RBSheet>(null)
   const { database } = useContext(AppContext)
-  const { relayPool } = useContext(RelayPoolContext)
+  const { relayPool, lastEventId } = useContext(RelayPoolContext)
   const { user, publicKey, nPub, nSec, contactsCount, followersCount, setUser } =
     useContext(UserContext)
   // State
@@ -42,122 +42,130 @@ export const ProfileConfigPage: React.FC = () => {
   const { t } = useTranslation('common')
 
   useEffect(() => {
-    relayPool?.unsubscribeAll()
     if (database && publicKey) {
-      if (user) {
-        setName(user.name)
-        setPicture(user.picture)
-        setAbout(user.about)
-        setLnurl(user.lnurl)
-        setNip05(user.nip05)
-      }
+      relayPool?.unsubscribeAll()
+      relayPool?.subscribe('loading-meta', [
+        {
+          kinds: [EventKind.meta],
+          authors: [publicKey],
+        },
+      ])
     }
   }, [])
 
+  useEffect(() => {
+    if (database && publicKey) {
+      getUser(publicKey, database).then((result) => {
+        if (result) {
+          setName(result.name)
+          setPicture(result.picture)
+          setAbout(result.about)
+          setLnurl(result.lnurl)
+          setNip05(result.nip05)
+          setUser(result)
+        }
+      })
+    }
+  }, [lastEventId])
+
   const onPressSavePicture: () => void = () => {
     if (publicKey && database) {
-      getUser(publicKey, database).then((user) => {
-        if (user) {
-          relayPool
-            ?.sendEvent({
-              content: JSON.stringify({
-                name: user.name,
-                about: user.about,
-                picture,
-                lud06: user.lnurl,
-                nip05: user.nip05,
-              }),
-              created_at: moment().unix(),
-              kind: EventKind.meta,
-              pubkey: publicKey,
-              tags: [],
+      getUser(publicKey, database).then((result) => {
+        relayPool
+          ?.sendEvent({
+            content: JSON.stringify({
+              name: result?.name,
+              about: result?.about,
+              lud06: result?.lnurl,
+              nip05: result?.nip05,
+              picture,
+            }),
+            created_at: moment().unix(),
+            kind: EventKind.meta,
+            pubkey: publicKey,
+            tags: [],
+          })
+          .then(() => {
+            setIsPublishingProfile(false) // restore sending status
+            setShowNotification('picturePublished')
+            setUser({
+              ...(user ?? { id: publicKey }),
+              picture,
             })
-            .then(() => {
-              setIsPublishingProfile(false) // restore sending status
-              setShowNotification('picturePublished')
-              setUser({
-                ...user,
-                picture,
-              })
-              bottomSheetPictureRef.current?.close()
-            })
-            .catch(() => {
-              setIsPublishingProfile(false) // restore sending status
-              setShowNotification('connectionError')
-            })
-        }
+            bottomSheetPictureRef.current?.close()
+          })
+          .catch(() => {
+            setIsPublishingProfile(false) // restore sending status
+            setShowNotification('connectionError')
+          })
       })
     }
   }
 
   const onPressSaveNip05: () => void = () => {
     if (publicKey && database) {
-      getUser(publicKey, database).then((user) => {
-        if (user) {
-          relayPool
-            ?.sendEvent({
-              content: JSON.stringify({
-                name: user.name,
-                about: user.about,
-                picture: user.picture,
-                lud06: user.lnurl,
-                nip05,
-              }),
-              created_at: moment().unix(),
-              kind: EventKind.meta,
-              pubkey: publicKey,
-              tags: [],
+      getUser(publicKey, database).then((result) => {
+        relayPool
+          ?.sendEvent({
+            content: JSON.stringify({
+              name: result?.name,
+              about: result?.about,
+              picture: result?.picture,
+              lud06: result?.lnurl,
+              nip05,
+            }),
+            created_at: moment().unix(),
+            kind: EventKind.meta,
+            pubkey: publicKey,
+            tags: [],
+          })
+          .then(() => {
+            setIsPublishingProfile(false) // restore sending status
+            setShowNotification('nip05Published')
+            setUser({
+              ...(result ?? { id: publicKey }),
+              nip05,
             })
-            .then(() => {
-              setIsPublishingProfile(false) // restore sending status
-              setShowNotification('nip05Published')
-              setUser({
-                ...user,
-                nip05,
-              })
-              bottomSheetNip05Ref.current?.close()
-            })
-            .catch(() => {
-              setIsPublishingProfile(false) // restore sending status
-              setShowNotification('connectionError')
-            })
-        }
+            bottomSheetNip05Ref.current?.close()
+          })
+          .catch(() => {
+            setIsPublishingProfile(false) // restore sending status
+            setShowNotification('connectionError')
+          })
       })
     }
   }
 
   const onPressSaveLnurl: () => void = () => {
     if (publicKey && database) {
-      getUser(publicKey, database).then((user) => {
-        if (user) {
-          relayPool
-            ?.sendEvent({
-              content: JSON.stringify({
-                name: user.name,
-                about: user.about,
-                picture: user.picture,
-                lud06: lnurl,
-                nip05: user.nip05,
-              }),
-              created_at: moment().unix(),
-              kind: EventKind.meta,
-              pubkey: publicKey,
-              tags: [],
+      getUser(publicKey, database).then((result) => {
+        relayPool
+          ?.sendEvent({
+            content: JSON.stringify({
+              name: result?.name,
+              about: result?.about,
+              picture: result?.picture,
+              nip05: result?.nip05,
+              lud06: lnurl,
+            }),
+            created_at: moment().unix(),
+            kind: EventKind.meta,
+            pubkey: publicKey,
+            tags: [],
+          })
+          .then(() => {
+            setIsPublishingProfile(false) // restore sending status
+            setShowNotification('lud06Published')
+            setUser({
+              ...(user ?? { id: publicKey }),
+              lnurl,
             })
-            .then(() => {
-              setIsPublishingProfile(false) // restore sending status
-              setShowNotification('lud06Published')
-              setUser({
-                ...user,
-                lnurl,
-              })
-              bottomSheetLud06Ref.current?.close()
-            })
-            .catch(() => {
-              setIsPublishingProfile(false) // restore sending status
-              setShowNotification('connectionError')
-            })
-        }
+            bottomSheetLud06Ref.current?.close()
+          })
+          .catch(() => {
+            setIsPublishingProfile(false) // restore sending status
+            setShowNotification('connectionError')
+          })
       })
     }
   }
@@ -165,37 +173,35 @@ export const ProfileConfigPage: React.FC = () => {
   const onPressSaveProfile: () => void = () => {
     if (publicKey && database) {
       getUser(publicKey, database).then((user) => {
-        if (user) {
-          relayPool
-            ?.sendEvent({
-              content: JSON.stringify({
-                name,
-                about,
-                picture: user.picture,
-                lud06: lnurl,
-                nip05: user.nip05,
-              }),
-              created_at: moment().unix(),
-              kind: EventKind.meta,
-              pubkey: publicKey,
-              tags: [],
-            })
-            .then(() => {
-              setIsPublishingProfile(false) // restore sending status
-              setShowNotification('profilePublished')
-              bottomSheetPictureRef.current?.close()
-            })
-            .catch(() => {
-              setIsPublishingProfile(false) // restore sending status
-              setShowNotification('connectionError')
-            })
-          setUser({
-            ...user,
-            name,
-            about,
-            picture,
+        relayPool
+          ?.sendEvent({
+            content: JSON.stringify({
+              picture: user?.picture,
+              lud06: lnurl,
+              nip05: user?.nip05,
+              name,
+              about,
+            }),
+            created_at: moment().unix(),
+            kind: EventKind.meta,
+            pubkey: publicKey,
+            tags: [],
           })
-        }
+          .then(() => {
+            setIsPublishingProfile(false) // restore sending status
+            setShowNotification('profilePublished')
+            bottomSheetPictureRef.current?.close()
+          })
+          .catch(() => {
+            setIsPublishingProfile(false) // restore sending status
+            setShowNotification('connectionError')
+          })
+        setUser({
+          ...(user ?? { id: publicKey }),
+          name,
+          about,
+          picture,
+        })
       })
     }
   }
@@ -339,12 +345,7 @@ export const ProfileConfigPage: React.FC = () => {
             />
           }
         />
-        <Button
-          mode='contained'
-          disabled={!picture || picture === ''}
-          onPress={onPressSaveProfile}
-          loading={isPublishingProfile}
-        >
+        <Button mode='contained' onPress={onPressSaveProfile} loading={isPublishingProfile}>
           {t('profileConfigPage.publish')}
         </Button>
       </ScrollView>
