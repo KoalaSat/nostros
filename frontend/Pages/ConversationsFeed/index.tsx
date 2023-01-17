@@ -158,6 +158,7 @@ export const ConversationsFeed: React.FC = () => {
           />
         ),
         onPress: async () => bottomSheetUserListRef.current?.open(),
+        disabled: users?.length === 0,
       },
       {
         key: 2,
@@ -168,6 +169,7 @@ export const ConversationsFeed: React.FC = () => {
           />
         ),
         onPress: async () => bottomSheetPubKeyRef.current?.open(),
+        disabled: false,
       },
     ]
   }, [])
@@ -199,14 +201,29 @@ export const ConversationsFeed: React.FC = () => {
   )
 
   return (
-    <View>
-      <ScrollView horizontal={false}>
-        <FlatList
-          data={directMessages}
-          renderItem={renderConversationItem}
-          ItemSeparatorComponent={Divider}
-        />
-      </ScrollView>
+    <View style={styles.container}>
+      {directMessages.length > 0 ? (
+        <ScrollView horizontal={false}>
+          <FlatList
+            data={directMessages}
+            renderItem={renderConversationItem}
+            ItemSeparatorComponent={Divider}
+          />
+        </ScrollView>
+      ) : (
+        <View style={styles.blank}>
+          <MaterialCommunityIcons name='message-outline' size={64} style={styles.center} />
+          <Text variant='headlineSmall' style={styles.center}>
+            {t('conversationsFeed.emptyTitle')}
+          </Text>
+          <Text variant='bodyMedium' style={styles.center}>
+            {t('conversationsFeed.emptyDescription')}
+          </Text>
+          <Button mode='contained' compact onPress={() => bottomSheetCreateRef.current?.open()}>
+            {t('conversationsFeed.emptyButton')}
+          </Button>
+        </View>
+      )}
       <AnimatedFAB
         style={[styles.fab, { top: Dimensions.get('window').height - 220 }]}
         icon='pencil-outline'
@@ -232,6 +249,7 @@ export const ConversationsFeed: React.FC = () => {
                   title={item.title}
                   onPress={item.onPress}
                   left={item.left}
+                  disabled={item.disabled}
                 />
               )
             }}
@@ -290,6 +308,7 @@ export const ConversationsFeed: React.FC = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    padding: 16,
   },
   contactRow: {
     paddingLeft: 16,
@@ -316,6 +335,15 @@ const styles = StyleSheet.create({
   fab: {
     right: 16,
     position: 'absolute',
+  },
+  center: {
+    alignContent: 'center',
+    textAlign: 'center',
+  },
+  blank: {
+    justifyContent: 'space-between',
+    height: 200,
+    marginTop: 60,
   },
 })
 

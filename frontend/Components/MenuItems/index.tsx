@@ -61,19 +61,19 @@ export const MenuItems: React.FC = () => {
         {nPub && (
           <Card style={styles.cardContainer}>
             <Card.Content style={styles.cardContent}>
-              <TouchableRipple onPress={() => navigate('Profile', { pubKey: user?.id })}>
+              <TouchableRipple onPress={() => navigate('Profile', { pubKey: publicKey })}>
                 <View style={styles.cardContent}>
                   <View style={styles.cardAvatar}>
                     <NostrosAvatar
                       name={user?.name}
-                      pubKey={nPub}
+                      pubKey={publicKey ?? ''}
                       src={user?.picture}
                       lud06={user?.lnurl}
                     />
                   </View>
                   <View>
                     <Text variant='titleMedium'>{user?.name}</Text>
-                    <Text>{formatPubKey(nPub)}</Text>
+                    <Text>{formatPubKey(publicKey ?? '')}</Text>
                   </View>
                 </View>
               </TouchableRipple>

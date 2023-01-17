@@ -15,10 +15,10 @@ import {
   Text,
   TouchableRipple,
   TextInput,
+  Snackbar,
 } from 'react-native-paper'
 import { RelayPoolContext } from '../../Contexts/RelayPoolContext'
 import RBSheet from 'react-native-raw-bottom-sheet'
-import NostrosNotification from '../../Components/NostrosNotification'
 import NostrosAvatar from '../../Components/NostrosAvatar'
 
 export const ProfileConfigPage: React.FC = () => {
@@ -478,14 +478,15 @@ export const ProfileConfigPage: React.FC = () => {
         </View>
       </RBSheet>
       {showNotification && (
-        <NostrosNotification
-          showNotification={showNotification}
-          setShowNotification={setShowNotification}
+        <Snackbar
+          style={styles.snackbar}
+          visible={showNotification !== undefined}
+          duration={Snackbar.DURATION_SHORT}
+          onIconPress={() => setShowNotification(undefined)}
+          onDismiss={() => setShowNotification(undefined)}
         >
-          <Text>{t(`profileConfigPage.notifications.${showNotification}`)}</Text>
-          {showNotification === 'nip05Published' && <Text>{nip05}</Text>}
-          {showNotification === 'lud06Published' && <Text>{lnurl}</Text>}
-        </NostrosNotification>
+          {t(`profileConfigPage.notifications.${showNotification}`, { nip05, lnurl })}
+        </Snackbar>
       )}
     </View>
   )

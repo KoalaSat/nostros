@@ -60,7 +60,13 @@ export const UserContextProvider = ({ children }: UserContextProviderProps): JSX
   const reloadUser: () => void = () => {
     if (database && publicKey) {
       getUser(publicKey, database).then((result) => {
-        if (result) setUser(result)
+        if (result) {
+          setUser(result)
+        } else {
+          setUser({
+            id: publicKey,
+          })
+        }
       })
       getContactsCount(database).then(setContantsCount)
       getFollowersCount(database).then(setFollowersCount)

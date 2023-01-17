@@ -24,6 +24,7 @@ import {
   AnimatedFAB,
   Button,
   Divider,
+  Snackbar,
   Text,
   TextInput,
   TouchableRipple,
@@ -33,11 +34,11 @@ import { Tabs, TabScreen } from 'react-native-paper-tabs'
 import NostrosAvatar from '../../Components/NostrosAvatar'
 import { navigate } from '../../lib/Navigation'
 import RBSheet from 'react-native-raw-bottom-sheet'
-import NostrosNotification from '../../Components/NostrosNotification'
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'
 
 export const ContactsFeed: React.FC = () => {
   const { database } = useContext(AppContext)
-  const { publicKey, setContantsCount, setFollowersCount } = React.useContext(UserContext)
+  const { publicKey, setContantsCount, setFollowersCount, nPub } = React.useContext(UserContext)
   const { relayPool, lastEventId } = useContext(RelayPoolContext)
   const theme = useTheme()
   const bottomSheetAddContactRef = React.useRef<RBSheet>(null)
@@ -192,28 +193,77 @@ export const ContactsFeed: React.FC = () => {
       >
         <TabScreen label={t('contactsFeed.following', { count: following.length })}>
           <View style={styles.container}>
-            <ScrollView horizontal={false}>
-              <View>
-                <FlatList
-                  data={following}
-                  renderItem={renderContactItem}
-                  ItemSeparatorComponent={Divider}
+            {following.length > 0 ? (
+              <ScrollView horizontal={false}>
+                <View>
+                  <FlatList
+                    data={following}
+                    renderItem={renderContactItem}
+                    ItemSeparatorComponent={Divider}
+                  />
+                </View>
+              </ScrollView>
+            ) : (
+              <View style={styles.blank}>
+                <MaterialCommunityIcons
+                  name='account-group-outline'
+                  size={64}
+                  style={styles.center}
                 />
+                <Text variant='headlineSmall' style={styles.center}>
+                  {t('contactsFeed.emptyTitleFollowing')}
+                </Text>
+                <Text variant='bodyMedium' style={styles.center}>
+                  {t('contactsFeed.emptyDescriptionFollowing')}
+                </Text>
+                <Button
+                  mode='contained'
+                  compact
+                  onPress={() => bottomSheetAddContactRef.current?.open()}
+                >
+                  {t('contactsFeed.emptyButtonFollowing')}
+                </Button>
               </View>
-            </ScrollView>
+            )}
           </View>
         </TabScreen>
         <TabScreen label={t('contactsFeed.followers', { count: followers.length })}>
           <View style={styles.container}>
-            <ScrollView horizontal={false}>
-              <View>
-                <FlatList
-                  data={followers}
-                  renderItem={renderContactItem}
-                  ItemSeparatorComponent={Divider}
+            {followers.length > 0 ? (
+              <ScrollView horizontal={false}>
+                <View>
+                  <FlatList
+                    data={followers}
+                    renderItem={renderContactItem}
+                    ItemSeparatorComponent={Divider}
+                  />
+                </View>
+              </ScrollView>
+            ) : (
+              <View style={styles.blank}>
+                <MaterialCommunityIcons
+                  name='account-group-outline'
+                  size={64}
+                  style={styles.center}
                 />
+                <Text variant='headlineSmall' style={styles.center}>
+                  {t('contactsFeed.emptyTitleFollower')}
+                </Text>
+                <Text variant='bodyMedium' style={styles.center}>
+                  {t('contactsFeed.emptyDescriptionFollower')}
+                </Text>
+                <Button
+                  mode='contained'
+                  compact
+                  onPress={() => {
+                    setShowNotification('keyCopied')
+                    Clipboard.setString(nPub ?? '')
+                  }}
+                >
+                  {t('contactsFeed.emptyButtonFollower')}
+                </Button>
               </View>
-            </ScrollView>
+            )}
           </View>
         </TabScreen>
       </Tabs>
@@ -269,12 +319,15 @@ export const ContactsFeed: React.FC = () => {
         </View>
       </RBSheet>
       {showNotification && (
-        <NostrosNotification
-          showNotification={showNotification}
-          setShowNotification={setShowNotification}
+        <Snackbar
+          style={styles.snackbar}
+          visible={showNotification !== undefined}
+          duration={Snackbar.DURATION_SHORT}
+          onIconPress={() => setShowNotification(undefined)}
+          onDismiss={() => setShowNotification(undefined)}
         >
-          <Text>{t(`contactsFeed.notifications.${showNotification}`)}</Text>
-        </NostrosNotification>
+          {t(`contactsFeed.notifications.${showNotification}`)}
+        </Snackbar>
       )}
     </>
   )
@@ -283,6 +336,10 @@ export const ContactsFeed: React.FC = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+  },
+  snackbar: {
+    margin: 16,
+    marginBottom: 95,
   },
   contactRow: {
     paddingLeft: 16,
@@ -305,6 +362,16 @@ const styles = StyleSheet.create({
   fab: {
     right: 16,
     position: 'absolute',
+  },
+  center: {
+    alignContent: 'center',
+    textAlign: 'center',
+  },
+  blank: {
+    justifyContent: 'space-between',
+    height: 232,
+    marginTop: 12,
+    padding: 16,
   },
 })
 

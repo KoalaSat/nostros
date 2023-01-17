@@ -2,14 +2,13 @@ import { t } from 'i18next'
 import { npubEncode } from 'nostr-tools/nip19'
 import * as React from 'react'
 import { Clipboard, StyleSheet, View } from 'react-native'
-import { Card, IconButton, Text } from 'react-native-paper'
+import { Card, IconButton, Snackbar, Text } from 'react-native-paper'
 import { AppContext } from '../../Contexts/AppContext'
 import { RelayPoolContext } from '../../Contexts/RelayPoolContext'
 import { UserContext } from '../../Contexts/UserContext'
 import { getUser, updateUserContact, User } from '../../Functions/DatabaseFunctions/Users'
 import { populatePets } from '../../Functions/RelayFunctions/Users'
 import NostrosAvatar from '../NostrosAvatar'
-import NostrosNotification from '../NostrosNotification'
 import LnPayment from '../LnPayment'
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'
 import { navigate, push } from '../../lib/Navigation'
@@ -94,7 +93,7 @@ export const ProfileCard: React.FC<ProfileCardProps> = ({ userPubKey, bottomShee
             </View>
             <View>
               <Text>
-                {`${user?.about?.slice(0, 75)}${
+                {`${user?.about ? user?.about?.slice(0, 75) : ''}${
                   user?.about && user?.about?.length > 75 ? ' ...' : ''
                 }`}
               </Text>
@@ -156,12 +155,15 @@ export const ProfileCard: React.FC<ProfileCardProps> = ({ userPubKey, bottomShee
         </View>
       </View>
       {showNotification && (
-        <NostrosNotification
-          showNotification={showNotification}
-          setShowNotification={setShowNotification}
+        <Snackbar
+          style={styles.snackbar}
+          visible={showNotification !== undefined}
+          duration={Snackbar.DURATION_SHORT}
+          onIconPress={() => setShowNotification(undefined)}
+          onDismiss={() => setShowNotification(undefined)}
         >
-          <Text>{t(`profileCard.notifications.${showNotification}`)}</Text>
-        </NostrosNotification>
+          {t(`profileCard.notifications.${showNotification}`)}
+        </Snackbar>
       )}
       <LnPayment setOpen={setOpenLn} open={openLn} user={user} />
     </View>
@@ -171,6 +173,10 @@ export const ProfileCard: React.FC<ProfileCardProps> = ({ userPubKey, bottomShee
 const styles = StyleSheet.create({
   container: {
     padding: 16,
+  },
+  snackbar: {
+    margin: 16,
+    width: '100%',
   },
   contacts: {
     flexDirection: 'row',

@@ -66,16 +66,23 @@
       "generateInvoice": "Generate invoice",
       "cancel": "Cancel"
     },
+    "notificationsFeed": {
+      "emptyTitle": "You don't have notifications",
+      "emptyDescription": "Write a message to get replies and reactions.",
+      "emptyButton": "Write a message"
+    },
     "profileCreatePage": {
-      "warningTitle": "Important",
-      "warningDescription": "Save your key on a safe place, if loose it, you won't be able to access or recover your profile.",
-      "warningAction": "Copy private key",
       "notifications": {
-        "copied": "Copy private key",
-        "description": "Important. Save your key on a safe place, if loose it, you won't be able to access or recover your profile."
+        "copied": "Private key copied.\n\nSave this key on a safe place."
       },
+      "snackbarDescription": "Important. Save your key on a safe place, if loose it, you won't be able to access or recover your profile.",
+      "snackbarAction": "Copy private key",
+      "warningTitle": "Importante",
+      "warningDescription": "Guarda tu clave privada en un lugar seguro, si la pierdes, no podrás acceder a tu perfil ni recuperarlo.",
       "accessButton": "Access",
-      "label": "Private key"
+      "label": "Private key",
+      "copied": "Key copied",
+      "description": "Save your key on a safe place."
     },
     "loggerPage": {
       "createButton": "Create keys",
@@ -87,10 +94,17 @@
     },
     "contactsFeed": {
       "notifications": {
+        "keyCopied": "Public key copied.",
         "contactAdded": "Profile followed.",
         "addContactError": "There was an error publishing your changes.",
         "contactRemoved": "Profile unfollowed."
       },
+      "emptyTitleFollowing": "You are not following no one",
+      "emptyDescriptionFollowing": "Follow other profiles to see content.",
+      "emptyButtonFollowing": "Paste public key",
+      "emptyTitleFollower": "You have no followers",
+      "emptyDescriptionFollower": "Share your public key so people can start following you.",
+      "emptyButtonFollower": "Copy public key",
       "cancel": "Cancel",
       "addContact": "Add contact",
       "addContactDescription": "Paste here the public key of the profile you want to add.",
@@ -104,6 +118,11 @@
       "gitHub": "GitHub",
       "nostr": "nostr",
       "nips": "NIPs"
+    },
+    "homeFeed": {
+      "emptyTitle": "You are not following no one",
+      "emptyDescription": "Follow other profiles to see content.",
+      "emptyButton": "Go to contacts"
     },
     "relaysPage": {
       "labelAdd": "Relay address",
@@ -122,8 +141,8 @@
         "nsecCopied": "Secret key copied.",
         "npubCopied": "Public key copied.",
         "profilePublished": "Profile published.",
-        "lud06Published": "LUD-06 published.",
-        "nip05Published": "NIP-05 published.",
+        "lud06Published": "LUD-06 published.\n\n{{lud06}}",
+        "nip05Published": "NIP-05 published.\n\n{{nip05}}",
         "picturePublished": "Picture published.",
         "connectionError": "Connection error."
       },
@@ -178,12 +197,15 @@
       "copyNPub": "Copy key"
     },
     "conversationsFeed": {
-      "openMessage": "Open conversation",
+      "openMessage": "Start conversation",
       "openMessageLabel": "Public key",
-      "openMessageDescription": "Paste here a public key to start a conversation",
-      "openMessageTitle": "Open conversation to public key",
-      "addPubKey": "Open conversation to public key",
-      "newMessageContact": "Open conversation to contact"
+      "openMessageDescription": "Paste a public key to start a conversation.",
+      "openMessageTitle": "Start conversation with public key",
+      "addPubKey": "Start conversation with public key",
+      "newMessageContact": "Start conversation with contact",
+      "emptyTitle": "You don't have any message",
+      "emptyDescription": "Write direct messages to your contacts or others.",
+      "emptyButton": "Open a conversation"
     }
   }
 }

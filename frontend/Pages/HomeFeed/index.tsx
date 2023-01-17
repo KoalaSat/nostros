@@ -16,14 +16,20 @@ import { UserContext } from '../../Contexts/UserContext'
 import { RelayPoolContext } from '../../Contexts/RelayPoolContext'
 import { EventKind } from '../../lib/nostr/Events'
 import { RelayFilters } from '../../lib/nostr/RelayPool/intex'
-import { ActivityIndicator, AnimatedFAB } from 'react-native-paper'
+import { ActivityIndicator, AnimatedFAB, Button, Text } from 'react-native-paper'
 import NoteCard from '../../Components/NoteCard'
 import RBSheet from 'react-native-raw-bottom-sheet'
 import ProfileCard from '../../Components/ProfileCard'
 import { useTheme } from '@react-navigation/native'
 import { navigate } from '../../lib/Navigation'
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'
+import { t } from 'i18next'
 
-export const HomeFeed: React.FC = () => {
+interface HomeFeedProps {
+  jumpTo: (tabName: string) => void
+}
+
+export const HomeFeed: React.FC<HomeFeedProps> = ({ jumpTo }) => {
   const theme = useTheme()
   const { database } = useContext(AppContext)
   const { publicKey } = useContext(UserContext)
@@ -99,7 +105,7 @@ export const HomeFeed: React.FC = () => {
         setNotes(notes)
         setRefreshing(false)
         if (notes.length > 0) {
-          relayPool?.subscribe('homepage-contacts-meta', [
+          relayPool?.subscribe('homepage-reactions', [
             {
               kinds: [EventKind.reaction, EventKind.textNote, EventKind.recommendServer],
               '#e': notes.map((note) => note.id ?? ''),
@@ -139,8 +145,8 @@ export const HomeFeed: React.FC = () => {
   }, [])
 
   return (
-    <>
-      {notes && notes.length > 0 && (
+    <View style={styles.container}>
+      {notes && notes.length > 0 ? (
         <ScrollView
           onScroll={onScroll}
           horizontal={false}
@@ -151,6 +157,19 @@ export const HomeFeed: React.FC = () => {
           {notes.map((note) => renderItem(note))}
           {notes.length >= 10 && <ActivityIndicator animating={true} />}
         </ScrollView>
+      ) : (
+        <View style={styles.blank}>
+          <MaterialCommunityIcons name='account-group-outline' size={64} style={styles.center} />
+          <Text variant='headlineSmall' style={styles.center}>
+            {t('homeFeed.emptyTitle')}
+          </Text>
+          <Text variant='bodyMedium' style={styles.center}>
+            {t('homeFeed.emptyDescription')}
+          </Text>
+          <Button mode='contained' compact onPress={() => jumpTo('contacts')}>
+            {t('homeFeed.emptyButton')}
+          </Button>
+        </View>
       )}
       <AnimatedFAB
         style={[styles.fab, { top: Dimensions.get('window').height - 220 }]}
@@ -169,7 +188,7 @@ export const HomeFeed: React.FC = () => {
       >
         <ProfileCard userPubKey={profileCardPubkey ?? ''} bottomSheetRef={bottomSheetProfileRef} />
       </RBSheet>
-    </>
+    </View>
   )
 }
 
@@ -183,6 +202,19 @@ const styles = StyleSheet.create({
   fab: {
     right: 16,
     position: 'absolute',
+  },
+  container: {
+    padding: 16,
+    flex: 1,
+  },
+  center: {
+    alignContent: 'center',
+    textAlign: 'center',
+  },
+  blank: {
+    justifyContent: 'space-between',
+    height: 200,
+    marginTop: 60,
   },
 })
 

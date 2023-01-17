@@ -1,7 +1,7 @@
 import React, { useContext, useEffect, useState } from 'react'
 import { generateRandomKey } from '../../lib/nostr/Bip'
 import { Clipboard, StyleSheet, View } from 'react-native'
-import { Button, Text, TextInput, useTheme } from 'react-native-paper'
+import { Button, Snackbar, Text, TextInput } from 'react-native-paper'
 import { useTranslation } from 'react-i18next'
 import { nsecEncode } from 'nostr-tools/nip19'
 import { DrawerNavigationHelpers } from '@react-navigation/drawer/lib/typescript/src/types'
@@ -18,7 +18,6 @@ export const ProfileCreatePage: React.FC<ProfileCreatePageProps> = ({ navigation
   const [inputValue, setInputValue] = useState<string>()
   const [copied, setCopied] = useState<boolean>(false)
   const [showNotification, setShowNotification] = useState<string>()
-  const theme = useTheme()
 
   useEffect(() => {
     generateRandomKey().then((string) => {
@@ -43,7 +42,7 @@ export const ProfileCreatePage: React.FC<ProfileCreatePageProps> = ({ navigation
 
   return (
     <View style={styles.container}>
-      <View>
+      <View style={styles.form}>
         <TextInput
           mode='outlined'
           label={t('profileCreatePage.label') ?? ''}
@@ -59,32 +58,34 @@ export const ProfileCreatePage: React.FC<ProfileCreatePageProps> = ({ navigation
             />
           }
         />
-        <Button style={styles.button} mode='contained' compact onPress={onPress} disabled={!copied}>
-          {t('profileCreatePage.accessButton')}
-        </Button>
-        <View style={[styles.warning, { backgroundColor: theme.colors.warningContainer }]}>
-          <Text variant='titleSmall' style={[styles.warningTitle, {color: theme.colors.onWarningContainer}]}>
+        {/* FIXME: colors are not on the theme */}
+        <View style={[styles.warning, { backgroundColor: '#683D00' }]}>
+          <Text variant='titleSmall' style={[styles.warningTitle, { color: '#FFDCBB' }]}>
             {t('profileCreatePage.warningTitle')}
           </Text>
-          <Text style={{color: theme.colors.onWarningContainer}}>
-            {t('profileCreatePage.warningDescription')}
-          </Text>
+          <Text style={{ color: '#FFDCBB' }}>{t('profileCreatePage.warningDescription')}</Text>
           <View style={styles.warningActionOuterLayout}>
             <Button
-                style={styles.warningAction}
-                mode='text'
-                onPress={copyContent}>
+              style={styles.warningAction}
+              textColor='#FFDCBB'
+              mode='text'
+              onPress={copyContent}
+            >
               {t('profileCreatePage.warningAction')}
             </Button>
           </View>
         </View>
+        <Button mode='contained' compact onPress={onPress} disabled={!copied}>
+          {t('profileCreatePage.accessButton')}
+        </Button>
       </View>
       {showNotification && (
         <Snackbar
           style={styles.snackbar}
-          visible
-          onDismiss={copyContent}
-          action={{ label: t('profileCreatePage.snackbarAction') ?? '', onPress: copyContent }}
+          visible={showNotification !== undefined}
+          duration={Snackbar.DURATION_SHORT}
+          onIconPress={() => setShowNotification(undefined)}
+          onDismiss={() => setShowNotification(undefined)}
         >
           <Text variant={'titleSmall'} style={{ color: theme.colors.inverseOnSurface }}>{t('profileCreatePage.snackbarTitle')}</Text>
           <Text variant={'bodySmall'} style={{ color: theme.colors.inverseOnSurface }}>{t('profileCreatePage.snackbarDescription')}</Text>
@@ -97,16 +98,18 @@ export const ProfileCreatePage: React.FC<ProfileCreatePageProps> = ({ navigation
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'center',
     padding: 16,
+    justifyContent: 'center',
   },
-  button: {
-    marginBottom: 24,
-    marginTop: 24,
+  snackbar: {
+    margin: 16,
+    width: '100%',
   },
   warning: {
     borderRadius: 4,
     padding: 16,
+    marginTop: 16,
+    marginBottom: 16,
   },
   warningTitle: {
     marginBottom: 8,
@@ -122,6 +125,12 @@ const styles = StyleSheet.create({
     width: '100%',
     bottom: 24,
   }
+  form: {
+    flex: 1,
+    flexDirection: 'column',
+    justifyContent: 'center',
+    alignContent: 'center',
+  },
 })
 
 export default ProfileCreatePage

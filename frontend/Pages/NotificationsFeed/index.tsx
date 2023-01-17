@@ -15,11 +15,15 @@ import { EventKind } from '../../lib/nostr/Events'
 import { handleInfinityScroll } from '../../Functions/NativeFunctions'
 import { UserContext } from '../../Contexts/UserContext'
 import RBSheet from 'react-native-raw-bottom-sheet'
-import { ActivityIndicator, useTheme } from 'react-native-paper'
+import { ActivityIndicator, Button, Text, useTheme } from 'react-native-paper'
 import ProfileCard from '../../Components/ProfileCard'
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'
+import { useTranslation } from 'react-i18next'
+import { navigate } from '../../lib/Navigation'
 
 export const NotificationsFeed: React.FC = () => {
   const theme = useTheme()
+  const { t } = useTranslation('common')
   const { database } = useContext(AppContext)
   const { publicKey } = useContext(UserContext)
   const initialPageSize = 10
@@ -56,7 +60,7 @@ export const NotificationsFeed: React.FC = () => {
   const subscribeNotes: () => void = async () => {
     if (!database || !publicKey) return
 
-    relayPool?.subscribe('mentions-user', [
+    relayPool?.subscribe('notification-user', [
       {
         kinds: [EventKind.textNote],
         '#p': [publicKey],
@@ -76,15 +80,14 @@ export const NotificationsFeed: React.FC = () => {
         setNotes(notes)
         setRefreshing(false)
         if (notes.length > 0) {
-          const missingDataNotes = notes.map((note) => note.pubkey)
-          relayPool?.subscribe('mentions-answers', [
+          relayPool?.subscribe('notification-answers', [
             {
               kinds: [EventKind.reaction, EventKind.textNote, EventKind.recommendServer],
               '#e': notes.map((note) => note.id ?? ''),
             },
             {
               kinds: [EventKind.meta],
-              authors: missingDataNotes,
+              authors: notes.filter((note) => note.name !== undefined).map((note) => note.pubkey),
             },
           ])
         }
@@ -134,18 +137,30 @@ export const NotificationsFeed: React.FC = () => {
   }, [])
 
   return (
-    <>
-      {notes && notes.length > 0 && (
+    <View style={styles.container}>
+      {notes && notes.length > 0 ? (
         <ScrollView
           onScroll={onScroll}
           horizontal={false}
           showsVerticalScrollIndicator={false}
           refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
-          style={styles.list}
         >
           {notes.map((note) => renderItem(note))}
           {notes.length >= 10 && <ActivityIndicator animating={true} />}
         </ScrollView>
+      ) : (
+        <View style={styles.blank}>
+          <MaterialCommunityIcons name='bell-outline' size={64} style={styles.center} />
+          <Text variant='headlineSmall' style={styles.center}>
+            {t('notificationsFeed.emptyTitle')}
+          </Text>
+          <Text variant='bodyMedium' style={styles.center}>
+            {t('notificationsFeed.emptyDescription')}
+          </Text>
+          <Button mode='contained' compact onPress={() => navigate('Send')}>
+            {t('notificationsFeed.emptyButton')}
+          </Button>
+        </View>
       )}
       <RBSheet
         ref={bottomSheetProfileRef}
@@ -155,16 +170,26 @@ export const NotificationsFeed: React.FC = () => {
       >
         <ProfileCard userPubKey={profileCardPubkey ?? ''} bottomSheetRef={bottomSheetProfileRef} />
       </RBSheet>
-    </>
+    </View>
   )
 }
 
 const styles = StyleSheet.create({
-  list: {
+  container: {
+    flex: 1,
     padding: 16,
   },
   noteCard: {
     marginBottom: 16,
+  },
+  center: {
+    alignContent: 'center',
+    textAlign: 'center',
+  },
+  blank: {
+    justifyContent: 'space-between',
+    height: 200,
+    marginTop: 60,
   },
 })
 
