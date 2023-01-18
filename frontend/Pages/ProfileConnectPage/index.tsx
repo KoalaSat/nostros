@@ -28,13 +28,11 @@ export const ProfileConnectPage: React.FC = () => {
   const onPress: () => void = () => {
     if (inputValue && inputValue !== '') {
       const key = isNip19 ? getNip19Key(inputValue) : inputValue
-
       if (isPublic) {
         setPublicKey(key)
       } else {
         setPrivateKey(key)
       }
-
       navigate('ProfileLoad')
     }
   }

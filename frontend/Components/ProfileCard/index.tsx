@@ -27,6 +27,7 @@ export const ProfileCard: React.FC<ProfileCardProps> = ({ userPubKey, bottomShee
   const [openLn, setOpenLn] = React.useState<boolean>(false)
   const [isContact, setIsContact] = React.useState<boolean>()
   const [showNotification, setShowNotification] = React.useState<undefined | string>()
+  const nPub = React.useMemo(() => npubEncode(userPubKey), [userPubKey])
 
   React.useEffect(() => {
     loadUser()
@@ -77,7 +78,7 @@ export const ProfileCard: React.FC<ProfileCardProps> = ({ userPubKey, bottomShee
               <View>
                 <NostrosAvatar
                   name={user?.name}
-                  pubKey={userPubKey}
+                  pubKey={nPub}
                   src={user?.picture}
                   lud06={user?.lnurl}
                   size={54}
@@ -134,8 +135,7 @@ export const ProfileCard: React.FC<ProfileCardProps> = ({ userPubKey, bottomShee
             size={28}
             onPress={() => {
               setShowNotification('npubCopied')
-              const profileNPud = npubEncode(userPubKey)
-              Clipboard.setString(profileNPud ?? '')
+              Clipboard.setString(nPub ?? '')
             }}
           />
           <Text>{t('profileCard.copyNPub')}</Text>

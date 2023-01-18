@@ -1,7 +1,7 @@
 import * as React from 'react'
-import { Platform, View } from 'react-native'
+import { Platform, StyleSheet, View } from 'react-native'
 import { CardStyleInterpolators, createStackNavigator } from '@react-navigation/stack'
-import { Appbar, Snackbar, Text, useTheme } from 'react-native-paper'
+import { Appbar, Text, useTheme } from 'react-native-paper'
 import ProfileConnectPage from '../../Pages/ProfileConnectPage'
 import ProfileLoadPage from '../../Pages/ProfileLoadPage'
 import RBSheet from 'react-native-raw-bottom-sheet'
@@ -32,16 +32,19 @@ export const HomeNavigator: React.FC = () => {
 
   const BottomSheetKeys = React.useMemo(
     () => (
-      <View>
+      <View style={styles.bottomSheetKeysContainer}>
         <Text variant='headlineSmall'>{t('drawers.keysTitle')}</Text>
         <Text variant='bodyMedium'>{t('drawers.keysDescription')}</Text>
         <Text variant='titleMedium'>{t('drawers.publicKeys')}</Text>
         <Text variant='bodyMedium'>{t('drawers.publicKeysDescription')}</Text>
         <Text variant='titleMedium'>{t('drawers.privateKey')}</Text>
         <Text variant='bodyMedium'>{t('drawers.privateKeyDescription')}</Text>
-        <Snackbar visible onDismiss={() => {}}>
-          {t('drawers.privateKeysSnackbar')}
-        </Snackbar>
+        <View style={[styles.warning, { backgroundColor: '#683D00' }]}>
+          <Text style={[styles.bold, { color: '#FFDCBB' }]}>
+            {t('drawers.privateKeysSnackbarTitle')}
+          </Text>
+          <Text style={{ color: '#FFDCBB' }}>{t('drawers.privateKeysSnackbarDescription')}</Text>
+        </View>
       </View>
     ),
     [],
@@ -60,11 +63,11 @@ export const HomeNavigator: React.FC = () => {
   const BottomSheets = {
     keys: {
       component: BottomSheetKeys,
-      height: 380,
+      height: 430,
     },
     relays: {
       component: BottomSheetRelays,
-      height: 600,
+      height: 680,
     },
   }
 
@@ -128,9 +131,6 @@ export const HomeNavigator: React.FC = () => {
             borderTopRightRadius: 28,
             borderTopLeftRadius: 28,
           },
-          draggableIcon: {
-            backgroundColor: '#000',
-          },
         }}
       >
         {BottomSheets[bottomSheetPage].component}
@@ -138,5 +138,31 @@ export const HomeNavigator: React.FC = () => {
     </>
   )
 }
+
+const styles = StyleSheet.create({
+  warning: {
+    borderRadius: 4,
+    padding: 16,
+    marginTop: 16,
+    marginBottom: 16,
+  },
+  warningTitle: {
+    marginBottom: 8,
+  },
+  warningAction: {
+    marginTop: 16,
+  },
+  warningActionOuterLayout: {
+    flexDirection: 'row',
+    justifyContent: 'flex-end',
+  },
+  bottomSheetKeysContainer: {
+    flex: 1,
+    justifyContent: 'space-between',
+  },
+  bold: {
+    fontWeight: 'bold',
+  },
+})
 
 export default HomeNavigator

@@ -8,18 +8,19 @@ import { useTranslation } from 'react-i18next'
 import moment from 'moment'
 import { StyleSheet, View } from 'react-native'
 import Logo from '../../Components/Logo'
-import { Button, Snackbar, Text } from 'react-native-paper'
+import { Button, Text, useTheme } from 'react-native-paper'
 import { navigate } from '../../lib/Navigation'
 import { useFocusEffect } from '@react-navigation/native'
 
 export const ProfileLoadPage: React.FC = () => {
+  const theme = useTheme()
   const { database } = useContext(AppContext)
   const { relayPool, lastEventId } = useContext(RelayPoolContext)
-  const { publicKey, reloadUser, user } = useContext(UserContext)
+  const { publicKey, reloadUser, user, setUserState } = useContext(UserContext)
   const { t } = useTranslation('common')
   const [profileFound, setProfileFound] = useState<boolean>(false)
   const [contactsCount, setContactsCount] = useState<number>(0)
-    
+
   useFocusEffect(
     React.useCallback(() => {
       console.log('FOCUS ProfileLoadPage')
@@ -32,10 +33,8 @@ export const ProfileLoadPage: React.FC = () => {
         ])
       }
 
-      return () => {
-        console.log('UNFOCUS ProfileLoadPage')
-      };
-    }, [])
+      return () => relayPool?.unsubscribeAll()
+    }, []),
   )
 
   useEffect(() => {
@@ -58,7 +57,7 @@ export const ProfileLoadPage: React.FC = () => {
             {
               kinds: [EventKind.meta, EventKind.textNote],
               authors,
-              since: moment().unix() - 43200,
+              since: moment().unix() - 86400,
             },
           ])
         }
@@ -66,45 +65,62 @@ export const ProfileLoadPage: React.FC = () => {
     }
   }
 
-  const goHome: () => void = () => {
-    navigate('Feed')
-  }
-
   return (
     <View style={styles.container}>
-      <Logo onlyIcon size='medium' />
-      <Text variant='titleMedium'>
-        {profileFound ? t('profileLoadPage.foundProfile') : t('profileLoadPage.searchingProfile')}
-      </Text>
-      <Text variant='titleMedium'>{t('profileLoadPage.foundContacts', { contactsCount })}</Text>
-      <Button mode='contained' onPress={goHome}>
-        {t('profileLoadPage.home')}
-      </Button>
-      <Snackbar
-        style={styles.snackbar}
-        visible
-        onDismiss={() => {}}
-        action={{
-          label: t('profileLoadPage.relays') ?? '',
-          onPress: () => {
-            relayPool?.unsubscribeAll()
-            navigate('Relays')
-          },
-        }}
-      >
-        {t('profileLoadPage.relaysDescripion')}
-      </Snackbar>
+      <View style={styles.info}>
+        <Logo onlyIcon size='medium' />
+        <Text variant='titleMedium' style={styles.center}>
+          {profileFound ? t('profileLoadPage.foundProfile') : t('profileLoadPage.searchingProfile')}
+        </Text>
+        <Text variant='titleMedium' style={styles.center}>
+          {t('profileLoadPage.foundContacts', { contactsCount })}
+        </Text>
+        <Button mode='contained' onPress={() => setUserState('ready')}>
+          {t('profileLoadPage.home')}
+        </Button>
+      </View>
+      <View style={[styles.warning, { backgroundColor: theme.colors.primaryContainer }]}>
+        <Text>{t('profileLoadPage.relaysDescripion')}</Text>
+        <View style={styles.warningActionOuterLayout}>
+          <Button style={styles.warningAction} mode='text' onPress={() => navigate('Relays')}>
+            {t('profileLoadPage.relays')}
+          </Button>
+        </View>
+      </View>
     </View>
   )
 }
 
 const styles = StyleSheet.create({
+  info: {
+    top: 150,
+    height: 220,
+    justifyContent: 'space-between',
+  },
   container: {
     padding: 16,
+    justifyContent: 'space-between',
+    flex: 1,
   },
-  snackbar: {
-    top: 150,
-    flexDirection: 'column',
+  center: {
+    alignContent: 'center',
+    textAlign: 'center',
+  },
+  warning: {
+    borderRadius: 4,
+    padding: 16,
+    marginTop: 16,
+    marginBottom: 16,
+  },
+  warningTitle: {
+    marginBottom: 8,
+  },
+  warningAction: {
+    marginTop: 16,
+  },
+  warningActionOuterLayout: {
+    flexDirection: 'row',
+    justifyContent: 'flex-end',
   },
 })
 

@@ -5,7 +5,6 @@ import {
   DefaultTheme as NavigationDefaultTheme,
   DarkTheme as NavigationDarkTheme,
 } from '@react-navigation/native'
-import { createDrawerNavigator } from '@react-navigation/drawer'
 import { RelayPoolContextProvider } from './Contexts/RelayPoolContext'
 import { I18nextProvider } from 'react-i18next'
 import { adaptNavigationTheme, Provider as PaperProvider } from 'react-native-paper'
@@ -13,16 +12,11 @@ import { SafeAreaProvider, SafeAreaInsetsContext } from 'react-native-safe-area-
 import i18n from './i18n.config'
 import nostrosDarkTheme from './Constants/Theme/theme-dark.json'
 import { navigationRef } from './lib/Navigation'
-import HomeNavigator from './Pages/HomeNavigator'
-import MenuItems from './Components/MenuItems'
-import FeedNavigator from './Pages/FeedNavigator'
 import { UserContextProvider } from './Contexts/UserContext'
-import { LogBox, StyleSheet, View } from 'react-native'
-import Logo from './Components/Logo'
+import { LogBox } from 'react-native'
+import NostrosDrawerNavigator from './Pages/NostrosDrawerNavigator'
 
 LogBox.ignoreAllLogs()
-
-const DrawerNavigator = createDrawerNavigator()
 
 export const Frontend: React.FC = () => {
   const { DarkTheme } = adaptNavigationTheme({
@@ -40,12 +34,6 @@ export const Frontend: React.FC = () => {
     }
   }, [])
 
-  const Loading: React.FC = () => (
-    <View style={styles.logo}>
-      <Logo onlyIcon size='big' />
-    </View>
-  )
-
   return (
     <PaperProvider theme={nostrosDarkTheme}>
       <SafeAreaProvider>
@@ -56,37 +44,7 @@ export const Frontend: React.FC = () => {
                 <RelayPoolContextProvider>
                   <React.Fragment>
                     <SafeAreaInsetsContext.Consumer>
-                      {() => {
-                        return (
-                          <DrawerNavigator.Navigator
-                            drawerContent={({ navigation }) => (
-                              <MenuItems navigation={navigation} />
-                            )}
-                            screenOptions={{
-                              drawerStyle: {
-                                borderRadius: 28,
-                                width: 296,
-                              },
-                            }}
-                          >
-                            <DrawerNavigator.Screen
-                              name='Loading'
-                              component={Loading}
-                              options={{ headerShown: false }}
-                            />
-                            <DrawerNavigator.Screen
-                              name='Home'
-                              component={HomeNavigator}
-                              options={{ headerShown: false }}
-                            />
-                            <DrawerNavigator.Screen
-                              name='Feed'
-                              component={FeedNavigator}
-                              options={{ headerShown: false }}
-                            />
-                          </DrawerNavigator.Navigator>
-                        )
-                      }}
+                      {() => <NostrosDrawerNavigator />}
                     </SafeAreaInsetsContext.Consumer>
                   </React.Fragment>
                 </RelayPoolContextProvider>
@@ -98,12 +56,5 @@ export const Frontend: React.FC = () => {
     </PaperProvider>
   )
 }
-const styles = StyleSheet.create({
-  logo: {
-    justifyContent: 'center',
-    alignContent: 'center',
-    flex: 1,
-  },
-})
 
 export default Frontend

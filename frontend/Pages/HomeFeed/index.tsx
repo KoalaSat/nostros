@@ -138,9 +138,6 @@ export const HomeFeed: React.FC<HomeFeedProps> = ({ jumpTo }) => {
         borderTopRightRadius: 28,
         borderTopLeftRadius: 28,
       },
-      draggableIcon: {
-        backgroundColor: '#000',
-      },
     }
   }, [])
 

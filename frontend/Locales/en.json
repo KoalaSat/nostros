@@ -9,7 +9,8 @@
       "publicKeysDescription": "Piensa en la clave pública como tu nombre de usuario (como tu @handle en Twitter). Compártela con otras personas para que te añadan a su red.",
       "privateKey": "Clave privada",
       "privateKeyDescription": "Piensa en tu clave privada como tu contraseña.",
-      "privateKeysSnackbar": "Muy importante. Guarda tu clave privada en un lugar seguro, si la pierdes no podrás volver a acceder con ella ni recuperar tu cuenta."
+      "privateKeysSnackbarTitle": "Muy importante.",
+      "privateKeysSnackbarDescription": "Guarda tu clave privada en un lugar seguro, si la pierdes no podrás volver a acceder con ella ni recuperar tu cuenta."
     },
     "homeNavigator": {
       "ProfileCreate": "",
@@ -34,7 +35,7 @@
     "profileLoadPage": {
       "relaysDescripion": "Connect with other relays if you have problems finding your data.",
       "relays": "See relays",
-      "home": "Access",
+      "home": "Go Home",
       "searchingProfile": "Searching for your profile",
       "foundProfile": "Found profile",
       "foundContacts": "{{contactsCount}} contacts found"
@@ -64,7 +65,10 @@
       "monto": "Cantity (sats.)",
       "comment": "Comment (optional)",
       "generateInvoice": "Generate invoice",
-      "cancel": "Cancel"
+      "cancel": "Cancel",
+      "npub": "Public key",
+      "copy": "Copy",
+      "open": "Open wallet"
     },
     "notificationsFeed": {
       "emptyTitle": "You don't have notifications",
@@ -75,10 +79,9 @@
       "notifications": {
         "copied": "Private key copied.\n\nSave this key on a safe place."
       },
-      "snackbarDescription": "Important. Save your key on a safe place, if loose it, you won't be able to access or recover your profile.",
-      "snackbarAction": "Copy private key",
-      "warningTitle": "Importante",
-      "warningDescription": "Guarda tu clave privada en un lugar seguro, si la pierdes, no podrás acceder a tu perfil ni recuperarlo.",
+      "warningTitle": "Important",
+      "warningDescription": "Save your key on a safe place, if loose it, you won't be able to access or recover your profile.",
+      "warningAction": "Copy private key",
       "accessButton": "Access",
       "label": "Private key",
       "copied": "Key copied",

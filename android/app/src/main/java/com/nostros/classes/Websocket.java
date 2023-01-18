@@ -42,18 +42,6 @@ public class Websocket {
             }
         }
         webSocket.sendText(message);
-        try {
-            JSONArray jsonArray = null;
-            jsonArray = new JSONArray(message);
-            String messageType = jsonArray.get(0).toString();
-            if (messageType.equals("EVENT")) {
-                JSONObject data = jsonArray.getJSONObject(2);
-                data.put("created_at", String.valueOf(System.currentTimeMillis() / 1000L));
-                database.saveEvent(data, pubKey);
-            }
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
     }
 
     public void disconnect() {

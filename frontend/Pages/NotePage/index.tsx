@@ -26,6 +26,7 @@ import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityI
 import RBSheet from 'react-native-raw-bottom-sheet'
 import ProfileCard from '../../Components/ProfileCard'
 import { navigate } from '../../lib/Navigation'
+import { useFocusEffect } from '@react-navigation/native'
 
 interface NotePageProps {
   route: { params: { noteId: string } }
@@ -48,13 +49,18 @@ export const NotePage: React.FC<NotePageProps> = ({ route }) => {
   const theme = useTheme()
   const bottomSheetProfileRef = React.useRef<RBSheet>(null)
 
-  useEffect(() => {
-    relayPool?.unsubscribeAll()
-    subscribeNotes()
-    loadNote()
-  }, [])
+  useFocusEffect(
+    React.useCallback(() => {
+      relayPool?.unsubscribeAll()
+      subscribeNotes()
+      loadNote()
+
+      return () => relayPool?.unsubscribeAll()
+    }, []),
+  )
 
   useEffect(() => {
+    console.log('loadNote', route.params.noteId)
     loadNote()
   }, [lastEventId])
 
@@ -150,9 +156,6 @@ export const NotePage: React.FC<NotePageProps> = ({ route }) => {
         borderTopRightRadius: 28,
         borderTopLeftRadius: 28,
       },
-      draggableIcon: {
-        backgroundColor: '#000',
-      },
     }
   }, [])
 
@@ -211,6 +214,7 @@ export const NotePage: React.FC<NotePageProps> = ({ route }) => {
                     size={25}
                   />
                 )}
+                disabled={userDownvoted}
               >
                 {negaiveReactions === undefined || negaiveReactions === 0 ? '-' : negaiveReactions}
               </Button>
@@ -228,6 +232,7 @@ export const NotePage: React.FC<NotePageProps> = ({ route }) => {
                     size={25}
                   />
                 )}
+                disabled={userUpvoted}
               >
                 {positiveReactions === undefined || positiveReactions === 0
                   ? '-'
@@ -244,10 +249,19 @@ export const NotePage: React.FC<NotePageProps> = ({ route }) => {
         )}
       </ScrollView>
       <AnimatedFAB
-        style={[styles.fab, { top: Dimensions.get('window').height - 140 }]}
+        style={[styles.fabSend, { top: Dimensions.get('window').height - 140 }]}
         icon='message-plus-outline'
         label='Label'
         onPress={() => navigate('Reply', { note })}
+        animateFrom='right'
+        iconMode='static'
+        extended={false}
+      />
+      <AnimatedFAB
+        style={[styles.fabHome, { top: Dimensions.get('window').height - 220 }]}
+        icon='home-outline'
+        label='Label'
+        onPress={() => navigate('Feed')}
         animateFrom='right'
         iconMode='static'
         extended={false}
@@ -297,7 +311,11 @@ const styles = StyleSheet.create({
   loading: {
     paddingBottom: 60,
   },
-  fab: {
+  fabSend: {
+    right: 16,
+    position: 'absolute',
+  },
+  fabHome: {
     right: 16,
     position: 'absolute',
   },

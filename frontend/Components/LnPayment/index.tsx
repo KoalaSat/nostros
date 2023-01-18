@@ -70,10 +70,11 @@ export const LnPayment: React.FC<TextContentProps> = ({ open, setOpen, event, us
   const rbSheetCustomStyles = React.useMemo(() => {
     return {
       container: {
-        ...styles.rbsheetContainer,
         backgroundColor: theme.colors.background,
+        padding: 16,
+        borderTopRightRadius: 28,
+        borderTopLeftRadius: 28,
       },
-      draggableIcon: styles.rbsheetDraggableIcon,
     }
   }, [])
 
@@ -159,14 +160,12 @@ export const LnPayment: React.FC<TextContentProps> = ({ open, setOpen, event, us
         <View style={styles.cardActions}>
           <View style={styles.actionButton}>
             <IconButton icon='content-copy' size={28} onPress={copyInvoice} />
-            <Text>{t('profileConfigPage.copyNPub')}</Text>
+            <Text>{t('lnPayment.copy')}</Text>
           </View>
           <View style={styles.actionButton}>
             <IconButton icon='wallet' size={28} onPress={openApp} />
-            <Text>{t('profileConfigPage.invoice')}</Text>
+            <Text>{t('lnPayment.open')}</Text>
           </View>
-          <View style={styles.actionButton}></View>
-          <View style={styles.actionButton}></View>
         </View>
       </RBSheet>
     </>
@@ -185,9 +184,6 @@ const styles = StyleSheet.create({
     marginTop: 20,
     flexDirection: 'row',
     justifyContent: 'center',
-  },
-  rbsheetDraggableIcon: {
-    backgroundColor: '#000',
   },
   rbsheetContainer: {
     padding: 16,

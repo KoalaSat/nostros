@@ -31,7 +31,6 @@ import {
   TouchableRipple,
   useTheme,
 } from 'react-native-paper'
-import { Tabs, TabScreen } from 'react-native-paper-tabs'
 import NostrosAvatar from '../../Components/NostrosAvatar'
 import { navigate } from '../../lib/Navigation'
 import RBSheet from 'react-native-raw-bottom-sheet'
@@ -41,6 +40,7 @@ import {
   Route,
   SceneRendererProps,
 } from 'react-native-tab-view/lib/typescript/src/types'
+import { npubEncode } from 'nostr-tools/nip19'
 
 export const ContactsFeed: React.FC = () => {
   const { t } = useTranslation('common')
@@ -55,7 +55,7 @@ export const ContactsFeed: React.FC = () => {
   const [contactInput, setContactInput] = useState<string>()
   const [isAddingContact, setIsAddingContact] = useState<boolean>(false)
   const [showNotification, setShowNotification] = useState<undefined | string>()
-  const [index, setIndex] = React.useState(0)
+  const [index] = React.useState(0)
   const [routes] = React.useState([
     { key: 'following', title: t('contactsFeed.following', { count: following.length }) },
     { key: 'followers', title: t('contactsFeed.followers', { count: followers.length }) },
@@ -153,30 +153,33 @@ export const ContactsFeed: React.FC = () => {
     }
   }
 
-  const renderContactItem: ListRenderItem<User> = ({ index, item }) => (
-    <TouchableRipple onPress={() => navigate('Profile', { pubKey: item.id })}>
-      <View key={item.id} style={styles.contactRow}>
-        <View style={styles.contactInfo}>
-          <NostrosAvatar
-            name={item.name}
-            pubKey={item.id}
-            src={item.picture}
-            lud06={item.lnurl}
-            size={40}
-          />
-          <View style={styles.contactName}>
-            <Text>{formatPubKey(item.id)}</Text>
-            {item.name && <Text variant='titleSmall'>{username(item)}</Text>}
+  const renderContactItem: ListRenderItem<User> = ({ index, item }) => {
+    const nPub = npubEncode(item.id)
+    return (
+      <TouchableRipple onPress={() => navigate('Profile', { pubKey: item.id })}>
+        <View key={item.id} style={styles.contactRow}>
+          <View style={styles.contactInfo}>
+            <NostrosAvatar
+              name={item.name}
+              pubKey={nPub}
+              src={item.picture}
+              lud06={item.lnurl}
+              size={40}
+            />
+            <View style={styles.contactName}>
+              <Text>{formatPubKey(nPub)}</Text>
+              {item.name && <Text variant='titleSmall'>{username(item)}</Text>}
+            </View>
+          </View>
+          <View style={styles.contactFollow}>
+            <Button onPress={() => (item.contact ? removeContact(item) : addContact(item))}>
+              {item.contact ? t('contactsFeed.stopFollowing') : t('contactsFeed.follow')}
+            </Button>
           </View>
         </View>
-        <View style={styles.contactFollow}>
-          <Button onPress={() => (item.contact ? removeContact(item) : addContact(item))}>
-            {item.contact ? t('contactsFeed.stopFollowing') : t('contactsFeed.follow')}
-          </Button>
-        </View>
-      </View>
-    </TouchableRipple>
-  )
+      </TouchableRipple>
+    )
+  }
 
   const bottomSheetStyles = React.useMemo(() => {
     return {
@@ -185,9 +188,6 @@ export const ContactsFeed: React.FC = () => {
         padding: 16,
         borderTopRightRadius: 28,
         borderTopLeftRadius: 28,
-      },
-      draggableIcon: {
-        backgroundColor: '#000',
       },
     }
   }, [])

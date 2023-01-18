@@ -66,7 +66,7 @@ export const MenuItems: React.FC = () => {
                   <View style={styles.cardAvatar}>
                     <NostrosAvatar
                       name={user?.name}
-                      pubKey={publicKey ?? ''}
+                      pubKey={nPub ?? ''}
                       src={user?.picture}
                       lud06={user?.lnurl}
                     />

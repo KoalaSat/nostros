@@ -17,7 +17,6 @@ import {
   Snackbar,
 } from 'react-native-paper'
 import RBSheet from 'react-native-raw-bottom-sheet'
-import { useFocusEffect } from '@react-navigation/native'
 
 export const RelaysPage: React.FC = () => {
   const defaultRelayInput = React.useMemo(() => 'wss://', [])
@@ -92,10 +91,11 @@ export const RelaysPage: React.FC = () => {
   const rbSheetCustomStyles = React.useMemo(() => {
     return {
       container: {
-        ...styles.rbsheetContainer,
         backgroundColor: theme.colors.background,
+        padding: 16,
+        borderTopRightRadius: 28,
+        borderTopLeftRadius: 28,
       },
-      draggableIcon: styles.rbsheetDraggableIcon,
     }
   }, [])
 
@@ -202,14 +202,6 @@ const styles = StyleSheet.create({
     bottom: 16,
     right: 16,
     position: 'absolute',
-  },
-  rbsheetDraggableIcon: {
-    backgroundColor: '#000',
-  },
-  rbsheetContainer: {
-    padding: 16,
-    borderTopRightRadius: 28,
-    borderTopLeftRadius: 28,
   },
   relayActions: {
     flexDirection: 'row',
