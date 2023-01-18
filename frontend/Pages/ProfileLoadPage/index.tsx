@@ -10,25 +10,33 @@ import { StyleSheet, View } from 'react-native'
 import Logo from '../../Components/Logo'
 import { Button, Snackbar, Text } from 'react-native-paper'
 import { navigate } from '../../lib/Navigation'
+import { useFocusEffect } from '@react-navigation/native'
 
 export const ProfileLoadPage: React.FC = () => {
-  const { loadingDb, database } = useContext(AppContext)
-  const { relayPool, lastEventId, loadingRelayPool } = useContext(RelayPoolContext)
+  const { database } = useContext(AppContext)
+  const { relayPool, lastEventId } = useContext(RelayPoolContext)
   const { publicKey, reloadUser, user } = useContext(UserContext)
   const { t } = useTranslation('common')
   const [profileFound, setProfileFound] = useState<boolean>(false)
   const [contactsCount, setContactsCount] = useState<number>(0)
+    
+  useFocusEffect(
+    React.useCallback(() => {
+      console.log('FOCUS ProfileLoadPage')
+      if (publicKey) {
+        relayPool?.subscribe('loading-meta', [
+          {
+            kinds: [EventKind.meta],
+            authors: [publicKey],
+          },
+        ])
+      }
 
-  useEffect(() => {
-    if (!loadingRelayPool && !loadingDb && publicKey) {
-      relayPool?.subscribe('loading-meta', [
-        {
-          kinds: [EventKind.meta],
-          authors: [publicKey],
-        },
-      ])
-    }
-  }, [loadingRelayPool, publicKey, loadingDb])
+      return () => {
+        console.log('UNFOCUS ProfileLoadPage')
+      };
+    }, [])
+  )
 
   useEffect(() => {
     loadPets()
@@ -50,12 +58,16 @@ export const ProfileLoadPage: React.FC = () => {
             {
               kinds: [EventKind.meta, EventKind.textNote],
               authors,
-              since: moment().unix() - 86400,
+              since: moment().unix() - 43200,
             },
           ])
         }
       })
     }
+  }
+
+  const goHome: () => void = () => {
+    navigate('Feed')
   }
 
   return (
@@ -65,7 +77,7 @@ export const ProfileLoadPage: React.FC = () => {
         {profileFound ? t('profileLoadPage.foundProfile') : t('profileLoadPage.searchingProfile')}
       </Text>
       <Text variant='titleMedium'>{t('profileLoadPage.foundContacts', { contactsCount })}</Text>
-      <Button mode='contained' onPress={() => navigate('Feed')}>
+      <Button mode='contained' onPress={goHome}>
         {t('profileLoadPage.home')}
       </Button>
       <Snackbar

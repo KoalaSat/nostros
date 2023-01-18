@@ -17,6 +17,7 @@ import {
   Snackbar,
 } from 'react-native-paper'
 import RBSheet from 'react-native-raw-bottom-sheet'
+import { useFocusEffect } from '@react-navigation/native'
 
 export const RelaysPage: React.FC = () => {
   const defaultRelayInput = React.useMemo(() => 'wss://', [])

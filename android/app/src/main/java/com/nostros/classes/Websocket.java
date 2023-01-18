@@ -17,6 +17,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.time.Instant;
 
 public class Websocket {
     private WebSocket webSocket;
@@ -41,11 +42,15 @@ public class Websocket {
             }
         }
         webSocket.sendText(message);
-        JSONArray jsonArray = null;
         try {
+            JSONArray jsonArray = null;
             jsonArray = new JSONArray(message);
-            JSONObject data = jsonArray.getJSONObject(2);
-            database.saveEvent(data, pubKey);
+            String messageType = jsonArray.get(0).toString();
+            if (messageType.equals("EVENT")) {
+                JSONObject data = jsonArray.getJSONObject(2);
+                data.put("created_at", String.valueOf(System.currentTimeMillis() / 1000L));
+                database.saveEvent(data, pubKey);
+            }
         } catch (JSONException e) {
             e.printStackTrace();
         }

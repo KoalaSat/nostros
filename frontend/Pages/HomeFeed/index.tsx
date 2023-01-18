@@ -152,7 +152,6 @@ export const HomeFeed: React.FC<HomeFeedProps> = ({ jumpTo }) => {
           horizontal={false}
           showsVerticalScrollIndicator={false}
           refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
-          style={styles.list}
         >
           {notes.map((note) => renderItem(note))}
           {notes.length >= 10 && <ActivityIndicator animating={true} />}
@@ -193,9 +192,6 @@ export const HomeFeed: React.FC<HomeFeedProps> = ({ jumpTo }) => {
 }
 
 const styles = StyleSheet.create({
-  list: {
-    padding: 16,
-  },
   noteCard: {
     marginBottom: 16,
   },
