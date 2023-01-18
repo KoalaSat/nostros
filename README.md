@@ -8,12 +8,6 @@
 
 Wellcome to the Nostros project, a NOSTR mobile client.
 
-Chanel Id:
-
-```
-8d37308d97356600f67a28039d598a52b8c4fa1b73ef6f2e7b7d40197c3afa56
-```
-
 # Getting Started
 
 What is Nostr: https://github.com/nostr-protocol/nostr
