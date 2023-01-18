@@ -31,7 +31,7 @@ Local setup: https://github.com/KoalaSat/nostros/blob/main/SETUP.md
 
 # Kudos
 
-- Inspired on https://github.com/jb55/nostr-js and https://github.com/fiatjaf/nostr-tools
+- Inspired by https://github.com/jb55/nostr-js and https://github.com/fiatjaf/nostr-tools
 - Discovered thanks to https://lunaticoin.com
 
 # Support
