@@ -119,7 +119,7 @@ export const ConversationsFeed: React.FC = () => {
           </View>
           <View style={styles.contactInfo}>
             <View style={styles.contactName}>
-              <Text>{moment.unix(item.created_at).format('HH:mm DD-MM-YY')}</Text>
+              <Text>{moment.unix(item.created_at).format('HH:mm L')}</Text>
               {item.pubkey !== publicKey && !item.read && <Badge size={16}></Badge>}
             </View>
           </View>

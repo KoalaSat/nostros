@@ -82,7 +82,13 @@ export const ProfileLoadPage: React.FC = () => {
       <View style={[styles.warning, { backgroundColor: theme.colors.primaryContainer }]}>
         <Text>{t('profileLoadPage.relaysDescripion')}</Text>
         <View style={styles.warningActionOuterLayout}>
-          <Button style={styles.warningAction} mode='text' onPress={() => navigate('Relays')}>
+          <Button
+            style={styles.warningAction}
+            mode='text'
+            onPress={() => {
+              navigate('Relays')
+            }}
+          >
             {t('profileLoadPage.relays')}
           </Button>
         </View>

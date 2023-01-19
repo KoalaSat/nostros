@@ -13,11 +13,9 @@ import com.neovisionaries.ws.client.WebSocketFrame;
 import com.nostros.modules.DatabaseModule;
 
 import org.json.JSONArray;
-import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
-import java.time.Instant;
 
 public class Websocket {
     private WebSocket webSocket;

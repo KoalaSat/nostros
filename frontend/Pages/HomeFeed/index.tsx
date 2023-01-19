@@ -2,6 +2,7 @@ import React, { useCallback, useContext, useState, useEffect } from 'react'
 import { getUsers, User } from '../../Functions/DatabaseFunctions/Users'
 import {
   Dimensions,
+  ListRenderItem,
   NativeScrollEvent,
   NativeSyntheticEvent,
   RefreshControl,
@@ -24,6 +25,7 @@ import { useTheme } from '@react-navigation/native'
 import { navigate } from '../../lib/Navigation'
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'
 import { t } from 'i18next'
+import { FlatList } from 'react-native-gesture-handler'
 
 interface HomeFeedProps {
   jumpTo: (tabName: string) => void
@@ -91,6 +93,7 @@ export const HomeFeed: React.FC<HomeFeedProps> = ({ jumpTo }) => {
       },
     ])
     setAuthors(newAuthors)
+    setRefreshing(false)
   }
 
   const onScroll: (event: NativeSyntheticEvent<NativeScrollEvent>) => void = (event) => {
@@ -103,7 +106,6 @@ export const HomeFeed: React.FC<HomeFeedProps> = ({ jumpTo }) => {
     if (database && publicKey) {
       getMainNotes(database, publicKey, pageSize).then((notes) => {
         setNotes(notes)
-        setRefreshing(false)
         if (notes.length > 0) {
           relayPool?.subscribe('homepage-reactions', [
             {
@@ -116,13 +118,13 @@ export const HomeFeed: React.FC<HomeFeedProps> = ({ jumpTo }) => {
     }
   }
 
-  const renderItem: (note: Note) => JSX.Element = (note) => {
+  const renderItem: ListRenderItem<Note> = ({ item, index }) => {
     return (
-      <View style={styles.noteCard} key={note.id}>
+      <View style={styles.noteCard} key={item.id}>
         <NoteCard
-          note={note}
+          note={item}
           onPressOptions={() => {
-            setProfileCardPubKey(note.pubkey)
+            setProfileCardPubKey(item.pubkey)
             bottomSheetProfileRef.current?.open()
           }}
         />
@@ -150,7 +152,7 @@ export const HomeFeed: React.FC<HomeFeedProps> = ({ jumpTo }) => {
           showsVerticalScrollIndicator={false}
           refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
         >
-          {notes.map((note) => renderItem(note))}
+          <FlatList showsVerticalScrollIndicator={false} data={notes} renderItem={renderItem} />
           {notes.length >= 10 && <ActivityIndicator animating={true} />}
         </ScrollView>
       ) : (

@@ -51,7 +51,7 @@ export const NoteCard: React.FC<NoteCardProps> = ({
   const [userDownvoted, setUserDownvoted] = useState<boolean>(false)
   const [repliesCount, setRepliesCount] = React.useState<number>(0)
   const [hide, setHide] = useState<boolean>(isContentWarning(note))
-  const timestamp = useMemo(() => moment.unix(note.created_at).format('HH:mm DD-MM-YY'), [note])
+  const timestamp = useMemo(() => moment.unix(note.created_at).format('HH:mm L'), [note])
   const nPub = useMemo(() => npubEncode(note.pubkey), [note])
 
   useEffect(() => {

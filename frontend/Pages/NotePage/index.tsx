@@ -71,7 +71,7 @@ export const NotePage: React.FC<NotePageProps> = ({ route }) => {
         const event = events[0]
         setNote(event)
         setNPub(npubEncode(event.pubkey))
-        setTimestamp(moment.unix(event.created_at).format('HH:mm DD-MM-YY'))
+        setTimestamp(moment.unix(event.created_at).format('HH:mm L'))
 
         const notes = await getNotes(database, { filters: { reply_event_id: route.params.noteId } })
         const rootReplies = getDirectReplies(event, notes)
@@ -252,7 +252,9 @@ export const NotePage: React.FC<NotePageProps> = ({ route }) => {
         style={[styles.fabSend, { top: Dimensions.get('window').height - 140 }]}
         icon='message-plus-outline'
         label='Label'
-        onPress={() => navigate('Reply', { note })}
+        onPress={() => {
+          navigate('Reply', { note })
+        }}
         animateFrom='right'
         iconMode='static'
         extended={false}
@@ -261,7 +263,9 @@ export const NotePage: React.FC<NotePageProps> = ({ route }) => {
         style={[styles.fabHome, { top: Dimensions.get('window').height - 220 }]}
         icon='home-outline'
         label='Label'
-        onPress={() => navigate('Feed')}
+        onPress={() => {
+          navigate('Feed')
+        }}
         animateFrom='right'
         iconMode='static'
         extended={false}
