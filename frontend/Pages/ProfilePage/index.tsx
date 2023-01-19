@@ -180,9 +180,6 @@ export const ProfilePage: React.FC<ProfilePageProps> = ({ route }) => {
         borderTopRightRadius: 28,
         borderTopLeftRadius: 28,
       },
-      draggableIcon: {
-        backgroundColor: '#000',
-      },
     }
   }, [])
 
@@ -193,7 +190,7 @@ export const ProfilePage: React.FC<ProfilePageProps> = ({ route }) => {
           <View>
             <NostrosAvatar
               name={user?.name}
-              pubKey={route.params.pubKey}
+              pubKey={npubEncode(route.params.pubKey)}
               src={user?.picture}
               lud06={user?.lnurl}
               size={54}

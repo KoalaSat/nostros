@@ -209,10 +209,11 @@ export const ProfileConfigPage: React.FC = () => {
   const rbSheetCustomStyles = React.useMemo(() => {
     return {
       container: {
-        ...styles.rbsheetContainer,
         backgroundColor: theme.colors.background,
+        padding: 16,
+        borderTopRightRadius: 28,
+        borderTopLeftRadius: 28,
       },
-      draggableIcon: styles.rbsheetDraggableIcon,
     }
   }, [])
 
@@ -246,7 +247,7 @@ export const ProfileConfigPage: React.FC = () => {
                 ) : (
                   <NostrosAvatar
                     name={user?.name}
-                    pubKey={nPub ?? publicKey ?? ''}
+                    pubKey={nPub ?? ''}
                     src={user?.picture}
                     lud06={user?.lnurl}
                     size={100}
@@ -515,14 +516,6 @@ const styles = StyleSheet.create({
     marginTop: 32,
     justifyContent: 'center',
     alignItems: 'center',
-  },
-  rbsheetDraggableIcon: {
-    backgroundColor: '#000',
-  },
-  rbsheetContainer: {
-    padding: 16,
-    borderTopRightRadius: 28,
-    borderTopLeftRadius: 28,
   },
   snackbar: {
     margin: 16,

@@ -36,6 +36,7 @@ import moment from 'moment'
 import RBSheet from 'react-native-raw-bottom-sheet'
 import { useTranslation } from 'react-i18next'
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'
+import { npubEncode } from 'nostr-tools/nip19'
 
 export const ConversationsFeed: React.FC = () => {
   const theme = useTheme()
@@ -107,7 +108,7 @@ export const ConversationsFeed: React.FC = () => {
           <View style={styles.contactUser}>
             <NostrosAvatar
               name={user.name}
-              pubKey={user.id}
+              pubKey={npubEncode(user.id)}
               src={user.picture}
               lud06={user.lnurl}
               size={40}
@@ -118,7 +119,7 @@ export const ConversationsFeed: React.FC = () => {
           </View>
           <View style={styles.contactInfo}>
             <View style={styles.contactName}>
-              <Text>{moment.unix(item.created_at).format('HH:mm DD-MM-YY')}</Text>
+              <Text>{moment.unix(item.created_at).format('HH:mm L')}</Text>
               {item.pubkey !== publicKey && !item.read && <Badge size={16}></Badge>}
             </View>
           </View>
@@ -140,9 +141,6 @@ export const ConversationsFeed: React.FC = () => {
         padding: 16,
         borderTopRightRadius: 28,
         borderTopLeftRadius: 28,
-      },
-      draggableIcon: {
-        backgroundColor: '#000',
       },
     }
   }, [])
@@ -186,7 +184,7 @@ export const ConversationsFeed: React.FC = () => {
         <View style={styles.contactUser}>
           <NostrosAvatar
             name={item.name}
-            pubKey={item.id}
+            pubKey={npubEncode(item.id)}
             src={item.picture}
             lud06={item.lnurl}
             size={40}

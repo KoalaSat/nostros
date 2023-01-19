@@ -18,7 +18,7 @@ export const Logo: React.FC<LogoProps> = ({ onlyIcon = false, size = 'small' }) 
   }
   return (
     <View style={styles.container}>
-      <SvgXml xml={nostrosLogoSvg} style={[styles.logo, { height: logoHeight[size] }]} />
+      <SvgXml height={logoHeight[size]} xml={nostrosLogoSvg} style={styles.logo} />
       {!onlyIcon && (
         <Text style={styles.text} variant={size === 'small' ? 'headlineSmall' : 'displayMedium'}>
           NOSTROS
@@ -38,7 +38,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   text: {
-    fontFamily: 'SpaceGrotesk-Bold',
+    fontFamily: 'Iceland-Regular',
     flex: 2,
     height: 60,
     textAlignVertical: 'center',

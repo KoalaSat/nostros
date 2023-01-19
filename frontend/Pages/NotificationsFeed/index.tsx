@@ -130,9 +130,6 @@ export const NotificationsFeed: React.FC = () => {
         borderTopRightRadius: 28,
         borderTopLeftRadius: 28,
       },
-      draggableIcon: {
-        backgroundColor: '#000',
-      },
     }
   }, [])
 

@@ -20,6 +20,7 @@ import { RelayPoolContext } from '../../Contexts/RelayPoolContext'
 import { formatPubKey, populatePets, username } from '../../Functions/RelayFunctions/Users'
 import { getNip19Key } from '../../lib/nostr/Nip19'
 import { UserContext } from '../../Contexts/UserContext'
+import { TabView, SceneMap, TabBar } from 'react-native-tab-view'
 import {
   AnimatedFAB,
   Button,
@@ -30,13 +31,19 @@ import {
   TouchableRipple,
   useTheme,
 } from 'react-native-paper'
-import { Tabs, TabScreen } from 'react-native-paper-tabs'
 import NostrosAvatar from '../../Components/NostrosAvatar'
 import { navigate } from '../../lib/Navigation'
 import RBSheet from 'react-native-raw-bottom-sheet'
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'
+import {
+  NavigationState,
+  Route,
+  SceneRendererProps,
+} from 'react-native-tab-view/lib/typescript/src/types'
+import { npubEncode } from 'nostr-tools/nip19'
 
 export const ContactsFeed: React.FC = () => {
+  const { t } = useTranslation('common')
   const { database } = useContext(AppContext)
   const { publicKey, setContantsCount, setFollowersCount, nPub } = React.useContext(UserContext)
   const { relayPool, lastEventId } = useContext(RelayPoolContext)
@@ -48,8 +55,11 @@ export const ContactsFeed: React.FC = () => {
   const [contactInput, setContactInput] = useState<string>()
   const [isAddingContact, setIsAddingContact] = useState<boolean>(false)
   const [showNotification, setShowNotification] = useState<undefined | string>()
-
-  const { t } = useTranslation('common')
+  const [index] = React.useState(0)
+  const [routes] = React.useState([
+    { key: 'following', title: t('contactsFeed.following', { count: following.length }) },
+    { key: 'followers', title: t('contactsFeed.followers', { count: followers.length }) },
+  ])
 
   useEffect(() => {
     loadUsers()
@@ -143,30 +153,33 @@ export const ContactsFeed: React.FC = () => {
     }
   }
 
-  const renderContactItem: ListRenderItem<User> = ({ index, item }) => (
-    <TouchableRipple onPress={() => navigate('Profile', { pubKey: item.id })}>
-      <View key={item.id} style={styles.contactRow}>
-        <View style={styles.contactInfo}>
-          <NostrosAvatar
-            name={item.name}
-            pubKey={item.id}
-            src={item.picture}
-            lud06={item.lnurl}
-            size={40}
-          />
-          <View style={styles.contactName}>
-            <Text>{formatPubKey(item.id)}</Text>
-            {item.name && <Text variant='titleSmall'>{username(item)}</Text>}
+  const renderContactItem: ListRenderItem<User> = ({ index, item }) => {
+    const nPub = npubEncode(item.id)
+    return (
+      <TouchableRipple onPress={() => navigate('Profile', { pubKey: item.id })}>
+        <View key={item.id} style={styles.contactRow}>
+          <View style={styles.contactInfo}>
+            <NostrosAvatar
+              name={item.name}
+              pubKey={nPub}
+              src={item.picture}
+              lud06={item.lnurl}
+              size={40}
+            />
+            <View style={styles.contactName}>
+              <Text>{formatPubKey(nPub)}</Text>
+              {item.name && <Text variant='titleSmall'>{username(item)}</Text>}
+            </View>
+          </View>
+          <View style={styles.contactFollow}>
+            <Button onPress={() => (item.contact ? removeContact(item) : addContact(item))}>
+              {item.contact ? t('contactsFeed.stopFollowing') : t('contactsFeed.follow')}
+            </Button>
           </View>
         </View>
-        <View style={styles.contactFollow}>
-          <Button onPress={() => (item.contact ? removeContact(item) : addContact(item))}>
-            {item.contact ? t('contactsFeed.stopFollowing') : t('contactsFeed.follow')}
-          </Button>
-        </View>
-      </View>
-    </TouchableRipple>
-  )
+      </TouchableRipple>
+    )
+  }
 
   const bottomSheetStyles = React.useMemo(() => {
     return {
@@ -176,97 +189,102 @@ export const ContactsFeed: React.FC = () => {
         borderTopRightRadius: 28,
         borderTopLeftRadius: 28,
       },
-      draggableIcon: {
-        backgroundColor: '#000',
-      },
     }
   }, [])
 
+  const Following: () => JSX.Element = () => (
+    <View style={styles.container}>
+      {following.length > 0 ? (
+        <ScrollView horizontal={false}>
+          <View>
+            <FlatList
+              data={following}
+              renderItem={renderContactItem}
+              ItemSeparatorComponent={Divider}
+            />
+          </View>
+        </ScrollView>
+      ) : (
+        <View style={styles.blank}>
+          <MaterialCommunityIcons name='account-group-outline' size={64} style={styles.center} />
+          <Text variant='headlineSmall' style={styles.center}>
+            {t('contactsFeed.emptyTitleFollowing')}
+          </Text>
+          <Text variant='bodyMedium' style={styles.center}>
+            {t('contactsFeed.emptyDescriptionFollowing')}
+          </Text>
+          <Button mode='contained' compact onPress={() => bottomSheetAddContactRef.current?.open()}>
+            {t('contactsFeed.emptyButtonFollowing')}
+          </Button>
+        </View>
+      )}
+    </View>
+  )
+
+  const Follower: () => JSX.Element = () => (
+    <View style={styles.container}>
+      {followers.length > 0 ? (
+        <ScrollView horizontal={false}>
+          <View>
+            <FlatList
+              data={followers}
+              renderItem={renderContactItem}
+              ItemSeparatorComponent={Divider}
+            />
+          </View>
+        </ScrollView>
+      ) : (
+        <View style={styles.blank}>
+          <MaterialCommunityIcons name='account-group-outline' size={64} style={styles.center} />
+          <Text variant='headlineSmall' style={styles.center}>
+            {t('contactsFeed.emptyTitleFollower')}
+          </Text>
+          <Text variant='bodyMedium' style={styles.center}>
+            {t('contactsFeed.emptyDescriptionFollower')}
+          </Text>
+          <Button
+            mode='contained'
+            compact
+            onPress={() => {
+              setShowNotification('keyCopied')
+              Clipboard.setString(nPub ?? '')
+            }}
+          >
+            {t('contactsFeed.emptyButtonFollower')}
+          </Button>
+        </View>
+      )}
+    </View>
+  )
+
+  const renderScene = SceneMap({
+    following: Following,
+    followers: Follower,
+  })
+
+  const renderTabBar: (
+    props: SceneRendererProps & { navigationState: NavigationState<Route> },
+  ) => JSX.Element = (props) => (
+    <TabBar
+      {...props}
+      indicatorStyle={{ backgroundColor: theme.colors.primary }}
+      style={{ backgroundColor: theme.colors.background }}
+      renderLabel={({ route }) => (
+        <Text style={[styles.tabLabel, { color: theme.colors.onSurfaceVariant }]}>
+          {route.title}
+        </Text>
+      )}
+    />
+  )
+
   return (
     <>
-      <Tabs
-        value={0}
-        onChange={() => {}}
-        defaultIndex={0}
-        uppercase={false}
-        style={{ backgroundColor: theme.colors.background }}
-      >
-        <TabScreen label={t('contactsFeed.following', { count: following.length })}>
-          <View style={styles.container}>
-            {following.length > 0 ? (
-              <ScrollView horizontal={false}>
-                <View>
-                  <FlatList
-                    data={following}
-                    renderItem={renderContactItem}
-                    ItemSeparatorComponent={Divider}
-                  />
-                </View>
-              </ScrollView>
-            ) : (
-              <View style={styles.blank}>
-                <MaterialCommunityIcons
-                  name='account-group-outline'
-                  size={64}
-                  style={styles.center}
-                />
-                <Text variant='headlineSmall' style={styles.center}>
-                  {t('contactsFeed.emptyTitleFollowing')}
-                </Text>
-                <Text variant='bodyMedium' style={styles.center}>
-                  {t('contactsFeed.emptyDescriptionFollowing')}
-                </Text>
-                <Button
-                  mode='contained'
-                  compact
-                  onPress={() => bottomSheetAddContactRef.current?.open()}
-                >
-                  {t('contactsFeed.emptyButtonFollowing')}
-                </Button>
-              </View>
-            )}
-          </View>
-        </TabScreen>
-        <TabScreen label={t('contactsFeed.followers', { count: followers.length })}>
-          <View style={styles.container}>
-            {followers.length > 0 ? (
-              <ScrollView horizontal={false}>
-                <View>
-                  <FlatList
-                    data={followers}
-                    renderItem={renderContactItem}
-                    ItemSeparatorComponent={Divider}
-                  />
-                </View>
-              </ScrollView>
-            ) : (
-              <View style={styles.blank}>
-                <MaterialCommunityIcons
-                  name='account-group-outline'
-                  size={64}
-                  style={styles.center}
-                />
-                <Text variant='headlineSmall' style={styles.center}>
-                  {t('contactsFeed.emptyTitleFollower')}
-                </Text>
-                <Text variant='bodyMedium' style={styles.center}>
-                  {t('contactsFeed.emptyDescriptionFollower')}
-                </Text>
-                <Button
-                  mode='contained'
-                  compact
-                  onPress={() => {
-                    setShowNotification('keyCopied')
-                    Clipboard.setString(nPub ?? '')
-                  }}
-                >
-                  {t('contactsFeed.emptyButtonFollower')}
-                </Button>
-              </View>
-            )}
-          </View>
-        </TabScreen>
-      </Tabs>
+      <TabView
+        navigationState={{ index, routes }}
+        renderScene={renderScene}
+        renderTabBar={renderTabBar}
+        onIndexChange={() => {}}
+      />
       <AnimatedFAB
         style={[styles.fab, { top: Dimensions.get('window').height - 220 }]}
         icon='account-multiple-plus-outline'
@@ -370,8 +388,11 @@ const styles = StyleSheet.create({
   blank: {
     justifyContent: 'space-between',
     height: 232,
-    marginTop: 12,
+    marginTop: 5,
     padding: 16,
+  },
+  tabLabel: {
+    margin: 8,
   },
 })
 

@@ -27,6 +27,7 @@ import {
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'
 import { REGEX_SOCKET_LINK } from '../../Constants/Relay'
 import { push } from '../../lib/Navigation'
+import { npubEncode } from 'nostr-tools/nip19'
 
 interface NoteCardProps {
   note: Note
@@ -50,7 +51,8 @@ export const NoteCard: React.FC<NoteCardProps> = ({
   const [userDownvoted, setUserDownvoted] = useState<boolean>(false)
   const [repliesCount, setRepliesCount] = React.useState<number>(0)
   const [hide, setHide] = useState<boolean>(isContentWarning(note))
-  const timestamp = useMemo(() => moment.unix(note.created_at).format('HH:mm DD-MM-YY'), [note])
+  const timestamp = useMemo(() => moment.unix(note.created_at).format('HH:mm L'), [note])
+  const nPub = useMemo(() => npubEncode(note.pubkey), [note])
 
   useEffect(() => {
     if (database && publicKey && note.id) {
@@ -187,14 +189,14 @@ export const NoteCard: React.FC<NoteCardProps> = ({
             <View>
               <NostrosAvatar
                 name={note.name}
-                pubKey={note.pubkey}
+                pubKey={nPub}
                 src={note.picture}
                 lud06={note.lnurl}
                 size={54}
               />
             </View>
             <View>
-              <Text>{usernamePubKey(note.name, note.pubkey)}</Text>
+              <Text>{usernamePubKey(note.name, nPub)}</Text>
               <Text>{timestamp}</Text>
             </View>
           </View>
@@ -221,6 +223,7 @@ export const NoteCard: React.FC<NoteCardProps> = ({
                 size={25}
               />
             )}
+            disabled={userDownvoted}
           >
             {negaiveReactions === undefined || negaiveReactions === 0 ? '-' : negaiveReactions}
           </Button>
@@ -238,6 +241,7 @@ export const NoteCard: React.FC<NoteCardProps> = ({
                 size={25}
               />
             )}
+            disabled={userUpvoted}
           >
             {positiveReactions === undefined || positiveReactions === 0 ? '-' : positiveReactions}
           </Button>

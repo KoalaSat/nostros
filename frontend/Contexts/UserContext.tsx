@@ -14,6 +14,8 @@ import { navigate } from '../lib/Navigation'
 import { npubEncode, nsecEncode } from 'nostr-tools/nip19'
 
 export interface UserContextProps {
+  userState: 'loading' | 'access' | 'ready'
+  setUserState: (userState: 'loading' | 'access' | 'ready') => void
   nPub?: string
   nSec?: string
   publicKey?: string
@@ -35,6 +37,8 @@ export interface UserContextProviderProps {
 }
 
 export const initialUserContext: UserContextProps = {
+  userState: 'loading',
+  setUserState: () => {},
   setPublicKey: () => {},
   setPrivateKey: () => {},
   setUser: () => {},
@@ -49,6 +53,7 @@ export const initialUserContext: UserContextProps = {
 export const UserContextProvider = ({ children }: UserContextProviderProps): JSX.Element => {
   const { database, loadingDb, init } = useContext(AppContext)
   const { relayPool } = useContext(RelayPoolContext)
+  const [userState, setUserState] = useState<'loading' | 'access' | 'ready'>('loading')
   const [publicKey, setPublicKey] = useState<string>()
   const [nPub, setNpub] = useState<string>()
   const [nSec, setNsec] = useState<string>()
@@ -85,6 +90,7 @@ export const UserContextProvider = ({ children }: UserContextProviderProps): JSX
         SInfo.deleteItem('privateKey', {}).then(() => {
           SInfo.deleteItem('publicKey', {}).then(() => {
             init()
+            setUserState('access')
             navigate('Home', { screen: 'ProfileConnect' })
           })
         })
@@ -110,21 +116,24 @@ export const UserContextProvider = ({ children }: UserContextProviderProps): JSX
   }, [publicKey])
 
   useEffect(() => {
+    if (userState === 'ready' && publicKey) {
+      navigate('Feed')
+    }
+  }, [userState, publicKey])
+
+  useEffect(() => {
     if (!loadingDb) {
       SInfo.getItem('privateKey', {}).then((privateResult) => {
         if (privateResult && privateResult !== '') {
           setPrivateKey(privateResult)
-          setPublicKey(getPublickey(privateResult))
-          navigate('Feed')
+        }
+      })
+      SInfo.getItem('publicKey', {}).then((publicResult) => {
+        if (publicResult && publicResult !== '') {
+          setPublicKey(publicResult)
+          setUserState('ready')
         } else {
-          SInfo.getItem('publicKey', {}).then((publicResult) => {
-            if (publicResult && publicResult !== '') {
-              setPublicKey(publicResult)
-              navigate('Feed')
-            } else {
-              navigate('Home')
-            }
-          })
+          setUserState('access')
         }
       })
     }
@@ -133,6 +142,8 @@ export const UserContextProvider = ({ children }: UserContextProviderProps): JSX
   return (
     <UserContext.Provider
       value={{
+        userState,
+        setUserState,
         nSec,
         nPub,
         setUser,

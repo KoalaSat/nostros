@@ -13,7 +13,7 @@ interface ProfileCreatePageProps {
 
 export const ProfileCreatePage: React.FC<ProfileCreatePageProps> = ({ navigation }) => {
   const { t } = useTranslation('common')
-  const { setPrivateKey } = useContext(UserContext)
+  const { setPrivateKey, setUserState } = useContext(UserContext)
   const [key, setKey] = useState<string>()
   const [inputValue, setInputValue] = useState<string>()
   const [copied, setCopied] = useState<boolean>(false)
@@ -37,7 +37,7 @@ export const ProfileCreatePage: React.FC<ProfileCreatePageProps> = ({ navigation
 
   const onPress: () => void = () => {
     setPrivateKey(key)
-    navigation.jumpTo('Feed')
+    setUserState('ready')
   }
 
   return (
@@ -125,6 +125,9 @@ const styles = StyleSheet.create({
     flexDirection: 'column',
     justifyContent: 'center',
     alignContent: 'center',
+  },
+  bold: {
+    fontWeight: 'bold',
   },
 })
 

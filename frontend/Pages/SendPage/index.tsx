@@ -14,6 +14,7 @@ import RBSheet from 'react-native-raw-bottom-sheet'
 import { UserContext } from '../../Contexts/UserContext'
 import NostrosAvatar from '../../Components/NostrosAvatar'
 import { goBack } from '../../lib/Navigation'
+import { npubEncode } from 'nostr-tools/nip19'
 
 interface SendPageProps {
   route: { params: { note: Note } | undefined }
@@ -124,7 +125,7 @@ export const SendPage: React.FC<SendPageProps> = ({ route }) => {
         <View style={styles.contactInfo}>
           <NostrosAvatar
             name={item.name}
-            pubKey={item.id}
+            pubKey={npubEncode(item.id)}
             src={item.picture}
             lud06={item.lnurl}
             size={34}

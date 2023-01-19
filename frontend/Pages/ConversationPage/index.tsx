@@ -171,7 +171,7 @@ export const ConversationPage: React.FC<ConversationPageProps> = ({ route }) => 
                     <MaterialCommunityIcons name='clock-outline' size={14} />
                   </View>
                 )}
-                <Text>{moment.unix(item.created_at).format('HH:mm DD-MM')}</Text>
+                <Text>{moment.unix(item.created_at).format('HH:mm L')}</Text>
               </View>
             </View>
             <TextContent content={item.content} />
