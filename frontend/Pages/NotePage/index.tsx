@@ -144,6 +144,7 @@ export const NotePage: React.FC<NotePageProps> = ({ route }) => {
 
   const renderItem: (note: Note) => JSX.Element = (note) => (
     <View style={[styles.noteCard, { borderColor: theme.colors.onSecondary }]} key={note.id}>
+      <View style={styles.noteCardSpace}></View>
       <NoteCard
         note={note}
         onPressOptions={() => {
@@ -322,10 +323,12 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-start',
   },
   list: {
-    padding: 16,
+    paddingLeft: 16,
+    paddingRight: 16,
   },
   loading: {
-    paddingBottom: 60,
+    paddingTop: 30,
+    paddingBottom: 30,
   },
   fabSend: {
     right: 16,
@@ -338,7 +341,7 @@ const styles = StyleSheet.create({
   noteCard: {
     borderLeftWidth: 1,
     paddingLeft: 32,
-    paddingBottom: 16,
+    paddingTop: 16
   },
 })
 

@@ -435,7 +435,7 @@ const styles = StyleSheet.create({
   },
   blank: {
     justifyContent: 'space-between',
-    height: 232,
+    height: 252,
     marginTop: 5,
     padding: 16,
   },

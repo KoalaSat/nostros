@@ -83,11 +83,11 @@ export const LnPayment: React.FC<TextContentProps> = ({ open, setOpen, event, us
       <RBSheet
         ref={bottomSheetLnPaymentRef}
         closeOnDragDown={true}
-        height={330}
+        height={380}
         customStyles={rbSheetCustomStyles}
         onClose={() => setOpen(false)}
       >
-        <View>
+        <View style={styles.drawerBottom}>
           <View style={styles.montoSelection}>
             <Button style={styles.montoButton} mode='outlined' onPress={() => setMonto('1000')}>
               <>
@@ -175,6 +175,10 @@ export const LnPayment: React.FC<TextContentProps> = ({ open, setOpen, event, us
 }
 
 const styles = StyleSheet.create({
+  drawerBottom: {
+    height: '90%',
+    justifyContent: 'space-between'
+  },
   qrContainer: {
     flex: 1,
     justifyContent: 'center',

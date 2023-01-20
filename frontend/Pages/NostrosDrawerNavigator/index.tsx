@@ -32,7 +32,7 @@ export const NostrosDrawerNavigator: React.FC = () => {
 
   return userState !== 'loading' ? (
     <DrawerNavigator.Navigator
-      drawerContent={({ navigation }) => <MenuItems navigation={navigation} />}
+      drawerContent={() => <MenuItems />}
       screenOptions={{
         drawerStyle: {
           borderRadius: 28,

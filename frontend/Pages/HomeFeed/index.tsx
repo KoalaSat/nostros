@@ -29,10 +29,10 @@ import { FlatList } from 'react-native-gesture-handler'
 import { getLastReaction } from '../../Functions/DatabaseFunctions/Reactions'
 
 interface HomeFeedProps {
-  jumpTo: (tabName: string) => void
+  navigation: any
 }
 
-export const HomeFeed: React.FC<HomeFeedProps> = ({ jumpTo }) => {
+export const HomeFeed: React.FC<HomeFeedProps> = ({ navigation }) => {
   const theme = useTheme()
   const { database } = useContext(AppContext)
   const { publicKey } = useContext(UserContext)
@@ -90,7 +90,7 @@ export const HomeFeed: React.FC<HomeFeedProps> = ({ jumpTo }) => {
       authors,
     }
     if (lastNote && lastNotes.length >= pageSize && !past) {
-      message.since = lastNote.created_at
+      message.since = lastNote?.created_at
     } else {
       message.limit = pageSize + initialPageSize
     }
@@ -99,7 +99,7 @@ export const HomeFeed: React.FC<HomeFeedProps> = ({ jumpTo }) => {
       {
         kinds: [EventKind.petNames],
         authors: users.filter((user) => user.name !== undefined).map((user) => user.id),
-        since: users[0].created_at ?? 0,
+        since: users[0]?.created_at ?? 0,
       },
     ])
     setRefreshing(false)
@@ -190,7 +190,7 @@ export const HomeFeed: React.FC<HomeFeedProps> = ({ jumpTo }) => {
           <Text variant='bodyMedium' style={styles.center}>
             {t('homeFeed.emptyDescription')}
           </Text>
-          <Button mode='contained' compact onPress={() => jumpTo('contacts')}>
+          <Button mode='contained' compact onPress={() => navigation.jumpTo('contacts')}>
             {t('homeFeed.emptyButton')}
           </Button>
         </View>
@@ -235,8 +235,8 @@ const styles = StyleSheet.create({
   },
   blank: {
     justifyContent: 'space-between',
-    height: 200,
-    marginTop: 60,
+    height: 220,
+    marginTop: 91,
   },
 })
 
