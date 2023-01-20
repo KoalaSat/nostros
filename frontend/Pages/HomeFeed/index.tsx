@@ -11,7 +11,7 @@ import {
   View,
 } from 'react-native'
 import { AppContext } from '../../Contexts/AppContext'
-import { getMainNotes, Note } from '../../Functions/DatabaseFunctions/Notes'
+import { getLastReply, getMainNotes, Note } from '../../Functions/DatabaseFunctions/Notes'
 import { handleInfinityScroll } from '../../Functions/NativeFunctions'
 import { UserContext } from '../../Contexts/UserContext'
 import { RelayPoolContext } from '../../Contexts/RelayPoolContext'
@@ -21,11 +21,12 @@ import { ActivityIndicator, AnimatedFAB, Button, Text } from 'react-native-paper
 import NoteCard from '../../Components/NoteCard'
 import RBSheet from 'react-native-raw-bottom-sheet'
 import ProfileCard from '../../Components/ProfileCard'
-import { useTheme } from '@react-navigation/native'
+import { useFocusEffect, useTheme } from '@react-navigation/native'
 import { navigate } from '../../lib/Navigation'
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'
 import { t } from 'i18next'
 import { FlatList } from 'react-native-gesture-handler'
+import { getLastReaction } from '../../Functions/DatabaseFunctions/Reactions'
 
 interface HomeFeedProps {
   jumpTo: (tabName: string) => void
@@ -38,17 +39,31 @@ export const HomeFeed: React.FC<HomeFeedProps> = ({ jumpTo }) => {
   const { lastEventId, relayPool, lastConfirmationtId } = useContext(RelayPoolContext)
   const initialPageSize = 10
   const [notes, setNotes] = useState<Note[]>([])
-  const [authors, setAuthors] = useState<string[]>([])
   const [pageSize, setPageSize] = useState<number>(initialPageSize)
-  const [refreshing, setRefreshing] = useState(true)
+  const [refreshing, setRefreshing] = useState(false)
   const [profileCardPubkey, setProfileCardPubKey] = useState<string>()
   const bottomSheetProfileRef = React.useRef<RBSheet>(null)
+
+  useFocusEffect(
+    React.useCallback(() => {
+      subscribeNotes()
+      loadNotes()
+
+      return () =>
+        relayPool?.unsubscribe([
+          'homepage-main',
+          'homepage-reactions',
+          'homepage-contacts-meta',
+          'homepage-replies',
+        ])
+    }, []),
+  )
 
   useEffect(() => {
     if (relayPool && publicKey) {
       loadNotes()
     }
-  }, [publicKey, relayPool, lastEventId, lastConfirmationtId])
+  }, [lastEventId, lastConfirmationtId])
 
   useEffect(() => {
     if (pageSize > initialPageSize) {
@@ -58,27 +73,21 @@ export const HomeFeed: React.FC<HomeFeedProps> = ({ jumpTo }) => {
 
   const onRefresh = useCallback(() => {
     setRefreshing(true)
-    if (relayPool && publicKey) {
-      subscribeNotes()
-    }
+    subscribeNotes()
   }, [])
 
   const subscribeNotes: (past?: boolean) => void = async (past) => {
     if (!database || !publicKey) return
 
-    let newAuthors: string[] = authors
-
-    if (newAuthors.length === 0) {
-      const users: User[] = await getUsers(database, { contacts: true })
-      newAuthors = [...users.map((user) => user.id), publicKey]
-    }
+    const users: User[] = await getUsers(database, { contacts: true, order: 'created_at DESC' })
+    const authors: string[] = [...users.map((user) => user.id), publicKey]
 
     const lastNotes: Note[] = await getMainNotes(database, publicKey, initialPageSize)
     const lastNote: Note = lastNotes[lastNotes.length - 1]
 
     const message: RelayFilters = {
       kinds: [EventKind.textNote, EventKind.recommendServer],
-      authors: newAuthors,
+      authors,
     }
     if (lastNote && lastNotes.length >= pageSize && !past) {
       message.since = lastNote.created_at
@@ -86,13 +95,13 @@ export const HomeFeed: React.FC<HomeFeedProps> = ({ jumpTo }) => {
       message.limit = pageSize + initialPageSize
     }
     relayPool?.subscribe('homepage-main', [message])
-    relayPool?.subscribe('homepage-contacts', [
+    relayPool?.subscribe('homepage-contacts-meta', [
       {
         kinds: [EventKind.petNames],
-        authors: newAuthors,
+        authors: users.filter((user) => user.name !== undefined).map((user) => user.id),
+        since: users[0].created_at ?? 0,
       },
     ])
-    setAuthors(newAuthors)
     setRefreshing(false)
   }
 
@@ -107,12 +116,29 @@ export const HomeFeed: React.FC<HomeFeedProps> = ({ jumpTo }) => {
       getMainNotes(database, publicKey, pageSize).then((notes) => {
         setNotes(notes)
         if (notes.length > 0) {
-          relayPool?.subscribe('homepage-reactions', [
-            {
-              kinds: [EventKind.reaction, EventKind.textNote, EventKind.recommendServer],
-              '#e': notes.map((note) => note.id ?? ''),
+          const notedIds = notes.map((note) => note.id ?? '')
+          getLastReaction(database, { eventIds: notes.map((note) => note.id ?? '') }).then(
+            (lastReaction) => {
+              relayPool?.subscribe('homepage-reactions', [
+                {
+                  kinds: [EventKind.reaction],
+                  '#e': notedIds,
+                  since: lastReaction?.created_at ?? 0,
+                },
+              ])
             },
-          ])
+          )
+          getLastReply(database, { eventIds: notes.map((note) => note.id ?? '') }).then(
+            (lastReply) => {
+              relayPool?.subscribe('homepage-replies', [
+                {
+                  kinds: [EventKind.textNote],
+                  '#e': notedIds,
+                  since: lastReply?.created_at ?? 0,
+                },
+              ])
+            },
+          )
         }
       })
     }
@@ -170,7 +196,7 @@ export const HomeFeed: React.FC<HomeFeedProps> = ({ jumpTo }) => {
         </View>
       )}
       <AnimatedFAB
-        style={[styles.fab, { top: Dimensions.get('window').height - 220 }]}
+        style={[styles.fab, { top: Dimensions.get('window').height - 200 }]}
         icon='pencil-outline'
         label='Label'
         onPress={() => navigate('Send')}
@@ -199,7 +225,8 @@ const styles = StyleSheet.create({
     position: 'absolute',
   },
   container: {
-    padding: 16,
+    paddingLeft: 16,
+    paddingRight: 16,
     flex: 1,
   },
   center: {

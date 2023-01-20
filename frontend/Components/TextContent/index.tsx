@@ -9,6 +9,7 @@ import moment from 'moment'
 import { Card, Text, useTheme } from 'react-native-paper'
 import { getLinkPreview } from 'link-preview-js'
 import { push } from '../../lib/Navigation'
+import { validImageUrl } from '../../Functions/NativeFunctions'
 
 interface TextContentProps {
   event?: Event
@@ -102,7 +103,7 @@ export const TextContent: React.FC<TextContentProps> = ({ event, content, previe
 
     return (
       <Card style={styles.previewCard} onPress={() => handleUrlPress(linkPreview.url)}>
-        <Card.Cover source={{ uri: coverUrl }} />
+        {validImageUrl(coverUrl) && <Card.Cover source={{ uri: coverUrl }} resizeMode='contain' />}
         <Card.Content style={styles.previewContent}>
           <Text variant='titleSmall'>{linkPreview.title || linkPreview.url}</Text>
           {linkPreview.description && <Text variant='bodySmall'>{linkPreview.description}</Text>}

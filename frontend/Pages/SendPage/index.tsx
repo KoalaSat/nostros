@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState } from 'react'
-import { FlatList, ListRenderItem, StyleSheet, View } from 'react-native'
+import { StyleSheet, View } from 'react-native'
 import { AppContext } from '../../Contexts/AppContext'
 import { Event, EventKind } from '../../lib/nostr/Events'
 import { useTranslation } from 'react-i18next'
@@ -9,8 +9,7 @@ import { Note } from '../../Functions/DatabaseFunctions/Notes'
 import { getETags, getTaggedPubKeys } from '../../Functions/RelayFunctions/Events'
 import { getUsers, User } from '../../Functions/DatabaseFunctions/Users'
 import { formatPubKey, username } from '../../Functions/RelayFunctions/Users'
-import { Button, Divider, Switch, Text, TextInput, TouchableRipple } from 'react-native-paper'
-import RBSheet from 'react-native-raw-bottom-sheet'
+import { Button, Switch, Text, TextInput, TouchableRipple } from 'react-native-paper'
 import { UserContext } from '../../Contexts/UserContext'
 import NostrosAvatar from '../../Components/NostrosAvatar'
 import { goBack } from '../../lib/Navigation'
@@ -21,7 +20,6 @@ interface SendPageProps {
 }
 
 export const SendPage: React.FC<SendPageProps> = ({ route }) => {
-  const bottomSheetContactsRef = React.useRef<RBSheet>(null)
   const { database } = useContext(AppContext)
   const { publicKey } = useContext(UserContext)
   const { relayPool, lastConfirmationtId } = useContext(RelayPoolContext)
@@ -53,7 +51,6 @@ export const SendPage: React.FC<SendPageProps> = ({ route }) => {
 
       request.then((results) => {
         setUserSuggestions(results.filter((item) => item.id !== publicKey))
-        bottomSheetContactsRef.current?.open()
       })
     } else {
       setUserSuggestions([])
@@ -106,6 +103,7 @@ export const SendPage: React.FC<SendPageProps> = ({ route }) => {
   }
 
   const addUserMention: (user: User) => void = (user) => {
+    console.log(user)
     setUserMentions((prev) => {
       prev.push(user)
       return prev
@@ -116,10 +114,9 @@ export const SendPage: React.FC<SendPageProps> = ({ route }) => {
       return `${splitText.join('@')}${mentionText(user)}`
     })
     setUserSuggestions([])
-    bottomSheetContactsRef.current?.close()
   }
 
-  const renderContactItem: ListRenderItem<User> = ({ index, item }) => (
+  const renderContactItem: (item: User, index: number) => JSX.Element = (item, index) => (
     <TouchableRipple onPress={() => addUserMention(item)}>
       <View key={index} style={styles.contactRow}>
         <View style={styles.contactInfo}>
@@ -159,13 +156,8 @@ export const SendPage: React.FC<SendPageProps> = ({ route }) => {
         {/* flexDirection: 'column-reverse' */}
         {userSuggestions.length > 0 ? (
           // FIXME: can't find this color
-          <View style={{ backgroundColor: '#001C37' }}>
-            <FlatList
-              style={styles.contactsList}
-              ItemSeparatorComponent={Divider}
-              data={userSuggestions}
-              renderItem={renderContactItem}
-            />
+          <View style={styles.contactsList}>
+            {userSuggestions.map((user, index) => renderContactItem(user, index))}
           </View>
         ) : (
           // FIXME: can't find this color
@@ -201,6 +193,7 @@ const styles = StyleSheet.create({
   },
   contactsList: {
     bottom: 0,
+    maxHeight: 200,
   },
   contactRow: {
     paddingLeft: 16,

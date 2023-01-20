@@ -24,3 +24,12 @@ export const pickRandomItems = <T extends unknown>(arr: T[], n: number): T[] => 
   const shuffled = Array.from(arr).sort(() => 0.5 - Math.random())
   return shuffled.slice(0, n)
 }
+
+export const validImageUrl: (url: string | undefined) => boolean = (url) => {
+  if (url) {
+    const regexp = /^(https?:\/\/.*\.(?:png|jpg|jpeg))$/
+    return regexp.test(url)
+  } else {
+    return false
+  }
+}

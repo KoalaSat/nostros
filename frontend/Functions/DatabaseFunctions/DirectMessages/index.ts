@@ -17,6 +17,7 @@ export const updateConversationRead: (
   db: QuickSQLiteConnection,
 ) => Promise<QueryResult | null> = async (conversationId, db) => {
   const userQuery = `UPDATE nostros_direct_messages SET read = ? WHERE conversation_id = ?`
+  console.log(userQuery)
   return db.execute(userQuery, [1, conversationId])
 }
 
@@ -44,23 +45,28 @@ export const getGroupedDirectMessages: (
 
 export const getDirectMessages: (
   db: QuickSQLiteConnection,
+  conversationId: string,
+  publicKey: string,
+  otherPubKey: string,
   options: {
-    conversationId?: string
     order?: 'DESC' | 'ASC'
   },
-) => Promise<DirectMessage[]> = async (db, { conversationId, order = 'DESC' }) => {
-  let notesQuery = `
+) => Promise<DirectMessage[]> = async (
+  db,
+  conversationId,
+  publicKey,
+  otherPubKey,
+  { order = 'DESC' },
+) => {
+  const notesQuery = `
     SELECT 
       *
     FROM
       nostros_direct_messages
+    WHERE conversation_id = "${conversationId}"
+    ORDER BY created_at ${order}
   `
-
-  if (conversationId) {
-    notesQuery += `WHERE conversation_id = "${conversationId}" `
-  }
-
-  notesQuery += `ORDER BY created_at ${order}`
+  // WHERE conversation_id = "${conversationId}"
 
   const resultSet = await db.execute(notesQuery)
   const items: object[] = getItems(resultSet)

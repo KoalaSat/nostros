@@ -37,6 +37,7 @@ import RBSheet from 'react-native-raw-bottom-sheet'
 import { useTranslation } from 'react-i18next'
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'
 import { npubEncode } from 'nostr-tools/nip19'
+import { useFocusEffect } from '@react-navigation/native'
 
 export const ConversationsFeed: React.FC = () => {
   const theme = useTheme()
@@ -51,15 +52,19 @@ export const ConversationsFeed: React.FC = () => {
   const bottomSheetUserListRef = React.useRef<RBSheet>(null)
   const bottomSheetPubKeyRef = React.useRef<RBSheet>(null)
 
-  useEffect(() => {
-    subscribeDirectMessages()
-  }, [])
+  useFocusEffect(
+    React.useCallback(() => {
+      loadDirectMessages(true)
+
+      return () => relayPool?.unsubscribe(['directmessages-meta', 'directmessages'])
+    }, []),
+  )
 
   useEffect(() => {
-    loadDirectMessages()
+    loadDirectMessages(false)
   }, [lastEventId])
 
-  const loadDirectMessages: () => void = () => {
+  const loadDirectMessages: (subscribe: boolean) => void = (subscribe) => {
     if (database && publicKey) {
       getUsers(database, { contacts: true }).then(setUsers)
       getGroupedDirectMessages(database, {}).then((results) => {
@@ -72,21 +77,28 @@ export const ConversationsFeed: React.FC = () => {
               authors: otherUsers,
             },
           ])
+          if (subscribe) {
+            subscribeDirectMessages(results[0].created_at)
+          }
+        } else if (subscribe) {
+          subscribeDirectMessages()
         }
       })
     }
   }
 
-  const subscribeDirectMessages: () => void = async () => {
+  const subscribeDirectMessages: (lastCreateAt?: number) => void = async (lastCreateAt) => {
     if (publicKey) {
-      relayPool?.subscribe('directmessages-user', [
+      relayPool?.subscribe('directmessages', [
         {
           kinds: [EventKind.directMessage],
           authors: [publicKey],
+          since: lastCreateAt ?? 0,
         },
         {
           kinds: [EventKind.directMessage],
           '#p': [publicKey],
+          since: lastCreateAt ?? 0,
         },
       ])
     }
@@ -119,7 +131,7 @@ export const ConversationsFeed: React.FC = () => {
           </View>
           <View style={styles.contactInfo}>
             <View style={styles.contactName}>
-              <Text>{moment.unix(item.created_at).format('HH:mm L')}</Text>
+              <Text>{moment.unix(item.created_at).format('L HH:mm')}</Text>
               {item.pubkey !== publicKey && !item.read && <Badge size={16}></Badge>}
             </View>
           </View>
@@ -223,7 +235,7 @@ export const ConversationsFeed: React.FC = () => {
         </View>
       )}
       <AnimatedFAB
-        style={[styles.fab, { top: Dimensions.get('window').height - 220 }]}
+        style={[styles.fab, { top: Dimensions.get('window').height - 200 }]}
         icon='pencil-outline'
         label='Label'
         onPress={() => bottomSheetCreateRef.current?.open()}
@@ -306,7 +318,6 @@ export const ConversationsFeed: React.FC = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 16,
   },
   contactRow: {
     paddingLeft: 16,

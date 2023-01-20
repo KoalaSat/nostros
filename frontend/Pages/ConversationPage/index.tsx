@@ -26,7 +26,7 @@ import {
 import { UserContext } from '../../Contexts/UserContext'
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'
 import { navigate } from '../../lib/Navigation'
-import { generateConversationId } from '../../Functions/RelayFunctions/DirectMessages'
+import { useFocusEffect } from '@react-navigation/native'
 
 interface ConversationPageProps {
   route: { params: { pubKey: string; conversationId: string } }
@@ -47,52 +47,63 @@ export const ConversationPage: React.FC<ConversationPageProps> = ({ route }) => 
 
   const { t } = useTranslation('common')
 
+  useFocusEffect(
+    React.useCallback(() => {
+      console.log('OPEN')
+      loadDirectMessages(true)
+
+      return () => relayPool?.unsubscribe([`conversation${route.params.pubKey}`])
+    }, []),
+  )
+
   useEffect(() => {
-    loadDirectMessages()
+    loadDirectMessages(false)
   }, [lastEventId])
 
-  useEffect(() => {
-    relayPool?.unsubscribeAll()
+  const loadDirectMessages: (subscribe: boolean) => void = (subscribe) => {
     if (database && publicKey) {
-      loadDirectMessages()
-      subscribeDirectMessages()
-    }
-  }, [])
-
-  const loadDirectMessages: () => void = () => {
-    if (database && publicKey) {
-      const conversationId =
-        route.params?.conversationId || generateConversationId(publicKey, otherPubKey)
+      const conversationId = route.params?.conversationId
       getUser(otherPubKey, database).then((user) => {
         if (user) setOtherUser(user)
       })
-      getDirectMessages(database, { conversationId, order: 'ASC' }).then((results) => {
-        if (privateKey && results && results.length > 0) {
-          setSendingMessages([])
-          setDirectMessages(
-            results.map((message) => {
-              message.content = decrypt(privateKey, otherPubKey, message.content ?? '')
-              return message
-            }),
-          )
-          updateConversationRead(conversationId, database)
-        }
-      })
+      getDirectMessages(database, conversationId, publicKey, otherPubKey, { order: 'ASC' }).then(
+        (results) => {
+          if (privateKey && results && results.length > 0) {
+            setSendingMessages([])
+            setDirectMessages(
+              results.map((message) => {
+                message.content = decrypt(privateKey, otherPubKey, message.content ?? '')
+                return message
+              }),
+            )
+            if (results.length > 0) {
+              updateConversationRead(results[0].conversation_id, database)
+            }
+            if (subscribe) {
+              subscribeDirectMessages(results[0].created_at)
+            }
+          } else if (subscribe) {
+            subscribeDirectMessages()
+          }
+        },
+      )
     }
   }
 
-  const subscribeDirectMessages: () => void = async () => {
+  const subscribeDirectMessages: (lastCreateAt?: number) => void = async (lastCreateAt) => {
     if (publicKey && otherPubKey) {
-      relayPool?.subscribe('conversation', [
+      relayPool?.subscribe(`conversation${route.params.pubKey}`, [
         {
           kinds: [EventKind.directMessage],
           authors: [publicKey],
           '#p': [otherPubKey],
+          since: lastCreateAt ?? 0,
         },
         {
           kinds: [EventKind.directMessage],
           authors: [otherPubKey],
           '#p': [publicKey],
+          since: lastCreateAt ?? 0,
         },
       ])
     }
@@ -171,7 +182,7 @@ export const ConversationPage: React.FC<ConversationPageProps> = ({ route }) => 
                     <MaterialCommunityIcons name='clock-outline' size={14} />
                   </View>
                 )}
-                <Text>{moment.unix(item.created_at).format('HH:mm L')}</Text>
+                <Text>{moment.unix(item.created_at).format('L HH:mm')}</Text>
               </View>
             </View>
             <TextContent content={item.content} />
@@ -188,16 +199,14 @@ export const ConversationPage: React.FC<ConversationPageProps> = ({ route }) => 
         ref={scrollViewRef}
         onContentSizeChange={() => scrollViewRef.current?.scrollToEnd({ animated: true })}
       >
-        <View>
-          <FlatList
-            data={directMessages}
-            renderItem={({ index, item }) => renderDirectMessageItem(index, item, false)}
-          />
-          <FlatList
-            data={sendingMessages}
-            renderItem={({ index, item }) => renderDirectMessageItem(index, item, true)}
-          />
-        </View>
+        <FlatList
+          data={directMessages}
+          renderItem={({ index, item }) => renderDirectMessageItem(index, item, false)}
+        />
+        <FlatList
+          data={sendingMessages}
+          renderItem={({ index, item }) => renderDirectMessageItem(index, item, true)}
+        />
       </ScrollView>
       <View
         style={[

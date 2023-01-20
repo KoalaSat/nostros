@@ -7,7 +7,7 @@ import { AppContext } from '../../Contexts/AppContext'
 import { RelayPoolContext } from '../../Contexts/RelayPoolContext'
 import { UserContext } from '../../Contexts/UserContext'
 import { getUser, updateUserContact, User } from '../../Functions/DatabaseFunctions/Users'
-import { populatePets } from '../../Functions/RelayFunctions/Users'
+import { populatePets, usernamePubKey } from '../../Functions/RelayFunctions/Users'
 import NostrosAvatar from '../NostrosAvatar'
 import LnPayment from '../LnPayment'
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'
@@ -85,14 +85,14 @@ export const ProfileCard: React.FC<ProfileCardProps> = ({ userPubKey, bottomShee
                 />
               </View>
               <View>
-                <View style={styles.userName}>
-                  <Text variant='titleMedium'>{user?.name}</Text>
+                <View style={styles.username}>
+                  <Text variant='titleMedium'>{usernamePubKey(user?.name ?? '', nPub)}</Text>
                   {/* <MaterialCommunityIcons name="check-decagram-outline" size={16} /> */}
+                  <Text>{user?.nip05}</Text>
                 </View>
-                <Text>{user?.nip05}</Text>
               </View>
             </View>
-            <View>
+            <View style={styles.about}>
               <Text>
                 {`${user?.about ? user?.about?.slice(0, 75) : ''}${
                   user?.about && user?.about?.length > 75 ? ' ...' : ''
@@ -178,6 +178,9 @@ const styles = StyleSheet.create({
     margin: 16,
     width: '100%',
   },
+  username: {
+    paddingLeft: 16,
+  },
   contacts: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -187,6 +190,9 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-around',
+  },
+  about: {
+    maxHeight: 50,
   },
   userName: {
     flexDirection: 'row',

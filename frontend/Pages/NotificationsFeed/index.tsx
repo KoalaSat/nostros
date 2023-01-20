@@ -8,7 +8,7 @@ import {
   View,
 } from 'react-native'
 import { AppContext } from '../../Contexts/AppContext'
-import { getMentionNotes, Note } from '../../Functions/DatabaseFunctions/Notes'
+import { getLastReply, getMentionNotes, Note } from '../../Functions/DatabaseFunctions/Notes'
 import NoteCard from '../../Components/NoteCard'
 import { RelayPoolContext } from '../../Contexts/RelayPoolContext'
 import { EventKind } from '../../lib/nostr/Events'
@@ -20,6 +20,8 @@ import ProfileCard from '../../Components/ProfileCard'
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'
 import { useTranslation } from 'react-i18next'
 import { navigate } from '../../lib/Navigation'
+import { useFocusEffect } from '@react-navigation/native'
+import { getLastReaction } from '../../Functions/DatabaseFunctions/Reactions'
 
 export const NotificationsFeed: React.FC = () => {
   const theme = useTheme()
@@ -34,14 +36,24 @@ export const NotificationsFeed: React.FC = () => {
   const [refreshing, setRefreshing] = useState(true)
   const [profileCardPubkey, setProfileCardPubKey] = useState<string>()
 
-  useEffect(() => {
-    if (relayPool && publicKey) {
-      calculateInitialNotes().then(() => loadNotes())
-    }
-  }, [publicKey, relayPool])
+  useFocusEffect(
+    React.useCallback(() => {
+      subscribeNotes()
+      loadNotes()
+
+      return () =>
+        relayPool?.unsubscribe([
+          'notification',
+          'notification-replies',
+          'notification-reactions',
+          'notification-meta',
+        ])
+    }, []),
+  )
 
   useEffect(() => {
     loadNotes()
+    setRefreshing(false)
   }, [lastEventId])
 
   useEffect(() => {
@@ -51,16 +63,10 @@ export const NotificationsFeed: React.FC = () => {
     }
   }, [pageSize])
 
-  const calculateInitialNotes: () => Promise<void> = async () => {
-    if (database && publicKey) {
-      subscribeNotes()
-    }
-  }
-
   const subscribeNotes: () => void = async () => {
-    if (!database || !publicKey) return
+    if (!publicKey) return
 
-    relayPool?.subscribe('notification-user', [
+    relayPool?.subscribe('notification', [
       {
         kinds: [EventKind.textNote],
         '#p': [publicKey],
@@ -80,16 +86,35 @@ export const NotificationsFeed: React.FC = () => {
         setNotes(notes)
         setRefreshing(false)
         if (notes.length > 0) {
-          relayPool?.subscribe('notification-answers', [
+          const notedIds = notes.map((note) => note.id ?? '')
+          relayPool?.subscribe('notification-meta', [
             {
-              kinds: [EventKind.reaction, EventKind.textNote, EventKind.recommendServer],
-              '#e': notes.map((note) => note.id ?? ''),
-            },
-            {
-              kinds: [EventKind.meta],
-              authors: notes.filter((note) => note.name !== undefined).map((note) => note.pubkey),
+              kinds: [EventKind.petNames],
+              authors: notes.map((note) => note.pubkey ?? ''),
             },
           ])
+          getLastReaction(database, { eventIds: notes.map((note) => note.id ?? '') }).then(
+            (lastReaction) => {
+              relayPool?.subscribe('notification-reactions', [
+                {
+                  kinds: [EventKind.reaction],
+                  '#e': notedIds,
+                  since: lastReaction?.created_at ?? 0,
+                },
+              ])
+            },
+          )
+          getLastReply(database, { eventIds: notes.map((note) => note.id ?? '') }).then(
+            (lastReply) => {
+              relayPool?.subscribe('notification-replies', [
+                {
+                  kinds: [EventKind.textNote],
+                  '#e': notedIds,
+                  since: lastReply?.created_at ?? 0,
+                },
+              ])
+            },
+          )
         }
       })
     }
@@ -98,7 +123,7 @@ export const NotificationsFeed: React.FC = () => {
   const onRefresh = useCallback(() => {
     setRefreshing(true)
     if (relayPool && publicKey) {
-      calculateInitialNotes().then(() => loadNotes())
+      subscribeNotes()
     }
   }, [])
 
@@ -174,7 +199,8 @@ export const NotificationsFeed: React.FC = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 16,
+    paddingLeft: 16,
+    paddingRight: 16,
   },
   noteCard: {
     marginBottom: 16,
