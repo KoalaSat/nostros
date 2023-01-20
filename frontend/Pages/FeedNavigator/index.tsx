@@ -108,16 +108,16 @@ export const HomeNavigator: React.FC = () => {
       >
         <Stack.Group>
           <Stack.Screen name='Landing' component={HomePage} />
+          <Stack.Screen name='Note' component={NotePage} />
+          <Stack.Screen name='Send' component={SendPage} />
+          <Stack.Screen name='Reply' component={SendPage} />
+          <Stack.Screen name='Conversation' component={ConversationPage} />
         </Stack.Group>
         <Stack.Group>
           <Stack.Screen name='Relays' component={RelaysPage} />
           <Stack.Screen name='About' component={AboutPage} />
           <Stack.Screen name='ProfileConfig' component={ProfileConfigPage} />
           <Stack.Screen name='Profile' component={ProfilePage} />
-          <Stack.Screen name='Note' component={NotePage} />
-          <Stack.Screen name='Send' component={SendPage} />
-          <Stack.Screen name='Reply' component={SendPage} />
-          <Stack.Screen name='Conversation' component={ConversationPage} />
         </Stack.Group>
       </Stack.Navigator>
       <RBSheet

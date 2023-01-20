@@ -23,37 +23,40 @@ export const ProfileLoadPage: React.FC = () => {
 
   useFocusEffect(
     React.useCallback(() => {
-      console.log('FOCUS ProfileLoadPage')
-      if (publicKey) {
-        relayPool?.subscribe('loading-meta', [
-          {
-            kinds: [EventKind.meta],
-            authors: [publicKey],
-          },
-        ])
-      }
+      loadMeta()
 
-      return () => relayPool?.unsubscribeAll()
+      return () => relayPool?.unsubscribe(['profile-load-meta-pets', 'profile-load-notes'])
     }, []),
   )
 
   useEffect(() => {
+    console.log('lastEventId', lastEventId)
     loadPets()
-    reloadUser()
+    if (user?.name) reloadUser()
   }, [lastEventId])
 
   useEffect(() => {
     if (user) setProfileFound(true)
   }, [user])
 
+  const loadMeta: () => void = () => {
+    if (publicKey) {
+      relayPool?.subscribe('profile-load-meta-pets', [
+        {
+          kinds: [EventKind.meta, EventKind.petNames],
+          authors: [publicKey],
+        },
+      ])
+    }
+  }
+
   const loadPets: () => void = () => {
     if (database && publicKey) {
       getUsers(database, { contacts: true }).then((results) => {
         if (results && results.length > 0) {
-          reloadUser()
           setContactsCount(results.length)
           const authors = [...results.map((user: User) => user.id), publicKey]
-          relayPool?.subscribe('loading-notes', [
+          relayPool?.subscribe('profile-load-notes', [
             {
               kinds: [EventKind.meta, EventKind.textNote],
               authors,

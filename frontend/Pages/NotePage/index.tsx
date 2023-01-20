@@ -55,12 +55,15 @@ export const NotePage: React.FC<NotePageProps> = ({ route }) => {
       subscribeNotes()
       loadNote()
 
-      return () => relayPool?.unsubscribeAll()
+      return () =>
+        relayPool?.unsubscribe([
+          `meta-notepage${route.params.noteId}`,
+          `notepage${route.params.noteId}`,
+        ])
     }, []),
   )
 
   useEffect(() => {
-    console.log('loadNote', route.params.noteId)
     loadNote()
   }, [lastEventId])
 
@@ -71,13 +74,13 @@ export const NotePage: React.FC<NotePageProps> = ({ route }) => {
         const event = events[0]
         setNote(event)
         setNPub(npubEncode(event.pubkey))
-        setTimestamp(moment.unix(event.created_at).format('HH:mm L'))
+        setTimestamp(moment.unix(event.created_at).format('L HH:mm'))
 
         const notes = await getNotes(database, { filters: { reply_event_id: route.params.noteId } })
         const rootReplies = getDirectReplies(event, notes)
         if (rootReplies.length > 0) {
           setReplies(rootReplies as Note[])
-          relayPool?.subscribe('meta-notepage', [
+          relayPool?.subscribe(`meta-notepage${route.params.noteId}`, [
             {
               kinds: [EventKind.meta],
               authors: [...rootReplies.map((note) => note.pubkey), event.pubkey],
@@ -90,8 +93,12 @@ export const NotePage: React.FC<NotePageProps> = ({ route }) => {
           const total = result.length
           let positive = 0
           result.forEach((reaction) => {
-            if (reaction) positive = positive + 1
-            if (reaction.pubkey === publicKey) setUserUpvoted(reaction.positive)
+            if (reaction.positive) {
+              positive = positive + 1
+              setUserUpvoted(true)
+            } else if (reaction.pubkey === publicKey) {
+              setUserDownvoted(true)
+            }
           })
           setPositiveReactions(positive)
           setNegativeReactions(total - positive)
@@ -109,7 +116,7 @@ export const NotePage: React.FC<NotePageProps> = ({ route }) => {
 
   const subscribeNotes: (past?: boolean) => Promise<void> = async (past) => {
     if (database && route.params.noteId) {
-      relayPool?.subscribe('notepage', [
+      relayPool?.subscribe(`notepage${route.params.noteId}`, [
         {
           kinds: [EventKind.textNote],
           ids: [route.params.noteId],
@@ -183,8 +190,8 @@ export const NotePage: React.FC<NotePageProps> = ({ route }) => {
                   size={54}
                 />
               </View>
-              <View>
-                <Text>{usernamePubKey(note.name, nPub)}</Text>
+              <View style={styles.titleUserData}>
+                <Text style={styles.titleUsername}>{usernamePubKey(note.name, nPub)}</Text>
                 <Text>{timestamp}</Text>
               </View>
             </View>
@@ -214,7 +221,6 @@ export const NotePage: React.FC<NotePageProps> = ({ route }) => {
                     size={25}
                   />
                 )}
-                disabled={userDownvoted}
               >
                 {negaiveReactions === undefined || negaiveReactions === 0 ? '-' : negaiveReactions}
               </Button>
@@ -232,7 +238,6 @@ export const NotePage: React.FC<NotePageProps> = ({ route }) => {
                     size={25}
                   />
                 )}
-                disabled={userUpvoted}
               >
                 {positiveReactions === undefined || positiveReactions === 0
                   ? '-'
@@ -264,7 +269,7 @@ export const NotePage: React.FC<NotePageProps> = ({ route }) => {
         icon='home-outline'
         label='Label'
         onPress={() => {
-          navigate('Feed')
+          navigate('Feed', { screen: 'Landing' })
         }}
         animateFrom='right'
         iconMode='static'
@@ -296,6 +301,13 @@ const styles = StyleSheet.create({
   titleUser: {
     flexDirection: 'row',
     alignContent: 'center',
+  },
+  titleUserData: {
+    paddingLeft: 16,
+    paddingTop: 5,
+  },
+  titleUsername: {
+    fontWeight: 'bold',
   },
   titleRecommend: {
     borderTopWidth: 1,

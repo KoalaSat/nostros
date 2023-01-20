@@ -85,7 +85,7 @@ class RelayPool {
       '57003344-b2cb-4b6f-a579-fae9e82c370a',
     )
     if (this.subscriptions[subId]?.includes(uuid)) {
-      console.log('Subscription already done!', filters)
+      console.log('Subscription already done!', subId)
     } else {
       this.send([...['REQ', subId], ...(filters ?? [])])
       const newSubscriptions = [...(this.subscriptions[subId] ?? []), uuid]
@@ -93,15 +93,15 @@ class RelayPool {
     }
   }
 
-  public readonly unsubscribe: (subId: string) => void = async (subId) => {
-    this.send(['CLOSE', subId])
-    delete this.subscriptions[subId]
+  public readonly unsubscribe: (subIds: string[]) => void = async (subIds) => {
+    subIds.forEach((subId: string) => {
+      this.send(['CLOSE', subId])
+      delete this.subscriptions[subId]
+    })
   }
 
   public readonly unsubscribeAll: () => void = async () => {
-    Object.keys(this.subscriptions).forEach((subId: string) => {
-      this.unsubscribe(subId)
-    })
+    this.unsubscribe(Object.keys(this.subscriptions))
   }
 }
 

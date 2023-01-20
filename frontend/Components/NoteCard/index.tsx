@@ -51,7 +51,7 @@ export const NoteCard: React.FC<NoteCardProps> = ({
   const [userDownvoted, setUserDownvoted] = useState<boolean>(false)
   const [repliesCount, setRepliesCount] = React.useState<number>(0)
   const [hide, setHide] = useState<boolean>(isContentWarning(note))
-  const timestamp = useMemo(() => moment.unix(note.created_at).format('HH:mm L'), [note])
+  const timestamp = useMemo(() => moment.unix(note.created_at).format('L HH:mm'), [note])
   const nPub = useMemo(() => npubEncode(note.pubkey), [note])
 
   useEffect(() => {
@@ -60,8 +60,12 @@ export const NoteCard: React.FC<NoteCardProps> = ({
         const total = result.length
         let positive = 0
         result.forEach((reaction) => {
-          if (reaction) positive = positive + 1
-          if (reaction.pubkey === publicKey) setUserUpvoted(reaction.positive)
+          if (reaction.positive) {
+            positive = positive + 1
+            if (reaction.pubkey === publicKey) setUserUpvoted(true)
+          } else if (reaction.pubkey === publicKey) {
+            setUserDownvoted(true)
+          }
         })
         setPositiveReactions(positive)
         setNegativeReactions(total - positive)
@@ -195,8 +199,8 @@ export const NoteCard: React.FC<NoteCardProps> = ({
                 size={54}
               />
             </View>
-            <View>
-              <Text>{usernamePubKey(note.name, nPub)}</Text>
+            <View style={styles.titleUserInfo}>
+              <Text style={styles.titleUsername}>{usernamePubKey(note.name, nPub)}</Text>
               <Text>{timestamp}</Text>
             </View>
           </View>
@@ -223,7 +227,6 @@ export const NoteCard: React.FC<NoteCardProps> = ({
                 size={25}
               />
             )}
-            disabled={userDownvoted}
           >
             {negaiveReactions === undefined || negaiveReactions === 0 ? '-' : negaiveReactions}
           </Button>
@@ -241,7 +244,6 @@ export const NoteCard: React.FC<NoteCardProps> = ({
                 size={25}
               />
             )}
-            disabled={userUpvoted}
           >
             {positiveReactions === undefined || positiveReactions === 0 ? '-' : positiveReactions}
           </Button>
@@ -254,6 +256,13 @@ export const NoteCard: React.FC<NoteCardProps> = ({
 const styles = StyleSheet.create({
   container: {
     padding: 16,
+  },
+  titleUsername: {
+    fontWeight: 'bold',
+  },
+  titleUserInfo: {
+    paddingTop: 10,
+    paddingLeft: 16,
   },
   title: {
     flexDirection: 'row',

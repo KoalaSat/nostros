@@ -50,6 +50,7 @@ export const ProfileCreatePage: React.FC<ProfileCreatePageProps> = ({ navigation
           value={inputValue}
           secureTextEntry={true}
           editable={false}
+          selectTextOnFocus={true}
           right={
             <TextInput.Icon
               icon={'content-copy'}

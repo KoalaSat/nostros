@@ -11,6 +11,7 @@ export interface User {
   follower?: boolean
   lnurl?: string
   nip05?: string
+  created_at?: number
 }
 
 const databaseToEntity: (object: object) => User = (object) => {
@@ -73,7 +74,8 @@ export const getFollowersCount: (db: QuickSQLiteConnection) => Promise<number> =
 export const getFollowersAndFollowing: (db: QuickSQLiteConnection) => Promise<User[]> = async (
   db,
 ) => {
-  const userQuery = 'SELECT * FROM nostros_users WHERE follower = 1 OR contact = 1'
+  const userQuery =
+    'SELECT * FROM nostros_users WHERE follower = 1 OR contact = 1 ORDER BY created_at DESC'
   const resultSet = db.execute(userQuery)
   if (resultSet.rows && resultSet.rows.length > 0) {
     const items: object[] = getItems(resultSet)

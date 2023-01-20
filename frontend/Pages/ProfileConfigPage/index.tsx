@@ -303,52 +303,56 @@ export const ProfileConfigPage: React.FC = () => {
             </View>
           </Card.Content>
         </Card>
-        <TextInput
-          mode='outlined'
-          label={t('profileConfigPage.name') ?? ''}
-          onChangeText={setName}
-          value={name}
-        />
-        <TextInput
-          mode='outlined'
-          label={t('profileConfigPage.about') ?? ''}
-          onChangeText={setAbout}
-          value={about}
-        />
-        <TextInput
-          mode='outlined'
-          label={t('profileConfigPage.npub') ?? ''}
-          value={nPub}
-          right={
-            <TextInput.Icon
-              icon='content-paste'
-              onPress={() => {
-                setShowNotification('npubCopied')
-                Clipboard.setString(nPub ?? '')
-              }}
-              forceTextInputFocus={false}
-            />
-          }
-        />
-        <TextInput
-          mode='outlined'
-          label={t('profileConfigPage.nsec') ?? ''}
-          value={nSec}
-          secureTextEntry={true}
-          right={
-            <TextInput.Icon
-              icon='content-paste'
-              onPress={() => {
-                setShowNotification('nsecCopied')
-                Clipboard.setString(nSec ?? '')
-              }}
-              forceTextInputFocus={false}
-            />
-          }
-        />
-        <Button mode='contained' onPress={onPressSaveProfile} loading={isPublishingProfile}>
-          {t('profileConfigPage.publish')}
-        </Button>
+        <View style={styles.inputContainer}>
+          <TextInput
+            mode='outlined'
+            label={t('profileConfigPage.name') ?? ''}
+            onChangeText={setName}
+            value={name}
+          />
+          <TextInput
+            mode='outlined'
+            label={t('profileConfigPage.about') ?? ''}
+            onChangeText={setAbout}
+            value={about}
+          />
+          <TextInput
+            mode='outlined'
+            label={t('profileConfigPage.npub') ?? ''}
+            value={nPub}
+            selectTextOnFocus={true}
+            right={
+              <TextInput.Icon
+                icon='content-paste'
+                onPress={() => {
+                  setShowNotification('npubCopied')
+                  Clipboard.setString(nPub ?? '')
+                }}
+                forceTextInputFocus={false}
+              />
+            }
+          />
+          <TextInput
+            mode='outlined'
+            label={t('profileConfigPage.nsec') ?? ''}
+            value={nSec}
+            secureTextEntry={true}
+            selectTextOnFocus={true}
+            right={
+              <TextInput.Icon
+                icon='content-paste'
+                onPress={() => {
+                  setShowNotification('nsecCopied')
+                  Clipboard.setString(nSec ?? '')
+                }}
+                forceTextInputFocus={false}
+              />
+            }
+          />
+          <Button mode='contained' onPress={onPressSaveProfile} loading={isPublishingProfile}>
+            {t('profileConfigPage.publish')}
+          </Button>
+        </View>
       </ScrollView>
       <RBSheet
         ref={bottomSheetPictureRef}
@@ -356,7 +360,7 @@ export const ProfileConfigPage: React.FC = () => {
         height={230}
         customStyles={rbSheetCustomStyles}
       >
-        <View>
+        <View style={styles.bottomDrawer}>
           <Text variant='titleLarge'>{t('profileConfigPage.pictureTitle')}</Text>
           <Text variant='bodyMedium'>{t('profileConfigPage.pictureDescription')}</Text>
           <TextInput
@@ -388,7 +392,7 @@ export const ProfileConfigPage: React.FC = () => {
         height={480}
         customStyles={rbSheetCustomStyles}
       >
-        <View>
+        <View style={styles.bottomDrawer}>
           <Text variant='titleLarge'>{t('profileConfigPage.directoryTitle')}</Text>
           <Text variant='bodyMedium'>{t('profileConfigPage.directoryDescription')}</Text>
           <Button
@@ -409,7 +413,7 @@ export const ProfileConfigPage: React.FC = () => {
         height={230}
         customStyles={rbSheetCustomStyles}
       >
-        <View>
+        <View style={styles.bottomDrawer}>
           <Text variant='titleLarge'>{t('profileConfigPage.nip05Title')}</Text>
           <Text variant='bodyMedium'>
             {t('profileConfigPage.nip05Description')}
@@ -449,10 +453,10 @@ export const ProfileConfigPage: React.FC = () => {
       <RBSheet
         ref={bottomSheetLud06Ref}
         closeOnDragDown={true}
-        height={230}
+        height={240}
         customStyles={rbSheetCustomStyles}
       >
-        <View>
+        <View style={styles.bottomDrawer}>
           <Text variant='titleLarge'>{t('profileConfigPage.lud06Title')}</Text>
           <Text variant='bodyMedium'>{t('profileConfigPage.lud06Description')}</Text>
           <TextInput
@@ -494,8 +498,17 @@ export const ProfileConfigPage: React.FC = () => {
 }
 
 const styles = StyleSheet.create({
+  bottomDrawer: {
+    height: '90%',
+    justifyContent: 'space-between'
+  },
   container: {
     padding: 16,
+  },
+  inputContainer: {
+    justifyContent: 'space-between',
+    height: 350,
+    paddingTop: 16,
   },
   cardContainer: {
     width: '100%',

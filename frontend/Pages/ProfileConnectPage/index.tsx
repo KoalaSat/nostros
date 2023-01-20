@@ -6,6 +6,7 @@ import { getNip19Key, isPrivateKey, isPublicKey } from '../../lib/nostr/Nip19'
 import { Button, Switch, Text, TextInput } from 'react-native-paper'
 import Logo from '../../Components/Logo'
 import { navigate } from '../../lib/Navigation'
+import { useFocusEffect } from '@react-navigation/native'
 
 export const ProfileConnectPage: React.FC = () => {
   const { setPrivateKey, setPublicKey } = useContext(UserContext)
@@ -13,6 +14,12 @@ export const ProfileConnectPage: React.FC = () => {
   const [isNip19, setIsNip19] = useState<boolean>(false)
   const [isPublic, setIsPublic] = useState<boolean>(false)
   const [inputValue, setInputValue] = useState<string>('')
+
+  useFocusEffect(
+    React.useCallback(() => {
+      return () => setInputValue('')
+    }, []),
+  )
 
   useEffect(() => checkKey(), [inputValue])
 

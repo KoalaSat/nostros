@@ -33,6 +33,7 @@ import { handleInfinityScroll } from '../../Functions/NativeFunctions'
 import RBSheet from 'react-native-raw-bottom-sheet'
 import ProfileCard from '../../Components/ProfileCard'
 import { navigate } from '../../lib/Navigation'
+import { useFocusEffect } from '@react-navigation/native'
 
 interface ProfilePageProps {
   route: { params: { pubKey: string } }
@@ -55,26 +56,30 @@ export const ProfilePage: React.FC<ProfilePageProps> = ({ route }) => {
   const [refreshing, setRefreshing] = useState(false)
   const [firstLoad, setFirstLoad] = useState(true)
 
-  useEffect(() => {
-    relayPool?.unsubscribeAll()
-    setRefreshing(true)
-    setNotes(undefined)
-    setUser(undefined)
+  useFocusEffect(
+    React.useCallback(() => {
+      subscribeProfile()
+      subscribeNotes()
+      loadUser()
+      loadNotes()
+      setFirstLoad(false)
 
-    loadUser()
-    loadNotes()
-    subscribeProfile()
-    subscribeNotes()
-    setFirstLoad(false)
-  }, [])
+      return () =>
+        relayPool?.unsubscribe([
+          `main-profile${route.params.pubKey}`,
+          `user-profile${route.params.pubKey}`,
+          `answers-profile${route.params.pubKey}`,
+        ])
+    }, []),
+  )
 
   useEffect(() => {
     if (!firstLoad) {
-      loadUser()
-      loadNotes()
       if (pageSize > initialPageSize) {
         subscribeNotes(true)
       }
+      loadUser()
+      loadNotes()
     }
   }, [pageSize, lastEventId])
 
@@ -108,7 +113,7 @@ export const ProfilePage: React.FC<ProfilePageProps> = ({ route }) => {
           setNotes(results)
           setRefreshing(false)
           if (results.length > 0) {
-            relayPool?.subscribe('answers-profile', [
+            relayPool?.subscribe(`answers-profile${route.params.pubKey}`, [
               {
                 kinds: [EventKind.reaction, EventKind.textNote, EventKind.recommendServer],
                 '#e': results.map((note) => note.id ?? ''),
@@ -121,7 +126,7 @@ export const ProfilePage: React.FC<ProfilePageProps> = ({ route }) => {
   }
 
   const subscribeProfile: () => Promise<void> = async () => {
-    relayPool?.subscribe('user-profile', [
+    relayPool?.subscribe(`user-profile${route.params.pubKey}`, [
       {
         kinds: [EventKind.meta, EventKind.petNames],
         authors: [route.params.pubKey],
@@ -137,7 +142,7 @@ export const ProfilePage: React.FC<ProfilePageProps> = ({ route }) => {
       authors: [route.params.pubKey],
       limit: pageSize,
     }
-    relayPool?.subscribe('main-profile', [message])
+    relayPool?.subscribe(`main-profile${route.params.pubKey}`, [message])
   }
 
   const removeContact: () => void = () => {
@@ -200,8 +205,8 @@ export const ProfilePage: React.FC<ProfilePageProps> = ({ route }) => {
             <View style={styles.userName}>
               <Text variant='titleMedium'>{user && username(user)}</Text>
               {/* <MaterialCommunityIcons name="check-decagram-outline" size={16} /> */}
+              <Text>{user?.nip05}</Text>
             </View>
-            <Text>{user?.nip05}</Text>
           </View>
         </View>
         <View>
@@ -317,8 +322,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   userName: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    paddingLeft: 16,
   },
   actionButton: {
     justifyContent: 'center',

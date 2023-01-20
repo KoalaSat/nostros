@@ -20,7 +20,6 @@ import { RelayPoolContext } from '../../Contexts/RelayPoolContext'
 import { formatPubKey, populatePets, username } from '../../Functions/RelayFunctions/Users'
 import { getNip19Key } from '../../lib/nostr/Nip19'
 import { UserContext } from '../../Contexts/UserContext'
-import { TabView, SceneMap, TabBar } from 'react-native-tab-view'
 import {
   AnimatedFAB,
   Button,
@@ -32,15 +31,11 @@ import {
   useTheme,
 } from 'react-native-paper'
 import NostrosAvatar from '../../Components/NostrosAvatar'
-import { navigate } from '../../lib/Navigation'
 import RBSheet from 'react-native-raw-bottom-sheet'
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'
-import {
-  NavigationState,
-  Route,
-  SceneRendererProps,
-} from 'react-native-tab-view/lib/typescript/src/types'
 import { npubEncode } from 'nostr-tools/nip19'
+import { useFocusEffect } from '@react-navigation/native'
+import ProfileCard from '../../Components/ProfileCard'
 
 export const ContactsFeed: React.FC = () => {
   const { t } = useTranslation('common')
@@ -49,17 +44,24 @@ export const ContactsFeed: React.FC = () => {
   const { relayPool, lastEventId } = useContext(RelayPoolContext)
   const theme = useTheme()
   const bottomSheetAddContactRef = React.useRef<RBSheet>(null)
+  const bottomSheetProfileRef = React.useRef<RBSheet>(null)
   // State
   const [followers, setFollowers] = useState<User[]>([])
   const [following, setFollowing] = useState<User[]>([])
   const [contactInput, setContactInput] = useState<string>()
+  const [profileCardPubkey, setProfileCardPubkey] = useState<string>()
   const [isAddingContact, setIsAddingContact] = useState<boolean>(false)
   const [showNotification, setShowNotification] = useState<undefined | string>()
-  const [index] = React.useState(0)
-  const [routes] = React.useState([
-    { key: 'following', title: t('contactsFeed.following', { count: following.length }) },
-    { key: 'followers', title: t('contactsFeed.followers', { count: followers.length }) },
-  ])
+  const [tabKey, setTabKey] = React.useState('following')
+
+  useFocusEffect(
+    React.useCallback(() => {
+      subscribeContacts()
+      loadUsers()
+
+      return () => relayPool?.unsubscribe(['contacts', 'contacts-meta'])
+    }, []),
+  )
 
   useEffect(() => {
     loadUsers()
@@ -78,10 +80,11 @@ export const ContactsFeed: React.FC = () => {
               if (user.contact) following.push(user)
             }
           })
-          relayPool?.subscribe('contacts-meta-following', [
+          relayPool?.subscribe('contacts-meta', [
             {
               kinds: [EventKind.meta],
               authors: results.map((user) => user.id),
+              since: results[0]?.created_at ?? 0,
             },
           ])
           setFollowers(followers)
@@ -156,7 +159,12 @@ export const ContactsFeed: React.FC = () => {
   const renderContactItem: ListRenderItem<User> = ({ index, item }) => {
     const nPub = npubEncode(item.id)
     return (
-      <TouchableRipple onPress={() => navigate('Profile', { pubKey: item.id })}>
+      <TouchableRipple
+        onPress={() => {
+          setProfileCardPubkey(item.id)
+          bottomSheetProfileRef.current?.open()
+        }}
+      >
         <View key={item.id} style={styles.contactRow}>
           <View style={styles.contactInfo}>
             <NostrosAvatar
@@ -192,7 +200,7 @@ export const ContactsFeed: React.FC = () => {
     }
   }, [])
 
-  const Following: () => JSX.Element = () => (
+  const Following: JSX.Element = (
     <View style={styles.container}>
       {following.length > 0 ? (
         <ScrollView horizontal={false}>
@@ -201,6 +209,7 @@ export const ContactsFeed: React.FC = () => {
               data={following}
               renderItem={renderContactItem}
               ItemSeparatorComponent={Divider}
+              showsVerticalScrollIndicator={false}
             />
           </View>
         </ScrollView>
@@ -221,7 +230,7 @@ export const ContactsFeed: React.FC = () => {
     </View>
   )
 
-  const Follower: () => JSX.Element = () => (
+  const Follower: JSX.Element = (
     <View style={styles.container}>
       {followers.length > 0 ? (
         <ScrollView horizontal={false}>
@@ -230,6 +239,7 @@ export const ContactsFeed: React.FC = () => {
               data={followers}
               renderItem={renderContactItem}
               ItemSeparatorComponent={Divider}
+              showsVerticalScrollIndicator={false}
             />
           </View>
         </ScrollView>
@@ -257,36 +267,46 @@ export const ContactsFeed: React.FC = () => {
     </View>
   )
 
-  const renderScene = SceneMap({
+  const renderScene: Record<string, JSX.Element> = {
     following: Following,
     followers: Follower,
-  })
-
-  const renderTabBar: (
-    props: SceneRendererProps & { navigationState: NavigationState<Route> },
-  ) => JSX.Element = (props) => (
-    <TabBar
-      {...props}
-      indicatorStyle={{ backgroundColor: theme.colors.primary }}
-      style={{ backgroundColor: theme.colors.background }}
-      renderLabel={({ route }) => (
-        <Text style={[styles.tabLabel, { color: theme.colors.onSurfaceVariant }]}>
-          {route.title}
-        </Text>
-      )}
-    />
-  )
+  }
 
   return (
     <>
-      <TabView
-        navigationState={{ index, routes }}
-        renderScene={renderScene}
-        renderTabBar={renderTabBar}
-        onIndexChange={() => {}}
-      />
+      <View style={styles.tabsNavigator}>
+        <View
+          style={[
+            styles.tab,
+            tabKey === 'following'
+              ? { ...styles.tabActive, borderBottomColor: theme.colors.primary }
+              : {},
+          ]}
+        >
+          <TouchableRipple onPress={() => setTabKey('following')}>
+            <Text style={styles.tabText}>
+              {t('contactsFeed.following', { count: following.length })}
+            </Text>
+          </TouchableRipple>
+        </View>
+        <View
+          style={[
+            styles.tab,
+            tabKey === 'followers'
+              ? { ...styles.tabActive, borderBottomColor: theme.colors.primary }
+              : {},
+          ]}
+        >
+          <TouchableRipple onPress={() => setTabKey('followers')}>
+            <Text style={styles.tabText}>
+              {t('contactsFeed.followers', { count: followers.length })}
+            </Text>
+          </TouchableRipple>
+        </View>
+      </View>
+      {renderScene[tabKey]}
       <AnimatedFAB
-        style={[styles.fab, { top: Dimensions.get('window').height - 220 }]}
+        style={[styles.fab, { top: Dimensions.get('window').height - 200 }]}
         icon='account-multiple-plus-outline'
         label='Label'
         onPress={() => bottomSheetAddContactRef.current?.open()}
@@ -294,6 +314,15 @@ export const ContactsFeed: React.FC = () => {
         iconMode='static'
         extended={false}
       />
+
+      <RBSheet
+        ref={bottomSheetProfileRef}
+        closeOnDragDown={true}
+        height={280}
+        customStyles={bottomSheetStyles}
+      >
+        <ProfileCard userPubKey={profileCardPubkey ?? ''} bottomSheetRef={bottomSheetProfileRef} />
+      </RBSheet>
       <RBSheet
         ref={bottomSheetAddContactRef}
         closeOnDragDown={true}
@@ -354,6 +383,25 @@ export const ContactsFeed: React.FC = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+  },
+  tabsNavigator: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    height: 70,
+  },
+  tab: {
+    flex: 1,
+    height: '100%',
+    justifyContent: 'center',
+    alignContent: 'center',
+  },
+  tabActive: {
+    borderBottomWidth: 5,
+  },
+  tabText: {
+    textAlign: 'center',
+    paddingTop: 25,
+    height: '100%',
   },
   snackbar: {
     margin: 16,

@@ -1,5 +1,4 @@
 import { DirectMessage } from '../../DatabaseFunctions/DirectMessages'
-import { v4 as uuidv4 } from 'uuid'
 
 export const getOtherPubKey: (message: DirectMessage, ownPubKey: string) => string = (
   message,
@@ -12,17 +11,6 @@ export const getOtherPubKey: (message: DirectMessage, ownPubKey: string) => stri
   }
 
   return otherPubKey
-}
-
-export const generateConversationId: (pubKey: string, otherPubKey: string) => string = (
-  pubKey,
-  otherPubKey,
-) => {
-  const pubKeys = [pubKey, otherPubKey].sort().join('')
-
-  return uuidv4({
-    random: convertStringToByteArray(pubKeys),
-  })
 }
 
 export const convertStringToByteArray: (string: string) => number[] = (string) => {

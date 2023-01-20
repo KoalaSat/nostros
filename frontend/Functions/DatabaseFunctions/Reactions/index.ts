@@ -32,3 +32,28 @@ export const getReactions: (
 
   return reactions
 }
+
+export const getLastReaction: (
+  db: QuickSQLiteConnection,
+  filters: {
+    eventIds: string[]
+  },
+) => Promise<Reaction> = async (db, { eventIds }) => {
+  const eventIdsQuery = eventIds.join('", "')
+
+  const reactionsQuery = `
+    SELECT 
+      *
+    FROM
+      nostros_reactions
+    WHERE reacted_event_id IN ("${eventIdsQuery}")
+    ORDER BY created_at DESC 
+    LIMIT 1
+  `
+
+  const resultSet = await db.execute(reactionsQuery)
+  const item: object = getItems(resultSet)[0]
+  const reaction: Reaction = databaseToEntity(item)
+
+  return reaction
+}

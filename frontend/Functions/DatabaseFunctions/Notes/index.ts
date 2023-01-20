@@ -7,6 +7,7 @@ export interface Note extends Event {
   picture: string
   lnurl: string
   reply_event_id: string
+  user_created_at: number
 }
 
 const databaseToEntity: (object: any) => Note = (object) => {
@@ -21,7 +22,7 @@ export const getMainNotes: (
 ) => Promise<Note[]> = async (db, pubKey, limit) => {
   const notesQuery = `
     SELECT 
-      nostros_notes.*, nostros_users.lnurl, nostros_users.name, nostros_users.picture, nostros_users.contact FROM nostros_notes 
+      nostros_notes.*, nostros_users.lnurl, nostros_users.name, nostros_users.picture, nostros_users.contact, nostros_users.created_at as user_created_at FROM nostros_notes 
     LEFT JOIN 
       nostros_users ON nostros_users.id = nostros_notes.pubkey 
     WHERE (nostros_users.contact = 1 OR nostros_notes.pubkey = '${pubKey}')
@@ -44,7 +45,7 @@ export const getMentionNotes: (
 ) => Promise<Note[]> = async (db, pubKey, limit) => {
   const notesQuery = `
     SELECT 
-      nostros_notes.*, nostros_users.lnurl, nostros_users.name, nostros_users.picture, nostros_users.contact FROM nostros_notes 
+      nostros_notes.*, nostros_users.lnurl, nostros_users.name, nostros_users.picture, nostros_users.contact, nostros_users.created_at as user_created_at FROM nostros_notes 
     LEFT JOIN 
       nostros_users ON nostros_users.id = nostros_notes.pubkey 
     WHERE (nostros_notes.reply_event_id IN (
@@ -78,6 +79,30 @@ export const getRepliesCount: (
   return item['COUNT(*)'] ?? 0
 }
 
+export const getLastReply: (
+  db: QuickSQLiteConnection,
+  filters: {
+    eventIds: string[]
+  },
+) => Promise<Note> = async (db, { eventIds }) => {
+  const eventIdsQuery = eventIds.join('", "')
+  const replyQuery = `
+    SELECT 
+      *
+    FROM
+      nostros_notes
+    WHERE reply_event_id IN ("${eventIdsQuery}")
+    ORDER BY created_at DESC 
+    LIMIT 1
+  `
+
+  const resultSet = await db.execute(replyQuery)
+  const item: object = getItems(resultSet)[0]
+  const reaction: Note = databaseToEntity(item)
+
+  return reaction
+}
+
 export const getNotes: (
   db: QuickSQLiteConnection,
   options: {
@@ -89,7 +114,7 @@ export const getNotes: (
 ) => Promise<Note[]> = async (db, { filters = {}, limit, contacts, includeIds }) => {
   let notesQuery = `
     SELECT 
-      nostros_notes.*, nostros_users.lnurl, nostros_users.name, nostros_users.picture, nostros_users.contact FROM nostros_notes 
+      nostros_notes.*, nostros_users.lnurl, nostros_users.name, nostros_users.picture, nostros_users.contact, nostros_users.created_at as user_created_at FROM nostros_notes 
     LEFT JOIN 
       nostros_users ON nostros_users.id = nostros_notes.pubkey
   `

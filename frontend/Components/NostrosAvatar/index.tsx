@@ -1,6 +1,7 @@
 import React from 'react'
 import { StyleSheet, View } from 'react-native'
 import { Avatar as PaperAvatar, useTheme } from 'react-native-paper'
+import { validImageUrl } from '../../Functions/NativeFunctions'
 
 interface NostrosAvatarProps {
   pubKey: string
@@ -21,18 +22,10 @@ export const NostrosAvatar: React.FC<NostrosAvatarProps> = ({
   const displayName = name && name !== '' ? name : pubKey ?? ''
   const hasLud06 = lud06 && lud06 !== ''
   const lud06IconSize = size / 2.85
-  const validImage: () => boolean = () => {
-    if (src) {
-      const regexp = /^(https?:\/\/.*\.(?:png|jpg|jpeg))$/
-      return regexp.test(src)
-    } else {
-      return false
-    }
-  }
 
   return (
     <View>
-      {validImage() ? (
+      {validImageUrl(src) ? (
         <PaperAvatar.Image size={size} source={{ uri: src }} />
       ) : (
         <PaperAvatar.Text size={size} label={displayName.substring(0, 2).toUpperCase()} />
