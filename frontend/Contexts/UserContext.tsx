@@ -11,7 +11,8 @@ import {
 } from '../Functions/DatabaseFunctions/Users'
 import { dropTables } from '../Functions/DatabaseFunctions'
 import { navigate } from '../lib/Navigation'
-import { npubEncode, nsecEncode } from 'nostr-tools/nip19'
+import { nsecEncode } from 'nostr-tools/nip19'
+import { getNpub } from '../lib/nostr/Nip19'
 
 export interface UserContextProps {
   userState: 'loading' | 'access' | 'ready'
@@ -110,7 +111,7 @@ export const UserContextProvider = ({ children }: UserContextProviderProps): JSX
   useEffect(() => {
     if (publicKey && publicKey !== '') {
       SInfo.setItem('publicKey', publicKey, {})
-      setNpub(npubEncode(publicKey))
+      setNpub(getNpub(publicKey))
       reloadUser()
     }
   }, [publicKey])

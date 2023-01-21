@@ -23,7 +23,7 @@ import { formatPubKey } from '../../Functions/RelayFunctions/Users'
 export const MenuItems: React.FC = () => {
   const [drawerItemIndex, setDrawerItemIndex] = React.useState<number>(-1)
   const { relays } = React.useContext(RelayPoolContext)
-  const { nPub, publicKey, user, contactsCount, followersCount, logout } =
+  const { nPub, publicKey, privateKey, user, contactsCount, followersCount, logout } =
     React.useContext(UserContext)
   const { t } = useTranslation('common')
   const theme = useTheme()
@@ -78,11 +78,13 @@ export const MenuItems: React.FC = () => {
                 </View>
               </TouchableRipple>
               <View style={styles.cardEdit}>
-                <IconButton
-                  icon='pencil-outline'
-                  size={20}
-                  onPress={() => navigate('ProfileConfig')}
-                />
+                {privateKey && (
+                  <IconButton
+                    icon='pencil-outline'
+                    size={20}
+                    onPress={() => navigate('ProfileConfig')}
+                  />
+                )}
               </View>
             </Card.Content>
             <Card.Content style={styles.cardActions}>

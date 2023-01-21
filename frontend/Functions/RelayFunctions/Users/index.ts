@@ -3,7 +3,7 @@ import { QuickSQLiteConnection } from 'react-native-quick-sqlite'
 import RelayPool from '../../../lib/nostr/RelayPool/intex'
 import { getUser, getUsers, User } from '../../DatabaseFunctions/Users'
 import { Event } from '../../../lib/nostr/Events'
-import { npubEncode } from 'nostr-tools/nip19'
+import { getNpub } from '../../../lib/nostr/Nip19'
 
 export const usersToTags: (users: User[]) => string[][] = (users) => {
   return users.map((user): string[] => {
@@ -20,7 +20,7 @@ export const tagToUser: (tag: string[]) => User = (tag) => {
 }
 
 export const username: (user: User) => string = (user) => {
-  return user.name && user.name !== '' ? user.name : formatPubKey(npubEncode(user.id))
+  return user.name && user.name !== '' ? user.name : formatPubKey(getNpub(user.id))
 }
 
 export const usernamePubKey: (name: string, pubKey: string) => string = (name, pubKey) => {
@@ -30,7 +30,7 @@ export const usernamePubKey: (name: string, pubKey: string) => string = (name, p
 export const formatPubKey: (pubKey: string) => string = (pubKey) => {
   if (!pubKey) return ''
 
-  return `${pubKey.slice(0, 4)}...${pubKey.slice(-4)}`
+  return `${pubKey.slice(0, 6)}...${pubKey.slice(-6)}`
 }
 
 export const populatePets: (

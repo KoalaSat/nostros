@@ -18,7 +18,7 @@ import {
 } from '../../Functions/DatabaseFunctions/Users'
 import { RelayPoolContext } from '../../Contexts/RelayPoolContext'
 import { formatPubKey, populatePets, username } from '../../Functions/RelayFunctions/Users'
-import { getNip19Key } from '../../lib/nostr/Nip19'
+import { getNip19Key, getNpub } from '../../lib/nostr/Nip19'
 import { UserContext } from '../../Contexts/UserContext'
 import {
   AnimatedFAB,
@@ -33,14 +33,14 @@ import {
 import NostrosAvatar from '../../Components/NostrosAvatar'
 import RBSheet from 'react-native-raw-bottom-sheet'
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'
-import { npubEncode } from 'nostr-tools/nip19'
 import { useFocusEffect } from '@react-navigation/native'
 import ProfileCard from '../../Components/ProfileCard'
 
 export const ContactsFeed: React.FC = () => {
   const { t } = useTranslation('common')
   const { database } = useContext(AppContext)
-  const { publicKey, setContantsCount, setFollowersCount, nPub } = React.useContext(UserContext)
+  const { privateKey, publicKey, setContantsCount, setFollowersCount, nPub } =
+    React.useContext(UserContext)
   const { relayPool, lastEventId } = useContext(RelayPoolContext)
   const theme = useTheme()
   const bottomSheetAddContactRef = React.useRef<RBSheet>(null)
@@ -84,7 +84,6 @@ export const ContactsFeed: React.FC = () => {
             {
               kinds: [EventKind.meta],
               authors: results.map((user) => user.id),
-              since: results[0]?.created_at ?? 0,
             },
           ])
           setFollowers(followers)
@@ -157,7 +156,7 @@ export const ContactsFeed: React.FC = () => {
   }
 
   const renderContactItem: ListRenderItem<User> = ({ index, item }) => {
-    const nPub = npubEncode(item.id)
+    const nPub = getNpub(item.id)
     return (
       <TouchableRipple
         onPress={() => {
@@ -305,15 +304,17 @@ export const ContactsFeed: React.FC = () => {
         </View>
       </View>
       {renderScene[tabKey]}
-      <AnimatedFAB
-        style={[styles.fab, { top: Dimensions.get('window').height - 200 }]}
-        icon='account-multiple-plus-outline'
-        label='Label'
-        onPress={() => bottomSheetAddContactRef.current?.open()}
-        animateFrom='right'
-        iconMode='static'
-        extended={false}
-      />
+      {privateKey && (
+        <AnimatedFAB
+          style={[styles.fab, { top: Dimensions.get('window').height - 200 }]}
+          icon='account-multiple-plus-outline'
+          label='Label'
+          onPress={() => bottomSheetAddContactRef.current?.open()}
+          animateFrom='right'
+          iconMode='static'
+          extended={false}
+        />
+      )}
 
       <RBSheet
         ref={bottomSheetProfileRef}

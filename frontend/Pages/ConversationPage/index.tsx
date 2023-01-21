@@ -49,7 +49,6 @@ export const ConversationPage: React.FC<ConversationPageProps> = ({ route }) => 
 
   useFocusEffect(
     React.useCallback(() => {
-      console.log('OPEN')
       loadDirectMessages(true)
 
       return () => relayPool?.unsubscribe([`conversation${route.params.pubKey}`])

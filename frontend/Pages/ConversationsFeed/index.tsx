@@ -36,8 +36,8 @@ import moment from 'moment'
 import RBSheet from 'react-native-raw-bottom-sheet'
 import { useTranslation } from 'react-i18next'
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'
-import { npubEncode } from 'nostr-tools/nip19'
 import { useFocusEffect } from '@react-navigation/native'
+import { getNpub } from '../../lib/nostr/Nip19'
 
 export const ConversationsFeed: React.FC = () => {
   const theme = useTheme()
@@ -66,11 +66,11 @@ export const ConversationsFeed: React.FC = () => {
 
   const loadDirectMessages: (subscribe: boolean) => void = (subscribe) => {
     if (database && publicKey) {
-      getUsers(database, { contacts: true }).then(setUsers)
       getGroupedDirectMessages(database, {}).then((results) => {
         if (results && results.length > 0) {
           settDirectMessages(results)
           const otherUsers = results.map((message) => getOtherPubKey(message, publicKey))
+          getUsers(database, { contacts: true, includeIds: otherUsers }).then(setUsers)
           relayPool?.subscribe('directmessages-meta', [
             {
               kinds: [EventKind.meta],
@@ -120,7 +120,7 @@ export const ConversationsFeed: React.FC = () => {
           <View style={styles.contactUser}>
             <NostrosAvatar
               name={user.name}
-              pubKey={npubEncode(user.id)}
+              pubKey={getNpub(user.id)}
               src={user.picture}
               lud06={user.lnurl}
               size={40}
@@ -196,7 +196,7 @@ export const ConversationsFeed: React.FC = () => {
         <View style={styles.contactUser}>
           <NostrosAvatar
             name={item.name}
-            pubKey={npubEncode(item.id)}
+            pubKey={getNpub(item.id)}
             src={item.picture}
             lud06={item.lnurl}
             size={40}

@@ -35,7 +35,7 @@ interface HomeFeedProps {
 export const HomeFeed: React.FC<HomeFeedProps> = ({ navigation }) => {
   const theme = useTheme()
   const { database } = useContext(AppContext)
-  const { publicKey } = useContext(UserContext)
+  const { publicKey, privateKey } = useContext(UserContext)
   const { lastEventId, relayPool, lastConfirmationtId } = useContext(RelayPoolContext)
   const initialPageSize = 10
   const [notes, setNotes] = useState<Note[]>([])
@@ -97,9 +97,8 @@ export const HomeFeed: React.FC<HomeFeedProps> = ({ navigation }) => {
     relayPool?.subscribe('homepage-main', [message])
     relayPool?.subscribe('homepage-contacts-meta', [
       {
-        kinds: [EventKind.petNames],
-        authors: users.filter((user) => user.name !== undefined).map((user) => user.id),
-        since: users[0]?.created_at ?? 0,
+        kinds: [EventKind.meta],
+        authors: users.map((user) => user.id),
       },
     ])
     setRefreshing(false)
@@ -195,15 +194,17 @@ export const HomeFeed: React.FC<HomeFeedProps> = ({ navigation }) => {
           </Button>
         </View>
       )}
-      <AnimatedFAB
-        style={[styles.fab, { top: Dimensions.get('window').height - 200 }]}
-        icon='pencil-outline'
-        label='Label'
-        onPress={() => navigate('Send')}
-        animateFrom='right'
-        iconMode='static'
-        extended={false}
-      />
+      {privateKey && (
+        <AnimatedFAB
+          style={[styles.fab, { top: Dimensions.get('window').height - 200 }]}
+          icon='pencil-outline'
+          label='Label'
+          onPress={() => navigate('Send')}
+          animateFrom='right'
+          iconMode='static'
+          extended={false}
+        />
+      )}
       <RBSheet
         ref={bottomSheetProfileRef}
         closeOnDragDown={true}

@@ -6,9 +6,11 @@ import HomeFeed from '../HomeFeed'
 import NotificationsFeed from '../NotificationsFeed'
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs'
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'
+import { UserContext } from '../../Contexts/UserContext'
 
 export const HomePage: React.FC = () => {
   const theme = useTheme()
+  const { privateKey } = React.useContext(UserContext)
 
   const Tab = createBottomTabNavigator()
 
@@ -40,15 +42,17 @@ export const HomePage: React.FC = () => {
           ),
         }}
       />
-      <Tab.Screen
-        name='messages'
-        component={ConversationsFeed}
-        options={{
-          tabBarIcon: ({ focused, size }) => (
-            <MaterialCommunityIcons name={focused ? 'email' : 'email-outline'} size={size} />
-          ),
-        }}
-      />
+      {privateKey && (
+        <Tab.Screen
+          name='messages'
+          component={ConversationsFeed}
+          options={{
+            tabBarIcon: ({ focused, size }) => (
+              <MaterialCommunityIcons name={focused ? 'email' : 'email-outline'} size={size} />
+            ),
+          }}
+        />
+      )}
       <Tab.Screen
         name='contacts'
         component={ContactsFeed}

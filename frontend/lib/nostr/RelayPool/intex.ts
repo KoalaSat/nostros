@@ -1,6 +1,5 @@
 // import { spawnThread } from 'react-native-multithreading'
 import { signEvent, validateEvent, Event } from '../Events'
-import { v5 as uuidv5 } from 'uuid'
 import RelayPoolModule from '../../Native/WebsocketModule'
 
 export interface RelayFilters {
@@ -80,15 +79,12 @@ class RelayPool {
     subId,
     filters,
   ) => {
-    const uuid = uuidv5(
-      `${subId}${JSON.stringify(filters)}`,
-      '57003344-b2cb-4b6f-a579-fae9e82c370a',
-    )
-    if (this.subscriptions[subId]?.includes(uuid)) {
+    const id = `${subId}${JSON.stringify(filters)}`
+    if (this.subscriptions[subId]?.includes(id)) {
       console.log('Subscription already done!', subId)
     } else {
       this.send([...['REQ', subId], ...(filters ?? [])])
-      const newSubscriptions = [...(this.subscriptions[subId] ?? []), uuid]
+      const newSubscriptions = [...(this.subscriptions[subId] ?? []), id]
       this.subscriptions[subId] = newSubscriptions
     }
   }

@@ -13,10 +13,7 @@ import i18n from './i18n.config'
 import nostrosDarkTheme from './Constants/Theme/theme-dark.json'
 import { navigationRef } from './lib/Navigation'
 import { UserContextProvider } from './Contexts/UserContext'
-import { LogBox } from 'react-native'
 import NostrosDrawerNavigator from './Pages/NostrosDrawerNavigator'
-
-LogBox.ignoreAllLogs()
 
 export const Frontend: React.FC = () => {
   const { DarkTheme } = adaptNavigationTheme({

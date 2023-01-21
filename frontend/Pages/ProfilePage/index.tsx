@@ -25,7 +25,6 @@ import { getUser, updateUserContact, User } from '../../Functions/DatabaseFuncti
 import { EventKind } from '../../lib/nostr/Events'
 import { populatePets, username } from '../../Functions/RelayFunctions/Users'
 import { useTranslation } from 'react-i18next'
-import { npubEncode } from 'nostr-tools/nip19'
 import { RelayFilters } from '../../lib/nostr/RelayPool/intex'
 import NoteCard from '../../Components/NoteCard'
 import LnPayment from '../../Components/LnPayment'
@@ -34,6 +33,7 @@ import RBSheet from 'react-native-raw-bottom-sheet'
 import ProfileCard from '../../Components/ProfileCard'
 import { navigate } from '../../lib/Navigation'
 import { useFocusEffect } from '@react-navigation/native'
+import { getNpub } from '../../lib/nostr/Nip19'
 
 interface ProfilePageProps {
   route: { params: { pubKey: string } }
@@ -195,7 +195,7 @@ export const ProfilePage: React.FC<ProfilePageProps> = ({ route }) => {
           <View>
             <NostrosAvatar
               name={user?.name}
-              pubKey={npubEncode(route.params.pubKey)}
+              pubKey={getNpub(route.params.pubKey)}
               src={user?.picture}
               lud06={user?.lnurl}
               size={54}
@@ -245,7 +245,7 @@ export const ProfilePage: React.FC<ProfilePageProps> = ({ route }) => {
               size={28}
               onPress={() => {
                 setShowNotification('copyNPub')
-                const profileNPud = npubEncode(route.params.pubKey)
+                const profileNPud = getNpub(route.params.pubKey)
                 Clipboard.setString(profileNPud ?? '')
               }}
             />
