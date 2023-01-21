@@ -11,16 +11,19 @@ interface LogoProps {
 
 export const Logo: React.FC<LogoProps> = ({ onlyIcon = false, size = 'small' }) => {
   const logoHeight = {
-    small: 60,
+    small: 30,
     medium: 90,
     large: 120,
     big: 280,
   }
   return (
     <View style={styles.container}>
-      <SvgXml height={logoHeight[size]} xml={nostrosLogoSvg} style={styles.logo} />
+      <SvgXml height={logoHeight[size]} xml={nostrosLogoSvg} />
       {!onlyIcon && (
-        <Text style={styles.text} variant={size === 'small' ? 'headlineSmall' : 'displayMedium'}>
+        <Text
+          style={[styles.text, { paddingLeft: size === 'small' ? 0 : 16 }]}
+          variant={size === 'small' ? 'headlineSmall' : 'displayMedium'}
+        >
           NOSTROS
         </Text>
       )}
@@ -29,17 +32,12 @@ export const Logo: React.FC<LogoProps> = ({ onlyIcon = false, size = 'small' }) 
 }
 
 const styles = StyleSheet.create({
-  logo: {
-    flex: 1,
-  },
   container: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
     alignItems: 'center',
   },
   text: {
     fontFamily: 'Iceland-Regular',
-    flex: 2,
     height: 60,
     textAlignVertical: 'center',
   },
