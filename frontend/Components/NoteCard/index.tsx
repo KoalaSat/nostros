@@ -27,7 +27,7 @@ import {
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'
 import { REGEX_SOCKET_LINK } from '../../Constants/Relay'
 import { push } from '../../lib/Navigation'
-import { npubEncode } from 'nostr-tools/nip19'
+import { getNpub } from '../../lib/nostr/Nip19'
 
 interface NoteCardProps {
   note: Note
@@ -52,7 +52,7 @@ export const NoteCard: React.FC<NoteCardProps> = ({
   const [repliesCount, setRepliesCount] = React.useState<number>(0)
   const [hide, setHide] = useState<boolean>(isContentWarning(note))
   const timestamp = useMemo(() => moment.unix(note.created_at).format('L HH:mm'), [note])
-  const nPub = useMemo(() => npubEncode(note.pubkey), [note])
+  const nPub = useMemo(() => getNpub(note.pubkey), [note])
 
   useEffect(() => {
     if (database && publicKey && note.id) {

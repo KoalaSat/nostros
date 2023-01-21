@@ -1,5 +1,4 @@
 import { t } from 'i18next'
-import { npubEncode } from 'nostr-tools/nip19'
 import * as React from 'react'
 import { Clipboard, StyleSheet, View } from 'react-native'
 import { Card, IconButton, Snackbar, Text } from 'react-native-paper'
@@ -13,6 +12,7 @@ import LnPayment from '../LnPayment'
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'
 import { navigate, push } from '../../lib/Navigation'
 import RBSheet from 'react-native-raw-bottom-sheet'
+import { getNpub } from '../../lib/nostr/Nip19'
 
 interface ProfileCardProps {
   userPubKey: string
@@ -27,7 +27,7 @@ export const ProfileCard: React.FC<ProfileCardProps> = ({ userPubKey, bottomShee
   const [openLn, setOpenLn] = React.useState<boolean>(false)
   const [isContact, setIsContact] = React.useState<boolean>()
   const [showNotification, setShowNotification] = React.useState<undefined | string>()
-  const nPub = React.useMemo(() => npubEncode(userPubKey), [userPubKey])
+  const nPub = React.useMemo(() => getNpub(userPubKey), [userPubKey])
 
   React.useEffect(() => {
     loadUser()

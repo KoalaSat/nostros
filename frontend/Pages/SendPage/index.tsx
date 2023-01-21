@@ -13,7 +13,7 @@ import { Button, Switch, Text, TextInput, TouchableRipple } from 'react-native-p
 import { UserContext } from '../../Contexts/UserContext'
 import NostrosAvatar from '../../Components/NostrosAvatar'
 import { goBack } from '../../lib/Navigation'
-import { npubEncode } from 'nostr-tools/nip19'
+import { getNpub } from '../../lib/nostr/Nip19'
 
 interface SendPageProps {
   route: { params: { note: Note } | undefined }
@@ -103,7 +103,6 @@ export const SendPage: React.FC<SendPageProps> = ({ route }) => {
   }
 
   const addUserMention: (user: User) => void = (user) => {
-    console.log(user)
     setUserMentions((prev) => {
       prev.push(user)
       return prev
@@ -122,7 +121,7 @@ export const SendPage: React.FC<SendPageProps> = ({ route }) => {
         <View style={styles.contactInfo}>
           <NostrosAvatar
             name={item.name}
-            pubKey={npubEncode(item.id)}
+            pubKey={getNpub(item.id)}
             src={item.picture}
             lud06={item.lnurl}
             size={34}

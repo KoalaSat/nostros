@@ -13,11 +13,11 @@ import {
   Button,
   IconButton,
   Surface,
+  TouchableRipple,
   useTheme,
 } from 'react-native-paper'
-import { npubEncode } from 'nostr-tools/nip19'
 import moment from 'moment'
-import { usernamePubKey } from '../../Functions/RelayFunctions/Users'
+import { formatPubKey, usernamePubKey } from '../../Functions/RelayFunctions/Users'
 import NostrosAvatar from '../../Components/NostrosAvatar'
 import TextContent from '../../Components/TextContent'
 import { getReactions } from '../../Functions/DatabaseFunctions/Reactions'
@@ -25,8 +25,10 @@ import { UserContext } from '../../Contexts/UserContext'
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'
 import RBSheet from 'react-native-raw-bottom-sheet'
 import ProfileCard from '../../Components/ProfileCard'
-import { navigate } from '../../lib/Navigation'
+import { navigate, push } from '../../lib/Navigation'
 import { useFocusEffect } from '@react-navigation/native'
+import { getNpub } from '../../lib/nostr/Nip19'
+import { useTranslation } from 'react-i18next'
 
 interface NotePageProps {
   route: { params: { noteId: string } }
@@ -47,6 +49,7 @@ export const NotePage: React.FC<NotePageProps> = ({ route }) => {
   const [timestamp, setTimestamp] = useState<string>()
   const [profileCardPubkey, setProfileCardPubKey] = useState<string>()
   const theme = useTheme()
+  const { t } = useTranslation('common')
   const bottomSheetProfileRef = React.useRef<RBSheet>(null)
 
   useFocusEffect(
@@ -73,7 +76,7 @@ export const NotePage: React.FC<NotePageProps> = ({ route }) => {
       if (events.length > 0) {
         const event = events[0]
         setNote(event)
-        setNPub(npubEncode(event.pubkey))
+        setNPub(getNpub(event.pubkey))
         setTimestamp(moment.unix(event.created_at).format('L HH:mm'))
 
         const notes = await getNotes(database, { filters: { reply_event_id: route.params.noteId } })
@@ -144,7 +147,6 @@ export const NotePage: React.FC<NotePageProps> = ({ route }) => {
 
   const renderItem: (note: Note) => JSX.Element = (note) => (
     <View style={[styles.noteCard, { borderColor: theme.colors.onSecondary }]} key={note.id}>
-      <View style={styles.noteCardSpace}></View>
       <NoteCard
         note={note}
         onPressOptions={() => {
@@ -200,6 +202,26 @@ export const NotePage: React.FC<NotePageProps> = ({ route }) => {
               <IconButton icon='dots-vertical' size={25} onPress={openProfileDrawer} />
             </View>
           </View>
+          {note.reply_event_id && (
+            <TouchableRipple
+              onPress={() =>
+                note.kind !== EventKind.recommendServer &&
+                push('Note', { noteId: note.reply_event_id })
+              }
+            >
+              <View style={[styles.answerContent, { borderColor: theme.colors.onSecondary }]}>
+                <View style={styles.answerData}>
+                  <MaterialCommunityIcons name='arrow-left-top' size={16} />
+                  <Text>
+                    {t('noteCard.answering', { username: formatPubKey(note.reply_event_id) })}
+                  </Text>
+                </View>
+                <View>
+                  <Text style={styles.link}>{t('noteCard.seeParent')}</Text>
+                </View>
+              </View>
+            </TouchableRipple>
+          )}
           <View style={[styles.titleComment, { borderColor: theme.colors.onSecondary }]}>
             <TextContent event={note} />
           </View>
@@ -254,17 +276,19 @@ export const NotePage: React.FC<NotePageProps> = ({ route }) => {
           </View>
         )}
       </ScrollView>
-      <AnimatedFAB
-        style={[styles.fabSend, { top: Dimensions.get('window').height - 140 }]}
-        icon='message-plus-outline'
-        label='Label'
-        onPress={() => {
-          navigate('Reply', { note })
-        }}
-        animateFrom='right'
-        iconMode='static'
-        extended={false}
-      />
+      {privateKey && (
+        <AnimatedFAB
+          style={[styles.fabSend, { top: Dimensions.get('window').height - 140 }]}
+          icon='message-plus-outline'
+          label='Label'
+          onPress={() => {
+            navigate('Reply', { note })
+          }}
+          animateFrom='right'
+          iconMode='static'
+          extended={false}
+        />
+      )}
       <AnimatedFAB
         style={[styles.fabHome, { top: Dimensions.get('window').height - 220 }]}
         icon='home-outline'
@@ -341,7 +365,19 @@ const styles = StyleSheet.create({
   noteCard: {
     borderLeftWidth: 1,
     paddingLeft: 32,
-    paddingTop: 16
+    paddingTop: 16,
+  },
+  answerData: {
+    flexDirection: 'row',
+  },
+  answerContent: {
+    flexDirection: 'row',
+    borderTopWidth: 1,
+    padding: 16,
+    justifyContent: 'space-between',
+  },
+  link: {
+    textDecorationLine: 'underline',
   },
 })
 

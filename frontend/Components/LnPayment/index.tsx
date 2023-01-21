@@ -177,7 +177,7 @@ export const LnPayment: React.FC<TextContentProps> = ({ open, setOpen, event, us
 const styles = StyleSheet.create({
   drawerBottom: {
     height: '90%',
-    justifyContent: 'space-between'
+    justifyContent: 'space-between',
   },
   qrContainer: {
     flex: 1,

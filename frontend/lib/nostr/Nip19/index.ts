@@ -1,4 +1,8 @@
-import { decode, EventPointer, ProfilePointer } from 'nostr-tools/nip19'
+import { decode, EventPointer, npubEncode, ProfilePointer } from 'nostr-tools/nip19'
+
+export function getNpub(key: string): string {
+  return isPublicKey(key) ? key : npubEncode(key)
+}
 
 export function getNip19Key(nip19: string): string {
   let result = nip19

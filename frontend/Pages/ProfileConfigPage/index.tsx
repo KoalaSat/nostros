@@ -500,7 +500,7 @@ export const ProfileConfigPage: React.FC = () => {
 const styles = StyleSheet.create({
   bottomDrawer: {
     height: '90%',
-    justifyContent: 'space-between'
+    justifyContent: 'space-between',
   },
   container: {
     padding: 16,

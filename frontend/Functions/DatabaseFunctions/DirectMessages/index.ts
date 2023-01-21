@@ -17,7 +17,6 @@ export const updateConversationRead: (
   db: QuickSQLiteConnection,
 ) => Promise<QueryResult | null> = async (conversationId, db) => {
   const userQuery = `UPDATE nostros_direct_messages SET read = ? WHERE conversation_id = ?`
-  console.log(userQuery)
   return db.execute(userQuery, [1, conversationId])
 }
 

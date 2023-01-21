@@ -30,10 +30,13 @@ export const ProfileLoadPage: React.FC = () => {
   )
 
   useEffect(() => {
-    console.log('lastEventId', lastEventId)
     loadPets()
-    if (user?.name) reloadUser()
+    reloadUser()
   }, [lastEventId])
+
+  useEffect(() => {
+    if (publicKey) loadMeta()
+  }, [publicKey])
 
   useEffect(() => {
     if (user) setProfileFound(true)
@@ -43,7 +46,7 @@ export const ProfileLoadPage: React.FC = () => {
     if (publicKey) {
       relayPool?.subscribe('profile-load-meta-pets', [
         {
-          kinds: [EventKind.meta, EventKind.petNames],
+          kinds: [EventKind.petNames],
           authors: [publicKey],
         },
       ])
@@ -58,9 +61,15 @@ export const ProfileLoadPage: React.FC = () => {
           const authors = [...results.map((user: User) => user.id), publicKey]
           relayPool?.subscribe('profile-load-notes', [
             {
-              kinds: [EventKind.meta, EventKind.textNote],
+              kinds: [EventKind.textNote],
               authors,
               since: moment().unix() - 86400,
+            },
+          ])
+          relayPool?.subscribe('profile-load-meta', [
+            {
+              kinds: [EventKind.meta],
+              authors,
             },
           ])
         }

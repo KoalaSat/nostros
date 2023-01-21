@@ -87,34 +87,32 @@ export const NotificationsFeed: React.FC = () => {
         setRefreshing(false)
         if (notes.length > 0) {
           const notedIds = notes.map((note) => note.id ?? '')
+          const authors = notes.map((note) => note.pubkey ?? '')
+
           relayPool?.subscribe('notification-meta', [
             {
-              kinds: [EventKind.petNames],
-              authors: notes.map((note) => note.pubkey ?? ''),
+              kinds: [EventKind.meta],
+              authors,
             },
           ])
-          getLastReaction(database, { eventIds: notes.map((note) => note.id ?? '') }).then(
-            (lastReaction) => {
-              relayPool?.subscribe('notification-reactions', [
-                {
-                  kinds: [EventKind.reaction],
-                  '#e': notedIds,
-                  since: lastReaction?.created_at ?? 0,
-                },
-              ])
-            },
-          )
-          getLastReply(database, { eventIds: notes.map((note) => note.id ?? '') }).then(
-            (lastReply) => {
-              relayPool?.subscribe('notification-replies', [
-                {
-                  kinds: [EventKind.textNote],
-                  '#e': notedIds,
-                  since: lastReply?.created_at ?? 0,
-                },
-              ])
-            },
-          )
+          getLastReaction(database, { eventIds: notedIds }).then((lastReaction) => {
+            relayPool?.subscribe('notification-reactions', [
+              {
+                kinds: [EventKind.reaction],
+                '#e': notedIds,
+                since: lastReaction?.created_at ?? 0,
+              },
+            ])
+          })
+          getLastReply(database, { eventIds: notedIds }).then((lastReply) => {
+            relayPool?.subscribe('notification-replies', [
+              {
+                kinds: [EventKind.textNote],
+                '#e': notedIds,
+                since: lastReply?.created_at ?? 0,
+              },
+            ])
+          })
         }
       })
     }
