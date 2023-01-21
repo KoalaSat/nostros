@@ -55,7 +55,7 @@ export const MenuItems: React.FC = () => {
           },
         ]}
       >
-        <Drawer.Section showDivider={false}>
+        <Drawer.Section showDivider={false} style={styles.logo}>
           <Logo />
         </Drawer.Section>
         {nPub && (
@@ -165,6 +165,10 @@ export const MenuItems: React.FC = () => {
 }
 
 const styles = StyleSheet.create({
+  logo: {
+    justifyContent: 'center',
+    flexDirection: 'row',
+  },
   drawerContent: {
     flex: 1,
     borderTopRightRadius: 28,

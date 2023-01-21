@@ -58,7 +58,9 @@ export const ProfileConnectPage: React.FC = () => {
   return (
     <>
       <View style={styles.container}>
-        <Logo size='medium' />
+        <View style={styles.logo}>
+          <Logo size='medium' />
+        </View>
         <View style={styles.loginMain}>
           <TextInput
             mode='outlined'
@@ -100,6 +102,11 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 16,
+  },
+  logo: {
+    justifyContent: 'center',
+    alignContent: 'center',
+    flexDirection: 'row',
   },
   loginMain: {
     flex: 1,

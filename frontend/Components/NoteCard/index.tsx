@@ -189,28 +189,35 @@ export const NoteCard: React.FC<NoteCardProps> = ({
     note && (
       <Card>
         <Card.Content style={styles.title}>
-          <View style={styles.titleUser}>
-            <View>
-              <NostrosAvatar
-                name={note.name}
-                pubKey={nPub}
-                src={note.picture}
-                lud06={note.lnurl}
-                size={54}
-              />
+          <TouchableRipple onPress={onPressOptions}>
+            <View style={styles.titleUser}>
+              <View>
+                <NostrosAvatar
+                  name={note.name}
+                  pubKey={nPub}
+                  src={note.picture}
+                  lud06={note.lnurl}
+                  size={54}
+                />
+              </View>
+              <View style={styles.titleUserInfo}>
+                <Text style={styles.titleUsername}>{usernamePubKey(note.name, nPub)}</Text>
+                <Text>{timestamp}</Text>
+              </View>
             </View>
-            <View style={styles.titleUserInfo}>
-              <Text style={styles.titleUsername}>{usernamePubKey(note.name, nPub)}</Text>
-              <Text>{timestamp}</Text>
-            </View>
-          </View>
+          </TouchableRipple>
           <View>
             <IconButton icon='dots-vertical' size={25} onPress={onPressOptions} />
           </View>
         </Card.Content>
         {getNoteContent()}
         <Card.Content style={[styles.actions, { borderColor: theme.colors.onSecondary }]}>
-          <Button icon={() => <MaterialCommunityIcons name='message-outline' size={25} />}>
+          <Button
+            icon={() => <MaterialCommunityIcons name='message-outline' size={25} />}
+            onPress={() =>
+              note.kind !== EventKind.recommendServer && push('Note', { noteId: note.id })
+            }
+          >
             {repliesCount}
           </Button>
           <Button

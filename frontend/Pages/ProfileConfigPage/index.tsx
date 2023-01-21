@@ -321,9 +321,10 @@ export const ProfileConfigPage: React.FC = () => {
             label={t('profileConfigPage.npub') ?? ''}
             value={nPub}
             selectTextOnFocus={true}
+            editable={false}
             right={
               <TextInput.Icon
-                icon='content-paste'
+                icon='content-copy'
                 onPress={() => {
                   setShowNotification('npubCopied')
                   Clipboard.setString(nPub ?? '')
@@ -337,10 +338,11 @@ export const ProfileConfigPage: React.FC = () => {
             label={t('profileConfigPage.nsec') ?? ''}
             value={nSec}
             secureTextEntry={true}
+            editable={false}
             selectTextOnFocus={true}
             right={
               <TextInput.Icon
-                icon='content-paste'
+                icon='content-copy'
                 onPress={() => {
                   setShowNotification('nsecCopied')
                   Clipboard.setString(nSec ?? '')

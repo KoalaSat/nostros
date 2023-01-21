@@ -183,21 +183,23 @@ export const NotePage: React.FC<NotePageProps> = ({ route }) => {
       >
         <Surface elevation={1}>
           <View style={styles.title}>
-            <View style={styles.titleUser}>
-              <View>
-                <NostrosAvatar
-                  name={note.name}
-                  pubKey={nPub}
-                  src={note.picture}
-                  lud06={note.lnurl}
-                  size={54}
-                />
+            <TouchableRipple onPress={openProfileDrawer}>
+              <View style={styles.titleUser}>
+                <View>
+                  <NostrosAvatar
+                    name={note.name}
+                    pubKey={nPub}
+                    src={note.picture}
+                    lud06={note.lnurl}
+                    size={54}
+                  />
+                </View>
+                <View style={styles.titleUserData}>
+                  <Text style={styles.titleUsername}>{usernamePubKey(note.name, nPub)}</Text>
+                  <Text>{timestamp}</Text>
+                </View>
               </View>
-              <View style={styles.titleUserData}>
-                <Text style={styles.titleUsername}>{usernamePubKey(note.name, nPub)}</Text>
-                <Text>{timestamp}</Text>
-              </View>
-            </View>
+            </TouchableRipple>
             <View>
               <IconButton icon='dots-vertical' size={25} onPress={openProfileDrawer} />
             </View>

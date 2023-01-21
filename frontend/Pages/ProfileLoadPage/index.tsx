@@ -39,7 +39,10 @@ export const ProfileLoadPage: React.FC = () => {
   }, [publicKey])
 
   useEffect(() => {
-    if (user) setProfileFound(true)
+    if (user) {
+      setProfileFound(true)
+      loadPets()
+    }
   }, [user])
 
   const loadMeta: () => void = () => {
@@ -80,7 +83,9 @@ export const ProfileLoadPage: React.FC = () => {
   return (
     <View style={styles.container}>
       <View style={styles.info}>
-        <Logo onlyIcon size='medium' />
+        <View style={styles.logo}>
+          <Logo onlyIcon size='medium' />
+        </View>
         <Text variant='titleMedium' style={styles.center}>
           {profileFound ? t('profileLoadPage.foundProfile') : t('profileLoadPage.searchingProfile')}
         </Text>
@@ -119,6 +124,11 @@ const styles = StyleSheet.create({
     padding: 16,
     justifyContent: 'space-between',
     flex: 1,
+  },
+  logo: {
+    justifyContent: 'center',
+    alignContent: 'center',
+    flexDirection: 'row',
   },
   center: {
     alignContent: 'center',
