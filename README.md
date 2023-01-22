@@ -4,7 +4,7 @@
 [![Apache 2 license](https://img.shields.io/badge/license-Apache%202-blue)](https://github.com/KoalaSat/nostros/blob/main/LICENSE)
 [![Telegram](https://img.shields.io/badge/chat-telegram-brightgreen)](https://t.me/+zhvZAE9L0X40ZjI0)
 
-![image](https://user-images.githubusercontent.com/4659020/213927551-d2ece568-a5b9-4f1a-af99-c52019df79db.png)
+![image](https://user-images.githubusercontent.com/4659020/213938631-df6399dd-e37c-41e9-a02e-ba4705751153.png)
 
 Wellcome to the Nostros project, a NOSTR mobile client.
 
