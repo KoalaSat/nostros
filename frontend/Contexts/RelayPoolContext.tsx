@@ -7,7 +7,7 @@ import { getRelays, Relay } from '../Functions/DatabaseFunctions/Relays'
 import { UserContext } from './UserContext'
 
 export interface RelayPoolContextProps {
-  loadingRelayPool: boolean
+  relayPoolReady: boolean
   relayPool?: RelayPool
   setRelayPool: (relayPool: RelayPool) => void
   lastEventId?: string
@@ -27,7 +27,7 @@ export interface RelayPoolContextProviderProps {
 }
 
 export const initialRelayPoolContext: RelayPoolContextProps = {
-  loadingRelayPool: true,
+  relayPoolReady: true,
   setRelayPool: () => {},
   addRelayItem: async () => await new Promise(() => {}),
   removeRelayItem: async () => await new Promise(() => {}),
@@ -42,9 +42,7 @@ export const RelayPoolContextProvider = ({
   const { publicKey, privateKey } = React.useContext(UserContext)
 
   const [relayPool, setRelayPool] = useState<RelayPool>()
-  const [loadingRelayPool, setLoadingRelayPool] = useState<boolean>(
-    initialRelayPoolContext.loadingRelayPool,
-  )
+  const [relayPoolReady, setRelayPoolReady] = useState<boolean>(false)
   const [lastEventId, setLastEventId] = useState<string>('')
   const [lastConfirmationtId, setLastConfirmationId] = useState<string>('')
   const [relays, setRelays] = React.useState<Relay[]>([])
@@ -72,7 +70,7 @@ export const RelayPoolContextProvider = ({
       const initRelayPool = new RelayPool([], privateKey)
       initRelayPool.connect(publicKey, (eventId: string) => setLastEventId(eventId))
       setRelayPool(initRelayPool)
-      setLoadingRelayPool(false)
+      setRelayPoolReady(true)
       loadRelays()
     }
   }
@@ -114,7 +112,7 @@ export const RelayPoolContextProvider = ({
   return (
     <RelayPoolContext.Provider
       value={{
-        loadingRelayPool,
+        relayPoolReady,
         relayPool,
         setRelayPool,
         lastEventId,

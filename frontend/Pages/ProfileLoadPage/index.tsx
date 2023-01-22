@@ -15,7 +15,7 @@ import { useFocusEffect } from '@react-navigation/native'
 export const ProfileLoadPage: React.FC = () => {
   const theme = useTheme()
   const { database } = useContext(AppContext)
-  const { relayPool, lastEventId } = useContext(RelayPoolContext)
+  const { relayPool, lastEventId, relayPoolReady } = useContext(RelayPoolContext)
   const { publicKey, reloadUser, user, setUserState } = useContext(UserContext)
   const { t } = useTranslation('common')
   const [profileFound, setProfileFound] = useState<boolean>(false)
@@ -23,7 +23,7 @@ export const ProfileLoadPage: React.FC = () => {
 
   useFocusEffect(
     React.useCallback(() => {
-      loadMeta()
+      if (publicKey && relayPoolReady) loadMeta()
 
       return () => relayPool?.unsubscribe(['profile-load-meta-pets', 'profile-load-notes'])
     }, []),
@@ -35,8 +35,8 @@ export const ProfileLoadPage: React.FC = () => {
   }, [lastEventId])
 
   useEffect(() => {
-    if (publicKey) loadMeta()
-  }, [publicKey])
+    if (publicKey && relayPoolReady) loadMeta()
+  }, [publicKey, relayPoolReady])
 
   useEffect(() => {
     if (user) {
@@ -52,13 +52,17 @@ export const ProfileLoadPage: React.FC = () => {
           kinds: [EventKind.petNames],
           authors: [publicKey],
         },
+        {
+          kinds: [EventKind.petNames],
+          '#p': [publicKey],
+        },
       ])
     }
   }
 
   const loadPets: () => void = () => {
     if (database && publicKey) {
-      getUsers(database, { contacts: true }).then((results) => {
+      getUsers(database, {}).then((results) => {
         if (results && results.length > 0) {
           setContactsCount(results.length)
           const authors = [...results.map((user: User) => user.id), publicKey]
@@ -68,8 +72,6 @@ export const ProfileLoadPage: React.FC = () => {
               authors,
               since: moment().unix() - 86400,
             },
-          ])
-          relayPool?.subscribe('profile-load-meta', [
             {
               kinds: [EventKind.meta],
               authors,

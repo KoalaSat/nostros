@@ -70,7 +70,7 @@ export const ConversationsFeed: React.FC = () => {
         if (results && results.length > 0) {
           settDirectMessages(results)
           const otherUsers = results.map((message) => getOtherPubKey(message, publicKey))
-          getUsers(database, { contacts: true, includeIds: otherUsers }).then(setUsers)
+          getUsers(database, { includeIds: otherUsers }).then(setUsers)
           relayPool?.subscribe('directmessages-meta', [
             {
               kinds: [EventKind.meta],
