@@ -102,7 +102,7 @@
         "addContactError": "There was an error publishing your changes.",
         "contactRemoved": "Profile unfollowed."
       },
-      "emptyTitleFollowing": "You are not following no one",
+      "emptyTitleFollowing": "You are not following anyone.",
       "emptyDescriptionFollowing": "Follow other profiles to see content.",
       "emptyButtonFollowing": "Paste public key",
       "emptyTitleFollower": "You have no followers",
@@ -123,7 +123,7 @@
       "nips": "NIPs"
     },
     "homeFeed": {
-      "emptyTitle": "You are not following no one",
+      "emptyTitle": "You are not following anyone.",
       "emptyDescription": "Follow other profiles to see content.",
       "emptyButton": "Go to contacts"
     },

@@ -1,9 +1,8 @@
 import { decode, EventPointer, npubEncode, ProfilePointer } from 'nostr-tools/nip19'
 
 export function getNpub(key: string): string {
-
   if (isPublicKey(key)) return key
-  
+
   try {
     return npubEncode(key)
   } catch {
