@@ -9,6 +9,7 @@ import moment from 'moment'
 import { Card, Text, useTheme } from 'react-native-paper'
 import { getLinkPreview } from 'link-preview-js'
 import { validImageUrl } from '../../Functions/NativeFunctions'
+import { getNpub } from '../../lib/nostr/Nip19'
 
 interface TextContentProps {
   event?: Event
@@ -82,7 +83,7 @@ export const TextContent: React.FC<TextContentProps> = ({
           })
         })
       }
-      return `@${formatPubKey(pudKey)}`
+      return `@${formatPubKey(getNpub(pudKey))}`
     } else {
       return matchingString
     }
@@ -90,7 +91,7 @@ export const TextContent: React.FC<TextContentProps> = ({
 
   const renderUrlText: (matchingString: string, matches: string[]) => string = (
     matchingString,
-    matches,
+    _matches,
   ) => {
     if (!linkPreview) {
       getLinkPreview(matchingString).then((data) => {
