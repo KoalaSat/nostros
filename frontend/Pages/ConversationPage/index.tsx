@@ -11,7 +11,7 @@ import {
 import { getUser, User } from '../../Functions/DatabaseFunctions/Users'
 import { useTranslation } from 'react-i18next'
 import { username, usersToTags } from '../../Functions/RelayFunctions/Users'
-import moment from 'moment'
+import { getUnixTime, formatDistance, fromUnixTime } from 'date-fns'
 import TextContent from '../../Components/TextContent'
 import { encrypt, decrypt } from '../../lib/nostr/Nip04'
 import {
@@ -117,7 +117,7 @@ export const ConversationPage: React.FC<ConversationPageProps> = ({ route }) => 
     if (input !== '' && otherPubKey && publicKey && privateKey) {
       const event: Event = {
         content: input,
-        created_at: moment().unix(),
+        created_at: getUnixTime(new Date()),
         kind: Kind.EncryptedDirectMessage,
         pubkey: publicKey,
         tags: usersToTags([otherUser]),
@@ -186,7 +186,7 @@ export const ConversationPage: React.FC<ConversationPageProps> = ({ route }) => 
                     />
                   </View>
                 )}
-                <Text>{moment.unix(item.created_at).format('L HH:mm')}</Text>
+                <Text>{formatDistance(fromUnixTime(item.created_at), new Date())}</Text>
               </View>
             </View>
             <TextContent content={item.content} />

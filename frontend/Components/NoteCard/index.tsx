@@ -12,7 +12,7 @@ import { AppContext } from '../../Contexts/AppContext'
 import { t } from 'i18next'
 import { isContentWarning } from '../../Functions/RelayFunctions/Events'
 import { Event } from '../../../lib/nostr/Events'
-import moment from 'moment'
+import { getUnixTime } from 'date-fns'
 import { populateRelay } from '../../Functions/RelayFunctions'
 import { searchRelays } from '../../Functions/DatabaseFunctions/Relays'
 import TextContent from '../../Components/TextContent'
@@ -114,7 +114,7 @@ export const NoteCard: React.FC<NoteCardProps> = ({
     if (note) {
       const event: Event = {
         content: positive ? '+' : '-',
-        created_at: moment().unix(),
+        created_at: getUnixTime(new Date()),
         kind: Kind.Reaction,
         pubkey: publicKey,
         tags: [...(note.tags ?? []), ['e', note.id], ['p', note.pubkey]],

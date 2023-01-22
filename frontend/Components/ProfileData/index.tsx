@@ -4,7 +4,7 @@ import { Text, useTheme } from 'react-native-paper'
 import { getNip05Domain, usernamePubKey } from '../../Functions/RelayFunctions/Users'
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'
 import NostrosAvatar from '../NostrosAvatar'
-import moment from 'moment'
+import { fromUnixTime, formatDistance } from 'date-fns'
 import { getNpub } from '../../lib/nostr/Nip19'
 
 interface ProfileCardProps {
@@ -31,7 +31,7 @@ export const ProfileData: React.FC<ProfileCardProps> = ({
   const theme = useTheme()
   const nPub = React.useMemo(() => (publicKey ? getNpub(publicKey) : ''), [publicKey])
   const date = React.useMemo(
-    () => (timestamp ? moment.unix(timestamp).format('L HH:mm') : null),
+    () => (timestamp ? formatDistance(fromUnixTime(timestamp), new Date()) : null),
     [timestamp],
   )
 

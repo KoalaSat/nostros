@@ -5,7 +5,7 @@ import { AppContext } from '../../Contexts/AppContext'
 import { UserContext } from '../../Contexts/UserContext'
 import { getUsers, User } from '../../Functions/DatabaseFunctions/Users'
 import { useTranslation } from 'react-i18next'
-import moment from 'moment'
+import getUnixTime from 'date-fns/getUnixTime'
 import { StyleSheet, View } from 'react-native'
 import Logo from '../../Components/Logo'
 import { Button, Text, useTheme } from 'react-native-paper'
@@ -70,7 +70,7 @@ export const ProfileLoadPage: React.FC = () => {
             {
               kinds: [Kind.Text],
               authors,
-              since: moment().unix() - 86400,
+              since: getUnixTime(new Date()) - 86400,
             },
             {
               kinds: [Kind.Metadata],

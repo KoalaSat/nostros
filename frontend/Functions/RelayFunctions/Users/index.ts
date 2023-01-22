@@ -1,4 +1,4 @@
-import moment from 'moment'
+import getUnixTime from 'date-fns/getUnixTime'
 import { QuickSQLiteConnection } from 'react-native-quick-sqlite'
 import RelayPool from '../../../lib/nostr/RelayPool/intex'
 import { getUser, getUsers, User } from '../../DatabaseFunctions/Users'
@@ -57,7 +57,7 @@ export const populatePets: (
   if (results) {
     const event: Event = {
       content: '',
-      created_at: moment().unix(),
+      created_at: getUnixTime(new Date()),
       kind: 3,
       pubkey: publicKey,
       tags: usersToTags(results),
@@ -81,7 +81,7 @@ export const populateProfile: (
     }
     const event: Event = {
       content: JSON.stringify(profile),
-      created_at: moment().unix(),
+      created_at: getUnixTime(new Date()),
       kind: 0,
       pubkey: publicKey,
       tags: usersToTags([result]),
