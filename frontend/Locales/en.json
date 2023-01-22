@@ -2,15 +2,15 @@
   "common": {
     "drawers": {
       "relaysTitle": "Relays",
-      "relaysDescription": "Los relés son nodos en la red que actúan como intermediarios para la transmisión demensajes entre aplicaciones.\n\n\nLos relés pueden ser utilizados para mejorar la resiliencia yla disponibilidad de la red, ya que permiten que los mensajes sean entregados aun cuandohay fallos o interrupciones en la conectividad.\n\n\nLos relés también pueden ser utilizadospara mejorar la privacidad y la seguridad de la red, ya que pueden ocultar la ubicación yel identidad de las aplicaciones que se comunican entre sí a través de ellos. Esto puedeser útil en entornos donde la censura o la vigilancia son un problema.\n\n\nEs importante teneren cuenta que los relés también pueden ser utilizados para propósitos malintencionados,como para rastrear o censurar el tráfico de la red.\n\n\nPor lo tanto, es importante evaluarcuidadosamente el uso de relés y considerar medidas de seguridad adecuadas para protegerla privacidad y la seguridad de la red.",
+      "relaysDescription": "Relays are nodes on the network that act as intermediaries for the transmission of messages between applications.\n\n\nRelays can be used to improve network resiliency and availability by allowing messages to be delivered even when there are failures or interruptions in connectivity.\n\n\nRelays can also be used to improve privacy and network security, as they can hide the location and identity of applications that communicate with each other over This can be useful in environments where censorship or surveillance is an issue.\n\n\nIt is important to note that relays can also be used for malicious purposes, such as sniffing or censoring network traffic.\n \n\nTherefore, it is important to carefully evaluate the use of relays and consider appropriate security measures to protect privacy and network security.",
       "keysTitle": "What are these keys?",
-      "keysDescription": "En nostr tienes dos claves: tu clave pública y tu clave privada.",
-      "publicKeys": "Clave pública",
-      "publicKeysDescription": "Piensa en la clave pública como tu nombre de usuario (como tu @handle en Twitter). Compártela con otras personas para que te añadan a su red.",
-      "privateKey": "Clave privada",
-      "privateKeyDescription": "Piensa en tu clave privada como tu contraseña.",
-      "privateKeysSnackbarTitle": "Muy importante.",
-      "privateKeysSnackbarDescription": "Guarda tu clave privada en un lugar seguro, si la pierdes no podrás volver a acceder con ella ni recuperar tu cuenta."
+      "keysDescription": "In nostr you got two keys: your public key and your private key.",
+      "publicKeys": "Public key",
+      "publicKeysDescription": "Think of the public key as your username (like your @handle on Twitter). Share it with other people so they can add you to their network.",
+      "privateKey": "Private key",
+      "privateKeyDescription": "Think of your private key as your password.",
+      "privateKeysSnackbarTitle": "Important.",
+      "privateKeysSnackbarDescription": "Keep your private key in a safe place, if you lose it you will not be able to access it again or recover your account."
     },
     "homeNavigator": {
       "ProfileCreate": "",
@@ -159,7 +159,7 @@
       "nip05Title": "NIP-05",
       "directoryCancell": "Cancel",
       "directoryContinue": "Continue",
-      "directoryDescription": "Nostr Directory es una base de datos de claves públicas de nostr asociadas a una cuenta de Twitter. Encuentra a las personas que sigues en Twitter en nostr y añade tu clave pública para que tus seguidores te encuentren si lo deseas.\n\n\nAl verificar tu cuenta de Twitter se añadirá un distintivo en tu perfil.\n\n\nSi continuas tendrás que llevar a cabo el proceso de verificación fuera de la aplicación.",
+      "directoryDescription": "Nostr Directory is a database of nostr public keys associated with a Twitter account. Find the people you follow on Twitter on nostr and add your public key so your followers can find you if you want.\n\n\nVerifying your Twitter account will add a badge to your profile.\n\n\nYes you will have to carry out the verification process outside the application.",
       "directoryTitle": "Nostr Directory",
       "publishPicture": "Publish",
       "pictureUrl": "Picture URL",

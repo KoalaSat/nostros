@@ -1,15 +1,16 @@
 {
   "common": {
     "drawers": {
-      "relaysTitle": "Relays",
+      "relaysTitle": "Relés",
       "relaysDescription": "Los relés son nodos en la red que actúan como intermediarios para la transmisión demensajes entre aplicaciones.\n\n\nLos relés pueden ser utilizados para mejorar la resiliencia yla disponibilidad de la red, ya que permiten que los mensajes sean entregados aun cuandohay fallos o interrupciones en la conectividad.\n\n\nLos relés también pueden ser utilizadospara mejorar la privacidad y la seguridad de la red, ya que pueden ocultar la ubicación yel identidad de las aplicaciones que se comunican entre sí a través de ellos. Esto puedeser útil en entornos donde la censura o la vigilancia son un problema.\n\n\nEs importante teneren cuenta que los relés también pueden ser utilizados para propósitos malintencionados,como para rastrear o censurar el tráfico de la red.\n\n\nPor lo tanto, es importante evaluarcuidadosamente el uso de relés y considerar medidas de seguridad adecuadas para protegerla privacidad y la seguridad de la red.",
-      "keysTitle": "What are these keys?",
+      "keysTitle": "¿Qué son las claves?",
       "keysDescription": "En nostr tienes dos claves: tu clave pública y tu clave privada.",
       "publicKeys": "Clave pública",
       "publicKeysDescription": "Piensa en la clave pública como tu nombre de usuario (como tu @handle en Twitter). Compártela con otras personas para que te añadan a su red.",
       "privateKey": "Clave privada",
       "privateKeyDescription": "Piensa en tu clave privada como tu contraseña.",
-      "privateKeysSnackbar": "Muy importante. Guarda tu clave privada en un lugar seguro, si la pierdes no podrás volver a acceder con ella ni recuperar tu cuenta."
+      "privateKeysSnackbarTitle": "Muy importante.",
+      "privateKeysSnackbarDescription": "Guarda tu clave privada en un lugar seguro, si la pierdes no podrás volver a acceder con ella ni recuperar tu cuenta."
     },
     "homeNavigator": {
       "ProfileCreate": "",
@@ -52,7 +53,7 @@
       "following": "{{following}} siguiendo",
       "followers": "{{followers}} seguidores",
       "configuration": "Configuración",
-      "about": "About",
+      "about": "Sobre Nostros",
       "logout": "Salir"
     },
     "noteCard": {
@@ -61,21 +62,23 @@
       "contentWarning": "Sensitive content"
     },
     "lnPayment": {
-      "monto": "Cantity (sats.)",
-      "comment": "Comment (optional)",
-      "generateInvoice": "Generate invoice",
-      "cancel": "Cancel"
+      "monto": "Cantidad (sats.)",
+      "comment": "Commentario (opcional)",
+      "generateInvoice": "Generar invoice",
+      "cancel": "Cancelar",
+      "copy": "Copiar",
+      "open": "Abrir wallet"
     },
     "notificationsFeed": {
-      "emptyTitle": "You don't have notifications",
-      "emptyDescription": "Write a message to get replies and reactions.",
-      "emptyButton": "Write a message"
+      "emptyTitle": "No tienes notificationes.",
+      "emptyDescription": "Escribe una nota para tener respuestas y reacciónes.",
+      "emptyButton": "Escribe una nota"
     },
     "profileCreatePage": {
       "notifications": {
-        "copied": "Private key copied.\n\nSave this key on a safe place."
+        "copied": "Clave privada copiada.\n\nGuardala en un lugar seguro."
       },
-      "snackbarDescription": "Important. Save your key on a safe place, if loose it, you won't be able to access or recover your profile.",
+      "snackbarDescription": "Importante. Guardala tu clave en un lugar seguro, si la pierdes, no será posible acceder a tu perfil.",
       "snackbarAction": "Copy private key",
       "warningTitle": "Importante",
       "warningDescription": "Guarda tu clave privada en un lugar seguro, si la pierdes, no podrás acceder a tu perfil ni recuperarlo.",
@@ -95,17 +98,17 @@
     },
     "contactsFeed": {
       "notifications": {
-        "keyCopied": "Public key copied.",
-        "contactAdded": "Profile followed.",
-        "addContactError": "There was an error publishing your changes.",
-        "contactRemoved": "Profile unfollowed."
+        "keyCopied": "Clave pública copiada.",
+        "contactAdded": "Perfil seguido.",
+        "addContactError": "Se ha producido un error al publicar tus cambios.",
+        "contactRemoved": "Perfil dejado de seguir."
       },
-      "emptyTitleFollowing": "You are not following no one",
-      "emptyDescriptionFollowing": "Follow other profiles to see content.",
-      "emptyButtonFollowing": "Paste public key",
-      "emptyTitleFollower": "You have no followers",
-      "emptyDescriptionFollower": "Share your public key so people can start following you.",
-      "emptyButtonFollower": "Copy public key",
+      "emptyTitleFollowing": "No sigues a nadie",
+      "emptyDescriptionFollowing": "Sigue otros perfiles para ver aquí contenido.",
+      "emptyButtonFollowing": "Pegar clave pública",
+      "emptyTitleFollower": "No tienes seguidores",
+      "emptyDescriptionFollower": "Comparte tu clave público para que lo demás puedan empezar a seguirte.",
+      "emptyButtonFollower": "Copiar clave pública",
       "cancel": "Cancelar",
       "addContact": "Añadir contacto",
       "addContactDescription": "Pega la clave pública de quien desees añadir.",
@@ -121,9 +124,9 @@
       "nips": "NIPs"
     },
     "homeFeed": {
-      "emptyTitle": "You are not following no one",
-      "emptyDescription": "Follow other profiles to see content.",
-      "emptyButton": "Go to contacts"
+      "emptyTitle": "No sigues a nadie",
+      "emptyDescription": "Sigue otros perfiles para ver aquí contenido.",
+      "emptyButton": "Ir a contactos"
     },
     "relaysPage": {
       "labelAdd": "Dirección de relay",
@@ -198,15 +201,15 @@
       "copyNPub": "Copiar clave"
     },
     "conversationsFeed": {
-      "openMessage": "Start conversation",
-      "openMessageLabel": "Public key",
-      "openMessageDescription": "Paste a public key to start a conversation.",
-      "openMessageTitle": "Start conversation with public key",
-      "addPubKey": "Start conversation with public key",
-      "newMessageContact": "Start conversation with contact",
-      "emptyTitle": "You don't have any message",
-      "emptyDescription": "Write direct messages to your contacts or others.",
-      "emptyButton": "Open a conversation"
+      "openMessage": "Comenzar conversación",
+      "openMessageLabel": "Clave pública",
+      "openMessageDescription": "Pega una clave pública para empezar una conversación.",
+      "openMessageTitle": "Empezar conversación con una clave pública",
+      "addPubKey": "Empezar conversación con una clave pública",
+      "newMessageContact": "Empezar conversación con un contacto",
+      "emptyTitle": "No tienes mensajes",
+      "emptyDescription": "Escribe un mensaje directo a tus contactos u otros.",
+      "emptyButton": "Abrir una conversación"
     }
   }
 }

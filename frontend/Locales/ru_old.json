@@ -1,0 +1,117 @@
+{
+  "common": {
+    "landing": {
+      "connect": "Подключить",
+      "connecting": "Подключение",
+      "loadingContacts": "Загрузка контактов",
+      "loadingEvents": "Загрузка событий",
+      "ready": "Готова",
+      "privateKey": "Приватный ключ",
+      "publicKey": "Публичный ключ"
+    },
+    "navigationBar": {
+      "home": "Главная страницы",
+      "profile": "Профиль"
+    },
+    "homePage": {
+      "search": "Поиск",
+      "send": "Отправить",
+      "noContacts": "У Вас пока нет контактов",
+      "addContacts": "Добавить контакты"
+    },
+    "logger": {
+      "randomKeyGenerator": {
+        "message": "Ваш приватный ключ был скопирован",
+        "description": "Сохраните его в надеждном месте, чтобы восстановить доступ к акканунту"
+      }
+    },
+    "profilePage": {
+      "search": "Поиск",
+      "send": "Отправить",
+      "profileNotCreated": "Профиль еще не опубликован",
+      "createProfile": "Перейти в настройки"
+    },
+    "lnPayment": {
+      "monto": "Cantidad",
+      "comment": "Comentario (opcional)",
+      "copy": "Copiar",
+      "openApp": "Abrir App"
+    },
+    "relaysPage": {
+      "title": "Все реле",
+      "addRelay": {
+        "placeholder": "URL реле",
+        "invalidFormat": "Не действительный URL",
+        "add": "Добавить Реле"
+      }
+    },
+    "notePage": {
+      "reply": "Ответить"
+    },
+    "loader": {
+      "searchingProfile": "Поиск профиля",
+      "profileFound": "Профиль найден",
+      "searchingContacts": "Поиск контактов:",
+      "help1": "Проблемы с подключением?",
+      "help2": "Попробуйте подключиться к другим реле.",
+      "relays": "Реле",
+      "home": "На главную"
+    },
+    "configPage": {
+      "title": "Настройки",
+      "logout": "Удалить ключи",
+      "relays": "Реле",
+      "publicKey": "Публичный ключ",
+      "privateKey": "Приватный ключ",
+      "username": "Имя",
+      "picture": "URL изображения",
+      "lnurl": "LNURL / Lightning address",
+      "nip05": "NIP05",
+      "about": "Описание",
+      "publish": "Опубликовать"
+    },
+    "direcMessagesPage": {
+      "sendMessage": {
+        "placeholder": "Публичный ключ",
+        "send": "Открыть диалог",
+        "contacts": "Контакты"
+      }
+    },
+    "contactsPage": {
+      "following": "Подписки",
+      "followers": "Подписчики",
+      "add": "Добавить контакт",
+      "addContact": {
+        "placeholder": "Публичный ключ",
+        "add": "Добавить контакт"
+      }
+    },
+    "mentionsPage": {
+      "noMentions": "Упоминаний не найнедо."
+    },
+    "sendPage": {
+      "title": "Опубликовать заметку",
+      "placeholder": "Поделитесь чем-нибудь с миром",
+      "send": "Опубликовать",
+      "reply": "Ответить",
+      "contentWarning": "Деликатный контент."
+    },
+    "alerts": {
+      "relayAdded": "Реле добавлено",
+      "relayRemoved": "Реле удалено",
+      "profilePublished": "Профиль опубликован",
+      "profilePublishError": "При публикации профиля произошла ошибка",
+      "invoiceCopied": "Инвойс копирован",
+      "invoiceError": "Произошла ошибка при попытке получить инвойс",
+      "sendNoteSuccess": "Заметка отправлена",
+      "sendNoteError": "При отправке заметки произошла ошибка",
+      "sendGetNotesError": "При загрузке заметок произошла внутренняя ошибка",
+      "contactAddError": "При добавлении контакта произошла ошибка",
+      "privateMessageEncryptError": "При шифровании сообщения произошла ошибка",
+      "privateMessageSendError": "При отправке сообщения произошла ошибка"
+    },
+    "note": {
+      "contentWarning": "Деликатный контент. Нажмите, чтобы увидеть"
+    }
+  }
+}
