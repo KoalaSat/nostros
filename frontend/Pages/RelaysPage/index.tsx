@@ -1,5 +1,6 @@
 import React, { useContext, useState } from 'react'
-import { Clipboard, FlatList, ListRenderItem, ScrollView, StyleSheet, View } from 'react-native'
+import { FlatList, ListRenderItem, ScrollView, StyleSheet, View } from 'react-native'
+import Clipboard from '@react-native-clipboard/clipboard'
 import { useTranslation } from 'react-i18next'
 import { RelayPoolContext } from '../../Contexts/RelayPoolContext'
 import { Relay } from '../../Functions/DatabaseFunctions/Relays'

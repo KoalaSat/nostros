@@ -1,6 +1,7 @@
 import React, { useContext, useEffect, useState } from 'react'
 import { generateRandomKey } from '../../lib/nostr/Bip'
-import { Clipboard, StyleSheet, View } from 'react-native'
+import { StyleSheet, View } from 'react-native'
+import Clipboard from '@react-native-clipboard/clipboard'
 import { Button, Snackbar, Text, TextInput } from 'react-native-paper'
 import { useTranslation } from 'react-i18next'
 import { nsecEncode } from 'nostr-tools/nip19'

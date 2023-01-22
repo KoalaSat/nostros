@@ -1,13 +1,6 @@
 import React, { useContext, useEffect, useState } from 'react'
-import {
-  Clipboard,
-  Dimensions,
-  FlatList,
-  ListRenderItem,
-  ScrollView,
-  StyleSheet,
-  View,
-} from 'react-native'
+import { Dimensions, FlatList, ListRenderItem, ScrollView, StyleSheet, View } from 'react-native'
+import Clipboard from '@react-native-clipboard/clipboard'
 import { AppContext } from '../../Contexts/AppContext'
 import { EventKind } from '../../lib/nostr/Events'
 import { useTranslation } from 'react-i18next'

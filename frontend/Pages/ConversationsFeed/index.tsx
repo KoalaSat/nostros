@@ -1,13 +1,6 @@
 import React, { useContext, useEffect, useState } from 'react'
-import {
-  Clipboard,
-  Dimensions,
-  FlatList,
-  ListRenderItem,
-  ScrollView,
-  StyleSheet,
-  View,
-} from 'react-native'
+import { Dimensions, FlatList, ListRenderItem, ScrollView, StyleSheet, View } from 'react-native'
+import Clipboard from '@react-native-clipboard/clipboard'
 import { AppContext } from '../../Contexts/AppContext'
 import { RelayPoolContext } from '../../Contexts/RelayPoolContext'
 import { EventKind } from '../../lib/nostr/Events'
@@ -174,7 +167,7 @@ export const ConversationsFeed: React.FC = () => {
         ),
         onPress: async () => bottomSheetUserListRef.current?.open(),
         disabled: users?.length === 0,
-        style: users?.length === 0 ? { color: theme.colors.outline } : {}
+        style: users?.length === 0 ? { color: theme.colors.outline } : {},
       },
       {
         key: 2,
@@ -186,7 +179,7 @@ export const ConversationsFeed: React.FC = () => {
         ),
         onPress: async () => bottomSheetPubKeyRef.current?.open(),
         disabled: false,
-        style: {}
+        style: {},
       },
     ]
   }, [])

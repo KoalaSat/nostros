@@ -1,6 +1,7 @@
 import { t } from 'i18next'
 import * as React from 'react'
-import { Clipboard, StyleSheet, View } from 'react-native'
+import { StyleSheet, View } from 'react-native'
+import Clipboard from '@react-native-clipboard/clipboard'
 import { Card, IconButton, Snackbar, Text } from 'react-native-paper'
 import { AppContext } from '../../Contexts/AppContext'
 import { RelayPoolContext } from '../../Contexts/RelayPoolContext'
