@@ -114,18 +114,23 @@ export const ContactsFeed: React.FC = () => {
     if (contactInput && relayPool && database && publicKey) {
       setIsAddingContact(true)
       const hexKey = getNip19Key(contactInput)
-      updateUserContact(hexKey, database, true)
-        .then(() => {
-          populatePets(relayPool, database, publicKey)
-          loadUsers()
-          setIsAddingContact(false)
-          bottomSheetAddContactRef.current?.close()
-          setShowNotification('contactAdded')
-        })
-        .catch(() => {
-          setIsAddingContact(false)
-          setShowNotification('addContactError')
-        })
+      if (hexKey) {
+        updateUserContact(hexKey, database, true)
+          .then(() => {
+            populatePets(relayPool, database, publicKey)
+            loadUsers()
+            setIsAddingContact(false)
+            bottomSheetAddContactRef.current?.close()
+            setShowNotification('contactAdded')
+          })
+          .catch(() => {
+            setIsAddingContact(false)
+            setShowNotification('addContactError')
+          })
+      } else {
+        setIsAddingContact(false)
+        setShowNotification('addContactError')
+      }
     }
   }
 
