@@ -109,11 +109,16 @@ export const ConversationsFeed: React.FC = () => {
 
     const otherPubKey = getOtherPubKey(item, publicKey)
     const user: User = users?.find((user) => user.id === otherPubKey) ?? { id: otherPubKey }
+    const userMame = username(user)
 
     return (
       <TouchableRipple
         onPress={() =>
-          navigate('Conversation', { pubKey: user.id, conversationId: item.conversation_id })
+          navigate('Conversation', {
+            pubKey: user.id,
+            conversationId: item.conversation_id,
+            title: userMame,
+          })
         }
       >
         <View key={user.id} style={styles.contactRow}>
@@ -126,7 +131,7 @@ export const ConversationsFeed: React.FC = () => {
               size={40}
             />
             <View style={styles.contactName}>
-              <Text variant='titleSmall'>{username(user)}</Text>
+              <Text variant='titleSmall'>{userMame}</Text>
             </View>
           </View>
           <View style={styles.contactInfo}>
@@ -189,7 +194,7 @@ export const ConversationsFeed: React.FC = () => {
       onPress={() => {
         bottomSheetUserListRef.current?.close()
         bottomSheetPubKeyRef.current?.close()
-        navigate('Conversation', { pubKey: item.id })
+        navigate('Conversation', { pubKey: item.id, title: username(item) })
       }}
     >
       <View key={item.id} style={styles.contactRow}>
@@ -215,6 +220,7 @@ export const ConversationsFeed: React.FC = () => {
       {directMessages.length > 0 ? (
         <ScrollView horizontal={false}>
           <FlatList
+            style={styles.list}
             data={directMessages}
             renderItem={renderConversationItem}
             ItemSeparatorComponent={Divider}
@@ -303,7 +309,7 @@ export const ConversationsFeed: React.FC = () => {
             mode='contained'
             disabled={!sendPubKeyInput || sendPubKeyInput === ''}
             onPress={() => {
-              navigate('Conversation', { pubKey: sendPubKeyInput })
+              navigate('Conversation', { pubKey: sendPubKeyInput, title: sendPubKeyInput })
               bottomSheetPubKeyRef.current?.close()
             }}
           >
@@ -355,6 +361,9 @@ const styles = StyleSheet.create({
     marginTop: 91,
     paddingLeft: 16,
     paddingRight: 16,
+  },
+  list: {
+    paddingBottom: 64,
   },
 })
 

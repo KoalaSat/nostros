@@ -3,18 +3,18 @@ import ParsedText from 'react-native-parsed-text'
 import { Event } from '../../lib/nostr/Events'
 import { Linking, StyleSheet, View } from 'react-native'
 import { AppContext } from '../../Contexts/AppContext'
-import { getUser } from '../../Functions/DatabaseFunctions/Users'
+import { getUser, User } from '../../Functions/DatabaseFunctions/Users'
 import { formatPubKey } from '../../Functions/RelayFunctions/Users'
 import moment from 'moment'
 import { Card, Text, useTheme } from 'react-native-paper'
 import { getLinkPreview } from 'link-preview-js'
-import { push } from '../../lib/Navigation'
 import { validImageUrl } from '../../Functions/NativeFunctions'
 
 interface TextContentProps {
   event?: Event
   content?: string
   preview?: boolean
+  onPressUser?: (user: User) => void
 }
 
 interface LinkPreviewMedia {
@@ -35,7 +35,12 @@ interface LinkPreviewMedia {
   favicons: string[]
 }
 
-export const TextContent: React.FC<TextContentProps> = ({ event, content, preview = true }) => {
+export const TextContent: React.FC<TextContentProps> = ({
+  event,
+  content,
+  preview = true,
+  onPressUser = () => {},
+}) => {
   const theme = useTheme()
   const { database } = useContext(AppContext)
   const [userNames, setUserNames] = useState<Record<number, string>>({})
@@ -55,7 +60,7 @@ export const TextContent: React.FC<TextContentProps> = ({ event, content, previe
     const mentionIndex: number = parseInt(text.substring(2, text.length - 1))
     const userPubKey = event.tags[mentionIndex][1]
 
-    push('Profile', { pubKey: userPubKey })
+    onPressUser({ id: userPubKey, name: text })
   }
 
   const renderMentionText: (matchingString: string, matches: string[]) => string = (

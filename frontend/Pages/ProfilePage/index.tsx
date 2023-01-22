@@ -173,7 +173,7 @@ export const ProfilePage: React.FC<ProfilePageProps> = ({ route }) => {
 
   const renderItem: (note: Note) => JSX.Element = (note) => (
     <View style={styles.noteCard} key={note.id}>
-      <NoteCard note={note} onPressOptions={() => bottomSheetProfileRef.current?.open()} />
+      <NoteCard note={note} onPressUser={() => bottomSheetProfileRef.current?.open()} />
     </View>
   )
 
@@ -189,95 +189,99 @@ export const ProfilePage: React.FC<ProfilePageProps> = ({ route }) => {
   }, [])
 
   return (
-    <View style={styles.content}>
-      <Surface style={styles.container} elevation={1}>
-        <View style={styles.mainLayout}>
-          <View>
-            <NostrosAvatar
-              name={user?.name}
-              pubKey={getNpub(route.params.pubKey)}
-              src={user?.picture}
-              lud06={user?.lnurl}
-              size={54}
-            />
-          </View>
-          <View>
-            <View style={styles.userName}>
-              <Text variant='titleMedium'>{user && username(user)}</Text>
-              {/* <MaterialCommunityIcons name="check-decagram-outline" size={16} /> */}
-              <Text>{user?.nip05}</Text>
+    <View>
+      <ScrollView
+        onScroll={onScroll}
+        horizontal={false}
+        showsVerticalScrollIndicator={false}
+        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
+      >
+        <Surface style={styles.container} elevation={1}>
+          <View style={styles.mainLayout}>
+            <View>
+              <NostrosAvatar
+                name={user?.name}
+                pubKey={getNpub(route.params.pubKey)}
+                src={user?.picture}
+                lud06={user?.lnurl}
+                size={54}
+              />
+            </View>
+            <View>
+              <View style={styles.userName}>
+                <Text variant='titleMedium'>{user && username(user)}</Text>
+                {/* <MaterialCommunityIcons name="check-decagram-outline" size={16} /> */}
+                <Text>{user?.nip05}</Text>
+              </View>
             </View>
           </View>
-        </View>
-        <View>
-          <Text>{user?.about}</Text>
-        </View>
-        <View style={styles.mainLayout}>
-          {route.params.pubKey !== publicKey && (
+          <View>
+            <Text>{user?.about}</Text>
+          </View>
+          <View style={styles.mainLayout}>
+            {route.params.pubKey !== publicKey && (
+              <View style={styles.actionButton}>
+                <IconButton
+                  icon={
+                    isContact ? 'account-multiple-remove-outline' : 'account-multiple-plus-outline'
+                  }
+                  size={28}
+                  onPress={() => {
+                    isContact ? removeContact() : addContact()
+                  }}
+                  disabled={route.params.pubKey === publicKey}
+                />
+                <Text>{isContact ? t('profilePage.unfollow') : t('profilePage.follow')}</Text>
+              </View>
+            )}
             <View style={styles.actionButton}>
               <IconButton
-                icon={
-                  isContact ? 'account-multiple-remove-outline' : 'account-multiple-plus-outline'
-                }
+                icon='message-plus-outline'
                 size={28}
                 onPress={() => {
-                  isContact ? removeContact() : addContact()
+                  navigate('Conversation', {
+                    pubKey: route.params.pubKey,
+                    title: user ? username(user) : route.params.pubKey,
+                  })
+                  bottomSheetProfileRef.current?.close()
                 }}
-                disabled={route.params.pubKey === publicKey}
               />
-              <Text>{isContact ? t('profilePage.unfollow') : t('profilePage.follow')}</Text>
+              <Text>{t('profilePage.message')}</Text>
             </View>
-          )}
-          <View style={styles.actionButton}>
-            <IconButton
-              icon='message-plus-outline'
-              size={28}
-              onPress={() => {
-                navigate('Conversation', { pubKey: route.params.pubKey })
-                bottomSheetProfileRef.current?.close()
-              }}
-            />
-            <Text>{t('profilePage.message')}</Text>
+            <View style={styles.actionButton}>
+              <IconButton
+                icon='content-copy'
+                size={28}
+                onPress={() => {
+                  setShowNotification('copyNPub')
+                  const profileNPud = getNpub(route.params.pubKey)
+                  Clipboard.setString(profileNPud ?? '')
+                }}
+              />
+              <Text>{t('profilePage.copyNPub')}</Text>
+            </View>
+            <View style={styles.actionButton}>
+              {user?.lnurl && (
+                <>
+                  <IconButton
+                    icon='lightning-bolt'
+                    size={28}
+                    onPress={() => setOpenLn(true)}
+                    iconColor='#F5D112'
+                  />
+                  <Text>{t('profilePage.invoice')}</Text>
+                </>
+              )}
+            </View>
           </View>
-          <View style={styles.actionButton}>
-            <IconButton
-              icon='content-copy'
-              size={28}
-              onPress={() => {
-                setShowNotification('copyNPub')
-                const profileNPud = getNpub(route.params.pubKey)
-                Clipboard.setString(profileNPud ?? '')
-              }}
-            />
-            <Text>{t('profilePage.copyNPub')}</Text>
+        </Surface>
+        {notes && notes.length > 0 && (
+          <View style={styles.list}>
+            {notes.map((note) => renderItem(note))}
+            {notes.length >= 10 && <ActivityIndicator animating={true} />}
           </View>
-          <View style={styles.actionButton}>
-            {user?.lnurl && (
-              <>
-                <IconButton
-                  icon='lightning-bolt'
-                  size={28}
-                  onPress={() => setOpenLn(true)}
-                  iconColor='#F5D112'
-                />
-                <Text>{t('profilePage.invoice')}</Text>
-              </>
-            )}
-          </View>
-        </View>
-      </Surface>
-      {notes && notes.length > 0 && (
-        <ScrollView
-          onScroll={onScroll}
-          horizontal={false}
-          showsVerticalScrollIndicator={false}
-          refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
-          style={styles.list}
-        >
-          {notes.map((note) => renderItem(note))}
-          {notes.length >= 10 && <ActivityIndicator animating={true} />}
-        </ScrollView>
-      )}
+        )}
+      </ScrollView>
       {showNotification && (
         <Snackbar
           style={styles.snackbar}
@@ -306,9 +310,6 @@ export const ProfilePage: React.FC<ProfilePageProps> = ({ route }) => {
 }
 
 const styles = StyleSheet.create({
-  content: {
-    paddingBottom: 60,
-  },
   container: {
     padding: 16,
   },

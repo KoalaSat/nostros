@@ -54,7 +54,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignContent: 'center',
     flex: 1,
-    paddingLeft: 50,
+    paddingLeft: 90,
   },
 })
 

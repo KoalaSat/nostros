@@ -130,8 +130,8 @@ export const NotificationsFeed: React.FC = () => {
       <View style={styles.noteCard} key={note.id}>
         <NoteCard
           note={note}
-          onPressOptions={() => {
-            setProfileCardPubKey(note.pubkey)
+          onPressUser={(user) => {
+            setProfileCardPubKey(user.id)
             bottomSheetProfileRef.current?.open()
           }}
         />

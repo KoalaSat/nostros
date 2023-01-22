@@ -28,6 +28,7 @@ export const ProfileCard: React.FC<ProfileCardProps> = ({ userPubKey, bottomShee
   const [isContact, setIsContact] = React.useState<boolean>()
   const [showNotification, setShowNotification] = React.useState<undefined | string>()
   const nPub = React.useMemo(() => getNpub(userPubKey), [userPubKey])
+  const username = React.useMemo(() => usernamePubKey(user?.name ?? '', nPub), [nPub, user])
 
   React.useEffect(() => {
     loadUser()
@@ -66,7 +67,7 @@ export const ProfileCard: React.FC<ProfileCardProps> = ({ userPubKey, bottomShee
 
   const goToProfile: () => void = () => {
     bottomSheetRef.current?.close()
-    push('Profile', { pubKey: userPubKey })
+    push('Profile', { pubKey: userPubKey, title: username })
   }
 
   return (
@@ -86,7 +87,7 @@ export const ProfileCard: React.FC<ProfileCardProps> = ({ userPubKey, bottomShee
               </View>
               <View>
                 <View style={styles.username}>
-                  <Text variant='titleMedium'>{usernamePubKey(user?.name ?? '', nPub)}</Text>
+                  <Text variant='titleMedium'>{username}</Text>
                   {/* <MaterialCommunityIcons name="check-decagram-outline" size={16} /> */}
                   <Text>{user?.nip05}</Text>
                 </View>
@@ -123,7 +124,7 @@ export const ProfileCard: React.FC<ProfileCardProps> = ({ userPubKey, bottomShee
             icon='message-plus-outline'
             size={28}
             onPress={() => {
-              navigate('Conversation', { pubKey: userPubKey })
+              navigate('Conversation', { pubKey: userPubKey, title: username })
               bottomSheetRef.current?.close()
             }}
           />

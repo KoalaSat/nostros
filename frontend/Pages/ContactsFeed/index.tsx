@@ -205,6 +205,7 @@ export const ContactsFeed: React.FC = () => {
         <ScrollView horizontal={false}>
           <View>
             <FlatList
+              style={styles.list}
               data={following}
               renderItem={renderContactItem}
               ItemSeparatorComponent={Divider}
@@ -235,6 +236,7 @@ export const ContactsFeed: React.FC = () => {
         <ScrollView horizontal={false}>
           <View>
             <FlatList
+              style={styles.list}
               data={followers}
               renderItem={renderContactItem}
               ItemSeparatorComponent={Divider}
@@ -442,6 +444,9 @@ const styles = StyleSheet.create({
   },
   tabLabel: {
     margin: 8,
+  },
+  list: {
+    paddingBottom: 80,
   },
 })
 

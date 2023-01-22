@@ -145,16 +145,24 @@ export const NotePage: React.FC<NotePageProps> = ({ route }) => {
     }
   }
 
-  const renderItem: (note: Note) => JSX.Element = (note) => (
-    <View style={[styles.noteCard, { borderColor: theme.colors.onSecondary }]} key={note.id}>
-      <NoteCard
-        note={note}
-        onPressOptions={() => {
-          setProfileCardPubKey(note.pubkey)
-          bottomSheetProfileRef.current?.open()
-        }}
-        showAnswerData={false}
-      />
+  const renderItem: (note: Note, index: number) => JSX.Element = (note, index) => (
+    <View style={styles.note} key={note.id}>
+      <View style={styles.noteLine}>
+        <View style={[styles.noteLineTop, { borderColor: theme.colors.onSecondary }]}></View>
+        {index < (replies?.length ?? 0) - 1 && (
+          <View style={[styles.noteLineBottom, { borderColor: theme.colors.onSecondary }]}></View>
+        )}
+      </View>
+      <View style={styles.noteCard}>
+        <NoteCard
+          note={note}
+          onPressUser={(user) => {
+            setProfileCardPubKey(user.id)
+            bottomSheetProfileRef.current?.open()
+          }}
+          showAnswerData={false}
+        />
+      </View>
     </View>
   )
 
@@ -272,8 +280,8 @@ export const NotePage: React.FC<NotePageProps> = ({ route }) => {
           )}
         </Surface>
         {replies && replies.length > 0 && (
-          <View style={styles.list}>
-            {replies.map((note) => renderItem(note))}
+          <View style={[styles.list, { borderColor: theme.colors.onSecondary }]}>
+            {replies.map((note, index) => renderItem(note, index))}
             {replies.length >= 10 && <ActivityIndicator style={styles.loading} animating={true} />}
           </View>
         )}
@@ -317,6 +325,9 @@ export const NotePage: React.FC<NotePageProps> = ({ route }) => {
 }
 
 const styles = StyleSheet.create({
+  container: {
+    paddingBottom: 32,
+  },
   title: {
     paddingRight: 16,
     paddingLeft: 16,
@@ -343,14 +354,14 @@ const styles = StyleSheet.create({
     justifyContent: 'space-around',
   },
   titleComment: {
-    borderTopWidth: 1,
     padding: 16,
     flexDirection: 'row',
     justifyContent: 'flex-start',
   },
   list: {
-    paddingLeft: 16,
+    marginLeft: 16,
     paddingRight: 16,
+    marginBottom: 180,
   },
   loading: {
     paddingTop: 30,
@@ -364,10 +375,25 @@ const styles = StyleSheet.create({
     right: 16,
     position: 'absolute',
   },
+  note: {
+    flexDirection: 'row',
+    flex: 1,
+  },
   noteCard: {
-    borderLeftWidth: 1,
-    paddingLeft: 32,
+    flex: 1,
     paddingTop: 16,
+  },
+  noteLine: {
+    width: 16,
+  },
+  noteLineTop: {
+    borderBottomWidth: 1,
+    borderLeftWidth: 1,
+    height: 60,
+  },
+  noteLineBottom: {
+    borderLeftWidth: 1,
+    flex: 1,
   },
   answerData: {
     flexDirection: 'row',

@@ -148,8 +148,8 @@ export const HomeFeed: React.FC<HomeFeedProps> = ({ navigation }) => {
       <View style={styles.noteCard} key={item.id}>
         <NoteCard
           note={item}
-          onPressOptions={() => {
-            setProfileCardPubKey(item.pubkey)
+          onPressUser={(user) => {
+            setProfileCardPubKey(user.id)
             bottomSheetProfileRef.current?.open()
           }}
         />
