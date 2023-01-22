@@ -109,7 +109,7 @@ export const ConversationPage: React.FC<ConversationPageProps> = ({ route }) => 
   }
 
   const onPressOtherUser: () => void = () => {
-    navigate('Profile', { pubKey: otherPubKey })
+    navigate('Profile', { pubKey: otherPubKey, title: username(otherUser) })
   }
 
   const send: () => void = () => {

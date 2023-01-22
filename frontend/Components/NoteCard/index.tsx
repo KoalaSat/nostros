@@ -28,17 +28,18 @@ import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityI
 import { REGEX_SOCKET_LINK } from '../../Constants/Relay'
 import { push } from '../../lib/Navigation'
 import { getNpub } from '../../lib/nostr/Nip19'
+import { User } from '../../Functions/DatabaseFunctions/Users'
 
 interface NoteCardProps {
   note: Note
-  onPressOptions?: () => void
+  onPressUser?: (user: User) => void
   showAnswerData?: boolean
 }
 
 export const NoteCard: React.FC<NoteCardProps> = ({
   note,
   showAnswerData = true,
-  onPressOptions = () => {},
+  onPressUser = () => {},
 }) => {
   const theme = useTheme()
   const { publicKey, privateKey } = React.useContext(UserContext)
@@ -116,21 +117,15 @@ export const NoteCard: React.FC<NoteCardProps> = ({
             </Card.Content>
           </TouchableRipple>
         )}
-        <TouchableRipple
-          onPress={() =>
-            note.kind !== EventKind.recommendServer && push('Note', { noteId: note.id })
-          }
-        >
-          <Card.Content style={[styles.content, { borderColor: theme.colors.onSecondary }]}>
-            {hide ? (
-              <Button mode='outlined' onPress={() => setHide(false)}>
-                {t('noteCard.contentWarning')}
-              </Button>
-            ) : (
-              <TextContent event={note} />
-            )}
-          </Card.Content>
-        </TouchableRipple>
+        <Card.Content style={[styles.content, { borderColor: theme.colors.onSecondary }]}>
+          {hide ? (
+            <Button mode='outlined' onPress={() => setHide(false)}>
+              {t('noteCard.contentWarning')}
+            </Button>
+          ) : (
+            <TextContent event={note} onPressUser={onPressUser} />
+          )}
+        </Card.Content>
       </>
     )
   }
@@ -187,9 +182,9 @@ export const NoteCard: React.FC<NoteCardProps> = ({
 
   return (
     note && (
-      <Card>
+      <Card style={styles.container}>
         <Card.Content style={styles.title}>
-          <TouchableRipple onPress={onPressOptions}>
+          <TouchableRipple onPress={() => onPressUser({ id: note.pubkey, name: note.name })}>
             <View style={styles.titleUser}>
               <View>
                 <NostrosAvatar
@@ -207,7 +202,11 @@ export const NoteCard: React.FC<NoteCardProps> = ({
             </View>
           </TouchableRipple>
           <View>
-            <IconButton icon='dots-vertical' size={25} onPress={onPressOptions} />
+            <IconButton
+              icon='dots-vertical'
+              size={25}
+              onPress={() => onPressUser({ id: note.pubkey, name: note.name })}
+            />
           </View>
         </Card.Content>
         {getNoteContent()}
@@ -262,7 +261,7 @@ export const NoteCard: React.FC<NoteCardProps> = ({
 
 const styles = StyleSheet.create({
   container: {
-    padding: 16,
+    flex: 1,
   },
   titleUsername: {
     fontWeight: 'bold',

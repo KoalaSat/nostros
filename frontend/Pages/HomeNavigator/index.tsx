@@ -10,13 +10,12 @@ import { useTranslation } from 'react-i18next'
 import ProfileCreatePage from '../../Pages/ProfileCreatePage'
 import { DrawerNavigationProp } from '@react-navigation/drawer'
 import RelaysPage from '../RelaysPage'
-import { useState } from 'react'
 
 export const HomeNavigator: React.FC = () => {
   const theme = useTheme()
   const { t } = useTranslation('common')
-  const [bottomSheetPage, setBottomSheetPage] = useState<'keys' | 'relays'>('keys')
-  const bottomSheetRef = React.useRef<RBSheet>(null)
+  const bottomSheetKeysRef = React.useRef<RBSheet>(null)
+  const bottomSheetRelaysRef = React.useRef<RBSheet>(null)
   const Stack = React.useMemo(() => createStackNavigator(), [])
   const cardStyleInterpolator = React.useMemo(
     () =>
@@ -26,8 +25,9 @@ export const HomeNavigator: React.FC = () => {
     [],
   )
   const onPressQuestion: (pageName: string) => void = (pageName) => {
-    bottomSheetRef.current?.open()
-    setBottomSheetPage(pageName === 'Relays' ? 'relays' : 'keys')
+    pageName === 'Relays'
+      ? bottomSheetRelaysRef.current?.open()
+      : bottomSheetKeysRef.current?.open()
   }
 
   const BottomSheetKeys = React.useMemo(
@@ -59,17 +59,6 @@ export const HomeNavigator: React.FC = () => {
     ),
     [],
   )
-
-  const BottomSheets = {
-    keys: {
-      component: BottomSheetKeys,
-      height: 430,
-    },
-    relays: {
-      component: BottomSheetRelays,
-      height: 680,
-    },
-  }
 
   return (
     <>
@@ -121,9 +110,9 @@ export const HomeNavigator: React.FC = () => {
         </Stack.Group>
       </Stack.Navigator>
       <RBSheet
-        ref={bottomSheetRef}
+        ref={bottomSheetKeysRef}
         closeOnDragDown={true}
-        height={BottomSheets[bottomSheetPage].height}
+        height={430}
         customStyles={{
           container: {
             backgroundColor: theme.colors.background,
@@ -133,7 +122,22 @@ export const HomeNavigator: React.FC = () => {
           },
         }}
       >
-        {BottomSheets[bottomSheetPage].component}
+        {BottomSheetKeys}
+      </RBSheet>
+      <RBSheet
+        ref={bottomSheetRelaysRef}
+        closeOnDragDown={true}
+        height={680}
+        customStyles={{
+          container: {
+            backgroundColor: theme.colors.background,
+            padding: 16,
+            borderTopRightRadius: 28,
+            borderTopLeftRadius: 28,
+          },
+        }}
+      >
+        {BottomSheetRelays}
       </RBSheet>
     </>
   )

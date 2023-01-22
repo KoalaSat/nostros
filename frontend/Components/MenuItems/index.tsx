@@ -18,7 +18,7 @@ import { UserContext } from '../../Contexts/UserContext'
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'
 import { navigate } from '../../lib/Navigation'
 import NostrosAvatar from '../NostrosAvatar'
-import { formatPubKey } from '../../Functions/RelayFunctions/Users'
+import { formatPubKey, username } from '../../Functions/RelayFunctions/Users'
 
 export const MenuItems: React.FC = () => {
   const [drawerItemIndex, setDrawerItemIndex] = React.useState<number>(-1)
@@ -61,7 +61,9 @@ export const MenuItems: React.FC = () => {
         {nPub && (
           <Card style={styles.cardContainer}>
             <Card.Content style={styles.cardContent}>
-              <TouchableRipple onPress={() => navigate('Profile', { pubKey: publicKey })}>
+              <TouchableRipple
+                onPress={() => navigate('Profile', { pubKey: publicKey, title: username(user) })}
+              >
                 <View style={styles.cardContent}>
                   <View style={styles.cardAvatar}>
                     <NostrosAvatar

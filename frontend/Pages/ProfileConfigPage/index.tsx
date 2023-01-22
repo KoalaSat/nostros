@@ -309,12 +309,16 @@ export const ProfileConfigPage: React.FC = () => {
             label={t('profileConfigPage.name') ?? ''}
             onChangeText={setName}
             value={name}
+            style={styles.input}
           />
           <TextInput
             mode='outlined'
             label={t('profileConfigPage.about') ?? ''}
             onChangeText={setAbout}
             value={about}
+            multiline
+            numberOfLines={5}
+            style={styles.input}
           />
           <TextInput
             mode='outlined'
@@ -332,6 +336,7 @@ export const ProfileConfigPage: React.FC = () => {
                 forceTextInputFocus={false}
               />
             }
+            style={styles.input}
           />
           <TextInput
             mode='outlined'
@@ -350,6 +355,7 @@ export const ProfileConfigPage: React.FC = () => {
                 forceTextInputFocus={false}
               />
             }
+            style={styles.input}
           />
           <Button mode='contained' onPress={onPressSaveProfile} loading={isPublishingProfile}>
             {t('profileConfigPage.publish')}
@@ -492,7 +498,7 @@ export const ProfileConfigPage: React.FC = () => {
           onIconPress={() => setShowNotification(undefined)}
           onDismiss={() => setShowNotification(undefined)}
         >
-          {t(`profileConfigPage.notifications.${showNotification}`, { nip05, lnurl })}
+          {t(`profileConfigPage.notifications.${showNotification}`, { nip05, lud06: lnurl })}
         </Snackbar>
       )}
     </View>
@@ -509,8 +515,10 @@ const styles = StyleSheet.create({
   },
   inputContainer: {
     justifyContent: 'space-between',
-    height: 350,
     paddingTop: 16,
+  },
+  input: {
+    marginBottom: 16,
   },
   cardContainer: {
     width: '100%',

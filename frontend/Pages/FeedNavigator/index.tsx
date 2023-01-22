@@ -82,7 +82,11 @@ export const HomeNavigator: React.FC = () => {
                       onPress={() => (navigation as any as DrawerNavigationProp<{}>).openDrawer()}
                     />
                   ) : null}
-                  <Appbar.Content title={t(`homeNavigator.${route.name}`)} />
+                  <Appbar.Content
+                    title={
+                      route.params?.title ? route.params?.title : t(`homeNavigator.${route.name}`)
+                    }
+                  />
                   {['Profile', 'Conversation'].includes(route.name) && (
                     <Appbar.Action
                       icon='dots-vertical'

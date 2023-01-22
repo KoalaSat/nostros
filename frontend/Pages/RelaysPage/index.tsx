@@ -1,5 +1,5 @@
 import React, { useContext, useState } from 'react'
-import { Clipboard, FlatList, ListRenderItem, StyleSheet, View } from 'react-native'
+import { Clipboard, FlatList, ListRenderItem, ScrollView, StyleSheet, View } from 'react-native'
 import { useTranslation } from 'react-i18next'
 import { RelayPoolContext } from '../../Contexts/RelayPoolContext'
 import { Relay } from '../../Functions/DatabaseFunctions/Relays'
@@ -101,7 +101,13 @@ export const RelaysPage: React.FC = () => {
 
   return (
     <View style={styles.container}>
-      <FlatList style={styles.list} data={[...relays, ...defaultList()]} renderItem={renderItem} />
+      <ScrollView horizontal={false}>
+        <FlatList
+          style={styles.list}
+          data={[...relays, ...defaultList()]}
+          renderItem={renderItem}
+        />
+      </ScrollView>
       <AnimatedFAB
         style={styles.fab}
         icon='plus'
@@ -190,9 +196,11 @@ export const RelaysPage: React.FC = () => {
 const styles = StyleSheet.create({
   container: {
     padding: 0,
+    paddingBottom: 32,
   },
   list: {
     padding: 0,
+    paddingBottom: 45,
   },
   snackbar: {
     margin: 16,
