@@ -6,8 +6,6 @@
 
 ![image](https://user-images.githubusercontent.com/4659020/213927551-d2ece568-a5b9-4f1a-af99-c52019df79db.png)
 
-Wellcome to the Nostros project, a NOSTR mobile client.
-
 # Getting Started
 
 What is Nostr: https://github.com/nostr-protocol/nostr
