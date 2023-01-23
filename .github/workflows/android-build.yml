@@ -35,10 +35,24 @@ jobs:
         id: commit
         uses: pr-mpt/actions-commit-hash@v1
 
-      - name: 'Upload .apk Release Artifact (for Release)'
+      - name: 'Upload universal .apk Release Artifac'
         uses: actions/upload-artifact@v3
         if: ${{ github.event_name != 'pull_request' }}
         with:
-          name: nostros-${{ github.ref_name }}.apk
-          path: android/app/build/outputs/apk/release/app-release.apk
+          name: nostros-${{ github.ref_name }}-universal.apk
+          path: android/app/build/outputs/apk/release/app-universal-release.apk
+
+      - name: 'Upload arm64-v8a .apk Release Artifac'
+        uses: actions/upload-artifact@v3
+        if: ${{ github.event_name != 'pull_request' }}
+        with:
+          name: nostros-${{ github.ref_name }}-arm64-v8a.apk
+          path: android/app/build/outputs/apk/release/app-arm64-v8a-release.apk
+
+      - name: 'Upload armeabi-v7a .apk Release Artifac'
+        uses: actions/upload-artifact@v3
+        if: ${{ github.event_name != 'pull_request' }}
+        with:
+          name: nostros-${{ github.ref_name }}-armeabi-v7a.apk
+          path: android/app/build/outputs/apk/release/app-armeabi-v7a-release.apk
 
