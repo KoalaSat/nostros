@@ -1,7 +1,7 @@
 import React, { useContext, useEffect, useState } from 'react'
 import { StyleSheet, View } from 'react-native'
 import { AppContext } from '../../Contexts/AppContext'
-import { Event, EventKind } from '../../lib/nostr/Events'
+import { Event } from '../../lib/nostr/Events'
 import { useTranslation } from 'react-i18next'
 import { RelayPoolContext } from '../../Contexts/RelayPoolContext'
 import moment from 'moment'
@@ -14,6 +14,7 @@ import { UserContext } from '../../Contexts/UserContext'
 import NostrosAvatar from '../../Components/NostrosAvatar'
 import { goBack } from '../../lib/Navigation'
 import { getNpub } from '../../lib/nostr/Nip19'
+import { Kind } from 'nostr-tools'
 
 interface SendPageProps {
   route: { params: { note: Note } | undefined }

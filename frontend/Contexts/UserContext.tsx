@@ -1,5 +1,4 @@
 import React, { useContext, useEffect, useState } from 'react'
-import { getPublickey } from '../lib/nostr/Bip'
 import SInfo from 'react-native-sensitive-info'
 import { RelayPoolContext } from './RelayPoolContext'
 import { AppContext } from './AppContext'
@@ -9,6 +8,7 @@ import {
   getUser,
   User,
 } from '../Functions/DatabaseFunctions/Users'
+import { getPublicKey } from 'nostr-tools'
 import { dropTables } from '../Functions/DatabaseFunctions'
 import { navigate } from '../lib/Navigation'
 import { nsecEncode } from 'nostr-tools/nip19'
@@ -103,8 +103,7 @@ export const UserContextProvider = ({ children }: UserContextProviderProps): JSX
     if (privateKey && privateKey !== '') {
       SInfo.setItem('privateKey', privateKey, {})
       setNsec(nsecEncode(privateKey))
-      const publicKey: string = getPublickey(privateKey)
-      setPublicKey(publicKey)
+      setPublicKey(getPublicKey(privateKey))
     }
   }, [privateKey])
 

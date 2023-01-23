@@ -2,7 +2,7 @@ import React, { useContext, useEffect, useMemo, useRef, useState } from 'react'
 import { FlatList, ScrollView, StyleSheet, View } from 'react-native'
 import { AppContext } from '../../Contexts/AppContext'
 import { RelayPoolContext } from '../../Contexts/RelayPoolContext'
-import { EventKind, Event } from '../../lib/nostr/Events'
+import { Event } from '../../lib/nostr/Events'
 import {
   DirectMessage,
   getDirectMessages,
@@ -27,6 +27,7 @@ import { UserContext } from '../../Contexts/UserContext'
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'
 import { navigate } from '../../lib/Navigation'
 import { useFocusEffect } from '@react-navigation/native'
+import { Kind } from 'nostr-tools'
 
 interface ConversationPageProps {
   route: { params: { pubKey: string; conversationId: string } }
