@@ -1,6 +1,5 @@
 import React, { useCallback, useContext, useEffect, useState } from 'react'
 import {
-  Clipboard,
   NativeScrollEvent,
   NativeSyntheticEvent,
   RefreshControl,
@@ -8,6 +7,7 @@ import {
   StyleSheet,
   View,
 } from 'react-native'
+import Clipboard from '@react-native-clipboard/clipboard'
 import {
   Surface,
   Text,

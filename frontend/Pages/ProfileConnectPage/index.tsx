@@ -1,5 +1,6 @@
 import React, { useContext, useEffect, useState } from 'react'
-import { Clipboard, StyleSheet, View } from 'react-native'
+import { StyleSheet, View } from 'react-native'
+import Clipboard from '@react-native-clipboard/clipboard'
 import { UserContext } from '../../Contexts/UserContext'
 import { useTranslation } from 'react-i18next'
 import { getNip19Key, isPrivateKey, isPublicKey } from '../../lib/nostr/Nip19'

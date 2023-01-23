@@ -1,5 +1,6 @@
 import React, { useContext, useEffect, useState } from 'react'
-import { Clipboard, Linking, ScrollView, StyleSheet, View } from 'react-native'
+import { Linking, ScrollView, StyleSheet, View } from 'react-native'
+import Clipboard from '@react-native-clipboard/clipboard'
 import { AppContext } from '../../Contexts/AppContext'
 import { useTranslation } from 'react-i18next'
 import { UserContext } from '../../Contexts/UserContext'
