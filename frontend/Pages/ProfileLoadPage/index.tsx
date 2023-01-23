@@ -64,7 +64,7 @@ export const ProfileLoadPage: React.FC = () => {
     if (database && publicKey) {
       getUsers(database, {}).then((results) => {
         if (results && results.length > 0) {
-          setContactsCount(results.length)
+          setContactsCount(results.filter((user) => user.contact).length)
           const authors = [...results.map((user: User) => user.id), publicKey]
           relayPool?.subscribe('profile-load-notes', [
             {
