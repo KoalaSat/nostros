@@ -46,10 +46,17 @@ export const TextContent: React.FC<TextContentProps> = ({
   const { database } = useContext(AppContext)
   const [userNames, setUserNames] = useState<Record<number, string>>({})
   const [loadedUsers, setLoadedUsers] = useState<number>(0)
+  const [url, setUrl] = useState<string>()
   const [linkPreview, setLinkPreview] = useState<LinkPreviewMedia>()
   const text = event?.content ?? content ?? ''
 
-  useEffect(() => {}, [loadedUsers, linkPreview])
+  useEffect(() => {
+    if (!linkPreview && url) {
+      getLinkPreview(url).then((data) => {
+        setLinkPreview(data as LinkPreviewMedia)
+      })
+    }
+  }, [loadedUsers, url])
 
   const handleUrlPress: (url: string) => void = (url) => {
     Linking.openURL(url)
@@ -93,12 +100,9 @@ export const TextContent: React.FC<TextContentProps> = ({
     matchingString,
     _matches,
   ) => {
-    if (!linkPreview) {
-      getLinkPreview(matchingString).then((data) => {
-        setLinkPreview(data as LinkPreviewMedia)
-      })
-    }
-
+    setUrl((prev) => {
+      return prev ?? matchingString
+    })
     return matchingString
   }
 
