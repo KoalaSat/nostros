@@ -98,7 +98,7 @@ export const HomeFeed: React.FC<HomeFeedProps> = ({ navigation }) => {
     relayPool?.subscribe('homepage-contacts-meta', [
       {
         kinds: [Kind.Metadata],
-        authors: users.map((user) => user.id),
+        authors,
       },
     ])
     setRefreshing(false)

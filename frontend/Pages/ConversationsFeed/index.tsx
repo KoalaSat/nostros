@@ -125,10 +125,20 @@ export const ConversationsFeed: React.FC = () => {
             />
             <View style={styles.contactName}>
               <Text variant='titleSmall'>{userMame}</Text>
+              {user?.valid_nip05 ? (
+                <MaterialCommunityIcons
+                  name='check-decagram-outline'
+                  size={14}
+                  color={theme.colors.onPrimaryContainer}
+                  style={styles.verifyIcon}
+                />
+              ) : (
+                <></>
+              )}
             </View>
           </View>
           <View style={styles.contactInfo}>
-            <View style={styles.contactName}>
+            <View style={styles.contactDate}>
               <Text>{moment.unix(item.created_at).format('L HH:mm')}</Text>
               {item.pubkey !== publicKey && !item.read && <Badge size={16}></Badge>}
             </View>
@@ -213,8 +223,20 @@ export const ConversationsFeed: React.FC = () => {
             lud06={item.lnurl}
             size={40}
           />
-          <View style={styles.contactName}>
-            <Text variant='titleSmall'>{formatPubKey(item.id)}</Text>
+          <View style={styles.contactData}>
+            <View style={styles.contactName}>
+              <Text variant='titleSmall'>{formatPubKey(item.id)}</Text>
+              {item?.valid_nip05 ? (
+                <MaterialCommunityIcons
+                  name='check-decagram-outline'
+                  size={14}
+                  color={theme.colors.onPrimaryContainer}
+                  style={styles.verifyIcon}
+                />
+              ) : (
+                <></>
+              )}
+            </View>
             {item.name && <Text variant='titleSmall'>{username(item)}</Text>}
           </View>
         </View>
@@ -346,8 +368,18 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     width: '100%',
   },
-  contactName: {
+  contactData: {
     paddingLeft: 16,
+  },
+  contactDate: {
+    paddingLeft: 16,
+  },
+  contactName: {
+    flexDirection: 'row',
+    alignContent: 'center',
+    justifyContent: 'center',
+    paddingLeft: 16,
+    paddingTop: 10,
   },
   contactUser: {
     flexDirection: 'row',
@@ -377,6 +409,10 @@ const styles = StyleSheet.create({
   },
   list: {
     paddingBottom: 64,
+  },
+  verifyIcon: {
+    paddingTop: 3,
+    paddingLeft: 5,
   },
 })
 

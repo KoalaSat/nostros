@@ -286,7 +286,7 @@ export const ProfileConfigPage: React.FC = () => {
               </View>
               <View style={styles.actionButton}>
                 <IconButton
-                  icon='check-circle-outline'
+                  icon='check-decagram-outline'
                   size={28}
                   onPress={() => bottomSheetNip05Ref.current?.open()}
                 />
@@ -426,7 +426,6 @@ export const ProfileConfigPage: React.FC = () => {
           <Text variant='titleLarge'>{t('profileConfigPage.nip05Title')}</Text>
           <Text variant='bodyMedium'>
             {t('profileConfigPage.nip05Description')}
-            <Text> </Text>
             <Text
               style={styles.link}
               onPress={async () =>

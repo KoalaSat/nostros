@@ -88,9 +88,20 @@ export const ProfileCard: React.FC<ProfileCardProps> = ({ userPubKey, bottomShee
                 />
               </View>
               <View>
-                <View style={styles.username}>
-                  <Text variant='titleMedium'>{username}</Text>
-                  {/* <MaterialCommunityIcons name="check-decagram-outline" size={16} color={theme.colors.onPrimaryContainer} /> */}
+                <View style={styles.usernameData}>
+                  <View style={styles.username}>
+                    <Text variant='titleMedium'>{username}</Text>
+                    {user?.valid_nip05 ? (
+                      <MaterialCommunityIcons
+                        name='check-decagram-outline'
+                        size={14}
+                        color={theme.colors.onPrimaryContainer}
+                        style={styles.verifyIcon}
+                      />
+                    ) : (
+                      <></>
+                    )}
+                  </View>
                   <Text>{user?.nip05}</Text>
                 </View>
               </View>
@@ -184,8 +195,11 @@ const styles = StyleSheet.create({
   snackbar: {
     marginBottom: 85,
   },
-  username: {
+  usernameData: {
     paddingLeft: 16,
+  },
+  username: {
+    flexDirection: 'row',
   },
   contacts: {
     flexDirection: 'row',
@@ -223,6 +237,10 @@ const styles = StyleSheet.create({
   },
   cardUser: {
     flex: 1,
+  },
+  verifyIcon: {
+    paddingTop: 6,
+    paddingLeft: 5,
   },
 })
 

@@ -171,8 +171,20 @@ export const ContactsFeed: React.FC = () => {
               lud06={item.lnurl}
               size={40}
             />
-            <View style={styles.contactName}>
-              <Text>{formatPubKey(nPub)}</Text>
+            <View style={styles.contactData}>
+              <View style={styles.contactName}>
+                <Text>{formatPubKey(nPub)}</Text>
+                {item.valid_nip05 ? (
+                  <MaterialCommunityIcons
+                    name='check-decagram-outline'
+                    size={14}
+                    color={theme.colors.onPrimaryContainer}
+                    style={styles.verifyIcon}
+                  />
+                ) : (
+                  <></>
+                )}
+              </View>
               {item.name && <Text variant='titleSmall'>{username(item)}</Text>}
             </View>
           </View>
@@ -426,8 +438,11 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     width: '100%',
   },
-  contactName: {
+  contactData: {
     paddingLeft: 16,
+  },
+  contactName: {
+    flexDirection: 'row',
   },
   contactInfo: {
     flexDirection: 'row',
@@ -455,6 +470,10 @@ const styles = StyleSheet.create({
   },
   list: {
     paddingBottom: 80,
+  },
+  verifyIcon: {
+    paddingTop: 4,
+    paddingLeft: 5,
   },
 })
 

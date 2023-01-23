@@ -79,7 +79,19 @@ export const MenuItems: React.FC = () => {
                     />
                   </View>
                   <View>
-                    <Text variant='titleMedium'>{user?.name}</Text>
+                    <View style={styles.username}>
+                      <Text variant='titleMedium'>{user?.name}</Text>
+                      {user?.valid_nip05 ? (
+                        <MaterialCommunityIcons
+                          name='check-decagram-outline'
+                          size={14}
+                          color={theme.colors.onPrimaryContainer}
+                          style={styles.verifyIcon}
+                        />
+                      ) : (
+                        <></>
+                      )}
+                    </View>
                     <Text>{formatPubKey(publicKey ?? '')}</Text>
                   </View>
                 </View>
@@ -137,14 +149,6 @@ export const MenuItems: React.FC = () => {
                 )
               }
             />
-            {/* <Drawer.Item
-              label={t('menuItems.configuration')}
-              icon='cog-outline'
-              key='config'
-              active={drawerItemIndex === 1}
-              onPress={() => onPressItem('config', 1)}
-              onTouchEnd={() => setDrawerItemIndex(-1)}
-            /> */}
           </Drawer.Section>
         )}
         <Drawer.Section showDivider={false}>
@@ -212,6 +216,13 @@ const styles = StyleSheet.create({
     marginBottom: 0,
     borderBottomRightRadius: 28,
     padding: 24,
+  },
+  username: {
+    flexDirection: 'row',
+  },
+  verifyIcon: {
+    paddingTop: 6,
+    paddingLeft: 5,
   },
 })
 

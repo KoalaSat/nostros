@@ -34,6 +34,7 @@ import ProfileCard from '../../Components/ProfileCard'
 import { navigate } from '../../lib/Navigation'
 import { useFocusEffect } from '@react-navigation/native'
 import { getNpub } from '../../lib/nostr/Nip19'
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'
 
 interface ProfilePageProps {
   route: { params: { pubKey: string } }
@@ -208,9 +209,20 @@ export const ProfilePage: React.FC<ProfilePageProps> = ({ route }) => {
               />
             </View>
             <View>
-              <View style={styles.userName}>
-                <Text variant='titleMedium'>{user && username(user)}</Text>
-                {/* <MaterialCommunityIcons name="check-decagram-outline" size={16} color={theme.colors.onPrimaryContainer} /> */}
+              <View style={styles.userData}>
+                <View style={styles.userName}>
+                  <Text variant='titleMedium'>{user && username(user)}</Text>
+                  {user?.valid_nip05 ? (
+                    <MaterialCommunityIcons
+                      name='check-decagram-outline'
+                      size={14}
+                      color={theme.colors.onPrimaryContainer}
+                      style={styles.verifyIcon}
+                    />
+                  ) : (
+                    <></>
+                  )}
+                </View>
                 <Text>{user?.nip05}</Text>
               </View>
             </View>
@@ -322,8 +334,11 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
   },
-  userName: {
+  userData: {
     paddingLeft: 16,
+  },
+  userName: {
+    flexDirection: 'row',
   },
   actionButton: {
     justifyContent: 'center',
@@ -339,6 +354,10 @@ const styles = StyleSheet.create({
   },
   noteCard: {
     marginBottom: 16,
+  },
+  verifyIcon: {
+    paddingTop: 6,
+    paddingLeft: 5,
   },
 })
 
