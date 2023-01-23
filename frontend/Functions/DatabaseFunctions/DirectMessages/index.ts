@@ -7,8 +7,8 @@ export interface DirectMessage extends Event {
   read: boolean
 }
 
-const databaseToEntity: (object: any) => DirectMessage = (object) => {
-  object.tags = JSON.parse(object.tags)
+const databaseToEntity: (object: any) => DirectMessage = (object = {}) => {
+  object.tags = object.tags ? JSON.parse(object.tags) : []
   return object as DirectMessage
 }
 
@@ -27,7 +27,7 @@ export const getGroupedDirectMessages: (
   },
 ) => Promise<DirectMessage[]> = async (db, { order = 'DESC' }) => {
   let notesQuery = `
-    SELECT 
+    SELECT
       *, MAX(created_at) AS request_id
     FROM
       nostros_direct_messages
@@ -58,7 +58,7 @@ export const getDirectMessages: (
   { order = 'DESC' },
 ) => {
   const notesQuery = `
-    SELECT 
+    SELECT
       *
     FROM
       nostros_direct_messages

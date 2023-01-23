@@ -10,8 +10,8 @@ export interface Note extends Event {
   user_created_at: number
 }
 
-const databaseToEntity: (object: any) => Note = (object) => {
-  object.tags = JSON.parse(object.tags)
+const databaseToEntity: (object: any) => Note = (object = {}) => {
+  object.tags = object.tags ? JSON.parse(object.tags) : []
   return object as Note
 }
 
@@ -21,13 +21,13 @@ export const getMainNotes: (
   limit: number,
 ) => Promise<Note[]> = async (db, pubKey, limit) => {
   const notesQuery = `
-    SELECT 
-      nostros_notes.*, nostros_users.lnurl, nostros_users.name, nostros_users.picture, nostros_users.contact, nostros_users.created_at as user_created_at FROM nostros_notes 
-    LEFT JOIN 
-      nostros_users ON nostros_users.id = nostros_notes.pubkey 
+    SELECT
+      nostros_notes.*, nostros_users.lnurl, nostros_users.name, nostros_users.picture, nostros_users.contact, nostros_users.created_at as user_created_at FROM nostros_notes
+    LEFT JOIN
+      nostros_users ON nostros_users.id = nostros_notes.pubkey
     WHERE (nostros_users.contact = 1 OR nostros_notes.pubkey = '${pubKey}')
-    AND nostros_notes.main_event_id IS NULL 
-    ORDER BY created_at DESC 
+    AND nostros_notes.main_event_id IS NULL
+    ORDER BY created_at DESC
     LIMIT ${limit}
   `
 
@@ -44,15 +44,15 @@ export const getMentionNotes: (
   limit: number,
 ) => Promise<Note[]> = async (db, pubKey, limit) => {
   const notesQuery = `
-    SELECT 
-      nostros_notes.*, nostros_users.lnurl, nostros_users.name, nostros_users.picture, nostros_users.contact, nostros_users.created_at as user_created_at FROM nostros_notes 
-    LEFT JOIN 
-      nostros_users ON nostros_users.id = nostros_notes.pubkey 
+    SELECT
+      nostros_notes.*, nostros_users.lnurl, nostros_users.name, nostros_users.picture, nostros_users.contact, nostros_users.created_at as user_created_at FROM nostros_notes
+    LEFT JOIN
+      nostros_users ON nostros_users.id = nostros_notes.pubkey
     WHERE (nostros_notes.reply_event_id IN (
       SELECT nostros_notes.id FROM nostros_notes WHERE pubkey = '${pubKey}'
     ) OR nostros_notes.user_mentioned = 1)
     AND nostros_notes.pubkey != '${pubKey}'
-    ORDER BY created_at DESC 
+    ORDER BY created_at DESC
     LIMIT ${limit}
   `
 
@@ -68,7 +68,7 @@ export const getRepliesCount: (
   eventId: string,
 ) => Promise<number> = async (db, eventId) => {
   const repliesQuery = `
-    SELECT 
+    SELECT
       COUNT(*)
     FROM nostros_notes
     WHERE reply_event_id = "${eventId}"
@@ -87,12 +87,12 @@ export const getLastReply: (
 ) => Promise<Note> = async (db, { eventIds }) => {
   const eventIdsQuery = eventIds.join('", "')
   const replyQuery = `
-    SELECT 
+    SELECT
       *
     FROM
       nostros_notes
     WHERE reply_event_id IN ("${eventIdsQuery}")
-    ORDER BY created_at DESC 
+    ORDER BY created_at DESC
     LIMIT 1
   `
 
@@ -113,9 +113,9 @@ export const getNotes: (
   },
 ) => Promise<Note[]> = async (db, { filters = {}, limit, contacts, includeIds }) => {
   let notesQuery = `
-    SELECT 
-      nostros_notes.*, nostros_users.lnurl, nostros_users.name, nostros_users.picture, nostros_users.contact, nostros_users.created_at as user_created_at FROM nostros_notes 
-    LEFT JOIN 
+    SELECT
+      nostros_notes.*, nostros_users.lnurl, nostros_users.name, nostros_users.picture, nostros_users.contact, nostros_users.created_at as user_created_at FROM nostros_notes
+    LEFT JOIN
       nostros_users ON nostros_users.id = nostros_notes.pubkey
   `
 
