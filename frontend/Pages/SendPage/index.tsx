@@ -94,7 +94,7 @@ export const SendPage: React.FC<SendPageProps> = ({ route }) => {
       const event: Event = {
         content: rawContent,
         created_at: moment().unix(),
-        kind: EventKind.textNote,
+        kind: Kind.Text,
         pubkey: publicKey,
         tags,
       }

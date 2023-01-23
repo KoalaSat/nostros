@@ -93,13 +93,13 @@ export const ConversationPage: React.FC<ConversationPageProps> = ({ route }) => 
     if (publicKey && otherPubKey) {
       relayPool?.subscribe(`conversation${route.params.pubKey}`, [
         {
-          kinds: [EventKind.directMessage],
+          kinds: [Kind.EncryptedDirectMessage],
           authors: [publicKey],
           '#p': [otherPubKey],
           since: lastCreateAt ?? 0,
         },
         {
-          kinds: [EventKind.directMessage],
+          kinds: [Kind.EncryptedDirectMessage],
           authors: [otherPubKey],
           '#p': [publicKey],
           since: lastCreateAt ?? 0,
@@ -117,7 +117,7 @@ export const ConversationPage: React.FC<ConversationPageProps> = ({ route }) => 
       const event: Event = {
         content: input,
         created_at: moment().unix(),
-        kind: EventKind.directMessage,
+        kind: Kind.EncryptedDirectMessage,
         pubkey: publicKey,
         tags: usersToTags([otherUser]),
       }

@@ -2,7 +2,7 @@ import React, { useContext, useEffect, useState } from 'react'
 import { Dimensions, FlatList, ListRenderItem, ScrollView, StyleSheet, View } from 'react-native'
 import Clipboard from '@react-native-clipboard/clipboard'
 import { AppContext } from '../../Contexts/AppContext'
-import { EventKind } from '../../lib/nostr/Events'
+import { Kind } from 'nostr-tools'
 import { useTranslation } from 'react-i18next'
 import {
   getFollowersAndFollowing,
@@ -75,7 +75,7 @@ export const ContactsFeed: React.FC = () => {
           })
           relayPool?.subscribe('contacts-meta', [
             {
-              kinds: [EventKind.meta],
+              kinds: [Kind.Metadata],
               authors: results.map((user) => user.id),
             },
           ])
@@ -92,11 +92,11 @@ export const ContactsFeed: React.FC = () => {
     if (publicKey) {
       relayPool?.subscribe('contacts', [
         {
-          kinds: [EventKind.petNames],
+          kinds: [Kind.Contacts],
           authors: [publicKey],
         },
         {
-          kinds: [EventKind.petNames],
+          kinds: [Kind.Contacts],
           '#p': [publicKey],
         },
       ])

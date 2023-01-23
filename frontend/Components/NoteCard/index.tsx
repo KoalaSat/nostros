@@ -1,7 +1,6 @@
 import React, { useContext, useEffect, useMemo, useState } from 'react'
 import { getRepliesCount, Note } from '../../Functions/DatabaseFunctions/Notes'
 import { StyleSheet, View } from 'react-native'
-import { EventKind } from '../../lib/nostr/Events'
 import { RelayPoolContext } from '../../Contexts/RelayPoolContext'
 import { AppContext } from '../../Contexts/AppContext'
 import { t } from 'i18next'
@@ -29,6 +28,7 @@ import { REGEX_SOCKET_LINK } from '../../Constants/Relay'
 import { push } from '../../lib/Navigation'
 import { getNpub } from '../../lib/nostr/Nip19'
 import { User } from '../../Functions/DatabaseFunctions/Users'
+import { Kind } from 'nostr-tools'
 
 interface NoteCardProps {
   note: Note
@@ -87,7 +87,7 @@ export const NoteCard: React.FC<NoteCardProps> = ({
     const event: Event = {
       content: positive ? '+' : '-',
       created_at: moment().unix(),
-      kind: EventKind.reaction,
+      kind: Kind.Reaction,
       pubkey: publicKey,
       tags: [...note.tags, ['e', note.id], ['p', note.pubkey]],
     }
@@ -100,7 +100,7 @@ export const NoteCard: React.FC<NoteCardProps> = ({
         {note.reply_event_id && showAnswerData && (
           <TouchableRipple
             onPress={() =>
-              note.kind !== EventKind.recommendServer &&
+              note.kind !== Kind.RecommendRelay &&
               push('Note', { noteId: note.reply_event_id })
             }
           >
@@ -148,7 +148,7 @@ export const NoteCard: React.FC<NoteCardProps> = ({
 
     return (
       <TouchableRipple
-        onPress={() => note.kind !== EventKind.recommendServer && push('Note', { noteId: note.id })}
+        onPress={() => note.kind !== Kind.RecommendRelay && push('Note', { noteId: note.id })}
       >
         <Card.Content style={[styles.content, { borderColor: theme.colors.onSecondary }]}>
           <Card>
@@ -179,9 +179,9 @@ export const NoteCard: React.FC<NoteCardProps> = ({
   }
 
   const getNoteContent: () => JSX.Element | undefined = () => {
-    if (note.kind === EventKind.textNote) {
+    if (note.kind === Kind.Text) {
       return textNote()
-    } else if (note.kind === EventKind.recommendServer) return recommendServer()
+    } else if (note.kind === Kind.RecommendRelay) return recommendServer()
   }
 
   return (
@@ -224,7 +224,7 @@ export const NoteCard: React.FC<NoteCardProps> = ({
               />
             )}
             onPress={() =>
-              note.kind !== EventKind.recommendServer && push('Note', { noteId: note.id })
+              note.kind !== Kind.RecommendRelay && push('Note', { noteId: note.id })
             }
           >
             {repliesCount}

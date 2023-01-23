@@ -3,7 +3,7 @@ import { Dimensions, FlatList, ListRenderItem, ScrollView, StyleSheet, View } fr
 import Clipboard from '@react-native-clipboard/clipboard'
 import { AppContext } from '../../Contexts/AppContext'
 import { RelayPoolContext } from '../../Contexts/RelayPoolContext'
-import { EventKind } from '../../lib/nostr/Events'
+import { Kind } from 'nostr-tools'
 import {
   DirectMessage,
   getGroupedDirectMessages,
@@ -66,7 +66,7 @@ export const ConversationsFeed: React.FC = () => {
           getUsers(database, { includeIds: otherUsers }).then(setUsers)
           relayPool?.subscribe('directmessages-meta', [
             {
-              kinds: [EventKind.meta],
+              kinds: [Kind.Metadata],
               authors: otherUsers,
             },
           ])
@@ -84,12 +84,12 @@ export const ConversationsFeed: React.FC = () => {
     if (publicKey) {
       relayPool?.subscribe('directmessages', [
         {
-          kinds: [EventKind.directMessage],
+          kinds: [Kind.EncryptedDirectMessage],
           authors: [publicKey],
           since: lastCreateAt ?? 0,
         },
         {
-          kinds: [EventKind.directMessage],
+          kinds: [Kind.EncryptedDirectMessage],
           '#p': [publicKey],
           since: lastCreateAt ?? 0,
         },
