@@ -67,10 +67,9 @@ export const RelayPoolContextProvider = ({
     if (database && publicKey) {
       DeviceEventEmitter.addListener('WebsocketEvent', debouncedEventIdHandler)
       DeviceEventEmitter.addListener('WebsocketConfirmation', debouncedConfirmationHandler)
-      const initRelayPool = new RelayPool([], privateKey)
-      initRelayPool.connect(publicKey, (eventId: string) => setLastEventId(eventId))
+      const initRelayPool = new RelayPool(privateKey)
+      initRelayPool.connect(publicKey, () => setRelayPoolReady(true))
       setRelayPool(initRelayPool)
-      setRelayPoolReady(true)
       loadRelays()
     }
   }

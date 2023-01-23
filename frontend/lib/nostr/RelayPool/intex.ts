@@ -18,19 +18,13 @@ export interface RelayMessage {
 }
 
 class RelayPool {
-  constructor(relaysUrls: string[], privateKey?: string) {
+  constructor(privateKey?: string) {
     this.privateKey = privateKey
-    this.relays = relaysUrls
     this.subscriptions = {}
-
-    this.relays.forEach((relayUrl) => {
-      this.add(relayUrl)
-    })
   }
 
   private readonly privateKey?: string
   private subscriptions: Record<string, string[]>
-  public relays: string[]
 
   private readonly send: (message: object) => void = async (message) => {
     const tosend = JSON.stringify(message)
@@ -47,7 +41,6 @@ class RelayPool {
     callback = () => {},
   ) => {
     RelayPoolModule.add(relayUrl, callback)
-    this.relays.push(relayUrl)
   }
 
   public readonly remove: (relayUrl: string, callback?: () => void) => void = async (
@@ -55,7 +48,6 @@ class RelayPool {
     callback = () => {},
   ) => {
     RelayPoolModule.remove(relayUrl, callback)
-    this.relays = this.relays.filter((relay) => relay === relayUrl)
   }
 
   public readonly sendEvent: (event: Event) => Promise<Event | null> = async (event) => {
