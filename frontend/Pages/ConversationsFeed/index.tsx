@@ -174,7 +174,7 @@ export const ConversationsFeed: React.FC = () => {
         ),
         onPress: async () => bottomSheetUserListRef.current?.open(),
         disabled: users?.length === 0,
-        style: users?.length === 0 ? { color: theme.colors.outline } : {}
+        style: users?.length === 0 ? { color: theme.colors.outline } : {},
       },
       {
         key: 2,
@@ -186,7 +186,7 @@ export const ConversationsFeed: React.FC = () => {
         ),
         onPress: async () => bottomSheetPubKeyRef.current?.open(),
         disabled: false,
-        style: {}
+        style: {},
       },
     ]
   }, [])
