@@ -9,7 +9,8 @@ import moment from 'moment'
 import { Card, Text, useTheme } from 'react-native-paper'
 import { getLinkPreview } from 'link-preview-js'
 import { validImageUrl } from '../../Functions/NativeFunctions'
-import { getNpub } from '../../lib/nostr/Nip19'
+import { getNip19Key, getNpub } from '../../lib/nostr/Nip19'
+import { navigate } from '../../lib/Navigation'
 
 interface TextContentProps {
   event?: Event
@@ -60,6 +61,22 @@ export const TextContent: React.FC<TextContentProps> = ({
 
   const handleUrlPress: (url: string) => void = (url) => {
     Linking.openURL(url)
+  }
+
+  const handleNip05NotePress: (nip19: string) => void = (nip19) => {
+    const noteId = getNip19Key(nip19)
+
+    if (noteId) {
+      navigate('Note', { noteId })
+    }
+  }
+
+  const handleNip05ProfilePress: (nip19: string) => void = (nip19) => {
+    const pubKey = getNip19Key(nip19)
+
+    if (pubKey) {
+      navigate('Profile', { pubKey })
+    }
   }
 
   const handleMentionPress: (text: string) => void = (text) => {
@@ -140,6 +157,8 @@ export const TextContent: React.FC<TextContentProps> = ({
                 pattern: /#\[(\d+)\]/,
               },
           { pattern: /#(\w+)/, style: styles.hashTag },
+          { pattern: /(note1)\S*/, style: styles.nip19, onPress: handleNip05NotePress },
+          { pattern: /(npub1|nprofile1)\S*/, style: styles.nip19, onPress: handleNip05ProfilePress },
         ]}
         childrenProps={{ allowFontScaling: false }}
       >
@@ -155,6 +174,9 @@ const styles = StyleSheet.create({
     width: '100%',
   },
   url: {
+    textDecorationLine: 'underline',
+  },
+  nip19: {
     textDecorationLine: 'underline',
   },
   email: {

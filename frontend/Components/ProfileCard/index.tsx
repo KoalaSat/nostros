@@ -177,8 +177,7 @@ const styles = StyleSheet.create({
     padding: 16,
   },
   snackbar: {
-    margin: 16,
-    width: '100%',
+    marginBottom: 85
   },
   username: {
     paddingLeft: 16,

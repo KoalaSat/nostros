@@ -13,10 +13,10 @@ export function getNpub(key: string): string {
 }
 
 export function getNip19Key(nip19: string): string | null {
-  let result = nip19
+  let result = null
 
   try {
-    const decoded = decode(result)
+    const decoded = decode(nip19)
     if (decoded.type === 'nprofile') {
       const data = decoded.data as ProfilePointer
       result = data.pubkey
@@ -30,7 +30,7 @@ export function getNip19Key(nip19: string): string | null {
     console.log('Error decoding getPublicKey', e)
   }
 
-  return null
+  return result
 }
 
 export function isPrivateKey(nip19: string): boolean {
