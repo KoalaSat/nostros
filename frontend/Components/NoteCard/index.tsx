@@ -329,7 +329,7 @@ const styles = StyleSheet.create({
     textDecorationLine: 'underline',
   },
   verifyIcon: {
-    paddingTop: 3,
+    paddingTop: 4,
     paddingLeft: 5,
   },
 })
