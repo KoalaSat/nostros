@@ -100,8 +100,7 @@ export const NoteCard: React.FC<NoteCardProps> = ({
         {note.reply_event_id && showAnswerData && (
           <TouchableRipple
             onPress={() =>
-              note.kind !== Kind.RecommendRelay &&
-              push('Note', { noteId: note.reply_event_id })
+              note.kind !== Kind.RecommendRelay && push('Note', { noteId: note.reply_event_id })
             }
           >
             <Card.Content style={[styles.answerContent, { borderColor: theme.colors.onSecondary }]}>
@@ -200,7 +199,19 @@ export const NoteCard: React.FC<NoteCardProps> = ({
                 />
               </View>
               <View style={styles.titleUserInfo}>
-                <Text style={styles.titleUsername}>{usernamePubKey(note.name, nPub)}</Text>
+                <View style={styles.titleUser}>
+                  <Text style={styles.titleUsername}>{usernamePubKey(note.name, nPub)}</Text>
+                  {note?.valid_nip05 ? (
+                    <MaterialCommunityIcons
+                      name='check-decagram-outline'
+                      size={14}
+                      color={theme.colors.onPrimaryContainer}
+                      style={styles.verifyIcon}
+                    />
+                  ) : (
+                    <></>
+                  )}
+                </View>
                 <Text>{timestamp}</Text>
               </View>
             </View>
@@ -223,9 +234,7 @@ export const NoteCard: React.FC<NoteCardProps> = ({
                 color={theme.colors.onPrimaryContainer}
               />
             )}
-            onPress={() =>
-              note.kind !== Kind.RecommendRelay && push('Note', { noteId: note.id })
-            }
+            onPress={() => note.kind !== Kind.RecommendRelay && push('Note', { noteId: note.id })}
           >
             {repliesCount}
           </Button>
@@ -318,6 +327,10 @@ const styles = StyleSheet.create({
   },
   link: {
     textDecorationLine: 'underline',
+  },
+  verifyIcon: {
+    paddingTop: 3,
+    paddingLeft: 5,
   },
 })
 

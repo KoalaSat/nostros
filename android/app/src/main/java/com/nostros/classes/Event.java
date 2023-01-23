@@ -4,11 +4,17 @@ import android.annotation.SuppressLint;
 import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.util.Log;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.UUID;
@@ -129,6 +135,29 @@ public class Event {
         return filtered;
     }
 
+    protected boolean validateNip05(String nip05) {
+        String[] parts = nip05.split("@");
+        if (parts.length < 1) return false;
+
+        String name = parts[0];
+        String domain = parts[1];
+
+        if (!name.matches("^[a-z0-9-_]+$")) return false;
+
+        try {
+            String url = "https://" + domain + "/.well-known/nostr.json?name=" + name;
+            JSONObject response = getJSONObjectFromURL(url);
+            JSONObject names = response.getJSONObject("names");
+            String key = names.getString(name);
+
+            return key.equals(pubkey);
+        } catch (IOException | JSONException e) {
+            e.printStackTrace();
+        }
+
+        return false;
+    }
+
     protected void saveNote(SQLiteDatabase database, String userPubKey) {
         ContentValues values = new ContentValues();
         values.put("id", id);
@@ -203,21 +232,27 @@ public class Event {
 
     protected void saveUserMeta(SQLiteDatabase database) throws JSONException {
         JSONObject userContent = new JSONObject(content);
-        String query = "SELECT created_at FROM nostros_users WHERE id = ?";
+        String query = "SELECT created_at, valid_nip05, nip05 FROM nostros_users WHERE id = ?";
         @SuppressLint("Recycle") Cursor cursor = database.rawQuery(query, new String[] {pubkey});
+
+        String nip05 = userContent.optString("nip05");
 
         ContentValues values = new ContentValues();
         values.put("name", userContent.optString("name"));
         values.put("picture", userContent.optString("picture"));
         values.put("about", userContent.optString("about"));
         values.put("lnurl", userContent.optString("lud06"));
-        values.put("nip05", userContent.optString("nip05"));
+        values.put("nip05", nip05);
         values.put("main_relay", userContent.optString("main_relay"));
         values.put("created_at", created_at);
         if (cursor.getCount() == 0) {
             values.put("id", pubkey);
+            values.put("valid_nip05", validateNip05(nip05) ? 1 : 0);
             database.insert("nostros_users", null, values);
         } else if (cursor.moveToFirst() && created_at > cursor.getInt(0)) {
+            if (cursor.getInt(1) == 0 || !cursor.getString(2).equals(nip05)) {
+                values.put("valid_nip05", validateNip05(nip05) ? 1 : 0);
+            }
             String whereClause = "id = ?";
             String[] whereArgs = new String[] {
                     this.pubkey
@@ -227,23 +262,23 @@ public class Event {
     }
 
     protected void savePets(SQLiteDatabase database) throws JSONException {
-            for (int i = 0; i < tags.length(); ++i) {
-                JSONArray tag = tags.getJSONArray(i);
-                String petId = tag.getString(1);
-                String name = "";
-                if (tag.length() >= 4) {
-                    name = tag.getString(3);
-                }
-                String query = "SELECT * FROM nostros_users WHERE id = ?";
-                Cursor cursor = database.rawQuery(query, new String[] {petId});
-                if (cursor.getCount() == 0) {
-                    ContentValues values = new ContentValues();
-                    values.put("id", petId);
-                    values.put("name", name);
-                    values.put("contact", true);
-                    database.insert("nostros_users", null, values);
-                }
+        for (int i = 0; i < tags.length(); ++i) {
+            JSONArray tag = tags.getJSONArray(i);
+            String petId = tag.getString(1);
+            String name = "";
+            if (tag.length() >= 4) {
+                name = tag.getString(3);
             }
+            String query = "SELECT * FROM nostros_users WHERE id = ?";
+            Cursor cursor = database.rawQuery(query, new String[] {petId});
+            if (cursor.getCount() == 0) {
+                ContentValues values = new ContentValues();
+                values.put("id", petId);
+                values.put("name", name);
+                values.put("contact", true);
+                database.insert("nostros_users", null, values);
+            }
+        }
     }
 
     protected void saveFollower(SQLiteDatabase database, String userPubKey) throws JSONException {
@@ -269,5 +304,39 @@ public class Event {
                 }
             }
         }
+    }
+
+    protected static JSONObject getJSONObjectFromURL(String urlString) throws JSONException, IOException {
+        HttpURLConnection urlConnection = null;
+
+        URL url = new URL(urlString);
+
+        urlConnection = (HttpURLConnection) url.openConnection();
+
+        urlConnection.setRequestMethod("GET");
+        urlConnection.setReadTimeout(10000 /* milliseconds */);
+        urlConnection.setConnectTimeout(15000 /* milliseconds */);
+
+        urlConnection.setDoOutput(true);
+
+        urlConnection.connect();
+
+        BufferedReader br=new BufferedReader(new InputStreamReader(url.openStream()));
+
+        String jsonString;
+
+        StringBuilder sb = new StringBuilder();
+        String line;
+        while ((line = br.readLine()) != null) {
+            sb.append(line+"\n");
+        }
+        br.close();
+
+        jsonString = sb.toString();
+
+        System.out.println("JSON: " + jsonString);
+        urlConnection.disconnect();
+
+        return new JSONObject(jsonString);
     }
 }

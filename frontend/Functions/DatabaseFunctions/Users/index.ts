@@ -12,6 +12,7 @@ export interface User {
   lnurl?: string
   nip05?: string
   created_at?: number
+  valid_nip05?: boolean
 }
 
 const databaseToEntity: (object: object) => User = (object) => {

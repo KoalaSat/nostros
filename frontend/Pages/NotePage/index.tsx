@@ -202,7 +202,19 @@ export const NotePage: React.FC<NotePageProps> = ({ route }) => {
                   />
                 </View>
                 <View style={styles.titleUserData}>
-                  <Text style={styles.titleUsername}>{usernamePubKey(note.name, nPub)}</Text>
+                  <View style={styles.titleUser}>
+                    <Text style={styles.titleUsername}>{usernamePubKey(note.name, nPub)}</Text>
+                    {note?.valid_nip05 ? (
+                      <MaterialCommunityIcons
+                        name='check-decagram-outline'
+                        size={14}
+                        color={theme.colors.onPrimaryContainer}
+                        style={styles.verifyIcon}
+                      />
+                    ) : (
+                      <></>
+                    )}
+                  </View>
                   <Text>{timestamp}</Text>
                 </View>
               </View>
@@ -214,8 +226,7 @@ export const NotePage: React.FC<NotePageProps> = ({ route }) => {
           {note.reply_event_id && (
             <TouchableRipple
               onPress={() =>
-                note.kind !== Kind.RecommendRelay &&
-                push('Note', { noteId: note.reply_event_id })
+                note.kind !== Kind.RecommendRelay && push('Note', { noteId: note.reply_event_id })
               }
             >
               <View style={[styles.answerContent, { borderColor: theme.colors.onSecondary }]}>
@@ -419,6 +430,10 @@ const styles = StyleSheet.create({
   },
   link: {
     textDecorationLine: 'underline',
+  },
+  verifyIcon: {
+    paddingTop: 3,
+    paddingLeft: 5,
   },
 })
 

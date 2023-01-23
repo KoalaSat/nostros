@@ -90,6 +90,7 @@ class RelayPool {
 
   public readonly unsubscribeAll: () => void = async () => {
     this.unsubscribe(Object.keys(this.subscriptions))
+    this.subscriptions = {}
   }
 }
 

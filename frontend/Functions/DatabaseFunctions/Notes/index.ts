@@ -8,6 +8,7 @@ export interface Note extends Event {
   lnurl: string
   reply_event_id: string
   user_created_at: number
+  valid_nip05: boolean
 }
 
 const databaseToEntity: (object: any) => Note = (object = {}) => {
@@ -22,7 +23,7 @@ export const getMainNotes: (
 ) => Promise<Note[]> = async (db, pubKey, limit) => {
   const notesQuery = `
     SELECT
-      nostros_notes.*, nostros_users.lnurl, nostros_users.name, nostros_users.picture, nostros_users.contact, nostros_users.created_at as user_created_at FROM nostros_notes
+      nostros_notes.*, nostros_users.valid_nip05, nostros_users.lnurl, nostros_users.name, nostros_users.picture, nostros_users.contact, nostros_users.created_at as user_created_at FROM nostros_notes
     LEFT JOIN
       nostros_users ON nostros_users.id = nostros_notes.pubkey
     WHERE (nostros_users.contact = 1 OR nostros_notes.pubkey = '${pubKey}')
@@ -45,7 +46,7 @@ export const getMentionNotes: (
 ) => Promise<Note[]> = async (db, pubKey, limit) => {
   const notesQuery = `
     SELECT
-      nostros_notes.*, nostros_users.lnurl, nostros_users.name, nostros_users.picture, nostros_users.contact, nostros_users.created_at as user_created_at FROM nostros_notes
+      nostros_notes.*, nostros_users.valid_nip05, nostros_users.lnurl, nostros_users.name, nostros_users.picture, nostros_users.contact, nostros_users.created_at as user_created_at FROM nostros_notes
     LEFT JOIN
       nostros_users ON nostros_users.id = nostros_notes.pubkey
     WHERE (nostros_notes.reply_event_id IN (
@@ -114,7 +115,7 @@ export const getNotes: (
 ) => Promise<Note[]> = async (db, { filters = {}, limit, contacts, includeIds }) => {
   let notesQuery = `
     SELECT
-      nostros_notes.*, nostros_users.lnurl, nostros_users.name, nostros_users.picture, nostros_users.contact, nostros_users.created_at as user_created_at FROM nostros_notes
+      nostros_notes.*, nostros_users.valid_nip05, nostros_users.lnurl, nostros_users.name, nostros_users.picture, nostros_users.contact, nostros_users.created_at as user_created_at FROM nostros_notes
     LEFT JOIN
       nostros_users ON nostros_users.id = nostros_notes.pubkey
   `
