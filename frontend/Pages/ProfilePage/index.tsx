@@ -22,7 +22,7 @@ import { UserContext } from '../../Contexts/UserContext'
 import { RelayPoolContext } from '../../Contexts/RelayPoolContext'
 import { getNotes, Note } from '../../Functions/DatabaseFunctions/Notes'
 import { getUser, updateUserContact, User } from '../../Functions/DatabaseFunctions/Users'
-import { EventKind } from '../../lib/nostr/Events'
+import { Kind } from 'nostr-tools'
 import { populatePets, username } from '../../Functions/RelayFunctions/Users'
 import { useTranslation } from 'react-i18next'
 import { RelayFilters } from '../../lib/nostr/RelayPool/intex'
@@ -115,7 +115,7 @@ export const ProfilePage: React.FC<ProfilePageProps> = ({ route }) => {
           if (results.length > 0) {
             relayPool?.subscribe(`answers-profile${route.params.pubKey}`, [
               {
-                kinds: [EventKind.reaction, EventKind.textNote, EventKind.recommendServer],
+                kinds: [Kind.Reaction, Kind.Text, Kind.RecommendRelay],
                 '#e': results.map((note) => note.id ?? ''),
               },
             ])
@@ -128,7 +128,7 @@ export const ProfilePage: React.FC<ProfilePageProps> = ({ route }) => {
   const subscribeProfile: () => Promise<void> = async () => {
     relayPool?.subscribe(`user-profile${route.params.pubKey}`, [
       {
-        kinds: [EventKind.meta, EventKind.petNames],
+        kinds: [Kind.Metadata, Kind.Contacts],
         authors: [route.params.pubKey],
       },
     ])
@@ -138,7 +138,7 @@ export const ProfilePage: React.FC<ProfilePageProps> = ({ route }) => {
     if (!database) return
 
     const message: RelayFilters = {
-      kinds: [EventKind.textNote, EventKind.recommendServer],
+      kinds: [Kind.Text, Kind.RecommendRelay],
       authors: [route.params.pubKey],
       limit: pageSize,
     }

@@ -5,7 +5,7 @@ import { AppContext } from '../../Contexts/AppContext'
 import { useTranslation } from 'react-i18next'
 import { UserContext } from '../../Contexts/UserContext'
 import { getUser } from '../../Functions/DatabaseFunctions/Users'
-import { EventKind } from '../../lib/nostr/Events'
+import { Kind } from 'nostr-tools'
 import moment from 'moment'
 import {
   Avatar,
@@ -47,7 +47,7 @@ export const ProfileConfigPage: React.FC = () => {
       relayPool?.unsubscribeAll()
       relayPool?.subscribe('loading-meta', [
         {
-          kinds: [EventKind.meta],
+          kinds: [Kind.Metadata],
           authors: [publicKey],
         },
       ])
@@ -82,7 +82,7 @@ export const ProfileConfigPage: React.FC = () => {
               picture,
             }),
             created_at: moment().unix(),
-            kind: EventKind.meta,
+            kind: Kind.Metadata,
             pubkey: publicKey,
             tags: [],
           })
@@ -116,7 +116,7 @@ export const ProfileConfigPage: React.FC = () => {
               nip05,
             }),
             created_at: moment().unix(),
-            kind: EventKind.meta,
+            kind: Kind.Metadata,
             pubkey: publicKey,
             tags: [],
           })
@@ -150,7 +150,7 @@ export const ProfileConfigPage: React.FC = () => {
               lud06: lnurl,
             }),
             created_at: moment().unix(),
-            kind: EventKind.meta,
+            kind: Kind.Metadata,
             pubkey: publicKey,
             tags: [],
           })
@@ -184,7 +184,7 @@ export const ProfileConfigPage: React.FC = () => {
               about,
             }),
             created_at: moment().unix(),
-            kind: EventKind.meta,
+            kind: Kind.Metadata,
             pubkey: publicKey,
             tags: [],
           })

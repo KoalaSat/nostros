@@ -11,7 +11,7 @@ import { AppContext } from '../../Contexts/AppContext'
 import { getLastReply, getMentionNotes, Note } from '../../Functions/DatabaseFunctions/Notes'
 import NoteCard from '../../Components/NoteCard'
 import { RelayPoolContext } from '../../Contexts/RelayPoolContext'
-import { EventKind } from '../../lib/nostr/Events'
+import { Kind } from 'nostr-tools'
 import { handleInfinityScroll } from '../../Functions/NativeFunctions'
 import { UserContext } from '../../Contexts/UserContext'
 import RBSheet from 'react-native-raw-bottom-sheet'
@@ -68,12 +68,12 @@ export const NotificationsFeed: React.FC = () => {
 
     relayPool?.subscribe('notification', [
       {
-        kinds: [EventKind.textNote],
+        kinds: [Kind.Text],
         '#p': [publicKey],
         limit: pageSize,
       },
       {
-        kinds: [EventKind.textNote],
+        kinds: [Kind.Text],
         '#e': [publicKey],
         limit: pageSize,
       },
@@ -91,14 +91,14 @@ export const NotificationsFeed: React.FC = () => {
 
           relayPool?.subscribe('notification-meta', [
             {
-              kinds: [EventKind.meta],
+              kinds: [Kind.Metadata],
               authors,
             },
           ])
           getLastReaction(database, { eventIds: notedIds }).then((lastReaction) => {
             relayPool?.subscribe('notification-reactions', [
               {
-                kinds: [EventKind.reaction],
+                kinds: [Kind.Reaction],
                 '#e': notedIds,
                 since: lastReaction?.created_at ?? 0,
               },
@@ -107,7 +107,7 @@ export const NotificationsFeed: React.FC = () => {
           getLastReply(database, { eventIds: notedIds }).then((lastReply) => {
             relayPool?.subscribe('notification-replies', [
               {
-                kinds: [EventKind.textNote],
+                kinds: [Kind.Text],
                 '#e': notedIds,
                 since: lastReply?.created_at ?? 0,
               },

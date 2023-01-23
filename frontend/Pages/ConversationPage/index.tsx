@@ -2,7 +2,7 @@ import React, { useContext, useEffect, useMemo, useRef, useState } from 'react'
 import { FlatList, ScrollView, StyleSheet, View } from 'react-native'
 import { AppContext } from '../../Contexts/AppContext'
 import { RelayPoolContext } from '../../Contexts/RelayPoolContext'
-import { EventKind, Event } from '../../lib/nostr/Events'
+import { Event } from '../../lib/nostr/Events'
 import {
   DirectMessage,
   getDirectMessages,
@@ -27,6 +27,7 @@ import { UserContext } from '../../Contexts/UserContext'
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'
 import { navigate } from '../../lib/Navigation'
 import { useFocusEffect } from '@react-navigation/native'
+import { Kind } from 'nostr-tools'
 
 interface ConversationPageProps {
   route: { params: { pubKey: string; conversationId: string } }
@@ -93,13 +94,13 @@ export const ConversationPage: React.FC<ConversationPageProps> = ({ route }) => 
     if (publicKey && otherPubKey) {
       relayPool?.subscribe(`conversation${route.params.pubKey}`, [
         {
-          kinds: [EventKind.directMessage],
+          kinds: [Kind.EncryptedDirectMessage],
           authors: [publicKey],
           '#p': [otherPubKey],
           since: lastCreateAt ?? 0,
         },
         {
-          kinds: [EventKind.directMessage],
+          kinds: [Kind.EncryptedDirectMessage],
           authors: [otherPubKey],
           '#p': [publicKey],
           since: lastCreateAt ?? 0,
@@ -117,7 +118,7 @@ export const ConversationPage: React.FC<ConversationPageProps> = ({ route }) => 
       const event: Event = {
         content: input,
         created_at: moment().unix(),
-        kind: EventKind.directMessage,
+        kind: Kind.EncryptedDirectMessage,
         pubkey: publicKey,
         tags: usersToTags([otherUser]),
       }

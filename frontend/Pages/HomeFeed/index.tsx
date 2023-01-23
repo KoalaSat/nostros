@@ -15,7 +15,7 @@ import { getLastReply, getMainNotes, Note } from '../../Functions/DatabaseFuncti
 import { handleInfinityScroll } from '../../Functions/NativeFunctions'
 import { UserContext } from '../../Contexts/UserContext'
 import { RelayPoolContext } from '../../Contexts/RelayPoolContext'
-import { EventKind } from '../../lib/nostr/Events'
+import { Kind } from 'nostr-tools'
 import { RelayFilters } from '../../lib/nostr/RelayPool/intex'
 import { ActivityIndicator, AnimatedFAB, Button, Text } from 'react-native-paper'
 import NoteCard from '../../Components/NoteCard'
@@ -86,7 +86,7 @@ export const HomeFeed: React.FC<HomeFeedProps> = ({ navigation }) => {
     const lastNote: Note = lastNotes[lastNotes.length - 1]
 
     const message: RelayFilters = {
-      kinds: [EventKind.textNote, EventKind.recommendServer],
+      kinds: [Kind.Text, Kind.RecommendRelay],
       authors,
     }
     if (lastNote && lastNotes.length >= pageSize && !past) {
@@ -97,7 +97,7 @@ export const HomeFeed: React.FC<HomeFeedProps> = ({ navigation }) => {
     relayPool?.subscribe('homepage-main', [message])
     relayPool?.subscribe('homepage-contacts-meta', [
       {
-        kinds: [EventKind.meta],
+        kinds: [Kind.Metadata],
         authors: users.map((user) => user.id),
       },
     ])
@@ -120,7 +120,7 @@ export const HomeFeed: React.FC<HomeFeedProps> = ({ navigation }) => {
             (lastReaction) => {
               relayPool?.subscribe('homepage-reactions', [
                 {
-                  kinds: [EventKind.reaction],
+                  kinds: [Kind.Reaction],
                   '#e': notedIds,
                   since: lastReaction?.created_at ?? 0,
                 },
@@ -131,7 +131,7 @@ export const HomeFeed: React.FC<HomeFeedProps> = ({ navigation }) => {
             (lastReply) => {
               relayPool?.subscribe('homepage-replies', [
                 {
-                  kinds: [EventKind.textNote],
+                  kinds: [Kind.Text],
                   '#e': notedIds,
                   since: lastReply?.created_at ?? 0,
                 },

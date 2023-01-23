@@ -1,22 +1,14 @@
 import schnorr from 'bip-schnorr'
+import { Kind } from 'nostr-tools'
 
 export interface Event {
   content: string
   created_at: number
   id?: string
-  kind: EventKind
+  kind: Kind
   pubkey: string
   sig?: string
   tags: string[][]
-}
-
-export enum EventKind {
-  meta = 0,
-  textNote = 1,
-  recommendServer = 2,
-  petNames = 3,
-  directMessage = 4,
-  reaction = 7,
 }
 
 export const serializeEvent: (event: Event) => string = (event) => {

@@ -27,7 +27,7 @@ export function getNip19Key(nip19: string): string | null {
       result = decoded.data as string
     }
   } catch (e) {
-    console.log('Error decoding getPublicKey', e)
+    console.log('Error decoding getNip19Key', e)
   }
 
   return result

@@ -3,7 +3,7 @@ import { AppContext } from '../../Contexts/AppContext'
 import { getNotes, Note } from '../../Functions/DatabaseFunctions/Notes'
 import { RelayPoolContext } from '../../Contexts/RelayPoolContext'
 import NoteCard from '../../Components/NoteCard'
-import { EventKind } from '../../lib/nostr/Events'
+import { Kind } from 'nostr-tools'
 import { Dimensions, RefreshControl, ScrollView, StyleSheet, Text, View } from 'react-native'
 import { Event } from '../../../lib/nostr/Events'
 import { getDirectReplies } from '../../Functions/RelayFunctions/Events'
@@ -84,7 +84,7 @@ export const NotePage: React.FC<NotePageProps> = ({ route }) => {
           setReplies(rootReplies as Note[])
           relayPool?.subscribe(`meta-notepage${route.params.noteId}`, [
             {
-              kinds: [EventKind.meta],
+              kinds: [Kind.Metadata],
               authors: [...rootReplies.map((note) => note.pubkey), event.pubkey],
             },
           ])
@@ -120,11 +120,11 @@ export const NotePage: React.FC<NotePageProps> = ({ route }) => {
     if (database && route.params.noteId) {
       relayPool?.subscribe(`notepage${route.params.noteId}`, [
         {
-          kinds: [EventKind.textNote],
+          kinds: [Kind.Text],
           ids: [route.params.noteId],
         },
         {
-          kinds: [EventKind.reaction, EventKind.textNote, EventKind.recommendServer],
+          kinds: [Kind.Reaction, Kind.Text, Kind.RecommendRelay],
           '#e': [route.params.noteId],
         },
       ])
@@ -136,7 +136,7 @@ export const NotePage: React.FC<NotePageProps> = ({ route }) => {
       const event: Event = {
         content: positive ? '+' : '-',
         created_at: moment().unix(),
-        kind: EventKind.reaction,
+        kind: Kind.Reaction,
         pubkey: publicKey,
         tags: [...note.tags, ['e', note.id], ['p', note.pubkey]],
       }
@@ -214,7 +214,7 @@ export const NotePage: React.FC<NotePageProps> = ({ route }) => {
           {note.reply_event_id && (
             <TouchableRipple
               onPress={() =>
-                note.kind !== EventKind.recommendServer &&
+                note.kind !== Kind.RecommendRelay &&
                 push('Note', { noteId: note.reply_event_id })
               }
             >
