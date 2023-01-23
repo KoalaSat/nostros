@@ -25,7 +25,7 @@ export const ProfileLoadPage: React.FC = () => {
     React.useCallback(() => {
       if (publicKey && relayPoolReady) loadMeta()
 
-      return () => relayPool?.unsubscribe(['profile-load-meta-pets', 'profile-load-notes'])
+      return () => relayPool?.unsubscribe(['profile-load-notes'])
     }, []),
   )
 
