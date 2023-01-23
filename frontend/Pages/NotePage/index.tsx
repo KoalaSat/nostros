@@ -54,7 +54,6 @@ export const NotePage: React.FC<NotePageProps> = ({ route }) => {
 
   useFocusEffect(
     React.useCallback(() => {
-      relayPool?.unsubscribeAll()
       subscribeNotes()
       loadNote()
 
@@ -221,7 +220,11 @@ export const NotePage: React.FC<NotePageProps> = ({ route }) => {
             >
               <View style={[styles.answerContent, { borderColor: theme.colors.onSecondary }]}>
                 <View style={styles.answerData}>
-                  <MaterialCommunityIcons name='arrow-left-top' size={16} />
+                  <MaterialCommunityIcons
+                    name='arrow-left-top'
+                    size={16}
+                    color={theme.colors.onPrimaryContainer}
+                  />
                   <Text>
                     {t('noteCard.answering', { username: formatPubKey(note.reply_event_id) })}
                   </Text>
@@ -237,7 +240,15 @@ export const NotePage: React.FC<NotePageProps> = ({ route }) => {
           </View>
           {privateKey && (
             <View style={[styles.titleRecommend, { borderColor: theme.colors.onSecondary }]}>
-              <Button icon={() => <MaterialCommunityIcons name='message-outline' size={25} />}>
+              <Button
+                icon={() => (
+                  <MaterialCommunityIcons
+                    name='message-outline'
+                    size={25}
+                    color={theme.colors.onPrimaryContainer}
+                  />
+                )}
+              >
                 {replies?.length ?? 0}
               </Button>
               <Button
@@ -252,6 +263,7 @@ export const NotePage: React.FC<NotePageProps> = ({ route }) => {
                   <MaterialCommunityIcons
                     name={userDownvoted ? 'thumb-down' : 'thumb-down-outline'}
                     size={25}
+                    color={theme.colors.onPrimaryContainer}
                   />
                 )}
               >
@@ -269,6 +281,7 @@ export const NotePage: React.FC<NotePageProps> = ({ route }) => {
                   <MaterialCommunityIcons
                     name={userUpvoted ? 'thumb-up' : 'thumb-up-outline'}
                     size={25}
+                    color={theme.colors.onPrimaryContainer}
                   />
                 )}
               >

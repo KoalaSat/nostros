@@ -38,7 +38,11 @@ export const HomePage: React.FC = () => {
         component={HomeFeed}
         options={{
           tabBarIcon: ({ focused, size }) => (
-            <MaterialCommunityIcons name={focused ? 'home' : 'home-outline'} size={size} />
+            <MaterialCommunityIcons
+              name={focused ? 'home' : 'home-outline'}
+              size={size}
+              color={theme.colors.onPrimaryContainer}
+            />
           ),
         }}
       />
@@ -48,7 +52,11 @@ export const HomePage: React.FC = () => {
           component={ConversationsFeed}
           options={{
             tabBarIcon: ({ focused, size }) => (
-              <MaterialCommunityIcons name={focused ? 'email' : 'email-outline'} size={size} />
+              <MaterialCommunityIcons
+                name={focused ? 'email' : 'email-outline'}
+                size={size}
+                color={theme.colors.onPrimaryContainer}
+              />
             ),
           }}
         />
@@ -61,6 +69,7 @@ export const HomePage: React.FC = () => {
             <MaterialCommunityIcons
               name={focused ? 'account-group' : 'account-group-outline'}
               size={size}
+              color={theme.colors.onPrimaryContainer}
             />
           ),
         }}
@@ -70,7 +79,11 @@ export const HomePage: React.FC = () => {
         component={NotificationsFeed}
         options={{
           tabBarIcon: ({ focused, size }) => (
-            <MaterialCommunityIcons name={focused ? 'bell' : 'bell-outline'} size={size} />
+            <MaterialCommunityIcons
+              name={focused ? 'bell' : 'bell-outline'}
+              size={size}
+              color={theme.colors.onPrimaryContainer}
+            />
           ),
         }}
       />

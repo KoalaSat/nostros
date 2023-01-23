@@ -158,7 +158,11 @@ export const TextContent: React.FC<TextContentProps> = ({
               },
           { pattern: /#(\w+)/, style: styles.hashTag },
           { pattern: /(note1)\S*/, style: styles.nip19, onPress: handleNip05NotePress },
-          { pattern: /(npub1|nprofile1)\S*/, style: styles.nip19, onPress: handleNip05ProfilePress },
+          {
+            pattern: /(npub1|nprofile1)\S*/,
+            style: styles.nip19,
+            onPress: handleNip05ProfilePress,
+          },
         ]}
         childrenProps={{ allowFontScaling: false }}
       >
