@@ -210,7 +210,7 @@ export const ProfilePage: React.FC<ProfilePageProps> = ({ route }) => {
             <View>
               <View style={styles.userName}>
                 <Text variant='titleMedium'>{user && username(user)}</Text>
-                {/* <MaterialCommunityIcons name="check-decagram-outline" size={16} /> */}
+                {/* <MaterialCommunityIcons name="check-decagram-outline" size={16} color={theme.colors.onPrimaryContainer} /> */}
                 <Text>{user?.nip05}</Text>
               </View>
             </View>

@@ -2,7 +2,7 @@ import { t } from 'i18next'
 import * as React from 'react'
 import { StyleSheet, View } from 'react-native'
 import Clipboard from '@react-native-clipboard/clipboard'
-import { Card, IconButton, Snackbar, Text } from 'react-native-paper'
+import { Card, IconButton, Snackbar, Text, useTheme } from 'react-native-paper'
 import { AppContext } from '../../Contexts/AppContext'
 import { RelayPoolContext } from '../../Contexts/RelayPoolContext'
 import { UserContext } from '../../Contexts/UserContext'
@@ -21,6 +21,7 @@ interface ProfileCardProps {
 }
 
 export const ProfileCard: React.FC<ProfileCardProps> = ({ userPubKey, bottomSheetRef }) => {
+  const theme = useTheme()
   const { database } = React.useContext(AppContext)
   const { publicKey } = React.useContext(UserContext)
   const { relayPool } = React.useContext(RelayPoolContext)
@@ -89,7 +90,7 @@ export const ProfileCard: React.FC<ProfileCardProps> = ({ userPubKey, bottomShee
               <View>
                 <View style={styles.username}>
                   <Text variant='titleMedium'>{username}</Text>
-                  {/* <MaterialCommunityIcons name="check-decagram-outline" size={16} /> */}
+                  {/* <MaterialCommunityIcons name="check-decagram-outline" size={16} color={theme.colors.onPrimaryContainer} /> */}
                   <Text>{user?.nip05}</Text>
                 </View>
               </View>
@@ -103,7 +104,11 @@ export const ProfileCard: React.FC<ProfileCardProps> = ({ userPubKey, bottomShee
             </View>
           </View>
           <View>
-            <MaterialCommunityIcons name='menu-right' size={25} />
+            <MaterialCommunityIcons
+              name='menu-right'
+              size={25}
+              color={theme.colors.onPrimaryContainer}
+            />
           </View>
         </Card.Content>
       </Card>
@@ -177,7 +182,7 @@ const styles = StyleSheet.create({
     padding: 16,
   },
   snackbar: {
-    marginBottom: 85
+    marginBottom: 85,
   },
   username: {
     paddingLeft: 16,

@@ -178,7 +178,11 @@ export const ConversationPage: React.FC<ConversationPageProps> = ({ route }) => 
               <View style={styles.cardContentDate}>
                 {pending && (
                   <View style={styles.cardContentPending}>
-                    <MaterialCommunityIcons name='clock-outline' size={14} />
+                    <MaterialCommunityIcons
+                      name='clock-outline'
+                      size={14}
+                      color={theme.colors.onPrimaryContainer}
+                    />
                   </View>
                 )}
                 <Text>{moment.unix(item.created_at).format('L HH:mm')}</Text>
@@ -223,7 +227,13 @@ export const ConversationPage: React.FC<ConversationPageProps> = ({ route }) => 
           onFocus={() => scrollViewRef.current?.scrollToEnd({ animated: true })}
           right={
             <TextInput.Icon
-              icon={() => <MaterialCommunityIcons name='send-outline' size={25} />}
+              icon={() => (
+                <MaterialCommunityIcons
+                  name='send-outline'
+                  size={25}
+                  color={theme.colors.onPrimaryContainer}
+                />
+              )}
               onPress={send}
             />
           }

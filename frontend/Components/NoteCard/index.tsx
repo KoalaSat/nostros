@@ -106,7 +106,11 @@ export const NoteCard: React.FC<NoteCardProps> = ({
           >
             <Card.Content style={[styles.answerContent, { borderColor: theme.colors.onSecondary }]}>
               <View style={styles.answerData}>
-                <MaterialCommunityIcons name='arrow-left-top' size={16} />
+                <MaterialCommunityIcons
+                  name='arrow-left-top'
+                  size={16}
+                  color={theme.colors.onPrimaryContainer}
+                />
                 <Text>
                   {t('noteCard.answering', { username: formatPubKey(note.reply_event_id) })}
                 </Text>
@@ -212,7 +216,13 @@ export const NoteCard: React.FC<NoteCardProps> = ({
         {getNoteContent()}
         <Card.Content style={[styles.actions, { borderColor: theme.colors.onSecondary }]}>
           <Button
-            icon={() => <MaterialCommunityIcons name='message-outline' size={25} />}
+            icon={() => (
+              <MaterialCommunityIcons
+                name='message-outline'
+                size={25}
+                color={theme.colors.onPrimaryContainer}
+              />
+            )}
             onPress={() =>
               note.kind !== EventKind.recommendServer && push('Note', { noteId: note.id })
             }
@@ -231,6 +241,7 @@ export const NoteCard: React.FC<NoteCardProps> = ({
               <MaterialCommunityIcons
                 name={userDownvoted ? 'thumb-down' : 'thumb-down-outline'}
                 size={25}
+                color={theme.colors.onPrimaryContainer}
               />
             )}
           >
@@ -248,6 +259,7 @@ export const NoteCard: React.FC<NoteCardProps> = ({
               <MaterialCommunityIcons
                 name={userUpvoted ? 'thumb-up' : 'thumb-up-outline'}
                 size={25}
+                color={theme.colors.onPrimaryContainer}
               />
             )}
           >

@@ -162,7 +162,13 @@ export const ConversationsFeed: React.FC = () => {
         title: t('conversationsFeed.newMessageContact'),
         left: () => (
           <List.Icon
-            icon={() => <MaterialCommunityIcons name='account-multiple-plus-outline' size={25} />}
+            icon={() => (
+              <MaterialCommunityIcons
+                name='account-multiple-plus-outline'
+                size={25}
+                color={theme.colors.onPrimaryContainer}
+              />
+            )}
           />
         ),
         onPress: async () => bottomSheetUserListRef.current?.open(),
@@ -174,7 +180,13 @@ export const ConversationsFeed: React.FC = () => {
         title: t('conversationsFeed.addPubKey'),
         left: () => (
           <List.Icon
-            icon={() => <MaterialCommunityIcons name='account-multiple-plus-outline' size={25} />}
+            icon={() => (
+              <MaterialCommunityIcons
+                name='account-multiple-plus-outline'
+                size={25}
+                color={theme.colors.onPrimaryContainer}
+              />
+            )}
           />
         ),
         onPress: async () => bottomSheetPubKeyRef.current?.open(),
@@ -223,7 +235,12 @@ export const ConversationsFeed: React.FC = () => {
         </ScrollView>
       ) : (
         <View style={styles.blank}>
-          <MaterialCommunityIcons name='message-outline' size={64} style={styles.center} />
+          <MaterialCommunityIcons
+            name='message-outline'
+            size={64}
+            style={styles.center}
+            color={theme.colors.onPrimaryContainer}
+          />
           <Text variant='headlineSmall' style={styles.center}>
             {t('conversationsFeed.emptyTitle')}
           </Text>

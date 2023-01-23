@@ -170,7 +170,12 @@ export const NotificationsFeed: React.FC = () => {
         </ScrollView>
       ) : (
         <View style={styles.blank}>
-          <MaterialCommunityIcons name='bell-outline' size={64} style={styles.center} />
+          <MaterialCommunityIcons
+            name='bell-outline'
+            size={64}
+            style={styles.center}
+            color={theme.colors.onPrimaryContainer}
+          />
           <Text variant='headlineSmall' style={styles.center}>
             {t('notificationsFeed.emptyTitle')}
           </Text>
