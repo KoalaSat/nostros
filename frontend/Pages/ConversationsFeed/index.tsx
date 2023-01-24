@@ -10,8 +10,7 @@ import {
 } from '../../Functions/DatabaseFunctions/DirectMessages'
 import { getUsers, User } from '../../Functions/DatabaseFunctions/Users'
 import { getOtherPubKey } from '../../Functions/RelayFunctions/DirectMessages'
-import { NostrosAvatar } from '../../Components/NostrosAvatar'
-import { formatPubKey, username } from '../../Functions/RelayFunctions/Users'
+import { username } from '../../Functions/RelayFunctions/Users'
 import {
   AnimatedFAB,
   Badge,
@@ -30,7 +29,7 @@ import RBSheet from 'react-native-raw-bottom-sheet'
 import { useTranslation } from 'react-i18next'
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'
 import { useFocusEffect } from '@react-navigation/native'
-import { getNpub } from '../../lib/nostr/Nip19'
+import ProfileData from '../../Components/ProfileData'
 
 export const ConversationsFeed: React.FC = () => {
   const theme = useTheme()
@@ -115,28 +114,15 @@ export const ConversationsFeed: React.FC = () => {
         }
       >
         <View key={user.id} style={styles.contactRow}>
-          <View style={styles.contactUser}>
-            <NostrosAvatar
-              name={user.name}
-              pubKey={getNpub(user.id)}
-              src={user.picture}
-              lud06={user.lnurl}
-              size={40}
-            />
-            <View style={styles.contactName}>
-              <Text variant='titleSmall'>{userMame}</Text>
-              {user?.valid_nip05 ? (
-                <MaterialCommunityIcons
-                  name='check-decagram-outline'
-                  size={14}
-                  color={theme.colors.onPrimaryContainer}
-                  style={styles.verifyIcon}
-                />
-              ) : (
-                <></>
-              )}
-            </View>
-          </View>
+          <ProfileData
+            username={user?.name}
+            publicKey={user.id}
+            validNip05={user?.valid_nip05}
+            nip05={user?.nip05}
+            lud06={user?.lnurl}
+            picture={user?.picture}
+            avatarSize={40}
+          />
           <View style={styles.contactInfo}>
             <View style={styles.contactDate}>
               <Text>{moment.unix(item.created_at).format('L HH:mm')}</Text>
@@ -215,31 +201,15 @@ export const ConversationsFeed: React.FC = () => {
       }}
     >
       <View key={item.id} style={styles.contactRow}>
-        <View style={styles.contactUser}>
-          <NostrosAvatar
-            name={item.name}
-            pubKey={getNpub(item.id)}
-            src={item.picture}
-            lud06={item.lnurl}
-            size={40}
-          />
-          <View style={styles.contactData}>
-            <View style={styles.contactName}>
-              <Text variant='titleSmall'>{formatPubKey(item.id)}</Text>
-              {item?.valid_nip05 ? (
-                <MaterialCommunityIcons
-                  name='check-decagram-outline'
-                  size={14}
-                  color={theme.colors.onPrimaryContainer}
-                  style={styles.verifyIcon}
-                />
-              ) : (
-                <></>
-              )}
-            </View>
-            {item.name && <Text variant='titleSmall'>{username(item)}</Text>}
-          </View>
-        </View>
+        <ProfileData
+          username={item?.name}
+          publicKey={item.id}
+          validNip05={item?.valid_nip05}
+          nip05={item?.nip05}
+          lud06={item?.lnurl}
+          picture={item?.picture}
+          avatarSize={40}
+        />
       </View>
     </TouchableRipple>
   )
@@ -368,18 +338,8 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     width: '100%',
   },
-  contactData: {
-    paddingLeft: 16,
-  },
   contactDate: {
     paddingLeft: 16,
-  },
-  contactName: {
-    flexDirection: 'row',
-    alignContent: 'center',
-    justifyContent: 'center',
-    paddingLeft: 16,
-    paddingTop: 10,
   },
   contactUser: {
     flexDirection: 'row',
@@ -409,10 +369,6 @@ const styles = StyleSheet.create({
   },
   list: {
     paddingBottom: 64,
-  },
-  verifyIcon: {
-    paddingTop: 3,
-    paddingLeft: 5,
   },
 })
 

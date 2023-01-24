@@ -10,7 +10,7 @@ import {
   User,
 } from '../../Functions/DatabaseFunctions/Users'
 import { RelayPoolContext } from '../../Contexts/RelayPoolContext'
-import { formatPubKey, populatePets, username } from '../../Functions/RelayFunctions/Users'
+import { populatePets } from '../../Functions/RelayFunctions/Users'
 import { getNip19Key, getNpub } from '../../lib/nostr/Nip19'
 import { UserContext } from '../../Contexts/UserContext'
 import {
@@ -23,11 +23,11 @@ import {
   TouchableRipple,
   useTheme,
 } from 'react-native-paper'
-import NostrosAvatar from '../../Components/NostrosAvatar'
 import RBSheet from 'react-native-raw-bottom-sheet'
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'
 import { useFocusEffect } from '@react-navigation/native'
 import ProfileCard from '../../Components/ProfileCard'
+import ProfileData from '../../Components/ProfileData'
 
 export const ContactsFeed: React.FC = () => {
   const { t } = useTranslation('common')
@@ -163,31 +163,15 @@ export const ContactsFeed: React.FC = () => {
         }}
       >
         <View key={item.id} style={styles.contactRow}>
-          <View style={styles.contactInfo}>
-            <NostrosAvatar
-              name={item.name}
-              pubKey={nPub}
-              src={item.picture}
-              lud06={item.lnurl}
-              size={40}
-            />
-            <View style={styles.contactData}>
-              <View style={styles.contactName}>
-                <Text>{formatPubKey(nPub)}</Text>
-                {item.valid_nip05 ? (
-                  <MaterialCommunityIcons
-                    name='check-decagram-outline'
-                    size={14}
-                    color={theme.colors.onPrimaryContainer}
-                    style={styles.verifyIcon}
-                  />
-                ) : (
-                  <></>
-                )}
-              </View>
-              {item.name && <Text variant='titleSmall'>{username(item)}</Text>}
-            </View>
-          </View>
+          <ProfileData
+            username={item?.name}
+            publicKey={nPub}
+            validNip05={item?.valid_nip05}
+            nip05={item?.nip05}
+            lud06={item?.lnurl}
+            picture={item?.picture}
+            avatarSize={40}
+          />
           <View style={styles.contactFollow}>
             <Button onPress={() => (item.contact ? removeContact(item) : addContact(item))}>
               {item.contact ? t('contactsFeed.stopFollowing') : t('contactsFeed.follow')}

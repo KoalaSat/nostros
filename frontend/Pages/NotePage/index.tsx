@@ -17,8 +17,7 @@ import {
   useTheme,
 } from 'react-native-paper'
 import moment from 'moment'
-import { formatPubKey, usernamePubKey } from '../../Functions/RelayFunctions/Users'
-import NostrosAvatar from '../../Components/NostrosAvatar'
+import { formatPubKey } from '../../Functions/RelayFunctions/Users'
 import TextContent from '../../Components/TextContent'
 import { getReactions } from '../../Functions/DatabaseFunctions/Reactions'
 import { UserContext } from '../../Contexts/UserContext'
@@ -29,6 +28,7 @@ import { navigate, push } from '../../lib/Navigation'
 import { useFocusEffect } from '@react-navigation/native'
 import { getNpub } from '../../lib/nostr/Nip19'
 import { useTranslation } from 'react-i18next'
+import ProfileData from '../../Components/ProfileData'
 
 interface NotePageProps {
   route: { params: { noteId: string } }
@@ -46,7 +46,6 @@ export const NotePage: React.FC<NotePageProps> = ({ route }) => {
   const [negaiveReactions, setNegativeReactions] = useState<number>(0)
   const [userUpvoted, setUserUpvoted] = useState<boolean>(false)
   const [userDownvoted, setUserDownvoted] = useState<boolean>(false)
-  const [timestamp, setTimestamp] = useState<string>()
   const [profileCardPubkey, setProfileCardPubKey] = useState<string>()
   const theme = useTheme()
   const { t } = useTranslation('common')
@@ -76,7 +75,6 @@ export const NotePage: React.FC<NotePageProps> = ({ route }) => {
         const event = events[0]
         setNote(event)
         setNPub(getNpub(event.pubkey))
-        setTimestamp(moment.unix(event.created_at).format('L HH:mm'))
 
         const notes = await getNotes(database, { filters: { reply_event_id: route.params.noteId } })
         const rootReplies = getDirectReplies(event, notes)
@@ -191,33 +189,16 @@ export const NotePage: React.FC<NotePageProps> = ({ route }) => {
         <Surface elevation={1}>
           <View style={styles.title}>
             <TouchableRipple onPress={openProfileDrawer}>
-              <View style={styles.titleUser}>
-                <View>
-                  <NostrosAvatar
-                    name={note.name}
-                    pubKey={nPub}
-                    src={note.picture}
-                    lud06={note.lnurl}
-                    size={54}
-                  />
-                </View>
-                <View style={styles.titleUserData}>
-                  <View style={styles.titleUser}>
-                    <Text style={styles.titleUsername}>{usernamePubKey(note.name, nPub)}</Text>
-                    {note?.valid_nip05 ? (
-                      <MaterialCommunityIcons
-                        name='check-decagram-outline'
-                        size={14}
-                        color={theme.colors.onPrimaryContainer}
-                        style={styles.verifyIcon}
-                      />
-                    ) : (
-                      <></>
-                    )}
-                  </View>
-                  <Text>{timestamp}</Text>
-                </View>
-              </View>
+              <ProfileData
+                username={note?.name}
+                publicKey={note.pubkey}
+                validNip05={note?.valid_nip05}
+                nip05={note?.nip05}
+                lud06={note?.lnurl}
+                picture={note?.picture}
+                timestamp={note?.created_at}
+                avatarSize={54}
+              />
             </TouchableRipple>
             <View>
               <IconButton icon='dots-vertical' size={25} onPress={openProfileDrawer} />
