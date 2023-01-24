@@ -36,7 +36,7 @@ jobs:
           name: nostros-${{ github.ref_name }}.apk
           path: .
       - name: 'Upload universal APK Asset'
-        id: upload-release-asset
+        id: upload-universal-release-asset
         uses: actions/upload-release-asset@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -46,7 +46,7 @@ jobs:
           asset_name: nostros-${{ github.ref_name }}-universal.apk
           asset_content_type: application/apk
       - name: 'Upload arm64-v8a APK Asset'
-        id: upload-release-asset
+        id: upload-arm64-v8a-release-asset
         uses: actions/upload-release-asset@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -56,7 +56,7 @@ jobs:
           asset_name: nostros-${{ github.ref_name }}-arm64-v8a.apk
           asset_content_type: application/apk
       - name: 'Upload armeabi-v7a APK Asset'
-        id: upload-release-asset
+        id: upload-armeabi-v7a-release-asset
         uses: actions/upload-release-asset@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
