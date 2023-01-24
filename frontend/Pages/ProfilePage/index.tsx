@@ -16,7 +16,6 @@ import {
   useTheme,
   Snackbar,
 } from 'react-native-paper'
-import NostrosAvatar from '../../Components/NostrosAvatar'
 import { AppContext } from '../../Contexts/AppContext'
 import { UserContext } from '../../Contexts/UserContext'
 import { RelayPoolContext } from '../../Contexts/RelayPoolContext'
@@ -34,7 +33,7 @@ import ProfileCard from '../../Components/ProfileCard'
 import { navigate } from '../../lib/Navigation'
 import { useFocusEffect } from '@react-navigation/native'
 import { getNpub } from '../../lib/nostr/Nip19'
-import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'
+import ProfileData from '../../Components/ProfileData'
 
 interface ProfilePageProps {
   route: { params: { pubKey: string } }
@@ -198,35 +197,15 @@ export const ProfilePage: React.FC<ProfilePageProps> = ({ route }) => {
         refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
       >
         <Surface style={styles.container} elevation={1}>
-          <View style={styles.mainLayout}>
-            <View>
-              <NostrosAvatar
-                name={user?.name}
-                pubKey={getNpub(route.params.pubKey)}
-                src={user?.picture}
-                lud06={user?.lnurl}
-                size={54}
-              />
-            </View>
-            <View>
-              <View style={styles.userData}>
-                <View style={styles.userName}>
-                  <Text variant='titleMedium'>{user && username(user)}</Text>
-                  {user?.valid_nip05 ? (
-                    <MaterialCommunityIcons
-                      name='check-decagram-outline'
-                      size={14}
-                      color={theme.colors.onPrimaryContainer}
-                      style={styles.verifyIcon}
-                    />
-                  ) : (
-                    <></>
-                  )}
-                </View>
-                <Text>{user?.nip05}</Text>
-              </View>
-            </View>
-          </View>
+          <ProfileData
+            username={user?.name}
+            publicKey={route.params.pubKey}
+            validNip05={user?.valid_nip05}
+            nip05={user?.nip05}
+            lud06={user?.lnurl}
+            picture={user?.picture}
+            avatarSize={54}
+          />
           <View>
             <Text>{user?.about}</Text>
           </View>

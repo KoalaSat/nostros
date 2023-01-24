@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useMemo, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import { getRepliesCount, Note } from '../../Functions/DatabaseFunctions/Notes'
 import { StyleSheet, View } from 'react-native'
 import { RelayPoolContext } from '../../Contexts/RelayPoolContext'
@@ -8,10 +8,9 @@ import { isContentWarning } from '../../Functions/RelayFunctions/Events'
 import { Event } from '../../../lib/nostr/Events'
 import moment from 'moment'
 import { populateRelay } from '../../Functions/RelayFunctions'
-import { NostrosAvatar } from '../NostrosAvatar'
 import { searchRelays } from '../../Functions/DatabaseFunctions/Relays'
 import TextContent from '../../Components/TextContent'
-import { formatPubKey, usernamePubKey } from '../../Functions/RelayFunctions/Users'
+import { formatPubKey } from '../../Functions/RelayFunctions/Users'
 import { getReactions } from '../../Functions/DatabaseFunctions/Reactions'
 import { UserContext } from '../../Contexts/UserContext'
 import {
@@ -26,9 +25,9 @@ import {
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'
 import { REGEX_SOCKET_LINK } from '../../Constants/Relay'
 import { push } from '../../lib/Navigation'
-import { getNpub } from '../../lib/nostr/Nip19'
 import { User } from '../../Functions/DatabaseFunctions/Users'
 import { Kind } from 'nostr-tools'
+import ProfileData from '../ProfileData'
 
 interface NoteCardProps {
   note: Note
@@ -52,8 +51,6 @@ export const NoteCard: React.FC<NoteCardProps> = ({
   const [userDownvoted, setUserDownvoted] = useState<boolean>(false)
   const [repliesCount, setRepliesCount] = React.useState<number>(0)
   const [hide, setHide] = useState<boolean>(isContentWarning(note))
-  const timestamp = useMemo(() => moment.unix(note.created_at).format('L HH:mm'), [note])
-  const nPub = useMemo(() => getNpub(note.pubkey), [note])
 
   useEffect(() => {
     if (database && publicKey && note.id) {
@@ -188,33 +185,16 @@ export const NoteCard: React.FC<NoteCardProps> = ({
       <Card style={styles.container}>
         <Card.Content style={styles.title}>
           <TouchableRipple onPress={() => onPressUser({ id: note.pubkey, name: note.name })}>
-            <View style={styles.titleUser}>
-              <View>
-                <NostrosAvatar
-                  name={note.name}
-                  pubKey={nPub}
-                  src={note.picture}
-                  lud06={note.lnurl}
-                  size={54}
-                />
-              </View>
-              <View style={styles.titleUserInfo}>
-                <View style={styles.titleUser}>
-                  <Text style={styles.titleUsername}>{usernamePubKey(note.name, nPub)}</Text>
-                  {note?.valid_nip05 ? (
-                    <MaterialCommunityIcons
-                      name='check-decagram-outline'
-                      size={14}
-                      color={theme.colors.onPrimaryContainer}
-                      style={styles.verifyIcon}
-                    />
-                  ) : (
-                    <></>
-                  )}
-                </View>
-                <Text>{timestamp}</Text>
-              </View>
-            </View>
+            <ProfileData
+              username={note?.name}
+              publicKey={note.pubkey}
+              validNip05={note?.valid_nip05}
+              nip05={note?.nip05}
+              lud06={note?.lnurl}
+              picture={note?.picture}
+              timestamp={note?.created_at}
+              avatarSize={56}
+            />
           </TouchableRipple>
           <View>
             <IconButton

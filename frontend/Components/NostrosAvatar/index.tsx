@@ -4,7 +4,7 @@ import { Avatar as PaperAvatar, useTheme } from 'react-native-paper'
 import { validImageUrl } from '../../Functions/NativeFunctions'
 
 interface NostrosAvatarProps {
-  pubKey: string
+  pubKey?: string
   src?: string
   name?: string
   size?: number

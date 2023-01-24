@@ -8,13 +8,12 @@ import moment from 'moment'
 import { Note } from '../../Functions/DatabaseFunctions/Notes'
 import { getETags, getTaggedPubKeys } from '../../Functions/RelayFunctions/Events'
 import { getUsers, User } from '../../Functions/DatabaseFunctions/Users'
-import { formatPubKey, username } from '../../Functions/RelayFunctions/Users'
+import { formatPubKey } from '../../Functions/RelayFunctions/Users'
 import { Button, Switch, Text, TextInput, TouchableRipple } from 'react-native-paper'
 import { UserContext } from '../../Contexts/UserContext'
-import NostrosAvatar from '../../Components/NostrosAvatar'
 import { goBack } from '../../lib/Navigation'
-import { getNpub } from '../../lib/nostr/Nip19'
 import { Kind } from 'nostr-tools'
+import ProfileData from '../../Components/ProfileData'
 
 interface SendPageProps {
   route: { params: { note: Note } | undefined }
@@ -37,7 +36,7 @@ export const SendPage: React.FC<SendPageProps> = ({ route }) => {
   }, [lastConfirmationtId])
 
   const onChangeText: (text: string) => void = (text) => {
-    const match = text.match(/@(.*)$/)
+    const match = text.match(/.*@(.*)$/)
     const note: Note | undefined = route.params?.note
     if (database && match && match?.length > 0) {
       let request = getUsers(database, { name: match[1], order: 'contact DESC,name ASC' })
@@ -111,7 +110,7 @@ export const SendPage: React.FC<SendPageProps> = ({ route }) => {
     setContent((prev) => {
       const splitText = prev.split('@')
       splitText.pop()
-      return `${splitText.join('@')}${mentionText(user)}`
+      return `${splitText.join('@')}${mentionText(user)} `
     })
     setUserSuggestions([])
   }
@@ -119,19 +118,15 @@ export const SendPage: React.FC<SendPageProps> = ({ route }) => {
   const renderContactItem: (item: User, index: number) => JSX.Element = (item, index) => (
     <TouchableRipple onPress={() => addUserMention(item)}>
       <View key={index} style={styles.contactRow}>
-        <View style={styles.contactInfo}>
-          <NostrosAvatar
-            name={item.name}
-            pubKey={getNpub(item.id)}
-            src={item.picture}
-            lud06={item.lnurl}
-            size={34}
-          />
-          <View style={styles.contactName}>
-            <Text>{formatPubKey(item.id)}</Text>
-            {item.name && <Text variant='titleSmall'>{username(item)}</Text>}
-          </View>
-        </View>
+        <ProfileData
+          username={item?.name}
+          publicKey={item?.id}
+          validNip05={item?.valid_nip05}
+          nip05={item?.nip05}
+          lud06={item?.lnurl}
+          picture={item?.picture}
+          avatarSize={34}
+        />
         <View style={styles.contactFollow}>
           <Text>{item.contact ? t('sendPage.isContact') : t('sendPage.isNotContact')}</Text>
         </View>
@@ -203,8 +198,11 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     width: '100%',
   },
-  contactName: {
+  contactData: {
     paddingLeft: 16,
+  },
+  contactName: {
+    flexDirection: 'row',
   },
   contactInfo: {
     flexDirection: 'row',
@@ -223,6 +221,10 @@ const styles = StyleSheet.create({
   },
   send: {
     padding: 16,
+  },
+  verifyIcon: {
+    paddingTop: 4,
+    paddingLeft: 5,
   },
 })
 

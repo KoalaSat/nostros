@@ -8,12 +8,12 @@ import { RelayPoolContext } from '../../Contexts/RelayPoolContext'
 import { UserContext } from '../../Contexts/UserContext'
 import { getUser, updateUserContact, User } from '../../Functions/DatabaseFunctions/Users'
 import { populatePets, usernamePubKey } from '../../Functions/RelayFunctions/Users'
-import NostrosAvatar from '../NostrosAvatar'
 import LnPayment from '../LnPayment'
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'
 import { navigate, push } from '../../lib/Navigation'
 import RBSheet from 'react-native-raw-bottom-sheet'
 import { getNpub } from '../../lib/nostr/Nip19'
+import ProfileData from '../ProfileData'
 
 interface ProfileCardProps {
   userPubKey: string
@@ -78,33 +78,15 @@ export const ProfileCard: React.FC<ProfileCardProps> = ({ userPubKey, bottomShee
         <Card.Content style={styles.card}>
           <View style={styles.cardUser}>
             <View style={styles.cardUserMain}>
-              <View>
-                <NostrosAvatar
-                  name={user?.name}
-                  pubKey={nPub}
-                  src={user?.picture}
-                  lud06={user?.lnurl}
-                  size={54}
-                />
-              </View>
-              <View>
-                <View style={styles.usernameData}>
-                  <View style={styles.username}>
-                    <Text variant='titleMedium'>{username}</Text>
-                    {user?.valid_nip05 ? (
-                      <MaterialCommunityIcons
-                        name='check-decagram-outline'
-                        size={14}
-                        color={theme.colors.onPrimaryContainer}
-                        style={styles.verifyIcon}
-                      />
-                    ) : (
-                      <></>
-                    )}
-                  </View>
-                  <Text>{user?.nip05}</Text>
-                </View>
-              </View>
+              <ProfileData
+                username={user?.name}
+                publicKey={user?.id}
+                validNip05={user?.valid_nip05}
+                nip05={user?.nip05}
+                lud06={user?.lnurl}
+                picture={user?.picture}
+                avatarSize={54}
+              />
             </View>
             <View style={styles.about}>
               <Text>

@@ -4,7 +4,6 @@ import { DrawerContentScrollView } from '@react-navigation/drawer'
 import {
   Button,
   Card,
-  Chip,
   Drawer,
   IconButton,
   Text,
@@ -17,14 +16,13 @@ import { RelayPoolContext } from '../../Contexts/RelayPoolContext'
 import { UserContext } from '../../Contexts/UserContext'
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'
 import { navigate } from '../../lib/Navigation'
-import NostrosAvatar from '../NostrosAvatar'
-import { formatPubKey, username } from '../../Functions/RelayFunctions/Users'
+import { username } from '../../Functions/RelayFunctions/Users'
+import ProfileData from '../ProfileData'
 
 export const MenuItems: React.FC = () => {
   const [drawerItemIndex, setDrawerItemIndex] = React.useState<number>(-1)
   const { relays } = React.useContext(RelayPoolContext)
-  const { nPub, publicKey, privateKey, user, contactsCount, followersCount, logout } =
-    React.useContext(UserContext)
+  const { nPub, publicKey, privateKey, user, logout } = React.useContext(UserContext)
   const { t } = useTranslation('common')
   const theme = useTheme()
 
@@ -69,32 +67,14 @@ export const MenuItems: React.FC = () => {
                   })
                 }
               >
-                <View style={styles.cardContent}>
-                  <View style={styles.cardAvatar}>
-                    <NostrosAvatar
-                      name={user?.name}
-                      pubKey={nPub ?? ''}
-                      src={user?.picture}
-                      lud06={user?.lnurl}
-                    />
-                  </View>
-                  <View>
-                    <View style={styles.username}>
-                      <Text variant='titleMedium'>{user?.name}</Text>
-                      {user?.valid_nip05 ? (
-                        <MaterialCommunityIcons
-                          name='check-decagram-outline'
-                          size={14}
-                          color={theme.colors.onPrimaryContainer}
-                          style={styles.verifyIcon}
-                        />
-                      ) : (
-                        <></>
-                      )}
-                    </View>
-                    <Text>{formatPubKey(publicKey ?? '')}</Text>
-                  </View>
-                </View>
+                <ProfileData
+                  username={user?.name}
+                  publicKey={user?.id}
+                  validNip05={user?.valid_nip05}
+                  nip05={user?.nip05}
+                  lud06={user?.lnurl}
+                  picture={user?.picture}
+                />
               </TouchableRipple>
               <View style={styles.cardEdit}>
                 {privateKey && (
@@ -105,22 +85,6 @@ export const MenuItems: React.FC = () => {
                   />
                 )}
               </View>
-            </Card.Content>
-            <Card.Content style={styles.cardActions}>
-              <Chip
-                compact={true}
-                style={styles.cardActionsChip}
-                onPress={() => console.log('Pressed')}
-              >
-                {t('menuItems.following', { following: contactsCount })}
-              </Chip>
-              <Chip
-                compact={true}
-                style={styles.cardActionsChip}
-                onPress={() => console.log('Pressed')}
-              >
-                {t('menuItems.followers', { followers: followersCount })}
-              </Chip>
             </Card.Content>
           </Card>
         )}
