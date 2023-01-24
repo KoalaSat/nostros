@@ -144,10 +144,7 @@ export const TextContent: React.FC<TextContentProps> = ({
 
     return (
       <Card style={styles.previewCard} onPress={() => handleUrlPress(linkPreview.url)}>
-        <Card.Cover
-          source={getRequireCover()}
-          resizeMode='contain'
-        />
+        <Card.Cover source={getRequireCover()} resizeMode='contain' />
         <Card.Content style={styles.previewContent}>
           <Text variant='titleSmall'>{linkPreview.title || linkPreview.url}</Text>
           {linkPreview.description && <Text variant='bodySmall'>{linkPreview.description}</Text>}
