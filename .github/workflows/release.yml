@@ -30,10 +30,20 @@ jobs:
 
             https://github.com/KoalaSat/nostros/releases/download/${{ github.ref_name }}/nostros-${{ github.ref_name }}-universal.apk
       # Upload APK artifact asset
-      - name: 'Download APK Artifact'
+      - name: 'Download universal APK Artifact'
         uses: actions/download-artifact@v3
         with:
-          name: nostros-${{ github.ref_name }}.apk
+          name: nostros-${{ github.ref_name }}-universal.apk
+          path: .
+      - name: 'Download arm64-v8a APK Artifact'
+        uses: actions/download-artifact@v3
+        with:
+          name: nostros-${{ github.ref_name }}-arm64-v8a.apk
+          path: .
+      - name: 'Download armeabi-v7a APK Artifact'
+        uses: actions/download-artifact@v3
+        with:
+          name: nostros-${{ github.ref_name }}-armeabi-v7a.apk
           path: .
       - name: 'Upload universal APK Asset'
         id: upload-universal-release-asset
