@@ -27,7 +27,7 @@ export const pickRandomItems = <T extends unknown>(arr: T[], n: number): T[] => 
 
 export const validImageUrl: (url: string | undefined) => boolean = (url) => {
   if (url) {
-    const regexp = /^(https?:\/\/.*\.(?:png|jpg|jpeg))$/
+    const regexp = /^(https?:\/\/.*\.(?:png|jpg|jpeg|gif))$/
     return regexp.test(url)
   } else {
     return false
