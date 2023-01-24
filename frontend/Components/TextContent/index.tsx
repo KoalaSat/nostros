@@ -11,6 +11,7 @@ import { getLinkPreview } from 'link-preview-js'
 import { getNip19Key, getNpub } from '../../lib/nostr/Nip19'
 import { navigate } from '../../lib/Navigation'
 import { validImageUrl } from '../../Functions/NativeFunctions'
+import Clipboard from '@react-native-clipboard/clipboard'
 
 interface TextContentProps {
   event?: Event
@@ -133,8 +134,8 @@ export const TextContent: React.FC<TextContentProps> = ({
       const coverUrl = linkPreview.images?.length > 0 ? linkPreview.images[0] : linkPreview.url
 
       if (coverUrl && validImageUrl(coverUrl)) return { uri: coverUrl }
-      if (!linkPreview?.mediaType) return require(DEFAULT_COVER)
 
+      if (!linkPreview?.mediaType) return require(DEFAULT_COVER)
       if (linkPreview.mediaType === 'audio') return require(MEDIA_COVER)
       if (linkPreview.mediaType === 'video') return require(MEDIA_COVER)
       if (linkPreview.mediaType === 'image') return require(IMAGE_COVER)
@@ -179,6 +180,7 @@ export const TextContent: React.FC<TextContentProps> = ({
           },
         ]}
         childrenProps={{ allowFontScaling: false }}
+        onLongPress={() => Clipboard.setString(text)}
       >
         {text}
       </ParsedText>
