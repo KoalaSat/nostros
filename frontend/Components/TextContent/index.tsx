@@ -1,16 +1,16 @@
 import React, { useContext, useEffect, useState } from 'react'
 import ParsedText from 'react-native-parsed-text'
 import { Event } from '../../lib/nostr/Events'
-import { Linking, StyleSheet, View } from 'react-native'
+import { ImageSourcePropType, Linking, StyleSheet, View } from 'react-native'
 import { AppContext } from '../../Contexts/AppContext'
 import { getUser, User } from '../../Functions/DatabaseFunctions/Users'
 import { formatPubKey } from '../../Functions/RelayFunctions/Users'
 import moment from 'moment'
 import { Card, Text, useTheme } from 'react-native-paper'
 import { getLinkPreview } from 'link-preview-js'
-import { validImageUrl } from '../../Functions/NativeFunctions'
 import { getNip19Key, getNpub } from '../../lib/nostr/Nip19'
 import { navigate } from '../../lib/Navigation'
+import { validImageUrl } from '../../Functions/NativeFunctions'
 
 interface TextContentProps {
   event?: Event
@@ -50,6 +50,9 @@ export const TextContent: React.FC<TextContentProps> = ({
   const [url, setUrl] = useState<string>()
   const [linkPreview, setLinkPreview] = useState<LinkPreviewMedia>()
   const text = event?.content ?? content ?? ''
+  const DEFAULT_COVER = '../../../assets/images/placeholders/placeholder_url.png'
+  const MEDIA_COVER = '../../../assets/images/placeholders/placeholder_media.png'
+  const IMAGE_COVER = '../../../assets/images/placeholders/placeholder_image.png'
 
   useEffect(() => {
     if (!linkPreview && url) {
@@ -126,11 +129,22 @@ export const TextContent: React.FC<TextContentProps> = ({
   const generatePreview: () => JSX.Element = () => {
     if (!linkPreview) return <></>
 
-    const coverUrl = linkPreview.images?.length > 0 ? linkPreview.images[0] : linkPreview.url
+    const getRequireCover: () => ImageSourcePropType = () => {
+      const coverUrl = linkPreview.images?.length > 0 ? linkPreview.images[0] : linkPreview.url
+
+      if (coverUrl && validImageUrl(coverUrl)) return { uri: coverUrl }
+      if (!linkPreview?.mediaType) return require(DEFAULT_COVER)
+
+      if (linkPreview.mediaType === 'audio') return require(MEDIA_COVER)
+      if (linkPreview.mediaType === 'video') return require(MEDIA_COVER)
+      if (linkPreview.mediaType === 'image') return require(IMAGE_COVER)
+
+      return require(DEFAULT_COVER)
+    }
 
     return (
       <Card style={styles.previewCard} onPress={() => handleUrlPress(linkPreview.url)}>
-        {validImageUrl(coverUrl) && <Card.Cover source={{ uri: coverUrl }} resizeMode='contain' />}
+        <Card.Cover source={getRequireCover()} resizeMode='contain' />
         <Card.Content style={styles.previewContent}>
           <Text variant='titleSmall'>{linkPreview.title || linkPreview.url}</Text>
           {linkPreview.description && <Text variant='bodySmall'>{linkPreview.description}</Text>}
