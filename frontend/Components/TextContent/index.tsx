@@ -16,8 +16,9 @@ import Clipboard from '@react-native-clipboard/clipboard'
 interface TextContentProps {
   event?: Event
   content?: string
-  preview?: boolean
+  showPreview?: boolean
   onPressUser?: (user: User) => void
+  numberOfLines?: number
 }
 
 interface LinkPreviewMedia {
@@ -41,8 +42,9 @@ interface LinkPreviewMedia {
 export const TextContent: React.FC<TextContentProps> = ({
   event,
   content,
-  preview = true,
+  showPreview = true,
   onPressUser = () => {},
+  numberOfLines,
 }) => {
   const theme = useTheme()
   const { database } = useContext(AppContext)
@@ -63,7 +65,9 @@ export const TextContent: React.FC<TextContentProps> = ({
     }
   }, [loadedUsers, url])
 
-  const handleUrlPress: (url: string) => void = (url) => {
+  const handleUrlPress: (url: string | undefined) => void = (url) => {
+    if (!url) return
+
     Linking.openURL(url)
   }
 
@@ -101,7 +105,12 @@ export const TextContent: React.FC<TextContentProps> = ({
     if (userNames[mentionIndex]) {
       return userNames[mentionIndex]
     } else if (event) {
-      const pudKey = event.tags[mentionIndex][1]
+      const tag = event.tags[mentionIndex]
+      const kind = tag[0]
+      const pudKey = tag[1]
+
+      if (kind === 'e') return ''
+
       if (database) {
         getUser(pudKey, database).then((user) => {
           setLoadedUsers(moment().unix())
@@ -128,14 +137,14 @@ export const TextContent: React.FC<TextContentProps> = ({
   }
 
   const generatePreview: () => JSX.Element = () => {
-    if (!linkPreview) return <></>
+    if (!showPreview || !url) return <></>
 
     const getRequireCover: () => ImageSourcePropType = () => {
-      const coverUrl = linkPreview.images?.length > 0 ? linkPreview.images[0] : linkPreview.url
+      if (!linkPreview?.mediaType) return require(DEFAULT_COVER)
 
+      const coverUrl = linkPreview.images?.length > 0 ? linkPreview.images[0] : linkPreview.url
       if (coverUrl && validImageUrl(coverUrl)) return { uri: coverUrl }
 
-      if (!linkPreview?.mediaType) return require(DEFAULT_COVER)
       if (linkPreview.mediaType === 'audio') return require(MEDIA_COVER)
       if (linkPreview.mediaType === 'video') return require(MEDIA_COVER)
       if (linkPreview.mediaType === 'image') return require(IMAGE_COVER)
@@ -144,11 +153,17 @@ export const TextContent: React.FC<TextContentProps> = ({
     }
 
     return (
-      <Card style={styles.previewCard} onPress={() => handleUrlPress(linkPreview.url)}>
+      <Card style={styles.previewCard} onPress={() => handleUrlPress(linkPreview?.url)}>
         <Card.Cover source={getRequireCover()} resizeMode='contain' />
         <Card.Content style={styles.previewContent}>
-          <Text variant='titleSmall'>{linkPreview.title || linkPreview.url}</Text>
-          {linkPreview.description && <Text variant='bodySmall'>{linkPreview.description}</Text>}
+          <Text variant='bodyMedium' numberOfLines={3}>
+            {linkPreview?.title ?? linkPreview?.url ?? url}
+          </Text>
+          {linkPreview?.description && (
+            <Text variant='bodySmall' numberOfLines={3}>
+              {linkPreview.description}
+            </Text>
+          )}
         </Card.Content>
       </Card>
     )
@@ -181,10 +196,11 @@ export const TextContent: React.FC<TextContentProps> = ({
         ]}
         childrenProps={{ allowFontScaling: false }}
         onLongPress={() => Clipboard.setString(text)}
+        numberOfLines={numberOfLines}
       >
         {text}
       </ParsedText>
-      {linkPreview && generatePreview()}
+      {generatePreview()}
     </View>
   )
 }

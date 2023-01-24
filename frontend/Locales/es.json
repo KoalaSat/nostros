@@ -19,6 +19,7 @@
       "Landing": "",
       "Conversation": "Conversación",
       "Reply": "Responder",
+      "Repost": "Citar nota",
       "Note": "Nota",
       "Profile": "Perfil",
       "About": "About",
@@ -57,7 +58,8 @@
       "logout": "Salir"
     },
     "noteCard": {
-      "answering": "Responder a {{username}}",
+      "answering": "Responder a {{pubkey}}",
+      "reposting": "Reposted {{pubkey}}",
       "seeParent": "See note",
       "contentWarning": "Sensitive content"
     },

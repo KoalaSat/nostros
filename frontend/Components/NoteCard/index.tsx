@@ -1,5 +1,11 @@
 import React, { useContext, useEffect, useState } from 'react'
-import { getRepliesCount, Note } from '../../Functions/DatabaseFunctions/Notes'
+import {
+  getNotes,
+  getRepliesCount,
+  getRepostCount,
+  isUserReposted,
+  Note,
+} from '../../Functions/DatabaseFunctions/Notes'
 import { StyleSheet, View } from 'react-native'
 import { RelayPoolContext } from '../../Contexts/RelayPoolContext'
 import { AppContext } from '../../Contexts/AppContext'
@@ -30,15 +36,25 @@ import { Kind } from 'nostr-tools'
 import ProfileData from '../ProfileData'
 
 interface NoteCardProps {
-  note: Note
+  note?: Note
   onPressUser?: (user: User) => void
   showAnswerData?: boolean
+  showAction?: boolean
+  showPreview?: boolean
+  showRepostPreview?: boolean
+  numberOfLines?: number
+  mode?: 'elevated' | 'outlined' | 'contained'
 }
 
 export const NoteCard: React.FC<NoteCardProps> = ({
   note,
   showAnswerData = true,
+  showAction = true,
+  showPreview = true,
+  showRepostPreview = true,
   onPressUser = () => {},
+  numberOfLines,
+  mode = 'elevated',
 }) => {
   const theme = useTheme()
   const { publicKey, privateKey } = React.useContext(UserContext)
@@ -50,10 +66,13 @@ export const NoteCard: React.FC<NoteCardProps> = ({
   const [userUpvoted, setUserUpvoted] = useState<boolean>(false)
   const [userDownvoted, setUserDownvoted] = useState<boolean>(false)
   const [repliesCount, setRepliesCount] = React.useState<number>(0)
+  const [repostCount, serRepostCount] = React.useState<number>(0)
   const [hide, setHide] = useState<boolean>(isContentWarning(note))
+  const [userReposted, setUserReposted] = useState<boolean>()
+  const [repost, setRepost] = useState<Note>()
 
   useEffect(() => {
-    if (database && publicKey && note.id) {
+    if (database && publicKey && showAction && note?.id) {
       getReactions(database, { eventId: note.id }).then((result) => {
         const total = result.length
         let positive = 0
@@ -69,32 +88,45 @@ export const NoteCard: React.FC<NoteCardProps> = ({
         setNegativeReactions(total - positive)
       })
       getRepliesCount(database, note.id).then(setRepliesCount)
+      getRepostCount(database, note.id).then(serRepostCount)
+      isUserReposted(database, note.id, publicKey).then(setUserReposted)
     }
   }, [lastEventId])
 
   useEffect(() => {
     if (database && note) {
-      searchRelays(note.content, database).then((result) => {
-        setRelayAdded(result.length > 0)
-      })
+      if (note.kind === Kind.RecommendRelay) {
+        searchRelays(note.content, database).then((result) => {
+          setRelayAdded(result.length > 0)
+        })
+      }
+      if (showRepostPreview && note.repost_id) {
+        getNotes(database, { filters: { id: note.repost_id } }).then((events) => {
+          if (events.length > 0) {
+            setRepost(events[0])
+          }
+        })
+      }
     }
   }, [database])
 
   const publishReaction: (positive: boolean) => void = (positive) => {
-    const event: Event = {
-      content: positive ? '+' : '-',
-      created_at: moment().unix(),
-      kind: Kind.Reaction,
-      pubkey: publicKey,
-      tags: [...note.tags, ['e', note.id], ['p', note.pubkey]],
+    if (note) {
+      const event: Event = {
+        content: positive ? '+' : '-',
+        created_at: moment().unix(),
+        kind: Kind.Reaction,
+        pubkey: publicKey,
+        tags: [...(note.tags ?? []), ['e', note.id], ['p', note.pubkey]],
+      }
+      relayPool?.sendEvent(event)
     }
-    relayPool?.sendEvent(event)
   }
 
   const textNote: () => JSX.Element = () => {
     return (
       <>
-        {note.reply_event_id && showAnswerData && (
+        {note?.reply_event_id && showAnswerData && (
           <TouchableRipple
             onPress={() =>
               note.kind !== Kind.RecommendRelay && push('Note', { noteId: note.reply_event_id })
@@ -103,12 +135,14 @@ export const NoteCard: React.FC<NoteCardProps> = ({
             <Card.Content style={[styles.answerContent, { borderColor: theme.colors.onSecondary }]}>
               <View style={styles.answerData}>
                 <MaterialCommunityIcons
-                  name='arrow-left-top'
+                  name={note.repost_id ? 'cached' : 'arrow-left-top'}
                   size={16}
                   color={theme.colors.onPrimaryContainer}
                 />
                 <Text>
-                  {t('noteCard.answering', { username: formatPubKey(note.reply_event_id) })}
+                  {note.repost_id
+                    ? t('noteCard.reposting', { pubkey: formatPubKey(note.pubkey) })
+                    : t('noteCard.answering', { pubkey: formatPubKey(note.pubkey) })}
                 </Text>
               </View>
               <View>
@@ -123,18 +157,24 @@ export const NoteCard: React.FC<NoteCardProps> = ({
               {t('noteCard.contentWarning')}
             </Button>
           ) : (
-            <TextContent event={note} onPressUser={onPressUser} />
+            <TextContent
+              event={note}
+              onPressUser={onPressUser}
+              showPreview={showPreview}
+              numberOfLines={numberOfLines}
+            />
           )}
+          {showRepostPreview && repost && <NoteCard note={repost} showAction={false} />}
         </Card.Content>
       </>
     )
   }
 
   const recommendServer: () => JSX.Element = () => {
-    const relayName = note.content.split('wss://')[1]?.split('/')[0]
+    const relayName = note?.content.split('wss://')[1]?.split('/')[0]
 
     const addRelayItem: () => void = () => {
-      if (relayPool && database && publicKey) {
+      if (relayPool && database && publicKey && note) {
         relayPool.add(note.content, () => {
           populateRelay(relayPool, database, publicKey)
           setRelayAdded(true)
@@ -143,68 +183,66 @@ export const NoteCard: React.FC<NoteCardProps> = ({
     }
 
     return (
-      <TouchableRipple
-        onPress={() => note.kind !== Kind.RecommendRelay && push('Note', { noteId: note.id })}
-      >
-        <Card.Content style={[styles.content, { borderColor: theme.colors.onSecondary }]}>
-          <Card>
-            <Card.Content style={styles.title}>
-              <View>
-                <Avatar.Icon
-                  size={54}
-                  icon='chart-timeline-variant'
-                  style={{
-                    backgroundColor: theme.colors.tertiaryContainer,
-                  }}
-                />
-              </View>
-              <View>
-                <Text>{t('noteCard.recommendation')}</Text>
-                <Text>{relayName}</Text>
-              </View>
+      <Card.Content style={[styles.content, { borderColor: theme.colors.onSecondary }]}>
+        <Card>
+          <Card.Content style={styles.title}>
+            <View>
+              <Avatar.Icon
+                size={54}
+                icon='chart-timeline-variant'
+                style={{
+                  backgroundColor: theme.colors.tertiaryContainer,
+                }}
+              />
+            </View>
+            <View>
+              <Text>{t('noteCard.recommendation')}</Text>
+              <Text>{relayName}</Text>
+            </View>
+          </Card.Content>
+          {!relayAdded && note && REGEX_SOCKET_LINK.test(note.content) && (
+            <Card.Content style={[styles.actions, { borderColor: theme.colors.onSecondary }]}>
+              <Button onPress={addRelayItem}>{t('noteCard.addRelay')}</Button>
             </Card.Content>
-            {!relayAdded && REGEX_SOCKET_LINK.test(note.content) && (
-              <Card.Content style={[styles.actions, { borderColor: theme.colors.onSecondary }]}>
-                <Button onPress={addRelayItem}>{t('noteCard.addRelay')}</Button>
-              </Card.Content>
-            )}
-          </Card>
-        </Card.Content>
-      </TouchableRipple>
+          )}
+        </Card>
+      </Card.Content>
     )
   }
 
   const getNoteContent: () => JSX.Element | undefined = () => {
-    if (note.kind === Kind.Text) {
+    if (note?.kind === Kind.Text) {
       return textNote()
-    } else if (note.kind === Kind.RecommendRelay) return recommendServer()
+    } else if (note?.kind === Kind.RecommendRelay) return recommendServer()
   }
 
-  return (
-    note && (
-      <Card style={styles.container}>
-        <Card.Content style={styles.title}>
-          <TouchableRipple onPress={() => onPressUser({ id: note.pubkey, name: note.name })}>
-            <ProfileData
-              username={note?.name}
-              publicKey={note.pubkey}
-              validNip05={note?.valid_nip05}
-              nip05={note?.nip05}
-              lud06={note?.lnurl}
-              picture={note?.picture}
-              timestamp={note?.created_at}
-              avatarSize={56}
-            />
-          </TouchableRipple>
-          <View>
+  return note ? (
+    <Card style={styles.container} mode={mode}>
+      <Card.Content style={styles.title}>
+        <TouchableRipple onPress={() => onPressUser({ id: note.pubkey, name: note.name })}>
+          <ProfileData
+            username={note?.name}
+            publicKey={note.pubkey}
+            validNip05={note?.valid_nip05}
+            nip05={note?.nip05}
+            lud06={note?.lnurl}
+            picture={note?.picture}
+            timestamp={note?.created_at}
+            avatarSize={56}
+          />
+        </TouchableRipple>
+        <View>
+          {showAction && (
             <IconButton
               icon='dots-vertical'
               size={25}
               onPress={() => onPressUser({ id: note.pubkey, name: note.name })}
             />
-          </View>
-        </Card.Content>
-        {getNoteContent()}
+          )}
+        </View>
+      </Card.Content>
+      {getNoteContent()}
+      {showAction && (
         <Card.Content style={[styles.actions, { borderColor: theme.colors.onSecondary }]}>
           <Button
             icon={() => (
@@ -217,6 +255,20 @@ export const NoteCard: React.FC<NoteCardProps> = ({
             onPress={() => note.kind !== Kind.RecommendRelay && push('Note', { noteId: note.id })}
           >
             {repliesCount}
+          </Button>
+          <Button
+            icon={() => (
+              <MaterialCommunityIcons
+                name='cached'
+                size={25}
+                color={userReposted ? '#7ADC70' : theme.colors.onPrimaryContainer}
+              />
+            )}
+            onPress={() =>
+              note.kind !== Kind.RecommendRelay && push('Repost', { note, type: 'repost' })
+            }
+          >
+            {repostCount}
           </Button>
           <Button
             onPress={() => {
@@ -255,15 +307,15 @@ export const NoteCard: React.FC<NoteCardProps> = ({
             {positiveReactions === undefined || positiveReactions === 0 ? '-' : positiveReactions}
           </Button>
         </Card.Content>
-      </Card>
-    )
+      )}
+    </Card>
+  ) : (
+    <></>
   )
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
+  container: {},
   titleUsername: {
     fontWeight: 'bold',
   },
@@ -275,7 +327,6 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignContent: 'center',
-    paddingBottom: 16,
   },
   titleUser: {
     flexDirection: 'row',

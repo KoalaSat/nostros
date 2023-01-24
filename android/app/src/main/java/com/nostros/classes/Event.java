@@ -17,7 +17,10 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 import java.util.UUID;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class Event {
     private final int created_at;
@@ -117,6 +120,24 @@ public class Event {
         return userMentioned;
     }
 
+    protected String getRepostId() {
+        String match = "";
+        Matcher m = Pattern.compile("#\\[(\\d+)\\]").matcher(content);
+        while (m.find()) {
+            int position = Integer.parseInt(m.group(1));
+            try {
+                JSONArray tag = tags.getJSONArray(position);
+                String tagKind = tag.getString(0);
+                if (tagKind.equals("e")) {
+                    match = tag.getString(1);
+                }
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+        return match;
+    }
+
     protected JSONArray filterTags(String kind) {
         JSONArray filtered = new JSONArray();
 
@@ -159,73 +180,78 @@ public class Event {
     }
 
     protected void saveNote(SQLiteDatabase database, String userPubKey) {
-        ContentValues values = new ContentValues();
-        values.put("id", id);
-        values.put("content", content.replace("'", "''"));
-        values.put("created_at", created_at);
-        values.put("kind", kind);
-        values.put("pubkey", pubkey);
-        values.put("sig", sig);
-        values.put("tags", tags.toString());
-        values.put("main_event_id", getMainEventId());
-        values.put("reply_event_id", getReplyEventId());
-        values.put("user_mentioned", getUserMentioned(userPubKey));
-        database.replace("nostros_notes", null, values);
+        String query = "SELECT id FROM nostros_notes WHERE id = ?";
+        @SuppressLint("Recycle") Cursor cursor = database.rawQuery(query, new String[] {id});
+        if (cursor.getCount() == 0) {
+            ContentValues values = new ContentValues();
+            values.put("id", id);
+            values.put("content", content.replace("'", "''"));
+            values.put("created_at", created_at);
+            values.put("kind", kind);
+            values.put("pubkey", pubkey);
+            values.put("sig", sig);
+            values.put("tags", tags.toString());
+            values.put("main_event_id", getMainEventId());
+            values.put("reply_event_id", getReplyEventId());
+            values.put("user_mentioned", getUserMentioned(userPubKey));
+            values.put("repost_id", getRepostId());
+            database.replace("nostros_notes", null, values);
+        }
     }
 
     protected void saveDirectMessage(SQLiteDatabase database) throws JSONException {
-        JSONArray tag = tags.getJSONArray(0);
-        ArrayList<String> identifiers = new ArrayList<>();
-        identifiers.add(pubkey);
-        identifiers.add(tag.getString(1));
-        Collections.sort(identifiers);
-        String conversationId = UUID.nameUUIDFromBytes(identifiers.toString().getBytes()).toString();
-
-        ContentValues values = new ContentValues();
-        values.put("id", id);
-        values.put("content", content.replace("'", "''"));
-        values.put("created_at", created_at);
-        values.put("kind", kind);
-        values.put("pubkey", pubkey);
-        values.put("sig", sig);
-        values.put("tags", tags.toString());
-        values.put("conversation_id", conversationId);
-
         String query = "SELECT read FROM nostros_direct_messages WHERE id = ?";
         @SuppressLint("Recycle") Cursor cursor = database.rawQuery(query, new String[] {id});
         if (cursor.getCount() == 0) {
+            JSONArray tag = tags.getJSONArray(0);
+            ArrayList<String> identifiers = new ArrayList<>();
+            identifiers.add(pubkey);
+            identifiers.add(tag.getString(1));
+            Collections.sort(identifiers);
+            String conversationId = UUID.nameUUIDFromBytes(identifiers.toString().getBytes()).toString();
+
+            ContentValues values = new ContentValues();
+            values.put("id", id);
+            values.put("content", content.replace("'", "''"));
+            values.put("created_at", created_at);
+            values.put("kind", kind);
+            values.put("pubkey", pubkey);
+            values.put("sig", sig);
+            values.put("tags", tags.toString());
+            values.put("conversation_id", conversationId);
+
             database.insert("nostros_direct_messages", null, values);
         }
     }
 
     protected void saveReaction(SQLiteDatabase database) throws JSONException {
-        JSONArray pTags = filterTags("p");
-        JSONArray eTags = filterTags("e");
-
-        String reacted_event_id = "";
-        String reacted_user_id = "";
-        if (eTags.length() > 0) {
-            reacted_event_id = eTags.getJSONArray(eTags.length() - 1).getString(1);
-        }
-        if (pTags.length() > 0) {
-            reacted_user_id = pTags.getJSONArray(pTags.length() - 1).getString(1);
-        }
-
-        ContentValues values = new ContentValues();
-        values.put("id", id);
-        values.put("content", content.replace("'", "''"));
-        values.put("created_at", created_at);
-        values.put("kind", kind);
-        values.put("pubkey", pubkey);
-        values.put("sig", sig);
-        values.put("tags", tags.toString());
-        values.put("positive", !content.equals("-"));
-        values.put("reacted_event_id", reacted_event_id);
-        values.put("reacted_user_id", reacted_user_id);
-
         String query = "SELECT id FROM nostros_reactions WHERE id = ?";
         @SuppressLint("Recycle") Cursor cursor = database.rawQuery(query, new String[] {id});
         if (cursor.getCount() == 0) {
+            JSONArray pTags = filterTags("p");
+            JSONArray eTags = filterTags("e");
+
+            String reacted_event_id = "";
+            String reacted_user_id = "";
+            if (eTags.length() > 0) {
+                reacted_event_id = eTags.getJSONArray(eTags.length() - 1).getString(1);
+            }
+            if (pTags.length() > 0) {
+                reacted_user_id = pTags.getJSONArray(pTags.length() - 1).getString(1);
+            }
+
+            ContentValues values = new ContentValues();
+            values.put("id", id);
+            values.put("content", content.replace("'", "''"));
+            values.put("created_at", created_at);
+            values.put("kind", kind);
+            values.put("pubkey", pubkey);
+            values.put("sig", sig);
+            values.put("tags", tags.toString());
+            values.put("positive", !content.equals("-"));
+            values.put("reacted_event_id", reacted_event_id);
+            values.put("reacted_user_id", reacted_user_id);
+
             database.insert("nostros_reactions", null, values);
         }
     }

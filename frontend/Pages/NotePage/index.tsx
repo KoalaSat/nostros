@@ -4,31 +4,15 @@ import { getNotes, Note } from '../../Functions/DatabaseFunctions/Notes'
 import { RelayPoolContext } from '../../Contexts/RelayPoolContext'
 import NoteCard from '../../Components/NoteCard'
 import { Kind } from 'nostr-tools'
-import { Dimensions, RefreshControl, ScrollView, StyleSheet, Text, View } from 'react-native'
-import { Event } from '../../../lib/nostr/Events'
+import { Dimensions, RefreshControl, ScrollView, StyleSheet, View } from 'react-native'
 import { getDirectReplies } from '../../Functions/RelayFunctions/Events'
-import {
-  ActivityIndicator,
-  AnimatedFAB,
-  Button,
-  IconButton,
-  Surface,
-  TouchableRipple,
-  useTheme,
-} from 'react-native-paper'
-import moment from 'moment'
-import { formatPubKey } from '../../Functions/RelayFunctions/Users'
-import TextContent from '../../Components/TextContent'
-import { getReactions } from '../../Functions/DatabaseFunctions/Reactions'
+import { ActivityIndicator, AnimatedFAB, useTheme } from 'react-native-paper'
 import { UserContext } from '../../Contexts/UserContext'
-import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'
 import RBSheet from 'react-native-raw-bottom-sheet'
 import ProfileCard from '../../Components/ProfileCard'
-import { navigate, push } from '../../lib/Navigation'
+import { navigate } from '../../lib/Navigation'
 import { useFocusEffect } from '@react-navigation/native'
 import { getNpub } from '../../lib/nostr/Nip19'
-import { useTranslation } from 'react-i18next'
-import ProfileData from '../../Components/ProfileData'
 
 interface NotePageProps {
   route: { params: { noteId: string } }
@@ -42,13 +26,8 @@ export const NotePage: React.FC<NotePageProps> = ({ route }) => {
   const [replies, setReplies] = useState<Note[]>()
   const [refreshing, setRefreshing] = useState(false)
   const [nPub, setNPub] = useState<string>()
-  const [positiveReactions, setPositiveReactions] = useState<number>(0)
-  const [negaiveReactions, setNegativeReactions] = useState<number>(0)
-  const [userUpvoted, setUserUpvoted] = useState<boolean>(false)
-  const [userDownvoted, setUserDownvoted] = useState<boolean>(false)
   const [profileCardPubkey, setProfileCardPubKey] = useState<string>()
   const theme = useTheme()
-  const { t } = useTranslation('common')
   const bottomSheetProfileRef = React.useRef<RBSheet>(null)
 
   useFocusEffect(
@@ -89,20 +68,6 @@ export const NotePage: React.FC<NotePageProps> = ({ route }) => {
         } else {
           setReplies([])
         }
-        getReactions(database, { eventId: route.params.noteId }).then((result) => {
-          const total = result.length
-          let positive = 0
-          result.forEach((reaction) => {
-            if (reaction.positive) {
-              positive = positive + 1
-              setUserUpvoted(true)
-            } else if (reaction.pubkey === publicKey) {
-              setUserDownvoted(true)
-            }
-          })
-          setPositiveReactions(positive)
-          setNegativeReactions(total - positive)
-        })
       }
       setRefreshing(false)
     }
@@ -129,19 +94,6 @@ export const NotePage: React.FC<NotePageProps> = ({ route }) => {
     }
   }
 
-  const publishReaction: (positive: boolean) => void = (positive) => {
-    if (note) {
-      const event: Event = {
-        content: positive ? '+' : '-',
-        created_at: moment().unix(),
-        kind: Kind.Reaction,
-        pubkey: publicKey,
-        tags: [...note.tags, ['e', note.id], ['p', note.pubkey]],
-      }
-      relayPool?.sendEvent(event)
-    }
-  }
-
   const renderItem: (note: Note, index: number) => JSX.Element = (note, index) => (
     <View style={styles.note} key={note.id}>
       <View style={styles.noteLine}>
@@ -158,6 +110,7 @@ export const NotePage: React.FC<NotePageProps> = ({ route }) => {
             bottomSheetProfileRef.current?.open()
           }}
           showAnswerData={false}
+          showRepostPreview={false}
         />
       </View>
     </View>
@@ -186,104 +139,7 @@ export const NotePage: React.FC<NotePageProps> = ({ route }) => {
         showsVerticalScrollIndicator={false}
         refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
       >
-        <Surface elevation={1}>
-          <View style={styles.title}>
-            <TouchableRipple onPress={openProfileDrawer}>
-              <ProfileData
-                username={note?.name}
-                publicKey={note.pubkey}
-                validNip05={note?.valid_nip05}
-                nip05={note?.nip05}
-                lud06={note?.lnurl}
-                picture={note?.picture}
-                timestamp={note?.created_at}
-                avatarSize={54}
-              />
-            </TouchableRipple>
-            <View>
-              <IconButton icon='dots-vertical' size={25} onPress={openProfileDrawer} />
-            </View>
-          </View>
-          {note.reply_event_id && (
-            <TouchableRipple
-              onPress={() =>
-                note.kind !== Kind.RecommendRelay && push('Note', { noteId: note.reply_event_id })
-              }
-            >
-              <View style={[styles.answerContent, { borderColor: theme.colors.onSecondary }]}>
-                <View style={styles.answerData}>
-                  <MaterialCommunityIcons
-                    name='arrow-left-top'
-                    size={16}
-                    color={theme.colors.onPrimaryContainer}
-                  />
-                  <Text>
-                    {t('noteCard.answering', { username: formatPubKey(note.reply_event_id) })}
-                  </Text>
-                </View>
-                <View>
-                  <Text style={styles.link}>{t('noteCard.seeParent')}</Text>
-                </View>
-              </View>
-            </TouchableRipple>
-          )}
-          <View style={[styles.titleComment, { borderColor: theme.colors.onSecondary }]}>
-            <TextContent event={note} />
-          </View>
-          {privateKey && (
-            <View style={[styles.titleRecommend, { borderColor: theme.colors.onSecondary }]}>
-              <Button
-                icon={() => (
-                  <MaterialCommunityIcons
-                    name='message-outline'
-                    size={25}
-                    color={theme.colors.onPrimaryContainer}
-                  />
-                )}
-              >
-                {replies?.length ?? 0}
-              </Button>
-              <Button
-                onPress={() => {
-                  if (!userDownvoted && privateKey) {
-                    setUserDownvoted(true)
-                    setNegativeReactions((prev) => prev + 1)
-                    publishReaction(false)
-                  }
-                }}
-                icon={() => (
-                  <MaterialCommunityIcons
-                    name={userDownvoted ? 'thumb-down' : 'thumb-down-outline'}
-                    size={25}
-                    color={theme.colors.onPrimaryContainer}
-                  />
-                )}
-              >
-                {negaiveReactions === undefined || negaiveReactions === 0 ? '-' : negaiveReactions}
-              </Button>
-              <Button
-                onPress={() => {
-                  if (!userUpvoted && privateKey) {
-                    setUserUpvoted(true)
-                    setPositiveReactions((prev) => prev + 1)
-                    publishReaction(true)
-                  }
-                }}
-                icon={() => (
-                  <MaterialCommunityIcons
-                    name={userUpvoted ? 'thumb-up' : 'thumb-up-outline'}
-                    size={25}
-                    color={theme.colors.onPrimaryContainer}
-                  />
-                )}
-              >
-                {positiveReactions === undefined || positiveReactions === 0
-                  ? '-'
-                  : positiveReactions}
-              </Button>
-            </View>
-          )}
-        </Surface>
+        <NoteCard note={note} onPressUser={openProfileDrawer} />
         {replies && replies.length > 0 && (
           <View style={[styles.list, { borderColor: theme.colors.onSecondary }]}>
             {replies.map((note, index) => renderItem(note, index))}
@@ -297,7 +153,7 @@ export const NotePage: React.FC<NotePageProps> = ({ route }) => {
           icon='message-plus-outline'
           label='Label'
           onPress={() => {
-            navigate('Reply', { note })
+            navigate('Reply', { note, type: 'reply' })
           }}
           animateFrom='right'
           iconMode='static'
