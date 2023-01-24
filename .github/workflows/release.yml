@@ -52,7 +52,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create-release.outputs.upload_url }}
-          asset_path: .
+          asset_path: app-release-universal.apk
           asset_name: nostros-${{ github.ref_name }}-universal.apk
           asset_content_type: application/apk
       - name: 'Upload arm64-v8a APK Asset'
@@ -62,7 +62,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create-release.outputs.upload_url }}
-          asset_path: .
+          asset_path: app-release-arm64-v8a.apk
           asset_name: nostros-${{ github.ref_name }}-arm64-v8a.apk
           asset_content_type: application/apk
       - name: 'Upload armeabi-v7a APK Asset'
@@ -72,6 +72,6 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create-release.outputs.upload_url }}
-          asset_path: .
+          asset_path: app-release-armeabi-v7a.apk
           asset_name: nostros-${{ github.ref_name }}-armeabi-v7a.apk
           asset_content_type: application/apk
