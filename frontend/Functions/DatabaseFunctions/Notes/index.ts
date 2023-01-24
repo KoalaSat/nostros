@@ -10,6 +10,7 @@ export interface Note extends Event {
   user_created_at: number
   nip05: string
   valid_nip05: boolean
+  repost_id: string
 }
 
 const databaseToEntity: (object: any) => Note = (object = {}) => {
@@ -79,6 +80,40 @@ export const getRepliesCount: (
   const item: { 'COUNT(*)': number } = resultSet?.rows?.item(0)
 
   return item['COUNT(*)'] ?? 0
+}
+
+export const getRepostCount: (
+  db: QuickSQLiteConnection,
+  eventId: string,
+) => Promise<number> = async (db, eventId) => {
+  const repliesQuery = `
+    SELECT
+      COUNT(*)
+    FROM nostros_notes
+    WHERE repost_id = "${eventId}"
+  `
+  const resultSet = db.execute(repliesQuery)
+  const item: { 'COUNT(*)': number } = resultSet?.rows?.item(0)
+
+  return item['COUNT(*)'] ?? 0
+}
+
+export const isUserReposted: (
+  db: QuickSQLiteConnection,
+  eventId: string,
+  publicKey: string,
+) => Promise<boolean> = async (db, eventId, publicKey) => {
+  const repliesQuery = `
+    SELECT
+      COUNT(*)
+    FROM nostros_notes
+    WHERE repost_id = "${eventId}"
+    AND pubkey = "${publicKey}"
+  `
+  const resultSet = db.execute(repliesQuery)
+  const item: { 'COUNT(*)': number } = resultSet?.rows?.item(0)
+
+  return (item['COUNT(*)'] ?? 0) > 0
 }
 
 export const getLastReply: (

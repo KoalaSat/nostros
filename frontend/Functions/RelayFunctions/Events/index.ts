@@ -17,7 +17,9 @@ export const getDirectReplies: (event: Event, replies: Event[]) => Event[] = (ev
   return replies.filter((item) => isDirectReply(event, item))
 }
 
-export const isContentWarning: (event: Event) => boolean = (event) => {
+export const isContentWarning: (event?: Event) => boolean = (event) => {
+  if (!event) return false
+
   return event.tags.some((item) => item[0] === 'content-warning')
 }
 

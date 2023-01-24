@@ -20,6 +20,7 @@
       "Conversation": "Диалог",
       "Reply": "Ответ",
       "Note": "Заметка",
+      "Repost": "Citar nota",
       "Profile": "Профиль",
       "About": "О нас",
       "Send": "Отпраить",
@@ -57,7 +58,8 @@
       "logout": "Выйти"
     },
     "noteCard": {
-      "answering": "Ответить {{username}}",
+      "answering": "Ответить {{pubkey}}",
+      "reposting": "Reposted {{pubkey}}",
       "seeParent": "See note",
       "contentWarning": "Sensitive content"
     },

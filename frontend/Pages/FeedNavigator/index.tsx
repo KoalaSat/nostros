@@ -114,6 +114,7 @@ export const HomeNavigator: React.FC = () => {
           <Stack.Screen name='Landing' component={HomePage} />
           <Stack.Screen name='Note' component={NotePage} />
           <Stack.Screen name='Send' component={SendPage} />
+          <Stack.Screen name='Repost' component={SendPage} />
           <Stack.Screen name='Reply' component={SendPage} />
           <Stack.Screen name='Conversation' component={ConversationPage} />
         </Stack.Group>

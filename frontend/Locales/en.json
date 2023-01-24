@@ -18,6 +18,7 @@
       "ProfileLoad": "",
       "Landing": "",
       "Conversation": "Conversation",
+      "Repost": "Repost note",
       "Reply": "Reply",
       "Note": "Note",
       "Profile": "Profile",
@@ -57,7 +58,8 @@
       "logout": "Logout"
     },
     "noteCard": {
-      "answering": "Answer to {{username}}",
+      "answering": "Answer to {{pubkey}}",
+      "reposting": "Reposted {{pubkey}}",
       "seeParent": "See note",
       "contentWarning": "Sensitive content"
     },

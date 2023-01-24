@@ -14,9 +14,10 @@ import { UserContext } from '../../Contexts/UserContext'
 import { goBack } from '../../lib/Navigation'
 import { Kind } from 'nostr-tools'
 import ProfileData from '../../Components/ProfileData'
+import NoteCard from '../../Components/NoteCard'
 
 interface SendPageProps {
-  route: { params: { note: Note } | undefined }
+  route: { params: { note: Note; type?: 'reply' | 'repost' } | undefined }
 }
 
 export const SendPage: React.FC<SendPageProps> = ({ route }) => {
@@ -30,6 +31,7 @@ export const SendPage: React.FC<SendPageProps> = ({ route }) => {
   const [userSuggestions, setUserSuggestions] = useState<User[]>([])
   const [userMentions, setUserMentions] = useState<User[]>([])
   const [isSending, setIsSending] = useState<boolean>(false)
+  const note = React.useMemo(() => route.params?.note, [])
 
   useEffect(() => {
     if (isSending) goBack()
@@ -64,18 +66,23 @@ export const SendPage: React.FC<SendPageProps> = ({ route }) => {
 
   const onPressSend: () => void = () => {
     if (database && publicKey) {
-      const note: Note | undefined = route.params?.note
       setIsSending(true)
       let tags: string[][] = []
 
       let rawContent = content
 
       if (note?.id) {
-        tags = note.tags
-        if (getETags(note).length === 0) {
-          tags.push(['e', note.id, '', 'root'])
-        } else {
-          tags.push(['e', note.id, '', 'reply'])
+        if (route.params?.type === 'reply') {
+          tags = note.tags
+          if (getETags(note).length === 0) {
+            tags.push(['e', note.id, '', 'root'])
+          } else {
+            tags.push(['e', note.id, '', 'reply'])
+          }
+          tags.push(['p', note.pubkey, ''])
+        } else if (route.params?.type === 'repost') {
+          rawContent = `#[${tags.length}] ${rawContent}`
+          tags.push(['e', note.id, '', ''])
         }
       }
 
@@ -137,20 +144,23 @@ export const SendPage: React.FC<SendPageProps> = ({ route }) => {
   return (
     <>
       <View style={styles.textInput}>
+        {route.params?.type && (
+          <View style={styles.noteCard}>
+            <NoteCard note={note} showAction={false} showPreview={false} numberOfLines={5} />
+          </View>
+        )}
         <TextInput
           ref={(ref) => ref?.focus()}
           mode='outlined'
           multiline={true}
-          numberOfLines={30}
+          numberOfLines={route.params?.type ? 6 : 30}
           outlineStyle={{ borderColor: 'transparent' }}
           value={content}
           onChangeText={onChangeText}
         />
       </View>
       <View style={styles.actions}>
-        {/* flexDirection: 'column-reverse' */}
         {userSuggestions.length > 0 ? (
-          // FIXME: can't find this color
           <View style={styles.contactsList}>
             {userSuggestions.map((user, index) => renderContactItem(user, index))}
           </View>
@@ -165,7 +175,7 @@ export const SendPage: React.FC<SendPageProps> = ({ route }) => {
               <Button
                 mode='contained'
                 onPress={onPressSend}
-                disabled={!content || content === ''}
+                disabled={route.params?.type !== 'repost' && (!content || content === '')}
                 loading={isSending}
               >
                 {t('sendPage.send')}
@@ -180,7 +190,12 @@ export const SendPage: React.FC<SendPageProps> = ({ route }) => {
 
 const styles = StyleSheet.create({
   textInput: {
-    flex: 3,
+    flex: 1,
+  },
+  noteCard: {
+    flexDirection: 'column-reverse',
+    paddingLeft: 16,
+    paddingRight: 16,
   },
   actions: {
     height: 200,

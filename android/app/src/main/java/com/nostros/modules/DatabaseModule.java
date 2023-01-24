@@ -100,6 +100,9 @@ public class DatabaseModule {
         try {
             database.execSQL("ALTER TABLE nostros_users ADD COLUMN valid_nip05 BOOLEAN DEFAULT FALSE;");
         } catch (SQLException e) { }
+        try {
+            database.execSQL("ALTER TABLE nostros_notes ADD COLUMN repost_id TEXT;");
+        } catch (SQLException e) { }
     }
 
     public void saveEvent(JSONObject data, String userPubKey) throws JSONException {
