@@ -186,7 +186,9 @@ export const ContactsFeed: React.FC = () => {
     return {
       container: {
         backgroundColor: theme.colors.background,
-        padding: 16,
+        paddingLeft: 16,
+        paddingRight: 16,
+        paddingBottom: 32,
         borderTopRightRadius: 28,
         borderTopLeftRadius: 28,
       },
@@ -312,7 +314,7 @@ export const ContactsFeed: React.FC = () => {
       {renderScene[tabKey]}
       {privateKey && (
         <AnimatedFAB
-          style={[styles.fab, { top: Dimensions.get('window').height - 200 }]}
+          style={[styles.fab, { top: Dimensions.get('window').height - 220 }]}
           icon='account-multiple-plus-outline'
           label='Label'
           onPress={() => bottomSheetAddContactRef.current?.open()}
@@ -325,7 +327,6 @@ export const ContactsFeed: React.FC = () => {
       <RBSheet
         ref={bottomSheetProfileRef}
         closeOnDragDown={true}
-        height={280}
         customStyles={bottomSheetStyles}
       >
         <ProfileCard userPubKey={profileCardPubkey ?? ''} bottomSheetRef={bottomSheetProfileRef} />
@@ -341,6 +342,7 @@ export const ContactsFeed: React.FC = () => {
           <Text variant='titleLarge'>{t('contactsFeed.addContactTitle')}</Text>
           <Text variant='bodyMedium'>{t('contactsFeed.addContactDescription')}</Text>
           <TextInput
+            style={styles.input}
             mode='outlined'
             label={t('contactsFeed.addContact') ?? ''}
             onChangeText={setContactInput}
@@ -354,6 +356,7 @@ export const ContactsFeed: React.FC = () => {
             }
           />
           <Button
+            style={styles.addContactButton}
             mode='contained'
             disabled={!contactInput || contactInput === ''}
             onPress={onPressAddContact}
@@ -395,6 +398,16 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     height: 70,
+  },
+  bottomSheet: {
+    paddingBottom: 24
+  },
+  input: {
+    marginTop: 16,
+    marginBottom: 16
+  },
+  addContactButton: {
+    marginBottom: 16
   },
   tab: {
     flex: 1,

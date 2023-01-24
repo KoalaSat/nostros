@@ -245,7 +245,7 @@ export const ConversationsFeed: React.FC = () => {
         </View>
       )}
       <AnimatedFAB
-        style={[styles.fab, { top: Dimensions.get('window').height - 200 }]}
+        style={[styles.fab, { top: Dimensions.get('window').height - 220 }]}
         icon='pencil-outline'
         label='Label'
         onPress={() => bottomSheetCreateRef.current?.open()}

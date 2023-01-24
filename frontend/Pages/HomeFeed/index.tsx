@@ -201,7 +201,7 @@ export const HomeFeed: React.FC<HomeFeedProps> = ({ navigation }) => {
       )}
       {privateKey && (
         <AnimatedFAB
-          style={[styles.fab, { top: Dimensions.get('window').height - 200 }]}
+          style={[styles.fab, { top: Dimensions.get('window').height - 220 }]}
           icon='pencil-outline'
           label='Label'
           onPress={() => navigate('Send')}
