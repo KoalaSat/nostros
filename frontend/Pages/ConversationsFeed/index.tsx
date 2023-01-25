@@ -125,7 +125,7 @@ export const ConversationsFeed: React.FC = () => {
           />
           <View style={styles.contactInfo}>
             <View style={styles.contactDate}>
-              <Text>{formatDistance(fromUnixTime(item.created_at), new Date())}</Text>
+              <Text>{formatDistance(fromUnixTime(item.created_at), new Date(), { addSuffix: true })}</Text>
               {item.pubkey !== publicKey && !item.read && <Badge size={16}></Badge>}
             </View>
           </View>

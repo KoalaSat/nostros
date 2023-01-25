@@ -186,7 +186,7 @@ export const ConversationPage: React.FC<ConversationPageProps> = ({ route }) => 
                     />
                   </View>
                 )}
-                <Text>{formatDistance(fromUnixTime(item.created_at), new Date())}</Text>
+                <Text>{formatDistance(fromUnixTime(item.created_at), new Date(), { addSuffix: true })}</Text>
               </View>
             </View>
             <TextContent content={item.content} />
