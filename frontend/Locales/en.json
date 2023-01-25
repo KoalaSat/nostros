@@ -2,15 +2,15 @@
   "common": {
     "drawers": {
       "relaysTitle": "Relays",
-      "relaysDescription": "Relays are nodes on the network that act as intermediaries for the transmission of messages between applications.\n\n\nRelays can be used to improve network resiliency and availability by allowing messages to be delivered even when there are failures or interruptions in connectivity.\n\n\nRelays can also be used to improve privacy and network security, as they can hide the location and identity of applications that communicate with each other over This can be useful in environments where censorship or surveillance is an issue.\n\n\nIt is important to note that relays can also be used for malicious purposes, such as sniffing or censoring network traffic.\n \n\nTherefore, it is important to carefully evaluate the use of relays and consider appropriate security measures to protect privacy and network security.",
+      "relaysDescription": "Relays are nodes on the network that act as intermediaries for the transmission of messages between applications.\n\n\nRelays can be used to improve network resiliency and availability by allowing messages to be delivered even when there are failures or interruptions in connectivity.\n\n\nRelays can also be used to improve privacy and network security, as they can hide the location and identity of applications that communicate with each other. This can be useful in environments where censorship or surveillance is an issue.\n\n\nIt is important to note that relays can also be used for malicious purposes, such as sniffing or censoring network traffic.\n\n\nTherefore, it is important to carefully evaluate the use of relays and consider appropriate security measures to protect privacy and network security.",
       "keysTitle": "What are these keys?",
-      "keysDescription": "In nostr you got two keys: your public key and your private key.",
+      "keysDescription": "In nostr, you get two keys: your public key and your private key.",
       "publicKeys": "Public key",
       "publicKeysDescription": "Think of the public key as your username (like your @handle on Twitter). Share it with other people so they can add you to their network.",
       "privateKey": "Private key",
       "privateKeyDescription": "Think of your private key as your password.",
       "privateKeysSnackbarTitle": "Important.",
-      "privateKeysSnackbarDescription": "Keep your private key in a safe place, if you lose it you will not be able to access it again or recover your account."
+      "privateKeysSnackbarDescription": "Keep your private key in a safe place. If you lose it, you will not be able to access it again or recover your account."
     },
     "homeNavigator": {
       "ProfileCreate": "",
@@ -64,7 +64,7 @@
       "contentWarning": "Sensitive content"
     },
     "lnPayment": {
-      "monto": "Cantity (sats.)",
+      "monto": "Amount (sats)",
       "comment": "Comment (optional)",
       "generateInvoice": "Generate invoice",
       "cancel": "Cancel",
@@ -73,21 +73,21 @@
       "open": "Open wallet"
     },
     "notificationsFeed": {
-      "emptyTitle": "You don't have notifications",
+      "emptyTitle": "You don't have any notifications.",
       "emptyDescription": "Write a message to get replies and reactions.",
-      "emptyButton": "Write a message"
+      "emptyButton": "Write a message."
     },
     "profileCreatePage": {
       "notifications": {
-        "copied": "Private key copied.\n\nSave this key on a safe place."
+        "copied": "Private key copied.\n\nStore this key in a safe place."
       },
       "warningTitle": "Important",
-      "warningDescription": "Save your key on a safe place, if loose it, you won't be able to access or recover your profile.",
+      "warningDescription": "Store your key in a safe place. If lose it, you won't be able to access or recover your profile.",
       "warningAction": "Copy private key",
       "accessButton": "Access",
       "label": "Private key",
       "copied": "Key copied",
-      "description": "Save your key on a safe place."
+      "description": "Store your key in a safe place."
     },
     "loggerPage": {
       "createButton": "Create keys",
@@ -153,7 +153,7 @@
       },
       "publishLud06": "Publish",
       "lud06Label": "LNURL / Lightning Address",
-      "lud06Description": "Link your identity with a LNURL or Lightning Address.",
+      "lud06Description": "Link your identity with an LNURL or Lightning Address.",
       "lud06Title": "LUD-06",
       "publishNip05": "Publish",
       "nip05Link": "Learn more.",
