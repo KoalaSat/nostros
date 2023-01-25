@@ -21,7 +21,8 @@ import RBSheet from 'react-native-raw-bottom-sheet'
 
 export const RelaysPage: React.FC = () => {
   const defaultRelayInput = React.useMemo(() => 'wss://', [])
-  const { addRelayItem, removeRelayItem, relays } = useContext(RelayPoolContext)
+  const { activeRelayItem, desactiveRelayItem, addRelayItem, removeRelayItem, relays } =
+    useContext(RelayPoolContext)
   const { t } = useTranslation('common')
   const theme = useTheme()
   const bottomSheetAddRef = React.useRef<RBSheet>(null)
@@ -33,6 +34,7 @@ export const RelaysPage: React.FC = () => {
   const addRelay: (url: string) => void = (url) => {
     addRelayItem({
       url,
+      active: true,
     }).then(() => {
       setShowNotification('add')
     })
@@ -46,10 +48,22 @@ export const RelaysPage: React.FC = () => {
     })
   }
 
+  const activeRelay: (relay: Relay) => void = (relay) => {
+    activeRelayItem(relay).then(() => {
+      setShowNotification('active')
+    })
+  }
+
+  const desactiveRelay: (relay: Relay) => void = (relay) => {
+    desactiveRelayItem(relay).then(() => {
+      setShowNotification('desactive')
+    })
+  }
+
   const onPressAddRelay: () => void = () => {
     if (REGEX_SOCKET_LINK.test(addRelayInput)) {
       bottomSheetAddRef.current?.close()
-
+      addRelay(addRelayInput)
       setAddRelayInput(defaultRelayInput)
     } else {
       bottomSheetAddRef.current?.close()
@@ -57,24 +71,13 @@ export const RelaysPage: React.FC = () => {
     }
   }
 
-  const defaultList: () => Relay[] = () => {
-    return defaultRelays
-      .filter((url) => !relays?.find((item) => item.url === url))
-      .map((url) => {
-        return {
-          url,
-        }
-      })
-  }
-
   const relayToggle: (relay: Relay) => JSX.Element = (relay) => {
-    const active = relays?.some((item) => item.url === relay.url)
-
-    const onValueChange: () => void = () => {
-      active ? removeRelay(relay.url) : addRelay(relay.url)
-    }
-
-    return <Switch value={active} onValueChange={onValueChange} />
+    return (
+      <Switch
+        value={relay.active}
+        onValueChange={() => (relay.active ? desactiveRelay(relay) : activeRelay(relay))}
+      />
+    )
   }
 
   const renderItem: ListRenderItem<Relay> = ({ index, item }) => (
@@ -100,12 +103,30 @@ export const RelaysPage: React.FC = () => {
     }
   }, [])
 
+  const myRelays = relays.filter((relay) => !defaultRelays.includes(relay.url))
+
   return (
     <View style={styles.container}>
       <ScrollView horizontal={false}>
+        {myRelays && (
+          <>
+            <Text style={styles.title} variant='titleMedium'>
+              {t('relaysPage.myList')}
+            </Text>
+            <FlatList style={styles.list} data={myRelays} renderItem={renderItem} />
+          </>
+        )}
+        <Text style={styles.title} variant='titleMedium'>
+          {t('relaysPage.recommended')}
+        </Text>
         <FlatList
           style={styles.list}
-          data={[...relays, ...defaultList()]}
+          data={defaultRelays.map((url) => {
+            return {
+              url,
+              active: relays.find((relay) => relay.url === url) !== undefined,
+            }
+          })}
           renderItem={renderItem}
         />
       </ScrollView>
@@ -135,7 +156,7 @@ export const RelaysPage: React.FC = () => {
         height={260}
         customStyles={rbSheetCustomStyles}
       >
-        <View>
+        <View style={styles.addRelay}>
           <TextInput
             mode='outlined'
             label={t('relaysPage.labelAdd') ?? ''}
@@ -195,6 +216,9 @@ export const RelaysPage: React.FC = () => {
 }
 
 const styles = StyleSheet.create({
+  title: {
+    paddingLeft: 16,
+  },
   container: {
     padding: 0,
     paddingBottom: 32,
@@ -211,6 +235,11 @@ const styles = StyleSheet.create({
     bottom: 16,
     right: 16,
     position: 'absolute',
+  },
+  addRelay: {
+    alignContent: 'center',
+    height: '80%',
+    justifyContent: 'space-between',
   },
   relayActions: {
     flexDirection: 'row',

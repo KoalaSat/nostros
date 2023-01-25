@@ -31,19 +31,23 @@ public class Websocket {
     }
 
     public void send(String message) {
-        Log.d("Websocket", "SEND URL:" + url + " __ " + message);
-        if (!webSocket.isOpen()) {
-            try {
-                this.connect(pubKey);
-            } catch (IOException e) {
-                e.printStackTrace();
+        if (webSocket != null) {
+            Log.d("Websocket", "SEND URL:" + url + " __ " + message);
+            if (!webSocket.isOpen()) {
+                try {
+                    this.connect(pubKey);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
             }
+            webSocket.sendText(message);
         }
-        webSocket.sendText(message);
     }
 
     public void disconnect() {
-        webSocket.disconnect();
+        if (webSocket != null) {
+            webSocket.disconnect();
+        }
     }
 
     public void connect(String userPubKey) throws IOException {

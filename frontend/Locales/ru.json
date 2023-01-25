@@ -2,7 +2,7 @@
   "common": {
     "drawers": {
       "relaysTitle": "Реле",
-      "relaysDescription": "Relays are nodes on the network that act as intermediaries for the transmission of messages between applications.\n\n\nRelays can be used to improve network resiliency and availability by allowing messages to be delivered even when there are failures or interruptions in connectivity.\n\n\nRelays can also be used to improve privacy and network security, as they can hide the location and identity of applications that communicate with each other over This can be useful in environments where censorship or surveillance is an issue.\n\n\nIt is important to note that relays can also be used for malicious purposes, such as sniffing or censoring network traffic.\n \n\nTherefore, it is important to carefully evaluate the use of relays and consider appropriate security measures to protect privacy and network security.",
+      "relaysDescription": "Реле(ретрансляторы) — это сетевые узлы, которые работают как посредники для передачи сообщений между приложениями.\n\n\nРетрансляторы можно использовать для повышения отказоустойчивости и доступности сети, позволяя доставлять сообщения даже при сбоях и проблемах с подключением. n\n\nРеле также можно использовать для повышения конфиденциальности и сетевой безопасности, поскольку они могут скрывать местоположение и идентификационные данные приложений, которые обмениваются данными. Это может быть полезно в условиях цензуры или слежки.\n\n \nВажно отметить, что реле также могут использоваться в злонамеренных целях, таких как прослушивание или цензура сетевого трафика.\n \n\nПоэтому важно тщательно оценивать использование реле и принимать соответствующие меры безопасности для защиты конфиденциальности и сетевой безопасности.",
       "keysTitle": "Что такое ключи?",
       "keysDescription": "In nostr you got two keys: your public key and your private key.",
       "publicKeys": "Public key",
@@ -20,12 +20,12 @@
       "Conversation": "Диалог",
       "Reply": "Ответ",
       "Note": "Заметка",
-      "Repost": "Citar nota",
+      "Repost": "Поделиться",
       "Profile": "Профиль",
       "About": "О нас",
       "Send": "Отпраить",
       "Relays": "Реле",
-      "ProfileConfig": "Мой аккаунт"
+      "ProfileConfig": "Мой профиль"
     },
     "conversationPage": {
       "typeMessage": "Напишите сообщение",
@@ -34,17 +34,17 @@
       }
     },
     "profileLoadPage": {
-      "relaysDescripion": "Connect with other relays if you have problems finding your data.",
+      "relaysDescripion": "При проблемах с получением данных, подключитесь к другим реле.",
       "relays": "Посмотреть реле",
       "home": "На главную",
-      "searchingProfile": "Searching for your profile",
-      "foundProfile": "Found profile",
-      "foundContacts": "{{contactsCount}} contacts found"
+      "searchingProfile": "Ищем Ваш профиль.",
+      "foundProfile": "Профиль найден.",
+      "foundContacts": "{{contactsCount}} контакта(ов) найдено"
     },
     "sendPage": {
       "isContact": "Following",
       "isNotContact": "Not following",
-      "contentWarning": "Sensitive content",
+      "contentWarning": "Делекатный контент",
       "send": "Send"
     },
     "menuItems": {
@@ -53,22 +53,22 @@
       "connectedRelays": "{{number}} connected",
       "following": "{{following}} following",
       "followers": "{{followers}} followers",
-      "configuration": "Configuration",
-      "about": "About",
+      "configuration": "Настройки",
+      "about": "Подроблее",
       "logout": "Выйти"
     },
     "noteCard": {
       "answering": "Ответить {{pubkey}}",
       "reposting": "Reposted {{pubkey}}",
       "seeParent": "See note",
-      "contentWarning": "Sensitive content"
+      "contentWarning": "Деликатный контент"
     },
     "lnPayment": {
       "monto": "Cantity (sats.)",
       "comment": "Коментарий (optional)",
       "generateInvoice": "Generate invoice",
       "cancel": "Отменить",
-      "npub": "Public key",
+      "npub": "Публичный ключ",
       "copy": "Скопировать",
       "open": "Открыть кошелек"
     },
@@ -79,18 +79,18 @@
     },
     "profileCreatePage": {
       "notifications": {
-        "copied": "Private key copied.\n\nSave this key on a safe place."
+        "copied": "Приватный ключ скопирован.\n\nСохраните этот ключ в надежном месте."
       },
       "warningTitle": "Важно",
-      "warningDescription": "Save your key on a safe place, if loose it, you won't be able to access or recover your profile.",
-      "warningAction": "Copy private key",
+      "warningDescription": "Сохраните этот ключ в надежном месте. В случае утери ключа, Вы не сможете войти или восстановить доступ к профилю.",
+      "warningAction": "Скопировать приватный ключ",
       "accessButton": "Access",
-      "label": "Private key",
-      "copied": "Key copied",
-      "description": "Save your key on a safe place."
+      "label": "Приватный ключ",
+      "copied": "Ключ скопирован",
+      "description": "Сохраните ключ в надежном месте."
     },
     "loggerPage": {
-      "createButton": "Create keys",
+      "createButton": "Создать ключи",
       "notKeys": "Don't have keys?",
       "isPublic": "Access with public key",
       "accessButton": "Access",

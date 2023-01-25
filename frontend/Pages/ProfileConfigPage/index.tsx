@@ -270,7 +270,7 @@ export const ProfileConfigPage: React.FC = () => {
                   icon='content-copy'
                   size={28}
                   onPress={() => {
-                    setShowNotification('picturePublished')
+                    setShowNotification('npubCopied')
                     Clipboard.setString(nPub ?? '')
                   }}
                 />
@@ -543,8 +543,9 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   snackbar: {
-    margin: 16,
-    bottom: 70,
+    marginLeft: 16,
+    bottom: 65,
+    width: '100%',
   },
   link: {
     textDecorationLine: 'underline',

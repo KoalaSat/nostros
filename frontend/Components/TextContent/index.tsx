@@ -153,19 +153,21 @@ export const TextContent: React.FC<TextContentProps> = ({
     }
 
     return (
-      <Card style={styles.previewCard} onPress={() => handleUrlPress(linkPreview?.url)}>
-        <Card.Cover source={getRequireCover()} resizeMode='contain' />
-        <Card.Content style={styles.previewContent}>
-          <Text variant='bodyMedium' numberOfLines={3}>
-            {linkPreview?.title ?? linkPreview?.url ?? url}
-          </Text>
-          {linkPreview?.description && (
-            <Text variant='bodySmall' numberOfLines={3}>
-              {linkPreview.description}
+      <View style={styles.previewCard}>
+        <Card onPress={() => handleUrlPress(linkPreview?.url)}>
+          <Card.Cover source={getRequireCover()} resizeMode='contain' />
+          <Card.Content style={styles.previewContent}>
+            <Text variant='bodyMedium' numberOfLines={3}>
+              {linkPreview?.title ?? linkPreview?.url ?? url}
             </Text>
-          )}
-        </Card.Content>
-      </Card>
+            {linkPreview?.description && (
+              <Text variant='bodySmall' numberOfLines={3}>
+                {linkPreview.description}
+              </Text>
+            )}
+          </Card.Content>
+        </Card>
+      </View>
     )
   }
 
@@ -229,7 +231,7 @@ const styles = StyleSheet.create({
     padding: 16,
   },
   previewCard: {
-    marginTop: 16,
+    paddingTop: 16,
   },
 })
 

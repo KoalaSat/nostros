@@ -19,7 +19,6 @@ export const HomeNavigator: React.FC = () => {
   const theme = useTheme()
   const { t } = useTranslation('common')
   const bottomSheetRef = React.useRef<RBSheet>(null)
-  const [bottomSheetPage, setBottomSheetPage] = React.useState<string>('keys')
   const bottomSheetProfileRef = React.useRef<RBSheet>(null)
   const Stack = React.useMemo(() => createStackNavigator(), [])
   const [showProfile, setShowProfile] = React.useState<string>()
@@ -43,24 +42,6 @@ export const HomeNavigator: React.FC = () => {
 
   const onPressQuestion: (pageName: string) => void = (pageName) => {
     bottomSheetRef.current?.open()
-    setBottomSheetPage(pageName === 'Relays' ? 'relays' : 'keys')
-  }
-
-  const BottomSheetRelays = React.useMemo(
-    () => (
-      <View>
-        <Text variant='headlineSmall'>{t('drawers.relaysTitle')}</Text>
-        <Text variant='bodyMedium'>{t('drawers.relaysDescription')}</Text>
-      </View>
-    ),
-    [],
-  )
-
-  const BottomSheets = {
-    relays: {
-      component: BottomSheetRelays,
-      height: 700,
-    },
   }
 
   return (
@@ -136,10 +117,13 @@ export const HomeNavigator: React.FC = () => {
       <RBSheet
         ref={bottomSheetRef}
         closeOnDragDown={true}
-        height={BottomSheets[bottomSheetPage]?.height}
+        height={620}
         customStyles={bottomSheetStyles}
       >
-        {BottomSheets[bottomSheetPage]?.component}
+        <View>
+          <Text variant='headlineSmall'>{t('drawers.relaysTitle')}</Text>
+          <Text variant='bodyMedium'>{t('drawers.relaysDescription')}</Text>
+        </View>
       </RBSheet>
     </>
   )

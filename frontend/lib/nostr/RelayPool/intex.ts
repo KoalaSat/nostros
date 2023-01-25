@@ -50,6 +50,20 @@ class RelayPool {
     RelayPoolModule.remove(relayUrl, callback)
   }
 
+  public readonly active: (relayUrl: string, callback?: () => void) => void = async (
+    relayUrl,
+    callback = () => {},
+  ) => {
+    RelayPoolModule.active(relayUrl, callback)
+  }
+
+  public readonly desactive: (relayUrl: string, callback?: () => void) => void = async (
+    relayUrl,
+    callback = () => {},
+  ) => {
+    RelayPoolModule.desactive(relayUrl, callback)
+  }
+
   public readonly sendEvent: (event: Event) => Promise<Event | null> = async (event) => {
     if (this.privateKey) {
       const signedEvent: Event = await signEvent(event, this.privateKey)

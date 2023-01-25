@@ -38,7 +38,7 @@ public class RelayPoolModule extends ReactContextBaseJavaModule {
     @ReactMethod
     public void add(String url) {
         try {
-            Relay relay = new Relay(url, database, context);
+            Relay relay = new Relay(url, true, database, context);
             relay.connect(userPubKey);
             relays.add(relay);
             database.saveRelay(relay);
@@ -63,17 +63,59 @@ public class RelayPoolModule extends ReactContextBaseJavaModule {
     }
 
     @ReactMethod
+    public void active(String url, Callback callback) throws IOException {
+        ListIterator<Relay> iterator = relays.listIterator();
+        boolean relayExists = false;
+        while(iterator.hasNext()){
+            Relay relay = iterator.next();
+            if(url.equals(relay.url) && !relay.isActive()){
+                int index = relays.indexOf(relay);
+                relay.connect(userPubKey);
+                relay.setActive(true);
+                relay.save(database.database);
+                this.relays.set(index, relay);
+                relayExists = true;
+            }
+        }
+
+        if (!relayExists) {
+            this.add(url);
+        }
+
+        callback.invoke();
+    }
+
+    @ReactMethod
+    public void desactive(String url, Callback callback) {
+        ListIterator<Relay> iterator = relays.listIterator();
+        while(iterator.hasNext()){
+            Relay relay = iterator.next();
+            if(url.equals(relay.url) && relay.isActive()){
+                int index = relays.indexOf(relay);
+                relay.disconnect();
+                relay.setActive(false);
+                relay.save(database.database);
+                this.relays.set(index, relay);
+            }
+        }
+
+        callback.invoke();
+    }
+
+    @ReactMethod
     public void connect(String pubKey, Callback callback) {
         userPubKey = pubKey;
         relays = database.getRelays(context);
         if (relays.isEmpty()) {
-            add("wss://damus.io");
             add("wss://brb.io");
-            add("wss://nostr-relay.wlvs.space");
+            add("wss://damus.io");
+            add("wss://eden.nostr.land");
         }
         for (Relay relay : relays) {
             try {
-                relay.connect(pubKey);
+                if (relay.isActive()) {
+                    relay.connect(pubKey);
+                }
             } catch (IOException e) {
                 Log.d("WebSocket", e.toString());
             }
@@ -84,7 +126,9 @@ public class RelayPoolModule extends ReactContextBaseJavaModule {
     @ReactMethod
     public void send(String message) {
         for (Relay relay : relays) {
-            relay.send(message);
+            if (relay.isActive()) {
+                relay.send(message);
+            }
         }
     }
 }

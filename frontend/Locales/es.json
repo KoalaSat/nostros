@@ -149,7 +149,7 @@
         "profilePublished": "Perfil publicado.",
         "lud06Published": "LUD-06 publicado.\n\n{{lud06}}",
         "nip05Published": "NIP-05 publicado.\n\n{{nip05}}",
-        "picturePublished": "Picture publicado.",
+        "picturePublished": "Imagen publicada.",
         "connectionError": "Error de conexión"
       },
       "publishLud06": "Publicar",

@@ -154,7 +154,6 @@ export const ContactsFeed: React.FC = () => {
   }
 
   const renderContactItem: ListRenderItem<User> = ({ index, item }) => {
-    const nPub = getNpub(item.id)
     return (
       <TouchableRipple
         onPress={() => {
@@ -165,7 +164,7 @@ export const ContactsFeed: React.FC = () => {
         <View key={item.id} style={styles.contactRow}>
           <ProfileData
             username={item?.name}
-            publicKey={nPub}
+            publicKey={getNpub(item.id)}
             validNip05={item?.valid_nip05}
             nip05={item?.nip05}
             lud06={item?.lnurl}
@@ -324,11 +323,7 @@ export const ContactsFeed: React.FC = () => {
         />
       )}
 
-      <RBSheet
-        ref={bottomSheetProfileRef}
-        closeOnDragDown={true}
-        customStyles={bottomSheetStyles}
-      >
+      <RBSheet ref={bottomSheetProfileRef} closeOnDragDown={true} customStyles={bottomSheetStyles}>
         <ProfileCard userPubKey={profileCardPubkey ?? ''} bottomSheetRef={bottomSheetProfileRef} />
       </RBSheet>
       <RBSheet
@@ -400,14 +395,14 @@ const styles = StyleSheet.create({
     height: 70,
   },
   bottomSheet: {
-    paddingBottom: 24
+    paddingBottom: 24,
   },
   input: {
     marginTop: 16,
-    marginBottom: 16
+    marginBottom: 16,
   },
   addContactButton: {
-    marginBottom: 16
+    marginBottom: 16,
   },
   tab: {
     flex: 1,
