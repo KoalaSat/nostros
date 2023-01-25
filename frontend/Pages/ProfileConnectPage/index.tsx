@@ -68,6 +68,7 @@ export const ProfileConnectPage: React.FC = () => {
           <TextInput
             mode='outlined'
             multiline
+            numberOfLines={5}
             label={label}
             onChangeText={setInputValue}
             value={inputValue}
