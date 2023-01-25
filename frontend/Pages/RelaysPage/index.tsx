@@ -108,7 +108,7 @@ export const RelaysPage: React.FC = () => {
   return (
     <View style={styles.container}>
       <ScrollView horizontal={false}>
-        {myRelays && (
+        {myRelays.length > 0 && (
           <>
             <Text style={styles.title} variant='titleMedium'>
               {t('relaysPage.myList')}

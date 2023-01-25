@@ -164,7 +164,14 @@ export const NoteCard: React.FC<NoteCardProps> = ({
               numberOfLines={numberOfLines}
             />
           )}
-          {showRepostPreview && repost && <NoteCard note={repost} showAction={false} showPreview={showPreview}/>}
+          {showRepostPreview && repost && (
+            <NoteCard
+              note={repost}
+              showAction={false}
+              showPreview={showPreview}
+              showRepostPreview={false}
+            />
+          )}
         </Card.Content>
       </>
     )

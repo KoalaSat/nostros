@@ -23,9 +23,12 @@ export const ProfileLoadPage: React.FC = () => {
 
   useFocusEffect(
     React.useCallback(() => {
-      if (publicKey && relayPoolReady) loadMeta()
+      if (publicKey && relayPoolReady) {
+        loadMeta()
+        loadPets()
+      }
 
-      return () => relayPool?.unsubscribe(['profile-load-notes'])
+      return () => relayPool?.unsubscribe(['profile-load-notes', 'profile-load-meta-pets'])
     }, []),
   )
 
@@ -70,7 +73,7 @@ export const ProfileLoadPage: React.FC = () => {
             {
               kinds: [Kind.Text],
               authors,
-              since: getUnixTime(new Date()) - 86400,
+              since: getUnixTime(new Date()) - 43200,
             },
             {
               kinds: [Kind.Metadata],

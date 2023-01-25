@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { QuickSQLiteConnection } from 'react-native-quick-sqlite'
 import { initDatabase } from '../Functions/DatabaseFunctions'
 import SInfo from 'react-native-sensitive-info'
+import { Linking } from 'react-native'
 
 export interface AppContextProps {
   init: () => void
@@ -28,6 +29,7 @@ export const AppContextProvider = ({ children }: AppContextProviderProps): JSX.E
     setDatabase(db)
     SInfo.getItem('publicKey', {}).then((value) => {
       setLoadingDb(false)
+      // Linking.addEventListener('url', this.handleOpenURL);
     })
   }
 

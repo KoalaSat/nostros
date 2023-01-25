@@ -81,6 +81,7 @@ export const AboutPage: React.FC = () => {
       data={items}
       renderItem={renderItem}
     />
+    // DeviceInfo.getVersion()
   )
 }
 

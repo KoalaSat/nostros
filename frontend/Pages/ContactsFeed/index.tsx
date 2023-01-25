@@ -227,7 +227,7 @@ export const ContactsFeed: React.FC = () => {
               ItemSeparatorComponent={Divider}
               showsVerticalScrollIndicator={false}
             />
-            {following.length >= 10 && <ActivityIndicator animating={true} />}
+            {pageSize < following.length && <ActivityIndicator animating={true} />}
           </View>
         </ScrollView>
       ) : (
@@ -265,7 +265,7 @@ export const ContactsFeed: React.FC = () => {
               showsVerticalScrollIndicator={false}
             />
           </View>
-          {followers.length >= 10 && <ActivityIndicator animating={true} />}
+          {pageSize < followers.length && <ActivityIndicator animating={true} />}
         </ScrollView>
       ) : (
         <View style={styles.blank}>
