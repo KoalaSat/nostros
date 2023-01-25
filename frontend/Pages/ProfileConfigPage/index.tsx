@@ -6,7 +6,7 @@ import { useTranslation } from 'react-i18next'
 import { UserContext } from '../../Contexts/UserContext'
 import { getUser } from '../../Functions/DatabaseFunctions/Users'
 import { Kind } from 'nostr-tools'
-import moment from 'moment'
+import getUnixTime from 'date-fns/getUnixTime'
 import {
   Avatar,
   Button,
@@ -81,7 +81,7 @@ export const ProfileConfigPage: React.FC = () => {
               nip05: result?.nip05,
               picture,
             }),
-            created_at: moment().unix(),
+            created_at: getUnixTime(new Date()),
             kind: Kind.Metadata,
             pubkey: publicKey,
             tags: [],
@@ -115,7 +115,7 @@ export const ProfileConfigPage: React.FC = () => {
               lud06: result?.lnurl,
               nip05,
             }),
-            created_at: moment().unix(),
+            created_at: getUnixTime(new Date()),
             kind: Kind.Metadata,
             pubkey: publicKey,
             tags: [],
@@ -149,7 +149,7 @@ export const ProfileConfigPage: React.FC = () => {
               nip05: result?.nip05,
               lud06: lnurl,
             }),
-            created_at: moment().unix(),
+            created_at: getUnixTime(new Date()),
             kind: Kind.Metadata,
             pubkey: publicKey,
             tags: [],
@@ -183,7 +183,7 @@ export const ProfileConfigPage: React.FC = () => {
               name,
               about,
             }),
-            created_at: moment().unix(),
+            created_at: getUnixTime(new Date()),
             kind: Kind.Metadata,
             pubkey: publicKey,
             tags: [],

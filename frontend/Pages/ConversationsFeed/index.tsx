@@ -24,12 +24,12 @@ import {
 } from 'react-native-paper'
 import { UserContext } from '../../Contexts/UserContext'
 import { navigate } from '../../lib/Navigation'
-import moment from 'moment'
 import RBSheet from 'react-native-raw-bottom-sheet'
 import { useTranslation } from 'react-i18next'
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'
 import { useFocusEffect } from '@react-navigation/native'
 import ProfileData from '../../Components/ProfileData'
+import { fromUnixTime, formatDistance } from 'date-fns'
 
 export const ConversationsFeed: React.FC = () => {
   const theme = useTheme()
@@ -125,7 +125,7 @@ export const ConversationsFeed: React.FC = () => {
           />
           <View style={styles.contactInfo}>
             <View style={styles.contactDate}>
-              <Text>{moment.unix(item.created_at).format('L HH:mm')}</Text>
+              <Text>{formatDistance(fromUnixTime(item.created_at), new Date(), { addSuffix: true })}</Text>
               {item.pubkey !== publicKey && !item.read && <Badge size={16}></Badge>}
             </View>
           </View>

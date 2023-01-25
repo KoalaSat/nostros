@@ -4,7 +4,7 @@ import { AppContext } from '../../Contexts/AppContext'
 import { Event } from '../../lib/nostr/Events'
 import { useTranslation } from 'react-i18next'
 import { RelayPoolContext } from '../../Contexts/RelayPoolContext'
-import moment from 'moment'
+import getUnixTime from 'date-fns/getUnixTime'
 import { Note } from '../../Functions/DatabaseFunctions/Notes'
 import { getETags, getTaggedPubKeys } from '../../Functions/RelayFunctions/Events'
 import { getUsers, User } from '../../Functions/DatabaseFunctions/Users'
@@ -100,7 +100,7 @@ export const SendPage: React.FC<SendPageProps> = ({ route }) => {
 
       const event: Event = {
         content: rawContent,
-        created_at: moment().unix(),
+created_at: getUnixTime(new Date()),
         kind: Kind.Text,
         pubkey: publicKey,
         tags,

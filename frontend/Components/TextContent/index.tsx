@@ -5,7 +5,7 @@ import { ImageSourcePropType, Linking, StyleSheet, View } from 'react-native'
 import { AppContext } from '../../Contexts/AppContext'
 import { getUser, User } from '../../Functions/DatabaseFunctions/Users'
 import { formatPubKey } from '../../Functions/RelayFunctions/Users'
-import moment from 'moment'
+import getUnixTime from 'date-fns/getUnixTime'
 import { Card, Text, useTheme } from 'react-native-paper'
 import { getLinkPreview } from 'link-preview-js'
 import { getNip19Key, getNpub } from '../../lib/nostr/Nip19'
@@ -113,7 +113,7 @@ export const TextContent: React.FC<TextContentProps> = ({
 
       if (database) {
         getUser(pudKey, database).then((user) => {
-          setLoadedUsers(moment().unix())
+          setLoadedUsers(getUnixTime(new Date()))
           setUserNames((prev) => {
             if (user?.name) prev[mentionIndex] = `@${user.name}`
             return prev
