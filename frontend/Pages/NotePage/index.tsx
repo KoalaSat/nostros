@@ -140,12 +140,16 @@ export const NotePage: React.FC<NotePageProps> = ({ route }) => {
         refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
       >
         <NoteCard note={note} onPressUser={openProfileDrawer} />
-        {replies && replies.length > 0 && (
-          <View style={[styles.list, { borderColor: theme.colors.onSecondary }]}>
-            {replies.map((note, index) => renderItem(note, index))}
-            {replies.length >= 10 && <ActivityIndicator style={styles.loading} animating={true} />}
-          </View>
-        )}
+        <View style={[styles.list, { borderColor: theme.colors.onSecondary }]}>
+          {replies && replies.length > 0 && (
+            <>
+              {replies.map((note, index) => renderItem(note, index))}
+              {replies.length >= 10 && (
+                <ActivityIndicator style={styles.loading} animating={true} />
+              )}
+            </>
+          )}
+        </View>
       </ScrollView>
       {privateKey && (
         <AnimatedFAB

@@ -146,7 +146,14 @@ export const SendPage: React.FC<SendPageProps> = ({ route }) => {
       <View style={[styles.textInputContainer, { paddingBottom: note ? 200 : 10 }]}>
         {note && (
           <View style={styles.noteCard}>
-            <NoteCard note={note} showAction={false} showPreview={false} numberOfLines={5} />
+            <NoteCard
+              note={note}
+              showAction={false}
+              showPreview={false}
+              showAnswerData={false}
+              showRepostPreview={false}
+              numberOfLines={5}
+            />
           </View>
         )}
         <View style={styles.textInput}>

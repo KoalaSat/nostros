@@ -139,6 +139,8 @@
       "notifications": {
         "add": "Relay conectado",
         "remove": "Relay borrado",
+        "active": "Relay acivado.",
+        "desactive": "Relay desactivado.",
         "badFormat": "La URL del relay no tiene el formato adecuado."
       }
     },

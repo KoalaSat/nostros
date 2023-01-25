@@ -225,7 +225,6 @@ export const ConversationPage: React.FC<ConversationPageProps> = ({ route }) => 
         <TextInput
           mode='outlined'
           multiline
-          numberOfLines={5}
           label={t('conversationPage.typeMessage') ?? ''}
           value={input}
           onChangeText={setInput}

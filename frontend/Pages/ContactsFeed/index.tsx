@@ -1,5 +1,15 @@
 import React, { useContext, useEffect, useState } from 'react'
-import { Dimensions, FlatList, ListRenderItem, ScrollView, StyleSheet, View } from 'react-native'
+import {
+  ActivityIndicator,
+  Dimensions,
+  FlatList,
+  ListRenderItem,
+  NativeScrollEvent,
+  NativeSyntheticEvent,
+  ScrollView,
+  StyleSheet,
+  View,
+} from 'react-native'
 import Clipboard from '@react-native-clipboard/clipboard'
 import { AppContext } from '../../Contexts/AppContext'
 import { Kind } from 'nostr-tools'
@@ -28,14 +38,17 @@ import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityI
 import { useFocusEffect } from '@react-navigation/native'
 import ProfileCard from '../../Components/ProfileCard'
 import ProfileData from '../../Components/ProfileData'
+import { handleInfinityScroll } from '../../Functions/NativeFunctions'
 
 export const ContactsFeed: React.FC = () => {
   const { t } = useTranslation('common')
+  const initialPageSize = 20
   const { database } = useContext(AppContext)
   const { privateKey, publicKey, setContantsCount, setFollowersCount, nPub } =
     React.useContext(UserContext)
   const { relayPool, lastEventId } = useContext(RelayPoolContext)
   const theme = useTheme()
+  const [pageSize, setPageSize] = useState<number>(initialPageSize)
   const bottomSheetAddContactRef = React.useRef<RBSheet>(null)
   const bottomSheetProfileRef = React.useRef<RBSheet>(null)
   // State
@@ -162,15 +175,17 @@ export const ContactsFeed: React.FC = () => {
         }}
       >
         <View key={item.id} style={styles.contactRow}>
-          <ProfileData
-            username={item?.name}
-            publicKey={getNpub(item.id)}
-            validNip05={item?.valid_nip05}
-            nip05={item?.nip05}
-            lud06={item?.lnurl}
-            picture={item?.picture}
-            avatarSize={40}
-          />
+          <View style={styles.profileData}>
+            <ProfileData
+              username={item?.name}
+              publicKey={getNpub(item.id)}
+              validNip05={item?.valid_nip05}
+              nip05={item?.nip05}
+              lud06={item?.lnurl}
+              picture={item?.picture}
+              avatarSize={40}
+            />
+          </View>
           <View style={styles.contactFollow}>
             <Button onPress={() => (item.contact ? removeContact(item) : addContact(item))}>
               {item.contact ? t('contactsFeed.stopFollowing') : t('contactsFeed.follow')}
@@ -194,18 +209,25 @@ export const ContactsFeed: React.FC = () => {
     }
   }, [])
 
+  const onScroll: (event: NativeSyntheticEvent<NativeScrollEvent>) => void = (event) => {
+    if (handleInfinityScroll(event)) {
+      setPageSize(pageSize + initialPageSize)
+    }
+  }
+
   const Following: JSX.Element = (
     <View style={styles.container}>
       {following.length > 0 ? (
-        <ScrollView horizontal={false}>
+        <ScrollView horizontal={false} onScroll={onScroll} showsVerticalScrollIndicator={false}>
           <View>
             <FlatList
               style={styles.list}
-              data={following}
+              data={following.slice(0, pageSize)}
               renderItem={renderContactItem}
               ItemSeparatorComponent={Divider}
               showsVerticalScrollIndicator={false}
             />
+            {pageSize < following.length && <ActivityIndicator animating={true} />}
           </View>
         </ScrollView>
       ) : (
@@ -233,16 +255,17 @@ export const ContactsFeed: React.FC = () => {
   const Follower: JSX.Element = (
     <View style={styles.container}>
       {followers.length > 0 ? (
-        <ScrollView horizontal={false}>
+        <ScrollView horizontal={false} onScroll={onScroll} showsVerticalScrollIndicator={false}>
           <View>
             <FlatList
               style={styles.list}
-              data={followers}
+              data={followers.slice(0, pageSize)}
               renderItem={renderContactItem}
               ItemSeparatorComponent={Divider}
               showsVerticalScrollIndicator={false}
             />
           </View>
+          {pageSize < followers.length && <ActivityIndicator animating={true} />}
         </ScrollView>
       ) : (
         <View style={styles.blank}>
@@ -428,7 +451,6 @@ const styles = StyleSheet.create({
     paddingTop: 16,
     flexDirection: 'row',
     justifyContent: 'space-between',
-    width: '100%',
   },
   contactData: {
     paddingLeft: 16,
@@ -466,6 +488,9 @@ const styles = StyleSheet.create({
   verifyIcon: {
     paddingTop: 4,
     paddingLeft: 5,
+  },
+  profileData: {
+    maxWidth: 300,
   },
 })
 
