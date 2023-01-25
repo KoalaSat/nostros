@@ -2,7 +2,7 @@
 [![Frontend Build](https://github.com/KoalaSat/nostros/actions/workflows/android-build.yml/badge.svg?branch=main)](https://github.com/KoalaSat/nostros/actions/workflows/android-build.yml)
 [![release](https://img.shields.io/github/v/release/KoalaSat/nostros)](https://github.com/KoalaSat/nostros/releases)
 [![Apache 2 license](https://img.shields.io/badge/license-Apache%202-blue)](https://github.com/KoalaSat/nostros/blob/main/LICENSE)
-[![Telegram](https://img.shields.io/badge/chat-telegram-brightgreen)](https://t.me/+zhvZAE9L0X40ZjI0)\
+[![Telegram](https://img.shields.io/badge/chat-telegram-brightgreen)](https://t.me/+zhvZAE9L0X40ZjI0)
 
 <center><a href="https://apt.izzysoft.de/fdroid/index/apk/com.nostros" target="_blank" rel="noopener noreferrer"><img src="https://gitlab.com/IzzyOnDroid/repo/-/raw/master/assets/IzzyOnDroid.png" width="170"></a></center>
 
