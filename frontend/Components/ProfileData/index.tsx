@@ -41,7 +41,7 @@ export const ProfileData: React.FC<ProfileCardProps> = ({
       <NostrosAvatar name={username} pubKey={nPub} src={picture} lud06={lud06} size={avatarSize} />
       <View style={styles.contactData}>
         <View style={styles.contactName}>
-          <Text variant='titleSmall'>{usernamePubKey(username, nPub)}</Text>
+          <Text variant='titleSmall' numberOfLines={1}>{usernamePubKey(username, nPub)}</Text>
           {validNip05 ? (
             <MaterialCommunityIcons
               name='check-decagram-outline'
@@ -52,8 +52,8 @@ export const ProfileData: React.FC<ProfileCardProps> = ({
             <></>
           )}
         </View>
-        {validNip05 ? <Text>{getNip05Domain(nip05)}</Text> : <></>}
-        {date ? <Text>{date}</Text> : <></>}
+        {validNip05 ? <Text numberOfLines={1}>{getNip05Domain(nip05)}</Text> : <></>}
+        {date ? <Text numberOfLines={1}>{date}</Text> : <></>}
       </View>
     </View>
   )
@@ -64,7 +64,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
   },
   contactName: {
-    flexDirection: 'row',
+    flexDirection: 'row'
   },
   contactData: {
     flexDirection: 'column',
