@@ -2,7 +2,9 @@
 [![Frontend Build](https://github.com/KoalaSat/nostros/actions/workflows/android-build.yml/badge.svg?branch=main)](https://github.com/KoalaSat/nostros/actions/workflows/android-build.yml)
 [![release](https://img.shields.io/github/v/release/KoalaSat/nostros)](https://github.com/KoalaSat/nostros/releases)
 [![Apache 2 license](https://img.shields.io/badge/license-Apache%202-blue)](https://github.com/KoalaSat/nostros/blob/main/LICENSE)
-[![Telegram](https://img.shields.io/badge/chat-telegram-brightgreen)](https://t.me/+zhvZAE9L0X40ZjI0)
+[![Telegram](https://img.shields.io/badge/chat-telegram-brightgreen)](https://t.me/+zhvZAE9L0X40ZjI0)\
+
+<center><a href="https://apt.izzysoft.de/fdroid/index/apk/com.nostros" target="_blank" rel="noopener noreferrer"><img src="https://gitlab.com/IzzyOnDroid/repo/-/raw/master/assets/IzzyOnDroid.png" width="170"></a></center>
 
 ![image](https://user-images.githubusercontent.com/4659020/213927551-d2ece568-a5b9-4f1a-af99-c52019df79db.png)
 
@@ -12,20 +14,23 @@ What is Nostr: https://github.com/nostr-protocol/nostr
 
 Local setup: https://github.com/KoalaSat/nostros/blob/main/SETUP.md
 
-# Some Features to Work On
+# Features
 
-### Home
-
-- [ ] Public Room
-- [ ] Other Rooms
-
-### Profile
-
-- [ ] Verify NIP-05 https://github.com/nostr-protocol/nips/blob/master/05.md
-
-### Note
-
-- [ ] Deletion https://github.com/nostr-protocol/nips/blob/master/09.md
+- [x] Send public notes and replies
+- [x] Profile edition
+- [x] Reposts
+- [x] Reactions (likes & dislikes)
+- [x] Encrypted direct messsages
+- [x] Notifications feed
+- [x] NIP-05 validation
+- [x] Lightning Network invoice generation for profiles and notes
+- [x] Sensitive content flag
+- [x] Multirelay management
+- [x] Bench-32 keys
+- [] Public Feed
+- [] Channels
+- [] Deep Links
+- [] Search 
 
 # Kudos
 
