@@ -470,6 +470,7 @@ export const ProfileConfigPage: React.FC = () => {
           <TextInput
             mode='outlined'
             multiline
+            numberOfLines={5}
             label={t('profileConfigPage.lud06Label') ?? ''}
             onChangeText={setLnurl}
             value={lnurl}
