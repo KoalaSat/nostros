@@ -222,6 +222,7 @@ export const ConversationPage: React.FC<ConversationPageProps> = ({ route }) => 
       >
         <TextInput
           mode='outlined'
+          multiline
           label={t('conversationPage.typeMessage') ?? ''}
           value={input}
           onChangeText={setInput}

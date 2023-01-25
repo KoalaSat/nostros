@@ -152,7 +152,7 @@ export const SendPage: React.FC<SendPageProps> = ({ route }) => {
         <TextInput
           ref={(ref) => ref?.focus()}
           mode='outlined'
-          multiline={true}
+          multiline
           numberOfLines={route.params?.type ? 6 : 30}
           outlineStyle={{ borderColor: 'transparent' }}
           value={content}
