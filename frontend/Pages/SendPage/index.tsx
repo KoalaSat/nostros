@@ -100,7 +100,7 @@ export const SendPage: React.FC<SendPageProps> = ({ route }) => {
 
       const event: Event = {
         content: rawContent,
-created_at: getUnixTime(new Date()),
+        created_at: getUnixTime(new Date()),
         kind: Kind.Text,
         pubkey: publicKey,
         tags,
@@ -143,21 +143,24 @@ created_at: getUnixTime(new Date()),
 
   return (
     <>
-      <View style={styles.textInput}>
-        {route.params?.type && (
+      <View style={styles.textInputContainer}>
+        {note && (
           <View style={styles.noteCard}>
             <NoteCard note={note} showAction={false} showPreview={false} numberOfLines={5} />
           </View>
         )}
-        <TextInput
-          ref={(ref) => ref?.focus()}
-          mode='outlined'
-          multiline
-          numberOfLines={route.params?.type ? 6 : 30}
-          outlineStyle={{ borderColor: 'transparent' }}
-          value={content}
-          onChangeText={onChangeText}
-        />
+        <View style={styles.textInput}>
+          <TextInput
+            ref={(ref) => ref?.focus()}
+            mode='outlined'
+            multiline
+            numberOfLines={30}
+            outlineStyle={{ borderColor: 'transparent' }}
+            value={content}
+            onChangeText={onChangeText}
+            scrollEnabled
+          />
+        </View>
       </View>
       <View style={styles.actions}>
         {userSuggestions.length > 0 ? (
@@ -189,8 +192,12 @@ created_at: getUnixTime(new Date()),
 }
 
 const styles = StyleSheet.create({
-  textInput: {
+  textInputContainer: {
     flex: 1,
+    paddingBottom: 200,
+  },
+  textInput: {
+    paddingBottom: 0,
   },
   noteCard: {
     flexDirection: 'column-reverse',
@@ -198,8 +205,9 @@ const styles = StyleSheet.create({
     paddingRight: 16,
   },
   actions: {
-    height: 200,
+    height: 100,
     flexDirection: 'column-reverse',
+    zIndex: 999,
   },
   contactsList: {
     bottom: 0,

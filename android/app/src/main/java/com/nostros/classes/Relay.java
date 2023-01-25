@@ -13,10 +13,20 @@ import java.io.IOException;
 public class Relay {
     private Websocket webSocket;
     public String url;
+    public boolean active;
 
-    public Relay(String serverUrl, DatabaseModule database, ReactApplicationContext reactContext) throws IOException {
+    public Relay(String serverUrl, boolean isActive,DatabaseModule database, ReactApplicationContext reactContext) throws IOException {
         webSocket = new Websocket(serverUrl, database, reactContext);
         url = serverUrl;
+        active = isActive;
+    }
+
+    public boolean isActive() {
+        return active;
+    }
+
+    public void setActive(boolean active) {
+        this.active = active;
     }
 
     public void send(String message) {
@@ -34,6 +44,7 @@ public class Relay {
     public void save(SQLiteDatabase database) {
         ContentValues values = new ContentValues();
         values.put("url", url);
+        values.put("active", active ? 1 : 0);
         database.replace("nostros_relays", null, values);
     }
 

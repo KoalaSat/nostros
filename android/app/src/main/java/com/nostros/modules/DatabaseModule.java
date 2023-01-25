@@ -19,7 +19,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class DatabaseModule {
-    private SQLiteDatabase database;
+    public SQLiteDatabase database;
 
     DatabaseModule(String absoluteFilesPath) {
         database = SQLiteDatabase.openDatabase( absoluteFilesPath + "/nostros.sqlite", null, SQLiteDatabase.CREATE_IF_NECESSARY);
@@ -103,6 +103,9 @@ public class DatabaseModule {
         try {
             database.execSQL("ALTER TABLE nostros_notes ADD COLUMN repost_id TEXT;");
         } catch (SQLException e) { }
+        try {
+            database.execSQL("ALTER TABLE nostros_relays ADD COLUMN active BOOLEAN DEFAULT TRUE;");
+        } catch (SQLException e) { }
     }
 
     public void saveEvent(JSONObject data, String userPubKey) throws JSONException {
@@ -120,14 +123,15 @@ public class DatabaseModule {
 
     public List<Relay> getRelays(ReactApplicationContext reactContext) {
         List<Relay> relayList = new ArrayList<>();
-        String query = "SELECT url FROM nostros_relays;";
+        String query = "SELECT url, active FROM nostros_relays;";
         @SuppressLint("Recycle") Cursor cursor = database.rawQuery(query, new String[] {});
         if (cursor.getCount() > 0) {
             cursor.moveToFirst();
             while (!cursor.isAfterLast()) {
                 try {
                     String relayUrl = cursor.getString(0);
-                    Relay relay = new Relay(relayUrl, this, reactContext);
+                    int active = cursor.getInt(1);
+                    Relay relay = new Relay(relayUrl, active > 0,this, reactContext);
                     relayList.add(relay);
                 } catch (IOException e) {
                     Log.d("WebSocket", e.toString());

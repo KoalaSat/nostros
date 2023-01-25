@@ -4,6 +4,7 @@ import { getItems } from '..'
 export interface Relay {
   url: string
   name?: string
+  active?: boolean
 }
 
 const databaseToEntity: (object: any) => Relay = (object) => {

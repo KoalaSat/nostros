@@ -108,7 +108,9 @@ export const MenuItems: React.FC = () => {
                   <Text style={{ color: theme.colors.error }}>{t('menuItems.notConnected')}</Text>
                 ) : (
                   <Text style={{ color: theme.colors.inversePrimary }}>
-                    {t('menuItems.connectedRelays', { number: relays.length })}
+                    {t('menuItems.connectedRelays', {
+                      number: relays.filter((relay) => relay.active).length,
+                    })}
                   </Text>
                 )
               }

@@ -15,6 +15,8 @@ export interface RelayPoolContextProps {
   relays: Relay[]
   addRelayItem: (relay: Relay) => Promise<void>
   removeRelayItem: (relay: Relay) => Promise<void>
+  activeRelayItem: (relay: Relay) => Promise<void>
+  desactiveRelayItem: (relay: Relay) => Promise<void>
 }
 
 export interface WebsocketEvent {
@@ -31,6 +33,8 @@ export const initialRelayPoolContext: RelayPoolContextProps = {
   setRelayPool: () => {},
   addRelayItem: async () => await new Promise(() => {}),
   removeRelayItem: async () => await new Promise(() => {}),
+  activeRelayItem: async () => await new Promise(() => {}),
+  desactiveRelayItem: async () => await new Promise(() => {}),
   relays: [],
 }
 
@@ -74,17 +78,56 @@ export const RelayPoolContextProvider = ({
     }
   }
 
-  const loadRelays: () => void = () => {
-    if (database) {
-      getRelays(database).then((results) => setRelays(results))
-    }
+  const loadRelays: () => Promise<void> = async () => {
+    return await new Promise<void>((resolve, _reject) => {
+      if (database) {
+        getRelays(database).then((results) => {
+          setRelays(results)
+          resolve()
+        })
+      } else {
+        resolve()
+      }
+    })
+  }
+
+  const activeRelayItem: (relay: Relay) => Promise<void> = async (relay) => {
+    setRelays((prev) => {
+      return prev.map((item) => {
+        if (item.url === relay.url) item.active = true
+        return item
+      })
+    })
+    return await new Promise((resolve, _reject) => {
+      if (relayPool && database && publicKey) {
+        relayPool.active(relay.url, () => {
+          loadRelays().then(resolve)
+        })
+      }
+    })
+  }
+
+  const desactiveRelayItem: (relay: Relay) => Promise<void> = async (relay) => {
+    setRelays((prev) => {
+      return prev.map((item) => {
+        if (item.url === relay.url) item.active = false
+        return item
+      })
+    })
+    return await new Promise((resolve, _reject) => {
+      if (relayPool && database && publicKey) {
+        relayPool.desactive(relay.url, () => {
+          loadRelays().then(resolve)
+        })
+      }
+    })
   }
 
   const addRelayItem: (relay: Relay) => Promise<void> = async (relay) => {
+    setRelays((prev) => [...prev, relay])
     return await new Promise((resolve, _reject) => {
       if (relayPool && database && publicKey) {
         relayPool.add(relay.url, () => {
-          setRelays((prev) => [...prev, relay])
           resolve()
         })
       }
@@ -92,10 +135,10 @@ export const RelayPoolContextProvider = ({
   }
 
   const removeRelayItem: (relay: Relay) => Promise<void> = async (relay) => {
+    setRelays((prev) => prev.filter((item) => item.url !== relay.url))
     return await new Promise((resolve, _reject) => {
       if (relayPool && database && publicKey) {
         relayPool.remove(relay.url, () => {
-          setRelays((prev) => prev.filter((item) => item.url !== relay.url))
           resolve()
         })
       }
@@ -119,6 +162,8 @@ export const RelayPoolContextProvider = ({
         relays,
         addRelayItem,
         removeRelayItem,
+        activeRelayItem,
+        desactiveRelayItem,
       }}
     >
       {children}

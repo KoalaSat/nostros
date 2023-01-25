@@ -135,9 +135,13 @@
       "add": "Add",
       "removeRelay": "Remove",
       "copyRelay": "Copy",
+      "recommended": "Recommended",
+      "myList": "My relays",
       "notifications": {
-        "add": "Relay connected.",
+        "add": "Relay added.",
         "remove": "Relay removed.",
+        "active": "Relay activated.",
+        "desactive": "Relay desactivated.",
         "badFormat": "Relay URL has a bad format."
       }
     },

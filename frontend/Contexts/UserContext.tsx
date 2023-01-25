@@ -53,7 +53,7 @@ export const initialUserContext: UserContextProps = {
 
 export const UserContextProvider = ({ children }: UserContextProviderProps): JSX.Element => {
   const { database, loadingDb, init } = useContext(AppContext)
-  const { relayPool } = useContext(RelayPoolContext)
+  const { relayPool, lastEventId } = useContext(RelayPoolContext)
   const [userState, setUserState] = useState<'loading' | 'access' | 'ready'>('loading')
   const [publicKey, setPublicKey] = useState<string>()
   const [nPub, setNpub] = useState<string>()
@@ -98,6 +98,10 @@ export const UserContextProvider = ({ children }: UserContextProviderProps): JSX
       })
     }
   }
+
+  useEffect(() => {
+    if (!user) reloadUser()
+  }, [lastEventId])
 
   useEffect(() => {
     if (privateKey && privateKey !== '') {

@@ -72,7 +72,6 @@ export const ProfileConnectPage: React.FC = () => {
             label={label}
             onChangeText={setInputValue}
             value={inputValue}
-            secureTextEntry={!isPublic}
             style={styles.input}
             right={
               <TextInput.Icon
