@@ -67,6 +67,7 @@ export const ProfileConnectPage: React.FC = () => {
         <View style={styles.loginMain}>
           <TextInput
             mode='outlined'
+            multiline
             label={label}
             onChangeText={setInputValue}
             value={inputValue}
