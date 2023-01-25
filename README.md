@@ -26,7 +26,7 @@ Local setup: https://github.com/KoalaSat/nostros/blob/main/SETUP.md
 - [x] Lightning Network invoice generation for profiles and notes
 - [x] Sensitive content flag
 - [x] Multirelay management
-- [x] Bench-32 keys
+- [x] Bech-32 keys
 - [] Public Feed
 - [] Channels
 - [] Deep Links
