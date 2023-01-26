@@ -1,13 +1,15 @@
 import * as React from 'react'
 import { useTranslation } from 'react-i18next'
 import { FlatList, Linking, ListRenderItem, StyleSheet } from 'react-native'
-import { Divider, List, useTheme } from 'react-native-paper'
+import { Divider, List, Text, useTheme } from 'react-native-paper'
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'
+import DeviceInfo from 'react-native-device-info'
 
 interface ItemList {
   key: number
   title: string
-  left?: () => JSX.Element
+  left?: JSX.Element
+  right?: JSX.Element
   onPress: () => void
 }
 
@@ -20,7 +22,7 @@ export const AboutPage: React.FC = () => {
       {
         key: 1,
         title: t('aboutPage.gitHub'),
-        left: () => (
+        left: (
           <List.Icon
             icon={() => (
               <MaterialCommunityIcons
@@ -36,7 +38,7 @@ export const AboutPage: React.FC = () => {
       {
         key: 2,
         title: t('aboutPage.nostr'),
-        left: () => (
+        left: (
           <List.Icon
             icon={() => (
               <MaterialCommunityIcons
@@ -52,7 +54,7 @@ export const AboutPage: React.FC = () => {
       {
         key: 3,
         title: t('aboutPage.nips'),
-        left: () => (
+        left: (
           <List.Icon
             icon={() => (
               <MaterialCommunityIcons
@@ -63,25 +65,52 @@ export const AboutPage: React.FC = () => {
             )}
           />
         ),
+        right: <></>,
         onPress: async () => await Linking.openURL('https://github.com/nostr-protocol/nips'),
+      },
+      {
+        key: 4,
+        title: t('aboutPage.version'),
+        left: (
+          <List.Icon
+            icon={() => (
+              <MaterialCommunityIcons
+                name='android'
+                size={25}
+                color={theme.colors.onPrimaryContainer}
+              />
+            )}
+          />
+        ),
+        right: <Text>{DeviceInfo.getVersion()}</Text>,
+        onPress: () => {},
       },
     ],
     [],
   )
 
   const renderItem: ListRenderItem<ItemList> = ({ item }) => {
-    return <List.Item key={item.key} title={item.title} onPress={item.onPress} left={item.left} />
+    return (
+      <List.Item
+        key={item.key}
+        title={item.title}
+        onPress={item.onPress}
+        left={() => item.left}
+        right={() => item.right}
+      />
+    )
   }
 
   return (
-    <FlatList
-      style={styles.container}
-      showsVerticalScrollIndicator={false}
-      ItemSeparatorComponent={Divider}
-      data={items}
-      renderItem={renderItem}
-    />
-    // DeviceInfo.getVersion()
+    <>
+      <FlatList
+        style={styles.container}
+        showsVerticalScrollIndicator={false}
+        ItemSeparatorComponent={Divider}
+        data={items}
+        renderItem={renderItem}
+      />
+    </>
   )
 }
 

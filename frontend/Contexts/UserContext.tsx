@@ -13,6 +13,8 @@ import { dropTables } from '../Functions/DatabaseFunctions'
 import { navigate } from '../lib/Navigation'
 import { nsecEncode } from 'nostr-tools/nip19'
 import { getNpub } from '../lib/nostr/Nip19'
+import Clipboard from '@react-native-clipboard/clipboard'
+import { validNip21 } from '../Functions/NativeFunctions'
 
 export interface UserContextProps {
   userState: 'loading' | 'access' | 'ready'
@@ -60,6 +62,7 @@ export const UserContextProvider = ({ children }: UserContextProviderProps): JSX
   const [nSec, setNsec] = useState<string>()
   const [privateKey, setPrivateKey] = useState<string>()
   const [user, setUser] = React.useState<User>()
+  const [clipboardLoads, setClipboardLoads] = React.useState<string[]>([])
   const [contactsCount, setContantsCount] = React.useState<number>(0)
   const [followersCount, setFollowersCount] = React.useState<number>(0)
 
@@ -73,10 +76,22 @@ export const UserContextProvider = ({ children }: UserContextProviderProps): JSX
             id: publicKey,
           })
         }
+        checkClipboard()
       })
       getContactsCount(database).then(setContantsCount)
       getFollowersCount(database).then(setFollowersCount)
     }
+  }
+
+  const checkClipboard: () => void = () => {
+    Clipboard.getString().then((clipboardContent) => {
+      if (validNip21(clipboardContent) && !clipboardLoads.includes(clipboardContent)) {
+        setClipboardLoads((prev) => [...prev, clipboardContent])
+        
+      }
+    })
+    
+    
   }
 
   const logout: () => void = () => {

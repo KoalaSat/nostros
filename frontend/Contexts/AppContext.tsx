@@ -29,8 +29,10 @@ export const AppContextProvider = ({ children }: AppContextProviderProps): JSX.E
     setDatabase(db)
     SInfo.getItem('publicKey', {}).then((value) => {
       setLoadingDb(false)
-      // Linking.addEventListener('url', this.handleOpenURL);
     })
+    Linking.addEventListener('url', (event) => {
+      console.log(event.url)
+    });
   }
 
   useEffect(init, [])
