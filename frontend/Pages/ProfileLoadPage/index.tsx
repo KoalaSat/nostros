@@ -23,10 +23,8 @@ export const ProfileLoadPage: React.FC = () => {
 
   useFocusEffect(
     React.useCallback(() => {
-      if (publicKey && relayPoolReady) {
-        loadMeta()
-        loadPets()
-      }
+      loadMeta()
+      loadPets()
 
       return () => relayPool?.unsubscribe(['profile-load-notes', 'profile-load-meta-pets'])
     }, []),
@@ -49,7 +47,7 @@ export const ProfileLoadPage: React.FC = () => {
   }, [user])
 
   const loadMeta: () => void = () => {
-    if (publicKey) {
+    if (publicKey && relayPoolReady) {
       relayPool?.subscribe('profile-load-meta-pets', [
         {
           kinds: [Kind.Contacts],
@@ -64,7 +62,7 @@ export const ProfileLoadPage: React.FC = () => {
   }
 
   const loadPets: () => void = () => {
-    if (database && publicKey) {
+    if (database && publicKey && relayPoolReady) {
       getUsers(database, {}).then((results) => {
         if (results && results.length > 0) {
           setContactsCount(results.filter((user) => user.contact).length)
