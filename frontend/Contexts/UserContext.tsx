@@ -90,8 +90,6 @@ export const UserContextProvider = ({ children }: UserContextProviderProps): JSX
         console.log(clipboardContent)
       }
     })
-    
-    
   }
 
   const logout: () => void = () => {

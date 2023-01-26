@@ -30,7 +30,7 @@ Local setup: https://github.com/KoalaSat/nostros/blob/main/SETUP.md
 - [ ] Public Feed
 - [ ] Channels
 - [ ] Deep Links
-- [ ] Search 
+- [ ] Search
 
 # Kudos
 
