@@ -106,21 +106,25 @@ export const TextContent: React.FC<TextContentProps> = ({
       return userNames[mentionIndex]
     } else if (event) {
       const tag = event.tags[mentionIndex]
-      const kind = tag[0]
-      const pudKey = tag[1]
+      if (tag) {
+        const kind = tag[0]
+        const pudKey = tag[1]
 
-      if (kind === 'e') return ''
+        if (kind === 'e') return ''
 
-      if (database) {
-        getUser(pudKey, database).then((user) => {
-          setLoadedUsers(getUnixTime(new Date()))
-          setUserNames((prev) => {
-            if (user?.name) prev[mentionIndex] = `@${user.name}`
-            return prev
+        if (database) {
+          getUser(pudKey, database).then((user) => {
+            setLoadedUsers(getUnixTime(new Date()))
+            setUserNames((prev) => {
+              if (user?.name) prev[mentionIndex] = `@${user.name}`
+              return prev
+            })
           })
-        })
+        }
+        return `@${formatPubKey(getNpub(pudKey))}`
+      } else {
+        return matchingString
       }
-      return `@${formatPubKey(getNpub(pudKey))}`
     } else {
       return matchingString
     }

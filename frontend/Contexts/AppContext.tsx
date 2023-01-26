@@ -32,7 +32,7 @@ export const AppContextProvider = ({ children }: AppContextProviderProps): JSX.E
     })
     Linking.addEventListener('url', (event) => {
       console.log(event.url)
-    });
+    })
   }
 
   useEffect(init, [])
