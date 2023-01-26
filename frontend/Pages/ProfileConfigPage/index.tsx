@@ -366,7 +366,6 @@ export const ProfileConfigPage: React.FC = () => {
       <RBSheet
         ref={bottomSheetPictureRef}
         closeOnDragDown={true}
-        height={230}
         customStyles={rbSheetCustomStyles}
       >
         <View style={styles.bottomDrawer}>
@@ -377,6 +376,7 @@ export const ProfileConfigPage: React.FC = () => {
             label={t('profileConfigPage.pictureUrl') ?? ''}
             onChangeText={setPicture}
             value={picture}
+            style={styles.imageInput}
             right={
               <TextInput.Icon
                 icon='content-paste'
@@ -544,12 +544,16 @@ const styles = StyleSheet.create({
   },
   snackbar: {
     marginLeft: 16,
-    bottom: 65,
+    bottom: 24,
     width: '100%',
   },
   link: {
     textDecorationLine: 'underline',
   },
+  imageInput: {
+    marginTop: 16,
+    marginBottom: 16,
+  }
 })
 
 export default ProfileConfigPage
