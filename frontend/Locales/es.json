@@ -25,7 +25,7 @@
       "About": "About",
       "Send": "Send",
       "Relays": "Relays",
-      "ProfileConfig": "My profile"
+      "ProfileConfig": "Mi perfil"
     },
     "conversationPage": {
       "typeMessage": "Escribir mensaje",
@@ -60,12 +60,12 @@
     "noteCard": {
       "answering": "Responder a {{pubkey}}",
       "reposting": "Reposted {{pubkey}}",
-      "seeParent": "See note",
-      "contentWarning": "Sensitive content"
+      "seeParent": "Ver nota",
+      "contentWarning": "Contenido sensible"
     },
     "lnPayment": {
       "monto": "Cantidad (sats.)",
-      "comment": "Commentario (opcional)",
+      "comment": "Comentario (opcional)",
       "generateInvoice": "Generar invoice",
       "cancel": "Cancelar",
       "copy": "Copiar",
@@ -81,7 +81,7 @@
         "copied": "Clave privada copiada.\n\nGuardala en un lugar seguro."
       },
       "snackbarDescription": "Importante. Guardala tu clave en un lugar seguro, si la pierdes, no será posible acceder a tu perfil.",
-      "snackbarAction": "Copy private key",
+      "snackbarAction": "Copiar clave privada",
       "warningTitle": "Importante",
       "warningDescription": "Guarda tu clave privada en un lugar seguro, si la pierdes, no podrás acceder a tu perfil ni recuperarlo.",
       "warningAction": "Copiar clave",
