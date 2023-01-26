@@ -87,7 +87,7 @@ export const UserContextProvider = ({ children }: UserContextProviderProps): JSX
     Clipboard.getString().then((clipboardContent) => {
       if (validNip21(clipboardContent) && !clipboardLoads.includes(clipboardContent)) {
         setClipboardLoads((prev) => [...prev, clipboardContent])
-        
+        console.log(clipboardContent)
       }
     })
     
