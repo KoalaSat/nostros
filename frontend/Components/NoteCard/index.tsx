@@ -38,8 +38,10 @@ import ProfileData from '../ProfileData'
 interface NoteCardProps {
   note?: Note
   onPressUser?: (user: User) => void
+  showAvatarImage?: boolean
   showAnswerData?: boolean
   showAction?: boolean
+  showActionCount?: boolean
   showPreview?: boolean
   showRepostPreview?: boolean
   numberOfLines?: number
@@ -48,8 +50,10 @@ interface NoteCardProps {
 
 export const NoteCard: React.FC<NoteCardProps> = ({
   note,
+  showAvatarImage = true,
   showAnswerData = true,
   showAction = true,
+  showActionCount = true,
   showPreview = true,
   showRepostPreview = true,
   onPressUser = () => {},
@@ -59,7 +63,7 @@ export const NoteCard: React.FC<NoteCardProps> = ({
   const theme = useTheme()
   const { publicKey, privateKey } = React.useContext(UserContext)
   const { relayPool, lastEventId } = useContext(RelayPoolContext)
-  const { database } = useContext(AppContext)
+  const { database, showSensitive } = useContext(AppContext)
   const [relayAdded, setRelayAdded] = useState<boolean>(false)
   const [positiveReactions, setPositiveReactions] = useState<number>(0)
   const [negaiveReactions, setNegativeReactions] = useState<number>(0)
@@ -72,7 +76,7 @@ export const NoteCard: React.FC<NoteCardProps> = ({
   const [repost, setRepost] = useState<Note>()
 
   useEffect(() => {
-    if (database && publicKey && showAction && note?.id) {
+    if (database && publicKey && showAction && showActionCount && note?.id) {
       getReactions(database, { eventId: note.id }).then((result) => {
         const total = result.length
         let positive = 0
@@ -152,7 +156,7 @@ export const NoteCard: React.FC<NoteCardProps> = ({
           </TouchableRipple>
         )}
         <Card.Content style={[styles.content, { borderColor: theme.colors.onSecondary }]}>
-          {hide ? (
+          {hide && !showSensitive ? (
             <Button mode='outlined' onPress={() => setHide(false)}>
               {t('noteCard.contentWarning')}
             </Button>
@@ -208,7 +212,7 @@ export const NoteCard: React.FC<NoteCardProps> = ({
             </View>
           </Card.Content>
           {!relayAdded && note && REGEX_SOCKET_LINK.test(note.content) && (
-            <Card.Content style={[styles.actions, { borderColor: theme.colors.onSecondary }]}>
+            <Card.Content style={[styles.bottomActions, { borderColor: theme.colors.onSecondary }]}>
               <Button onPress={addRelayItem}>{t('noteCard.addRelay')}</Button>
             </Card.Content>
           )}
@@ -217,8 +221,33 @@ export const NoteCard: React.FC<NoteCardProps> = ({
     )
   }
 
+  const blockedContent: () => JSX.Element = () => {
+    return (
+      <Card.Content style={[styles.content, { borderColor: theme.colors.onSecondary }]}>
+        <Card>
+          <Card.Content style={styles.title}>
+            <View>
+              <Avatar.Icon
+                size={54}
+                icon='account-cancel'
+                style={{
+                  backgroundColor: theme.colors.tertiaryContainer,
+                }}
+              />
+            </View>
+            <View style={styles.userBlocked}>
+              <Text>{t('noteCard.userBlocked')}</Text>
+            </View>
+          </Card.Content>
+        </Card>
+      </Card.Content>
+    )
+  }
+
   const getNoteContent: () => JSX.Element | undefined = () => {
-    if (note?.kind === Kind.Text) {
+    if (note?.blocked) {
+      return blockedContent()
+    } else if (note?.kind === Kind.Text) {
       return textNote()
     } else if (note?.kind === Kind.RecommendRelay) return recommendServer()
   }
@@ -233,24 +262,24 @@ export const NoteCard: React.FC<NoteCardProps> = ({
             validNip05={note?.valid_nip05}
             nip05={note?.nip05}
             lud06={note?.lnurl}
-            picture={note?.picture}
+            picture={showAvatarImage ? note?.picture : undefined}
             timestamp={note?.created_at}
             avatarSize={56}
           />
         </TouchableRipple>
-        <View>
-          {showAction && (
+        {showAction && (
+          <View style={styles.topAction}>
             <IconButton
               icon='dots-vertical'
               size={25}
               onPress={() => onPressUser({ id: note.pubkey, name: note.name })}
             />
-          )}
-        </View>
+          </View>
+        )}
       </Card.Content>
       {getNoteContent()}
-      {showAction && (
-        <Card.Content style={[styles.actions, { borderColor: theme.colors.onSecondary }]}>
+      {showAction && !note?.blocked && (
+        <Card.Content style={[styles.bottomActions, { borderColor: theme.colors.onSecondary }]}>
           <Button
             icon={() => (
               <MaterialCommunityIcons
@@ -261,7 +290,7 @@ export const NoteCard: React.FC<NoteCardProps> = ({
             )}
             onPress={() => note.kind !== Kind.RecommendRelay && push('Note', { noteId: note.id })}
           >
-            {repliesCount}
+            {showActionCount && repliesCount}
           </Button>
           <Button
             icon={() => (
@@ -275,7 +304,7 @@ export const NoteCard: React.FC<NoteCardProps> = ({
               note.kind !== Kind.RecommendRelay && push('Repost', { note, type: 'repost' })
             }
           >
-            {repostCount}
+            {showActionCount && repostCount}
           </Button>
           <Button
             onPress={() => {
@@ -293,7 +322,8 @@ export const NoteCard: React.FC<NoteCardProps> = ({
               />
             )}
           >
-            {negaiveReactions === undefined || negaiveReactions === 0 ? '-' : negaiveReactions}
+            {showActionCount &&
+              (negaiveReactions === undefined || negaiveReactions === 0 ? '-' : negaiveReactions)}
           </Button>
           <Button
             onPress={() => {
@@ -311,7 +341,10 @@ export const NoteCard: React.FC<NoteCardProps> = ({
               />
             )}
           >
-            {positiveReactions === undefined || positiveReactions === 0 ? '-' : positiveReactions}
+            {showActionCount &&
+              (positiveReactions === undefined || positiveReactions === 0
+                ? '-'
+                : positiveReactions)}
           </Button>
         </Card.Content>
       )}
@@ -335,6 +368,10 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignContent: 'center',
   },
+  userBlocked: {
+    justifyContent: 'center',
+    textAlign: 'center',
+  },
   titleUser: {
     flexDirection: 'row',
     alignContent: 'center',
@@ -348,11 +385,15 @@ const styles = StyleSheet.create({
     padding: 16,
     justifyContent: 'space-between',
   },
-  actions: {
+  bottomActions: {
     paddingTop: 16,
     flexDirection: 'row',
     justifyContent: 'space-around',
     borderTopWidth: 1,
+  },
+  topAction: {
+    flexDirection: 'row',
+    justifyContent: 'space-around',
   },
   relayActions: {
     paddingTop: 16,

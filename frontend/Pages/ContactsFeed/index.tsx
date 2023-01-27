@@ -44,8 +44,7 @@ export const ContactsFeed: React.FC = () => {
   const { t } = useTranslation('common')
   const initialPageSize = 20
   const { database } = useContext(AppContext)
-  const { privateKey, publicKey, setContantsCount, setFollowersCount, nPub } =
-    React.useContext(UserContext)
+  const { privateKey, publicKey, nPub } = React.useContext(UserContext)
   const { relayPool, lastEventId } = useContext(RelayPoolContext)
   const theme = useTheme()
   const [pageSize, setPageSize] = useState<number>(initialPageSize)
@@ -94,8 +93,6 @@ export const ContactsFeed: React.FC = () => {
           ])
           setFollowers(followers)
           setFollowing(following)
-          setContantsCount(following.length)
-          setFollowersCount(followers.length)
         }
       })
     }
@@ -434,7 +431,7 @@ const styles = StyleSheet.create({
     alignContent: 'center',
   },
   tabActive: {
-    borderBottomWidth: 5,
+    borderBottomWidth: 3,
   },
   tabText: {
     textAlign: 'center',

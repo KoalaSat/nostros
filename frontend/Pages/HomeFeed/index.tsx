@@ -1,32 +1,16 @@
-import React, { useCallback, useContext, useState, useEffect } from 'react'
-import { getUsers, User } from '../../Functions/DatabaseFunctions/Users'
-import {
-  Dimensions,
-  ListRenderItem,
-  NativeScrollEvent,
-  NativeSyntheticEvent,
-  RefreshControl,
-  ScrollView,
-  StyleSheet,
-  View,
-} from 'react-native'
-import { AppContext } from '../../Contexts/AppContext'
-import { getLastReply, getMainNotes, Note } from '../../Functions/DatabaseFunctions/Notes'
-import { handleInfinityScroll } from '../../Functions/NativeFunctions'
+import React, { useContext, useState } from 'react'
+import { Dimensions, StyleSheet, View } from 'react-native'
 import { UserContext } from '../../Contexts/UserContext'
 import { RelayPoolContext } from '../../Contexts/RelayPoolContext'
-import { Kind } from 'nostr-tools'
-import { RelayFilters } from '../../lib/nostr/RelayPool/intex'
-import { ActivityIndicator, AnimatedFAB, Button, Text } from 'react-native-paper'
-import NoteCard from '../../Components/NoteCard'
+import { AnimatedFAB, Text, TouchableRipple } from 'react-native-paper'
 import RBSheet from 'react-native-raw-bottom-sheet'
 import ProfileCard from '../../Components/ProfileCard'
 import { useFocusEffect, useTheme } from '@react-navigation/native'
 import { navigate } from '../../lib/Navigation'
-import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'
 import { t } from 'i18next'
-import { FlatList } from 'react-native-gesture-handler'
-import { getLastReaction } from '../../Functions/DatabaseFunctions/Reactions'
+import GlobalFeed from '../GlobalFeed'
+import MyFeed from '../MyFeed'
+import { AppContext } from '../../Contexts/AppContext'
 
 interface HomeFeedProps {
   navigation: any
@@ -34,128 +18,25 @@ interface HomeFeedProps {
 
 export const HomeFeed: React.FC<HomeFeedProps> = ({ navigation }) => {
   const theme = useTheme()
-  const { database } = useContext(AppContext)
-  const { publicKey, privateKey } = useContext(UserContext)
-  const { lastEventId, relayPool, lastConfirmationtId } = useContext(RelayPoolContext)
-  const initialPageSize = 10
-  const [notes, setNotes] = useState<Note[]>([])
-  const [pageSize, setPageSize] = useState<number>(initialPageSize)
-  const [refreshing, setRefreshing] = useState(false)
+  const { showPublicImages } = useContext(AppContext)
+  const { privateKey } = useContext(UserContext)
+  const { relayPool } = useContext(RelayPoolContext)
+  const [tabKey, setTabKey] = React.useState('myFeed')
   const [profileCardPubkey, setProfileCardPubKey] = useState<string>()
   const bottomSheetProfileRef = React.useRef<RBSheet>(null)
 
   useFocusEffect(
     React.useCallback(() => {
-      subscribeNotes()
-      loadNotes()
-
       return () =>
         relayPool?.unsubscribe([
-          'homepage-main',
+          'homepage-global-main',
+          'homepage-contacts-main',
           'homepage-reactions',
           'homepage-contacts-meta',
           'homepage-replies',
         ])
     }, []),
   )
-
-  useEffect(() => {
-    if (relayPool && publicKey) {
-      loadNotes()
-    }
-  }, [lastEventId, lastConfirmationtId])
-
-  useEffect(() => {
-    if (pageSize > initialPageSize) {
-      subscribeNotes(true)
-    }
-  }, [pageSize])
-
-  const onRefresh = useCallback(() => {
-    setRefreshing(true)
-    subscribeNotes()
-  }, [])
-
-  const subscribeNotes: (past?: boolean) => void = async (past) => {
-    if (!database || !publicKey) return
-
-    const users: User[] = await getUsers(database, { contacts: true, order: 'created_at DESC' })
-    const authors: string[] = [...users.map((user) => user.id), publicKey]
-
-    const lastNotes: Note[] = await getMainNotes(database, publicKey, initialPageSize)
-    const lastNote: Note = lastNotes[lastNotes.length - 1]
-
-    const message: RelayFilters = {
-      kinds: [Kind.Text, Kind.RecommendRelay],
-      authors,
-    }
-    if (lastNote && lastNotes.length >= pageSize && !past) {
-      message.since = lastNote?.created_at
-    } else {
-      message.limit = pageSize + initialPageSize
-    }
-    relayPool?.subscribe('homepage-main', [message])
-    relayPool?.subscribe('homepage-contacts-meta', [
-      {
-        kinds: [Kind.Metadata],
-        authors,
-      },
-    ])
-    setRefreshing(false)
-  }
-
-  const onScroll: (event: NativeSyntheticEvent<NativeScrollEvent>) => void = (event) => {
-    if (handleInfinityScroll(event)) {
-      setPageSize(pageSize + initialPageSize)
-    }
-  }
-
-  const loadNotes: () => void = () => {
-    if (database && publicKey) {
-      getMainNotes(database, publicKey, pageSize).then((notes) => {
-        setNotes(notes)
-        if (notes.length > 0) {
-          const notedIds = notes.map((note) => note.id ?? '')
-          getLastReaction(database, { eventIds: notes.map((note) => note.id ?? '') }).then(
-            (lastReaction) => {
-              relayPool?.subscribe('homepage-reactions', [
-                {
-                  kinds: [Kind.Reaction],
-                  '#e': notedIds,
-                  since: lastReaction?.created_at ?? 0,
-                },
-              ])
-            },
-          )
-          getLastReply(database, { eventIds: notes.map((note) => note.id ?? '') }).then(
-            (lastReply) => {
-              relayPool?.subscribe('homepage-replies', [
-                {
-                  kinds: [Kind.Text],
-                  '#e': notedIds,
-                  since: lastReply?.created_at ?? 0,
-                },
-              ])
-            },
-          )
-        }
-      })
-    }
-  }
-
-  const renderItem: ListRenderItem<Note> = ({ item, index }) => {
-    return (
-      <View style={styles.noteCard} key={item.id}>
-        <NoteCard
-          note={item}
-          onPressUser={(user) => {
-            setProfileCardPubKey(user.id)
-            bottomSheetProfileRef.current?.open()
-          }}
-        />
-      </View>
-    )
-  }
 
   const bottomSheetStyles = React.useMemo(() => {
     return {
@@ -168,37 +49,74 @@ export const HomeFeed: React.FC<HomeFeedProps> = ({ navigation }) => {
     }
   }, [])
 
+  const renderScene: Record<string, JSX.Element> = {
+    globalFeed: (
+      <GlobalFeed
+        navigation={navigation}
+        setProfileCardPubKey={(value) => {
+          setProfileCardPubKey(value)
+          bottomSheetProfileRef.current?.open()
+        }}
+      />
+    ),
+    myFeed: (
+      <MyFeed
+        navigation={navigation}
+        setProfileCardPubKey={(value) => {
+          setProfileCardPubKey(value)
+          bottomSheetProfileRef.current?.open()
+        }}
+      />
+    ),
+  }
+
   return (
-    <View style={styles.container}>
-      {notes && notes.length > 0 ? (
-        <ScrollView
-          onScroll={onScroll}
-          horizontal={false}
-          showsVerticalScrollIndicator={false}
-          refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
+    <View>
+      <View style={styles.tabsNavigator}>
+        <View
+          style={[
+            styles.tab,
+            {
+              borderBottomColor:
+                tabKey === 'globalFeed' ? theme.colors.primary : theme.colors.border,
+              borderBottomWidth: tabKey === 'globalFeed' ? 3 : 1,
+            },
+          ]}
         >
-          <FlatList showsVerticalScrollIndicator={false} data={notes} renderItem={renderItem} />
-          {notes.length >= 10 && <ActivityIndicator animating={true} />}
-        </ScrollView>
-      ) : (
-        <View style={styles.blank}>
-          <MaterialCommunityIcons
-            name='account-group-outline'
-            size={64}
-            style={styles.center}
-            color={theme.colors.onPrimaryContainer}
-          />
-          <Text variant='headlineSmall' style={styles.center}>
-            {t('homeFeed.emptyTitle')}
-          </Text>
-          <Text variant='bodyMedium' style={styles.center}>
-            {t('homeFeed.emptyDescription')}
-          </Text>
-          <Button mode='contained' compact onPress={() => navigation.jumpTo('contacts')}>
-            {t('homeFeed.emptyButton')}
-          </Button>
+          <TouchableRipple
+            onPress={() => {
+              relayPool?.unsubscribe([
+                'homepage-contacts-main',
+                'homepage-reactions',
+                'homepage-contacts-meta',
+                'homepage-replies',
+              ])
+              setTabKey('globalFeed')
+            }}
+          >
+            <Text style={styles.tabText}>{t('homeFeed.globalFeed')}</Text>
+          </TouchableRipple>
         </View>
-      )}
+        <View
+          style={[
+            styles.tab,
+            {
+              borderBottomColor: tabKey === 'myFeed' ? theme.colors.primary : theme.colors.border,
+              borderBottomWidth: tabKey === 'myFeed' ? 3 : 1,
+            },
+          ]}
+        >
+          <TouchableRipple
+            onPress={() => {
+              relayPool?.unsubscribe(['homepage-global-main'])
+              setTabKey('myFeed')
+            }}
+          >
+            <Text style={styles.tabText}>{t('homeFeed.myFeed')}</Text>
+          </TouchableRipple>
+        </View>
+      </View>
+      <View style={styles.feed}>{renderScene[tabKey]}</View>
       {privateKey && (
         <AnimatedFAB
           style={[styles.fab, { top: Dimensions.get('window').height - 220 }]}
@@ -216,7 +134,11 @@ export const HomeFeed: React.FC<HomeFeedProps> = ({ navigation }) => {
         height={280}
         customStyles={bottomSheetStyles}
       >
-        <ProfileCard userPubKey={profileCardPubkey ?? ''} bottomSheetRef={bottomSheetProfileRef} />
+        <ProfileCard
+          userPubKey={profileCardPubkey ?? ''}
+          bottomSheetRef={bottomSheetProfileRef}
+          showImages={showPublicImages}
+        />
       </RBSheet>
     </View>
   )
@@ -231,9 +153,7 @@ const styles = StyleSheet.create({
     position: 'absolute',
   },
   container: {
-    paddingLeft: 16,
-    paddingRight: 16,
-    flex: 1,
+    padding: 16,
   },
   center: {
     alignContent: 'center',
@@ -243,6 +163,27 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     height: 220,
     marginTop: 91,
+  },
+  tab: {
+    flex: 1,
+    height: '100%',
+    justifyContent: 'center',
+    alignContent: 'center',
+  },
+  tabText: {
+    textAlign: 'center',
+    paddingTop: 25,
+    height: '100%',
+  },
+  tabsNavigator: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    height: 70,
+  },
+  feed: {
+    paddingBottom: 140,
+    paddingLeft: 16,
+    paddingRight: 16,
   },
 })
 

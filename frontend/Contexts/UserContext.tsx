@@ -2,12 +2,7 @@ import React, { useContext, useEffect, useState } from 'react'
 import SInfo from 'react-native-sensitive-info'
 import { RelayPoolContext } from './RelayPoolContext'
 import { AppContext } from './AppContext'
-import {
-  getContactsCount,
-  getFollowersCount,
-  getUser,
-  User,
-} from '../Functions/DatabaseFunctions/Users'
+import { getUser, User } from '../Functions/DatabaseFunctions/Users'
 import { getPublicKey } from 'nostr-tools'
 import { dropTables } from '../Functions/DatabaseFunctions'
 import { navigate } from '../lib/Navigation'
@@ -27,10 +22,6 @@ export interface UserContextProps {
   setPrivateKey: (privateKey: string | undefined) => void
   setUser: (user: User) => void
   user?: User
-  contactsCount: number
-  followersCount: number
-  setContantsCount: (count: number) => void
-  setFollowersCount: (count: number) => void
   reloadUser: () => void
   logout: () => void
 }
@@ -47,10 +38,6 @@ export const initialUserContext: UserContextProps = {
   setUser: () => {},
   reloadUser: () => {},
   logout: () => {},
-  setContantsCount: () => {},
-  setFollowersCount: () => {},
-  contactsCount: 0,
-  followersCount: 0,
 }
 
 export const UserContextProvider = ({ children }: UserContextProviderProps): JSX.Element => {
@@ -63,8 +50,6 @@ export const UserContextProvider = ({ children }: UserContextProviderProps): JSX
   const [privateKey, setPrivateKey] = useState<string>()
   const [user, setUser] = React.useState<User>()
   const [clipboardLoads, setClipboardLoads] = React.useState<string[]>([])
-  const [contactsCount, setContantsCount] = React.useState<number>(0)
-  const [followersCount, setFollowersCount] = React.useState<number>(0)
 
   const reloadUser: () => void = () => {
     if (database && publicKey) {
@@ -78,8 +63,6 @@ export const UserContextProvider = ({ children }: UserContextProviderProps): JSX
         }
         checkClipboard()
       })
-      getContactsCount(database).then(setContantsCount)
-      getFollowersCount(database).then(setFollowersCount)
     }
   }
 
@@ -169,12 +152,8 @@ export const UserContextProvider = ({ children }: UserContextProviderProps): JSX
         privateKey,
         setPrivateKey,
         user,
-        contactsCount,
-        followersCount,
         reloadUser,
         logout,
-        setContantsCount,
-        setFollowersCount,
       }}
     >
       {children}

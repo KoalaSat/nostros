@@ -23,6 +23,7 @@
       "Note": "Note",
       "Profile": "Profile",
       "About": "About",
+      "Config": "Config",
       "Send": "Send",
       "Relays": "Relays",
       "ProfileConfig": "My profile"
@@ -57,9 +58,15 @@
       "about": "About",
       "logout": "Logout"
     },
+    "configPage": {
+      "showPublicImages": "Show images on public feed",
+      "showSensitive": "Show sensitive notes",
+      "satoshi": "Satoshi symbol"
+    },
     "noteCard": {
       "answering": "Answer to {{pubkey}}",
       "reposting": "Reposted {{pubkey}}",
+      "userBlocked": "User blocked",
       "seeParent": "See note",
       "contentWarning": "Sensitive content"
     },
@@ -128,7 +135,11 @@
     "homeFeed": {
       "emptyTitle": "You are not following anyone.",
       "emptyDescription": "Follow other profiles to see content.",
-      "emptyButton": "Go to contacts"
+      "emptyButton": "Go to contacts",
+      "globalFeed": "Global feed",
+      "myFeed": "My feed",
+      "newMessage": "{{newNotesCount}} new note. Pull to refresh.",
+      "newMessages": "{{newNotesCount}} new notes. Pull to refresh."
     },
     "relaysPage": {
       "labelAdd": "Relay address",
@@ -204,6 +215,8 @@
       "message": "Message",
       "follow": "Follow",
       "unfollow": "Following",
+      "block": "Block",
+      "unblock": "Unblock",
       "copyNPub": "Copy key"
     },
     "conversationsFeed": {

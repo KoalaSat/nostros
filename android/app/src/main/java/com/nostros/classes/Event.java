@@ -66,7 +66,7 @@ public class Event {
     }
 
     protected boolean isValid() {
-        return !id.isEmpty() && !sig.isEmpty();
+        return !id.isEmpty() && !sig.isEmpty() && created_at <= System.currentTimeMillis() / 1000L;
     }
 
     protected String getMainEventId() {

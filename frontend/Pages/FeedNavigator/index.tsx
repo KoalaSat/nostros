@@ -14,6 +14,7 @@ import ProfileCard from '../../Components/ProfileCard'
 import NotePage from '../NotePage'
 import SendPage from '../SendPage'
 import ConversationPage from '../ConversationPage'
+import ConfigPage from '../ConfigPage'
 
 export const HomeNavigator: React.FC = () => {
   const theme = useTheme()
@@ -102,6 +103,7 @@ export const HomeNavigator: React.FC = () => {
         <Stack.Group>
           <Stack.Screen name='Relays' component={RelaysPage} />
           <Stack.Screen name='About' component={AboutPage} />
+          <Stack.Screen name='Config' component={ConfigPage} />
           <Stack.Screen name='ProfileConfig' component={ProfileConfigPage} />
           <Stack.Screen name='Profile' component={ProfilePage} />
         </Stack.Group>

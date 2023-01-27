@@ -68,6 +68,7 @@ public class DatabaseModule {
         try {
             database.execSQL("ALTER TABLE nostros_users ADD COLUMN created_at INT DEFAULT 0;");
         } catch (SQLException e) { }
+        try {
         database.execSQL("CREATE TABLE IF NOT EXISTS nostros_reactions(\n" +
                 "          id TEXT PRIMARY KEY NOT NULL, \n" +
                 "          content TEXT NOT NULL,\n" +
@@ -80,6 +81,7 @@ public class DatabaseModule {
                 "          reacted_event_id TEXT,\n" +
                 "          reacted_user_id TEXT\n" +
                 "        );");
+        } catch (SQLException e) { }
         try {
             database.execSQL("CREATE INDEX nostros_notes_pubkey_index ON nostros_notes(pubkey); ");
             database.execSQL("CREATE INDEX nostros_notes_main_event_id_index ON nostros_notes(main_event_id); ");
@@ -105,6 +107,31 @@ public class DatabaseModule {
         } catch (SQLException e) { }
         try {
             database.execSQL("ALTER TABLE nostros_relays ADD COLUMN active BOOLEAN DEFAULT TRUE;");
+        } catch (SQLException e) { }
+        try {
+            database.execSQL("CREATE INDEX nostros_notes_main_index ON nostros_notes(pubkey, main_event_id, created_at);");
+            database.execSQL("CREATE INDEX nostros_notes_kind_index ON nostros_notes(repost_id, pubkey, created_at); ");
+            database.execSQL("CREATE INDEX nostros_notes_notifications_index ON nostros_notes(pubkey, user_mentioned, reply_event_id, created_at); ");
+            database.execSQL("CREATE INDEX nostros_notes_repost_id_index ON nostros_notes(pubkey, repost_id); ");
+            database.execSQL("CREATE INDEX nostros_notes_reply_event_id_count_index ON nostros_notes(created_at, reply_event_id); ");
+
+            database.execSQL("CREATE INDEX nostros_direct_messages_created_at_index ON nostros_direct_messages(created_at); ");
+            database.execSQL("CREATE INDEX nostros_direct_messages_created_at_conversation_id_index ON nostros_direct_messages(created_at, conversation_id); ");
+
+            database.execSQL("CREATE INDEX nostros_reactions_created_at_reacted_event_id_index ON nostros_reactions(created_at, reacted_event_id); ");
+
+            database.execSQL("CREATE INDEX nostros_users_contact_index ON nostros_users(contact, follower); ");
+            database.execSQL("CREATE INDEX nostros_users_contact_index ON nostros_users(id, name); ");
+        } catch (SQLException e) { }
+        try {
+            database.execSQL("CREATE TABLE IF NOT EXISTS nostros_config(\n" +
+                    "          satoshi TEXT NOT NULL,\n" +
+                    "          show_public_images BOOLEAN DEFAULT FALSE,\n" +
+                    "          show_sensitive BOOLEAN DEFAULT FALSE\n" +
+                    "        );");
+        } catch (SQLException e) { }
+        try {
+            database.execSQL("ALTER TABLE nostros_users ADD COLUMN blocked BOOLEAN DEFAULT FALSE;");
         } catch (SQLException e) { }
     }
 

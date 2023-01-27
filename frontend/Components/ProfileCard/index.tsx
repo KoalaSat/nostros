@@ -6,7 +6,13 @@ import { Card, IconButton, Snackbar, Text, useTheme } from 'react-native-paper'
 import { AppContext } from '../../Contexts/AppContext'
 import { RelayPoolContext } from '../../Contexts/RelayPoolContext'
 import { UserContext } from '../../Contexts/UserContext'
-import { getUser, updateUserContact, User } from '../../Functions/DatabaseFunctions/Users'
+import {
+  addUser,
+  getUser,
+  updateUserBlock,
+  updateUserContact,
+  User,
+} from '../../Functions/DatabaseFunctions/Users'
 import { populatePets, usernamePubKey } from '../../Functions/RelayFunctions/Users'
 import LnPayment from '../LnPayment'
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'
@@ -18,14 +24,20 @@ import ProfileData from '../ProfileData'
 interface ProfileCardProps {
   userPubKey: string
   bottomSheetRef: React.RefObject<RBSheet>
+  showImages: boolean
 }
 
-export const ProfileCard: React.FC<ProfileCardProps> = ({ userPubKey, bottomSheetRef }) => {
+export const ProfileCard: React.FC<ProfileCardProps> = ({
+  userPubKey,
+  bottomSheetRef,
+  showImages = true,
+}) => {
   const theme = useTheme()
   const { database } = React.useContext(AppContext)
   const { publicKey } = React.useContext(UserContext)
   const { relayPool } = React.useContext(RelayPoolContext)
   const [user, setUser] = React.useState<User>()
+  const [blocked, setBlocked] = React.useState<boolean>()
   const [openLn, setOpenLn] = React.useState<boolean>(false)
   const [isContact, setIsContact] = React.useState<boolean>()
   const [showNotification, setShowNotification] = React.useState<undefined | string>()
@@ -35,6 +47,15 @@ export const ProfileCard: React.FC<ProfileCardProps> = ({ userPubKey, bottomShee
   React.useEffect(() => {
     loadUser()
   }, [])
+
+  const onChangeBlockUser: () => void = () => {
+    if (database && blocked !== undefined) {
+      updateUserBlock(userPubKey, database, !blocked).then(() => {
+        setBlocked(!blocked)
+        loadUser()
+      })
+    }
+  }
 
   const removeContact: () => void = () => {
     if (relayPool && database && publicKey) {
@@ -61,7 +82,13 @@ export const ProfileCard: React.FC<ProfileCardProps> = ({ userPubKey, bottomShee
       getUser(userPubKey, database).then((result) => {
         if (result) {
           setUser(result)
+          setBlocked(result.blocked)
           setIsContact(result?.contact)
+        } else {
+          addUser(userPubKey, database).then(() => {
+            setUser({ id: userPubKey })
+            setBlocked(false)
+          })
         }
       })
     }
@@ -80,11 +107,11 @@ export const ProfileCard: React.FC<ProfileCardProps> = ({ userPubKey, bottomShee
             <View style={styles.cardUserMain}>
               <ProfileData
                 username={user?.name}
-                publicKey={user?.id}
+                publicKey={user?.id ?? userPubKey}
                 validNip05={user?.valid_nip05}
                 nip05={user?.nip05}
                 lud06={user?.lnurl}
-                picture={user?.picture}
+                picture={showImages ? user?.picture : undefined}
                 avatarSize={54}
               />
             </View>
@@ -120,6 +147,14 @@ export const ProfileCard: React.FC<ProfileCardProps> = ({ userPubKey, bottomShee
         )}
         <View style={styles.actionButton}>
           <IconButton
+            icon={blocked ? 'account-cancel' : 'account-cancel-outline'}
+            size={28}
+            onPress={onChangeBlockUser}
+          />
+          <Text>{t(blocked ? 'profileCard.unblock' : 'profileCard.block')}</Text>
+        </View>
+        <View style={styles.actionButton}>
+          <IconButton
             icon='message-plus-outline'
             size={28}
             onPress={() => {
@@ -140,8 +175,8 @@ export const ProfileCard: React.FC<ProfileCardProps> = ({ userPubKey, bottomShee
           />
           <Text>{t('profileCard.copyNPub')}</Text>
         </View>
-        <View style={styles.actionButton}>
-          {user?.lnurl && (
+        {user?.lnurl && (
+          <View style={styles.actionButton}>
             <>
               <IconButton
                 icon='lightning-bolt'
@@ -151,8 +186,8 @@ export const ProfileCard: React.FC<ProfileCardProps> = ({ userPubKey, bottomShee
               />
               <Text>{t('profileCard.invoice')}</Text>
             </>
-          )}
-        </View>
+          </View>
+        )}
       </View>
       {showNotification && (
         <Snackbar
