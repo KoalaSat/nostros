@@ -51,10 +51,11 @@ export const getMentionNotes: (
       nostros_notes.*, nostros_users.nip05, nostros_users.valid_nip05, nostros_users.lnurl, nostros_users.name, nostros_users.picture, nostros_users.contact, nostros_users.created_at as user_created_at FROM nostros_notes
     LEFT JOIN
       nostros_users ON nostros_users.id = nostros_notes.pubkey
-    WHERE (nostros_notes.reply_event_id IN (
+    WHERE 
+      nostros_notes.pubkey != '${pubKey}'
+    AND (nostros_notes.reply_event_id IN (
       SELECT nostros_notes.id FROM nostros_notes WHERE pubkey = '${pubKey}'
     ) OR nostros_notes.user_mentioned = 1)
-    AND nostros_notes.pubkey != '${pubKey}'
     ORDER BY created_at DESC
     LIMIT ${limit}
   `

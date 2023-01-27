@@ -252,7 +252,7 @@ dependencies {
 
     implementation "androidx.swiperefreshlayout:swiperefreshlayout:1.0.0"
 
-    implementation 'com.neovisionaries:nv-websocket-client:2.14'
+    implementation 'org.java-websocket:Java-WebSocket:1.5.3'
 
     implementation 'com.facebook.fresco:animated-webp:2.6.0'
     implementation 'com.facebook.fresco:webpsupport:2.6.0'
