@@ -11,6 +11,7 @@ export interface Note extends Event {
   nip05: string
   valid_nip05: boolean
   repost_id: string
+  blocked: boolean
 }
 
 const databaseToEntity: (object: any) => Note = (object = {}) => {
@@ -22,14 +23,26 @@ export const getMainNotes: (
   db: QuickSQLiteConnection,
   pubKey: string,
   limit: number,
-) => Promise<Note[]> = async (db, pubKey, limit) => {
-  const notesQuery = `
+  contants: boolean,
+  filters?: {
+    until?: number
+  },
+) => Promise<Note[]> = async (db, pubKey, limit, contants, filters) => {
+  let notesQuery = `
     SELECT
-      nostros_notes.*, nostros_users.nip05, nostros_users.valid_nip05, nostros_users.lnurl, nostros_users.name, nostros_users.picture, nostros_users.contact, nostros_users.created_at as user_created_at FROM nostros_notes
+      nostros_notes.*, nostros_users.nip05, nostros_users.blocked, nostros_users.valid_nip05, nostros_users.lnurl, nostros_users.name, nostros_users.picture, nostros_users.contact, nostros_users.created_at as user_created_at FROM nostros_notes
     LEFT JOIN
       nostros_users ON nostros_users.id = nostros_notes.pubkey
-    WHERE (nostros_users.contact = 1 OR nostros_notes.pubkey = '${pubKey}')
-    AND nostros_notes.main_event_id IS NULL
+    WHERE 
+  `
+
+  if (contants)
+    notesQuery += `(nostros_users.contact = 1 OR nostros_notes.pubkey = '${pubKey}') AND `
+
+  if (filters?.until) notesQuery += `nostros_notes.created_at < ${filters?.until} AND `
+
+  notesQuery += `
+    nostros_notes.main_event_id IS NULL
     ORDER BY created_at DESC
     LIMIT ${limit}
   `
@@ -39,6 +52,22 @@ export const getMainNotes: (
   const notes: Note[] = items.map((object) => databaseToEntity(object))
 
   return notes
+}
+
+export const getMainNotesCount: (
+  db: QuickSQLiteConnection,
+  from: number,
+) => Promise<number> = async (db, from) => {
+  const repliesQuery = `
+    SELECT
+      COUNT(*)
+    FROM nostros_notes
+    WHERE created_at > "${from}"
+  `
+  const resultSet = db.execute(repliesQuery)
+  const item: { 'COUNT(*)': number } = resultSet?.rows?.item(0)
+
+  return item['COUNT(*)'] ?? 0
 }
 
 export const getMentionNotes: (

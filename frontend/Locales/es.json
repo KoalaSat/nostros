@@ -23,6 +23,7 @@
       "Note": "Nota",
       "Profile": "Perfil",
       "About": "About",
+      "Config": "Config",
       "Send": "Send",
       "Relays": "Relays",
       "ProfileConfig": "My profile"
@@ -57,10 +58,16 @@
       "about": "Sobre Nostros",
       "logout": "Salir"
     },
+    "configPage": {
+      "showPublicImages": "Show images on public feed",
+      "showSensitive": "Show sensitive notes",
+      "satoshi": "Satoshi symbol"
+    },
     "noteCard": {
       "answering": "Responder a {{pubkey}}",
       "reposting": "Reposted {{pubkey}}",
       "seeParent": "See note",
+      "userBlocked": "User blocked",
       "contentWarning": "Sensitive content"
     },
     "lnPayment": {
@@ -129,7 +136,11 @@
     "homeFeed": {
       "emptyTitle": "No sigues a nadie",
       "emptyDescription": "Sigue otros perfiles para ver aquí contenido.",
-      "emptyButton": "Ir a contactos"
+      "emptyButton": "Ir a contactos",
+      "globalFeed": "Fee global",
+      "newMessage": "{{newNotesCount}} nota nueva. Desliza para recargar.",
+      "newMessages": "{{newNotesCount}} notas nuevas. Desliza para refrescar.",
+      "myFeed": "Mi feed"
     },
     "relaysPage": {
       "labelAdd": "Dirección de relay",
@@ -202,6 +213,8 @@
       "invoice": "Propina",
       "message": "Mensaje",
       "follow": "Seguir",
+      "block": "Bloquear",
+      "unblock": "Desbloquear",
       "unfollow": "Siguiendo",
       "copyNPub": "Copiar clave"
     },

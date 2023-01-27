@@ -23,6 +23,7 @@
       "Repost": "Поделиться",
       "Profile": "Профиль",
       "About": "О нас",
+      "Config": "Config",
       "Send": "Отпраить",
       "Relays": "Реле",
       "ProfileConfig": "Мой профиль"
@@ -57,10 +58,16 @@
       "about": "Подроблее",
       "logout": "Выйти"
     },
+    "configPage": {
+      "showPublicImages": "Show images on public feed",
+      "showSensitive": "Show sensitive notes",
+      "satoshi": "Satoshi symbol"
+    },
     "noteCard": {
       "answering": "Ответить {{pubkey}}",
       "reposting": "Reposted {{pubkey}}",
       "seeParent": "See note",
+      "userBlocked": "User blocked",
       "contentWarning": "Деликатный контент"
     },
     "lnPayment": {
@@ -128,7 +135,11 @@
     "homeFeed": {
       "emptyTitle": "You are not following anyone.",
       "emptyDescription": "Follow other profiles to see content.",
-      "emptyButton": "Go to contacts"
+      "emptyButton": "Go to contacts",
+      "globalFeed": "Global feed",
+      "newMessage": "{{newNotesCount}} nota nueva. Desliza para recargar.",
+      "newMessages": "{{newNotesCount}} notas nuevas. Desliza para refrescar.",
+      "myFeed": "My feed"
     },
     "relaysPage": {
       "labelAdd": "Relay address",
@@ -201,6 +212,8 @@
       "invoice": "Tip",
       "message": "Message",
       "follow": "Follow",
+      "block": "Block",
+      "unblock": "Desbloquear",
       "unfollow": "Following",
       "copyNPub": "Copy key"
     },

@@ -13,6 +13,7 @@ export interface User {
   nip05?: string
   created_at?: number
   valid_nip05?: boolean
+  blocked?: boolean
 }
 
 const databaseToEntity: (object: object) => User = (object) => {
@@ -28,6 +29,17 @@ export const updateUserContact: (
 
   await addUser(userId, db)
   return db.execute(userQuery, [contact ? 1 : 0, userId])
+}
+
+export const updateUserBlock: (
+  userId: string,
+  db: QuickSQLiteConnection,
+  blocked: boolean,
+) => Promise<QueryResult | null> = async (userId, db, blocked) => {
+  const userQuery = `UPDATE nostros_users SET blocked = ? WHERE id = ?`
+
+  await addUser(userId, db)
+  return db.execute(userQuery, [blocked ? 1 : 0, userId])
 }
 
 export const getUser: (pubkey: string, db: QuickSQLiteConnection) => Promise<User | null> = async (

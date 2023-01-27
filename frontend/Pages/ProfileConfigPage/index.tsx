@@ -30,8 +30,7 @@ export const ProfileConfigPage: React.FC = () => {
   const bottomSheetLud06Ref = React.useRef<RBSheet>(null)
   const { database } = useContext(AppContext)
   const { relayPool, lastEventId } = useContext(RelayPoolContext)
-  const { user, publicKey, nPub, nSec, contactsCount, followersCount, setUser } =
-    useContext(UserContext)
+  const { user, publicKey, nPub, nSec, setUser } = useContext(UserContext)
   // State
   const [name, setName] = useState<string>()
   const [picture, setPicture] = useState<string>()
@@ -255,14 +254,6 @@ export const ProfileConfigPage: React.FC = () => {
                   />
                 )}
               </TouchableRipple>
-            </View>
-            <View style={styles.cardActions}>
-              <Button mode='elevated'>
-                {t('menuItems.following', { following: contactsCount })}
-              </Button>
-              <Button mode='elevated'>
-                {t('menuItems.followers', { followers: followersCount })}
-              </Button>
             </View>
             <View style={styles.cardActions}>
               <View style={styles.actionButton}>
@@ -535,7 +526,6 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'center',
     alignContent: 'center',
-    marginBottom: 32,
   },
   actionButton: {
     marginTop: 32,
