@@ -81,7 +81,7 @@ export const AboutPage: React.FC = () => {
             )}
           />
         ),
-        right: <Text>v0.2.1.4-alpha</Text>,
+        right: <Text>v0.2.1.5-alpha</Text>,
         onPress: () => {},
       },
     ],
