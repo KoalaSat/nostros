@@ -9,6 +9,7 @@ import com.facebook.react.bridge.ReactApplicationContext;
 import com.nostros.modules.DatabaseModule;
 
 import java.io.IOException;
+import java.net.URISyntaxException;
 
 public class Relay {
     private Websocket webSocket;
@@ -38,7 +39,11 @@ public class Relay {
     }
 
     public void connect(String userPubKey) throws IOException {
-        webSocket.connect(userPubKey);
+        try {
+            webSocket.connect(userPubKey);
+        } catch (URISyntaxException e) {
+            e.printStackTrace();
+        }
     }
 
     public void save(SQLiteDatabase database) {
