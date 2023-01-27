@@ -62,33 +62,34 @@ public class Websocket {
 
             @Override
             public void onMessage(String message) {
-                Log.d("Websocket", "RECEIVE URL:" + url + " __ " + message);
-                JSONArray jsonArray;
-                try {
-                    jsonArray = new JSONArray(message);
-                    String messageType = jsonArray.get(0).toString();
-                    if (messageType.equals("EVENT")) {
-                        JSONObject data = jsonArray.getJSONObject(2);
-                        database.saveEvent(data, userPubKey);
-                        reactNativeEvent(data.getString("id"));
-                    } else if (messageType.equals("OK")) {
-                        reactNativeConfirmation(jsonArray.get(1).toString());
-                    }
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
+//                Log.d("Websocket", "RECEIVE URL:" + url + " __ " + message);
+//                JSONArray jsonArray;
+//                try {
+//                    jsonArray = new JSONArray(message);
+//                    String messageType = jsonArray.get(0).toString();
+//                    if (messageType.equals("EVENT")) {
+//                        JSONObject data = jsonArray.getJSONObject(2);
+//                        database.saveEvent(data, userPubKey);
+//                        reactNativeEvent(data.getString("id"));
+//                    } else if (messageType.equals("OK")) {
+//                        reactNativeConfirmation(jsonArray.get(1).toString());
+//                    }
+//                } catch (JSONException e) {
+//                    e.printStackTrace();
+//                }
             }
 
             @Override
             public void onClose(int code, String reason, boolean remote) {
-                this.connect();
+//                this.connect();
             }
 
             @Override
             public void onError(Exception ex) {
-                ex.printStackTrace();
+//                ex.printStackTrace();
             }
         };
+        webSocket.connect();
     }
 
     public void reactNativeEvent(String eventId) {
