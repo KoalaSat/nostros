@@ -31,6 +31,14 @@ jobs:
           cd android
           ./gradlew assembleRelease
 
+      - name: 'Check for non-FOSS libraries'
+        run: |
+          wget https://github.com/iBotPeaches/Apktool/releases/download/v2.5.0/apktool_2.5.0.jar
+          wget https://github.com/iBotPeaches/Apktool/raw/master/scripts/linux/apktool
+          chmod u+x apktool
+          ln -s apktool_2.5.0.jar apktool.jar
+          scanapk android/app/build/outputs/apk/release/app-universal-release.apk
+
       - name: 'Get Commit Hash'
         id: commit
         uses: pr-mpt/actions-commit-hash@v1
