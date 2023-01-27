@@ -44,8 +44,7 @@ jobs:
           mkdir -p repo/lib/radar/tool
           mv app-universal-release* repo/lib/radar/tool
           # create an alias for ease of use
-          alias scanapk=$(pwd)/repo/bin/scanapk.php
-          scanapk android/app/build/outputs/apk/release/app-universal-release.apk
+          repo/bin/scanapk.php android/app/build/outputs/apk/release/app-universal-release.apk
 
       - name: 'Get Commit Hash'
         id: commit
