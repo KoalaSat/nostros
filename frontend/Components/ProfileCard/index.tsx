@@ -115,13 +115,15 @@ export const ProfileCard: React.FC<ProfileCardProps> = ({
                 avatarSize={54}
               />
             </View>
-            <View style={styles.about}>
-              <Text>
-                {`${user?.about ? user?.about?.slice(0, 75) : ''}${
-                  user?.about && user?.about?.length > 75 ? ' ...' : ''
-                }`}
-              </Text>
-            </View>
+            { user?.about &&
+                <View style={styles.about}>
+                  <Text>
+                    {`${user?.about ? user?.about?.slice(0, 75) : ''}${
+                        user?.about && user?.about?.length > 75 ? ' ...' : ''
+                    }`}
+                  </Text>
+                </View>
+            }
           </View>
           <View>
             <MaterialCommunityIcons
