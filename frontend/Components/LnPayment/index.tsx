@@ -8,6 +8,7 @@ import Clipboard from '@react-native-clipboard/clipboard'
 import { useTranslation } from 'react-i18next'
 import RBSheet from 'react-native-raw-bottom-sheet'
 import { Button, Card, IconButton, Text, TextInput, useTheme } from 'react-native-paper'
+import { AppContext } from '../../Contexts/AppContext'
 
 interface TextContentProps {
   open: boolean
@@ -19,6 +20,7 @@ interface TextContentProps {
 export const LnPayment: React.FC<TextContentProps> = ({ open, setOpen, event, user }) => {
   const theme = useTheme()
   const { t } = useTranslation('common')
+  const { getSatoshiSymbol } = React.useContext(AppContext)
   const bottomSheetLnPaymentRef = React.useRef<RBSheet>(null)
   const bottomSheetInvoiceRef = React.useRef<RBSheet>(null)
   const [monto, setMonto] = useState<string>('')
@@ -91,22 +93,13 @@ export const LnPayment: React.FC<TextContentProps> = ({ open, setOpen, event, us
         <View style={styles.drawerBottom}>
           <View style={styles.montoSelection}>
             <Button style={styles.montoButton} mode='outlined' onPress={() => setMonto('1000')}>
-              <>
-                <Text style={styles.satoshi}>s</Text>
-                <Text> 1k</Text>
-              </>
+              <Text>1k {getSatoshiSymbol(15)}</Text>
             </Button>
             <Button style={styles.montoButton} mode='outlined' onPress={() => setMonto('5000')}>
-              <>
-                <Text style={styles.satoshi}>s</Text>
-                <Text> 5k</Text>
-              </>
+              <Text>5k {getSatoshiSymbol(15)}</Text>
             </Button>
             <Button style={styles.montoButton} mode='outlined' onPress={() => setMonto('10000')}>
-              <>
-                <Text style={styles.satoshi}>s</Text>
-                <Text> 10k</Text>
-              </>
+              <Text>10k {getSatoshiSymbol(15)}</Text>
             </Button>
           </View>
           <TextInput
@@ -146,10 +139,8 @@ export const LnPayment: React.FC<TextContentProps> = ({ open, setOpen, event, us
               <QRCode value={invoice} size={350} />
             </View>
             <View style={styles.qrText}>
-              <Text variant='titleMedium' style={styles.satoshi}>
-                s
-              </Text>
-              <Text variant='titleMedium'>{monto}</Text>
+              <Text>{monto} </Text>
+              {getSatoshiSymbol(23)}
             </View>
             {comment && (
               <View style={styles.qrText}>

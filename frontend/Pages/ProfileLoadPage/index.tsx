@@ -33,18 +33,15 @@ export const ProfileLoadPage: React.FC = () => {
   useEffect(() => {
     loadPets()
     reloadUser()
+    if (user?.created_at) {
+      setProfileFound(true)
+      loadPets()
+    }
   }, [lastEventId])
 
   useEffect(() => {
     if (publicKey && relayPoolReady) loadMeta()
   }, [publicKey, relayPoolReady])
-
-  useEffect(() => {
-    if (user) {
-      setProfileFound(true)
-      loadPets()
-    }
-  }, [user])
 
   const loadMeta: () => void = () => {
     if (publicKey && relayPoolReady) {

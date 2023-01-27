@@ -1,5 +1,5 @@
 import React, { useContext, useState } from 'react'
-import { FlatList, ListRenderItem, ScrollView, StyleSheet, View } from 'react-native'
+import { ScrollView, StyleSheet, View } from 'react-native'
 import Clipboard from '@react-native-clipboard/clipboard'
 import { useTranslation } from 'react-i18next'
 import { RelayPoolContext } from '../../Contexts/RelayPoolContext'
@@ -71,27 +71,6 @@ export const RelaysPage: React.FC = () => {
     }
   }
 
-  const relayToggle: (relay: Relay) => JSX.Element = (relay) => {
-    return (
-      <Switch
-        value={relay.active}
-        onValueChange={() => (relay.active ? desactiveRelay(relay) : activeRelay(relay))}
-      />
-    )
-  }
-
-  const renderItem: ListRenderItem<Relay> = ({ index, item }) => (
-    <List.Item
-      key={index}
-      title={item.url.split('wss://')[1]?.split('/')[0]}
-      right={() => relayToggle(item)}
-      onPress={() => {
-        setSelectedRelay(item)
-        bottomSheetEditRef.current?.open()
-      }}
-    />
-  )
-
   const rbSheetCustomStyles = React.useMemo(() => {
     return {
       container: {
@@ -113,22 +92,54 @@ export const RelaysPage: React.FC = () => {
             <Text style={styles.title} variant='titleMedium'>
               {t('relaysPage.myList')}
             </Text>
-            <FlatList style={styles.list} data={myRelays} renderItem={renderItem} />
+            {myRelays.length > 0 &&
+              myRelays.map((relay, index) => {
+                return (
+                  <List.Item
+                    key={index}
+                    title={relay.url.split('wss://')[1]?.split('/')[0]}
+                    right={() => (
+                      <Switch
+                        value={relay.active}
+                        onValueChange={() =>
+                          relay.active ? desactiveRelay(relay) : activeRelay(relay)
+                        }
+                      />
+                    )}
+                    onPress={() => {
+                      setSelectedRelay(relay)
+                      bottomSheetEditRef.current?.open()
+                    }}
+                  />
+                )
+              })}
           </>
         )}
         <Text style={styles.title} variant='titleMedium'>
           {t('relaysPage.recommended')}
         </Text>
-        <FlatList
-          style={styles.list}
-          data={defaultRelays.map((url) => {
-            return {
-              url,
-              active: relays.find((relay) => relay.url === url) !== undefined,
-            }
-          })}
-          renderItem={renderItem}
-        />
+        {defaultRelays.map((url, index) => {
+          const relay = {
+            url,
+            active: relays.find((relay) => relay.url === url && relay.active) !== undefined,
+          }
+          return (
+            <List.Item
+              key={index}
+              title={url.split('wss://')[1]?.split('/')[0]}
+              right={() => (
+                <Switch
+                  value={relay.active}
+                  onValueChange={() => (relay.active ? desactiveRelay(relay) : activeRelay(relay))}
+                />
+              )}
+              onPress={() => {
+                setSelectedRelay(relay)
+                bottomSheetEditRef.current?.open()
+              }}
+            />
+          )
+        })}
       </ScrollView>
       <AnimatedFAB
         style={styles.fab}

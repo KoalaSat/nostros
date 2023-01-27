@@ -34,10 +34,12 @@ export const MenuItems: React.FC = () => {
     setDrawerItemIndex(index)
     if (key === 'relays') {
       navigate('Relays')
-    } else if (key === 'config') {
-      navigate('Feed', { page: 'Config' })
+    } else if (key === 'configProfile') {
+      navigate('Feed', { page: 'ProfileConfig' })
     } else if (key === 'about') {
       navigate('About')
+    } else if (key === 'config') {
+      navigate('Config')
     }
   }
 
@@ -89,7 +91,7 @@ export const MenuItems: React.FC = () => {
           </Card>
         )}
         {publicKey && (
-          <Drawer.Section>
+          <Drawer.Section showDivider={false}>
             <Drawer.Item
               label={t('menuItems.relays')}
               icon={() => (
@@ -117,6 +119,16 @@ export const MenuItems: React.FC = () => {
             />
           </Drawer.Section>
         )}
+        <Drawer.Section>
+          <Drawer.Item
+            label={t('menuItems.configuration')}
+            icon='cog'
+            key='configuration'
+            active={drawerItemIndex === 1}
+            onPress={() => onPressItem('config', 1)}
+            onTouchEnd={() => setDrawerItemIndex(-1)}
+          />
+        </Drawer.Section>
         <Drawer.Section showDivider={false}>
           <Drawer.Item
             label={t('menuItems.about')}

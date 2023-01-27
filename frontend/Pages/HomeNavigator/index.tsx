@@ -10,6 +10,7 @@ import { useTranslation } from 'react-i18next'
 import ProfileCreatePage from '../../Pages/ProfileCreatePage'
 import { DrawerNavigationProp } from '@react-navigation/drawer'
 import RelaysPage from '../RelaysPage'
+import ConfigPage from '../ConfigPage'
 
 export const HomeNavigator: React.FC = () => {
   const theme = useTheme()
@@ -107,6 +108,7 @@ export const HomeNavigator: React.FC = () => {
         <Stack.Group>
           <Stack.Screen name='About' component={AboutPage} />
           <Stack.Screen name='Relays' component={RelaysPage} />
+          <Stack.Screen name='Config' component={ConfigPage} />
         </Stack.Group>
       </Stack.Navigator>
       <RBSheet
