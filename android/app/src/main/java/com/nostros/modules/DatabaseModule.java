@@ -106,11 +106,6 @@ public class DatabaseModule {
         try {
             database.execSQL("ALTER TABLE nostros_relays ADD COLUMN active BOOLEAN DEFAULT TRUE;");
         } catch (SQLException e) { }
-        try {
-            database.execSQL("CREATE INDEX nostros_direct_messages_created_at_index ON nostros_direct_messages(created_at); ");
-            database.execSQL("CREATE INDEX nostros_notes_user_mentioned_index ON nostros_notes(user_mentioned); ");
-            database.execSQL("CREATE INDEX nostros_notes_created_at_index ON nostros_notes(created_at); ");
-        } catch (SQLException e) { }
     }
 
     public void saveEvent(JSONObject data, String userPubKey) throws JSONException {
