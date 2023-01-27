@@ -9,6 +9,7 @@ import com.facebook.react.modules.core.DeviceEventManagerModule;
 import com.nostros.modules.DatabaseModule;
 
 import org.java_websocket.client.WebSocketClient;
+import org.java_websocket.exceptions.WebsocketNotConnectedException;
 import org.java_websocket.handshake.ServerHandshake;
 
 import org.json.JSONArray;
@@ -35,14 +36,11 @@ public class Websocket {
     public void send(String message) {
         if (webSocket != null) {
             Log.d("Websocket", "SEND URL:" + url + " __ " + message);
-            if (!webSocket.isOpen()) {
-                try {
-                    this.connect(pubKey);
-                } catch (IOException | URISyntaxException e) {
-                    e.printStackTrace();
-                }
+            try {
+                webSocket.send(message);
+            } catch (WebsocketNotConnectedException e) {
+
             }
-            webSocket.send(message);
         }
     }
 
@@ -62,31 +60,31 @@ public class Websocket {
 
             @Override
             public void onMessage(String message) {
-//                Log.d("Websocket", "RECEIVE URL:" + url + " __ " + message);
-//                JSONArray jsonArray;
-//                try {
-//                    jsonArray = new JSONArray(message);
-//                    String messageType = jsonArray.get(0).toString();
-//                    if (messageType.equals("EVENT")) {
-//                        JSONObject data = jsonArray.getJSONObject(2);
-//                        database.saveEvent(data, userPubKey);
-//                        reactNativeEvent(data.getString("id"));
-//                    } else if (messageType.equals("OK")) {
-//                        reactNativeConfirmation(jsonArray.get(1).toString());
-//                    }
-//                } catch (JSONException e) {
-//                    e.printStackTrace();
-//                }
+                Log.d("Websocket", "RECEIVE URL:" + url + " __ " + message);
+                JSONArray jsonArray;
+                try {
+                    jsonArray = new JSONArray(message);
+                    String messageType = jsonArray.get(0).toString();
+                    if (messageType.equals("EVENT")) {
+                        JSONObject data = jsonArray.getJSONObject(2);
+                        database.saveEvent(data, userPubKey);
+                        reactNativeEvent(data.getString("id"));
+                    } else if (messageType.equals("OK")) {
+                        reactNativeConfirmation(jsonArray.get(1).toString());
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
             }
 
             @Override
             public void onClose(int code, String reason, boolean remote) {
-//                this.connect();
+                webSocket.connect();
             }
 
             @Override
             public void onError(Exception ex) {
-//                ex.printStackTrace();
+                ex.printStackTrace();
             }
         };
         webSocket.connect();
