@@ -27,6 +27,7 @@ import {
   Avatar,
   IconButton,
   TouchableRipple,
+  Chip,
 } from 'react-native-paper'
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'
 import { REGEX_SOCKET_LINK } from '../../Constants/Relay'
@@ -224,22 +225,20 @@ export const NoteCard: React.FC<NoteCardProps> = ({
   const blockedContent: () => JSX.Element = () => {
     return (
       <Card.Content style={[styles.content, { borderColor: theme.colors.onSecondary }]}>
-        <Card>
-          <Card.Content style={styles.title}>
-            <View>
-              <Avatar.Icon
-                size={54}
-                icon='account-cancel'
-                style={{
-                  backgroundColor: theme.colors.tertiaryContainer,
-                }}
-              />
-            </View>
-            <View style={styles.userBlocked}>
-              <Text>{t('noteCard.userBlocked')}</Text>
-            </View>
-          </Card.Content>
-        </Card>
+          <View style={styles.userBlockedWrapper}>
+            <Chip
+                icon={() => (
+                    <MaterialCommunityIcons
+                        name={'account-cancel'}
+                        size={16}
+                        color={theme.colors.onTertiaryContainer}
+                    />
+                )}
+                style={{backgroundColor: theme.colors.tertiaryContainer, color: theme.colors.onTertiaryContainer}}
+            >
+              <Text style={{color: theme.colors.onTertiaryContainer}}>{t('noteCard.userBlocked')}</Text>
+            </Chip>
+          </View>
       </Card.Content>
     )
   }
@@ -368,9 +367,10 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignContent: 'center',
   },
-  userBlocked: {
-    justifyContent: 'center',
-    textAlign: 'center',
+  userBlockedWrapper: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center'
   },
   titleUser: {
     flexDirection: 'row',
