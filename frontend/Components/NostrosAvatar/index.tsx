@@ -25,11 +25,13 @@ export const NostrosAvatar: React.FC<NostrosAvatarProps> = ({
 
   return (
     <View>
-      {validImageUrl(src) ? (
-        <PaperAvatar.Image size={size} source={{ uri: src }} />
-      ) : (
-        <PaperAvatar.Text size={size} label={displayName.substring(0, 2).toUpperCase()} />
-      )}
+      <View style={{borderRadius: size / 2, overflow: 'hidden'}}>
+        {validImageUrl(src) ? (
+          <PaperAvatar.Image size={size} source={{ uri: src }} />
+        ) : (
+          <PaperAvatar.Text size={size} label={displayName.substring(0, 2).toUpperCase()} />
+        )}
+      </View>
       {hasLud06 ? (
         <PaperAvatar.Icon
           size={lud06IconSize}

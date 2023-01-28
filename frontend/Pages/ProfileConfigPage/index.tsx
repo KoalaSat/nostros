@@ -247,17 +247,19 @@ export const ProfileConfigPage: React.FC = () => {
           <Card.Content>
             <View style={styles.cardPicture}>
               <TouchableRipple onPress={() => bottomSheetPictureRef.current?.open()}>
-                {user?.picture ? (
-                  <Avatar.Image size={100} source={{ uri: user.picture }} />
-                ) : (
-                  <NostrosAvatar
-                    name={user?.name}
-                    pubKey={nPub ?? ''}
-                    src={user?.picture}
-                    lud06={user?.lnurl}
-                    size={100}
-                  />
-                )}
+                <View style={{borderRadius: 50, overflow: 'hidden'}}>
+                  {user?.picture ? (
+                      <Avatar.Image size={100} source={{ uri: user.picture }} />
+                  ) : (
+                      <NostrosAvatar
+                          name={user?.name}
+                          pubKey={nPub ?? ''}
+                          src={user?.picture}
+                          lud06={user?.lnurl}
+                          size={100}
+                      />
+                  )}
+                </View>
               </TouchableRipple>
             </View>
             <View style={styles.cardActions}>
@@ -372,6 +374,7 @@ export const ProfileConfigPage: React.FC = () => {
             label={t('profileConfigPage.pictureUrl') ?? ''}
             onChangeText={setPicture}
             value={picture}
+            style={styles.imageInput}
             right={
               <TextInput.Icon
                 icon='content-paste'
@@ -537,12 +540,16 @@ const styles = StyleSheet.create({
   },
   snackbar: {
     marginLeft: 16,
-    bottom: 65,
+    bottom: 24,
     width: '100%',
   },
   link: {
     textDecorationLine: 'underline',
   },
+  imageInput: {
+    marginTop: 16,
+    marginBottom: 16,
+  }
 })
 
 export default ProfileConfigPage
