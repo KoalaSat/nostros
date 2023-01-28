@@ -137,7 +137,7 @@
       "emptyTitle": "No sigues a nadie",
       "emptyDescription": "Sigue otros perfiles para ver aquí contenido.",
       "emptyButton": "Ir a contactos",
-      "globalFeed": "Fee global",
+      "globalFeed": "Feed global",
       "newMessage": "{{newNotesCount}} nota nueva. Desliza para recargar.",
       "newMessages": "{{newNotesCount}} notas nuevas. Desliza para refrescar.",
       "myFeed": "Mi feed"

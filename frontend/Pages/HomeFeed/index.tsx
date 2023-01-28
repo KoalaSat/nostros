@@ -88,6 +88,7 @@ export const HomeFeed: React.FC<HomeFeedProps> = ({ navigation }) => {
           ]}
         >
           <TouchableRipple
+            style={styles.textWrapper}
             onPress={() => {
               relayPool?.unsubscribe([
                 'homepage-contacts-main',
@@ -111,6 +112,7 @@ export const HomeFeed: React.FC<HomeFeedProps> = ({ navigation }) => {
           ]}
         >
           <TouchableRipple
+            style={styles.textWrapper}
             onPress={() => {
               relayPool?.unsubscribe(['homepage-global-main'])
               setTabKey('myFeed')
@@ -169,19 +171,19 @@ const styles = StyleSheet.create({
   },
   tab: {
     flex: 1,
-    height: '100%',
+  },
+  textWrapper: {
     justifyContent: 'center',
-    alignContent: 'center',
+    height: '100%',
+    textAlign: 'center'
   },
   tabText: {
     textAlign: 'center',
-    paddingTop: 25,
-    height: '100%',
   },
   tabsNavigator: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
-    height: 70,
+    alignItems: 'center',
+    height: 48,
   },
   feed: {
     paddingBottom: 140,
