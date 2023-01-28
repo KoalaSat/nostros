@@ -4,10 +4,7 @@ import Clipboard from '@react-native-clipboard/clipboard'
 import { AppContext } from '../../Contexts/AppContext'
 import { useTranslation } from 'react-i18next'
 import { UserContext } from '../../Contexts/UserContext'
-import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'
-import { getUser } from '../../Functions/DatabaseFunctions/Users'
 import { Kind } from 'nostr-tools'
-import getUnixTime from 'date-fns/getUnixTime'
 import {
   Avatar,
   Button,
@@ -22,6 +19,7 @@ import {
 import { RelayPoolContext } from '../../Contexts/RelayPoolContext'
 import RBSheet from 'react-native-raw-bottom-sheet'
 import NostrosAvatar from '../../Components/NostrosAvatar'
+import { getUnixTime } from 'date-fns'
 
 export const ProfileConfigPage: React.FC = () => {
   const theme = useTheme()
@@ -30,16 +28,26 @@ export const ProfileConfigPage: React.FC = () => {
   const bottomSheetNip05Ref = React.useRef<RBSheet>(null)
   const bottomSheetLud06Ref = React.useRef<RBSheet>(null)
   const { database } = useContext(AppContext)
-  const { relayPool, lastEventId } = useContext(RelayPoolContext)
-  const { user, publicKey, nPub, nSec, setUser } = useContext(UserContext)
+  const { relayPool, lastEventId, lastConfirmationtId } = useContext(RelayPoolContext)
+  const {
+    publicKey,
+    nPub,
+    nSec,
+    name,
+    setName,
+    picture,
+    setPicture,
+    about,
+    setAbout,
+    lnurl,
+    setLnurl,
+    nip05,
+    setNip05,
+    reloadUser,
+  } = useContext(UserContext)
   // State
-  const [name, setName] = useState<string>()
-  const [picture, setPicture] = useState<string>()
-  const [about, setAbout] = useState<string>()
-  const [lnurl, setLnurl] = useState<string>()
-  const [isPublishingProfile, setIsPublishingProfile] = useState<boolean>(false)
-  const [nip05, setNip05] = useState<string>()
   const [showNotification, setShowNotification] = useState<undefined | string>()
+  const [isPublishingProfile, setIsPublishingProfile] = useState<string>()
   const { t } = useTranslation('common')
 
   useEffect(() => {
@@ -55,154 +63,46 @@ export const ProfileConfigPage: React.FC = () => {
   }, [])
 
   useEffect(() => {
-    if (database && publicKey) {
-      getUser(publicKey, database).then((result) => {
-        if (result) {
-          setName(result.name)
-          setPicture(result.picture)
-          setAbout(result.about)
-          setLnurl(result.lnurl)
-          setNip05(result.nip05)
-          setUser(result)
-        }
-      })
+    if (isPublishingProfile) {
+      reloadUser()
+      setIsPublishingProfile(undefined)
+      setShowNotification(isPublishingProfile)
+      bottomSheetPictureRef.current?.close()
+      bottomSheetNip05Ref.current?.close()
+      bottomSheetLud06Ref.current?.close()
     }
-  }, [lastEventId])
+  }, [lastEventId, lastConfirmationtId])
 
-  const onPressSavePicture: () => void = () => {
-    if (publicKey && database) {
-      getUser(publicKey, database).then((result) => {
+  const publishUser: () => Promise<void> = async () => {
+    return await new Promise<void>((resolve) => {
+      if (publicKey && relayPool) {
         relayPool
           ?.sendEvent({
             content: JSON.stringify({
-              name: result?.name,
-              about: result?.about,
-              lud06: result?.lnurl,
-              nip05: result?.nip05,
-              picture,
-            }),
-            created_at: getUnixTime(new Date()),
-            kind: Kind.Metadata,
-            pubkey: publicKey,
-            tags: [],
-          })
-          .then(() => {
-            setIsPublishingProfile(false) // restore sending status
-            setShowNotification('picturePublished')
-            setUser({
-              ...(user ?? { id: publicKey }),
-              picture,
-            })
-            bottomSheetPictureRef.current?.close()
-          })
-          .catch(() => {
-            setIsPublishingProfile(false) // restore sending status
-            setShowNotification('connectionError')
-          })
-      })
-    }
-  }
-
-  const onPressSaveNip05: () => void = () => {
-    if (publicKey && database) {
-      getUser(publicKey, database).then((result) => {
-        relayPool
-          ?.sendEvent({
-            content: JSON.stringify({
-              name: result?.name,
-              about: result?.about,
-              picture: result?.picture,
-              lud06: result?.lnurl,
-              nip05,
-            }),
-            created_at: getUnixTime(new Date()),
-            kind: Kind.Metadata,
-            pubkey: publicKey,
-            tags: [],
-          })
-          .then(() => {
-            setIsPublishingProfile(false) // restore sending status
-            setShowNotification('nip05Published')
-            setUser({
-              ...(result ?? { id: publicKey }),
-              nip05,
-            })
-            bottomSheetNip05Ref.current?.close()
-          })
-          .catch(() => {
-            setIsPublishingProfile(false) // restore sending status
-            setShowNotification('connectionError')
-          })
-      })
-    }
-  }
-
-  const onPressSaveLnurl: () => void = () => {
-    if (publicKey && database) {
-      getUser(publicKey, database).then((result) => {
-        relayPool
-          ?.sendEvent({
-            content: JSON.stringify({
-              name: result?.name,
-              about: result?.about,
-              picture: result?.picture,
-              nip05: result?.nip05,
-              lud06: lnurl,
-            }),
-            created_at: getUnixTime(new Date()),
-            kind: Kind.Metadata,
-            pubkey: publicKey,
-            tags: [],
-          })
-          .then(() => {
-            setIsPublishingProfile(false) // restore sending status
-            setShowNotification('lud06Published')
-            setUser({
-              ...(user ?? { id: publicKey }),
-              lnurl,
-            })
-            bottomSheetLud06Ref.current?.close()
-          })
-          .catch(() => {
-            setIsPublishingProfile(false) // restore sending status
-            setShowNotification('connectionError')
-          })
-      })
-    }
-  }
-
-  const onPressSaveProfile: () => void = () => {
-    if (publicKey && database) {
-      getUser(publicKey, database).then((user) => {
-        relayPool
-          ?.sendEvent({
-            content: JSON.stringify({
-              picture: user?.picture,
-              lud06: lnurl,
-              nip05: user?.nip05,
               name,
               about,
+              lud06: lnurl,
+              nip05,
+              picture,
             }),
             created_at: getUnixTime(new Date()),
             kind: Kind.Metadata,
             pubkey: publicKey,
             tags: [],
           })
-          .then(() => {
-            setIsPublishingProfile(false) // restore sending status
-            setShowNotification('profilePublished')
-            bottomSheetPictureRef.current?.close()
-          })
-          .catch(() => {
-            setIsPublishingProfile(false) // restore sending status
-            setShowNotification('connectionError')
-          })
-        setUser({
-          ...(user ?? { id: publicKey }),
-          name,
-          about,
-          picture,
-        })
+          .then(() => resolve())
+      } else {
+        resolve()
+      }
+    })
+  }
+
+  const onPublishUser: (notification: string) => void = (notification) => {
+    if (publicKey && database) {
+      setIsPublishingProfile(notification)
+      publishUser().catch(() => {
+        setIsPublishingProfile(undefined) // restore sending status
+        setShowNotification('connectionError')
       })
     }
   }
@@ -247,17 +147,17 @@ export const ProfileConfigPage: React.FC = () => {
           <Card.Content>
             <View style={styles.cardPicture}>
               <TouchableRipple onPress={() => bottomSheetPictureRef.current?.open()}>
-                <View style={{borderRadius: 50, overflow: 'hidden'}}>
-                  {user?.picture ? (
-                      <Avatar.Image size={100} source={{ uri: user.picture }} />
+                <View style={{ borderRadius: 50, overflow: 'hidden' }}>
+                  {picture ? (
+                    <Avatar.Image size={100} source={{ uri: picture }} />
                   ) : (
-                      <NostrosAvatar
-                          name={user?.name}
-                          pubKey={nPub ?? ''}
-                          src={user?.picture}
-                          lud06={user?.lnurl}
-                          size={100}
-                      />
+                    <NostrosAvatar
+                      name={name}
+                      pubKey={nPub ?? ''}
+                      src={picture}
+                      lud06={lnurl}
+                      size={100}
+                    />
                   )}
                 </View>
               </TouchableRipple>
@@ -356,7 +256,11 @@ export const ProfileConfigPage: React.FC = () => {
             }
             style={styles.input}
           />
-          <Button mode='contained' onPress={onPressSaveProfile} loading={isPublishingProfile}>
+          <Button
+            mode='contained'
+            onPress={() => onPublishUser('profilePublished')}
+            loading={isPublishingProfile !== undefined}
+          >
             {t('profileConfigPage.publish')}
           </Button>
         </View>
@@ -366,7 +270,7 @@ export const ProfileConfigPage: React.FC = () => {
         closeOnDragDown={true}
         customStyles={rbSheetCustomStyles}
       >
-        <View style={styles.bottomDrawer}>
+        <View>
           <Text variant='titleLarge'>{t('profileConfigPage.pictureTitle')}</Text>
           <Text variant='bodyMedium'>{t('profileConfigPage.pictureDescription')}</Text>
           <TextInput
@@ -386,8 +290,8 @@ export const ProfileConfigPage: React.FC = () => {
           <Button
             mode='contained'
             disabled={!picture || picture === ''}
-            onPress={onPressSavePicture}
-            loading={isPublishingProfile}
+            onPress={() => onPublishUser('picturePublished')}
+            loading={isPublishingProfile !== undefined}
           >
             {t('profileConfigPage.publishPicture')}
           </Button>
@@ -398,14 +302,16 @@ export const ProfileConfigPage: React.FC = () => {
         closeOnDragDown={true}
         customStyles={rbSheetCustomStyles}
       >
-        <View style={styles.bottomDrawer}>
+        <View>
           <Text variant='titleLarge'>{t('profileConfigPage.directoryTitle')}</Text>
-          <Text style={styles.spacer} variant='bodyMedium'>{t('profileConfigPage.directoryDescription')}</Text>
+          <Text style={styles.spacer} variant='bodyMedium'>
+            {t('profileConfigPage.directoryDescription')}
+          </Text>
           <Button
             style={styles.spacer}
             mode='contained'
             onPress={async () => await Linking.openURL('https://www.nostr.directory')}
-            loading={isPublishingProfile}
+            loading={isPublishingProfile !== undefined}
           >
             {t('profileConfigPage.directoryContinue')}
           </Button>
@@ -414,12 +320,8 @@ export const ProfileConfigPage: React.FC = () => {
           </Button>
         </View>
       </RBSheet>
-      <RBSheet
-        ref={bottomSheetNip05Ref}
-        closeOnDragDown={true}
-        customStyles={rbSheetCustomStyles}
-      >
-        <View style={styles.bottomDrawer}>
+      <RBSheet ref={bottomSheetNip05Ref} closeOnDragDown={true} customStyles={rbSheetCustomStyles}>
+        <View>
           <Text variant='titleLarge'>{t('profileConfigPage.nip05Title')}</Text>
           <Text style={styles.spacer} variant='bodyMedium'>
             {t('profileConfigPage.nip05Description')}
@@ -449,26 +351,23 @@ export const ProfileConfigPage: React.FC = () => {
           <Button
             mode='contained'
             disabled={!nip05 || nip05 === ''}
-            onPress={onPressSaveNip05}
-            loading={isPublishingProfile}
+            onPress={() => onPublishUser('nip05Published')}
+            loading={isPublishingProfile !== undefined}
           >
             {t('profileConfigPage.publishNip05')}
           </Button>
         </View>
       </RBSheet>
-      <RBSheet
-        ref={bottomSheetLud06Ref}
-        closeOnDragDown={true}
-        customStyles={rbSheetCustomStyles}
-      >
-        <View style={styles.bottomDrawer}>
+      <RBSheet ref={bottomSheetLud06Ref} closeOnDragDown={true} customStyles={rbSheetCustomStyles}>
+        <View>
           <Text variant='titleLarge'>{t('profileConfigPage.lud06Title')}</Text>
-          <Text style={styles.spacer} variant='bodyMedium'>{t('profileConfigPage.lud06Description')}</Text>
+          <Text style={styles.spacer} variant='bodyMedium'>
+            {t('profileConfigPage.lud06Description')}
+          </Text>
           <TextInput
             style={styles.spacer}
             mode='outlined'
             multiline
-            numberOfLines={5}
             label={t('profileConfigPage.lud06Label') ?? ''}
             onChangeText={setLnurl}
             value={lnurl}
@@ -483,8 +382,8 @@ export const ProfileConfigPage: React.FC = () => {
           <Button
             mode='contained'
             disabled={!lnurl || lnurl === ''}
-            onPress={onPressSaveLnurl}
-            loading={isPublishingProfile}
+            onPress={() => onPublishUser('lud06Published')}
+            loading={isPublishingProfile !== undefined}
           >
             {t('profileConfigPage.publishLud06')}
           </Button>
@@ -549,7 +448,7 @@ const styles = StyleSheet.create({
   imageInput: {
     marginTop: 16,
     marginBottom: 16,
-  }
+  },
 })
 
 export default ProfileConfigPage

@@ -191,11 +191,7 @@ export const NotificationsFeed: React.FC = () => {
           </Button>
         </View>
       )}
-      <RBSheet
-        ref={bottomSheetProfileRef}
-        closeOnDragDown={true}
-        customStyles={bottomSheetStyles}
-      >
+      <RBSheet ref={bottomSheetProfileRef} closeOnDragDown={true} customStyles={bottomSheetStyles}>
         <ProfileCard userPubKey={profileCardPubkey ?? ''} bottomSheetRef={bottomSheetProfileRef} />
       </RBSheet>
     </View>

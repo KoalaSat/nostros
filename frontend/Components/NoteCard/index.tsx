@@ -116,7 +116,7 @@ export const NoteCard: React.FC<NoteCardProps> = ({
   }, [database])
 
   const publishReaction: (positive: boolean) => void = (positive) => {
-    if (note) {
+    if (note && publicKey) {
       const event: Event = {
         content: positive ? '+' : '-',
         created_at: getUnixTime(new Date()),
@@ -225,20 +225,25 @@ export const NoteCard: React.FC<NoteCardProps> = ({
   const blockedContent: () => JSX.Element = () => {
     return (
       <Card.Content style={[styles.content, { borderColor: theme.colors.onSecondary }]}>
-          <View style={styles.userBlockedWrapper}>
-            <Chip
-                icon={() => (
-                    <MaterialCommunityIcons
-                        name={'account-cancel'}
-                        size={16}
-                        color={theme.colors.onTertiaryContainer}
-                    />
-                )}
-                style={{backgroundColor: theme.colors.tertiaryContainer, color: theme.colors.onTertiaryContainer}}
-            >
-              <Text style={{color: theme.colors.onTertiaryContainer}}>{t('noteCard.userBlocked')}</Text>
-            </Chip>
-          </View>
+        <View style={styles.userBlockedWrapper}>
+          <Chip
+            icon={() => (
+              <MaterialCommunityIcons
+                name={'account-cancel'}
+                size={16}
+                color={theme.colors.onTertiaryContainer}
+              />
+            )}
+            style={{
+              backgroundColor: theme.colors.tertiaryContainer,
+              color: theme.colors.onTertiaryContainer,
+            }}
+          >
+            <Text style={{ color: theme.colors.onTertiaryContainer }}>
+              {t('noteCard.userBlocked')}
+            </Text>
+          </Chip>
+        </View>
       </Card.Content>
     )
   }
@@ -370,7 +375,7 @@ const styles = StyleSheet.create({
   userBlockedWrapper: {
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'center'
+    justifyContent: 'center',
   },
   titleUser: {
     flexDirection: 'row',

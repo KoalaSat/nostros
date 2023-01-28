@@ -25,7 +25,7 @@ export const NostrosAvatar: React.FC<NostrosAvatarProps> = ({
 
   return (
     <View>
-      <View style={{borderRadius: size / 2, overflow: 'hidden'}}>
+      <View style={{ borderRadius: size / 2, overflow: 'hidden' }}>
         {validImageUrl(src) ? (
           <PaperAvatar.Image size={size} source={{ uri: src }} />
         ) : (

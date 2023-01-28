@@ -7,7 +7,6 @@ import { AppContext } from '../../Contexts/AppContext'
 import { RelayPoolContext } from '../../Contexts/RelayPoolContext'
 import { UserContext } from '../../Contexts/UserContext'
 import {
-  addUser,
   getUser,
   updateUserBlock,
   updateUserContact,
@@ -24,7 +23,7 @@ import ProfileData from '../ProfileData'
 interface ProfileCardProps {
   userPubKey: string
   bottomSheetRef: React.RefObject<RBSheet>
-  showImages: boolean
+  showImages?: boolean
 }
 
 export const ProfileCard: React.FC<ProfileCardProps> = ({
@@ -85,10 +84,8 @@ export const ProfileCard: React.FC<ProfileCardProps> = ({
           setBlocked(result.blocked)
           setIsContact(result?.contact)
         } else {
-          addUser(userPubKey, database).then(() => {
-            setUser({ id: userPubKey })
-            setBlocked(false)
-          })
+          setUser({ id: userPubKey })
+          setBlocked(false)
         }
       })
     }
@@ -115,15 +112,15 @@ export const ProfileCard: React.FC<ProfileCardProps> = ({
                 avatarSize={54}
               />
             </View>
-            { user?.about &&
-                <View style={styles.about}>
-                  <Text>
-                    {`${user?.about ? user?.about?.slice(0, 75) : ''}${
-                        user?.about && user?.about?.length > 75 ? ' ...' : ''
-                    }`}
-                  </Text>
-                </View>
-            }
+            {user?.about && (
+              <View style={styles.about}>
+                <Text>
+                  {`${user?.about ? user?.about?.slice(0, 75) : ''}${
+                    user?.about && user?.about?.length > 75 ? ' ...' : ''
+                  }`}
+                </Text>
+              </View>
+            )}
           </View>
           <View>
             <MaterialCommunityIcons

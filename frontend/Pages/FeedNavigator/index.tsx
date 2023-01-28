@@ -112,18 +112,10 @@ export const HomeNavigator: React.FC = () => {
           <Stack.Screen name='Profile' component={ProfilePage} />
         </Stack.Group>
       </Stack.Navigator>
-      <RBSheet
-        ref={bottomSheetProfileRef}
-        closeOnDragDown={true}
-        customStyles={bottomSheetStyles}
-      >
+      <RBSheet ref={bottomSheetProfileRef} closeOnDragDown={true} customStyles={bottomSheetStyles}>
         <ProfileCard userPubKey={showProfile ?? ''} bottomSheetRef={bottomSheetProfileRef} />
       </RBSheet>
-      <RBSheet
-        ref={bottomSheetRef}
-        closeOnDragDown={true}
-        customStyles={bottomSheetStyles}
-      >
+      <RBSheet ref={bottomSheetRef} closeOnDragDown={true} customStyles={bottomSheetStyles}>
         <View>
           <Text variant='headlineSmall'>{t('drawers.relaysTitle')}</Text>
           <Text variant='bodyMedium'>{t('drawers.relaysDescription')}</Text>

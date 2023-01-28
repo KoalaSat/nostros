@@ -16,13 +16,14 @@ import { RelayPoolContext } from '../../Contexts/RelayPoolContext'
 import { UserContext } from '../../Contexts/UserContext'
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'
 import { navigate } from '../../lib/Navigation'
-import { username } from '../../Functions/RelayFunctions/Users'
+import { usernamePubKey } from '../../Functions/RelayFunctions/Users'
 import ProfileData from '../ProfileData'
 
 export const MenuItems: React.FC = () => {
   const [drawerItemIndex, setDrawerItemIndex] = React.useState<number>(-1)
   const { relays } = React.useContext(RelayPoolContext)
-  const { nPub, publicKey, privateKey, user, logout } = React.useContext(UserContext)
+  const { nPub, publicKey, privateKey, logout, name, picture, validNip05, lnurl, nip05 } =
+    React.useContext(UserContext)
   const { t } = useTranslation('common')
   const theme = useTheme()
 
@@ -65,17 +66,17 @@ export const MenuItems: React.FC = () => {
                 onPress={() =>
                   navigate('Profile', {
                     pubKey: publicKey,
-                    title: user ? username(user) : publicKey,
+                    title: usernamePubKey(name, publicKey),
                   })
                 }
               >
                 <ProfileData
-                  username={user?.name}
-                  publicKey={user?.id}
-                  validNip05={user?.valid_nip05}
-                  nip05={user?.nip05}
-                  lud06={user?.lnurl}
-                  picture={user?.picture}
+                  username={name}
+                  publicKey={publicKey}
+                  validNip05={validNip05}
+                  nip05={nip05}
+                  lud06={lnurl}
+                  picture={picture}
                   avatarSize={40}
                 />
               </TouchableRipple>

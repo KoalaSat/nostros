@@ -68,7 +68,9 @@
       "reposting": "Reposted {{pubkey}}",
       "seeParent": "Ver nota",
       "userBlocked": "Usuario bloqueado",
-      "contentWarning": "Contenido sensible"
+      "contentWarning": "Contenido sensible",
+      "recommendation": "Recomendación de relay",
+      "addRelay": "Agregar relay"
     },
     "lnPayment": {
       "monto": "Cantidad (sats.)",
