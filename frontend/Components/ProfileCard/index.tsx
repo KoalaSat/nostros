@@ -115,13 +115,15 @@ export const ProfileCard: React.FC<ProfileCardProps> = ({
                 avatarSize={54}
               />
             </View>
-            <View style={styles.about}>
-              <Text>
-                {`${user?.about ? user?.about?.slice(0, 75) : ''}${
-                  user?.about && user?.about?.length > 75 ? ' ...' : ''
-                }`}
-              </Text>
-            </View>
+            { user?.about &&
+                <View style={styles.about}>
+                  <Text>
+                    {`${user?.about ? user?.about?.slice(0, 75) : ''}${
+                        user?.about && user?.about?.length > 75 ? ' ...' : ''
+                    }`}
+                  </Text>
+                </View>
+            }
           </View>
           <View>
             <MaterialCommunityIcons
@@ -225,8 +227,9 @@ const styles = StyleSheet.create({
   },
   mainLayout: {
     flexDirection: 'row',
+    flexWrap: 'wrap',
     alignItems: 'center',
-    justifyContent: 'space-around',
+    justifyContent: 'flex-start',
   },
   about: {
     maxHeight: 50,
@@ -247,7 +250,8 @@ const styles = StyleSheet.create({
   actionButton: {
     justifyContent: 'center',
     alignItems: 'center',
-    minWidth: 58,
+    flexBasis: '33.333333%',
+    marginBottom: 4,
   },
   list: {
     padding: 16,

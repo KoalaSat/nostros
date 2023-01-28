@@ -76,6 +76,7 @@ export const MenuItems: React.FC = () => {
                   nip05={user?.nip05}
                   lud06={user?.lnurl}
                   picture={user?.picture}
+                  avatarSize={40}
                 />
               </TouchableRipple>
               <View style={styles.cardEdit}>

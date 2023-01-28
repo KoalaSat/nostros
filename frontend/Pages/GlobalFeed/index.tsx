@@ -15,7 +15,7 @@ import { UserContext } from '../../Contexts/UserContext'
 import { RelayPoolContext } from '../../Contexts/RelayPoolContext'
 import { Kind } from 'nostr-tools'
 import { RelayFilters } from '../../lib/nostr/RelayPool/intex'
-import { ActivityIndicator, Banner, Button, Text } from 'react-native-paper'
+import { ActivityIndicator, Chip, Button, Text } from 'react-native-paper'
 import NoteCard from '../../Components/NoteCard'
 import { useTheme } from '@react-navigation/native'
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'
@@ -132,15 +132,20 @@ export const GlobalFeed: React.FC<GlobalFeedProps> = ({ navigation, setProfileCa
           showsVerticalScrollIndicator={false}
           refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
         >
-          <Banner
-            visible={newNotesCount > 0}
-            actions={[]}
-            icon={() => <MaterialCommunityIcons name='arrow-down-bold' size={20} />}
-          >
-            {t(newNotesCount < 2 ? 'homeFeed.newMessage' : 'homeFeed.newMessages', {
-              newNotesCount,
-            })}
-          </Banner>
+          <View style={styles.refreshChipWrapper}>
+            <Chip
+                icon={() => <MaterialCommunityIcons name='cached' color={theme.colors.onSurface} size={20} />}
+                visible={newNotesCount > 0}
+                actions={[]}
+                compact
+                elevated
+                style={styles.refreshChip}
+            >
+              {t(newNotesCount < 2 ? 'homeFeed.newMessage' : 'homeFeed.newMessages', {
+                newNotesCount,
+              })}
+            </Chip>
+          </View>
           <FlatList showsVerticalScrollIndicator={false} data={notes} renderItem={renderItem} />
           {notes.length >= 10 && (
             <ActivityIndicator animating={true} style={styles.activityIndicator} />
@@ -170,6 +175,14 @@ export const GlobalFeed: React.FC<GlobalFeedProps> = ({ navigation, setProfileCa
 }
 
 const styles = StyleSheet.create({
+  refreshChipWrapper: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center'
+  },
+  refreshChip: {
+    marginTop: 16,
+  },
   noteCard: {
     marginTop: 16,
   },

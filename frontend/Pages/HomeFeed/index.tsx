@@ -42,9 +42,13 @@ export const HomeFeed: React.FC<HomeFeedProps> = ({ navigation }) => {
     return {
       container: {
         backgroundColor: theme.colors.background,
-        padding: 16,
+        paddingTop: 16,
+        paddingRight: 16,
+        paddingBottom: 32,
+        paddingLeft: 16,
         borderTopRightRadius: 28,
         borderTopLeftRadius: 28,
+        height: 'auto',
       },
     }
   }, [])
@@ -84,6 +88,7 @@ export const HomeFeed: React.FC<HomeFeedProps> = ({ navigation }) => {
           ]}
         >
           <TouchableRipple
+            style={styles.textWrapper}
             onPress={() => {
               relayPool?.unsubscribe([
                 'homepage-contacts-main',
@@ -107,6 +112,7 @@ export const HomeFeed: React.FC<HomeFeedProps> = ({ navigation }) => {
           ]}
         >
           <TouchableRipple
+            style={styles.textWrapper}
             onPress={() => {
               relayPool?.unsubscribe(['homepage-global-main'])
               setTabKey('myFeed')
@@ -131,7 +137,6 @@ export const HomeFeed: React.FC<HomeFeedProps> = ({ navigation }) => {
       <RBSheet
         ref={bottomSheetProfileRef}
         closeOnDragDown={true}
-        height={280}
         customStyles={bottomSheetStyles}
       >
         <ProfileCard
@@ -166,19 +171,19 @@ const styles = StyleSheet.create({
   },
   tab: {
     flex: 1,
-    height: '100%',
+  },
+  textWrapper: {
     justifyContent: 'center',
-    alignContent: 'center',
+    height: '100%',
+    textAlign: 'center'
   },
   tabText: {
     textAlign: 'center',
-    paddingTop: 25,
-    height: '100%',
   },
   tabsNavigator: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
-    height: 70,
+    alignItems: 'center',
+    height: 48,
   },
   feed: {
     paddingBottom: 140,

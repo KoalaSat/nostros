@@ -4,6 +4,7 @@ import Clipboard from '@react-native-clipboard/clipboard'
 import { AppContext } from '../../Contexts/AppContext'
 import { useTranslation } from 'react-i18next'
 import { UserContext } from '../../Contexts/UserContext'
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'
 import { getUser } from '../../Functions/DatabaseFunctions/Users'
 import { Kind } from 'nostr-tools'
 import getUnixTime from 'date-fns/getUnixTime'
@@ -210,9 +211,13 @@ export const ProfileConfigPage: React.FC = () => {
     return {
       container: {
         backgroundColor: theme.colors.background,
-        padding: 16,
+        paddingTop: 16,
+        paddingRight: 16,
+        paddingBottom: 32,
+        paddingLeft: 16,
         borderTopRightRadius: 28,
         borderTopLeftRadius: 28,
+        height: 'auto',
       },
     }
   }, [])
@@ -269,7 +274,7 @@ export const ProfileConfigPage: React.FC = () => {
               </View>
               <View style={styles.actionButton}>
                 <IconButton
-                  icon='twitter'
+                  icon='folder-check-outline'
                   size={28}
                   onPress={() => bottomSheetDirectoryRef.current?.open()}
                 />
@@ -357,7 +362,6 @@ export const ProfileConfigPage: React.FC = () => {
       <RBSheet
         ref={bottomSheetPictureRef}
         closeOnDragDown={true}
-        height={230}
         customStyles={rbSheetCustomStyles}
       >
         <View style={styles.bottomDrawer}>
@@ -389,13 +393,13 @@ export const ProfileConfigPage: React.FC = () => {
       <RBSheet
         ref={bottomSheetDirectoryRef}
         closeOnDragDown={true}
-        height={480}
         customStyles={rbSheetCustomStyles}
       >
         <View style={styles.bottomDrawer}>
           <Text variant='titleLarge'>{t('profileConfigPage.directoryTitle')}</Text>
-          <Text variant='bodyMedium'>{t('profileConfigPage.directoryDescription')}</Text>
+          <Text style={styles.spacer} variant='bodyMedium'>{t('profileConfigPage.directoryDescription')}</Text>
           <Button
+            style={styles.spacer}
             mode='contained'
             onPress={async () => await Linking.openURL('https://www.nostr.directory')}
             loading={isPublishingProfile}
@@ -410,12 +414,11 @@ export const ProfileConfigPage: React.FC = () => {
       <RBSheet
         ref={bottomSheetNip05Ref}
         closeOnDragDown={true}
-        height={230}
         customStyles={rbSheetCustomStyles}
       >
         <View style={styles.bottomDrawer}>
           <Text variant='titleLarge'>{t('profileConfigPage.nip05Title')}</Text>
-          <Text variant='bodyMedium'>
+          <Text style={styles.spacer} variant='bodyMedium'>
             {t('profileConfigPage.nip05Description')}
             <Text
               style={styles.link}
@@ -427,6 +430,7 @@ export const ProfileConfigPage: React.FC = () => {
             </Text>
           </Text>
           <TextInput
+            style={styles.spacer}
             mode='outlined'
             label={t('profileConfigPage.nip05') ?? ''}
             onChangeText={setNip05}
@@ -452,13 +456,13 @@ export const ProfileConfigPage: React.FC = () => {
       <RBSheet
         ref={bottomSheetLud06Ref}
         closeOnDragDown={true}
-        height={240}
         customStyles={rbSheetCustomStyles}
       >
         <View style={styles.bottomDrawer}>
           <Text variant='titleLarge'>{t('profileConfigPage.lud06Title')}</Text>
-          <Text variant='bodyMedium'>{t('profileConfigPage.lud06Description')}</Text>
+          <Text style={styles.spacer} variant='bodyMedium'>{t('profileConfigPage.lud06Description')}</Text>
           <TextInput
+            style={styles.spacer}
             mode='outlined'
             multiline
             numberOfLines={5}
@@ -499,9 +503,8 @@ export const ProfileConfigPage: React.FC = () => {
 }
 
 const styles = StyleSheet.create({
-  bottomDrawer: {
-    height: '90%',
-    justifyContent: 'space-between',
+  spacer: {
+    marginBottom: 16,
   },
   container: {
     padding: 16,

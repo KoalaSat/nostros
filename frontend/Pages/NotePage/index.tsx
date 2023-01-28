@@ -120,9 +120,13 @@ export const NotePage: React.FC<NotePageProps> = ({ route }) => {
     return {
       container: {
         backgroundColor: theme.colors.background,
-        padding: 16,
+        paddingTop: 16,
+        paddingRight: 16,
+        paddingBottom: 32,
+        paddingLeft: 16,
         borderTopRightRadius: 28,
         borderTopLeftRadius: 28,
+        height: 'auto',
       },
     }
   }, [])
@@ -153,7 +157,7 @@ export const NotePage: React.FC<NotePageProps> = ({ route }) => {
       </ScrollView>
       {privateKey && (
         <AnimatedFAB
-          style={[styles.fabSend, { top: Dimensions.get('window').height - 140 }]}
+          style={[styles.fabSend, { top: Dimensions.get('window').height - 160 }]}
           icon='message-plus-outline'
           label='Label'
           onPress={() => {
@@ -165,7 +169,7 @@ export const NotePage: React.FC<NotePageProps> = ({ route }) => {
         />
       )}
       <AnimatedFAB
-        style={[styles.fabHome, { top: Dimensions.get('window').height - 220 }]}
+        style={[styles.fabHome, { top: Dimensions.get('window').height - 230 }]}
         icon='home-outline'
         label='Label'
         onPress={() => {
@@ -178,7 +182,6 @@ export const NotePage: React.FC<NotePageProps> = ({ route }) => {
       <RBSheet
         ref={bottomSheetProfileRef}
         closeOnDragDown={true}
-        height={280}
         customStyles={bottomSheetStyles}
       >
         <ProfileCard userPubKey={profileCardPubkey ?? ''} bottomSheetRef={bottomSheetProfileRef} />

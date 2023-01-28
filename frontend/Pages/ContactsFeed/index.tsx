@@ -197,11 +197,13 @@ export const ContactsFeed: React.FC = () => {
     return {
       container: {
         backgroundColor: theme.colors.background,
-        paddingLeft: 16,
+        paddingTop: 16,
         paddingRight: 16,
         paddingBottom: 32,
+        paddingLeft: 16,
         borderTopRightRadius: 28,
         borderTopLeftRadius: 28,
+        height: 'auto',
       },
     }
   }, [])
@@ -309,7 +311,10 @@ export const ContactsFeed: React.FC = () => {
               : {},
           ]}
         >
-          <TouchableRipple onPress={() => setTabKey('following')}>
+          <TouchableRipple
+              style={styles.textWrapper}
+              onPress={() => setTabKey('following')}
+          >
             <Text style={styles.tabText}>
               {t('contactsFeed.following', { count: following.length })}
             </Text>
@@ -323,7 +328,10 @@ export const ContactsFeed: React.FC = () => {
               : {},
           ]}
         >
-          <TouchableRipple onPress={() => setTabKey('followers')}>
+          <TouchableRipple
+              style={styles.textWrapper}
+              onPress={() => setTabKey('followers')}
+          >
             <Text style={styles.tabText}>
               {t('contactsFeed.followers', { count: followers.length })}
             </Text>
@@ -349,7 +357,6 @@ export const ContactsFeed: React.FC = () => {
       <RBSheet
         ref={bottomSheetAddContactRef}
         closeOnDragDown={true}
-        height={280}
         customStyles={bottomSheetStyles}
         onClose={() => setContactInput('')}
       >
@@ -411,8 +418,8 @@ const styles = StyleSheet.create({
   },
   tabsNavigator: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
-    height: 70,
+    alignItems: 'center',
+    height: 48,
   },
   bottomSheet: {
     paddingBottom: 24,
@@ -433,10 +440,13 @@ const styles = StyleSheet.create({
   tabActive: {
     borderBottomWidth: 3,
   },
+  textWrapper: {
+    justifyContent: 'center',
+    height: '100%',
+    textAlign: 'center'
+  },
   tabText: {
     textAlign: 'center',
-    paddingTop: 25,
-    height: '100%',
   },
   snackbar: {
     margin: 16,

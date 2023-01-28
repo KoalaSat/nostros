@@ -34,9 +34,13 @@ export const HomeNavigator: React.FC = () => {
     return {
       container: {
         backgroundColor: theme.colors.background,
-        padding: 16,
+        paddingTop: 16,
+        paddingRight: 16,
+        paddingBottom: 32,
+        paddingLeft: 16,
         borderTopRightRadius: 28,
         borderTopLeftRadius: 28,
+        height: 'auto',
       },
     }
   }, [])
@@ -111,7 +115,6 @@ export const HomeNavigator: React.FC = () => {
       <RBSheet
         ref={bottomSheetProfileRef}
         closeOnDragDown={true}
-        height={280}
         customStyles={bottomSheetStyles}
       >
         <ProfileCard userPubKey={showProfile ?? ''} bottomSheetRef={bottomSheetProfileRef} />
@@ -119,7 +122,6 @@ export const HomeNavigator: React.FC = () => {
       <RBSheet
         ref={bottomSheetRef}
         closeOnDragDown={true}
-        height={620}
         customStyles={bottomSheetStyles}
       >
         <View>
