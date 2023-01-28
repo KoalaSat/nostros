@@ -76,11 +76,7 @@ export const ConfigPage: React.FC = () => {
         onPress={() => bottomSheetRef.current?.open()}
         right={() => getSatoshiSymbol(25)}
       />
-      <RBSheet
-        ref={bottomSheetRef}
-        closeOnDragDown={true}
-        customStyles={bottomSheetStyles}
-      >
+      <RBSheet ref={bottomSheetRef} closeOnDragDown={true} customStyles={bottomSheetStyles}>
         <FlatList
           data={createOptions}
           renderItem={({ item }) => {

@@ -158,7 +158,7 @@ public class Event {
 
     protected boolean validateNip05(String nip05) {
         String[] parts = nip05.split("@");
-        if (parts.length < 1) return false;
+        if (parts.length < 2) return false;
 
         String name = parts[0];
         String domain = parts[1];
@@ -275,7 +275,7 @@ public class Event {
             values.put("id", pubkey);
             values.put("valid_nip05", validateNip05(nip05) ? 1 : 0);
             database.insert("nostros_users", null, values);
-        } else if (cursor.moveToFirst() && created_at > cursor.getInt(0)) {
+        } else if (cursor.moveToFirst() && (cursor.isNull(0) || created_at > cursor.getInt(0))) {
             if (cursor.getInt(1) == 0 || !cursor.getString(2).equals(nip05)) {
                 values.put("valid_nip05", validateNip05(nip05) ? 1 : 0);
             }

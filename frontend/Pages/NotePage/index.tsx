@@ -57,17 +57,13 @@ export const NotePage: React.FC<NotePageProps> = ({ route }) => {
 
         const notes = await getNotes(database, { filters: { reply_event_id: route.params.noteId } })
         const rootReplies = getDirectReplies(event, notes)
-        if (rootReplies.length > 0) {
-          setReplies(rootReplies as Note[])
-          relayPool?.subscribe(`meta-notepage${route.params.noteId}`, [
-            {
-              kinds: [Kind.Metadata],
-              authors: [...rootReplies.map((note) => note.pubkey), event.pubkey],
-            },
-          ])
-        } else {
-          setReplies([])
-        }
+        relayPool?.subscribe(`meta-notepage${route.params.noteId}`, [
+          {
+            kinds: [Kind.Metadata],
+            authors: [...rootReplies.map((note) => note.pubkey), event.pubkey],
+          },
+        ])
+        setReplies(rootReplies as Note[])
       }
       setRefreshing(false)
     }
@@ -179,11 +175,7 @@ export const NotePage: React.FC<NotePageProps> = ({ route }) => {
         iconMode='static'
         extended={false}
       />
-      <RBSheet
-        ref={bottomSheetProfileRef}
-        closeOnDragDown={true}
-        customStyles={bottomSheetStyles}
-      >
+      <RBSheet ref={bottomSheetProfileRef} closeOnDragDown={true} customStyles={bottomSheetStyles}>
         <ProfileCard userPubKey={profileCardPubkey ?? ''} bottomSheetRef={bottomSheetProfileRef} />
       </RBSheet>
     </View>

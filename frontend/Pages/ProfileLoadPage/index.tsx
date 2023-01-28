@@ -16,7 +16,7 @@ export const ProfileLoadPage: React.FC = () => {
   const theme = useTheme()
   const { database } = useContext(AppContext)
   const { relayPool, lastEventId, relayPoolReady } = useContext(RelayPoolContext)
-  const { publicKey, reloadUser, user, setUserState } = useContext(UserContext)
+  const { publicKey, reloadUser, setUserState, name } = useContext(UserContext)
   const { t } = useTranslation('common')
   const [profileFound, setProfileFound] = useState<boolean>(false)
   const [contactsCount, setContactsCount] = useState<number>(0)
@@ -33,7 +33,7 @@ export const ProfileLoadPage: React.FC = () => {
   useEffect(() => {
     loadPets()
     reloadUser()
-    if (user?.created_at) {
+    if (name) {
       setProfileFound(true)
       loadPets()
     }
@@ -47,7 +47,7 @@ export const ProfileLoadPage: React.FC = () => {
     if (publicKey && relayPoolReady) {
       relayPool?.subscribe('profile-load-meta-pets', [
         {
-          kinds: [Kind.Contacts],
+          kinds: [Kind.Contacts, Kind.Metadata],
           authors: [publicKey],
         },
         {

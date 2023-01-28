@@ -134,15 +134,11 @@ export const HomeFeed: React.FC<HomeFeedProps> = ({ navigation }) => {
           extended={false}
         />
       )}
-      <RBSheet
-        ref={bottomSheetProfileRef}
-        closeOnDragDown={true}
-        customStyles={bottomSheetStyles}
-      >
+      <RBSheet ref={bottomSheetProfileRef} closeOnDragDown={true} customStyles={bottomSheetStyles}>
         <ProfileCard
           userPubKey={profileCardPubkey ?? ''}
           bottomSheetRef={bottomSheetProfileRef}
-          showImages={showPublicImages}
+          showImages={tabKey === 'myFeed' || showPublicImages}
         />
       </RBSheet>
     </View>
@@ -175,7 +171,7 @@ const styles = StyleSheet.create({
   textWrapper: {
     justifyContent: 'center',
     height: '100%',
-    textAlign: 'center'
+    textAlign: 'center',
   },
   tabText: {
     textAlign: 'center',
@@ -186,7 +182,7 @@ const styles = StyleSheet.create({
     height: 48,
   },
   feed: {
-    paddingBottom: 96,
+    paddingBottom: 95,
     paddingLeft: 16,
     paddingRight: 16,
   },

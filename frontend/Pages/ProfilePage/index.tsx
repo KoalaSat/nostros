@@ -289,11 +289,7 @@ export const ProfilePage: React.FC<ProfilePageProps> = ({ route }) => {
         </Snackbar>
       )}
       <LnPayment setOpen={setOpenLn} open={openLn} user={user} />
-      <RBSheet
-        ref={bottomSheetProfileRef}
-        closeOnDragDown={true}
-        customStyles={bottomSheetStyles}
-      >
+      <RBSheet ref={bottomSheetProfileRef} closeOnDragDown={true} customStyles={bottomSheetStyles}>
         <ProfileCard
           userPubKey={route.params.pubKey ?? ''}
           bottomSheetRef={bottomSheetProfileRef}

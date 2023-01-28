@@ -95,7 +95,7 @@ export const LnPayment: React.FC<TextContentProps> = ({ open, setOpen, event, us
         paddingLeft: 16,
         borderTopRightRadius: 28,
         borderTopLeftRadius: 28,
-        height: 'auto'
+        height: 'auto',
       },
     }
   }, [])

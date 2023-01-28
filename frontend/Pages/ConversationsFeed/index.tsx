@@ -259,11 +259,7 @@ export const ConversationsFeed: React.FC = () => {
         iconMode='static'
         extended={false}
       />
-      <RBSheet
-        ref={bottomSheetCreateRef}
-        closeOnDragDown={true}
-        customStyles={bottomSheetStyles}
-      >
+      <RBSheet ref={bottomSheetCreateRef} closeOnDragDown={true} customStyles={bottomSheetStyles}>
         <ScrollView horizontal={false}>
           <FlatList
             data={createOptions}
@@ -283,20 +279,12 @@ export const ConversationsFeed: React.FC = () => {
           />
         </ScrollView>
       </RBSheet>
-      <RBSheet
-        ref={bottomSheetUserListRef}
-        closeOnDragDown={true}
-        customStyles={bottomSheetStyles}
-      >
+      <RBSheet ref={bottomSheetUserListRef} closeOnDragDown={true} customStyles={bottomSheetStyles}>
         <ScrollView horizontal={false}>
           <FlatList data={users} renderItem={renderUserItem} ItemSeparatorComponent={Divider} />
         </ScrollView>
       </RBSheet>
-      <RBSheet
-        ref={bottomSheetPubKeyRef}
-        closeOnDragDown={true}
-        customStyles={bottomSheetStyles}
-      >
+      <RBSheet ref={bottomSheetPubKeyRef} closeOnDragDown={true} customStyles={bottomSheetStyles}>
         <View>
           <Text variant='titleLarge'>{t('conversationsFeed.openMessageTitle')}</Text>
           <Text variant='bodyMedium'>{t('conversationsFeed.openMessageDescription')}</Text>
