@@ -146,9 +146,13 @@ export const ConversationsFeed: React.FC = () => {
     return {
       container: {
         backgroundColor: theme.colors.background,
-        padding: 16,
+        paddingTop: 16,
+        paddingRight: 16,
+        paddingBottom: 32,
+        paddingLeft: 16,
         borderTopRightRadius: 28,
         borderTopLeftRadius: 28,
+        height: 'auto',
       },
     }
   }, [])
@@ -258,7 +262,6 @@ export const ConversationsFeed: React.FC = () => {
       <RBSheet
         ref={bottomSheetCreateRef}
         closeOnDragDown={true}
-        height={190}
         customStyles={bottomSheetStyles}
       >
         <ScrollView horizontal={false}>
@@ -283,7 +286,6 @@ export const ConversationsFeed: React.FC = () => {
       <RBSheet
         ref={bottomSheetUserListRef}
         closeOnDragDown={true}
-        height={620}
         customStyles={bottomSheetStyles}
       >
         <ScrollView horizontal={false}>
@@ -293,7 +295,6 @@ export const ConversationsFeed: React.FC = () => {
       <RBSheet
         ref={bottomSheetPubKeyRef}
         closeOnDragDown={true}
-        height={220}
         customStyles={bottomSheetStyles}
       >
         <View>

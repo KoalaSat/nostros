@@ -74,9 +74,28 @@ export const LnPayment: React.FC<TextContentProps> = ({ open, setOpen, event, us
     return {
       container: {
         backgroundColor: theme.colors.background,
-        padding: 16,
+        paddingTop: 16,
+        paddingRight: 16,
+        paddingBottom: 32,
+        paddingLeft: 16,
         borderTopRightRadius: 28,
         borderTopLeftRadius: 28,
+        height: 'auto',
+      },
+    }
+  }, [])
+
+  const rbSheetQrCustomStyles = React.useMemo(() => {
+    return {
+      container: {
+        backgroundColor: theme.colors.background,
+        paddingTop: 16,
+        paddingRight: 16,
+        paddingBottom: 32,
+        paddingLeft: 16,
+        borderTopRightRadius: 28,
+        borderTopLeftRadius: 28,
+        height: 'auto'
       },
     }
   }, [])
@@ -86,12 +105,11 @@ export const LnPayment: React.FC<TextContentProps> = ({ open, setOpen, event, us
       <RBSheet
         ref={bottomSheetLnPaymentRef}
         closeOnDragDown={true}
-        height={380}
         customStyles={rbSheetCustomStyles}
         onClose={() => setOpen(false)}
       >
         <View style={styles.drawerBottom}>
-          <View style={styles.montoSelection}>
+          <View style={[styles.montoSelection, styles.spacer]}>
             <Button style={styles.montoButton} mode='outlined' onPress={() => setMonto('1000')}>
               <Text>1k {getSatoshiSymbol(15)}</Text>
             </Button>
@@ -103,18 +121,21 @@ export const LnPayment: React.FC<TextContentProps> = ({ open, setOpen, event, us
             </Button>
           </View>
           <TextInput
+            style={styles.spacer}
             mode='outlined'
             label={t('lnPayment.monto') ?? ''}
             onChangeText={setMonto}
             value={monto}
           />
           <TextInput
+            style={styles.spacer}
             mode='outlined'
             label={t('lnPayment.comment') ?? ''}
             onChangeText={setComment}
             value={comment}
           />
           <Button
+            style={styles.spacer}
             mode='contained'
             disabled={loading || monto === ''}
             onPress={() => generateInvoice()}
@@ -129,8 +150,8 @@ export const LnPayment: React.FC<TextContentProps> = ({ open, setOpen, event, us
       <RBSheet
         ref={bottomSheetInvoiceRef}
         closeOnDragDown={true}
-        height={630}
-        customStyles={rbSheetCustomStyles}
+        // height={630}
+        customStyles={rbSheetQrCustomStyles}
         onClose={() => setOpen(false)}
       >
         <Card style={styles.qrContainer}>
@@ -168,11 +189,12 @@ export const LnPayment: React.FC<TextContentProps> = ({ open, setOpen, event, us
 
 const styles = StyleSheet.create({
   drawerBottom: {
-    height: '90%',
     justifyContent: 'space-between',
   },
+  spacer: {
+    marginBottom: 16,
+  },
   qrContainer: {
-    flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -180,11 +202,6 @@ const styles = StyleSheet.create({
     marginTop: 20,
     flexDirection: 'row',
     justifyContent: 'center',
-  },
-  rbsheetContainer: {
-    padding: 16,
-    borderTopRightRadius: 28,
-    borderTopLeftRadius: 28,
   },
   satoshi: {
     fontFamily: 'Satoshi-Symbol',

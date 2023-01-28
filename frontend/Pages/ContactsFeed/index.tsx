@@ -197,11 +197,13 @@ export const ContactsFeed: React.FC = () => {
     return {
       container: {
         backgroundColor: theme.colors.background,
-        paddingLeft: 16,
+        paddingTop: 16,
         paddingRight: 16,
         paddingBottom: 32,
+        paddingLeft: 16,
         borderTopRightRadius: 28,
         borderTopLeftRadius: 28,
+        height: 'auto',
       },
     }
   }, [])
@@ -349,7 +351,6 @@ export const ContactsFeed: React.FC = () => {
       <RBSheet
         ref={bottomSheetAddContactRef}
         closeOnDragDown={true}
-        height={280}
         customStyles={bottomSheetStyles}
         onClose={() => setContactInput('')}
       >

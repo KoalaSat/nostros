@@ -75,9 +75,13 @@ export const RelaysPage: React.FC = () => {
     return {
       container: {
         backgroundColor: theme.colors.background,
-        padding: 16,
+        paddingTop: 16,
+        paddingRight: 16,
+        paddingBottom: 32,
+        paddingLeft: 16,
         borderTopRightRadius: 28,
         borderTopLeftRadius: 28,
+        height: 'auto',
       },
     }
   }, [])
@@ -164,7 +168,6 @@ export const RelaysPage: React.FC = () => {
       <RBSheet
         ref={bottomSheetAddRef}
         closeOnDragDown={true}
-        height={260}
         customStyles={rbSheetCustomStyles}
       >
         <View style={styles.addRelay}>
@@ -191,7 +194,6 @@ export const RelaysPage: React.FC = () => {
       <RBSheet
         ref={bottomSheetEditRef}
         closeOnDragDown={true}
-        height={260}
         customStyles={rbSheetCustomStyles}
       >
         <View>

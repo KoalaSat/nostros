@@ -46,9 +46,13 @@ export const ConfigPage: React.FC = () => {
     return {
       container: {
         backgroundColor: theme.colors.background,
-        padding: 16,
+        paddingTop: 16,
+        paddingRight: 16,
+        paddingBottom: 32,
+        paddingLeft: 16,
         borderTopRightRadius: 28,
         borderTopLeftRadius: 28,
+        height: 'auto',
       },
     }
   }, [])
@@ -75,7 +79,6 @@ export const ConfigPage: React.FC = () => {
       <RBSheet
         ref={bottomSheetRef}
         closeOnDragDown={true}
-        height={160}
         customStyles={bottomSheetStyles}
       >
         <FlatList

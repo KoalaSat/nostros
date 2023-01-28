@@ -227,8 +227,9 @@ const styles = StyleSheet.create({
   },
   mainLayout: {
     flexDirection: 'row',
+    flexWrap: 'wrap',
     alignItems: 'center',
-    justifyContent: 'space-around',
+    justifyContent: 'flex-start',
   },
   about: {
     maxHeight: 50,
@@ -249,7 +250,8 @@ const styles = StyleSheet.create({
   actionButton: {
     justifyContent: 'center',
     alignItems: 'center',
-    minWidth: 58,
+    flexBasis: '33.333333%',
+    marginBottom: 4,
   },
   list: {
     padding: 16,

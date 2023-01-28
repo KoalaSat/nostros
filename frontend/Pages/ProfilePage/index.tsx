@@ -181,9 +181,13 @@ export const ProfilePage: React.FC<ProfilePageProps> = ({ route }) => {
     return {
       container: {
         backgroundColor: theme.colors.background,
-        padding: 16,
+        paddingTop: 16,
+        paddingRight: 16,
+        paddingBottom: 32,
+        paddingLeft: 16,
         borderTopRightRadius: 28,
         borderTopLeftRadius: 28,
+        height: 'auto',
       },
     }
   }, [])
@@ -288,7 +292,6 @@ export const ProfilePage: React.FC<ProfilePageProps> = ({ route }) => {
       <RBSheet
         ref={bottomSheetProfileRef}
         closeOnDragDown={true}
-        height={280}
         customStyles={bottomSheetStyles}
       >
         <ProfileCard
