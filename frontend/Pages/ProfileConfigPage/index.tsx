@@ -4,6 +4,7 @@ import Clipboard from '@react-native-clipboard/clipboard'
 import { AppContext } from '../../Contexts/AppContext'
 import { useTranslation } from 'react-i18next'
 import { UserContext } from '../../Contexts/UserContext'
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'
 import { getUser } from '../../Functions/DatabaseFunctions/Users'
 import { Kind } from 'nostr-tools'
 import getUnixTime from 'date-fns/getUnixTime'
@@ -273,7 +274,7 @@ export const ProfileConfigPage: React.FC = () => {
               </View>
               <View style={styles.actionButton}>
                 <IconButton
-                  icon='twitter'
+                  icon='folder-check-outline'
                   size={28}
                   onPress={() => bottomSheetDirectoryRef.current?.open()}
                 />
