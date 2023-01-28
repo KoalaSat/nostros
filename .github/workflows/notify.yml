@@ -13,3 +13,9 @@ jobs:
           token: ${{ secrets.TELEGRAM_BOT_TOKEN }}
           channel: ${{ secrets.CHANGELOG_CHANNEL_ID }}
           changelog: ${{ github.event.release.body }}
+      - name: 'Post to Nostr'
+        run: |
+          # clone the repo
+          git clone https://github.com/fiatjaf/noscl
+          noscl setprivate ${{ secrets.NOSTROS_PRIVATE_KEY }}
+          noscl publish ${{ github.event.release.body }}
