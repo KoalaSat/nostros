@@ -28,7 +28,6 @@
     "date-fns": "^2.29.3",
     "events": "^3.3.0",
     "i18next": "^22.4.9",
-    "link-preview-js": "^3.0.4",
     "lnurl-pay": "^2.1.1",
     "lodash.debounce": "^4.0.8",
     "nostr-tools": "^1.1.1",

@@ -149,7 +149,8 @@ export const ConversationPage: React.FC<ConversationPageProps> = ({ route }) => 
   ) => JSX.Element = (index, item, pending) => {
     if (!publicKey || !privateKey || !otherUser) return <></>
 
-    const displayName = item.pubkey === publicKey ? usernamePubKey(name, publicKey) : username(otherUser)
+    const displayName =
+      item.pubkey === publicKey ? usernamePubKey(name, publicKey) : username(otherUser)
     const lastIndex = directMessages.length - 1 === index
     const nextItemHasdifferentPubKey =
       !lastIndex && directMessages[index + 1]?.pubkey !== item.pubkey

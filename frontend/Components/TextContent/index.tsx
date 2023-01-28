@@ -7,7 +7,6 @@ import { getUser, User } from '../../Functions/DatabaseFunctions/Users'
 import { formatPubKey } from '../../Functions/RelayFunctions/Users'
 import getUnixTime from 'date-fns/getUnixTime'
 import { Card, Text, useTheme } from 'react-native-paper'
-import { getLinkPreview } from 'link-preview-js'
 import { getNip19Key, getNpub } from '../../lib/nostr/Nip19'
 import { navigate } from '../../lib/Navigation'
 import { validImageUrl } from '../../Functions/NativeFunctions'
@@ -19,24 +18,6 @@ interface TextContentProps {
   showPreview?: boolean
   onPressUser?: (user: User) => void
   numberOfLines?: number
-}
-
-interface LinkPreviewMedia {
-  url: string
-  title: string
-  siteName: string | undefined
-  description: string | undefined
-  mediaType: string
-  contentType: string | undefined
-  images: string[]
-  videos: Array<{
-    url: string | undefined
-    secureUrl: string | null | undefined
-    type: string | null | undefined
-    width: string | undefined
-    height: string | undefined
-  }>
-  favicons: string[]
 }
 
 export const TextContent: React.FC<TextContentProps> = ({
@@ -51,17 +32,17 @@ export const TextContent: React.FC<TextContentProps> = ({
   const [userNames, setUserNames] = useState<Record<number, string>>({})
   const [loadedUsers, setLoadedUsers] = useState<number>(0)
   const [url, setUrl] = useState<string>()
-  const [linkPreview, setLinkPreview] = useState<LinkPreviewMedia>()
+  const [linkPreview, setLinkPreview] = useState<string>()
+  const [linkType, setLinkType] = useState<string>()
   const text = event?.content ?? content ?? ''
   const DEFAULT_COVER = '../../../assets/images/placeholders/placeholder_url.png'
   const MEDIA_COVER = '../../../assets/images/placeholders/placeholder_media.png'
-  const IMAGE_COVER = '../../../assets/images/placeholders/placeholder_image.png'
+  // const IMAGE_COVER = '../../../assets/images/placeholders/placeholder_image.png'
 
   useEffect(() => {
-    if (!linkPreview && url) {
-      getLinkPreview(url).then((data) => {
-        setLinkPreview(data as LinkPreviewMedia)
-      })
+    if (!linkPreview && url && validImageUrl(url)) {
+      setLinkPreview(url)
+      setLinkType('image')
     }
   }, [loadedUsers, url])
 
@@ -144,31 +125,33 @@ export const TextContent: React.FC<TextContentProps> = ({
     if (!showPreview || !url) return <></>
 
     const getRequireCover: () => ImageSourcePropType = () => {
-      if (!linkPreview?.mediaType) return require(DEFAULT_COVER)
-
-      const coverUrl = linkPreview.images?.length > 0 ? linkPreview.images[0] : linkPreview.url
-      if (coverUrl && validImageUrl(coverUrl)) return { uri: coverUrl }
-
-      if (linkPreview.mediaType === 'audio') return require(MEDIA_COVER)
-      if (linkPreview.mediaType === 'video') return require(MEDIA_COVER)
-      if (linkPreview.mediaType === 'image') return require(IMAGE_COVER)
+      if (!linkPreview) return require(DEFAULT_COVER)
+      if (linkType === 'audio') return require(MEDIA_COVER)
+      if (linkType === 'video') return require(MEDIA_COVER)
+      // if (linkType === 'image') return require(IMAGE_COVER)
+      if (linkType === 'image') return { uri: url }
 
       return require(DEFAULT_COVER)
     }
 
     return (
       <View style={styles.previewCard}>
-        <Card onPress={() => handleUrlPress(linkPreview?.url)}>
-          <Card.Cover source={getRequireCover()} resizeMode='contain' />
+        <Card onPress={() => handleUrlPress(url)}>
+          <Card.Cover
+            source={getRequireCover()}
+            resizeMode='contain'
+            defaultSource={require(DEFAULT_COVER)}
+          />
           <Card.Content style={styles.previewContent}>
             <Text variant='bodyMedium' numberOfLines={3}>
-              {linkPreview?.title ?? linkPreview?.url ?? url}
+              {/* {linkPreview?.title ?? linkPreview?.url ?? url} */}
+              {url}
             </Text>
-            {linkPreview?.description && (
+            {/* {linkPreview?.description && (
               <Text variant='bodySmall' numberOfLines={3}>
                 {linkPreview.description}
               </Text>
-            )}
+            )} */}
           </Card.Content>
         </Card>
       </View>
