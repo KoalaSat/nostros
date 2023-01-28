@@ -10,7 +10,7 @@ import {
 } from '../../Functions/DatabaseFunctions/DirectMessages'
 import { getUser, User } from '../../Functions/DatabaseFunctions/Users'
 import { useTranslation } from 'react-i18next'
-import { username, usersToTags } from '../../Functions/RelayFunctions/Users'
+import { username, usernamePubKey, usersToTags } from '../../Functions/RelayFunctions/Users'
 import { getUnixTime, formatDistance, fromUnixTime } from 'date-fns'
 import TextContent from '../../Components/TextContent'
 import { encrypt, decrypt } from '../../lib/nostr/Nip04'
@@ -38,7 +38,7 @@ export const ConversationPage: React.FC<ConversationPageProps> = ({ route }) => 
   const scrollViewRef = useRef<ScrollView>()
   const { database } = useContext(AppContext)
   const { relayPool, lastEventId } = useContext(RelayPoolContext)
-  const { publicKey, privateKey, user } = useContext(UserContext)
+  const { publicKey, privateKey, name } = useContext(UserContext)
   const otherPubKey = useMemo(() => route.params.pubKey, [])
   const [directMessages, setDirectMessages] = useState<DirectMessage[]>([])
   const [sendingMessages, setSendingMessages] = useState<DirectMessage[]>([])
@@ -147,9 +147,9 @@ export const ConversationPage: React.FC<ConversationPageProps> = ({ route }) => 
     item: DirectMessage,
     pending: boolean,
   ) => JSX.Element = (index, item, pending) => {
-    if (!publicKey || !privateKey || !otherUser || !user) return <></>
+    if (!publicKey || !privateKey || !otherUser) return <></>
 
-    const displayName = item.pubkey === publicKey ? username(user) : username(otherUser)
+    const displayName = item.pubkey === publicKey ? usernamePubKey(name, publicKey) : username(otherUser)
     const lastIndex = directMessages.length - 1 === index
     const nextItemHasdifferentPubKey =
       !lastIndex && directMessages[index + 1]?.pubkey !== item.pubkey
