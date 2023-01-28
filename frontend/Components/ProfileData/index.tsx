@@ -39,7 +39,7 @@ export const ProfileData: React.FC<ProfileCardProps> = ({
   return (
     <View style={styles.container}>
       <NostrosAvatar name={username} pubKey={nPub} src={picture} lud06={lud06} size={avatarSize} />
-      <View style={[styles.contactData, {height: avatarSize}]}>
+      <View style={[styles.contactData, { height: avatarSize }]}>
         <View style={styles.contactName}>
           <Text variant='titleSmall' numberOfLines={1}>
             {usernamePubKey(username, nPub)}

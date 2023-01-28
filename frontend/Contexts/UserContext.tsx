@@ -2,14 +2,12 @@ import React, { useContext, useEffect, useState } from 'react'
 import SInfo from 'react-native-sensitive-info'
 import { RelayPoolContext } from './RelayPoolContext'
 import { AppContext } from './AppContext'
-import { getUser, User } from '../Functions/DatabaseFunctions/Users'
+import { getUser } from '../Functions/DatabaseFunctions/Users'
 import { getPublicKey } from 'nostr-tools'
 import { dropTables } from '../Functions/DatabaseFunctions'
 import { navigate } from '../lib/Navigation'
 import { nsecEncode } from 'nostr-tools/nip19'
 import { getNpub } from '../lib/nostr/Nip19'
-import Clipboard from '@react-native-clipboard/clipboard'
-import { validNip21 } from '../Functions/NativeFunctions'
 
 export interface UserContextProps {
   userState: 'loading' | 'access' | 'ready'
@@ -20,10 +18,19 @@ export interface UserContextProps {
   setPublicKey: (privateKey: string | undefined) => void
   privateKey?: string
   setPrivateKey: (privateKey: string | undefined) => void
-  setUser: (user: User) => void
-  user?: User
   reloadUser: () => void
   logout: () => void
+  name?: string
+  setName: (value: string) => void
+  picture?: string
+  setPicture: (value: string) => void
+  about?: string
+  setAbout: (value: string) => void
+  lnurl?: string
+  setLnurl: (value: string) => void
+  nip05?: string
+  setNip05: (value: string) => void
+  validNip05?: boolean
 }
 
 export interface UserContextProviderProps {
@@ -35,45 +42,55 @@ export const initialUserContext: UserContextProps = {
   setUserState: () => {},
   setPublicKey: () => {},
   setPrivateKey: () => {},
-  setUser: () => {},
   reloadUser: () => {},
   logout: () => {},
+  setName: () => {},
+  setPicture: () => {},
+  setAbout: () => {},
+  setLnurl: () => {},
+  setNip05: () => {},
 }
 
 export const UserContextProvider = ({ children }: UserContextProviderProps): JSX.Element => {
   const { database, loadingDb, init } = useContext(AppContext)
-  const { relayPool, lastEventId } = useContext(RelayPoolContext)
+  const { relayPool } = useContext(RelayPoolContext)
   const [userState, setUserState] = useState<'loading' | 'access' | 'ready'>('loading')
   const [publicKey, setPublicKey] = useState<string>()
   const [nPub, setNpub] = useState<string>()
   const [nSec, setNsec] = useState<string>()
   const [privateKey, setPrivateKey] = useState<string>()
-  const [user, setUser] = React.useState<User>()
-  const [clipboardLoads, setClipboardLoads] = React.useState<string[]>([])
+  const [name, setName] = useState<string>()
+  const [picture, setPicture] = useState<string>()
+  const [about, setAbout] = useState<string>()
+  const [lnurl, setLnurl] = useState<string>()
+  const [nip05, setNip05] = useState<string>()
+  const [validNip05, setValidNip05] = useState<boolean>()
+  // const [clipboardLoads, setClipboardLoads] = React.useState<string[]>([])
 
   const reloadUser: () => void = () => {
     if (database && publicKey) {
       getUser(publicKey, database).then((result) => {
         if (result) {
-          setUser(result)
-        } else {
-          setUser({
-            id: publicKey,
-          })
+          setName(result.name)
+          setPicture(result.picture)
+          setAbout(result.about)
+          setLnurl(result.lnurl)
+          setNip05(result.nip05)
+          setValidNip05(result.valid_nip05)
         }
-        checkClipboard()
       })
     }
   }
 
-  const checkClipboard: () => void = () => {
-    Clipboard.getString().then((clipboardContent) => {
-      if (validNip21(clipboardContent) && !clipboardLoads.includes(clipboardContent)) {
-        setClipboardLoads((prev) => [...prev, clipboardContent])
-        console.log(clipboardContent)
-      }
-    })
-  }
+  // const checkClipboard: () => void = () => {
+  //   if (Clipboard.hasString()) {
+  //     Clipboard.getString().then((clipboardContent) => {
+  //       if (validNip21(clipboardContent) && !clipboardLoads.includes(clipboardContent)) {
+  //         setClipboardLoads((prev) => [...prev, clipboardContent])
+  //       }
+  //     })
+  //   }
+  // }
 
   const logout: () => void = () => {
     if (database) {
@@ -82,7 +99,12 @@ export const UserContextProvider = ({ children }: UserContextProviderProps): JSX
       setPublicKey(undefined)
       setNpub(undefined)
       setNsec(undefined)
-      setUser(undefined)
+      setName(undefined)
+      setPicture(undefined)
+      setAbout(undefined)
+      setLnurl(undefined)
+      setNip05(undefined)
+      setValidNip05(undefined)
       dropTables(database).then(() => {
         SInfo.deleteItem('privateKey', {}).then(() => {
           SInfo.deleteItem('publicKey', {}).then(() => {
@@ -94,10 +116,6 @@ export const UserContextProvider = ({ children }: UserContextProviderProps): JSX
       })
     }
   }
-
-  useEffect(() => {
-    if (!user) reloadUser()
-  }, [lastEventId])
 
   useEffect(() => {
     if (privateKey && privateKey !== '') {
@@ -146,14 +164,23 @@ export const UserContextProvider = ({ children }: UserContextProviderProps): JSX
         setUserState,
         nSec,
         nPub,
-        setUser,
         publicKey,
         setPublicKey,
         privateKey,
         setPrivateKey,
-        user,
         reloadUser,
         logout,
+        name,
+        setName,
+        picture,
+        setPicture,
+        about,
+        setAbout,
+        lnurl,
+        setLnurl,
+        nip05,
+        setNip05,
+        validNip05,
       }}
     >
       {children}

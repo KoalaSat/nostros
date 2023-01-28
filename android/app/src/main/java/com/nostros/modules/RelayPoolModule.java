@@ -109,7 +109,7 @@ public class RelayPoolModule extends ReactContextBaseJavaModule {
         if (relays.isEmpty()) {
             add("wss://brb.io");
             add("wss://damus.io");
-            add("wss://eden.nostr.land");
+            add("wss://nostr.swiss-enigma.ch");
         }
         for (Relay relay : relays) {
             try {

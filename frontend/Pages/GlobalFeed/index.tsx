@@ -74,7 +74,7 @@ export const GlobalFeed: React.FC<GlobalFeedProps> = ({ navigation, setProfileCa
       limit: pageSize,
     }
 
-    if (past) message.until = notes[0].created_at
+    if (past) message.until = lastLoadAt
 
     relayPool?.subscribe('homepage-global-main', [message])
     setRefreshing(false)
@@ -99,7 +99,7 @@ export const GlobalFeed: React.FC<GlobalFeedProps> = ({ navigation, setProfileCa
           relayPool?.subscribe('homepage-contacts-meta', [
             {
               kinds: [Kind.Metadata],
-              authors: notes.map((note) => note.pubkey ?? ''),
+              authors: results.map((note) => note.pubkey ?? ''),
             },
           ])
         }
@@ -132,20 +132,24 @@ export const GlobalFeed: React.FC<GlobalFeedProps> = ({ navigation, setProfileCa
           showsVerticalScrollIndicator={false}
           refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
         >
-          <View style={styles.refreshChipWrapper}>
-            <Chip
-                icon={() => <MaterialCommunityIcons name='cached' color={theme.colors.onSurface} size={20} />}
-                visible={newNotesCount > 0}
-                actions={[]}
+          {newNotesCount > 0 && (
+            <View style={styles.refreshChipWrapper}>
+              <Chip
+                icon={() => (
+                  <MaterialCommunityIcons name='cached' color={theme.colors.onSurface} size={20} />
+                )}
+                onPress={onRefresh}
+                // visible={newNotesCount > 0}
                 compact
                 elevated
                 style={styles.refreshChip}
-            >
-              {t(newNotesCount < 2 ? 'homeFeed.newMessage' : 'homeFeed.newMessages', {
-                newNotesCount,
-              })}
-            </Chip>
-          </View>
+              >
+                {t(newNotesCount < 2 ? 'homeFeed.newMessage' : 'homeFeed.newMessages', {
+                  newNotesCount,
+                })}
+              </Chip>
+            </View>
+          )}
           <FlatList showsVerticalScrollIndicator={false} data={notes} renderItem={renderItem} />
           {notes.length >= 10 && (
             <ActivityIndicator animating={true} style={styles.activityIndicator} />
@@ -178,7 +182,7 @@ const styles = StyleSheet.create({
   refreshChipWrapper: {
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'center'
+    justifyContent: 'center',
   },
   refreshChip: {
     marginTop: 16,

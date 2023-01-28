@@ -116,7 +116,7 @@ export const ContactsFeed: React.FC = () => {
   const onPressAddContact: () => void = () => {
     if (contactInput && relayPool && database && publicKey) {
       setIsAddingContact(true)
-      const hexKey = getNip19Key(contactInput)
+      const hexKey = getNip19Key(contactInput) ?? contactInput
       if (hexKey) {
         updateUserContact(hexKey, database, true)
           .then(() => {
@@ -311,10 +311,7 @@ export const ContactsFeed: React.FC = () => {
               : {},
           ]}
         >
-          <TouchableRipple
-              style={styles.textWrapper}
-              onPress={() => setTabKey('following')}
-          >
+          <TouchableRipple style={styles.textWrapper} onPress={() => setTabKey('following')}>
             <Text style={styles.tabText}>
               {t('contactsFeed.following', { count: following.length })}
             </Text>
@@ -328,10 +325,7 @@ export const ContactsFeed: React.FC = () => {
               : {},
           ]}
         >
-          <TouchableRipple
-              style={styles.textWrapper}
-              onPress={() => setTabKey('followers')}
-          >
+          <TouchableRipple style={styles.textWrapper} onPress={() => setTabKey('followers')}>
             <Text style={styles.tabText}>
               {t('contactsFeed.followers', { count: followers.length })}
             </Text>
@@ -443,7 +437,7 @@ const styles = StyleSheet.create({
   textWrapper: {
     justifyContent: 'center',
     height: '100%',
-    textAlign: 'center'
+    textAlign: 'center',
   },
   tabText: {
     textAlign: 'center',

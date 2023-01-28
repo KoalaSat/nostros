@@ -2,7 +2,6 @@ export const defaultRelays = [
   'wss://brb.io',
   'wss://damus.io',
   'wss://nostr.swiss-enigma.ch',
-  'wss://eden.nostr.land',
   'wss://nostr.onsats.org',
   'wss://nostr-pub.semisol.dev',
   'wss://nostr.openchain.fr',

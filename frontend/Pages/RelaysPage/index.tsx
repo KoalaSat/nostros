@@ -165,11 +165,7 @@ export const RelaysPage: React.FC = () => {
           {t(`relaysPage.notifications.${showNotification}`)}
         </Snackbar>
       )}
-      <RBSheet
-        ref={bottomSheetAddRef}
-        closeOnDragDown={true}
-        customStyles={rbSheetCustomStyles}
-      >
+      <RBSheet ref={bottomSheetAddRef} closeOnDragDown={true} customStyles={rbSheetCustomStyles}>
         <View style={styles.addRelay}>
           <TextInput
             mode='outlined'
@@ -191,11 +187,7 @@ export const RelaysPage: React.FC = () => {
           </Button>
         </View>
       </RBSheet>
-      <RBSheet
-        ref={bottomSheetEditRef}
-        closeOnDragDown={true}
-        customStyles={rbSheetCustomStyles}
-      >
+      <RBSheet ref={bottomSheetEditRef} closeOnDragDown={true} customStyles={rbSheetCustomStyles}>
         <View>
           <View style={styles.relayActions}>
             <View style={styles.actionButton}>
