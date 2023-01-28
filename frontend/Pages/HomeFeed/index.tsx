@@ -186,7 +186,7 @@ const styles = StyleSheet.create({
     height: 48,
   },
   feed: {
-    paddingBottom: 140,
+    paddingBottom: 96,
     paddingLeft: 16,
     paddingRight: 16,
   },
