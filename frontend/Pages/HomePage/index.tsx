@@ -9,56 +9,38 @@ import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityI
 import { UserContext } from '../../Contexts/UserContext'
 import { RelayPoolContext } from '../../Contexts/RelayPoolContext'
 import { Kind } from 'nostr-tools'
-import { getMentionNotes } from '../../Functions/DatabaseFunctions/Notes'
-import { RelayFilters } from '../../lib/nostr/RelayPool/intex'
+import { getMentionNotes, getNotificationsCount } from '../../Functions/DatabaseFunctions/Notes'
 import { AppContext } from '../../Contexts/AppContext'
-import { getNotificationsCount } from '../../Functions/DatabaseFunctions/Config'
 import { StyleSheet } from 'react-native'
 
 export const HomePage: React.FC = () => {
   const theme = useTheme()
   const { privateKey, publicKey } = React.useContext(UserContext)
-  const { database } = useContext(AppContext)
+  const { database, notificationSeenAt } = useContext(AppContext)
   const { relayPool, lastEventId } = useContext(RelayPoolContext)
   const [newNotifications, setNewNotifications] = useState<number>(0)
 
   useEffect(() => {
     if (publicKey && database) {
-      getNotificationsCount(database, publicKey).then(setNewNotifications)
+      getNotificationsCount(database, publicKey, notificationSeenAt).then(setNewNotifications)
     }
-  }, [lastEventId])
+  }, [lastEventId, notificationSeenAt])
 
   useEffect(() => {
     if (publicKey && database) {
       getMentionNotes(database, publicKey, 1).then((results) => {
-        let messages: RelayFilters[] = [
+        relayPool?.subscribe('notification-icon', [
           {
             kinds: [Kind.Text],
             '#p': [publicKey],
-            limit: 1,
+            since: results[0].created_at,
           },
           {
             kinds: [Kind.Text],
             '#e': [publicKey],
-            limit: 1,
+            since: results[0].created_at,
           },
-        ]
-        if (results.length > 0) {
-          messages = [
-            {
-              kinds: [Kind.Text],
-              '#p': [publicKey],
-              since: results[0].created_at,
-            },
-            {
-              kinds: [Kind.Text],
-              '#e': [publicKey],
-              since: results[0].created_at,
-            },
-          ]
-        }
-
-        relayPool?.subscribe('notification-icon', messages)
+        ])
       })
     }
   }, [publicKey])

@@ -124,18 +124,10 @@ public class DatabaseModule {
             database.execSQL("CREATE INDEX nostros_users_contact_index ON nostros_users(id, name); ");
         } catch (SQLException e) { }
         try {
-            database.execSQL("CREATE TABLE IF NOT EXISTS nostros_config(\n" +
-                    "          satoshi TEXT NOT NULL,\n" +
-                    "          show_public_images BOOLEAN DEFAULT FALSE,\n" +
-                    "          show_sensitive BOOLEAN DEFAULT FALSE\n" +
-                    "        );");
+            database.execSQL("DROP TABLE IF EXISTS nostros_config;");
         } catch (SQLException e) { }
         try {
             database.execSQL("ALTER TABLE nostros_users ADD COLUMN blocked BOOLEAN DEFAULT FALSE;");
-        } catch (SQLException e) { }
-        try {
-            database.execSQL("ALTER TABLE nostros_config ADD COLUMN last_notification_seen_at INT DEFAULT 0;");
-            database.execSQL("ALTER TABLE nostros_config ADD COLUMN last_pets_at INT DEFAULT 0;");
         } catch (SQLException e) { }
     }
 
