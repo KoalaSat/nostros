@@ -35,7 +35,7 @@ export const usernamePubKey: (name: string | undefined, pubKey: string | undefin
 export const formatPubKey: (pubKey: string | undefined) => string = (pubKey) => {
   if (!pubKey) return ''
 
-  return `${pubKey.slice(0, 6)}...${pubKey.slice(-6)}`
+  return `${pubKey.slice(0, 8)}:${pubKey.slice(-8)}`
 }
 
 export const getNip05Domain: (nip05: string | undefined) => string | null = (nip05) => {

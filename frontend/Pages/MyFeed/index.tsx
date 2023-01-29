@@ -93,25 +93,30 @@ export const MyFeed: React.FC<MyFeedProps> = ({ navigation, setProfileCardPubKey
               authors: notes.map((note) => note.pubkey ?? ''),
             },
           ])
-          const notedIds = notes.map((note) => note.id ?? '')
+          const noteIds = notes.map((note) => note.id ?? '')
           getLastReaction(database, { eventIds: notes.map((note) => note.id ?? '') }).then(
             (lastReaction) => {
               relayPool?.subscribe('homepage-reactions', [
                 {
                   kinds: [Kind.Reaction],
-                  '#e': notedIds,
+                  '#e': noteIds,
                   since: lastReaction?.created_at ?? 0,
                 },
               ])
             },
           )
+          const repostIds = notes.filter((note) => note.repost_id).map((note) => note.id ?? '')
           getLastReply(database, { eventIds: notes.map((note) => note.id ?? '') }).then(
             (lastReply) => {
               relayPool?.subscribe('homepage-replies', [
                 {
                   kinds: [Kind.Text],
-                  '#e': notedIds,
+                  '#e': noteIds,
                   since: lastReply?.created_at ?? 0,
+                },
+                {
+                  kinds: [Kind.Text],
+                  '#e': repostIds
                 },
               ])
             },
