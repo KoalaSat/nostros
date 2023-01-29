@@ -8,6 +8,7 @@ import {
   View,
 } from 'react-native'
 import { AppContext } from '../../Contexts/AppContext'
+import SInfo from 'react-native-sensitive-info'
 import { getLastReply, getMentionNotes, Note } from '../../Functions/DatabaseFunctions/Notes'
 import NoteCard from '../../Components/NoteCard'
 import { RelayPoolContext } from '../../Contexts/RelayPoolContext'
@@ -22,13 +23,13 @@ import { useTranslation } from 'react-i18next'
 import { navigate } from '../../lib/Navigation'
 import { useFocusEffect } from '@react-navigation/native'
 import { getLastReaction } from '../../Functions/DatabaseFunctions/Reactions'
-import { updateLastNotificationConfig } from '../../Functions/DatabaseFunctions/Config'
 import { getUnixTime } from 'date-fns'
+import { Config } from '../../Functions/DatabaseFunctions/Config'
 
 export const NotificationsFeed: React.FC = () => {
   const theme = useTheme()
   const { t } = useTranslation('common')
-  const { database } = useContext(AppContext)
+  const { database, setNotificationSeenAt } = useContext(AppContext)
   const { publicKey } = useContext(UserContext)
   const initialPageSize = 10
   const { lastEventId, relayPool } = useContext(RelayPoolContext)
@@ -40,19 +41,18 @@ export const NotificationsFeed: React.FC = () => {
 
   useFocusEffect(
     React.useCallback(() => {
-      if (database) {
-        subscribeNotes()
-        loadNotes()
-        updateLastNotificationConfig(getUnixTime(new Date()), database)
-      }
-
-      return () =>
+      subscribeNotes()
+      loadNotes()
+      updateLastSeen()
+      return () => {
         relayPool?.unsubscribe([
           'notification-feed',
           'notification-replies',
           'notification-reactions',
           'notification-meta',
         ])
+        updateLastSeen()
+      }
     }, []),
   )
 
@@ -67,6 +67,16 @@ export const NotificationsFeed: React.FC = () => {
       loadNotes()
     }
   }, [pageSize])
+
+  const updateLastSeen: () => void = () => {
+    const unixtime = getUnixTime(new Date())
+    setNotificationSeenAt(unixtime)
+    SInfo.getItem('config', {}).then((result) => {
+      const config: Config = JSON.parse(result)
+      config.last_notification_seen_at = unixtime
+      SInfo.setItem('config', JSON.stringify(config), {})
+    })
+  }
 
   const subscribeNotes: () => void = async () => {
     if (!publicKey) return
