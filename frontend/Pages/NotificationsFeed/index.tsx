@@ -43,7 +43,7 @@ export const NotificationsFeed: React.FC = () => {
 
       return () =>
         relayPool?.unsubscribe([
-          'notification',
+          'notification-feed',
           'notification-replies',
           'notification-reactions',
           'notification-meta',
@@ -66,7 +66,7 @@ export const NotificationsFeed: React.FC = () => {
   const subscribeNotes: () => void = async () => {
     if (!publicKey) return
 
-    relayPool?.subscribe('notification', [
+    relayPool?.subscribe('notification-feed', [
       {
         kinds: [Kind.Text],
         '#p': [publicKey],
