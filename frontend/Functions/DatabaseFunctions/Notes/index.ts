@@ -25,6 +25,7 @@ export const getMainNotes: (
   limit: number,
   contants: boolean,
   filters?: {
+    excludeRepost?: boolean
     until?: number
   },
 ) => Promise<Note[]> = async (db, pubKey, limit, contants, filters) => {
@@ -41,8 +42,13 @@ export const getMainNotes: (
 
   if (filters?.until) notesQuery += `nostros_notes.created_at < ${filters?.until} AND `
 
+  if (filters?.excludeRepost) {
+    notesQuery += `nostros_notes.main_event_id IS NULL `
+  } else {
+    notesQuery += `(nostros_notes.main_event_id IS NULL OR nostros_notes.repost_id IS NOT NULL)`
+  }
+
   notesQuery += `
-    nostros_notes.main_event_id IS NULL
     ORDER BY created_at DESC
     LIMIT ${limit}
   `
