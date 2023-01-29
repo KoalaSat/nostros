@@ -40,7 +40,6 @@ export const TextContent: React.FC<TextContentProps> = ({
   // const IMAGE_COVER = '../../../assets/images/placeholders/placeholder_image.png'
 
   useEffect(() => {
-    console.log(content)
     if (!linkPreview && url && validImageUrl(url)) {
       setLinkPreview(url)
       setLinkType('image')
