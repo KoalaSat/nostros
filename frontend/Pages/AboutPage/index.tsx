@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next'
 import { FlatList, Linking, ListRenderItem, StyleSheet } from 'react-native'
 import { Divider, List, Text, useTheme } from 'react-native-paper'
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'
+import VersionNumber from 'react-native-version-number'
 
 interface ItemList {
   key: number
@@ -81,7 +82,7 @@ export const AboutPage: React.FC = () => {
             )}
           />
         ),
-        right: <Text>v0.2.1.6-alpha</Text>,
+        right: <Text>{VersionNumber.appVersion}</Text>,
         onPress: () => {},
       },
     ],
