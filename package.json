@@ -53,6 +53,7 @@
     "react-native-svg": "^13.7.0",
     "react-native-tab-view": "^3.3.4",
     "react-native-vector-icons": "^9.2.0",
+    "react-native-version-number": "^0.3.6",
     "react-native-webp-format": "^1.1.2",
     "readable-stream": "^4.3.0",
     "safe-buffer": "^5.2.1",
