@@ -116,7 +116,7 @@ export const MyFeed: React.FC<MyFeedProps> = ({ navigation, setProfileCardPubKey
                 },
                 {
                   kinds: [Kind.Text],
-                  '#e': repostIds
+                  '#e': repostIds,
                 },
               ])
             },
@@ -126,7 +126,7 @@ export const MyFeed: React.FC<MyFeedProps> = ({ navigation, setProfileCardPubKey
     }
   }
 
-  const renderItem: ListRenderItem<Note> = ({ item, index }) => {
+  const renderItem: ListRenderItem<Note> = ({ item }) => {
     return (
       <View style={styles.noteCard} key={item.id}>
         <NoteCard
