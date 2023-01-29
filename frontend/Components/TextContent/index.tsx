@@ -40,6 +40,7 @@ export const TextContent: React.FC<TextContentProps> = ({
   // const IMAGE_COVER = '../../../assets/images/placeholders/placeholder_image.png'
 
   useEffect(() => {
+    console.log(content)
     if (!linkPreview && url && validImageUrl(url)) {
       setLinkPreview(url)
       setLinkType('image')
@@ -121,6 +122,13 @@ export const TextContent: React.FC<TextContentProps> = ({
     return matchingString
   }
 
+  const renderBitcoinText: (matchingString: string, matches: string[]) => string = (
+    matchingString,
+    _matches,
+  ) => {
+    return matchingString + '\u20BF'
+  }
+
   const generatePreview: () => JSX.Element = () => {
     if (!showPreview || !url) return <></>
 
@@ -175,6 +183,7 @@ export const TextContent: React.FC<TextContentProps> = ({
             : {
                 pattern: /#\[(\d+)\]/,
               },
+          { pattern: /#bitcoin/, style: styles.bitcoin, renderText: renderBitcoinText },
           { pattern: /#(\w+)/, style: styles.hashTag },
           { pattern: /(note1)\S*/, style: styles.nip19, onPress: handleNip05NotePress },
           {
@@ -212,6 +221,9 @@ const styles = StyleSheet.create({
     textDecorationLine: 'underline',
   },
   hashTag: {
+    fontStyle: 'italic',
+  },
+  bitcoin: {
     fontStyle: 'italic',
   },
   previewContent: {

@@ -105,6 +105,7 @@ export const MyFeed: React.FC<MyFeedProps> = ({ navigation, setProfileCardPubKey
               ])
             },
           )
+          const repostIds = notes.filter((note) => note.repost_id).map((note) => note.repost_id ?? '')
           getLastReply(database, { eventIds: notes.map((note) => note.id ?? '') }).then(
             (lastReply) => {
               relayPool?.subscribe('homepage-replies', [
@@ -112,6 +113,10 @@ export const MyFeed: React.FC<MyFeedProps> = ({ navigation, setProfileCardPubKey
                   kinds: [Kind.Text],
                   '#e': notedIds,
                   since: lastReply?.created_at ?? 0,
+                },
+                {
+                  kinds: [Kind.Text],
+                  '#e': repostIds
                 },
               ])
             },
@@ -121,7 +126,7 @@ export const MyFeed: React.FC<MyFeedProps> = ({ navigation, setProfileCardPubKey
     }
   }
 
-  const renderItem: ListRenderItem<Note> = ({ item, index }) => {
+  const renderItem: ListRenderItem<Note> = ({ item }) => {
     return (
       <View style={styles.noteCard} key={item.id}>
         <NoteCard
