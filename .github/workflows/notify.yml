@@ -16,5 +16,5 @@ jobs:
       - name: 'Post to Nostr'
         run: |
           go install github.com/fiatjaf/noscl@latest
-          noscl setprivate ${{ secrets.NOSTROS_PRIVATE_KEY }}
-          noscl publish ${{ github.event.release.body }}
+          ~/go/bin/noscl setprivate ${{ secrets.NOSTROS_PRIVATE_KEY }}
+          ~/go/bin/noscl publish ${{ github.event.release.body }}
