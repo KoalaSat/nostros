@@ -22,6 +22,8 @@ import { useTranslation } from 'react-i18next'
 import { navigate } from '../../lib/Navigation'
 import { useFocusEffect } from '@react-navigation/native'
 import { getLastReaction } from '../../Functions/DatabaseFunctions/Reactions'
+import { updateLastNotificationConfig } from '../../Functions/DatabaseFunctions/Config'
+import { getUnixTime } from 'date-fns'
 
 export const NotificationsFeed: React.FC = () => {
   const theme = useTheme()
@@ -38,8 +40,11 @@ export const NotificationsFeed: React.FC = () => {
 
   useFocusEffect(
     React.useCallback(() => {
-      subscribeNotes()
-      loadNotes()
+      if (database) {
+        subscribeNotes()
+        loadNotes()
+        updateLastNotificationConfig(getUnixTime(new Date()), database)
+      }
 
       return () =>
         relayPool?.unsubscribe([

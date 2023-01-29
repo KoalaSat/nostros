@@ -35,6 +35,15 @@ export const updateConfig: (
   return db.execute(configQuery, [config.satoshi, config.show_public_images, config.show_sensitive])
 }
 
+export const updateLastNotificationConfig: (
+  lastNotificationSeenAt: number,
+  db: QuickSQLiteConnection,
+) => Promise<QueryResult> = async (lastNotificationSeenAt, db) => {
+  const configQuery = `UPDATE nostros_config SET last_notification_seen_at = ?`
+
+  return db.execute(configQuery, [lastNotificationSeenAt])
+}
+
 export const getNotificationsCount: (
   db: QuickSQLiteConnection,
   pubKey: string,

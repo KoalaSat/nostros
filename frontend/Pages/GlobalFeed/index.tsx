@@ -57,7 +57,7 @@ export const GlobalFeed: React.FC<GlobalFeedProps> = ({ navigation, setProfileCa
   }, [pageSize])
 
   const updateLastLoad: () => void = () => {
-    setLastLoadAt(getUnixTime(new Date()))
+    setLastLoadAt(getUnixTime(new Date()) - 5)
   }
 
   const onRefresh = useCallback(() => {
