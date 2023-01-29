@@ -27,7 +27,7 @@ Local setup: https://github.com/KoalaSat/nostros/blob/main/SETUP.md
 - [x] Sensitive content flag
 - [x] Multirelay management
 - [x] Bech-32 keys
-- [ ] Public Feed
+- [X] Public Feed
 - [ ] Channels
 - [ ] Deep Links
 - [ ] Search
