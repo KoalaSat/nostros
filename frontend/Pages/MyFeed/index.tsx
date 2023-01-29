@@ -135,7 +135,7 @@ export const MyFeed: React.FC<MyFeedProps> = ({ navigation, setProfileCardPubKey
   }
 
   return (
-    <View style={styles.container}>
+    <View>
       {notes && notes.length > 0 ? (
         <ScrollView
           onScroll={onScroll}

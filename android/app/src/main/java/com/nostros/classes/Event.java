@@ -121,7 +121,7 @@ public class Event {
     }
 
     protected String getRepostId() {
-        String match = "";
+        String match = null;
         Matcher m = Pattern.compile("#\\[(\\d+)\\]").matcher(content);
         while (m.find()) {
             int position = Integer.parseInt(m.group(1));

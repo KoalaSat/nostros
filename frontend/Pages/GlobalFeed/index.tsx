@@ -92,7 +92,10 @@ export const GlobalFeed: React.FC<GlobalFeedProps> = ({ navigation, setProfileCa
       if (lastLoadAt > 0) {
         getMainNotesCount(database, lastLoadAt).then(setNewNotesCount)
       }
-      getMainNotes(database, publicKey, pageSize, false, { until: lastLoadAt }).then((results) => {
+      getMainNotes(database, publicKey, pageSize, false, {
+        until: lastLoadAt,
+        excludeRepost: true,
+      }).then((results) => {
         setRefreshing(false)
         if (results.length > 0) {
           setNotes(results)
