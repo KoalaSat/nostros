@@ -61,7 +61,8 @@
     "configPage": {
       "showPublicImages": "Afficher les images dans le flux global",
       "showSensitive": "Montrer les notes sensibles",
-      "satoshi": "Symbole de satoshi"
+      "satoshi": "Symbole de satoshi",
+      "imageHostingService": "Image hosting service"
     },
     "noteCard": {
       "answering": "Répondre à {{pubkey}}",

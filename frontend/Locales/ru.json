@@ -56,7 +56,8 @@
       "followers": "{{followers}} followers",
       "configuration": "Настройки",
       "about": "Подроблее",
-      "logout": "Выйти"
+      "logout": "Выйти",
+      "imageHostingService": "Хостинг изображений"
     },
     "configPage": {
       "showPublicImages": "Show images on public feed",

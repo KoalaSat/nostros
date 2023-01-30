@@ -6,6 +6,7 @@ import { UserContext } from '../../Contexts/UserContext'
 import { getUsers, User } from '../../Functions/DatabaseFunctions/Users'
 import { useTranslation } from 'react-i18next'
 import getUnixTime from 'date-fns/getUnixTime'
+import debounce from 'lodash.debounce'
 import { StyleSheet, View } from 'react-native'
 import Logo from '../../Components/Logo'
 import { Button, Text, useTheme } from 'react-native-paper'
@@ -23,14 +24,17 @@ export const ProfileLoadPage: React.FC = () => {
 
   useFocusEffect(
     React.useCallback(() => {
-      loadMeta()
-      loadPets()
+      debounce(() => {
+        loadMeta()
+        loadPets()
+      }, 500)
 
       return () => relayPool?.unsubscribe(['profile-load-notes', 'profile-load-meta-pets'])
     }, []),
   )
 
   useEffect(() => {
+    loadMeta()
     loadPets()
     reloadUser()
     if (name) {

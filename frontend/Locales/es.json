@@ -61,7 +61,8 @@
     "configPage": {
       "showPublicImages": "Mostrar imágenes en feed global",
       "showSensitive": "Mostrar notas sensibles",
-      "satoshi": "Símbolo de satoshi"
+      "satoshi": "Símbolo de satoshi",
+      "imageHostingService": "Servicio de subida de imágenes"
     },
     "noteCard": {
       "answering": "Responder a {{pubkey}}",

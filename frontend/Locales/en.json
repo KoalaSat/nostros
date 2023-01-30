@@ -46,7 +46,9 @@
       "isContact": "Following",
       "isNotContact": "Not following",
       "contentWarning": "Sensitive content",
-      "send": "Send"
+      "send": "Send",
+      "imageUploaded": "Your file has been uploaded.\nConsider donating to the service: {{uri}}",
+      "imageUploadErro": "There was an error while trying to upload your file"
     },
     "menuItems": {
       "relays": "Relays",
@@ -61,7 +63,8 @@
     "configPage": {
       "showPublicImages": "Show images on public feed",
       "showSensitive": "Show sensitive notes",
-      "satoshi": "Satoshi symbol"
+      "satoshi": "Satoshi symbol",
+      "imageHostingService": "Image hosting service"
     },
     "noteCard": {
       "answering": "Answer to {{pubkey}}",
