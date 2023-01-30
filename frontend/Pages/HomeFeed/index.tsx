@@ -97,7 +97,7 @@ export const HomeFeed: React.FC<HomeFeedProps> = ({ navigation }) => {
   return (
     <View>
       <View style={styles.tabsNavigator}>
-        <ScrollView horizontal showsHorizontalScrollIndicator={false} >
+        <ScrollView horizontal showsHorizontalScrollIndicator={false}>
           <View
             style={[
               styles.tab,
