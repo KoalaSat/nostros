@@ -12,7 +12,7 @@ import RBSheet from 'react-native-raw-bottom-sheet'
 import ProfileCard from '../../Components/ProfileCard'
 import { navigate } from '../../lib/Navigation'
 import { useFocusEffect } from '@react-navigation/native'
-import { getNpub } from '../../lib/nostr/Nip19'
+import { SkeletonNote } from '../../Components/SkeletonNote/SkeletonNote'
 
 interface NotePageProps {
   route: { params: { noteId: string } }
@@ -25,7 +25,6 @@ export const NotePage: React.FC<NotePageProps> = ({ route }) => {
   const [note, setNote] = useState<Note>()
   const [replies, setReplies] = useState<Note[]>()
   const [refreshing, setRefreshing] = useState(false)
-  const [nPub, setNPub] = useState<string>()
   const [profileCardPubkey, setProfileCardPubKey] = useState<string>()
   const theme = useTheme()
   const bottomSheetProfileRef = React.useRef<RBSheet>(null)
@@ -53,7 +52,6 @@ export const NotePage: React.FC<NotePageProps> = ({ route }) => {
       if (events.length > 0) {
         const event = events[0]
         setNote(event)
-        setNPub(getNpub(event.pubkey))
 
         const notes = await getNotes(database, { filters: { reply_event_id: route.params.noteId } })
         const rootReplies = getDirectReplies(event, notes)
@@ -132,7 +130,7 @@ export const NotePage: React.FC<NotePageProps> = ({ route }) => {
     bottomSheetProfileRef.current?.open()
   }
 
-  return note && nPub ? (
+  return note ? (
     <View>
       <ScrollView
         horizontal={false}
@@ -180,7 +178,20 @@ export const NotePage: React.FC<NotePageProps> = ({ route }) => {
       </RBSheet>
     </View>
   ) : (
-    <></>
+    <View>
+      <SkeletonNote />
+      <AnimatedFAB
+        style={[styles.fabHome, { top: Dimensions.get('window').height - 230 }]}
+        icon='home-outline'
+        label='Label'
+        onPress={() => {
+          navigate('Feed', { screen: 'Landing' })
+        }}
+        animateFrom='right'
+        iconMode='static'
+        extended={false}
+      />
+    </View>
   )
 }
 

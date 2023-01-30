@@ -134,12 +134,23 @@
       "nips": "NIPs",
       "version": "Version"
     },
+    "reactionsFeed": {
+      "emptyTitle": "You still didn't reacted",
+      "emptyDescription": "See here the notes you reacted to."
+    },
+    "repostsFeed": {
+      "emptyTitle": "You still didn't reposted",
+      "emptyDescription": "See here the notes you reposted."
+    },
     "homeFeed": {
-      "emptyTitle": "You are not following anyone.",
+      "emptyTitle": "You are not following anyone",
       "emptyDescription": "Follow other profiles to see content.",
       "emptyButton": "Go to contacts",
       "globalFeed": "Global feed",
       "myFeed": "My feed",
+      "reactions": "Reactions",
+      "mentions": "Mentions",
+      "reposts": "Reposts",
       "newMessage": "{{newNotesCount}} new note. Pull to refresh.",
       "newMessages": "{{newNotesCount}} new notes. Pull to refresh."
     },

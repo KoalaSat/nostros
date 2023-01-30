@@ -25,7 +25,6 @@ export const getMainNotes: (
   limit: number,
   contants: boolean,
   filters?: {
-    excludeRepost?: boolean
     until?: number
   },
 ) => Promise<Note[]> = async (db, pubKey, limit, contants, filters) => {
@@ -42,13 +41,8 @@ export const getMainNotes: (
 
   if (filters?.until) notesQuery += `nostros_notes.created_at < ${filters?.until} AND `
 
-  if (filters?.excludeRepost) {
-    notesQuery += `nostros_notes.main_event_id IS NULL `
-  } else {
-    notesQuery += `(nostros_notes.main_event_id IS NULL OR nostros_notes.repost_id IS NOT NULL)`
-  }
-
   notesQuery += `
+    nostros_notes.main_event_id IS NULL
     ORDER BY created_at DESC
     LIMIT ${limit}
   `
@@ -90,6 +84,53 @@ export const getMentionNotes: (
       SELECT nostros_notes.id FROM nostros_notes WHERE pubkey = '${pubKey}'
     ) OR nostros_notes.user_mentioned = 1)
     AND nostros_notes.pubkey != '${pubKey}'
+    ORDER BY created_at DESC
+    LIMIT ${limit}
+  `
+
+  const resultSet = await db.execute(notesQuery)
+  const items: object[] = getItems(resultSet)
+  const notes: Note[] = items.map((object) => databaseToEntity(object))
+
+  return notes
+}
+
+export const getReactedNotes: (
+  db: QuickSQLiteConnection,
+  pubKey: string,
+  limit: number,
+) => Promise<Note[]> = async (db, pubKey, limit) => {
+  const notesQuery = `
+    SELECT
+      nostros_notes.*, nostros_users.nip05, nostros_users.valid_nip05, nostros_users.lnurl, nostros_users.name, nostros_users.picture, nostros_users.contact, nostros_users.created_at as user_created_at FROM nostros_notes
+    LEFT JOIN
+      nostros_users ON nostros_users.id = nostros_notes.pubkey
+    WHERE nostros_notes.id IN (
+      SELECT reacted_event_id FROM nostros_reactions WHERE pubkey = '${pubKey}'
+    )
+    ORDER BY created_at DESC
+    LIMIT ${limit}
+  `
+
+  const resultSet = await db.execute(notesQuery)
+  const items: object[] = getItems(resultSet)
+  const notes: Note[] = items.map((object) => databaseToEntity(object))
+
+  return notes
+}
+
+export const getRepostedNotes: (
+  db: QuickSQLiteConnection,
+  pubKey: string,
+  limit: number,
+) => Promise<Note[]> = async (db, pubKey, limit) => {
+  const notesQuery = `
+    SELECT
+      nostros_notes.*, nostros_users.nip05, nostros_users.valid_nip05, nostros_users.lnurl, nostros_users.name, nostros_users.picture, nostros_users.contact, nostros_users.created_at as user_created_at FROM nostros_notes
+    LEFT JOIN
+      nostros_users ON nostros_users.id = nostros_notes.pubkey
+    WHERE nostros_notes.repost_id IS NOT NULL AND
+    pubkey = '${pubKey}' 
     ORDER BY created_at DESC
     LIMIT ${limit}
   `

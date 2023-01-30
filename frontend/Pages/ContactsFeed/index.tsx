@@ -477,7 +477,7 @@ const styles = StyleSheet.create({
   blank: {
     justifyContent: 'space-between',
     height: 252,
-    marginTop: 5,
+    marginTop: 75,
     padding: 16,
   },
   tabLabel: {

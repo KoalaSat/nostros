@@ -3,7 +3,6 @@ import { QuickSQLiteConnection } from 'react-native-quick-sqlite'
 import { initDatabase } from '../Functions/DatabaseFunctions'
 import SInfo from 'react-native-sensitive-info'
 import { Linking, StyleSheet } from 'react-native'
-import { Config } from '../Functions/DatabaseFunctions/Config'
 import { Text } from 'react-native-paper'
 
 export interface AppContextProps {

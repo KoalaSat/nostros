@@ -229,7 +229,9 @@ const styles = StyleSheet.create({
   blank: {
     justifyContent: 'space-between',
     height: 220,
-    marginTop: 91,
+    marginTop: 139,
+    paddingLeft: 16,
+    paddingRight: 16,
   },
 })
 

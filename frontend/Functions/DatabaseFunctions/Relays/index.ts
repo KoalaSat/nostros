@@ -1,4 +1,4 @@
-import { QuickSQLiteConnection } from 'react-native-quick-sqlite'
+import { QueryResult, QuickSQLiteConnection } from 'react-native-quick-sqlite'
 import { getItems } from '..'
 
 export interface Relay {
@@ -28,4 +28,14 @@ export const getRelays: (db: QuickSQLiteConnection) => Promise<Relay[]> = async 
   const items: object[] = getItems(resultSet)
   const relays: Relay[] = items.map((object) => databaseToEntity(object))
   return relays
+}
+
+export const createRelay: (db: QuickSQLiteConnection, url: string) => Promise<QueryResult> = async (
+  db,
+  url,
+) => {
+  const query = `
+    INSERT OR IGNORE INTO nostros_relays (url) VALUES (?)
+  `
+  return db.execute(query, [url])
 }
