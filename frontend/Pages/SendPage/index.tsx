@@ -77,7 +77,7 @@ export const SendPage: React.FC<SendPageProps> = ({ route }) => {
   }
 
   const onUploadImage: () => void = async () => {
-    launchImageLibrary({ selectionLimit: 1, quality: 0, mediaType: 'photo' }, async (result) => {
+    launchImageLibrary({ selectionLimit: 1, mediaType: 'photo' }, async (result) => {
       const assets = result?.assets
       if (assets && assets.length > 0) {
         const file = assets[0]
