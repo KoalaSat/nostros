@@ -2464,6 +2464,15 @@ axios@^1.2.2:
     form-data "^4.0.0"
     proxy-from-env "^1.1.0"
 
+axios@^1.2.6:
+  version "1.2.6"
+  resolved "https://registry.yarnpkg.com/axios/-/axios-1.2.6.tgz#eacb6d065baa11bad5959e7ffa0cb6745c65f392"
+  integrity sha512-rC/7F08XxZwjMV4iuWv+JpD3E0Ksqg9nac4IIg6RwNuF0JTeWoCo/mBNG54+tNhhI11G3/VDRbdDQTs9hGp4pQ==
+  dependencies:
+    follow-redirects "^1.15.0"
+    form-data "^4.0.0"
+    proxy-from-env "^1.1.0"
+
 babel-core@^7.0.0-bridge.0:
   version "7.0.0-bridge.0"
   resolved "https://registry.yarnpkg.com/babel-core/-/babel-core-7.0.0-bridge.0.tgz#95a492ddd90f9b4e9a4a1da14eb335b87b634ece"
@@ -2595,6 +2604,11 @@ balanced-match@^1.0.0:
   version "1.0.2"
   resolved "https://registry.yarnpkg.com/balanced-match/-/balanced-match-1.0.2.tgz#e83e3a7e3f300b34cb9d87f615fa0cbf357690ee"
   integrity sha512-3oSeUO0TMV67hN1AmbXsK4yaqU7tjiHlbxRDZOpH0KW9+CeX4bRAaX0Anxt0tx2MrpRpWwQaPwIlISEJhYU5Pw==
+
+base-64@0.1.0:
+  version "0.1.0"
+  resolved "https://registry.yarnpkg.com/base-64/-/base-64-0.1.0.tgz#780a99c84e7d600260361511c4877613bf24f6bb"
+  integrity sha512-Y5gU45svrR5tI2Vt/X9GPd3L0HNIKzGu202EjxrXMpuc2V2CiKgemAbUUsqYmZJvPtCXoUKjNZwBJzsNScUbXA==
 
 base-x@^3.0.2:
   version "3.0.9"
@@ -4487,7 +4501,7 @@ glob-parent@^6.0.2:
   dependencies:
     is-glob "^4.0.3"
 
-glob@^7.1.3, glob@^7.1.4:
+glob@^7.1.3, glob@^7.1.4, glob@^7.2.3:
   version "7.2.3"
   resolved "https://registry.yarnpkg.com/glob/-/glob-7.2.3.tgz#b8df0fb802bbfa8e89bd1d938b4e16578ed44f2b"
   integrity sha512-nFR0zLpU2YCaRxwoCJvL6UvCH2JFyFVIvwTLsIf21AuHlMskA1hhTdk+LlYJtOlYt9v6dvszD2BGRqBL+iQK9Q==
@@ -7152,6 +7166,14 @@ react-native-bidirectional-infinite-scroll@^0.3.3:
   resolved "https://registry.yarnpkg.com/react-native-bidirectional-infinite-scroll/-/react-native-bidirectional-infinite-scroll-0.3.3.tgz#31e83e30514be2eaaa889b97d01149c8a08576ec"
   integrity sha512-zxYJDjrxTkGqg83WH3fSdufg79XZ7xDDn9HdHlKo9avAcz92Rf28/ivDeUM2aOUmmboqJK8BqtVByT6cF/taYg==
 
+react-native-blob-util@^0.17.1:
+  version "0.17.1"
+  resolved "https://registry.yarnpkg.com/react-native-blob-util/-/react-native-blob-util-0.17.1.tgz#d9d6caaa79cd44622ff68c566ab9b448c97003b6"
+  integrity sha512-sel2PvprG3Y5XK89mIuezB/ROTDkr9cz9nJXxfXil12GGZpGRsOsB+e919ZEGWV/BfPFx5AVjOE67XOJ7FNLMQ==
+  dependencies:
+    base-64 "0.1.0"
+    glob "^7.2.3"
+
 react-native-codegen@^0.70.6:
   version "0.70.6"
   resolved "https://registry.yarnpkg.com/react-native-codegen/-/react-native-codegen-0.70.6.tgz#2ce17d1faad02ad4562345f8ee7cbe6397eda5cb"
@@ -7177,6 +7199,11 @@ react-native-gradle-plugin@^0.70.3:
   version "0.70.3"
   resolved "https://registry.yarnpkg.com/react-native-gradle-plugin/-/react-native-gradle-plugin-0.70.3.tgz#cbcf0619cbfbddaa9128701aa2d7b4145f9c4fc8"
   integrity sha512-oOanj84fJEXUg9FoEAQomA8ISG+DVIrTZ3qF7m69VQUJyOGYyDZmPqKcjvRku4KXlEH6hWO9i4ACLzNBh8gC0A==
+
+react-native-image-picker@^5.0.1:
+  version "5.0.1"
+  resolved "https://registry.yarnpkg.com/react-native-image-picker/-/react-native-image-picker-5.0.1.tgz#c9e99217396bc82a977785e39e14afb4819e8448"
+  integrity sha512-+poQTHOnEGrbxJnut591XA9006svFOyfPg/i5bv+fLuwoSHh5HW0E/PVhvT8lbX0Z5C108vh3DAsnrfFFnPBGw==
 
 react-native-multithreading@^1.1.1:
   version "1.1.1"

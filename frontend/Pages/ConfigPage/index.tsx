@@ -5,7 +5,16 @@ import { Divider, List, Switch, useTheme } from 'react-native-paper'
 import SInfo from 'react-native-sensitive-info'
 import RBSheet from 'react-native-raw-bottom-sheet'
 import { AppContext } from '../../Contexts/AppContext'
-import { Config } from '../../Functions/DatabaseFunctions/Config'
+import { imageHostingServices } from '../../Constants/Services'
+
+export interface Config {
+  satoshi: 'kebab' | 'sats'
+  show_public_images: boolean
+  show_sensitive: boolean
+  last_notification_seen_at: number
+  last_pets_at: number
+  image_hosting_service: string
+}
 
 export const ConfigPage: React.FC = () => {
   const theme = useTheme()
@@ -18,12 +27,15 @@ export const ConfigPage: React.FC = () => {
     setShowSensitive,
     satoshi,
     setSatoshi,
+    imageHostingService,
+    setImageHostingService,
   } = React.useContext(AppContext)
-  const bottomSheetRef = React.useRef<RBSheet>(null)
+  const bottomSheetSatoshiRef = React.useRef<RBSheet>(null)
+  const bottomSheetImageHostingRef = React.useRef<RBSheet>(null)
 
   React.useEffect(() => {}, [showPublicImages, showSensitive, satoshi])
 
-  const createOptions = React.useMemo(() => {
+  const satoshiOptions = React.useMemo(() => {
     return [
       {
         key: 1,
@@ -35,7 +47,7 @@ export const ConfigPage: React.FC = () => {
             config.satoshi = 'kebab'
             SInfo.setItem('config', JSON.stringify(config), {})
           })
-          bottomSheetRef.current?.close()
+          bottomSheetSatoshiRef.current?.close()
         },
       },
       {
@@ -48,10 +60,28 @@ export const ConfigPage: React.FC = () => {
             config.satoshi = 'sats'
             SInfo.setItem('config', JSON.stringify(config), {})
           })
-          bottomSheetRef.current?.close()
+          bottomSheetSatoshiRef.current?.close()
         },
       },
     ]
+  }, [])
+
+  const imageHostingOptions = React.useMemo(() => {
+    return Object.keys(imageHostingServices).map((service, index) => {
+      return {
+        key: index,
+        title: <Text>{imageHostingServices[service].uri}</Text>,
+        onPress: () => {
+          setImageHostingService(service)
+          SInfo.getItem('config', {}).then((result) => {
+            const config: Config = JSON.parse(result)
+            config.image_hosting_service = service
+            SInfo.setItem('config', JSON.stringify(config), {})
+          })
+          bottomSheetImageHostingRef.current?.close()
+        },
+      }
+    })
   }, [])
 
   const bottomSheetStyles = React.useMemo(() => {
@@ -105,12 +135,30 @@ export const ConfigPage: React.FC = () => {
       />
       <List.Item
         title={t('configPage.satoshi')}
-        onPress={() => bottomSheetRef.current?.open()}
+        onPress={() => bottomSheetSatoshiRef.current?.open()}
         right={() => getSatoshiSymbol(25)}
       />
-      <RBSheet ref={bottomSheetRef} closeOnDragDown={true} customStyles={bottomSheetStyles}>
+      <List.Item
+        title={t('configPage.imageHostingService')}
+        onPress={() => bottomSheetImageHostingRef.current?.open()}
+        right={() => <Text>{imageHostingServices[imageHostingService].uri}</Text>}
+      />
+      <RBSheet ref={bottomSheetSatoshiRef} closeOnDragDown={true} customStyles={bottomSheetStyles}>
         <FlatList
-          data={createOptions}
+          data={satoshiOptions}
+          renderItem={({ item }) => {
+            return <List.Item key={item.key} title={item.title} onPress={item.onPress} />
+          }}
+          ItemSeparatorComponent={Divider}
+        />
+      </RBSheet>
+      <RBSheet
+        ref={bottomSheetImageHostingRef}
+        closeOnDragDown={true}
+        customStyles={bottomSheetStyles}
+      >
+        <FlatList
+          data={imageHostingOptions}
           renderItem={({ item }) => {
             return <List.Item key={item.key} title={item.title} onPress={item.onPress} />
           }}

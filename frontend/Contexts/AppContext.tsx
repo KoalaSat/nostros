@@ -4,6 +4,8 @@ import { initDatabase } from '../Functions/DatabaseFunctions'
 import SInfo from 'react-native-sensitive-info'
 import { Linking, StyleSheet } from 'react-native'
 import { Text } from 'react-native-paper'
+import { Config } from '../Pages/ConfigPage'
+import { imageHostingServices } from '../Constants/Services'
 
 export interface AppContextProps {
   init: () => void
@@ -16,6 +18,8 @@ export interface AppContextProps {
   showSensitive: boolean
   setShowSensitive: (showPublicImages: boolean) => void
   satoshi: 'kebab' | 'sats'
+  imageHostingService: string
+  setImageHostingService: (imageHostingService: string) => void
   setSatoshi: (showPublicImages: 'kebab' | 'sats') => void
   getSatoshiSymbol: (fontSize?: number) => JSX.Element
 }
@@ -36,6 +40,8 @@ export const initialAppContext: AppContextProps = {
   setShowSensitive: () => {},
   satoshi: 'kebab',
   setSatoshi: () => {},
+  imageHostingService: Object.keys(imageHostingServices)[0],
+  setImageHostingService: () => {},
   getSatoshiSymbol: () => <></>,
 }
 
@@ -44,6 +50,9 @@ export const AppContextProvider = ({ children }: AppContextProviderProps): JSX.E
     initialAppContext.showPublicImages,
   )
   const [showSensitive, setShowSensitive] = React.useState<boolean>(initialAppContext.showSensitive)
+  const [imageHostingService, setImageHostingService] = React.useState<string>(
+    initialAppContext.imageHostingService,
+  )
   const [notificationSeenAt, setNotificationSeenAt] = React.useState<number>(0)
   const [satoshi, setSatoshi] = React.useState<'kebab' | 'sats'>(initialAppContext.satoshi)
   const [database, setDatabase] = useState<QuickSQLiteConnection | null>(null)
@@ -64,10 +73,14 @@ export const AppContextProvider = ({ children }: AppContextProviderProps): JSX.E
         setShowSensitive(config.show_sensitive ?? initialAppContext.showSensitive)
         setSatoshi(config.satoshi)
         setNotificationSeenAt(config.last_notification_seen_at ?? 0)
+        setImageHostingService(
+          config.image_hosting_service ?? initialAppContext.imageHostingService,
+        )
       } else {
         const config: Config = {
           show_public_images: initialAppContext.showPublicImages,
           show_sensitive: initialAppContext.showSensitive,
+          image_hosting_service: initialAppContext.imageHostingService,
           satoshi: initialAppContext.satoshi,
           last_notification_seen_at: 0,
           last_pets_at: 0,
@@ -93,6 +106,8 @@ export const AppContextProvider = ({ children }: AppContextProviderProps): JSX.E
   return (
     <AppContext.Provider
       value={{
+        imageHostingService,
+        setImageHostingService,
         init,
         loadingDb,
         database,

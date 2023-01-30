@@ -9,23 +9,35 @@ import { Note } from '../../Functions/DatabaseFunctions/Notes'
 import { getETags, getTaggedPubKeys } from '../../Functions/RelayFunctions/Events'
 import { getUsers, User } from '../../Functions/DatabaseFunctions/Users'
 import { formatPubKey } from '../../Functions/RelayFunctions/Users'
-import { Button, Switch, Text, TextInput, TouchableRipple } from 'react-native-paper'
+import { launchImageLibrary } from 'react-native-image-picker'
+import {
+  Button,
+  IconButton,
+  Snackbar,
+  Switch,
+  Text,
+  TextInput,
+  TouchableRipple,
+} from 'react-native-paper'
 import { UserContext } from '../../Contexts/UserContext'
 import { goBack } from '../../lib/Navigation'
 import { Kind } from 'nostr-tools'
 import ProfileData from '../../Components/ProfileData'
 import NoteCard from '../../Components/NoteCard'
+import { imageHostingServices } from '../../Constants/Services'
 
 interface SendPageProps {
   route: { params: { note: Note; type?: 'reply' | 'repost' } | undefined }
 }
 
 export const SendPage: React.FC<SendPageProps> = ({ route }) => {
-  const { database } = useContext(AppContext)
+  const { database, imageHostingService } = useContext(AppContext)
   const { publicKey } = useContext(UserContext)
   const { relayPool, lastConfirmationtId } = useContext(RelayPoolContext)
   const { t } = useTranslation('common')
   // state
+  const [showNotification, setShowNotification] = useState<undefined | string>()
+  const [uploadingFile, setUploadingFile] = useState<boolean>(false)
   const [content, setContent] = useState<string>('')
   const [contentWarning, setContentWarning] = useState<boolean>(false)
   const [userSuggestions, setUserSuggestions] = useState<User[]>([])
@@ -62,6 +74,32 @@ export const SendPage: React.FC<SendPageProps> = ({ route }) => {
 
   const mentionText: (user: User) => string = (user) => {
     return `@${user.name ?? formatPubKey(user.id)}`
+  }
+
+  const onUploadImage: () => void = async () => {
+    launchImageLibrary({ selectionLimit: 1, quality: 0, mediaType: 'photo' }, async (result) => {
+      const assets = result?.assets
+      if (assets && assets.length > 0) {
+        const file = assets[0]
+        if (file.uri && file.type && file.fileName) {
+          imageHostingServices[imageHostingService]
+            .sendFunction(file.uri, file.type, file.fileName)
+            .then((imageUri) => {
+              setShowNotification('imageUploaded')
+              setUploadingFile(false)
+              setContent((prev) => `${prev}\n\n${imageUri}`)
+            })
+            .catch(() => {
+              setShowNotification('imageUploadErro')
+              setUploadingFile(false)
+            })
+        } else {
+          setUploadingFile(false)
+        }
+      } else {
+        setUploadingFile(false)
+      }
+    })
   }
 
   const onPressSend: () => void = () => {
@@ -178,15 +216,22 @@ export const SendPage: React.FC<SendPageProps> = ({ route }) => {
           // FIXME: can't find this color
           <View style={{ backgroundColor: '#001C37' }}>
             <View style={styles.contentWarning}>
-              <Text>{t('sendPage.contentWarning')}</Text>
+              <Text style={styles.contentWarningText}>{t('sendPage.contentWarning')}</Text>
               <Switch value={contentWarning} onValueChange={setContentWarning} />
+              <IconButton
+                icon='image-outline'
+                size={25}
+                style={styles.imageButton}
+                onPress={onUploadImage}
+                disabled={uploadingFile}
+              />
             </View>
             <View style={styles.send}>
               <Button
                 mode='contained'
                 onPress={onPressSend}
                 disabled={route.params?.type !== 'repost' && (!content || content === '')}
-                loading={isSending}
+                loading={isSending || uploadingFile}
               >
                 {t('sendPage.send')}
               </Button>
@@ -194,16 +239,40 @@ export const SendPage: React.FC<SendPageProps> = ({ route }) => {
           </View>
         )}
       </View>
+      {showNotification && (
+        <Snackbar
+          style={styles.snackbar}
+          visible={showNotification !== undefined}
+          duration={Snackbar.DURATION_SHORT}
+          onIconPress={() => setShowNotification(undefined)}
+          onDismiss={() => setShowNotification(undefined)}
+        >
+          {t(`sendPage.${showNotification}`, {
+            uri: imageHostingServices[imageHostingService].donation,
+          })}
+        </Snackbar>
+      )}
     </>
   )
 }
 
 const styles = StyleSheet.create({
+  contentWarningText: {
+    marginTop: 3,
+  },
+  snackbar: {
+    margin: 16,
+    bottom: 100,
+  },
   textInputContainer: {
     flex: 1,
   },
   textInput: {
     paddingBottom: 0,
+  },
+  imageButton: {
+    marginBottom: -13,
+    marginTop: -8,
   },
   noteCard: {
     flexDirection: 'column-reverse',
