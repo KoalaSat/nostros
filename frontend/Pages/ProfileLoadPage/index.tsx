@@ -67,6 +67,10 @@ export const ProfileLoadPage: React.FC = () => {
           relayPool?.subscribe('profile-load-notes', [
             {
               kinds: [Kind.Text],
+              authors: [publicKey],
+            },
+            {
+              kinds: [Kind.Text],
               authors,
               since: getUnixTime(new Date()) - 43200,
             },

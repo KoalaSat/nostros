@@ -1,5 +1,5 @@
 import React, { useContext, useState } from 'react'
-import { Dimensions, StyleSheet, View } from 'react-native'
+import { Dimensions, ScrollView, StyleSheet, View } from 'react-native'
 import { UserContext } from '../../Contexts/UserContext'
 import { RelayPoolContext } from '../../Contexts/RelayPoolContext'
 import { AnimatedFAB, Text, TouchableRipple } from 'react-native-paper'
@@ -11,6 +11,8 @@ import { t } from 'i18next'
 import GlobalFeed from '../GlobalFeed'
 import MyFeed from '../MyFeed'
 import { AppContext } from '../../Contexts/AppContext'
+import ReactionsFeed from '../ReactionsFeed'
+import RepostsFeed from '../RepostsFeed'
 
 interface HomeFeedProps {
   navigation: any
@@ -72,55 +74,115 @@ export const HomeFeed: React.FC<HomeFeedProps> = ({ navigation }) => {
         }}
       />
     ),
+    reactions: (
+      <ReactionsFeed
+        navigation={navigation}
+        setProfileCardPubKey={(value) => {
+          setProfileCardPubKey(value)
+          bottomSheetProfileRef.current?.open()
+        }}
+      />
+    ),
+    reposts: (
+      <RepostsFeed
+        navigation={navigation}
+        setProfileCardPubKey={(value) => {
+          setProfileCardPubKey(value)
+          bottomSheetProfileRef.current?.open()
+        }}
+      />
+    ),
   }
 
   return (
     <View>
       <View style={styles.tabsNavigator}>
-        <View
-          style={[
-            styles.tab,
-            {
-              borderBottomColor:
-                tabKey === 'globalFeed' ? theme.colors.primary : theme.colors.border,
-              borderBottomWidth: tabKey === 'globalFeed' ? 3 : 1,
-            },
-          ]}
-        >
-          <TouchableRipple
-            style={styles.textWrapper}
-            onPress={() => {
-              relayPool?.unsubscribe([
-                'homepage-contacts-main',
-                'homepage-reactions',
-                'homepage-contacts-meta',
-                'homepage-replies',
-              ])
-              setTabKey('globalFeed')
-            }}
+        <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+          <View
+            style={[
+              styles.tab,
+              {
+                borderBottomColor:
+                  tabKey === 'globalFeed' ? theme.colors.primary : theme.colors.border,
+                borderBottomWidth: tabKey === 'globalFeed' ? 3 : 1,
+              },
+            ]}
           >
-            <Text style={styles.tabText}>{t('homeFeed.globalFeed')}</Text>
-          </TouchableRipple>
-        </View>
-        <View
-          style={[
-            styles.tab,
-            {
-              borderBottomColor: tabKey === 'myFeed' ? theme.colors.primary : theme.colors.border,
-              borderBottomWidth: tabKey === 'myFeed' ? 3 : 1,
-            },
-          ]}
-        >
-          <TouchableRipple
-            style={styles.textWrapper}
-            onPress={() => {
-              relayPool?.unsubscribe(['homepage-global-main'])
-              setTabKey('myFeed')
-            }}
+            <TouchableRipple
+              style={styles.textWrapper}
+              onPress={() => {
+                relayPool?.unsubscribe([
+                  'homepage-contacts-main',
+                  'homepage-reactions',
+                  'homepage-contacts-meta',
+                  'homepage-replies',
+                ])
+                setTabKey('globalFeed')
+              }}
+            >
+              <Text style={styles.tabText}>{t('homeFeed.globalFeed')}</Text>
+            </TouchableRipple>
+          </View>
+          <View
+            style={[
+              styles.tab,
+              {
+                borderBottomColor: tabKey === 'myFeed' ? theme.colors.primary : theme.colors.border,
+                borderBottomWidth: tabKey === 'myFeed' ? 3 : 1,
+              },
+            ]}
           >
-            <Text style={styles.tabText}>{t('homeFeed.myFeed')}</Text>
-          </TouchableRipple>
-        </View>
+            <TouchableRipple
+              style={styles.textWrapper}
+              onPress={() => {
+                relayPool?.unsubscribe(['homepage-global-main'])
+                setTabKey('myFeed')
+              }}
+            >
+              <Text style={styles.tabText}>{t('homeFeed.myFeed')}</Text>
+            </TouchableRipple>
+          </View>
+          <View
+            style={[
+              styles.tab,
+              {
+                borderBottomColor:
+                  tabKey === 'reactions' ? theme.colors.primary : theme.colors.border,
+                borderBottomWidth: tabKey === 'reactions' ? 3 : 1,
+              },
+            ]}
+          >
+            <TouchableRipple
+              style={styles.textWrapper}
+              onPress={() => {
+                relayPool?.unsubscribe(['homepage-global-main'])
+                setTabKey('reactions')
+              }}
+            >
+              <Text style={styles.tabText}>{t('homeFeed.reactions')}</Text>
+            </TouchableRipple>
+          </View>
+          <View
+            style={[
+              styles.tab,
+              {
+                borderBottomColor:
+                  tabKey === 'reposts' ? theme.colors.primary : theme.colors.border,
+                borderBottomWidth: tabKey === 'reposts' ? 3 : 1,
+              },
+            ]}
+          >
+            <TouchableRipple
+              style={styles.textWrapper}
+              onPress={() => {
+                relayPool?.unsubscribe(['homepage-global-main'])
+                setTabKey('reposts')
+              }}
+            >
+              <Text style={styles.tabText}>{t('homeFeed.reposts')}</Text>
+            </TouchableRipple>
+          </View>
+        </ScrollView>
       </View>
       <View style={styles.feed}>{renderScene[tabKey]}</View>
       {privateKey && (
@@ -162,11 +224,12 @@ const styles = StyleSheet.create({
   },
   blank: {
     justifyContent: 'space-between',
-    height: 220,
-    marginTop: 91,
+    height: 252,
+    marginTop: 75,
+    padding: 16,
   },
   tab: {
-    flex: 1,
+    width: 160,
   },
   textWrapper: {
     justifyContent: 'center',

@@ -9,7 +9,7 @@ import getUnixTime from 'date-fns/getUnixTime'
 import { Card, Text, useTheme } from 'react-native-paper'
 import { getNip19Key, getNpub } from '../../lib/nostr/Nip19'
 import { navigate } from '../../lib/Navigation'
-import { validImageUrl } from '../../Functions/NativeFunctions'
+import { validBlueBirdUrl, validImageUrl, validMediaUrl } from '../../Functions/NativeFunctions'
 import Clipboard from '@react-native-clipboard/clipboard'
 
 interface TextContentProps {
@@ -40,9 +40,17 @@ export const TextContent: React.FC<TextContentProps> = ({
   // const IMAGE_COVER = '../../../assets/images/placeholders/placeholder_image.png'
 
   useEffect(() => {
-    if (!linkPreview && url && validImageUrl(url)) {
-      setLinkPreview(url)
-      setLinkType('image')
+    if (!linkPreview && url) {
+      if (validMediaUrl(url)) {
+        setLinkPreview(url)
+        setLinkType('video')
+      } else if (validImageUrl(url)) {
+        setLinkPreview(url)
+        setLinkType('image')
+      } else if (validBlueBirdUrl(url)) {
+        setLinkPreview(url)
+        setLinkType('blueBird')
+      }
     }
   }, [loadedUsers, url])
 
@@ -128,6 +136,7 @@ export const TextContent: React.FC<TextContentProps> = ({
       if (!linkPreview) return require(DEFAULT_COVER)
       if (linkType === 'audio') return require(MEDIA_COVER)
       if (linkType === 'video') return require(MEDIA_COVER)
+      if (linkType === 'blueBird') return require(DEFAULT_COVER)
       // if (linkType === 'image') return require(IMAGE_COVER)
       if (linkType === 'image') return { uri: url }
 

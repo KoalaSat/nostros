@@ -106,11 +106,6 @@ public class RelayPoolModule extends ReactContextBaseJavaModule {
     public void connect(String pubKey, Callback callback) {
         userPubKey = pubKey;
         relays = database.getRelays(context);
-        if (relays.isEmpty()) {
-            add("wss://brb.io");
-            add("wss://damus.io");
-            add("wss://nostr.swiss-enigma.ch");
-        }
         for (Relay relay : relays) {
             try {
                 if (relay.isActive()) {

@@ -34,6 +34,25 @@ export const validImageUrl: (url: string | undefined) => boolean = (url) => {
   }
 }
 
+export const validMediaUrl: (url: string | undefined) => boolean = (url) => {
+  if (url) {
+    const fileRegexp = /^(https?:\/\/.*\.(?:mp4|mp3))$/
+    const serviceRegexp = /^(https?:\/\/(?:youtube|youtu.be).*)$/
+    return fileRegexp.test(url) || serviceRegexp.test(url)
+  } else {
+    return false
+  }
+}
+
+export const validBlueBirdUrl: (url: string | undefined) => boolean = (url) => {
+  if (url) {
+    const serviceRegexp = /^(https?:\/\/(?:twitter.com).*)$/
+    return serviceRegexp.test(url)
+  } else {
+    return false
+  }
+}
+
 export const validNip21: (string: string | undefined) => boolean = (string) => {
   if (string) {
     const regexp = /^nostr:(npub1|nprofile1|note1|nevent1)S*$/
