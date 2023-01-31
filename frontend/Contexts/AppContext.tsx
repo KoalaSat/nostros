@@ -1,12 +1,13 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { QuickSQLiteConnection } from 'react-native-quick-sqlite'
 import { initDatabase } from '../Functions/DatabaseFunctions'
 import SInfo from 'react-native-sensitive-info'
-import { Linking, StyleSheet } from 'react-native'
+import { AppState, Linking, StyleSheet } from 'react-native'
 import { Text } from 'react-native-paper'
 import { Config } from '../Pages/ConfigPage'
 import { imageHostingServices } from '../Constants/Services'
-import { randomInt } from '../Functions/NativeFunctions'
+import { randomInt, validNip21 } from '../Functions/NativeFunctions'
+import Clipboard from '@react-native-clipboard/clipboard'
 
 export interface AppContextProps {
   init: () => void
@@ -24,6 +25,9 @@ export interface AppContextProps {
   setSatoshi: (showPublicImages: 'kebab' | 'sats') => void
   getSatoshiSymbol: (fontSize?: number) => JSX.Element
   getImageHostingService: () => string
+  clipboardNip21?: string
+  setClipboardNip21: (clipboardNip21: string | undefined) => void
+  checkClipboard: () => void
 }
 
 export interface AppContextProviderProps {
@@ -42,13 +46,17 @@ export const initialAppContext: AppContextProps = {
   setShowSensitive: () => {},
   satoshi: 'kebab',
   setSatoshi: () => {},
+  checkClipboard: () => {},
   imageHostingService: Object.keys(imageHostingServices)[0],
   setImageHostingService: () => {},
-  getImageHostingService: () => "",
+  getImageHostingService: () => '',
   getSatoshiSymbol: () => <></>,
+  setClipboardNip21: () => {},
 }
 
 export const AppContextProvider = ({ children }: AppContextProviderProps): JSX.Element => {
+  const currentState = useRef(AppState.currentState)
+  const [appState, setAppState] = useState(currentState.current)
   const [showPublicImages, setShowPublicImages] = React.useState<boolean>(
     initialAppContext.showPublicImages,
   )
@@ -60,6 +68,25 @@ export const AppContextProvider = ({ children }: AppContextProviderProps): JSX.E
   const [satoshi, setSatoshi] = React.useState<'kebab' | 'sats'>(initialAppContext.satoshi)
   const [database, setDatabase] = useState<QuickSQLiteConnection | null>(null)
   const [loadingDb, setLoadingDb] = useState<boolean>(initialAppContext.loadingDb)
+  const [clipboardLoads, setClipboardLoads] = React.useState<string[]>([])
+  const [clipboardNip21, setClipboardNip21] = React.useState<string>()
+
+  useEffect(() => {
+    const handleChange = AppState.addEventListener('change', (changedState) => {
+      currentState.current = changedState
+      setAppState(currentState.current)
+    })
+
+    return () => {
+      handleChange.remove()
+    }
+  }, [])
+
+  useEffect(() => {
+    if (appState === 'active') {
+      checkClipboard()
+    }
+  }, [appState])
 
   const init: () => void = () => {
     const db = initDatabase()
@@ -112,11 +139,25 @@ export const AppContextProvider = ({ children }: AppContextProviderProps): JSX.E
     return Object.keys(imageHostingServices)[randomIndex - 1]
   }
 
+  const checkClipboard: () => void = () => {
+    if (Clipboard.hasString()) {
+      Clipboard.getString().then((clipboardContent) => {
+        if (validNip21(clipboardContent) && !clipboardLoads.includes(clipboardContent)) {
+          setClipboardLoads((prev) => [...prev, clipboardContent])
+          setClipboardNip21(clipboardContent)
+        }
+      })
+    }
+  }
+
   useEffect(init, [])
 
   return (
     <AppContext.Provider
       value={{
+        checkClipboard,
+        clipboardNip21,
+        setClipboardNip21,
         imageHostingService,
         setImageHostingService,
         getImageHostingService,
