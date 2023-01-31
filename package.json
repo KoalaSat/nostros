@@ -53,6 +53,7 @@
     "react-native-screens": "^3.19.0",
     "react-native-securerandom": "^1.0.1",
     "react-native-sensitive-info": "^5.5.8",
+    "react-native-share": "^8.1.0",
     "react-native-svg": "^13.7.0",
     "react-native-tab-view": "^3.3.4",
     "react-native-vector-icons": "^9.2.0",

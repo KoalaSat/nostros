@@ -156,8 +156,8 @@ export const LnPayment: React.FC<TextContentProps> = ({ open, setOpen, event, us
       >
         <Card style={styles.qrContainer}>
           <Card.Content>
-            <View>
-              <QRCode value={invoice} size={350} />
+            <View style={styles.qr}>
+              <QRCode value={invoice} size={300} quietZone={8}/>
             </View>
             <View style={styles.qrText}>
               <Text>{monto} </Text>
@@ -221,6 +221,11 @@ const styles = StyleSheet.create({
   cardActions: {
     flexDirection: 'row',
     justifyContent: 'space-around',
+  },
+  qr: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 16
   },
 })
 

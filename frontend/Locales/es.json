@@ -46,7 +46,12 @@
       "isContact": "Siguiendo",
       "isNotContact": "Sin seguir",
       "contentWarning": "Contenido sensible",
-      "send": "Enviar"
+      "send": "Enviar",
+      "imageUploaded": "Tu archivo se ha subido.\nConsidera donar al servicio:\n{{uri}}",
+      "imageUploadErro": "Se ha producido un error al subir la imagen.",
+      "uploadImage": "Subir imagen ahora",
+      "cancel": "Cancelar",
+      "poweredBy": "Servido por {{uri}}"
     },
     "menuItems": {
       "relays": "Relays",
@@ -62,7 +67,8 @@
       "showPublicImages": "Mostrar imágenes en feed global",
       "showSensitive": "Mostrar notas sensibles",
       "satoshi": "Símbolo de satoshi",
-      "imageHostingService": "Servicio de subida de imágenes"
+      "imageHostingService": "Servicio de subida de imágenes",
+      "random": "Aleatorio"
     },
     "noteCard": {
       "answering": "Responder a {{pubkey}}",
@@ -217,8 +223,10 @@
       "message": "Mensaje",
       "follow": "Seguir",
       "block": "Bloquear",
+      "share": "Share",
       "unblock": "Desbloquear",
       "unfollow": "Siguiendo",
+      "copyNip05": "Copiar NIP-05",
       "copyNPub": "Copiar clave"
     },
     "conversationsFeed": {

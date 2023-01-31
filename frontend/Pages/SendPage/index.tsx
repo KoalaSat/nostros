@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from 'react'
+import React, { useContext, useEffect, useMemo, useState } from 'react'
 import { StyleSheet, View } from 'react-native'
 import { AppContext } from '../../Contexts/AppContext'
 import { Event } from '../../lib/nostr/Events'
@@ -9,15 +9,17 @@ import { Note } from '../../Functions/DatabaseFunctions/Notes'
 import { getETags, getTaggedPubKeys } from '../../Functions/RelayFunctions/Events'
 import { getUsers, User } from '../../Functions/DatabaseFunctions/Users'
 import { formatPubKey } from '../../Functions/RelayFunctions/Users'
-import { launchImageLibrary } from 'react-native-image-picker'
+import { Asset, launchImageLibrary } from 'react-native-image-picker'
 import {
   Button,
+  Card,
   IconButton,
   Snackbar,
   Switch,
   Text,
   TextInput,
   TouchableRipple,
+  useTheme,
 } from 'react-native-paper'
 import { UserContext } from '../../Contexts/UserContext'
 import { goBack } from '../../lib/Navigation'
@@ -25,13 +27,15 @@ import { Kind } from 'nostr-tools'
 import ProfileData from '../../Components/ProfileData'
 import NoteCard from '../../Components/NoteCard'
 import { imageHostingServices } from '../../Constants/Services'
+import RBSheet from 'react-native-raw-bottom-sheet'
 
 interface SendPageProps {
   route: { params: { note: Note; type?: 'reply' | 'repost' } | undefined }
 }
 
 export const SendPage: React.FC<SendPageProps> = ({ route }) => {
-  const { database, imageHostingService } = useContext(AppContext)
+  const theme = useTheme()
+  const { database, getImageHostingService } = useContext(AppContext)
   const { publicKey } = useContext(UserContext)
   const { relayPool, lastConfirmationtId } = useContext(RelayPoolContext)
   const { t } = useTranslation('common')
@@ -43,7 +47,10 @@ export const SendPage: React.FC<SendPageProps> = ({ route }) => {
   const [userSuggestions, setUserSuggestions] = useState<User[]>([])
   const [userMentions, setUserMentions] = useState<User[]>([])
   const [isSending, setIsSending] = useState<boolean>(false)
+  const [imageUpload, setImageUpload] = useState<Asset>()
   const note = React.useMemo(() => route.params?.note, [])
+  const [imageHostingService] = useState<string>(getImageHostingService())
+  const bottomSheetImageRef = React.useRef<RBSheet>(null)
 
   useEffect(() => {
     if (isSending) goBack()
@@ -76,30 +83,42 @@ export const SendPage: React.FC<SendPageProps> = ({ route }) => {
     return `@${user.name ?? formatPubKey(user.id)}`
   }
 
-  const onUploadImage: () => void = async () => {
-    launchImageLibrary({ selectionLimit: 1, quality: 0, mediaType: 'photo' }, async (result) => {
+  const getImage: () => void = () => {
+    launchImageLibrary({ selectionLimit: 1, mediaType: 'photo' }, async (result) => {
       const assets = result?.assets
       if (assets && assets.length > 0) {
         const file = assets[0]
         if (file.uri && file.type && file.fileName) {
-          imageHostingServices[imageHostingService]
-            .sendFunction(file.uri, file.type, file.fileName)
-            .then((imageUri) => {
-              setShowNotification('imageUploaded')
-              setUploadingFile(false)
-              setContent((prev) => `${prev}\n\n${imageUri}`)
-            })
-            .catch(() => {
-              setShowNotification('imageUploadErro')
-              setUploadingFile(false)
-            })
+          setImageUpload(file)
+          bottomSheetImageRef.current?.open()
         } else {
           setUploadingFile(false)
+          setShowNotification('imageUploadErro')
         }
       } else {
         setUploadingFile(false)
+        setShowNotification('imageUploadErro')
       }
     })
+  }
+
+  const uploadImage: () => void = async () => {
+    if (imageUpload?.uri && imageUpload.type && imageUpload.fileName) {
+      imageHostingServices[imageHostingService]
+        .sendFunction(imageUpload.uri, imageUpload.type, imageUpload.fileName)
+        .then((imageUri) => {
+          bottomSheetImageRef.current?.close()
+          setUploadingFile(false)
+          setContent((prev) => `${prev}\n\n${imageUri}`)
+          setImageUpload(undefined)
+          setShowNotification('imageUploaded')
+        })
+        .catch(() => {
+          bottomSheetImageRef.current?.close()
+          setUploadingFile(false)
+          setShowNotification('imageUploadErro')
+        })
+    }
   }
 
   const onPressSend: () => void = () => {
@@ -179,6 +198,21 @@ export const SendPage: React.FC<SendPageProps> = ({ route }) => {
     </TouchableRipple>
   )
 
+  const bottomSheetStyles = React.useMemo(() => {
+    return {
+      container: {
+        backgroundColor: theme.colors.background,
+        paddingTop: 16,
+        paddingRight: 16,
+        paddingBottom: 32,
+        paddingLeft: 16,
+        borderTopRightRadius: 28,
+        borderTopLeftRadius: 28,
+        height: 'auto',
+      },
+    }
+  }, [])
+
   return (
     <>
       <View style={[styles.textInputContainer, { paddingBottom: note ? 200 : 10 }]}>
@@ -222,7 +256,7 @@ export const SendPage: React.FC<SendPageProps> = ({ route }) => {
                 icon='image-outline'
                 size={25}
                 style={styles.imageButton}
-                onPress={onUploadImage}
+                onPress={getImage}
                 disabled={uploadingFile}
               />
             </View>
@@ -239,6 +273,31 @@ export const SendPage: React.FC<SendPageProps> = ({ route }) => {
           </View>
         )}
       </View>
+      <RBSheet ref={bottomSheetImageRef} closeOnDragDown={true} customStyles={bottomSheetStyles}>
+        <Card style={styles.imageUploadPreview}>
+          {imageUpload && (
+            <Card.Cover source={{ uri: imageUpload?.uri ?? '' }} resizeMode='contain' />
+          )}
+        </Card>
+        <Text>{t('sendPage.poweredBy', { uri: imageHostingServices[imageHostingService].uri })}</Text>
+        <Button
+          style={styles.buttonSpacer}
+          mode='contained'
+          onPress={uploadImage}
+          loading={uploadingFile}
+        >
+          {t('sendPage.uploadImage')}
+        </Button>
+        <Button
+          mode='outlined'
+          onPress={() => {
+            bottomSheetImageRef.current?.close()
+            setImageUpload(undefined)
+          }}
+        >
+          {t('sendPage.cancel')}
+        </Button>
+      </RBSheet>
       {showNotification && (
         <Snackbar
           style={styles.snackbar}
@@ -323,6 +382,14 @@ const styles = StyleSheet.create({
   verifyIcon: {
     paddingTop: 4,
     paddingLeft: 5,
+  },
+  imageUploadPreview: {
+    marginTop: 16,
+    marginBottom: 16,
+  },
+  buttonSpacer: {
+    marginTop: 16,
+    marginBottom: 16,
   },
 })
 
