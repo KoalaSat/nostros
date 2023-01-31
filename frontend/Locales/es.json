@@ -213,6 +213,11 @@
       "unfollow": "Siguiendo",
       "copyNPub": "Copiar clave"
     },
+    "homePage": {
+      "clipboardTitle": "Se ha detectado una clave Nostr en el portapapeles",
+      "goToEvent": "Abrir",
+      "cancel": "Cancelar"
+    },
     "profileCard": {
       "notifications": {
         "contactAdded": "Siguiendo",

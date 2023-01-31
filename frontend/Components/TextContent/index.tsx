@@ -185,7 +185,7 @@ export const TextContent: React.FC<TextContentProps> = ({
                 pattern: /#\[(\d+)\]/,
               },
           { pattern: /#(\w+)/, style: styles.hashTag },
-          { pattern: /(note1)\S*/, style: styles.nip19, onPress: handleNip05NotePress },
+          { pattern: /(nevent1)\S*/, style: styles.nip19, onPress: handleNip05NotePress },
           {
             pattern: /(npub1|nprofile1)\S*/,
             style: styles.nip19,

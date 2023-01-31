@@ -225,6 +225,11 @@
       "unfollow": "Following",
       "copyNPub": "Copy key"
     },
+    "homePage": {
+      "clipboardTitle": "Nostr key detected on your clipboard",
+      "goToEvent": "Open",
+      "cancel": "Cancel"
+    },
     "profileCard": {
       "notifications": {
         "contactAdded": "Profile followed",

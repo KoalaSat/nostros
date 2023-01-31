@@ -65,7 +65,6 @@ export const UserContextProvider = ({ children }: UserContextProviderProps): JSX
   const [lnurl, setLnurl] = useState<string>()
   const [nip05, setNip05] = useState<string>()
   const [validNip05, setValidNip05] = useState<boolean>()
-  // const [clipboardLoads, setClipboardLoads] = React.useState<string[]>([])
 
   const reloadUser: () => void = () => {
     if (database && publicKey) {
@@ -81,16 +80,6 @@ export const UserContextProvider = ({ children }: UserContextProviderProps): JSX
       })
     }
   }
-
-  // const checkClipboard: () => void = () => {
-  //   if (Clipboard.hasString()) {
-  //     Clipboard.getString().then((clipboardContent) => {
-  //       if (validNip21(clipboardContent) && !clipboardLoads.includes(clipboardContent)) {
-  //         setClipboardLoads((prev) => [...prev, clipboardContent])
-  //       }
-  //     })
-  //   }
-  // }
 
   const logout: () => void = () => {
     if (database) {

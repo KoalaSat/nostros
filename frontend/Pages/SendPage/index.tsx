@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useMemo, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import { StyleSheet, View } from 'react-native'
 import { AppContext } from '../../Contexts/AppContext'
 import { Event } from '../../lib/nostr/Events'
