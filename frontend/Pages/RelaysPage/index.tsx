@@ -167,15 +167,19 @@ export const RelaysPage: React.FC = () => {
       )}
       <RBSheet ref={bottomSheetAddRef} closeOnDragDown={true} customStyles={rbSheetCustomStyles}>
         <View style={styles.addRelay}>
-          <TextInput
-            mode='outlined'
-            label={t('relaysPage.labelAdd') ?? ''}
-            onChangeText={setAddRelayInput}
-            value={addRelayInput}
-          />
-          <Button mode='contained' onPress={onPressAddRelay}>
-            {t('relaysPage.add')}
-          </Button>
+          <View style={styles.bottomDrawerButton}>
+            <TextInput
+              mode='outlined'
+              label={t('relaysPage.labelAdd') ?? ''}
+              onChangeText={setAddRelayInput}
+              value={addRelayInput}
+            />
+          </View>
+          <View style={styles.bottomDrawerButton}>
+            <Button mode='contained' onPress={onPressAddRelay}>
+              {t('relaysPage.add')}
+            </Button>
+          </View>
           <Button
             mode='outlined'
             onPress={() => {
@@ -224,6 +228,9 @@ const styles = StyleSheet.create({
   title: {
     paddingLeft: 16,
   },
+  bottomDrawerButton: {
+    paddingBottom: 16,
+  },
   container: {
     padding: 0,
     paddingBottom: 32,
@@ -243,7 +250,6 @@ const styles = StyleSheet.create({
   },
   addRelay: {
     alignContent: 'center',
-    height: '80%',
     justifyContent: 'space-between',
   },
   relayActions: {

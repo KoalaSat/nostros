@@ -47,8 +47,11 @@
       "isNotContact": "Not following",
       "contentWarning": "Sensitive content",
       "send": "Send",
-      "imageUploaded": "Your file has been uploaded.\nConsider donating to the service: {{uri}}",
-      "imageUploadErro": "There was an error while trying to upload your file"
+      "imageUploaded": "Your file has been uploaded.\nConsider donating to the service:\n{{uri}}",
+      "imageUploadErro": "There was an error while trying to upload your file",
+      "uploadImage": "Upload image now",
+      "cancel": "Cancel",
+      "poweredBy": "Powered by {{uri}}"
     },
     "menuItems": {
       "relays": "Relays",
@@ -64,7 +67,8 @@
       "showPublicImages": "Show images on public feed",
       "showSensitive": "Show sensitive notes",
       "satoshi": "Satoshi symbol",
-      "imageHostingService": "Image hosting service"
+      "imageHostingService": "Image hosting service",
+      "random": "Random"
     },
     "noteCard": {
       "answering": "Answer to {{pubkey}}",
@@ -233,6 +237,8 @@
       "unfollow": "Following",
       "block": "Block",
       "unblock": "Unblock",
+      "share": "Share",
+      "copyNip05": "Copy NIP-05",
       "copyNPub": "Copy key"
     },
     "conversationsFeed": {

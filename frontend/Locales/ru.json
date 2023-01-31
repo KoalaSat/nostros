@@ -46,7 +46,12 @@
       "isContact": "Following",
       "isNotContact": "Not following",
       "contentWarning": "Делекатный контент",
-      "send": "Send"
+      "send": "Send",
+      "imageUploaded": "Tu archivo se ha subido.\nConsidera donar al servicio:\n{{uri}}",
+      "imageUploadErro": "Se ha producido un error al subir la imagen.",
+      "uploadImage": "Subir imagen ahora",
+      "cancel": "Отменить",
+      "poweredBy": "Powered by {{uri}}"
     },
     "menuItems": {
       "relays": "Реле",
@@ -62,7 +67,8 @@
     "configPage": {
       "showPublicImages": "Show images on public feed",
       "showSensitive": "Show sensitive notes",
-      "satoshi": "Satoshi symbol"
+      "satoshi": "Satoshi symbol",
+      "random": "Random"
     },
     "noteCard": {
       "answering": "Ответить {{pubkey}}",
@@ -218,6 +224,8 @@
       "block": "Block",
       "unblock": "Desbloquear",
       "unfollow": "Following",
+      "share": "Share",
+      "copyNip05": "Copy NIP-05",
       "copyNPub": "Copy key"
     },
     "conversationsFeed": {

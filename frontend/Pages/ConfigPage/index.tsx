@@ -67,10 +67,10 @@ export const ConfigPage: React.FC = () => {
   }, [])
 
   const imageHostingOptions = React.useMemo(() => {
-    return Object.keys(imageHostingServices).map((service, index) => {
+    return ['random', ...Object.keys(imageHostingServices)].map((service, index) => {
       return {
         key: index,
-        title: <Text>{imageHostingServices[service].uri}</Text>,
+        title: <Text>{imageHostingServices[service]?.uri ?? t(`configPage.${service}`)}</Text>,
         onPress: () => {
           setImageHostingService(service)
           SInfo.getItem('config', {}).then((result) => {
@@ -141,7 +141,12 @@ export const ConfigPage: React.FC = () => {
       <List.Item
         title={t('configPage.imageHostingService')}
         onPress={() => bottomSheetImageHostingRef.current?.open()}
-        right={() => <Text>{imageHostingServices[imageHostingService].uri}</Text>}
+        right={() => (
+          <Text>
+            {imageHostingServices[imageHostingService]?.uri ??
+              t(`configPage.${imageHostingService}`)}
+          </Text>
+        )}
       />
       <RBSheet ref={bottomSheetSatoshiRef} closeOnDragDown={true} customStyles={bottomSheetStyles}>
         <FlatList

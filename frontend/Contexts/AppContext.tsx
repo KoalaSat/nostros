@@ -6,6 +6,7 @@ import { Linking, StyleSheet } from 'react-native'
 import { Text } from 'react-native-paper'
 import { Config } from '../Pages/ConfigPage'
 import { imageHostingServices } from '../Constants/Services'
+import { randomInt } from '../Functions/NativeFunctions'
 
 export interface AppContextProps {
   init: () => void
@@ -22,6 +23,7 @@ export interface AppContextProps {
   setImageHostingService: (imageHostingService: string) => void
   setSatoshi: (showPublicImages: 'kebab' | 'sats') => void
   getSatoshiSymbol: (fontSize?: number) => JSX.Element
+  getImageHostingService: () => string
 }
 
 export interface AppContextProviderProps {
@@ -42,6 +44,7 @@ export const initialAppContext: AppContextProps = {
   setSatoshi: () => {},
   imageHostingService: Object.keys(imageHostingServices)[0],
   setImageHostingService: () => {},
+  getImageHostingService: () => "",
   getSatoshiSymbol: () => <></>,
 }
 
@@ -101,6 +104,14 @@ export const AppContextProvider = ({ children }: AppContextProviderProps): JSX.E
     )
   }
 
+  const getImageHostingService: () => string = () => {
+    if (imageHostingService !== 'random') return imageHostingService
+
+    const randomIndex = randomInt(1, Object.keys(imageHostingServices).length)
+
+    return Object.keys(imageHostingServices)[randomIndex - 1]
+  }
+
   useEffect(init, [])
 
   return (
@@ -108,6 +119,7 @@ export const AppContextProvider = ({ children }: AppContextProviderProps): JSX.E
       value={{
         imageHostingService,
         setImageHostingService,
+        getImageHostingService,
         init,
         loadingDb,
         database,
