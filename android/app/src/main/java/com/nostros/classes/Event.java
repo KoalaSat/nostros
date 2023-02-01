@@ -268,6 +268,7 @@ public class Event {
         if (cursor.getCount() == 0) {
             values.put("id", pubkey);
             values.put("valid_nip05", validateNip05(nip05) ? 1 : 0);
+            values.put("blocked", 0);
             database.insert("nostros_users", null, values);
         } else if (cursor.moveToFirst() && (cursor.isNull(0) || created_at > cursor.getInt(0))) {
             if (cursor.getInt(1) == 0 || !cursor.getString(2).equals(nip05)) {
@@ -296,6 +297,7 @@ public class Event {
                 values.put("id", petId);
                 values.put("name", name);
                 values.put("contact", true);
+                values.put("blocked", 0);
                 database.insert("nostros_users", null, values);
             }
         }
