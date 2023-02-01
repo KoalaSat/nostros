@@ -14,3 +14,32 @@ export const defaultRelays = [
 ]
 
 export const REGEX_SOCKET_LINK = /^wss:\/\/.*\..*$/i
+
+export const relayColors = [
+  '#3016dd',
+  '#43e1ef',
+  '#ef3b50',
+  '#d3690c',
+  '#43e23b',
+  '#3a729e',
+  '#805de2',
+  '#b2ff5b',
+  '#eaa123',
+  '#ba7a3b',
+  '#90c900',
+  '#26e08c',
+  '#090660',
+  '#9edb62',
+  '#db48f2',
+  '#5d14aa',
+  '#f2d859',
+  '#0b8458',
+  '#cdea10',
+  '#6473e0',
+  '#6721a5',
+  '#f76f8c',
+  '#ce2780',
+  '#403ba0',
+  '#a9f41d',
+  '#BBF067',
+]

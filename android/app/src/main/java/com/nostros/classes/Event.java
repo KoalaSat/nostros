@@ -41,13 +41,13 @@ public class Event {
         tags = data.getJSONArray("tags");
     }
 
-    public void save(SQLiteDatabase database, String userPubKey) {
+    public void save(SQLiteDatabase database, String userPubKey, String relayUrl) {
         if (isValid()) {
             try {
                 if (kind.equals("0")) {
                     saveUserMeta(database);
                 } else if (kind.equals("1") || kind.equals("2")) {
-                    saveNote(database, userPubKey);
+                    saveNote(database, userPubKey, relayUrl);
                 } else if (kind.equals("3")) {
                     if (pubkey.equals(userPubKey)) {
                         savePets(database);
@@ -179,81 +179,75 @@ public class Event {
         return false;
     }
 
-    protected void saveNote(SQLiteDatabase database, String userPubKey) {
-        String query = "SELECT id FROM nostros_notes WHERE id = ?";
-        @SuppressLint("Recycle") Cursor cursor = database.rawQuery(query, new String[] {id});
-        if (cursor.getCount() == 0) {
-            ContentValues values = new ContentValues();
-            values.put("id", id);
-            values.put("content", content.replace("'", "''"));
-            values.put("created_at", created_at);
-            values.put("kind", kind);
-            values.put("pubkey", pubkey);
-            values.put("sig", sig);
-            values.put("tags", tags.toString());
-            values.put("main_event_id", getMainEventId());
-            values.put("reply_event_id", getReplyEventId());
-            values.put("user_mentioned", getUserMentioned(userPubKey));
-            values.put("repost_id", getRepostId());
-            database.replace("nostros_notes", null, values);
-        }
+    protected void saveNote(SQLiteDatabase database, String userPubKey, String relayUrl) {
+        ContentValues relayValues = new ContentValues();
+        relayValues.put("note_id", id);
+        relayValues.put("pubkey", pubkey);
+        relayValues.put("relay_url", relayUrl);
+        database.replace("nostros_notes_relays", null, relayValues);
+
+        ContentValues values = new ContentValues();
+        values.put("id", id);
+        values.put("content", content.replace("'", "''"));
+        values.put("created_at", created_at);
+        values.put("kind", kind);
+        values.put("pubkey", pubkey);
+        values.put("sig", sig);
+        values.put("tags", tags.toString());
+        values.put("main_event_id", getMainEventId());
+        values.put("reply_event_id", getReplyEventId());
+        values.put("user_mentioned", getUserMentioned(userPubKey));
+        values.put("repost_id", getRepostId());
+        database.replace("nostros_notes", null, values);
     }
 
     protected void saveDirectMessage(SQLiteDatabase database) throws JSONException {
-        String query = "SELECT read FROM nostros_direct_messages WHERE id = ?";
-        @SuppressLint("Recycle") Cursor cursor = database.rawQuery(query, new String[] {id});
-        if (cursor.getCount() == 0) {
-            JSONArray tag = tags.getJSONArray(0);
-            ArrayList<String> identifiers = new ArrayList<>();
-            identifiers.add(pubkey);
-            identifiers.add(tag.getString(1));
-            Collections.sort(identifiers);
-            String conversationId = UUID.nameUUIDFromBytes(identifiers.toString().getBytes()).toString();
+        JSONArray tag = tags.getJSONArray(0);
+        ArrayList<String> identifiers = new ArrayList<>();
+        identifiers.add(pubkey);
+        identifiers.add(tag.getString(1));
+        Collections.sort(identifiers);
+        String conversationId = UUID.nameUUIDFromBytes(identifiers.toString().getBytes()).toString();
 
-            ContentValues values = new ContentValues();
-            values.put("id", id);
-            values.put("content", content.replace("'", "''"));
-            values.put("created_at", created_at);
-            values.put("kind", kind);
-            values.put("pubkey", pubkey);
-            values.put("sig", sig);
-            values.put("tags", tags.toString());
-            values.put("conversation_id", conversationId);
+        ContentValues values = new ContentValues();
+        values.put("id", id);
+        values.put("content", content.replace("'", "''"));
+        values.put("created_at", created_at);
+        values.put("kind", kind);
+        values.put("pubkey", pubkey);
+        values.put("sig", sig);
+        values.put("tags", tags.toString());
+        values.put("conversation_id", conversationId);
 
-            database.insert("nostros_direct_messages", null, values);
-        }
+        database.insert("nostros_direct_messages", null, values);
     }
 
     protected void saveReaction(SQLiteDatabase database) throws JSONException {
-        String query = "SELECT id FROM nostros_reactions WHERE id = ?";
-        @SuppressLint("Recycle") Cursor cursor = database.rawQuery(query, new String[] {id});
-        if (cursor.getCount() == 0) {
-            JSONArray pTags = filterTags("p");
-            JSONArray eTags = filterTags("e");
+        JSONArray pTags = filterTags("p");
+        JSONArray eTags = filterTags("e");
 
-            String reacted_event_id = "";
-            String reacted_user_id = "";
-            if (eTags.length() > 0) {
-                reacted_event_id = eTags.getJSONArray(eTags.length() - 1).getString(1);
-            }
-            if (pTags.length() > 0) {
-                reacted_user_id = pTags.getJSONArray(pTags.length() - 1).getString(1);
-            }
-
-            ContentValues values = new ContentValues();
-            values.put("id", id);
-            values.put("content", content.replace("'", "''"));
-            values.put("created_at", created_at);
-            values.put("kind", kind);
-            values.put("pubkey", pubkey);
-            values.put("sig", sig);
-            values.put("tags", tags.toString());
-            values.put("positive", !content.equals("-"));
-            values.put("reacted_event_id", reacted_event_id);
-            values.put("reacted_user_id", reacted_user_id);
-
-            database.insert("nostros_reactions", null, values);
+        String reacted_event_id = "";
+        String reacted_user_id = "";
+        if (eTags.length() > 0) {
+            reacted_event_id = eTags.getJSONArray(eTags.length() - 1).getString(1);
         }
+        if (pTags.length() > 0) {
+            reacted_user_id = pTags.getJSONArray(pTags.length() - 1).getString(1);
+        }
+
+        ContentValues values = new ContentValues();
+        values.put("id", id);
+        values.put("content", content.replace("'", "''"));
+        values.put("created_at", created_at);
+        values.put("kind", kind);
+        values.put("pubkey", pubkey);
+        values.put("sig", sig);
+        values.put("tags", tags.toString());
+        values.put("positive", !content.equals("-"));
+        values.put("reacted_event_id", reacted_event_id);
+        values.put("reacted_user_id", reacted_user_id);
+
+        database.insert("nostros_reactions", null, values);
     }
 
     protected void saveUserMeta(SQLiteDatabase database) throws JSONException {

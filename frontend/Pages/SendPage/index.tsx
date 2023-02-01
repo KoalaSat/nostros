@@ -279,7 +279,9 @@ export const SendPage: React.FC<SendPageProps> = ({ route }) => {
             <Card.Cover source={{ uri: imageUpload?.uri ?? '' }} resizeMode='contain' />
           )}
         </Card>
-        <Text>{t('sendPage.poweredBy', { uri: imageHostingServices[imageHostingService].uri })}</Text>
+        <Text>
+          {t('sendPage.poweredBy', { uri: imageHostingServices[imageHostingService].uri })}
+        </Text>
         <Button
           style={styles.buttonSpacer}
           mode='contained'

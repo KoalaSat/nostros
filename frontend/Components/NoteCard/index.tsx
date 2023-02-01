@@ -1,10 +1,12 @@
 import React, { useContext, useEffect, useState } from 'react'
 import {
+  getNoteRelays,
   getNotes,
   getRepliesCount,
   getRepostCount,
   isUserReposted,
   Note,
+  NoteRelay,
 } from '../../Functions/DatabaseFunctions/Notes'
 import { StyleSheet, View } from 'react-native'
 import { RelayPoolContext } from '../../Contexts/RelayPoolContext'
@@ -35,6 +37,7 @@ import { push } from '../../lib/Navigation'
 import { User } from '../../Functions/DatabaseFunctions/Users'
 import { Kind } from 'nostr-tools'
 import ProfileData from '../ProfileData'
+import { relayToColor } from '../../Functions/NativeFunctions'
 
 interface NoteCardProps {
   note?: Note
@@ -72,29 +75,33 @@ export const NoteCard: React.FC<NoteCardProps> = ({
   const [userDownvoted, setUserDownvoted] = useState<boolean>(false)
   const [repliesCount, setRepliesCount] = React.useState<number>(0)
   const [repostCount, serRepostCount] = React.useState<number>(0)
+  const [relays, setRelays] = React.useState<NoteRelay[]>([])
   const [hide, setHide] = useState<boolean>(isContentWarning(note))
   const [userReposted, setUserReposted] = useState<boolean>()
   const [repost, setRepost] = useState<Note>()
 
   useEffect(() => {
-    if (database && publicKey && showAction && showActionCount && note?.id) {
-      getReactions(database, { eventId: note.id }).then((result) => {
-        const total = result.length
-        let positive = 0
-        result.forEach((reaction) => {
-          if (reaction.positive) {
-            positive = positive + 1
-            if (reaction.pubkey === publicKey) setUserUpvoted(true)
-          } else if (reaction.pubkey === publicKey) {
-            setUserDownvoted(true)
-          }
+    if (database && publicKey && note?.id) {
+      if (showAction && showActionCount) {
+        getReactions(database, { eventId: note.id }).then((result) => {
+          const total = result.length
+          let positive = 0
+          result.forEach((reaction) => {
+            if (reaction.positive) {
+              positive = positive + 1
+              if (reaction.pubkey === publicKey) setUserUpvoted(true)
+            } else if (reaction.pubkey === publicKey) {
+              setUserDownvoted(true)
+            }
+          })
+          setPositiveReactions(positive)
+          setNegativeReactions(total - positive)
         })
-        setPositiveReactions(positive)
-        setNegativeReactions(total - positive)
-      })
-      getRepliesCount(database, note.id).then(setRepliesCount)
-      getRepostCount(database, note.id).then(serRepostCount)
-      isUserReposted(database, note.id, publicKey).then(setUserReposted)
+        getRepliesCount(database, note.id).then(setRepliesCount)
+        getRepostCount(database, note.id).then(serRepostCount)
+        isUserReposted(database, note.id, publicKey).then(setUserReposted)
+      }
+      getNoteRelays(database, note.id).then(setRelays)
     }
   }, [lastEventId])
 
@@ -197,24 +204,24 @@ export const NoteCard: React.FC<NoteCardProps> = ({
     return (
       <Card.Content style={[styles.content, { borderColor: theme.colors.onSecondary }]}>
         <Card>
-          <Card.Content style={styles.title}>
-            <View>
+          <Card.Title
+            title={t('noteCard.recommendation')}
+            subtitle={relayName}
+            left={(props) => (
               <Avatar.Icon
-                size={54}
+                {...props}
                 icon='chart-timeline-variant'
                 style={{
                   backgroundColor: theme.colors.tertiaryContainer,
                 }}
               />
-            </View>
-            <View>
-              <Text>{t('noteCard.recommendation')}</Text>
-              <Text>{relayName}</Text>
-            </View>
-          </Card.Content>
+            )}
+          />
           {!relayAdded && note && REGEX_SOCKET_LINK.test(note.content) && (
             <Card.Content style={[styles.bottomActions, { borderColor: theme.colors.onSecondary }]}>
-              <Button onPress={addRelayItem}>{t('noteCard.addRelay')}</Button>
+              <Button mode='contained' onPress={addRelayItem}>
+                {t('noteCard.addRelay')}
+              </Button>
             </Card.Content>
           )}
         </Card>
@@ -257,7 +264,7 @@ export const NoteCard: React.FC<NoteCardProps> = ({
   }
 
   return note ? (
-    <Card style={styles.container} mode={mode}>
+    <Card mode={mode}>
       <Card.Content style={styles.title}>
         <TouchableRipple onPress={() => onPressUser({ id: note.pubkey, name: note.name })}>
           <ProfileData
@@ -352,6 +359,19 @@ export const NoteCard: React.FC<NoteCardProps> = ({
           </Button>
         </Card.Content>
       )}
+      <Card.Content style={styles.relayList}>
+        {relays.map((relay, index) => (
+          <View
+            key={relay.relay_url}
+            style={[
+              styles.relay,
+              { backgroundColor: relayToColor(relay.relay_url) },
+              index === 0 ? { borderBottomLeftRadius: 50 } : {},
+              index === relays.length - 1 ? { borderBottomRightRadius: 50 } : {},
+            ]}
+          />
+        ))}
+      </Card.Content>
     </Card>
   ) : (
     <></>
@@ -359,7 +379,17 @@ export const NoteCard: React.FC<NoteCardProps> = ({
 }
 
 const styles = StyleSheet.create({
-  container: {},
+  relayList: {
+    flexDirection: 'row',
+    marginTop: 16,
+    marginBottom: -16,
+    marginLeft: -16,
+    marginRight: -16,
+  },
+  relay: {
+    flex: 1,
+    height: 6,
+  },
   titleUsername: {
     fontWeight: 'bold',
   },
