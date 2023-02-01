@@ -109,8 +109,8 @@ public class DatabaseModule {
             database.execSQL("ALTER TABLE nostros_relays ADD COLUMN active BOOLEAN DEFAULT TRUE;");
         } catch (SQLException e) { }
         try {
+            database.execSQL("CREATE INDEX nostros_notes_repost_id_created_at_index ON nostros_notes(repost_id, pubkey, created_at); ");
             database.execSQL("CREATE INDEX nostros_notes_main_index ON nostros_notes(pubkey, main_event_id, created_at);");
-            database.execSQL("CREATE INDEX nostros_notes_kind_index ON nostros_notes(repost_id, pubkey, created_at); ");
             database.execSQL("CREATE INDEX nostros_notes_notifications_index ON nostros_notes(pubkey, user_mentioned, reply_event_id, created_at); ");
             database.execSQL("CREATE INDEX nostros_notes_repost_id_index ON nostros_notes(pubkey, repost_id); ");
             database.execSQL("CREATE INDEX nostros_notes_reply_event_id_count_index ON nostros_notes(created_at, reply_event_id); ");
@@ -129,11 +129,21 @@ public class DatabaseModule {
         try {
             database.execSQL("ALTER TABLE nostros_users ADD COLUMN blocked BOOLEAN DEFAULT FALSE;");
         } catch (SQLException e) { }
+        try {
+            database.execSQL("CREATE TABLE IF NOT EXISTS nostros_notes_relays(\n" +
+                    "          note_id TEXT NOT NULL,\n" +
+                    "          pubkey TEXT NOT NULL,\n" +
+                    "          relay_url INT NOT NULL,\n" +
+                    "          PRIMARY KEY (note_id, relay_url)\n" +
+                    "        );");
+            database.execSQL("CREATE INDEX nostros_notes_relays_note_id_index ON nostros_notes_relays(note_id);");
+            database.execSQL("CREATE INDEX nostros_notes_relays_pubkey_index ON nostros_notes_relays(pubkey);");
+        } catch (SQLException e) { }
     }
 
-    public void saveEvent(JSONObject data, String userPubKey) throws JSONException {
+    public void saveEvent(JSONObject data, String userPubKey, String relayUrl) throws JSONException {
         Event event = new Event(data);
-        event.save(database, userPubKey);
+        event.save(database, userPubKey, relayUrl);
     }
 
     public void saveRelay(Relay relay) {

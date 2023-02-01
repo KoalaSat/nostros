@@ -14,9 +14,20 @@ export interface Note extends Event {
   blocked: boolean
 }
 
+export interface NoteRelay {
+  note_id: string
+  pubkey: string
+  relay_url: string
+}
+
 const databaseToEntity: (object: any) => Note = (object = {}) => {
   object.tags = object.tags ? JSON.parse(object.tags) : []
   return object as Note
+}
+
+const noteRelayDatabaseToEntity: (object: any) => NoteRelay = (object = {}) => {
+  object.tags = object.tags ? JSON.parse(object.tags) : []
+  return object as NoteRelay
 }
 
 export const getMainNotes: (
@@ -39,7 +50,7 @@ export const getMainNotes: (
   if (contants)
     notesQuery += `(nostros_users.contact = 1 OR nostros_notes.pubkey = '${pubKey}') AND `
 
-  if (filters?.until) notesQuery += `nostros_notes.created_at < ${filters?.until} AND `
+  if (filters?.until) notesQuery += `nostros_notes.created_at <= ${filters?.until} AND `
 
   notesQuery += `
     nostros_notes.main_event_id IS NULL
@@ -68,6 +79,24 @@ export const getMainNotesCount: (
   const item: { 'COUNT(*)': number } = resultSet?.rows?.item(0)
 
   return item['COUNT(*)'] ?? 0
+}
+
+export const getNoteRelays: (
+  db: QuickSQLiteConnection,
+  noteId: string,
+) => Promise<NoteRelay[]> = async (db, noteId) => {
+  const relaysQuery = `
+    SELECT
+      *
+    FROM nostros_notes_relays
+    WHERE note_id = "${noteId}"
+    ORDER BY relay_url
+  `
+  const resultSet = await db.execute(relaysQuery)
+  const items: object[] = getItems(resultSet)
+  const relays: NoteRelay[] = items.map((object) => noteRelayDatabaseToEntity(object))
+
+  return relays
 }
 
 export const getMentionNotes: (

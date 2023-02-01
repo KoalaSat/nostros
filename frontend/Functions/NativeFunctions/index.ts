@@ -1,3 +1,5 @@
+import { relayColors } from '../../Constants/Relay'
+
 export const handleInfinityScroll: (event: any) => boolean = (event) => {
   const mHeight = event.nativeEvent.layoutMeasurement.height
   const cSize = event.nativeEvent.contentSize.height
@@ -7,17 +9,12 @@ export const handleInfinityScroll: (event: any) => boolean = (event) => {
   return false
 }
 
-export const stringToColour: (string: string) => string = (string) => {
+export const relayToColor: (string: string) => string = (string) => {
   let hash = 0
   for (let i = 0; i < string.length; i++) {
     hash = string.charCodeAt(i) + ((hash << 5) - hash)
   }
-  let colour = '#'
-  for (let i = 0; i < 3; i++) {
-    const value = (hash >> (i * 8)) & 0xff
-    colour += ('00' + value.toString(16)).substr(-2)
-  }
-  return colour
+  return relayColors[(Math.abs(hash) % relayColors.length) - 1]
 }
 
 export const pickRandomItems = <T extends unknown>(arr: T[], n: number): T[] => {
@@ -62,4 +59,5 @@ export const validNip21: (string: string | undefined) => boolean = (string) => {
   }
 }
 
-export const randomInt: (min: number, max: number) => number = (min, max) => Math.floor(Math.random() * (max - min + 1)) + min
+export const randomInt: (min: number, max: number) => number = (min, max) =>
+  Math.floor(Math.random() * (max - min + 1)) + min

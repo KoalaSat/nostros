@@ -65,7 +65,7 @@ public class Websocket {
                 String messageType = jsonArray.get(0).toString();
                 if (messageType.equals("EVENT")) {
                     JSONObject data = jsonArray.getJSONObject(2);
-                    database.saveEvent(data, userPubKey);
+                    database.saveEvent(data, userPubKey, url);
                     reactNativeEvent(data.getString("id"));
                 } else if (messageType.equals("OK")) {
                     reactNativeConfirmation(jsonArray.get(1).toString());

@@ -227,7 +227,7 @@ export const ProfileCard: React.FC<ProfileCardProps> = ({
                   qrCode.toDataURL((base64: string) => {
                     Share.open({
                       url: `data:image/png;base64,${base64}`,
-                      filename: user?.id ?? 'nostrosshare'
+                      filename: user?.id ?? 'nostrosshare',
                     })
                   })
                 }

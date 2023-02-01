@@ -18,6 +18,8 @@ import {
   Snackbar,
 } from 'react-native-paper'
 import RBSheet from 'react-native-raw-bottom-sheet'
+import { relayToColor } from '../../Functions/NativeFunctions'
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'
 
 export const RelaysPage: React.FC = () => {
   const defaultRelayInput = React.useMemo(() => 'wss://', [])
@@ -104,10 +106,17 @@ export const RelaysPage: React.FC = () => {
                     title={relay.url.split('wss://')[1]?.split('/')[0]}
                     right={() => (
                       <Switch
-                        value={relay.active}
+                        value={relay.active !== undefined && relay.active > 0}
                         onValueChange={() =>
                           relay.active ? desactiveRelay(relay) : activeRelay(relay)
                         }
+                      />
+                    )}
+                    left={() => (
+                      <MaterialCommunityIcons
+                        style={styles.relayColor}
+                        name='circle'
+                        color={relayToColor(relay.url)}
                       />
                     )}
                     onPress={() => {
@@ -135,6 +144,13 @@ export const RelaysPage: React.FC = () => {
                 <Switch
                   value={relay.active}
                   onValueChange={() => (relay.active ? desactiveRelay(relay) : activeRelay(relay))}
+                />
+              )}
+              left={() => (
+                <MaterialCommunityIcons
+                  style={styles.relayColor}
+                  name='circle'
+                  color={relayToColor(relay.url)}
                 />
               )}
               onPress={() => {
@@ -234,6 +250,7 @@ const styles = StyleSheet.create({
   container: {
     padding: 0,
     paddingBottom: 32,
+    paddingLeft: 16,
   },
   list: {
     padding: 0,
@@ -242,6 +259,9 @@ const styles = StyleSheet.create({
   snackbar: {
     margin: 16,
     bottom: 70,
+  },
+  relayColor: {
+    paddingTop: 9,
   },
   fab: {
     bottom: 16,
