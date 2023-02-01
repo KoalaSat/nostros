@@ -256,7 +256,7 @@ export const NoteCard: React.FC<NoteCardProps> = ({
   }
 
   const getNoteContent: () => JSX.Element | undefined = () => {
-    if (note?.blocked) {
+    if (note?.blocked !== undefined && note.blocked) {
       return blockedContent()
     } else if (note?.kind === Kind.Text) {
       return textNote()

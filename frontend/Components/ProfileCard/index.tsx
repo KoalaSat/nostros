@@ -85,7 +85,7 @@ export const ProfileCard: React.FC<ProfileCardProps> = ({
       getUser(userPubKey, database).then((result) => {
         if (result) {
           setUser(result)
-          setBlocked(result.blocked)
+          setBlocked(result.blocked !== undefined && result.blocked)
           setIsContact(result?.contact)
         } else {
           setUser({ id: userPubKey })

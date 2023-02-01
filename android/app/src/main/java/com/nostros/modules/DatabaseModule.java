@@ -59,8 +59,8 @@ public class DatabaseModule {
                 "          read BOOLEAN DEFAULT FALSE\n" +
                 "        );");
         try {
-            database.execSQL("ALTER TABLE nostros_notes ADD COLUMN user_mentioned BOOLEAN DEFAULT FALSE;");
-            database.execSQL("ALTER TABLE nostros_notes ADD COLUMN seen BOOLEAN DEFAULT FALSE;");
+            database.execSQL("ALTER TABLE nostros_notes ADD COLUMN user_mentioned BOOLEAN DEFAULT 0;");
+            database.execSQL("ALTER TABLE nostros_notes ADD COLUMN seen BOOLEAN DEFAULT 0;");
         } catch (SQLException e) { }
         try {
             database.execSQL("ALTER TABLE nostros_users ADD COLUMN lnurl TEXT;");
@@ -77,7 +77,7 @@ public class DatabaseModule {
                 "          pubkey TEXT NOT NULL,\n" +
                 "          sig TEXT NOT NULL,\n" +
                 "          tags TEXT NOT NULL,\n" +
-                "          positive BOOLEAN DEFAULT TRUE,\n" +
+                "          positive BOOLEAN DEFAULT 1,\n" +
                 "          reacted_event_id TEXT,\n" +
                 "          reacted_user_id TEXT\n" +
                 "        );");
@@ -100,13 +100,13 @@ public class DatabaseModule {
             database.execSQL("ALTER TABLE nostros_users ADD COLUMN nip05 TEXT;");
         } catch (SQLException e) { }
         try {
-            database.execSQL("ALTER TABLE nostros_users ADD COLUMN valid_nip05 BOOLEAN DEFAULT FALSE;");
+            database.execSQL("ALTER TABLE nostros_users ADD COLUMN valid_nip05 BOOLEAN DEFAULT 0;");
         } catch (SQLException e) { }
         try {
             database.execSQL("ALTER TABLE nostros_notes ADD COLUMN repost_id TEXT;");
         } catch (SQLException e) { }
         try {
-            database.execSQL("ALTER TABLE nostros_relays ADD COLUMN active BOOLEAN DEFAULT TRUE;");
+            database.execSQL("ALTER TABLE nostros_relays ADD COLUMN active BOOLEAN DEFAULT 1;");
         } catch (SQLException e) { }
         try {
             database.execSQL("CREATE INDEX nostros_notes_repost_id_created_at_index ON nostros_notes(repost_id, pubkey, created_at); ");
@@ -127,7 +127,7 @@ public class DatabaseModule {
             database.execSQL("DROP TABLE IF EXISTS nostros_config;");
         } catch (SQLException e) { }
         try {
-            database.execSQL("ALTER TABLE nostros_users ADD COLUMN blocked BOOLEAN DEFAULT FALSE;");
+            database.execSQL("ALTER TABLE nostros_users ADD COLUMN blocked BOOLEAN DEFAULT 0;");
         } catch (SQLException e) { }
         try {
             database.execSQL("CREATE TABLE IF NOT EXISTS nostros_notes_relays(\n" +
