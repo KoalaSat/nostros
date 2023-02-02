@@ -166,9 +166,12 @@ export const RelaysPage: React.FC = () => {
       <ScrollView horizontal={false}>
         {myRelays.length > 0 && (
           <>
-            <Text style={styles.title} variant='titleMedium'>
-              {t('relaysPage.myList')}
-            </Text>
+            <View style={styles.titleWrapper}>
+              <Text style={styles.title} variant='titleMedium'>
+                {t('relaysPage.myList')}
+              </Text>
+              <Divider/>
+            </View>
             <FlatList
               showsVerticalScrollIndicator={false}
               data={myRelays}
@@ -176,9 +179,12 @@ export const RelaysPage: React.FC = () => {
             />
           </>
         )}
-        <Text style={styles.title} variant='titleMedium'>
-          {t('relaysPage.recommended')}
-        </Text>
+        <View style={styles.titleWrapper}>
+          <Text style={styles.title} variant='titleMedium'>
+            {t('relaysPage.recommended')}
+          </Text>
+          <Divider/>
+        </View>
         <FlatList
           showsVerticalScrollIndicator={false}
           data={defaultRelays.map(
@@ -271,8 +277,13 @@ export const RelaysPage: React.FC = () => {
 }
 
 const styles = StyleSheet.create({
+  titleWrapper: {
+    marginBottom: 4,
+    marginTop: 16,
+    paddingRight: 16,
+  },
   title: {
-    paddingLeft: 16,
+    marginBottom: 8,
   },
   bottomDrawerButton: {
     paddingBottom: 16,
