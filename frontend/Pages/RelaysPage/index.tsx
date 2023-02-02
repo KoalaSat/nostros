@@ -279,7 +279,7 @@ export const RelaysPage: React.FC = () => {
 const styles = StyleSheet.create({
   titleWrapper: {
     marginBottom: 4,
-    marginTop: 16,
+    marginTop: 24,
     paddingRight: 16,
   },
   title: {

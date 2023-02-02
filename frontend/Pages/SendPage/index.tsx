@@ -253,10 +253,12 @@ export const SendPage: React.FC<SendPageProps> = ({ route }) => {
             />
           </View>
         ) : (
-          <View style={{ backgroundColor: '#001C37' }}>
+          <View style={{ backgroundColor: theme.colors.elevation.level1 }}>
             <View style={styles.contentWarning}>
-              <Text style={styles.contentWarningText}>{t('sendPage.contentWarning')}</Text>
-              <Switch value={contentWarning} onValueChange={setContentWarning} />
+              <View style={styles.switchWrapper}>
+                <Switch value={contentWarning} onValueChange={setContentWarning} />
+                <Text>{t('sendPage.contentWarning')}</Text>
+              </View>
               <IconButton
                 icon='image-outline'
                 size={25}
@@ -323,8 +325,10 @@ export const SendPage: React.FC<SendPageProps> = ({ route }) => {
 }
 
 const styles = StyleSheet.create({
-  contentWarningText: {
-    marginTop: 3,
+  switchWrapper: {
+    flexDirection: 'row',
+    alignSelf: 'flex-start',
+    alignItems: 'center',
   },
   snackbar: {
     margin: 16,
@@ -379,6 +383,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignContent: 'center',
     justifyContent: 'space-between',
+    alignItems: 'center',
     paddingLeft: 16,
     paddingRight: 16,
     paddingTop: 16,
