@@ -152,7 +152,17 @@ export const MenuItems: React.FC = () => {
           ]}
           showDivider={false}
         >
-          <Button mode='outlined' onPress={onPressLogout}>
+          <Button
+              mode='outlined'
+              onPress={onPressLogout}
+              textColor={theme.colors.onSurface}
+              icon={() => (
+                  <MaterialCommunityIcons
+                      name='logout'
+                      size={20}
+                      style={{color: theme.colors.onSurface}}/>
+              )}
+          >
             {t('menuItems.logout')}
           </Button>
         </Drawer.Section>
