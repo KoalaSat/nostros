@@ -17,6 +17,7 @@ import ConversationPage from '../ConversationPage'
 import ConfigPage from '../ConfigPage'
 import { RelayPoolContext } from '../../Contexts/RelayPoolContext'
 import { AppContext } from '../../Contexts/AppContext'
+import RelayCard from '../../Components/RelayCard'
 
 export const HomeNavigator: React.FC = () => {
   const theme = useTheme()
@@ -137,7 +138,7 @@ export const HomeNavigator: React.FC = () => {
         customStyles={bottomSheetStyles}
         onClose={() => setDisplayrelayDrawer(undefined)}
       >
-        <Text>{displayRelayDrawer}</Text>
+        <RelayCard url={displayRelayDrawer} bottomSheetRef={bottomSheetRelayRef} />
       </RBSheet>
       <RBSheet ref={bottomSheetRef} closeOnDragDown={true} customStyles={bottomSheetStyles}>
         <View>

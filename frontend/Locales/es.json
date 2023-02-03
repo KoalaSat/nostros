@@ -152,6 +152,29 @@
       "newMessages": "{{newNotesCount}} notas nuevas. Desliza para refrescar.",
       "myFeed": "Mi feed"
     },
+    "relayCard": {
+      "moreInfo": "Más información",
+      "lessInfo": "Menos información",
+      "globalFeed": "Feed Global",
+      "active": "Activo",
+      "share": "Compartir",
+      "pubkey": "Clave pública",
+      "contact": "Contacto",
+      "supportedNips": "NIPs soportadas",
+      "software": "Sowftware",
+      "version": "Versión",
+      "description": "Descripción",
+      "obtainingInfo": "Obteniendo información del relay",
+      "notifications": {
+        "active": "Relay activado.",
+        "desactive": "Relay desactivado.",
+        "globalFeedActive": "Feed global activado.",
+        "globalFeedActiveUnactive": "Feed Global desactivado.",
+        "pubkeyCopied": "Clave pública copiada.",
+        "contactCopied": "Contactp copiado.",
+        "urlCopied": "URL copiada."
+      }
+    },
     "relaysPage": {
       "relayName": "Dirección",
       "globalFeed": "Feed global",

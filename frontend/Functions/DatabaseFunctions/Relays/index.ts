@@ -8,6 +8,16 @@ export interface Relay {
   global_feed?: number
 }
 
+export interface RelayInfo {
+  name: string
+  description: string
+  pubkey: string
+  contact: string
+  supported_nips: string[]
+  software: string
+  version: string
+}
+
 const databaseToEntity: (object: any) => Relay = (object) => {
   return object as Relay
 }
@@ -29,6 +39,17 @@ export const getRelays: (db: QuickSQLiteConnection) => Promise<Relay[]> = async 
   const items: object[] = getItems(resultSet)
   const relays: Relay[] = items.map((object) => databaseToEntity(object))
   return relays
+}
+
+export const getRelay: (db: QuickSQLiteConnection, url: string) => Promise<Relay> = async (
+  db,
+  url,
+) => {
+  const notesQuery = 'SELECT * FROM nostros_relays WHERE url = ?;'
+  const resultSet = await db.execute(notesQuery, [url])
+  const items: object[] = getItems(resultSet)
+  const relays: Relay[] = items.map((object) => databaseToEntity(object))
+  return relays[0]
 }
 
 export const createRelay: (db: QuickSQLiteConnection, url: string) => Promise<QueryResult> = async (

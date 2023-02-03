@@ -389,7 +389,7 @@ const styles = StyleSheet.create({
   },
   relay: {
     flex: 1,
-    height: 6,
+    height: 10,
   },
   titleUsername: {
     fontWeight: 'bold',
