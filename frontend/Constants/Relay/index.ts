@@ -1,6 +1,7 @@
 export const defaultRelays = [
   'wss://brb.io',
   'wss://damus.io',
+  'wss://nostr-pub.wellorder.net',
   'wss://nostr.swiss-enigma.ch',
   'wss://nostr.onsats.org',
   'wss://nostr-pub.semisol.dev',
@@ -9,7 +10,6 @@ export const defaultRelays = [
   'wss://nostr.oxtr.dev',
   'wss://nostr.ono.re',
   'wss://relay.grunch.dev',
-  'wss://nostr-pub.wellorder.net',
   'wss://nostr.developer.li',
 ]
 

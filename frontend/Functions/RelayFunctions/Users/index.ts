@@ -4,6 +4,7 @@ import RelayPool from '../../../lib/nostr/RelayPool/intex'
 import { getUser, getUsers, User } from '../../DatabaseFunctions/Users'
 import { Event } from '../../../lib/nostr/Events'
 import { getNpub } from '../../../lib/nostr/Nip19'
+import { Kind } from 'nostr-tools'
 
 export const usersToTags: (users: User[]) => string[][] = (users) => {
   return users.map((user): string[] => {
@@ -60,7 +61,7 @@ export const populatePets: (
     const event: Event = {
       content: '',
       created_at: getUnixTime(new Date()),
-      kind: 3,
+      kind: Kind.Contacts,
       pubkey: publicKey,
       tags: usersToTags(results),
     }
@@ -84,7 +85,7 @@ export const populateProfile: (
     const event: Event = {
       content: JSON.stringify(profile),
       created_at: getUnixTime(new Date()),
-      kind: 0,
+      kind: Kind.Metadata,
       pubkey: publicKey,
       tags: usersToTags([result]),
     }
