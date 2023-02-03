@@ -15,6 +15,7 @@ export interface Config {
   last_pets_at: number
   image_hosting_service: string
   language: string
+  relay_coloruring: boolean
 }
 
 export const ConfigPage: React.FC = () => {
@@ -32,6 +33,8 @@ export const ConfigPage: React.FC = () => {
     setImageHostingService,
     language,
     setLanguage,
+    relayColouring,
+    setRelayColouring,
   } = React.useContext(AppContext)
   const bottomSheetSatoshiRef = React.useRef<RBSheet>(null)
   const bottomSheetImageHostingRef = React.useRef<RBSheet>(null)
@@ -156,6 +159,22 @@ export const ConfigPage: React.FC = () => {
         )}
       />
       <List.Item
+        title={t('configPage.relayColoruring')}
+        right={() => (
+          <Switch
+            value={relayColouring}
+            onValueChange={(value) => {
+              setRelayColouring(value)
+              SInfo.getItem('config', {}).then((result) => {
+                const config: Config = JSON.parse(result)
+                config.relay_coloruring = value
+                SInfo.setItem('config', JSON.stringify(config), {})
+              })
+            }}
+          />
+        )}
+      />
+      <List.Item
         title={t('configPage.language')}
         onPress={() => bottomSheetLanguageRef.current?.open()}
         right={() => <Text>{t(`language.${language}`)}</Text>}
@@ -169,7 +188,7 @@ export const ConfigPage: React.FC = () => {
         title={t('configPage.imageHostingService')}
         onPress={() => bottomSheetImageHostingRef.current?.open()}
         right={() => (
-          <Text style={{color: theme.colors.onSurfaceVariant}}>
+          <Text style={{ color: theme.colors.onSurfaceVariant }}>
             {imageHostingServices[imageHostingService]?.uri ??
               t(`configPage.${imageHostingService}`)}
           </Text>

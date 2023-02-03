@@ -12,6 +12,7 @@ import { UserContext } from '../../Contexts/UserContext'
 import { navigate } from '../../lib/Navigation'
 import { useFocusEffect } from '@react-navigation/native'
 import { SkeletonNote } from '../../Components/SkeletonNote/SkeletonNote'
+import { ScrollView } from 'react-native-gesture-handler'
 
 interface NotePageProps {
   route: { params: { noteId: string } }
@@ -101,18 +102,20 @@ export const NotePage: React.FC<NotePageProps> = ({ route }) => {
 
   return note ? (
     <View>
-      <NoteCard note={note} />
-      <View style={[styles.list, { borderColor: theme.colors.onSecondary }]}>
-        <FlashList
-          estimatedItemSize={200}
-          showsVerticalScrollIndicator={false}
-          data={replies}
-          renderItem={renderItem}
-          refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
-          refreshing={refreshing}
-          horizontal={false}
-        />
-      </View>
+      <ScrollView>
+        <NoteCard note={note} />
+        <View style={[styles.list, { borderColor: theme.colors.onSecondary }]}>
+          <FlashList
+            estimatedItemSize={200}
+            showsVerticalScrollIndicator={false}
+            data={replies}
+            renderItem={renderItem}
+            refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
+            refreshing={refreshing}
+            horizontal={false}
+          />
+        </View>
+      </ScrollView>
       {privateKey && (
         <AnimatedFAB
           style={[styles.fabSend, { top: Dimensions.get('window').height - 160 }]}

@@ -64,7 +64,7 @@ export const NoteCard: React.FC<NoteCardProps> = ({
   const theme = useTheme()
   const { publicKey, privateKey } = React.useContext(UserContext)
   const { relayPool, lastEventId, setDisplayrelayDrawer } = useContext(RelayPoolContext)
-  const { database, showSensitive, setDisplayUserDrawer } = useContext(AppContext)
+  const { database, showSensitive, setDisplayUserDrawer, relayColouring } = useContext(AppContext)
   const [relayAdded, setRelayAdded] = useState<boolean>(false)
   const [positiveReactions, setPositiveReactions] = useState<number>(0)
   const [negaiveReactions, setNegativeReactions] = useState<number>(0)
@@ -357,21 +357,22 @@ export const NoteCard: React.FC<NoteCardProps> = ({
         </Card.Content>
       )}
       <Card.Content style={styles.relayList}>
-        {relays.map((relay, index) => (
-          <TouchableNativeFeedback
-            onPress={() => setDisplayrelayDrawer(relay.relay_url)}
-            key={relay.relay_url}
-          >
-            <View
-              style={[
-                styles.relay,
-                { backgroundColor: relayToColor(relay.relay_url) },
-                index === 0 ? { borderBottomLeftRadius: 50 } : {},
-                index === relays.length - 1 ? { borderBottomRightRadius: 50 } : {},
-              ]}
-            />
-          </TouchableNativeFeedback>
-        ))}
+        {relayColouring &&
+          relays.map((relay, index) => (
+            <TouchableNativeFeedback
+              onPress={() => setDisplayrelayDrawer(relay.relay_url)}
+              key={relay.relay_url}
+            >
+              <View
+                style={[
+                  styles.relay,
+                  { backgroundColor: relayToColor(relay.relay_url) },
+                  index === 0 ? { borderBottomLeftRadius: 50 } : {},
+                  index === relays.length - 1 ? { borderBottomRightRadius: 50 } : {},
+                ]}
+              />
+            </TouchableNativeFeedback>
+          ))}
       </Card.Content>
     </Card>
   ) : (

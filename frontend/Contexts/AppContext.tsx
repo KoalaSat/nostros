@@ -20,6 +20,8 @@ export interface AppContextProps {
   setLanguage: (language: string) => void
   showPublicImages: boolean
   setShowPublicImages: (showPublicImages: boolean) => void
+  relayColouring: boolean
+  setRelayColouring: (relayColouring: boolean) => void
   showSensitive: boolean
   setShowSensitive: (showPublicImages: boolean) => void
   satoshi: 'kebab' | 'sats'
@@ -54,6 +56,8 @@ export const initialAppContext: AppContextProps = {
     )?.split('_')[0] ?? 'en',
   setLanguage: () => {},
   showSensitive: false,
+  setRelayColouring: () => {},
+  relayColouring: true,
   setShowSensitive: () => {},
   satoshi: 'kebab',
   setSatoshi: () => {},
@@ -73,6 +77,9 @@ export const AppContextProvider = ({ children }: AppContextProviderProps): JSX.E
     initialAppContext.showPublicImages,
   )
   const [showSensitive, setShowSensitive] = React.useState<boolean>(initialAppContext.showSensitive)
+  const [relayColouring, setRelayColouring] = React.useState<boolean>(
+    initialAppContext.relayColouring,
+  )
   const [language, setLanguage] = React.useState<string>(initialAppContext.language)
   const [imageHostingService, setImageHostingService] = React.useState<string>(
     initialAppContext.imageHostingService,
@@ -134,6 +141,7 @@ export const AppContextProvider = ({ children }: AppContextProviderProps): JSX.E
           last_notification_seen_at: 0,
           last_pets_at: 0,
           language: initialAppContext.language,
+          relay_coloruring: initialAppContext.relayColouring,
         }
         SInfo.setItem('config', JSON.stringify(config), {})
       }
@@ -177,6 +185,8 @@ export const AppContextProvider = ({ children }: AppContextProviderProps): JSX.E
   return (
     <AppContext.Provider
       value={{
+        relayColouring,
+        setRelayColouring,
         displayUserDrawer,
         setDisplayUserDrawer,
         language,
