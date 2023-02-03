@@ -61,7 +61,7 @@
     "language": {
       "en": "English",
       "es": "Español",
-      "fr": "François",
+      "fr": "Français",
       "ru": "Русский",
       "de": "Deutsch"
     },
@@ -70,7 +70,8 @@
       "showSensitive": "Montrer les notes sensibles",
       "satoshi": "Symbole de satoshi",
       "imageHostingService": "Image hosting service",
-      "language": "Langue"
+      "language": "Langue",
+      "relayColoruring": "Relay coloruring"
     },
     "noteCard": {
       "answering": "Répondre à {{pubkey}}",

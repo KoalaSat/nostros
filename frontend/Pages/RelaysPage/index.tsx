@@ -170,7 +170,7 @@ export const RelaysPage: React.FC = () => {
               <Text style={styles.title} variant='titleMedium'>
                 {t('relaysPage.myList')}
               </Text>
-              <Divider/>
+              <Divider />
             </View>
             <FlatList
               showsVerticalScrollIndicator={false}
@@ -183,7 +183,7 @@ export const RelaysPage: React.FC = () => {
           <Text style={styles.title} variant='titleMedium'>
             {t('relaysPage.recommended')}
           </Text>
-          <Divider/>
+          <Divider />
         </View>
         <FlatList
           showsVerticalScrollIndicator={false}

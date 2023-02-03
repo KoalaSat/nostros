@@ -69,7 +69,8 @@
       "satoshi": "Satoshi Symbol",
       "imageHostingService": "Bilder Hosting Service",
       "random": "zufällig",
-      "language": "Language"
+      "language": "Language",
+      "relayColoruring": "Relay coloruring"
     },
     "noteCard": {
       "answering": "{{pubkey}} antworten",
@@ -249,7 +250,7 @@
     "language": {
       "en": "English",
       "es": "Español",
-      "fr": "François",
+      "fr": "Français",
       "ru": "Русский",
       "de": "Deutsch"
     },

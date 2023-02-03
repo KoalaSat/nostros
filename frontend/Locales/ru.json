@@ -69,7 +69,8 @@
       "showSensitive": "Show sensitive notes",
       "satoshi": "Satoshi symbol",
       "random": "Random",
-      "language": "Язык"
+      "language": "Язык",
+      "relayColoruring": "Relay coloruring"
     },
     "noteCard": {
       "answering": "Ответить {{pubkey}}",
@@ -248,7 +249,7 @@
     "language": {
       "en": "English",
       "es": "Español",
-      "fr": "François",
+      "fr": "Français",
       "ru": "Русский",
       "de": "Deutsch"
     },
