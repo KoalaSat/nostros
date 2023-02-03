@@ -256,7 +256,7 @@ export const NoteCard: React.FC<NoteCardProps> = ({
   }
 
   const getNoteContent: () => JSX.Element | undefined = () => {
-    if (note?.blocked !== undefined && note.blocked) {
+    if (note?.blocked !== undefined && note.blocked > 0) {
       return blockedContent()
     } else if (note?.kind === Kind.Text) {
       return textNote()
@@ -289,7 +289,7 @@ export const NoteCard: React.FC<NoteCardProps> = ({
         )}
       </Card.Content>
       {getNoteContent()}
-      {showAction && !note?.blocked && (
+      {showAction && !note?.blocked > 0 && (
         <Card.Content style={[styles.bottomActions, { borderColor: theme.colors.onSecondary }]}>
           <Button
             icon={() => (

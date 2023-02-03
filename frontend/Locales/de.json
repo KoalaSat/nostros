@@ -153,6 +153,9 @@
       "myFeed": "Mein Feed"
     },
     "relaysPage": {
+      "relayName": "Address",
+      "globalFeed": "Global feed",
+      "active": "Active",
       "labelAdd": "Beschreibung des Relay",
       "cancel": "Abbrechen",
       "add": "Hinzufügen",
@@ -163,7 +166,8 @@
         "remove": "Relay entfernen",
         "active": "Relay aktivieren.",
         "desactive": "Relay deaktivieren.",
-        "badFormat": "Die URL des Relays hat kein gültiges Format."
+        "badFormat": "Die URL des Relays hat kein gültiges Format.",
+        "alreadyExists": "Relay already exists."
       }
     },
     "profileConfigPage": {

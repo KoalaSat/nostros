@@ -163,6 +163,9 @@
       "newMessages": "{{newNotesCount}} new notes. Pull to refresh."
     },
     "relaysPage": {
+      "relayName": "Address",
+      "globalFeed": "Global feed",
+      "active": "Active",
       "labelAdd": "Relay address",
       "cancel": "Cancel",
       "add": "Add",
@@ -171,11 +174,14 @@
       "recommended": "Recommended",
       "myList": "My relays",
       "notifications": {
+        "globalFeedActive": "Global feed enabled.",
+        "globalFeedActiveUnactive": "Global feed disabled.",
         "add": "Relay added.",
         "remove": "Relay removed.",
         "active": "Relay activated.",
         "desactive": "Relay desactivated.",
-        "badFormat": "Relay URL has a bad format."
+        "badFormat": "Relay URL has a bad format.",
+        "alreadyExists": "Relay already exists."
       }
     },
     "profileConfigPage": {

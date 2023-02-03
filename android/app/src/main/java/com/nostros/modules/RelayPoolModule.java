@@ -38,7 +38,7 @@ public class RelayPoolModule extends ReactContextBaseJavaModule {
     @ReactMethod
     public void add(String url) {
         try {
-            Relay relay = new Relay(url, true, database, context);
+            Relay relay = new Relay(url, 1, 1, database, context);
             relay.connect(userPubKey);
             relays.add(relay);
             database.saveRelay(relay);
@@ -63,15 +63,16 @@ public class RelayPoolModule extends ReactContextBaseJavaModule {
     }
 
     @ReactMethod
-    public void active(String url, Callback callback) throws IOException {
+    public void update(String url, int active, int globalFeed, Callback callback) throws IOException {
         ListIterator<Relay> iterator = relays.listIterator();
         boolean relayExists = false;
         while(iterator.hasNext()){
             Relay relay = iterator.next();
-            if(url.equals(relay.url) && !relay.isActive()){
+            if(url.equals(relay.url)){
                 int index = relays.indexOf(relay);
                 relay.connect(userPubKey);
-                relay.setActive(true);
+                relay.setActive(active);
+                relay.setGlobalFeed(globalFeed);
                 relay.save(database.database);
                 this.relays.set(index, relay);
                 relayExists = true;
@@ -86,29 +87,12 @@ public class RelayPoolModule extends ReactContextBaseJavaModule {
     }
 
     @ReactMethod
-    public void desactive(String url, Callback callback) {
-        ListIterator<Relay> iterator = relays.listIterator();
-        while(iterator.hasNext()){
-            Relay relay = iterator.next();
-            if(url.equals(relay.url) && relay.isActive()){
-                int index = relays.indexOf(relay);
-                relay.disconnect();
-                relay.setActive(false);
-                relay.save(database.database);
-                this.relays.set(index, relay);
-            }
-        }
-
-        callback.invoke();
-    }
-
-    @ReactMethod
     public void connect(String pubKey, Callback callback) {
         userPubKey = pubKey;
         relays = database.getRelays(context);
         for (Relay relay : relays) {
             try {
-                if (relay.isActive()) {
+                if (relay.active() > 0) {
                     relay.connect(pubKey);
                 }
             } catch (IOException e) {
@@ -119,9 +103,9 @@ public class RelayPoolModule extends ReactContextBaseJavaModule {
     }
 
     @ReactMethod
-    public void send(String message) {
+    public void send(String message, boolean globalFeed) {
         for (Relay relay : relays) {
-            if (relay.isActive()) {
+            if (relay.active() > 0 && (!globalFeed || relay.globalFeed > 0)) {
                 relay.send(message);
             }
         }

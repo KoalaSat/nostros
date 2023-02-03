@@ -26,9 +26,12 @@ class RelayPool {
   private readonly privateKey?: string
   private subscriptions: Record<string, string[]>
 
-  private readonly send: (message: object) => void = async (message) => {
+  private readonly send: (message: object, globalFeed?: boolean) => void = async (
+    message,
+    globalFeed,
+  ) => {
     const tosend = JSON.stringify(message)
-    RelayPoolModule.send(tosend)
+    RelayPoolModule.send(tosend, globalFeed ?? false)
   }
 
   public readonly connect: (publicKey: string, onEventId: (eventId: string) => void) => void =
@@ -50,18 +53,13 @@ class RelayPool {
     RelayPoolModule.remove(relayUrl, callback)
   }
 
-  public readonly active: (relayUrl: string, callback?: () => void) => void = async (
-    relayUrl,
-    callback = () => {},
-  ) => {
-    RelayPoolModule.active(relayUrl, callback)
-  }
-
-  public readonly desactive: (relayUrl: string, callback?: () => void) => void = async (
-    relayUrl,
-    callback = () => {},
-  ) => {
-    RelayPoolModule.desactive(relayUrl, callback)
+  public readonly update: (
+    relayUrl: string,
+    active: number,
+    globalfeed: number,
+    callback?: () => void,
+  ) => void = async (relayUrl, active, globalfeed, callback = () => {}) => {
+    RelayPoolModule.update(relayUrl, active, globalfeed, callback)
   }
 
   public readonly sendEvent: (event: Event) => Promise<Event | null> = async (event) => {
@@ -89,7 +87,7 @@ class RelayPool {
     if (this.subscriptions[subId]?.includes(id)) {
       console.log('Subscription already done!', subId)
     } else {
-      this.send([...['REQ', subId], ...(filters ?? [])])
+      this.send([...['REQ', subId], ...(filters ?? [])], subId.includes('-global-'))
       const newSubscriptions = [...(this.subscriptions[subId] ?? []), id]
       this.subscriptions[subId] = newSubscriptions
     }

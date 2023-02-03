@@ -152,6 +152,9 @@
       "myFeed": "My feed"
     },
     "relaysPage": {
+      "relayName": "Address",
+      "globalFeed": "Global feed",
+      "active": "Active",
       "labelAdd": "Relay address",
       "cancel": "Отменить",
       "add": "Добавить",
@@ -162,7 +165,8 @@
         "remove": "Relay removed.",
         "active": "Relay acivado.",
         "desactive": "Relay desactivado.",
-        "badFormat": "Relay URL has a bad format."
+        "badFormat": "Relay URL has a bad format.",
+        "alreadyExists": "Relay already exists."
       }
     },
     "profileConfigPage": {

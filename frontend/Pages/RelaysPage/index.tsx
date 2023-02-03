@@ -1,5 +1,5 @@
 import React, { useContext, useState } from 'react'
-import { ScrollView, StyleSheet, View } from 'react-native'
+import { FlatList, ListRenderItem, ScrollView, StyleSheet, View } from 'react-native'
 import Clipboard from '@react-native-clipboard/clipboard'
 import { useTranslation } from 'react-i18next'
 import { RelayPoolContext } from '../../Contexts/RelayPoolContext'
@@ -23,8 +23,7 @@ import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityI
 
 export const RelaysPage: React.FC = () => {
   const defaultRelayInput = React.useMemo(() => 'wss://', [])
-  const { activeRelayItem, desactiveRelayItem, addRelayItem, removeRelayItem, relays } =
-    useContext(RelayPoolContext)
+  const { updateRelayItem, addRelayItem, removeRelayItem, relays } = useContext(RelayPoolContext)
   const { t } = useTranslation('common')
   const theme = useTheme()
   const bottomSheetAddRef = React.useRef<RBSheet>(null)
@@ -36,7 +35,8 @@ export const RelaysPage: React.FC = () => {
   const addRelay: (url: string) => void = (url) => {
     addRelayItem({
       url,
-      active: true,
+      active: 1,
+      global_feed: 1,
     }).then(() => {
       setShowNotification('add')
     })
@@ -51,29 +51,45 @@ export const RelaysPage: React.FC = () => {
   }
 
   const activeRelay: (relay: Relay) => void = (relay) => {
-    activeRelayItem(relay).then(() => {
+    relay.active = 1
+    updateRelayItem(relay).then(() => {
       setShowNotification('active')
     })
   }
 
   const desactiveRelay: (relay: Relay) => void = (relay) => {
-    desactiveRelayItem(relay).then(() => {
+    relay.active = 0
+    updateRelayItem(relay).then(() => {
       setShowNotification('desactive')
     })
   }
 
+  const activeGlobalFeedRelay: (relay: Relay) => void = (relay) => {
+    relay.global_feed = 1
+    updateRelayItem(relay).then(() => {
+      setShowNotification('globalFeedActive')
+    })
+  }
+
+  const desactiveGlobalFeedRelay: (relay: Relay) => void = (relay) => {
+    relay.global_feed = 0
+    updateRelayItem(relay).then(() => {
+      setShowNotification('globalFeedActiveUnactive')
+    })
+  }
+
   const onPressAddRelay: () => void = () => {
-    if (
-      REGEX_SOCKET_LINK.test(addRelayInput) &&
-      !relays.find((relay) => relay.url === addRelayInput)
-    ) {
-      bottomSheetAddRef.current?.close()
-      addRelay(addRelayInput)
-      setAddRelayInput(defaultRelayInput)
+    if (REGEX_SOCKET_LINK.test(addRelayInput)) {
+      if (relays.find((relay) => relay.url === addRelayInput)) {
+        setShowNotification('alreadyExists')
+      } else {
+        addRelay(addRelayInput)
+        setAddRelayInput(defaultRelayInput)
+      }
     } else {
-      bottomSheetAddRef.current?.close()
       setShowNotification('badFormat')
     }
+    bottomSheetAddRef.current?.close()
   }
 
   const rbSheetCustomStyles = React.useMemo(() => {
@@ -91,78 +107,87 @@ export const RelaysPage: React.FC = () => {
     }
   }, [])
 
-  const myRelays = relays.filter((relay) => !defaultRelays.includes(relay.url))
+  const myRelays = relays
+    .filter((relay) => !defaultRelays.includes(relay.url))
+    .sort((a, b) => {
+      if (a.url > b.url) return 1
+      if (a.url < b.url) return -1
+      return 0
+    })
+
+  const renderItem: ListRenderItem<Relay> = ({ item, index }) => {
+    return (
+      <List.Item
+        key={index}
+        title={item.url.split('wss://')[1]?.split('/')[0]}
+        right={() => (
+          <>
+            <Switch
+              value={item.global_feed !== undefined && item.global_feed > 0}
+              onValueChange={() =>
+                item.active ? desactiveGlobalFeedRelay(item) : activeGlobalFeedRelay(item)
+              }
+            />
+            <Switch
+              style={styles.switch}
+              value={item.active !== undefined && item.active > 0}
+              onValueChange={() => (item.active ? desactiveRelay(item) : activeRelay(item))}
+            />
+          </>
+        )}
+        left={() => (
+          <MaterialCommunityIcons
+            style={styles.relayColor}
+            name='circle'
+            color={relayToColor(item.url)}
+          />
+        )}
+        onPress={() => {
+          setSelectedRelay(item)
+          bottomSheetEditRef.current?.open()
+        }}
+      />
+    )
+  }
 
   return (
     <View style={styles.container}>
+      <List.Item
+        title={t('relaysPage.relayName')}
+        right={() => (
+          <>
+            <Text style={styles.listHeader}>{t('relaysPage.globalFeed')}</Text>
+            <Text style={styles.listHeader}>{t('relaysPage.active')}</Text>
+          </>
+        )}
+      />
       <ScrollView horizontal={false}>
+        <Text style={styles.title} variant='titleMedium'>
+          {t('relaysPage.myList')}
+        </Text>
         {myRelays.length > 0 && (
           <>
-            <Text style={styles.title} variant='titleMedium'>
-              {t('relaysPage.myList')}
-            </Text>
-            {myRelays.length > 0 &&
-              myRelays.map((relay, index) => {
-                return (
-                  <List.Item
-                    key={index}
-                    title={relay.url.split('wss://')[1]?.split('/')[0]}
-                    right={() => (
-                      <Switch
-                        value={relay.active !== undefined && relay.active > 0}
-                        onValueChange={() =>
-                          relay.active ? desactiveRelay(relay) : activeRelay(relay)
-                        }
-                      />
-                    )}
-                    left={() => (
-                      <MaterialCommunityIcons
-                        style={styles.relayColor}
-                        name='circle'
-                        color={relayToColor(relay.url)}
-                      />
-                    )}
-                    onPress={() => {
-                      setSelectedRelay(relay)
-                      bottomSheetEditRef.current?.open()
-                    }}
-                  />
-                )
-              })}
+            <FlatList
+              showsVerticalScrollIndicator={false}
+              data={myRelays}
+              renderItem={renderItem}
+            />
           </>
         )}
         <Text style={styles.title} variant='titleMedium'>
           {t('relaysPage.recommended')}
         </Text>
-        {defaultRelays.map((url, index) => {
-          const relay = {
-            url,
-            active: relays.find((relay) => relay.url === url && relay.active) !== undefined,
-          }
-          return (
-            <List.Item
-              key={index}
-              title={url.split('wss://')[1]?.split('/')[0]}
-              right={() => (
-                <Switch
-                  value={relay.active}
-                  onValueChange={() => (relay.active ? desactiveRelay(relay) : activeRelay(relay))}
-                />
-              )}
-              left={() => (
-                <MaterialCommunityIcons
-                  style={styles.relayColor}
-                  name='circle'
-                  color={relayToColor(relay.url)}
-                />
-              )}
-              onPress={() => {
-                setSelectedRelay(relay)
-                bottomSheetEditRef.current?.open()
-              }}
-            />
-          )
-        })}
+        <FlatList
+          showsVerticalScrollIndicator={false}
+          data={defaultRelays.map(
+            (url) =>
+              relays.find((relay) => relay.url === url && relay.active && relay.active > 0) ?? {
+                url,
+              },
+          )}
+          renderItem={renderItem}
+          style={styles.list}
+        />
       </ScrollView>
       <AnimatedFAB
         style={styles.fab}
@@ -252,12 +277,10 @@ const styles = StyleSheet.create({
   },
   container: {
     padding: 0,
-    paddingBottom: 32,
     paddingLeft: 16,
   },
   list: {
-    padding: 0,
-    paddingBottom: 45,
+    paddingBottom: 80,
   },
   snackbar: {
     margin: 16,
@@ -265,6 +288,14 @@ const styles = StyleSheet.create({
   },
   relayColor: {
     paddingTop: 9,
+  },
+  switch: {
+    marginLeft: 32,
+  },
+  listHeader: {
+    paddingRight: 5,
+    paddingLeft: 16,
+    textAlign: 'center',
   },
   fab: {
     bottom: 16,

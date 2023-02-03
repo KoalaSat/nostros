@@ -5,6 +5,7 @@ export interface Relay {
   url: string
   name?: string
   active?: number
+  global_feed?: number
 }
 
 const databaseToEntity: (object: any) => Relay = (object) => {

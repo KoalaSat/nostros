@@ -273,6 +273,7 @@ export const ProfilePage: React.FC<ProfilePageProps> = ({ route }) => {
         </Surface>
         <View style={styles.list}>
           <FlashList
+            estimatedItemSize={200}
             showsVerticalScrollIndicator={false}
             data={notes}
             renderItem={renderItem}
