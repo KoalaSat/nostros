@@ -59,12 +59,14 @@ export const RelaysPage: React.FC = () => {
 
   const desactiveRelay: (relay: Relay) => void = (relay) => {
     relay.active = 0
+    relay.global_feed = 0
     updateRelayItem(relay).then(() => {
       setShowNotification('desactive')
     })
   }
 
   const activeGlobalFeedRelay: (relay: Relay) => void = (relay) => {
+    relay.active = 1
     relay.global_feed = 1
     updateRelayItem(relay).then(() => {
       setShowNotification('globalFeedActive')
@@ -125,7 +127,7 @@ export const RelaysPage: React.FC = () => {
             <Switch
               value={item.global_feed !== undefined && item.global_feed > 0}
               onValueChange={() =>
-                item.active ? desactiveGlobalFeedRelay(item) : activeGlobalFeedRelay(item)
+                item.global_feed ? desactiveGlobalFeedRelay(item) : activeGlobalFeedRelay(item)
               }
             />
             <Switch
@@ -162,11 +164,11 @@ export const RelaysPage: React.FC = () => {
         )}
       />
       <ScrollView horizontal={false}>
-        <Text style={styles.title} variant='titleMedium'>
-          {t('relaysPage.myList')}
-        </Text>
         {myRelays.length > 0 && (
           <>
+            <Text style={styles.title} variant='titleMedium'>
+              {t('relaysPage.myList')}
+            </Text>
             <FlatList
               showsVerticalScrollIndicator={false}
               data={myRelays}
@@ -280,7 +282,7 @@ const styles = StyleSheet.create({
     paddingLeft: 16,
   },
   list: {
-    paddingBottom: 80,
+    paddingBottom: 130,
   },
   snackbar: {
     margin: 16,
@@ -298,7 +300,7 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
   fab: {
-    bottom: 16,
+    bottom: 65,
     right: 16,
     position: 'absolute',
   },

@@ -120,8 +120,8 @@ public class DatabaseModule {
 
             database.execSQL("CREATE INDEX nostros_reactions_created_at_reacted_event_id_index ON nostros_reactions(created_at, reacted_event_id); ");
 
-            database.execSQL("CREATE INDEX nostros_users_contact_index ON nostros_users(contact, follower); ");
-            database.execSQL("CREATE INDEX nostros_users_contact_index ON nostros_users(id, name); ");
+            database.execSQL("CREATE INDEX nostros_users_contact_follower_index ON nostros_users(contact, follower); ");
+            database.execSQL("CREATE INDEX nostros_users_id_name_index ON nostros_users(id, name); ");
         } catch (SQLException e) { }
         try {
             database.execSQL("DROP TABLE IF EXISTS nostros_config;");

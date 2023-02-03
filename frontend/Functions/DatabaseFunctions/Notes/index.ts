@@ -53,7 +53,6 @@ export const getMainNotes: (
   if (filters?.until) notesQuery += `nostros_notes.created_at <= ${filters?.until} AND `
 
   notesQuery += `
-    nostros_users.blocked != 1 AND
     nostros_notes.main_event_id IS NULL
     ORDER BY created_at DESC
     LIMIT ${limit}

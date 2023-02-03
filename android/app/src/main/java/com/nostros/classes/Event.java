@@ -42,31 +42,25 @@ public class Event {
     }
 
     public void save(SQLiteDatabase database, String userPubKey, String relayUrl) {
-        if (isValid()) {
-            try {
-                if (kind.equals("0")) {
-                    saveUserMeta(database);
-                } else if (kind.equals("1") || kind.equals("2")) {
-                    saveNote(database, userPubKey, relayUrl);
-                } else if (kind.equals("3")) {
-                    if (pubkey.equals(userPubKey)) {
-                        savePets(database);
-                    } else {
-                        saveFollower(database, userPubKey);
-                    }
-                } else if (kind.equals("4")) {
-                    saveDirectMessage(database);
-                } else if (kind.equals("7")) {
-                    saveReaction(database);
+        try {
+            if (kind.equals("0")) {
+                saveUserMeta(database);
+            } else if (kind.equals("1") || kind.equals("2")) {
+                saveNote(database, userPubKey, relayUrl);
+            } else if (kind.equals("3")) {
+                if (pubkey.equals(userPubKey)) {
+                    savePets(database);
+                } else {
+                    saveFollower(database, userPubKey);
                 }
-            } catch (JSONException e) {
-                e.printStackTrace();
+            } else if (kind.equals("4")) {
+                saveDirectMessage(database);
+            } else if (kind.equals("7")) {
+                saveReaction(database);
             }
+        } catch (JSONException e) {
+            e.printStackTrace();
         }
-    }
-
-    protected boolean isValid() {
-        return !id.isEmpty() && !sig.isEmpty() && created_at <= System.currentTimeMillis() / 1000L;
     }
 
     protected String getMainEventId() {
