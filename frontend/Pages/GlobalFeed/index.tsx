@@ -1,10 +1,9 @@
 import React, { useCallback, useContext, useState, useEffect } from 'react'
 import {
-  ListRenderItem,
+  ActivityIndicator,
   NativeScrollEvent,
   NativeSyntheticEvent,
   RefreshControl,
-  ScrollView,
   StyleSheet,
   View,
 } from 'react-native'
@@ -15,12 +14,12 @@ import { UserContext } from '../../Contexts/UserContext'
 import { RelayPoolContext } from '../../Contexts/RelayPoolContext'
 import { Kind } from 'nostr-tools'
 import { RelayFilters } from '../../lib/nostr/RelayPool/intex'
-import { ActivityIndicator, Chip, Button, Text } from 'react-native-paper'
+import { Chip, Button, Text } from 'react-native-paper'
 import NoteCard from '../../Components/NoteCard'
 import { useTheme } from '@react-navigation/native'
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'
 import { t } from 'i18next'
-import { FlatList } from 'react-native-gesture-handler'
+import { FlashList, ListRenderItem } from '@shopify/flash-list'
 import { getUnixTime } from 'date-fns'
 
 interface GlobalFeedProps {
@@ -94,7 +93,6 @@ export const GlobalFeed: React.FC<GlobalFeedProps> = ({ navigation, setProfileCa
       }
       getMainNotes(database, publicKey, pageSize, false, {
         until: lastLoadAt,
-        excludeRepost: true,
       }).then((results) => {
         setRefreshing(false)
         if (results.length > 0) {
@@ -126,62 +124,67 @@ export const GlobalFeed: React.FC<GlobalFeedProps> = ({ navigation, setProfileCa
     )
   }
 
+  const ListEmptyComponent = (
+    <View style={styles.blank}>
+      <MaterialCommunityIcons
+        name='account-group-outline'
+        size={64}
+        style={styles.center}
+        color={theme.colors.onPrimaryContainer}
+      />
+      <Text variant='headlineSmall' style={styles.center}>
+        {t('homeFeed.emptyTitle')}
+      </Text>
+      <Text variant='bodyMedium' style={styles.center}>
+        {t('homeFeed.emptyDescription')}
+      </Text>
+      <Button mode='contained' compact onPress={() => navigation.jumpTo('contacts')}>
+        {t('homeFeed.emptyButton')}
+      </Button>
+    </View>
+  )
+
   return (
     <View>
-      {notes && notes.length > 0 ? (
-        <ScrollView
-          onScroll={onScroll}
-          horizontal={false}
-          showsVerticalScrollIndicator={false}
-          refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
-        >
-          {newNotesCount > 0 && (
-            <View style={styles.refreshChipWrapper}>
-              <Chip
-                icon={() => (
-                  <MaterialCommunityIcons name='cached' color={theme.colors.onSurface} size={20} />
-                )}
-                onPress={onRefresh}
-                // visible={newNotesCount > 0}
-                compact
-                elevated
-                style={styles.refreshChip}
-              >
-                {t(newNotesCount < 2 ? 'homeFeed.newMessage' : 'homeFeed.newMessages', {
-                  newNotesCount,
-                })}
-              </Chip>
-            </View>
-          )}
-          <FlatList showsVerticalScrollIndicator={false} data={notes} renderItem={renderItem} />
-          {notes.length >= 10 && (
-            <ActivityIndicator animating={true} style={styles.activityIndicator} />
-          )}
-        </ScrollView>
-      ) : (
-        <View style={styles.blank}>
-          <MaterialCommunityIcons
-            name='account-group-outline'
-            size={64}
-            style={styles.center}
-            color={theme.colors.onPrimaryContainer}
-          />
-          <Text variant='headlineSmall' style={styles.center}>
-            {t('homeFeed.emptyTitle')}
-          </Text>
-          <Text variant='bodyMedium' style={styles.center}>
-            {t('homeFeed.emptyDescription')}
-          </Text>
-          <Button mode='contained' compact onPress={() => navigation.jumpTo('contacts')}>
-            {t('homeFeed.emptyButton')}
-          </Button>
+      {newNotesCount > 0 && (
+        <View style={styles.refreshChipWrapper}>
+          <Chip
+            icon={() => (
+              <MaterialCommunityIcons name='cached' color={theme.colors.onSurface} size={20} />
+            )}
+            onPress={onRefresh}
+            // visible={newNotesCount > 0}
+            compact
+            elevated
+            style={styles.refreshChip}
+          >
+            {t(newNotesCount < 2 ? 'homeFeed.newMessage' : 'homeFeed.newMessages', {
+              newNotesCount,
+            })}
+          </Chip>
         </View>
       )}
+      <View style={styles.list}>
+        <FlashList
+          showsVerticalScrollIndicator={false}
+          data={notes}
+          renderItem={renderItem}
+          refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
+          onScroll={onScroll}
+          refreshing={refreshing}
+          ListEmptyComponent={ListEmptyComponent}
+          horizontal={false}
+          ListFooterComponent={<ActivityIndicator animating={true} />}
+        />
+      </View>
     </View>
   )
 }
 
 const styles = StyleSheet.create({
+  list: {
+    height: '100%',
+  },
   refreshChipWrapper: {
     flexDirection: 'row',
     alignItems: 'center',

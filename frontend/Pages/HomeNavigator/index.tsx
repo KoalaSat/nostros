@@ -123,7 +123,7 @@ export const HomeNavigator: React.FC = () => {
             paddingBottom: 32,
             paddingLeft: 16,
             borderTopRightRadius: 28,
-            borderTopLeftRadius: 28
+            borderTopLeftRadius: 28,
           },
         }}
       >

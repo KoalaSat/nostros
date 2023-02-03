@@ -157,7 +157,7 @@ export const TextContent: React.FC<TextContentProps> = ({
               styles.cardCover,
               {
                 backgroundColor: theme.colors.backdrop,
-              }
+              },
             ]}
             source={{
               uri: getRequireCover(),

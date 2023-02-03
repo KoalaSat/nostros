@@ -8,7 +8,13 @@ import fr from './Locales/fr.json'
 import de from './Locales/de.json'
 /* eslint-disable import/no-duplicates */
 import setDefaultOptions from 'date-fns/setDefaultOptions'
-import { enUS as dateEnUS, es as dateEs, ru as dateRu, fr as dateFr, de as dateDe } from 'date-fns/locale'
+import {
+  enUS as dateEnUS,
+  es as dateEs,
+  ru as dateRu,
+  fr as dateFr,
+  de as dateDe,
+} from 'date-fns/locale'
 /* eslint-enable import/no-duplicates */
 
 const locale =
@@ -29,7 +35,7 @@ i18n.use(initReactI18next).init({
     es,
     ru,
     fr,
-    de
+    de,
   },
   lng: locale.substring(0, 2),
   ns: ['common'],

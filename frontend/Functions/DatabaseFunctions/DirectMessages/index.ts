@@ -5,6 +5,7 @@ import { Event } from '../../../lib/nostr/Events'
 export interface DirectMessage extends Event {
   conversation_id: string
   read: boolean
+  pending: boolean
 }
 
 const databaseToEntity: (object: any) => DirectMessage = (object = {}) => {

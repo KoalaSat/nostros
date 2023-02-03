@@ -1,13 +1,12 @@
 import React, { useCallback, useContext, useState, useEffect } from 'react'
 import {
-  ListRenderItem,
   NativeScrollEvent,
   NativeSyntheticEvent,
   RefreshControl,
-  ScrollView,
   StyleSheet,
   View,
 } from 'react-native'
+import { FlashList, ListRenderItem } from '@shopify/flash-list'
 import { AppContext } from '../../Contexts/AppContext'
 import { getLastReply, getRepostedNotes, Note } from '../../Functions/DatabaseFunctions/Notes'
 import { handleInfinityScroll } from '../../Functions/NativeFunctions'
@@ -20,7 +19,6 @@ import NoteCard from '../../Components/NoteCard'
 import { useTheme } from '@react-navigation/native'
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'
 import { t } from 'i18next'
-import { FlatList } from 'react-native-gesture-handler'
 import { getLastReaction } from '../../Functions/DatabaseFunctions/Reactions'
 
 interface RepostsFeedProps {
@@ -135,41 +133,47 @@ export const RepostsFeed: React.FC<RepostsFeedProps> = ({ navigation, setProfile
     )
   }
 
+  const ListEmptyComponent = React.useMemo(
+    () => (
+      <View style={styles.blank}>
+        <MaterialCommunityIcons
+          name='cached'
+          size={64}
+          style={styles.center}
+          color={theme.colors.onPrimaryContainer}
+        />
+        <Text variant='headlineSmall' style={styles.center}>
+          {t('repostsFeed.emptyTitle')}
+        </Text>
+        <Text variant='bodyMedium' style={styles.center}>
+          {t('repostsFeed.emptyDescription')}
+        </Text>
+      </View>
+    ),
+    [],
+  )
+
   return (
-    <View>
-      {notes && notes.length > 0 ? (
-        <ScrollView
-          onScroll={onScroll}
-          horizontal={false}
-          showsVerticalScrollIndicator={false}
-          refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
-        >
-          <FlatList showsVerticalScrollIndicator={false} data={notes} renderItem={renderItem} />
-          {notes.length >= initialPageSize && (
-            <ActivityIndicator animating={true} style={styles.activityIndicator} />
-          )}
-        </ScrollView>
-      ) : (
-        <View style={styles.blank}>
-          <MaterialCommunityIcons
-            name='cached'
-            size={64}
-            style={styles.center}
-            color={theme.colors.onPrimaryContainer}
-          />
-          <Text variant='headlineSmall' style={styles.center}>
-            {t('repostsFeed.emptyTitle')}
-          </Text>
-          <Text variant='bodyMedium' style={styles.center}>
-            {t('repostsFeed.emptyDescription')}
-          </Text>
-        </View>
-      )}
+    <View style={styles.list}>
+      <FlashList
+        showsVerticalScrollIndicator={false}
+        data={notes}
+        renderItem={renderItem}
+        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
+        onScroll={onScroll}
+        refreshing={refreshing}
+        ListEmptyComponent={ListEmptyComponent}
+        horizontal={false}
+        ListFooterComponent={<ActivityIndicator animating={true} />}
+      />
     </View>
   )
 }
 
 const styles = StyleSheet.create({
+  list: {
+    height: '100%',
+  },
   noteCard: {
     marginTop: 16,
   },

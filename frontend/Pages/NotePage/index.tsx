@@ -4,9 +4,10 @@ import { getNotes, Note } from '../../Functions/DatabaseFunctions/Notes'
 import { RelayPoolContext } from '../../Contexts/RelayPoolContext'
 import NoteCard from '../../Components/NoteCard'
 import { Kind } from 'nostr-tools'
-import { Dimensions, FlatList, ListRenderItem, RefreshControl, ScrollView, StyleSheet, View } from 'react-native'
+import { Dimensions, RefreshControl, StyleSheet, View } from 'react-native'
+import { FlashList, ListRenderItem } from '@shopify/flash-list'
 import { getDirectReplies } from '../../Functions/RelayFunctions/Events'
-import { ActivityIndicator, AnimatedFAB, useTheme } from 'react-native-paper'
+import { AnimatedFAB, useTheme } from 'react-native-paper'
 import { UserContext } from '../../Contexts/UserContext'
 import RBSheet from 'react-native-raw-bottom-sheet'
 import ProfileCard from '../../Components/ProfileCard'
@@ -132,27 +133,17 @@ export const NotePage: React.FC<NotePageProps> = ({ route }) => {
 
   return note ? (
     <View>
-      <ScrollView
-        horizontal={false}
-        showsVerticalScrollIndicator={false}
-        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
-      >
-        <NoteCard note={note} onPressUser={openProfileDrawer} />
-        <View style={[styles.list, { borderColor: theme.colors.onSecondary }]}>
-          {replies && replies.length > 0 && (
-            <>
-              <FlatList
-                showsVerticalScrollIndicator={false}
-                data={replies}
-                renderItem={renderItem}
-              />
-              {replies.length >= 10 && (
-                <ActivityIndicator style={styles.loading} animating={true} />
-              )}
-            </>
-          )}
-        </View>
-      </ScrollView>
+      <NoteCard note={note} onPressUser={openProfileDrawer} />
+      <View style={[styles.list, { borderColor: theme.colors.onSecondary }]}>
+        <FlashList
+          showsVerticalScrollIndicator={false}
+          data={replies}
+          renderItem={renderItem}
+          refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
+          refreshing={refreshing}
+          horizontal={false}
+        />
+      </View>
       {privateKey && (
         <AnimatedFAB
           style={[styles.fabSend, { top: Dimensions.get('window').height - 160 }]}
@@ -237,6 +228,7 @@ const styles = StyleSheet.create({
     marginLeft: 16,
     paddingRight: 16,
     marginBottom: 180,
+    height: '100%',
   },
   loading: {
     paddingTop: 30,

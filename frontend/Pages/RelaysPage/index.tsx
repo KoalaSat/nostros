@@ -63,7 +63,10 @@ export const RelaysPage: React.FC = () => {
   }
 
   const onPressAddRelay: () => void = () => {
-    if (REGEX_SOCKET_LINK.test(addRelayInput)) {
+    if (
+      REGEX_SOCKET_LINK.test(addRelayInput) &&
+      !relays.find((relay) => relay.url === addRelayInput)
+    ) {
       bottomSheetAddRef.current?.close()
       addRelay(addRelayInput)
       setAddRelayInput(defaultRelayInput)
