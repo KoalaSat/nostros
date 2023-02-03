@@ -167,6 +167,7 @@ export const ReactionsFeed: React.FC<ReactionsFeedProps> = ({
   return (
     <View style={styles.list}>
       <FlashList
+        estimatedItemSize={200}
         showsVerticalScrollIndicator={false}
         data={notes}
         renderItem={renderItem}

@@ -164,6 +164,7 @@ export const MyFeed: React.FC<MyFeedProps> = ({ navigation, setProfileCardPubKey
   return (
     <View style={styles.list}>
       <FlashList
+        estimatedItemSize={200}
         showsVerticalScrollIndicator={false}
         data={notes}
         renderItem={renderItem}

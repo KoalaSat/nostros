@@ -298,6 +298,7 @@ public class Event {
                 values.put("name", name);
                 values.put("contact", true);
                 values.put("blocked", 0);
+                values.put("pet_at", created_at);
                 database.insert("nostros_users", null, values);
             }
         }
@@ -315,6 +316,7 @@ public class Event {
                 if (cursor.getCount() == 0) {
                     values.put("id", pubkey);
                     values.put("follower", true);
+                    values.put("follower_at", created_at);
                     database.insert("nostros_users", null, values);
                 } else {
                     String whereClause = "id = ?";
@@ -322,6 +324,7 @@ public class Event {
                             this.pubkey
                     };
                     values.put("follower", true);
+                    values.put("follower_at", created_at);
                     database.update("nostros_users", values, whereClause, whereArgs);
                 }
             }

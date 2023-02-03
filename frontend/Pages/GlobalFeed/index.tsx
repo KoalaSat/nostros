@@ -97,7 +97,7 @@ export const GlobalFeed: React.FC<GlobalFeedProps> = ({ navigation, setProfileCa
         setRefreshing(false)
         if (results.length > 0) {
           setNotes(results)
-          relayPool?.subscribe('homepage-contacts-meta', [
+          relayPool?.subscribe('homepage-global-meta', [
             {
               kinds: [Kind.Metadata],
               authors: results.map((note) => note.pubkey ?? ''),
@@ -169,6 +169,7 @@ export const GlobalFeed: React.FC<GlobalFeedProps> = ({ navigation, setProfileCa
       )}
       <View style={styles.list}>
         <FlashList
+          estimatedItemSize={200}
           showsVerticalScrollIndicator={false}
           data={notes}
           renderItem={renderItem}

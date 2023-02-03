@@ -15,8 +15,7 @@ export interface RelayPoolContextProps {
   relays: Relay[]
   addRelayItem: (relay: Relay) => Promise<void>
   removeRelayItem: (relay: Relay) => Promise<void>
-  activeRelayItem: (relay: Relay) => Promise<void>
-  desactiveRelayItem: (relay: Relay) => Promise<void>
+  updateRelayItem: (relay: Relay) => Promise<void>
 }
 
 export interface WebsocketEvent {
@@ -33,8 +32,7 @@ export const initialRelayPoolContext: RelayPoolContextProps = {
   setRelayPool: () => {},
   addRelayItem: async () => await new Promise(() => {}),
   removeRelayItem: async () => await new Promise(() => {}),
-  activeRelayItem: async () => await new Promise(() => {}),
-  desactiveRelayItem: async () => await new Promise(() => {}),
+  updateRelayItem: async () => await new Promise(() => {}),
   relays: [],
 }
 
@@ -91,32 +89,19 @@ export const RelayPoolContextProvider = ({
     })
   }
 
-  const activeRelayItem: (relay: Relay) => Promise<void> = async (relay) => {
+  const updateRelayItem: (relay: Relay) => Promise<void> = async (relay) => {
     setRelays((prev) => {
       return prev.map((item) => {
-        if (item.url === relay.url) item.active = true
-        return item
+        if (item.url === relay.url) {
+          return relay
+        } else {
+          return item
+        }
       })
     })
     return await new Promise((resolve, _reject) => {
       if (relayPool && database && publicKey) {
-        relayPool.active(relay.url, () => {
-          loadRelays().then(resolve)
-        })
-      }
-    })
-  }
-
-  const desactiveRelayItem: (relay: Relay) => Promise<void> = async (relay) => {
-    setRelays((prev) => {
-      return prev.map((item) => {
-        if (item.url === relay.url) item.active = false
-        return item
-      })
-    })
-    return await new Promise((resolve, _reject) => {
-      if (relayPool && database && publicKey) {
-        relayPool.desactive(relay.url, () => {
+        relayPool.update(relay.url, relay.active ?? 1, relay.global_feed ?? 1, () => {
           loadRelays().then(resolve)
         })
       }
@@ -174,8 +159,7 @@ export const RelayPoolContextProvider = ({
         relays,
         addRelayItem,
         removeRelayItem,
-        activeRelayItem,
-        desactiveRelayItem,
+        updateRelayItem,
       }}
     >
       {children}

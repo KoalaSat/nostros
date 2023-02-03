@@ -13,7 +13,7 @@ export interface User {
   nip05?: string
   created_at?: number
   valid_nip05?: boolean
-  blocked?: boolean
+  blocked?: number
 }
 
 const databaseToEntity: (object: object) => User = (object) => {

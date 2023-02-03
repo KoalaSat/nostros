@@ -136,6 +136,7 @@ export const NotePage: React.FC<NotePageProps> = ({ route }) => {
       <NoteCard note={note} onPressUser={openProfileDrawer} />
       <View style={[styles.list, { borderColor: theme.colors.onSecondary }]}>
         <FlashList
+          estimatedItemSize={200}
           showsVerticalScrollIndicator={false}
           data={replies}
           renderItem={renderItem}

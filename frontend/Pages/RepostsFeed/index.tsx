@@ -156,6 +156,7 @@ export const RepostsFeed: React.FC<RepostsFeedProps> = ({ navigation, setProfile
   return (
     <View style={styles.list}>
       <FlashList
+        estimatedItemSize={200}
         showsVerticalScrollIndicator={false}
         data={notes}
         renderItem={renderItem}

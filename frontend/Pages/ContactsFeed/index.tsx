@@ -235,6 +235,7 @@ export const ContactsFeed: React.FC = () => {
   const Following: JSX.Element = (
     <View style={styles.container}>
       <FlashList
+        estimatedItemSize={71}
         showsVerticalScrollIndicator={false}
         data={following.slice(0, pageSize)}
         renderItem={renderContactItem}
@@ -276,6 +277,7 @@ export const ContactsFeed: React.FC = () => {
   const Followers: JSX.Element = (
     <View style={styles.container}>
       <FlashList
+        estimatedItemSize={71}
         style={styles.list}
         data={followers.slice(0, pageSize)}
         renderItem={renderContactItem}

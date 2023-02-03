@@ -152,6 +152,9 @@
       "myFeed": "Mon flux"
     },
     "relaysPage": {
+      "relayName": "Address",
+      "globalFeed": "Global feed",
+      "active": "Active",
       "labelAdd": "Adresse du relai",
       "cancel": "Annuler",
       "add": "Ajouter",
@@ -162,7 +165,8 @@
         "remove": "Relai supprimé",
         "active": "Relais activé.",
         "desactive": "Relais desactivé.",
-        "badFormat": "L'URL du relai n'est pas correctement formatée."
+        "badFormat": "L'URL du relai n'est pas correctement formatée.",
+        "alreadyExists": "Relay already exists."
       }
     },
     "profileConfigPage": {
