@@ -23,6 +23,7 @@
     "surfaceVariant": "#45464F",
     "onSurfaceVariant": "#C6C6D0",
     "outline": "#8F909A",
+    "border":"#00487F",
     "outlineVariant": "#45464F",
     "shadow": "#000000",
     "scrim": "#000000",
