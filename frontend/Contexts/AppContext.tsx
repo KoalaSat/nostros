@@ -31,6 +31,8 @@ export interface AppContextProps {
   clipboardNip21?: string
   setClipboardNip21: (clipboardNip21: string | undefined) => void
   checkClipboard: () => void
+  displayUserDrawer?: string
+  setDisplayUserDrawer: (displayUserDrawer: string | undefined) => void
 }
 
 export interface AppContextProviderProps {
@@ -46,9 +48,10 @@ export const initialAppContext: AppContextProps = {
   showPublicImages: false,
   setShowPublicImages: () => {},
   language:
-    Platform.OS === 'ios'
+    (Platform.OS === 'ios'
       ? NativeModules.SettingsManager.settings.AppleLocale
-      : NativeModules.I18nManager.localeIdentifier,
+      : NativeModules.I18nManager.localeIdentifier
+    )?.split('_')[0] ?? 'en',
   setLanguage: () => {},
   showSensitive: false,
   setShowSensitive: () => {},
@@ -60,6 +63,7 @@ export const initialAppContext: AppContextProps = {
   getImageHostingService: () => '',
   getSatoshiSymbol: () => <></>,
   setClipboardNip21: () => {},
+  setDisplayUserDrawer: () => {},
 }
 
 export const AppContextProvider = ({ children }: AppContextProviderProps): JSX.Element => {
@@ -79,6 +83,7 @@ export const AppContextProvider = ({ children }: AppContextProviderProps): JSX.E
   const [loadingDb, setLoadingDb] = useState<boolean>(initialAppContext.loadingDb)
   const [clipboardLoads, setClipboardLoads] = React.useState<string[]>([])
   const [clipboardNip21, setClipboardNip21] = React.useState<string>()
+  const [displayUserDrawer, setDisplayUserDrawer] = React.useState<string>()
 
   useEffect(() => {
     const handleChange = AppState.addEventListener('change', (changedState) => {
@@ -172,6 +177,8 @@ export const AppContextProvider = ({ children }: AppContextProviderProps): JSX.E
   return (
     <AppContext.Provider
       value={{
+        displayUserDrawer,
+        setDisplayUserDrawer,
         language,
         setLanguage,
         checkClipboard,

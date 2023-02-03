@@ -15,14 +15,19 @@ import NotePage from '../NotePage'
 import SendPage from '../SendPage'
 import ConversationPage from '../ConversationPage'
 import ConfigPage from '../ConfigPage'
+import { RelayPoolContext } from '../../Contexts/RelayPoolContext'
+import { AppContext } from '../../Contexts/AppContext'
+import RelayCard from '../../Components/RelayCard'
 
 export const HomeNavigator: React.FC = () => {
   const theme = useTheme()
   const { t } = useTranslation('common')
+  const { displayRelayDrawer, setDisplayrelayDrawer } = React.useContext(RelayPoolContext)
+  const { displayUserDrawer, setDisplayUserDrawer } = React.useContext(AppContext)
   const bottomSheetRef = React.useRef<RBSheet>(null)
   const bottomSheetProfileRef = React.useRef<RBSheet>(null)
+  const bottomSheetRelayRef = React.useRef<RBSheet>(null)
   const Stack = React.useMemo(() => createStackNavigator(), [])
-  const [showProfile, setShowProfile] = React.useState<string>()
   const cardStyleInterpolator = React.useMemo(
     () =>
       Platform.OS === 'android'
@@ -48,6 +53,14 @@ export const HomeNavigator: React.FC = () => {
   const onPressQuestion: (pageName: string) => void = (pageName) => {
     bottomSheetRef.current?.open()
   }
+
+  React.useEffect(() => {
+    if (displayRelayDrawer) bottomSheetRelayRef.current?.open()
+  }, [displayRelayDrawer])
+
+  React.useEffect(() => {
+    if (displayUserDrawer) bottomSheetProfileRef.current?.open()
+  }, [displayUserDrawer])
 
   return (
     <>
@@ -78,8 +91,7 @@ export const HomeNavigator: React.FC = () => {
                       icon='dots-vertical'
                       onPress={() => {
                         const params = route?.params as { pubKey: string }
-                        setShowProfile(params?.pubKey ?? '')
-                        bottomSheetProfileRef.current?.open()
+                        setDisplayUserDrawer(params?.pubKey ?? '')
                       }}
                     />
                   )}
@@ -112,8 +124,21 @@ export const HomeNavigator: React.FC = () => {
           <Stack.Screen name='Profile' component={ProfilePage} />
         </Stack.Group>
       </Stack.Navigator>
-      <RBSheet ref={bottomSheetProfileRef} closeOnDragDown={true} customStyles={bottomSheetStyles}>
-        <ProfileCard userPubKey={showProfile ?? ''} bottomSheetRef={bottomSheetProfileRef} />
+      <RBSheet
+        ref={bottomSheetProfileRef}
+        closeOnDragDown={true}
+        customStyles={bottomSheetStyles}
+        onClose={() => setDisplayUserDrawer(undefined)}
+      >
+        <ProfileCard bottomSheetRef={bottomSheetProfileRef} />
+      </RBSheet>
+      <RBSheet
+        ref={bottomSheetRelayRef}
+        closeOnDragDown={true}
+        customStyles={bottomSheetStyles}
+        onClose={() => setDisplayrelayDrawer(undefined)}
+      >
+        <RelayCard url={displayRelayDrawer} bottomSheetRef={bottomSheetRelayRef} />
       </RBSheet>
       <RBSheet ref={bottomSheetRef} closeOnDragDown={true} customStyles={bottomSheetStyles}>
         <View>

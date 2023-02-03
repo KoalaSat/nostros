@@ -34,14 +34,13 @@ import {
 import RBSheet from 'react-native-raw-bottom-sheet'
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'
 import { useFocusEffect } from '@react-navigation/native'
-import ProfileCard from '../../Components/ProfileCard'
 import ProfileData from '../../Components/ProfileData'
 import { handleInfinityScroll } from '../../Functions/NativeFunctions'
 
 export const ContactsFeed: React.FC = () => {
   const { t } = useTranslation('common')
   const initialPageSize = 20
-  const { database } = useContext(AppContext)
+  const { database, setDisplayUserDrawer } = useContext(AppContext)
   const { privateKey, publicKey, nPub } = React.useContext(UserContext)
   const { relayPool, lastEventId } = useContext(RelayPoolContext)
   const theme = useTheme()
@@ -52,7 +51,6 @@ export const ContactsFeed: React.FC = () => {
   const [followers, setFollowers] = useState<User[]>([])
   const [following, setFollowing] = useState<User[]>([])
   const [contactInput, setContactInput] = useState<string>()
-  const [profileCardPubkey, setProfileCardPubkey] = useState<string>()
   const [isAddingContact, setIsAddingContact] = useState<boolean>(false)
   const [showNotification, setShowNotification] = useState<undefined | string>()
   const [tabKey, setTabKey] = React.useState('following')
@@ -165,7 +163,7 @@ export const ContactsFeed: React.FC = () => {
     return (
       <TouchableRipple
         onPress={() => {
-          setProfileCardPubkey(item.id)
+          setDisplayUserDrawer(item.id)
           bottomSheetProfileRef.current?.open()
         }}
       >
@@ -339,10 +337,6 @@ export const ContactsFeed: React.FC = () => {
           extended={false}
         />
       )}
-
-      <RBSheet ref={bottomSheetProfileRef} closeOnDragDown={true} customStyles={bottomSheetStyles}>
-        <ProfileCard userPubKey={profileCardPubkey ?? ''} bottomSheetRef={bottomSheetProfileRef} />
-      </RBSheet>
       <RBSheet
         ref={bottomSheetAddContactRef}
         closeOnDragDown={true}

@@ -23,13 +23,9 @@ import { getLastReaction } from '../../Functions/DatabaseFunctions/Reactions'
 
 interface ReactionsFeedProps {
   navigation: any
-  setProfileCardPubKey: (profileCardPubKey: string) => void
 }
 
-export const ReactionsFeed: React.FC<ReactionsFeedProps> = ({
-  navigation,
-  setProfileCardPubKey,
-}) => {
+export const ReactionsFeed: React.FC<ReactionsFeedProps> = ({ navigation }) => {
   const theme = useTheme()
   const { database } = useContext(AppContext)
   const { publicKey } = useContext(UserContext)
@@ -126,12 +122,7 @@ export const ReactionsFeed: React.FC<ReactionsFeedProps> = ({
   const renderItem: ListRenderItem<Note> = ({ item }) => {
     return (
       <View style={styles.noteCard} key={item.id}>
-        <NoteCard
-          note={item}
-          onPressUser={(user) => {
-            setProfileCardPubKey(user.id)
-          }}
-        />
+        <NoteCard note={item} />
       </View>
     )
   }

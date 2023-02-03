@@ -184,6 +184,29 @@
         "alreadyExists": "Relay already exists."
       }
     },
+    "relayCard": {
+      "moreInfo": "More info",
+      "lessInfo": "Less info",
+      "globalFeed": "Global Feed",
+      "active": "Active",
+      "share": "Share",
+      "pubkey": "Public key",
+      "contact": "Contact",
+      "supportedNips": "Supported NIPs",
+      "software": "Sowftware",
+      "version": "Version",
+      "description": "Description",
+      "obtainingInfo": "Obtaining relay information",
+      "notifications": {
+        "active": "Relay actived.",
+        "desactive": "Relay desactivated.",
+        "globalFeedActive": "Global feed enabled.",
+        "globalFeedActiveUnactive": "Global feed disabled.",
+        "pubkeyCopied": "Public key copied.",
+        "contactCopied": "Contact copied.",
+        "urlCopied": "URL copied."
+      }
+    },
     "profileConfigPage": {
       "notifications": {
         "nsecCopied": "Secret key copied.",

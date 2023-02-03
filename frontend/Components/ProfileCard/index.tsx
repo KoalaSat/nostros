@@ -23,17 +23,13 @@ import ProfileData from '../ProfileData'
 import QRCode from 'react-native-qrcode-svg'
 
 interface ProfileCardProps {
-  userPubKey: string
   bottomSheetRef: React.RefObject<RBSheet>
   showImages?: boolean
 }
 
-export const ProfileCard: React.FC<ProfileCardProps> = ({
-  userPubKey,
-  bottomSheetRef,
-  showImages = true,
-}) => {
+export const ProfileCard: React.FC<ProfileCardProps> = ({ bottomSheetRef, showImages = true }) => {
   const theme = useTheme()
+  const { displayUserDrawer } = React.useContext(AppContext)
   const bottomSheetShareRef = React.useRef<RBSheet>(null)
   const { database } = React.useContext(AppContext)
   const { publicKey } = React.useContext(UserContext)
@@ -44,7 +40,7 @@ export const ProfileCard: React.FC<ProfileCardProps> = ({
   const [isContact, setIsContact] = React.useState<boolean>()
   const [showNotification, setShowNotification] = React.useState<undefined | string>()
   const [qrCode, setQrCode] = React.useState<any>()
-  const nPub = React.useMemo(() => getNpub(userPubKey), [userPubKey])
+  const nPub = React.useMemo(() => getNpub(displayUserDrawer), [displayUserDrawer])
   const username = React.useMemo(() => usernamePubKey(user?.name ?? '', nPub), [nPub, user])
 
   React.useEffect(() => {
@@ -52,8 +48,8 @@ export const ProfileCard: React.FC<ProfileCardProps> = ({
   }, [])
 
   const onChangeBlockUser: () => void = () => {
-    if (database && blocked !== undefined) {
-      updateUserBlock(userPubKey, database, !blocked).then(() => {
+    if (database && blocked !== undefined && displayUserDrawer) {
+      updateUserBlock(displayUserDrawer, database, !blocked).then(() => {
         setBlocked(blocked === 0 ? 1 : 0)
         loadUser()
       })
@@ -61,8 +57,8 @@ export const ProfileCard: React.FC<ProfileCardProps> = ({
   }
 
   const removeContact: () => void = () => {
-    if (relayPool && database && publicKey) {
-      updateUserContact(userPubKey, database, false).then(() => {
+    if (relayPool && database && publicKey && displayUserDrawer) {
+      updateUserContact(displayUserDrawer, database, false).then(() => {
         populatePets(relayPool, database, publicKey)
         setIsContact(false)
         setShowNotification('contactRemoved')
@@ -71,8 +67,8 @@ export const ProfileCard: React.FC<ProfileCardProps> = ({
   }
 
   const addContact: () => void = () => {
-    if (relayPool && database && publicKey) {
-      updateUserContact(userPubKey, database, true).then(() => {
+    if (relayPool && database && publicKey && displayUserDrawer) {
+      updateUserContact(displayUserDrawer, database, true).then(() => {
         populatePets(relayPool, database, publicKey)
         setIsContact(true)
         setShowNotification('contactAdded')
@@ -81,14 +77,14 @@ export const ProfileCard: React.FC<ProfileCardProps> = ({
   }
 
   const loadUser: () => void = () => {
-    if (database) {
-      getUser(userPubKey, database).then((result) => {
+    if (database && displayUserDrawer) {
+      getUser(displayUserDrawer, database).then((result) => {
         if (result) {
           setUser(result)
           setBlocked(result.blocked)
           setIsContact(result?.contact)
         } else {
-          setUser({ id: userPubKey })
+          setUser({ id: displayUserDrawer })
           setBlocked(0)
         }
       })
@@ -97,7 +93,7 @@ export const ProfileCard: React.FC<ProfileCardProps> = ({
 
   const goToProfile: () => void = () => {
     bottomSheetRef.current?.close()
-    push('Profile', { pubKey: userPubKey, title: username })
+    push('Profile', { pubKey: displayUserDrawer, title: username })
   }
 
   const bottomSheetStyles = React.useMemo(() => {
@@ -123,7 +119,7 @@ export const ProfileCard: React.FC<ProfileCardProps> = ({
             <View style={styles.cardUserMain}>
               <ProfileData
                 username={user?.name}
-                publicKey={user?.id ?? userPubKey}
+                publicKey={user?.id ?? displayUserDrawer}
                 validNip05={user?.valid_nip05}
                 nip05={user?.nip05}
                 lud06={user?.lnurl}
@@ -151,7 +147,7 @@ export const ProfileCard: React.FC<ProfileCardProps> = ({
         </Card.Content>
       </Card>
       <View style={styles.mainLayout}>
-        {userPubKey !== publicKey && (
+        {displayUserDrawer !== publicKey && (
           <View style={styles.actionButton}>
             <IconButton
               icon={isContact ? 'account-multiple-remove-outline' : 'account-multiple-plus-outline'}
@@ -168,7 +164,7 @@ export const ProfileCard: React.FC<ProfileCardProps> = ({
             icon='message-plus-outline'
             size={28}
             onPress={() => {
-              navigate('Conversation', { pubKey: userPubKey, title: username })
+              navigate('Conversation', { pubKey: displayUserDrawer, title: username })
               bottomSheetRef.current?.close()
             }}
           />

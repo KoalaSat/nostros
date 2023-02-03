@@ -24,10 +24,9 @@ import { getUnixTime } from 'date-fns'
 
 interface GlobalFeedProps {
   navigation: any
-  setProfileCardPubKey: (profileCardPubKey: string) => void
 }
 
-export const GlobalFeed: React.FC<GlobalFeedProps> = ({ navigation, setProfileCardPubKey }) => {
+export const GlobalFeed: React.FC<GlobalFeedProps> = ({ navigation }) => {
   const theme = useTheme()
   const { database, showPublicImages } = useContext(AppContext)
   const { publicKey } = useContext(UserContext)
@@ -115,9 +114,6 @@ export const GlobalFeed: React.FC<GlobalFeedProps> = ({ navigation, setProfileCa
           note={item}
           showActionCount={false}
           showAvatarImage={showPublicImages}
-          onPressUser={(user) => {
-            setProfileCardPubKey(user.id)
-          }}
           showPreview={showPublicImages}
         />
       </View>

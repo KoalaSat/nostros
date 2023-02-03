@@ -8,14 +8,7 @@ import {
   View,
 } from 'react-native'
 import Clipboard from '@react-native-clipboard/clipboard'
-import {
-  Surface,
-  Text,
-  IconButton,
-  ActivityIndicator,
-  useTheme,
-  Snackbar,
-} from 'react-native-paper'
+import { Surface, Text, IconButton, ActivityIndicator, Snackbar } from 'react-native-paper'
 import { FlashList, ListRenderItem } from '@shopify/flash-list'
 import { AppContext } from '../../Contexts/AppContext'
 import { UserContext } from '../../Contexts/UserContext'
@@ -29,8 +22,6 @@ import { RelayFilters } from '../../lib/nostr/RelayPool/intex'
 import NoteCard from '../../Components/NoteCard'
 import LnPayment from '../../Components/LnPayment'
 import { handleInfinityScroll } from '../../Functions/NativeFunctions'
-import RBSheet from 'react-native-raw-bottom-sheet'
-import ProfileCard from '../../Components/ProfileCard'
 import { navigate } from '../../lib/Navigation'
 import { useFocusEffect } from '@react-navigation/native'
 import { getNpub } from '../../lib/nostr/Nip19'
@@ -45,8 +36,6 @@ export const ProfilePage: React.FC<ProfilePageProps> = ({ route }) => {
   const { publicKey } = useContext(UserContext)
   const { lastEventId, relayPool } = useContext(RelayPoolContext)
   const { t } = useTranslation('common')
-  const bottomSheetProfileRef = React.useRef<RBSheet>(null)
-  const theme = useTheme()
   const initialPageSize = 10
   const [showNotification, setShowNotification] = useState<undefined | string>()
   const [notes, setNotes] = useState<Note[]>()
@@ -174,24 +163,9 @@ export const ProfilePage: React.FC<ProfilePageProps> = ({ route }) => {
 
   const renderItem: ListRenderItem<Note> = ({ item }) => (
     <View style={styles.noteCard} key={item.id}>
-      <NoteCard note={item} onPressUser={() => bottomSheetProfileRef.current?.open()} />
+      <NoteCard note={item} />
     </View>
   )
-
-  const bottomSheetStyles = React.useMemo(() => {
-    return {
-      container: {
-        backgroundColor: theme.colors.background,
-        paddingTop: 16,
-        paddingRight: 16,
-        paddingBottom: 32,
-        paddingLeft: 16,
-        borderTopRightRadius: 28,
-        borderTopLeftRadius: 28,
-        height: 'auto',
-      },
-    }
-  }, [])
 
   return (
     <View>
@@ -239,7 +213,6 @@ export const ProfilePage: React.FC<ProfilePageProps> = ({ route }) => {
                     pubKey: route.params.pubKey,
                     title: user ? username(user) : route.params.pubKey,
                   })
-                  bottomSheetProfileRef.current?.close()
                 }}
               />
               <Text>{t('profilePage.message')}</Text>
@@ -297,12 +270,6 @@ export const ProfilePage: React.FC<ProfilePageProps> = ({ route }) => {
         </Snackbar>
       )}
       <LnPayment setOpen={setOpenLn} open={openLn} user={user} />
-      <RBSheet ref={bottomSheetProfileRef} closeOnDragDown={true} customStyles={bottomSheetStyles}>
-        <ProfileCard
-          userPubKey={route.params.pubKey ?? ''}
-          bottomSheetRef={bottomSheetProfileRef}
-        />
-      </RBSheet>
     </View>
   )
 }

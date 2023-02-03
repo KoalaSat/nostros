@@ -3,6 +3,7 @@ import { StyleSheet, View } from 'react-native'
 import { Avatar as PaperAvatar, useTheme } from 'react-native-paper'
 import { validImageUrl } from '../../Functions/NativeFunctions'
 import FastImage from 'react-native-fast-image'
+import { formatPubKey } from '../../Functions/RelayFunctions/Users'
 
 interface NostrosAvatarProps {
   pubKey?: string
@@ -20,7 +21,7 @@ export const NostrosAvatar: React.FC<NostrosAvatarProps> = ({
   lud06,
 }) => {
   const theme = useTheme()
-  const displayName = name && name !== '' ? name : pubKey ?? ''
+  const displayName = name && name !== '' ? name : formatPubKey(pubKey) ?? ''
   const hasLud06 = lud06 && lud06 !== ''
   const lud06IconSize = size / 2.85
 
