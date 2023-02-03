@@ -68,7 +68,8 @@
       "showPublicImages": "Show images on public feed",
       "showSensitive": "Show sensitive notes",
       "satoshi": "Satoshi symbol",
-      "random": "Random"
+      "random": "Random",
+      "language": "Язык"
     },
     "noteCard": {
       "answering": "Ответить {{pubkey}}",
@@ -216,6 +217,13 @@
       "clipboardTitle": "Se ha detectado una clave Nostr",
       "goToEvent": "Abrir",
       "cancel": "Отменить"
+    },
+    "language": {
+      "en": "English",
+      "es": "Español",
+      "fr": "François",
+      "ru": "Русский",
+      "de": "Deutsch"
     },
     "profileCard": {
       "notifications": {

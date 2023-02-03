@@ -68,7 +68,8 @@
       "showSensitive": "Show sensitive notes",
       "satoshi": "Satoshi symbol",
       "imageHostingService": "Image hosting service",
-      "random": "Random"
+      "random": "Random",
+      "language": "Language"
     },
     "noteCard": {
       "answering": "Answer to {{pubkey}}",
@@ -229,6 +230,13 @@
       "clipboardTitle": "Nostr key detected",
       "goToEvent": "Open",
       "cancel": "Cancel"
+    },
+    "language": {
+      "en": "English",
+      "es": "Español",
+      "fr": "François",
+      "ru": "Русский",
+      "de": "Deutsch"
     },
     "profileCard": {
       "notifications": {

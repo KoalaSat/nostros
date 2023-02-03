@@ -56,7 +56,7 @@ export const HomeNavigator: React.FC = () => {
           return {
             detachPreviousScreen: !navigation.isFocused(),
             cardStyleInterpolator,
-            header: ({ navigation, route, options, back }) => {
+            header: ({ navigation, route, back }) => {
               return (
                 <Appbar.Header>
                   {back ? (

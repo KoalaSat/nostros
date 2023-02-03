@@ -124,24 +124,27 @@ export const GlobalFeed: React.FC<GlobalFeedProps> = ({ navigation, setProfileCa
     )
   }
 
-  const ListEmptyComponent = (
-    <View style={styles.blank}>
-      <MaterialCommunityIcons
-        name='account-group-outline'
-        size={64}
-        style={styles.center}
-        color={theme.colors.onPrimaryContainer}
-      />
-      <Text variant='headlineSmall' style={styles.center}>
-        {t('homeFeed.emptyTitle')}
-      </Text>
-      <Text variant='bodyMedium' style={styles.center}>
-        {t('homeFeed.emptyDescription')}
-      </Text>
-      <Button mode='contained' compact onPress={() => navigation.jumpTo('contacts')}>
-        {t('homeFeed.emptyButton')}
-      </Button>
-    </View>
+  const ListEmptyComponent = React.useMemo(
+    () => (
+      <View style={styles.blank}>
+        <MaterialCommunityIcons
+          name='account-group-outline'
+          size={64}
+          style={styles.center}
+          color={theme.colors.onPrimaryContainer}
+        />
+        <Text variant='headlineSmall' style={styles.center}>
+          {t('homeFeed.emptyTitle')}
+        </Text>
+        <Text variant='bodyMedium' style={styles.center}>
+          {t('homeFeed.emptyDescription')}
+        </Text>
+        <Button mode='contained' compact onPress={() => navigation.jumpTo('contacts')}>
+          {t('homeFeed.emptyButton')}
+        </Button>
+      </View>
+    ),
+    [],
   )
 
   return (
