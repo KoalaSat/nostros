@@ -2,7 +2,7 @@
   "common": {
     "drawers": {
       "relaysTitle": "Relés",
-      "relaysDescription": "Los relés son nodos en la red que actúan como intermediarios para la transmisión demensajes entre aplicaciones.\n\n\nLos relés pueden ser utilizados para mejorar la resiliencia yla disponibilidad de la red, ya que permiten que los mensajes sean entregados aun cuandohay fallos o interrupciones en la conectividad.\n\n\nLos relés también pueden ser utilizadospara mejorar la privacidad y la seguridad de la red, ya que pueden ocultar la ubicación yel identidad de las aplicaciones que se comunican entre sí a través de ellos. Esto puedeser útil en entornos donde la censura o la vigilancia son un problema.\n\n\nEs importante teneren cuenta que los relés también pueden ser utilizados para propósitos malintencionados,como para rastrear o censurar el tráfico de la red.\n\n\nPor lo tanto, es importante evaluarcuidadosamente el uso de relés y considerar medidas de seguridad adecuadas para protegerla privacidad y la seguridad de la red.",
+      "relaysDescription": "Los relays son nodos en la red que actúan como intermediarios para la transmisión demensajes entre aplicaciones.\n\n\nLos relays pueden ser utilizados para mejorar la resiliencia yla disponibilidad de la red, ya que permiten que los mensajes sean entregados aun cuandohay fallos o interrupciones en la conectividad.\n\n\nLos relays también pueden ser utilizadospara mejorar la privacidad y la seguridad de la red, ya que pueden ocultar la ubicación yel identidad de las aplicaciones que se comunican entre sí a través de ellos. Esto puedeser útil en entornos donde la censura o la vigilancia son un problema.\n\n\nEs importante teneren cuenta que los relays también pueden ser utilizados para propósitos malintencionados,como para rastrear o censurar el tráfico de la red.\n\n\nPor lo tanto, es importante evaluarcuidadosamente el uso de relays y considerar medidas de seguridad adecuadas para protegerla privacidad y la seguridad de la red.",
       "keysTitle": "¿Qué son las claves?",
       "keysDescription": "En nostr tienes dos claves: tu clave pública y tu clave privada.",
       "publicKeys": "Clave pública",
@@ -68,7 +68,8 @@
       "showSensitive": "Mostrar notas sensibles",
       "satoshi": "Símbolo de satoshi",
       "imageHostingService": "Servicio de subida de imágenes",
-      "random": "Aleatorio"
+      "random": "Aleatorio",
+      "language": "Idioma"
     },
     "noteCard": {
       "answering": "Responder a {{pubkey}}",
@@ -152,6 +153,9 @@
       "myFeed": "Mi feed"
     },
     "relaysPage": {
+      "relayName": "Dirección",
+      "globalFeed": "Feed global",
+      "active": "Activo",
       "labelAdd": "Dirección de relay",
       "cancel": "Cancelar",
       "add": "Añadir",
@@ -162,7 +166,8 @@
         "remove": "Relay borrado",
         "active": "Relay activado.",
         "desactive": "Relay desactivado.",
-        "badFormat": "La URL del relay no tiene el formato adecuado."
+        "badFormat": "La URL del relay no tiene el formato adecuado.",
+        "alreadyExists": "El relay ya existe."
       }
     },
     "profileConfigPage": {
@@ -214,9 +219,16 @@
       "copyNPub": "Copiar clave"
     },
     "homePage": {
-      "clipboardTitle": "Se ha detectado una clave Nostr en el portapapeles",
+      "clipboardTitle": "Se ha detectado una clave Nostr",
       "goToEvent": "Abrir",
       "cancel": "Cancelar"
+    },
+    "language": {
+      "en": "English",
+      "es": "Español",
+      "fr": "François",
+      "ru": "Русский",
+      "de": "Deutsch"
     },
     "profileCard": {
       "notifications": {

@@ -102,15 +102,13 @@ export const AboutPage: React.FC = () => {
   }
 
   return (
-    <>
-      <FlatList
-        style={styles.container}
-        showsVerticalScrollIndicator={false}
-        ItemSeparatorComponent={Divider}
-        data={items}
-        renderItem={renderItem}
-      />
-    </>
+    <FlatList
+      style={styles.container}
+      showsVerticalScrollIndicator={false}
+      ItemSeparatorComponent={Divider}
+      data={items}
+      renderItem={renderItem}
+    />
   )
 }
 

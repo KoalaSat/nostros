@@ -27,9 +27,14 @@ export const ProfileLoadPage: React.FC = () => {
       debounce(() => {
         loadMeta()
         loadPets()
-      }, 500)
+      }, 1000)
 
-      return () => relayPool?.unsubscribe(['profile-load-notes', 'profile-load-meta-pets'])
+      return () =>
+        relayPool?.unsubscribe([
+          'profile-load-meta',
+          'profile-load-notes',
+          'profile-load-meta-pets',
+        ])
     }, []),
   )
 
@@ -49,11 +54,13 @@ export const ProfileLoadPage: React.FC = () => {
 
   const loadMeta: () => void = () => {
     if (publicKey && relayPoolReady) {
-      relayPool?.subscribe('profile-load-meta-pets', [
+      relayPool?.subscribe('profile-load-meta', [
         {
-          kinds: [Kind.Contacts, Kind.Metadata],
+          kinds: [Kind.Text, Kind.Contacts, Kind.Metadata],
           authors: [publicKey],
         },
+      ])
+      relayPool?.subscribe('profile-load-meta-pets', [
         {
           kinds: [Kind.Contacts],
           '#p': [publicKey],
@@ -70,17 +77,13 @@ export const ProfileLoadPage: React.FC = () => {
           const authors = [...results.map((user: User) => user.id), publicKey]
           relayPool?.subscribe('profile-load-notes', [
             {
-              kinds: [Kind.Text],
-              authors: [publicKey],
+              kinds: [Kind.Metadata],
+              authors,
             },
             {
               kinds: [Kind.Text],
               authors,
               since: getUnixTime(new Date()) - 43200,
-            },
-            {
-              kinds: [Kind.Metadata],
-              authors,
             },
           ])
         }

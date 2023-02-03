@@ -2,6 +2,7 @@ import React from 'react'
 import { StyleSheet, View } from 'react-native'
 import { Avatar as PaperAvatar, useTheme } from 'react-native-paper'
 import { validImageUrl } from '../../Functions/NativeFunctions'
+import FastImage from 'react-native-fast-image'
 
 interface NostrosAvatarProps {
   pubKey?: string
@@ -27,7 +28,21 @@ export const NostrosAvatar: React.FC<NostrosAvatarProps> = ({
     <View>
       <View style={{ borderRadius: size / 2, overflow: 'hidden' }}>
         {validImageUrl(src) ? (
-          <PaperAvatar.Image size={size} source={{ uri: src }} />
+          <FastImage
+            style={[
+              {
+                backgroundColor: theme.colors.backdrop,
+                borderRadius: size / 2,
+                width: size,
+                height: size,
+              },
+            ]}
+            source={{
+              uri: src,
+              priority: FastImage.priority.normal,
+            }}
+            resizeMode={FastImage.resizeMode.contain}
+          />
         ) : (
           <PaperAvatar.Text size={size} label={displayName.substring(0, 2).toUpperCase()} />
         )}

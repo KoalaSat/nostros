@@ -40,8 +40,8 @@ public class DatabaseModule {
                 "        picture TEXT,\n" +
                 "        about TEXT,\n" +
                 "        main_relay TEXT,\n" +
-                "        contact BOOLEAN DEFAULT FALSE,\n" +
-                "        follower BOOLEAN DEFAULT FALSE\n" +
+                "        contact BOOLEAN DEFAULT 0,\n" +
+                "        follower BOOLEAN DEFAULT 0\n" +
                 "      );");
         database.execSQL("CREATE TABLE IF NOT EXISTS nostros_relays(\n" +
                 "          url TEXT PRIMARY KEY NOT NULL,\n" +
@@ -56,7 +56,7 @@ public class DatabaseModule {
                 "          sig TEXT NOT NULL,\n" +
                 "          tags TEXT NOT NULL,\n" +
                 "          conversation_id TEXT NOT NULL,\n" +
-                "          read BOOLEAN DEFAULT FALSE\n" +
+                "          read BOOLEAN DEFAULT 0\n" +
                 "        );");
         try {
             database.execSQL("ALTER TABLE nostros_notes ADD COLUMN user_mentioned BOOLEAN DEFAULT 0;");
@@ -120,8 +120,8 @@ public class DatabaseModule {
 
             database.execSQL("CREATE INDEX nostros_reactions_created_at_reacted_event_id_index ON nostros_reactions(created_at, reacted_event_id); ");
 
-            database.execSQL("CREATE INDEX nostros_users_contact_index ON nostros_users(contact, follower); ");
-            database.execSQL("CREATE INDEX nostros_users_contact_index ON nostros_users(id, name); ");
+            database.execSQL("CREATE INDEX nostros_users_contact_follower_index ON nostros_users(contact, follower); ");
+            database.execSQL("CREATE INDEX nostros_users_id_name_index ON nostros_users(id, name); ");
         } catch (SQLException e) { }
         try {
             database.execSQL("DROP TABLE IF EXISTS nostros_config;");
@@ -138,6 +138,11 @@ public class DatabaseModule {
                     "        );");
             database.execSQL("CREATE INDEX nostros_notes_relays_note_id_index ON nostros_notes_relays(note_id);");
             database.execSQL("CREATE INDEX nostros_notes_relays_pubkey_index ON nostros_notes_relays(pubkey);");
+        } catch (SQLException e) { }
+        try {
+            database.execSQL("ALTER TABLE nostros_relays ADD COLUMN global_feed BOOLEAN DEFAULT 1;");
+            database.execSQL("ALTER TABLE nostros_users ADD COLUMN pet_at INT;");
+            database.execSQL("ALTER TABLE nostros_users ADD COLUMN follower_at INT;");
         } catch (SQLException e) { }
     }
 
@@ -156,7 +161,7 @@ public class DatabaseModule {
 
     public List<Relay> getRelays(ReactApplicationContext reactContext) {
         List<Relay> relayList = new ArrayList<>();
-        String query = "SELECT url, active FROM nostros_relays;";
+        String query = "SELECT url, active, global_feed FROM nostros_relays;";
         @SuppressLint("Recycle") Cursor cursor = database.rawQuery(query, new String[] {});
         if (cursor.getCount() > 0) {
             cursor.moveToFirst();
@@ -164,7 +169,8 @@ public class DatabaseModule {
                 try {
                     String relayUrl = cursor.getString(0);
                     int active = cursor.getInt(1);
-                    Relay relay = new Relay(relayUrl, active > 0,this, reactContext);
+                    int globalFeed = cursor.getInt(2);
+                    Relay relay = new Relay(relayUrl, active, globalFeed,this, reactContext);
                     relayList.add(relay);
                 } catch (IOException e) {
                     Log.d("WebSocket", e.toString());

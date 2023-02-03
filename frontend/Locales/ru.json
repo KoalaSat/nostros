@@ -23,7 +23,7 @@
       "Repost": "Поделиться",
       "Profile": "Профиль",
       "About": "О нас",
-      "Config": "Config",
+      "Config": "Настройки",
       "Send": "Отпраить",
       "Relays": "Реле",
       "ProfileConfig": "Мой профиль"
@@ -43,10 +43,10 @@
       "foundContacts": "{{contactsCount}} контакта(ов) найдено"
     },
     "sendPage": {
-      "isContact": "Following",
-      "isNotContact": "Not following",
+      "isContact": "Подписаны",
+      "isNotContact": "Подписаться",
       "contentWarning": "Делекатный контент",
-      "send": "Send",
+      "send": "Отправить",
       "imageUploaded": "Tu archivo se ha subido.\nConsidera donar al servicio:\n{{uri}}",
       "imageUploadErro": "Se ha producido un error al subir la imagen.",
       "uploadImage": "Subir imagen ahora",
@@ -56,7 +56,7 @@
     "menuItems": {
       "relays": "Реле",
       "notConnected": "Not connected",
-      "connectedRelays": "{{number}} connected",
+      "connectedRelays": "{{number}} подключено",
       "following": "{{following}} following",
       "followers": "{{followers}} followers",
       "configuration": "Настройки",
@@ -68,15 +68,16 @@
       "showPublicImages": "Show images on public feed",
       "showSensitive": "Show sensitive notes",
       "satoshi": "Satoshi symbol",
-      "random": "Random"
+      "random": "Random",
+      "language": "Язык"
     },
     "noteCard": {
       "answering": "Ответить {{pubkey}}",
       "reposting": "Reposted {{pubkey}}",
       "seeParent": "See note",
-      "userBlocked": "User blocked",
+      "userBlocked": "Пользователь заблокирован",
       "contentWarning": "Деликатный контент",
-      "recommendation": "Recomendación de relay",
+      "recommendation": "Рекомендованные реле",
       "addRelay": "Agregar relay"
     },
     "lnPayment": {
@@ -107,9 +108,9 @@
     },
     "loggerPage": {
       "createButton": "Создать ключи",
-      "notKeys": "Don't have keys?",
+      "notKeys": "Нет ключей?",
       "isPublic": "Access with public key",
-      "accessButton": "Access",
+      "accessButton": "Войти",
       "privateKey": "Private key",
       "publicKey": "Public key"
     },
@@ -126,14 +127,14 @@
       "emptyTitleFollower": "You have no followers",
       "emptyDescriptionFollower": "Share your public key so people can start following you.",
       "emptyButtonFollower": "Copy public key",
-      "cancel": "Cancel",
-      "addContact": "Add contact",
+      "cancel": "Отменить",
+      "addContact": "Добавить контакт",
       "addContactDescription": "Paste here the public key of the profile you want to add.",
       "addContactTitle": "Add contact",
       "followers": "Followers ({{count}})",
       "following": "Following ({{count}})",
       "stopFollowing": "Stop Following",
-      "follow": "Follow"
+      "follow": "Подписаться"
     },
     "aboutPage": {
       "gitHub": "GitHub",
@@ -144,13 +145,16 @@
     "homeFeed": {
       "emptyTitle": "You are not following anyone.",
       "emptyDescription": "Follow other profiles to see content.",
-      "emptyButton": "Go to contacts",
+      "emptyButton": "Посмотреть контакты",
       "globalFeed": "Global feed",
       "newMessage": "{{newNotesCount}} nota nueva. Desliza para recargar.",
       "newMessages": "{{newNotesCount}} notas nuevas. Desliza para refrescar.",
       "myFeed": "My feed"
     },
     "relaysPage": {
+      "relayName": "Address",
+      "globalFeed": "Global feed",
+      "active": "Active",
       "labelAdd": "Relay address",
       "cancel": "Отменить",
       "add": "Добавить",
@@ -161,7 +165,8 @@
         "remove": "Relay removed.",
         "active": "Relay acivado.",
         "desactive": "Relay desactivado.",
-        "badFormat": "Relay URL has a bad format."
+        "badFormat": "Relay URL has a bad format.",
+        "alreadyExists": "Relay already exists."
       }
     },
     "profileConfigPage": {
@@ -213,9 +218,16 @@
       "copyNPub": "Copy key"
     },
     "homePage": {
-      "clipboardTitle": "Se ha detectado una clave Nostr en el portapapeles",
+      "clipboardTitle": "Se ha detectado una clave Nostr",
       "goToEvent": "Abrir",
       "cancel": "Отменить"
+    },
+    "language": {
+      "en": "English",
+      "es": "Español",
+      "fr": "François",
+      "ru": "Русский",
+      "de": "Deutsch"
     },
     "profileCard": {
       "notifications": {

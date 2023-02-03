@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState } from 'react'
-import { Dimensions, FlatList, ListRenderItem, ScrollView, StyleSheet, View } from 'react-native'
+import { Dimensions, FlatList, ListRenderItem, StyleSheet, View } from 'react-native'
 import Clipboard from '@react-native-clipboard/clipboard'
 import { AppContext } from '../../Contexts/AppContext'
 import { RelayPoolContext } from '../../Contexts/RelayPoolContext'
@@ -223,14 +223,13 @@ export const ConversationsFeed: React.FC = () => {
   return (
     <View style={styles.container}>
       {directMessages.length > 0 ? (
-        <ScrollView horizontal={false}>
-          <FlatList
-            style={styles.list}
-            data={directMessages}
-            renderItem={renderConversationItem}
-            ItemSeparatorComponent={Divider}
-          />
-        </ScrollView>
+        <FlatList
+          style={styles.list}
+          data={directMessages}
+          renderItem={renderConversationItem}
+          ItemSeparatorComponent={Divider}
+          horizontal={false}
+        />
       ) : (
         <View style={styles.blank}>
           <MaterialCommunityIcons
@@ -260,29 +259,31 @@ export const ConversationsFeed: React.FC = () => {
         extended={false}
       />
       <RBSheet ref={bottomSheetCreateRef} closeOnDragDown={true} customStyles={bottomSheetStyles}>
-        <ScrollView horizontal={false}>
-          <FlatList
-            data={createOptions}
-            renderItem={({ item }) => {
-              return (
-                <List.Item
-                  key={item.key}
-                  title={item.title}
-                  onPress={item.onPress}
-                  left={item.left}
-                  disabled={item.disabled}
-                  titleStyle={item.style}
-                />
-              )
-            }}
-            ItemSeparatorComponent={Divider}
-          />
-        </ScrollView>
+        <FlatList
+          data={createOptions}
+          renderItem={({ item }) => {
+            return (
+              <List.Item
+                key={item.key}
+                title={item.title}
+                onPress={item.onPress}
+                left={item.left}
+                disabled={item.disabled}
+                titleStyle={item.style}
+              />
+            )
+          }}
+          ItemSeparatorComponent={Divider}
+          horizontal={false}
+        />
       </RBSheet>
       <RBSheet ref={bottomSheetUserListRef} closeOnDragDown={true} customStyles={bottomSheetStyles}>
-        <ScrollView horizontal={false}>
-          <FlatList data={users} renderItem={renderUserItem} ItemSeparatorComponent={Divider} />
-        </ScrollView>
+        <FlatList
+          data={users}
+          renderItem={renderUserItem}
+          ItemSeparatorComponent={Divider}
+          horizontal={false}
+        />
       </RBSheet>
       <RBSheet ref={bottomSheetPubKeyRef} closeOnDragDown={true} customStyles={bottomSheetStyles}>
         <View>

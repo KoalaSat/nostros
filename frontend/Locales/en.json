@@ -68,7 +68,8 @@
       "showSensitive": "Show sensitive notes",
       "satoshi": "Satoshi symbol",
       "imageHostingService": "Image hosting service",
-      "random": "Random"
+      "random": "Random",
+      "language": "Language"
     },
     "noteCard": {
       "answering": "Answer to {{pubkey}}",
@@ -162,6 +163,9 @@
       "newMessages": "{{newNotesCount}} new notes. Pull to refresh."
     },
     "relaysPage": {
+      "relayName": "Address",
+      "globalFeed": "Global feed",
+      "active": "Active",
       "labelAdd": "Relay address",
       "cancel": "Cancel",
       "add": "Add",
@@ -170,11 +174,14 @@
       "recommended": "Recommended",
       "myList": "My relays",
       "notifications": {
+        "globalFeedActive": "Global feed enabled.",
+        "globalFeedActiveUnactive": "Global feed disabled.",
         "add": "Relay added.",
         "remove": "Relay removed.",
         "active": "Relay activated.",
         "desactive": "Relay desactivated.",
-        "badFormat": "Relay URL has a bad format."
+        "badFormat": "Relay URL has a bad format.",
+        "alreadyExists": "Relay already exists."
       }
     },
     "profileConfigPage": {
@@ -226,9 +233,16 @@
       "copyNPub": "Copy key"
     },
     "homePage": {
-      "clipboardTitle": "Nostr key detected on your clipboard",
+      "clipboardTitle": "Nostr key detected",
       "goToEvent": "Open",
       "cancel": "Cancel"
+    },
+    "language": {
+      "en": "English",
+      "es": "Español",
+      "fr": "François",
+      "ru": "Русский",
+      "de": "Deutsch"
     },
     "profileCard": {
       "notifications": {

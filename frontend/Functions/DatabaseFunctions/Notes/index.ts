@@ -11,7 +11,7 @@ export interface Note extends Event {
   nip05: string
   valid_nip05: boolean
   repost_id: string
-  blocked: boolean
+  blocked: number
 }
 
 export interface NoteRelay {
@@ -72,8 +72,13 @@ export const getMainNotesCount: (
   const repliesQuery = `
     SELECT
       COUNT(*)
-    FROM nostros_notes
-    WHERE created_at > "${from}"
+    FROM nostros_notes 
+    LEFT JOIN
+      nostros_users ON nostros_users.id = nostros_notes.pubkey
+    WHERE 
+    nostros_users.blocked != 1 AND
+    nostros_notes.main_event_id IS NULL AND 
+    nostros_notes.created_at > "${from}"
   `
   const resultSet = db.execute(repliesQuery)
   const item: { 'COUNT(*)': number } = resultSet?.rows?.item(0)

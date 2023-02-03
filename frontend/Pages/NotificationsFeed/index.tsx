@@ -3,7 +3,6 @@ import {
   NativeScrollEvent,
   NativeSyntheticEvent,
   RefreshControl,
-  ScrollView,
   StyleSheet,
   View,
 } from 'react-native'
@@ -25,6 +24,7 @@ import { useFocusEffect } from '@react-navigation/native'
 import { getLastReaction } from '../../Functions/DatabaseFunctions/Reactions'
 import { getUnixTime } from 'date-fns'
 import { Config } from '../../Functions/DatabaseFunctions/Config'
+import { FlashList, ListRenderItem } from '@shopify/flash-list'
 
 export const NotificationsFeed: React.FC = () => {
   const theme = useTheme()
@@ -140,11 +140,11 @@ export const NotificationsFeed: React.FC = () => {
     }
   }, [])
 
-  const renderItem: (note: Note) => JSX.Element = (note) => {
+  const renderItem: ListRenderItem<Note> = ({ item }) => {
     return (
-      <View style={styles.noteCard} key={note.id}>
+      <View style={styles.noteCard} key={item.id}>
         <NoteCard
-          note={note}
+          note={item}
           onPressUser={(user) => {
             setProfileCardPubKey(user.id)
             bottomSheetProfileRef.current?.open()
@@ -175,37 +175,43 @@ export const NotificationsFeed: React.FC = () => {
     }
   }, [])
 
+  const ListEmptyComponent = React.useMemo(
+    () => (
+      <View style={styles.blank}>
+        <MaterialCommunityIcons
+          name='bell-outline'
+          size={64}
+          style={styles.center}
+          color={theme.colors.onPrimaryContainer}
+        />
+        <Text variant='headlineSmall' style={styles.center}>
+          {t('notificationsFeed.emptyTitle')}
+        </Text>
+        <Text variant='bodyMedium' style={styles.center}>
+          {t('notificationsFeed.emptyDescription')}
+        </Text>
+        <Button mode='contained' compact onPress={() => navigate('Send')}>
+          {t('notificationsFeed.emptyButton')}
+        </Button>
+      </View>
+    ),
+    [],
+  )
+
   return (
     <View style={styles.container}>
-      {notes && notes.length > 0 ? (
-        <ScrollView
-          onScroll={onScroll}
-          horizontal={false}
-          showsVerticalScrollIndicator={false}
-          refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
-        >
-          {notes.map((note) => renderItem(note))}
-          {notes.length >= 10 && <ActivityIndicator animating={true} />}
-        </ScrollView>
-      ) : (
-        <View style={styles.blank}>
-          <MaterialCommunityIcons
-            name='bell-outline'
-            size={64}
-            style={styles.center}
-            color={theme.colors.onPrimaryContainer}
-          />
-          <Text variant='headlineSmall' style={styles.center}>
-            {t('notificationsFeed.emptyTitle')}
-          </Text>
-          <Text variant='bodyMedium' style={styles.center}>
-            {t('notificationsFeed.emptyDescription')}
-          </Text>
-          <Button mode='contained' compact onPress={() => navigate('Send')}>
-            {t('notificationsFeed.emptyButton')}
-          </Button>
-        </View>
-      )}
+      <FlashList
+        estimatedItemSize={200}
+        showsVerticalScrollIndicator={false}
+        data={notes}
+        renderItem={renderItem}
+        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
+        onScroll={onScroll}
+        refreshing={refreshing}
+        ListEmptyComponent={ListEmptyComponent}
+        horizontal={false}
+        ListFooterComponent={<ActivityIndicator animating={true} />}
+      />
       <RBSheet ref={bottomSheetProfileRef} closeOnDragDown={true} customStyles={bottomSheetStyles}>
         <ProfileCard userPubKey={profileCardPubkey ?? ''} bottomSheetRef={bottomSheetProfileRef} />
       </RBSheet>

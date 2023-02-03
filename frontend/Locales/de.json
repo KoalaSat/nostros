@@ -68,7 +68,8 @@
       "showSensitive": "Sensible Inhalte anzeigen",
       "satoshi": "Satoshi Symbol",
       "imageHostingService": "Bilder Hosting Service",
-      "random": "zufällig"
+      "random": "zufällig",
+      "language": "Language"
     },
     "noteCard": {
       "answering": "{{pubkey}} antworten",
@@ -152,6 +153,9 @@
       "myFeed": "Mein Feed"
     },
     "relaysPage": {
+      "relayName": "Address",
+      "globalFeed": "Global feed",
+      "active": "Active",
       "labelAdd": "Beschreibung des Relay",
       "cancel": "Abbrechen",
       "add": "Hinzufügen",
@@ -162,7 +166,8 @@
         "remove": "Relay entfernen",
         "active": "Relay aktivieren.",
         "desactive": "Relay deaktivieren.",
-        "badFormat": "Die URL des Relays hat kein gültiges Format."
+        "badFormat": "Die URL des Relays hat kein gültiges Format.",
+        "alreadyExists": "Relay already exists."
       }
     },
     "profileConfigPage": {
@@ -217,6 +222,13 @@
       "clipboardTitle": "Nostr Schlüssel entdeckt",
       "goToEvent": "Öffnen",
       "cancel": "Abbrechen"
+    },
+    "language": {
+      "en": "English",
+      "es": "Español",
+      "fr": "François",
+      "ru": "Русский",
+      "de": "Deutsch"
     },
     "profileCard": {
       "notifications": {

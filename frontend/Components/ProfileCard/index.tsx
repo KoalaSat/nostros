@@ -39,7 +39,7 @@ export const ProfileCard: React.FC<ProfileCardProps> = ({
   const { publicKey } = React.useContext(UserContext)
   const { relayPool } = React.useContext(RelayPoolContext)
   const [user, setUser] = React.useState<User>()
-  const [blocked, setBlocked] = React.useState<boolean>()
+  const [blocked, setBlocked] = React.useState<number>()
   const [openLn, setOpenLn] = React.useState<boolean>(false)
   const [isContact, setIsContact] = React.useState<boolean>()
   const [showNotification, setShowNotification] = React.useState<undefined | string>()
@@ -54,7 +54,7 @@ export const ProfileCard: React.FC<ProfileCardProps> = ({
   const onChangeBlockUser: () => void = () => {
     if (database && blocked !== undefined) {
       updateUserBlock(userPubKey, database, !blocked).then(() => {
-        setBlocked(!blocked)
+        setBlocked(blocked === 0 ? 1 : 0)
         loadUser()
       })
     }
@@ -85,11 +85,11 @@ export const ProfileCard: React.FC<ProfileCardProps> = ({
       getUser(userPubKey, database).then((result) => {
         if (result) {
           setUser(result)
-          setBlocked(result.blocked !== undefined && result.blocked)
+          setBlocked(result.blocked)
           setIsContact(result?.contact)
         } else {
           setUser({ id: userPubKey })
-          setBlocked(false)
+          setBlocked(0)
         }
       })
     }
@@ -199,11 +199,11 @@ export const ProfileCard: React.FC<ProfileCardProps> = ({
         )}
         <View style={styles.actionButton}>
           <IconButton
-            icon={blocked ? 'account-cancel' : 'account-cancel-outline'}
+            icon={blocked && blocked > 0 ? 'account-cancel' : 'account-cancel-outline'}
             size={28}
             onPress={onChangeBlockUser}
           />
-          <Text>{t(blocked ? 'profileCard.unblock' : 'profileCard.block')}</Text>
+          <Text>{t(blocked && blocked > 0 ? 'profileCard.unblock' : 'profileCard.block')}</Text>
         </View>
       </View>
       {showNotification && (

@@ -4,9 +4,10 @@ import { getNotes, Note } from '../../Functions/DatabaseFunctions/Notes'
 import { RelayPoolContext } from '../../Contexts/RelayPoolContext'
 import NoteCard from '../../Components/NoteCard'
 import { Kind } from 'nostr-tools'
-import { Dimensions, RefreshControl, ScrollView, StyleSheet, View } from 'react-native'
+import { Dimensions, RefreshControl, StyleSheet, View } from 'react-native'
+import { FlashList, ListRenderItem } from '@shopify/flash-list'
 import { getDirectReplies } from '../../Functions/RelayFunctions/Events'
-import { ActivityIndicator, AnimatedFAB, useTheme } from 'react-native-paper'
+import { AnimatedFAB, useTheme } from 'react-native-paper'
 import { UserContext } from '../../Contexts/UserContext'
 import RBSheet from 'react-native-raw-bottom-sheet'
 import ProfileCard from '../../Components/ProfileCard'
@@ -88,8 +89,8 @@ export const NotePage: React.FC<NotePageProps> = ({ route }) => {
     }
   }
 
-  const renderItem: (note: Note, index: number) => JSX.Element = (note, index) => (
-    <View style={styles.note} key={note.id}>
+  const renderItem: ListRenderItem<Note> = ({ item, index }) => (
+    <View style={styles.note} key={item.id}>
       <View style={styles.noteLine}>
         <View style={[styles.noteLineTop, { borderColor: theme.colors.onSecondary }]}></View>
         {index < (replies?.length ?? 0) - 1 && (
@@ -98,7 +99,7 @@ export const NotePage: React.FC<NotePageProps> = ({ route }) => {
       </View>
       <View style={styles.noteCard}>
         <NoteCard
-          note={note}
+          note={item}
           onPressUser={(user) => {
             setProfileCardPubKey(user.id)
             bottomSheetProfileRef.current?.open()
@@ -132,23 +133,18 @@ export const NotePage: React.FC<NotePageProps> = ({ route }) => {
 
   return note ? (
     <View>
-      <ScrollView
-        horizontal={false}
-        showsVerticalScrollIndicator={false}
-        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
-      >
-        <NoteCard note={note} onPressUser={openProfileDrawer} />
-        <View style={[styles.list, { borderColor: theme.colors.onSecondary }]}>
-          {replies && replies.length > 0 && (
-            <>
-              {replies.map((note, index) => renderItem(note, index))}
-              {replies.length >= 10 && (
-                <ActivityIndicator style={styles.loading} animating={true} />
-              )}
-            </>
-          )}
-        </View>
-      </ScrollView>
+      <NoteCard note={note} onPressUser={openProfileDrawer} />
+      <View style={[styles.list, { borderColor: theme.colors.onSecondary }]}>
+        <FlashList
+          estimatedItemSize={200}
+          showsVerticalScrollIndicator={false}
+          data={replies}
+          renderItem={renderItem}
+          refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
+          refreshing={refreshing}
+          horizontal={false}
+        />
+      </View>
       {privateKey && (
         <AnimatedFAB
           style={[styles.fabSend, { top: Dimensions.get('window').height - 160 }]}
@@ -233,6 +229,7 @@ const styles = StyleSheet.create({
     marginLeft: 16,
     paddingRight: 16,
     marginBottom: 180,
+    height: '100%',
   },
   loading: {
     paddingTop: 30,
