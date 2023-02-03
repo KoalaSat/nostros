@@ -1,5 +1,7 @@
 import React, { useCallback, useContext, useEffect, useState } from 'react'
 import {
+  FlatList,
+  ListRenderItem,
   NativeScrollEvent,
   NativeSyntheticEvent,
   RefreshControl,
@@ -171,9 +173,9 @@ export const ProfilePage: React.FC<ProfilePageProps> = ({ route }) => {
     }
   }
 
-  const renderItem: (note: Note) => JSX.Element = (note) => (
-    <View style={styles.noteCard} key={note.id}>
-      <NoteCard note={note} onPressUser={() => bottomSheetProfileRef.current?.open()} />
+  const renderItem: ListRenderItem<Note> = ({ item }) => (
+    <View style={styles.noteCard} key={item.id}>
+      <NoteCard note={item} onPressUser={() => bottomSheetProfileRef.current?.open()} />
     </View>
   )
 
@@ -208,7 +210,7 @@ export const ProfilePage: React.FC<ProfilePageProps> = ({ route }) => {
             nip05={user?.nip05}
             lud06={user?.lnurl}
             picture={user?.picture}
-            avatarSize={54}
+            avatarSize={56}
           />
           <View>
             <Text>{user?.about}</Text>
@@ -272,7 +274,7 @@ export const ProfilePage: React.FC<ProfilePageProps> = ({ route }) => {
         </Surface>
         {notes && notes.length > 0 && (
           <View style={styles.list}>
-            {notes.map((note) => renderItem(note))}
+            <FlatList showsVerticalScrollIndicator={false} data={notes} renderItem={renderItem} />
             {notes.length >= 10 && <ActivityIndicator animating={true} />}
           </View>
         )}

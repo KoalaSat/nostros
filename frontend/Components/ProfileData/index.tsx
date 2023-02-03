@@ -54,8 +54,8 @@ export const ProfileData: React.FC<ProfileCardProps> = ({
             <></>
           )}
         </View>
-        {validNip05 ? <Text numberOfLines={1}>{getNip05Domain(nip05)}</Text> : <></>}
-        {date ? <Text numberOfLines={1}>{date}</Text> : <></>}
+        <Text numberOfLines={1}>{validNip05 ? getNip05Domain(nip05) : ''}</Text>
+        <Text numberOfLines={1}>{date ?? ''}</Text>
       </View>
     </View>
   )

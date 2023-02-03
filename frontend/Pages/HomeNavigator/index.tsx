@@ -114,6 +114,7 @@ export const HomeNavigator: React.FC = () => {
       <RBSheet
         ref={bottomSheetKeysRef}
         closeOnDragDown={true}
+        height={420}
         customStyles={{
           container: {
             backgroundColor: theme.colors.background,
@@ -122,8 +123,7 @@ export const HomeNavigator: React.FC = () => {
             paddingBottom: 32,
             paddingLeft: 16,
             borderTopRightRadius: 28,
-            borderTopLeftRadius: 28,
-            height: 'auto',
+            borderTopLeftRadius: 28
           },
         }}
       >

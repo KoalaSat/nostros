@@ -226,7 +226,7 @@
       "copyNPub": "Copy key"
     },
     "homePage": {
-      "clipboardTitle": "Nostr key detected on your clipboard",
+      "clipboardTitle": "Nostr key detected",
       "goToEvent": "Open",
       "cancel": "Cancel"
     },

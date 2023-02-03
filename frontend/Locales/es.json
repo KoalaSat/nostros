@@ -214,7 +214,7 @@
       "copyNPub": "Copiar clave"
     },
     "homePage": {
-      "clipboardTitle": "Se ha detectado una clave Nostr en el portapapeles",
+      "clipboardTitle": "Se ha detectado una clave Nostr",
       "goToEvent": "Abrir",
       "cancel": "Cancelar"
     },

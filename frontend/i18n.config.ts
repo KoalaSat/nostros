@@ -4,9 +4,11 @@ import { NativeModules, Platform } from 'react-native'
 import en from './Locales/en.json'
 import es from './Locales/es.json'
 import ru from './Locales/ru.json'
+import fr from './Locales/fr.json'
+import de from './Locales/de.json'
 /* eslint-disable import/no-duplicates */
 import setDefaultOptions from 'date-fns/setDefaultOptions'
-import { enUS as dateEnUS, es as dateEs, ru as dateRu } from 'date-fns/locale'
+import { enUS as dateEnUS, es as dateEs, ru as dateRu, fr as dateFr, de as dateDe } from 'date-fns/locale'
 /* eslint-enable import/no-duplicates */
 
 const locale =
@@ -14,7 +16,7 @@ const locale =
     ? NativeModules.SettingsManager.settings.AppleLocale
     : NativeModules.I18nManager.localeIdentifier
 
-const dateLocales = { es: dateEs, ru: dateRu, en: dateEnUS }
+const dateLocales = { es: dateEs, ru: dateRu, en: dateEnUS, fr: dateFr, de: dateDe }
 const deviceLocale: string = locale?.split('_')[0] ?? 'en'
 setDefaultOptions({ locale: dateLocales[deviceLocale] })
 
@@ -26,6 +28,8 @@ i18n.use(initReactI18next).init({
     en,
     es,
     ru,
+    fr,
+    de
   },
   lng: locale.substring(0, 2),
   ns: ['common'],

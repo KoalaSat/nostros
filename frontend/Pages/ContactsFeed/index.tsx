@@ -183,7 +183,7 @@ export const ContactsFeed: React.FC = () => {
               avatarSize={40}
             />
           </View>
-          <View style={styles.contactFollow}>
+          <View>
             <Button onPress={() => (item.contact ? removeContact(item) : addContact(item))}>
               {item.contact ? t('contactsFeed.stopFollowing') : t('contactsFeed.follow')}
             </Button>
@@ -462,9 +462,6 @@ const styles = StyleSheet.create({
   contactInfo: {
     flexDirection: 'row',
     alignContent: 'center',
-  },
-  contactFollow: {
-    justifyContent: 'center',
   },
   fab: {
     right: 16,
