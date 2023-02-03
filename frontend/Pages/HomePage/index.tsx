@@ -105,7 +105,7 @@ export const HomePage: React.FC = () => {
           },
           tabBarStyle: {
             borderTopWidth: 0,
-            height: 60,
+            height: 54,
           },
           tabBarInactiveBackgroundColor: '#001C37',
           tabBarActiveBackgroundColor: theme.colors.secondaryContainer,

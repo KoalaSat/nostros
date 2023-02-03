@@ -250,7 +250,7 @@ export const ConversationsFeed: React.FC = () => {
         </View>
       )}
       <AnimatedFAB
-        style={[styles.fab, { top: Dimensions.get('window').height - 220 }]}
+        style={[styles.fab, { top: Dimensions.get('window').height - 216 }]}
         icon='pencil-outline'
         label='Label'
         onPress={() => bottomSheetCreateRef.current?.open()}
@@ -290,6 +290,7 @@ export const ConversationsFeed: React.FC = () => {
           <Text variant='titleLarge'>{t('conversationsFeed.openMessageTitle')}</Text>
           <Text variant='bodyMedium'>{t('conversationsFeed.openMessageDescription')}</Text>
           <TextInput
+            style={styles.input}
             mode='outlined'
             label={t('conversationsFeed.openMessageLabel') ?? ''}
             onChangeText={setSendPubKeyInput}
@@ -347,6 +348,10 @@ const styles = StyleSheet.create({
   fab: {
     right: 16,
     position: 'absolute',
+  },
+  input: {
+    marginTop: 16,
+    marginBottom: 16,
   },
   center: {
     alignContent: 'center',
