@@ -2,12 +2,13 @@ import React, { useEffect, useRef, useState } from 'react'
 import { QuickSQLiteConnection } from 'react-native-quick-sqlite'
 import { initDatabase } from '../Functions/DatabaseFunctions'
 import SInfo from 'react-native-sensitive-info'
-import { AppState, Linking, StyleSheet } from 'react-native'
+import { AppState, Linking, NativeModules, Platform, StyleSheet } from 'react-native'
 import { Text } from 'react-native-paper'
 import { Config } from '../Pages/ConfigPage'
 import { imageHostingServices } from '../Constants/Services'
 import { randomInt, validNip21 } from '../Functions/NativeFunctions'
 import Clipboard from '@react-native-clipboard/clipboard'
+import i18next from 'i18next'
 
 export interface AppContextProps {
   init: () => void
@@ -15,6 +16,8 @@ export interface AppContextProps {
   database: QuickSQLiteConnection | null
   notificationSeenAt: number
   setNotificationSeenAt: (unix: number) => void
+  language: string
+  setLanguage: (language: string) => void
   showPublicImages: boolean
   setShowPublicImages: (showPublicImages: boolean) => void
   showSensitive: boolean
@@ -42,6 +45,11 @@ export const initialAppContext: AppContextProps = {
   setNotificationSeenAt: () => {},
   showPublicImages: false,
   setShowPublicImages: () => {},
+  language:
+    Platform.OS === 'ios'
+      ? NativeModules.SettingsManager.settings.AppleLocale
+      : NativeModules.I18nManager.localeIdentifier,
+  setLanguage: () => {},
   showSensitive: false,
   setShowSensitive: () => {},
   satoshi: 'kebab',
@@ -61,6 +69,7 @@ export const AppContextProvider = ({ children }: AppContextProviderProps): JSX.E
     initialAppContext.showPublicImages,
   )
   const [showSensitive, setShowSensitive] = React.useState<boolean>(initialAppContext.showSensitive)
+  const [language, setLanguage] = React.useState<string>(initialAppContext.language)
   const [imageHostingService, setImageHostingService] = React.useState<string>(
     initialAppContext.imageHostingService,
   )
@@ -88,6 +97,10 @@ export const AppContextProvider = ({ children }: AppContextProviderProps): JSX.E
     }
   }, [appState])
 
+  useEffect(() => {
+    i18next.changeLanguage(language)
+  }, [language])
+
   const init: () => void = () => {
     const db = initDatabase()
     setDatabase(db)
@@ -106,6 +119,7 @@ export const AppContextProvider = ({ children }: AppContextProviderProps): JSX.E
         setImageHostingService(
           config.image_hosting_service ?? initialAppContext.imageHostingService,
         )
+        setLanguage(config.language ?? initialAppContext.language)
       } else {
         const config: Config = {
           show_public_images: initialAppContext.showPublicImages,
@@ -114,6 +128,7 @@ export const AppContextProvider = ({ children }: AppContextProviderProps): JSX.E
           satoshi: initialAppContext.satoshi,
           last_notification_seen_at: 0,
           last_pets_at: 0,
+          language: initialAppContext.language,
         }
         SInfo.setItem('config', JSON.stringify(config), {})
       }
@@ -157,6 +172,8 @@ export const AppContextProvider = ({ children }: AppContextProviderProps): JSX.E
   return (
     <AppContext.Provider
       value={{
+        language,
+        setLanguage,
         checkClipboard,
         clipboardNip21,
         setClipboardNip21,

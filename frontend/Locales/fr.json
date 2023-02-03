@@ -58,11 +58,19 @@
       "about": "À propos de Nostros",
       "logout": "Sortir"
     },
+    "language": {
+      "en": "English",
+      "es": "Español",
+      "fr": "François",
+      "ru": "Русский",
+      "de": "Deutsch"
+    },
     "configPage": {
       "showPublicImages": "Afficher les images dans le flux global",
       "showSensitive": "Montrer les notes sensibles",
       "satoshi": "Symbole de satoshi",
-      "imageHostingService": "Image hosting service"
+      "imageHostingService": "Image hosting service",
+      "language": "Langue"
     },
     "noteCard": {
       "answering": "Répondre à {{pubkey}}",

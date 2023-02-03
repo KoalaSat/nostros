@@ -22,11 +22,17 @@ const locale =
     ? NativeModules.SettingsManager.settings.AppleLocale
     : NativeModules.I18nManager.localeIdentifier
 
-const dateLocales = { es: dateEs, ru: dateRu, en: dateEnUS, fr: dateFr, de: dateDe }
+const dateLocales: Record<string, Locale> = {
+  es: dateEs,
+  ru: dateRu,
+  en: dateEnUS,
+  fr: dateFr,
+  de: dateDe,
+}
 const deviceLocale: string = locale?.split('_')[0] ?? 'en'
 setDefaultOptions({ locale: dateLocales[deviceLocale] })
 
-i18n.locale = locale
+i18n.language = locale
 i18n.use(initReactI18next).init({
   compatibilityJSON: 'v3',
   fallbackLng: 'en',
@@ -44,6 +50,9 @@ i18n.use(initReactI18next).init({
   interpolation: {
     escapeValue: false,
   },
+})
+i18n.on('languageChanged', (lng) => {
+  setDefaultOptions({ locale: dateLocales[lng] })
 })
 
 export default i18n

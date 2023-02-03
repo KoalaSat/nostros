@@ -20,6 +20,7 @@ import { decode } from 'nostr-tools/nip19'
 export const HomePage: React.FC = () => {
   const theme = useTheme()
   const { t } = useTranslation('common')
+  const { language } = React.useContext(AppContext)
   const { privateKey, publicKey } = React.useContext(UserContext)
   const { database, notificationSeenAt, clipboardNip21, setClipboardNip21 } = useContext(AppContext)
   const { relayPool, lastEventId } = useContext(RelayPoolContext)
@@ -56,6 +57,8 @@ export const HomePage: React.FC = () => {
       })
     }
   }, [publicKey])
+
+  React.useEffect(() => {}, [language])
 
   const goToEvent: () => void = () => {
     if (clipboardNip21) {

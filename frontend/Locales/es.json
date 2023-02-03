@@ -68,7 +68,8 @@
       "showSensitive": "Mostrar notas sensibles",
       "satoshi": "Símbolo de satoshi",
       "imageHostingService": "Servicio de subida de imágenes",
-      "random": "Aleatorio"
+      "random": "Aleatorio",
+      "language": "Idioma"
     },
     "noteCard": {
       "answering": "Responder a {{pubkey}}",
@@ -217,6 +218,13 @@
       "clipboardTitle": "Se ha detectado una clave Nostr",
       "goToEvent": "Abrir",
       "cancel": "Cancelar"
+    },
+    "language": {
+      "en": "English",
+      "es": "Español",
+      "fr": "François",
+      "ru": "Русский",
+      "de": "Deutsch"
     },
     "profileCard": {
       "notifications": {

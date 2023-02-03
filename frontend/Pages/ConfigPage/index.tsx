@@ -14,6 +14,7 @@ export interface Config {
   last_notification_seen_at: number
   last_pets_at: number
   image_hosting_service: string
+  language: string
 }
 
 export const ConfigPage: React.FC = () => {
@@ -29,9 +30,12 @@ export const ConfigPage: React.FC = () => {
     setSatoshi,
     imageHostingService,
     setImageHostingService,
+    language,
+    setLanguage,
   } = React.useContext(AppContext)
   const bottomSheetSatoshiRef = React.useRef<RBSheet>(null)
   const bottomSheetImageHostingRef = React.useRef<RBSheet>(null)
+  const bottomSheetLanguageRef = React.useRef<RBSheet>(null)
 
   React.useEffect(() => {}, [showPublicImages, showSensitive, satoshi])
 
@@ -79,6 +83,24 @@ export const ConfigPage: React.FC = () => {
             SInfo.setItem('config', JSON.stringify(config), {})
           })
           bottomSheetImageHostingRef.current?.close()
+        },
+      }
+    })
+  }, [])
+
+  const languageOptions = React.useMemo(() => {
+    return ['en', 'es', 'fr', 'ru', 'de'].map((language, index) => {
+      return {
+        key: index,
+        title: <Text>{t(`language.${language}`)}</Text>,
+        onPress: () => {
+          setLanguage(language)
+          SInfo.getItem('config', {}).then((result) => {
+            const config: Config = JSON.parse(result)
+            config.language = language
+            SInfo.setItem('config', JSON.stringify(config), {})
+          })
+          bottomSheetLanguageRef.current?.close()
         },
       }
     })
@@ -134,6 +156,11 @@ export const ConfigPage: React.FC = () => {
         )}
       />
       <List.Item
+        title={t('configPage.language')}
+        onPress={() => bottomSheetLanguageRef.current?.open()}
+        right={() => <Text>{t(`language.${language}`)}</Text>}
+      />
+      <List.Item
         title={t('configPage.satoshi')}
         onPress={() => bottomSheetSatoshiRef.current?.open()}
         right={() => getSatoshiSymbol(25)}
@@ -148,6 +175,15 @@ export const ConfigPage: React.FC = () => {
           </Text>
         )}
       />
+      <RBSheet ref={bottomSheetLanguageRef} closeOnDragDown={true} customStyles={bottomSheetStyles}>
+        <FlatList
+          data={languageOptions}
+          renderItem={({ item }) => {
+            return <List.Item key={item.key} title={item.title} onPress={item.onPress} />
+          }}
+          ItemSeparatorComponent={Divider}
+        />
+      </RBSheet>
       <RBSheet ref={bottomSheetSatoshiRef} closeOnDragDown={true} customStyles={bottomSheetStyles}>
         <FlatList
           data={satoshiOptions}
