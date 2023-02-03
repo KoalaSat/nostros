@@ -16,6 +16,7 @@ import {
   useTheme,
   Snackbar,
 } from 'react-native-paper'
+import { FlashList, ListRenderItem } from '@shopify/flash-list'
 import { AppContext } from '../../Contexts/AppContext'
 import { UserContext } from '../../Contexts/UserContext'
 import { RelayPoolContext } from '../../Contexts/RelayPoolContext'
@@ -171,9 +172,9 @@ export const ProfilePage: React.FC<ProfilePageProps> = ({ route }) => {
     }
   }
 
-  const renderItem: (note: Note) => JSX.Element = (note) => (
-    <View style={styles.noteCard} key={note.id}>
-      <NoteCard note={note} onPressUser={() => bottomSheetProfileRef.current?.open()} />
+  const renderItem: ListRenderItem<Note> = ({ item }) => (
+    <View style={styles.noteCard} key={item.id}>
+      <NoteCard note={item} onPressUser={() => bottomSheetProfileRef.current?.open()} />
     </View>
   )
 
@@ -208,7 +209,7 @@ export const ProfilePage: React.FC<ProfilePageProps> = ({ route }) => {
             nip05={user?.nip05}
             lud06={user?.lnurl}
             picture={user?.picture}
-            avatarSize={54}
+            avatarSize={56}
           />
           <View>
             <Text>{user?.about}</Text>
@@ -270,12 +271,18 @@ export const ProfilePage: React.FC<ProfilePageProps> = ({ route }) => {
             </View>
           </View>
         </Surface>
-        {notes && notes.length > 0 && (
-          <View style={styles.list}>
-            {notes.map((note) => renderItem(note))}
-            {notes.length >= 10 && <ActivityIndicator animating={true} />}
-          </View>
-        )}
+        <View style={styles.list}>
+          <FlashList
+            showsVerticalScrollIndicator={false}
+            data={notes}
+            renderItem={renderItem}
+            refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
+            onScroll={onScroll}
+            refreshing={refreshing}
+            horizontal={false}
+            ListFooterComponent={<ActivityIndicator animating={true} />}
+          />
+        </View>
       </ScrollView>
       {showNotification && (
         <Snackbar

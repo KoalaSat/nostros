@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState } from 'react'
-import { StyleSheet, View } from 'react-native'
+import { FlatList, ListRenderItem, StyleSheet, View } from 'react-native'
 import { AppContext } from '../../Contexts/AppContext'
 import { Event } from '../../lib/nostr/Events'
 import { useTranslation } from 'react-i18next'
@@ -13,6 +13,7 @@ import { Asset, launchImageLibrary } from 'react-native-image-picker'
 import {
   Button,
   Card,
+  Divider,
   IconButton,
   Snackbar,
   Switch,
@@ -179,7 +180,7 @@ export const SendPage: React.FC<SendPageProps> = ({ route }) => {
     setUserSuggestions([])
   }
 
-  const renderContactItem: (item: User, index: number) => JSX.Element = (item, index) => (
+  const renderContactItem: ListRenderItem<User> = ({ item, index }) => (
     <TouchableRipple onPress={() => addUserMention(item)}>
       <View key={index} style={styles.contactRow}>
         <ProfileData
@@ -189,7 +190,7 @@ export const SendPage: React.FC<SendPageProps> = ({ route }) => {
           nip05={item?.nip05}
           lud06={item?.lnurl}
           picture={item?.picture}
-          avatarSize={34}
+          avatarSize={40}
         />
         <View style={styles.contactFollow}>
           <Text>{item.contact ? t('sendPage.isContact') : t('sendPage.isNotContact')}</Text>
@@ -244,10 +245,14 @@ export const SendPage: React.FC<SendPageProps> = ({ route }) => {
       <View style={styles.actions}>
         {userSuggestions.length > 0 ? (
           <View style={styles.contactsList}>
-            {userSuggestions.map((user, index) => renderContactItem(user, index))}
+            <FlatList
+              data={userSuggestions}
+              renderItem={renderContactItem}
+              ItemSeparatorComponent={Divider}
+              horizontal={false}
+            />
           </View>
         ) : (
-          // FIXME: can't find this color
           <View style={{ backgroundColor: '#001C37' }}>
             <View style={styles.contentWarning}>
               <Text style={styles.contentWarningText}>{t('sendPage.contentWarning')}</Text>

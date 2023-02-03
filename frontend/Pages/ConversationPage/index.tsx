@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useMemo, useRef, useState } from 'react'
-import { FlatList, ScrollView, StyleSheet, View } from 'react-native'
+import { FlatList, ListRenderItem, ScrollView, StyleSheet, View } from 'react-native'
 import { AppContext } from '../../Contexts/AppContext'
 import { RelayPoolContext } from '../../Contexts/RelayPoolContext'
 import { Event } from '../../lib/nostr/Events'
@@ -122,9 +122,6 @@ export const ConversationPage: React.FC<ConversationPageProps> = ({ route }) => 
         pubkey: publicKey,
         tags: usersToTags([otherUser]),
       }
-      setSendingMessages((prev) => [...prev, event as DirectMessage])
-      setInput('')
-
       encrypt(privateKey, otherPubKey, input)
         .then((encryptedcontent) => {
           relayPool
@@ -139,14 +136,15 @@ export const ConversationPage: React.FC<ConversationPageProps> = ({ route }) => 
         .catch(() => {
           setShowNotification('privateMessageSendError')
         })
+
+      const directMessage = event as DirectMessage
+      directMessage.pending = true
+      setSendingMessages((prev) => [...prev, directMessage])
+      setInput('')
     }
   }
 
-  const renderDirectMessageItem: (
-    index: number,
-    item: DirectMessage,
-    pending: boolean,
-  ) => JSX.Element = (index, item, pending) => {
+  const renderDirectMessageItem: ListRenderItem<DirectMessage> = ({ index, item }) => {
     if (!publicKey || !privateKey || !otherUser) return <></>
 
     const displayName =
@@ -178,7 +176,7 @@ export const ConversationPage: React.FC<ConversationPageProps> = ({ route }) => 
             <View style={styles.cardContentInfo}>
               <Text>{displayName}</Text>
               <View style={styles.cardContentDate}>
-                {pending && (
+                {item.pending && (
                   <View style={styles.cardContentPending}>
                     <MaterialCommunityIcons
                       name='clock-outline'
@@ -201,20 +199,13 @@ export const ConversationPage: React.FC<ConversationPageProps> = ({ route }) => 
 
   return (
     <View style={styles.container}>
-      <ScrollView
+      <FlatList
+        data={[...directMessages, ...sendingMessages]}
+        renderItem={renderDirectMessageItem}
         horizontal={false}
         ref={scrollViewRef}
         onContentSizeChange={() => scrollViewRef.current?.scrollToEnd({ animated: true })}
-      >
-        <FlatList
-          data={directMessages}
-          renderItem={({ index, item }) => renderDirectMessageItem(index, item, false)}
-        />
-        <FlatList
-          data={sendingMessages}
-          renderItem={({ index, item }) => renderDirectMessageItem(index, item, true)}
-        />
-      </ScrollView>
+      />
       <View
         style={[
           styles.input,

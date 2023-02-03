@@ -28,7 +28,6 @@ export const HomePage: React.FC = () => {
 
   useEffect(() => {
     if (clipboardNip21) {
-      console.log('clipboardNip21', clipboardNip21)
       bottomSheetClipboardRef.current?.open()
     }
   }, [clipboardNip21])
@@ -70,6 +69,7 @@ export const HomePage: React.FC = () => {
       }
     }
     bottomSheetClipboardRef.current?.close()
+    setClipboardNip21(undefined)
   }
 
   const Tab = createBottomTabNavigator()

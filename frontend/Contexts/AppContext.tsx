@@ -47,7 +47,7 @@ export const initialAppContext: AppContextProps = {
   satoshi: 'kebab',
   setSatoshi: () => {},
   checkClipboard: () => {},
-  imageHostingService: Object.keys(imageHostingServices)[0],
+  imageHostingService: 'random',
   setImageHostingService: () => {},
   getImageHostingService: () => '',
   getSatoshiSymbol: () => <></>,
@@ -119,7 +119,9 @@ export const AppContextProvider = ({ children }: AppContextProviderProps): JSX.E
       }
     })
     Linking.addEventListener('url', (event) => {
-      console.log(event.url)
+      if (validNip21(event?.url)) {
+        setClipboardNip21(event.url)
+      }
     })
   }
 

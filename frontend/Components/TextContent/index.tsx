@@ -1,7 +1,7 @@
 import React, { useContext, useEffect, useState } from 'react'
 import ParsedText from 'react-native-parsed-text'
 import { Event } from '../../lib/nostr/Events'
-import { ImageSourcePropType, Linking, StyleSheet, View } from 'react-native'
+import { Linking, StyleSheet, View } from 'react-native'
 import { AppContext } from '../../Contexts/AppContext'
 import { getUser, User } from '../../Functions/DatabaseFunctions/Users'
 import { formatPubKey } from '../../Functions/RelayFunctions/Users'
@@ -11,6 +11,7 @@ import { getNip19Key, getNpub } from '../../lib/nostr/Nip19'
 import { navigate } from '../../lib/Navigation'
 import { validBlueBirdUrl, validImageUrl, validMediaUrl } from '../../Functions/NativeFunctions'
 import Clipboard from '@react-native-clipboard/clipboard'
+import FastImage from 'react-native-fast-image'
 
 interface TextContentProps {
   event?: Event
@@ -37,7 +38,7 @@ export const TextContent: React.FC<TextContentProps> = ({
   const text = event?.content ?? content ?? ''
   const DEFAULT_COVER = '../../../assets/images/placeholders/placeholder_url.png'
   const MEDIA_COVER = '../../../assets/images/placeholders/placeholder_media.png'
-  // const IMAGE_COVER = '../../../assets/images/placeholders/placeholder_image.png'
+  const IMAGE_COVER = '../../../assets/images/placeholders/placeholder_image.png'
 
   useEffect(() => {
     if (!linkPreview && url) {
@@ -132,13 +133,18 @@ export const TextContent: React.FC<TextContentProps> = ({
   const generatePreview: () => JSX.Element = () => {
     if (!showPreview || !url) return <></>
 
-    const getRequireCover: () => ImageSourcePropType = () => {
+    const getRequireCover: () => string = () => {
+      if (linkType === 'image') return url
+
+      return ''
+    }
+
+    const getDefaultCover: () => number = () => {
       if (!linkPreview) return require(DEFAULT_COVER)
       if (linkType === 'audio') return require(MEDIA_COVER)
       if (linkType === 'video') return require(MEDIA_COVER)
       if (linkType === 'blueBird') return require(DEFAULT_COVER)
-      // if (linkType === 'image') return require(IMAGE_COVER)
-      if (linkType === 'image') return { uri: url }
+      if (linkType === 'image') return require(IMAGE_COVER)
 
       return require(DEFAULT_COVER)
     }
@@ -146,10 +152,19 @@ export const TextContent: React.FC<TextContentProps> = ({
     return (
       <View style={styles.previewCard}>
         <Card onPress={() => handleUrlPress(url)}>
-          <Card.Cover
-            source={getRequireCover()}
-            resizeMode='contain'
-            defaultSource={require(DEFAULT_COVER)}
+          <FastImage
+            style={[
+              styles.cardCover,
+              {
+                backgroundColor: theme.colors.backdrop,
+              },
+            ]}
+            source={{
+              uri: getRequireCover(),
+              priority: FastImage.priority.high,
+            }}
+            defaultSource={getDefaultCover()}
+            resizeMode={FastImage.resizeMode.contain}
           />
           <Card.Content style={styles.previewContent}>
             <Text variant='bodyMedium' numberOfLines={3}>
@@ -206,6 +221,12 @@ export const TextContent: React.FC<TextContentProps> = ({
 const styles = StyleSheet.create({
   container: {
     width: '100%',
+  },
+  cardCover: {
+    flex: 1,
+    height: 180,
+    borderTopLeftRadius: 16,
+    borderTopRightRadius: 16,
   },
   url: {
     textDecorationLine: 'underline',

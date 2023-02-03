@@ -2,11 +2,8 @@ import React, { useContext, useEffect, useState } from 'react'
 import {
   ActivityIndicator,
   Dimensions,
-  FlatList,
-  ListRenderItem,
   NativeScrollEvent,
   NativeSyntheticEvent,
-  ScrollView,
   StyleSheet,
   View,
 } from 'react-native'
@@ -14,6 +11,7 @@ import Clipboard from '@react-native-clipboard/clipboard'
 import { AppContext } from '../../Contexts/AppContext'
 import { Kind } from 'nostr-tools'
 import { useTranslation } from 'react-i18next'
+import { FlashList, ListRenderItem } from '@shopify/flash-list'
 import {
   getFollowersAndFollowing,
   updateUserContact,
@@ -183,7 +181,7 @@ export const ContactsFeed: React.FC = () => {
               avatarSize={40}
             />
           </View>
-          <View style={styles.contactFollow}>
+          <View>
             <Button onPress={() => (item.contact ? removeContact(item) : addContact(item))}>
               {item.contact ? t('contactsFeed.stopFollowing') : t('contactsFeed.follow')}
             </Button>
@@ -214,90 +212,85 @@ export const ContactsFeed: React.FC = () => {
     }
   }
 
-  const Following: JSX.Element = (
-    <View style={styles.container}>
-      {following.length > 0 ? (
-        <ScrollView horizontal={false} onScroll={onScroll} showsVerticalScrollIndicator={false}>
-          <View>
-            <FlatList
-              style={styles.list}
-              data={following.slice(0, pageSize)}
-              renderItem={renderContactItem}
-              ItemSeparatorComponent={Divider}
-              showsVerticalScrollIndicator={false}
-            />
-            {pageSize < following.length && <ActivityIndicator animating={true} />}
-          </View>
-        </ScrollView>
-      ) : (
-        <View style={styles.blank}>
-          <MaterialCommunityIcons
-            name='account-group-outline'
-            size={64}
-            style={styles.center}
-            color={theme.colors.onPrimaryContainer}
-          />
-          <Text variant='headlineSmall' style={styles.center}>
-            {t('contactsFeed.emptyTitleFollowing')}
-          </Text>
-          <Text variant='bodyMedium' style={styles.center}>
-            {t('contactsFeed.emptyDescriptionFollowing')}
-          </Text>
-          <Button mode='contained' compact onPress={() => bottomSheetAddContactRef.current?.open()}>
-            {t('contactsFeed.emptyButtonFollowing')}
-          </Button>
-        </View>
-      )}
+  const ListEmptyComponentFollowing = (
+    <View style={styles.blank}>
+      <MaterialCommunityIcons
+        name='account-group-outline'
+        size={64}
+        style={styles.center}
+        color={theme.colors.onPrimaryContainer}
+      />
+      <Text variant='headlineSmall' style={styles.center}>
+        {t('contactsFeed.emptyTitleFollowing')}
+      </Text>
+      <Text variant='bodyMedium' style={styles.center}>
+        {t('contactsFeed.emptyDescriptionFollowing')}
+      </Text>
+      <Button mode='contained' compact onPress={() => bottomSheetAddContactRef.current?.open()}>
+        {t('contactsFeed.emptyButtonFollowing')}
+      </Button>
     </View>
   )
 
-  const Follower: JSX.Element = (
+  const Following: JSX.Element = (
     <View style={styles.container}>
-      {followers.length > 0 ? (
-        <ScrollView horizontal={false} onScroll={onScroll} showsVerticalScrollIndicator={false}>
-          <View>
-            <FlatList
-              style={styles.list}
-              data={followers.slice(0, pageSize)}
-              renderItem={renderContactItem}
-              ItemSeparatorComponent={Divider}
-              showsVerticalScrollIndicator={false}
-            />
-          </View>
-          {pageSize < followers.length && <ActivityIndicator animating={true} />}
-        </ScrollView>
-      ) : (
-        <View style={styles.blank}>
-          <MaterialCommunityIcons
-            name='account-group-outline'
-            size={64}
-            style={styles.center}
-            color={theme.colors.onPrimaryContainer}
-          />
-          <Text variant='headlineSmall' style={styles.center}>
-            {t('contactsFeed.emptyTitleFollower')}
-          </Text>
-          <Text variant='bodyMedium' style={styles.center}>
-            {t('contactsFeed.emptyDescriptionFollower')}
-          </Text>
-          <Button
-            mode='contained'
-            compact
-            onPress={() => {
-              setShowNotification('keyCopied')
-              Clipboard.setString(nPub ?? '')
-            }}
-          >
-            {t('contactsFeed.emptyButtonFollower')}
-          </Button>
-        </View>
-      )}
+      <FlashList
+        showsVerticalScrollIndicator={false}
+        data={following.slice(0, pageSize)}
+        renderItem={renderContactItem}
+        onScroll={onScroll}
+        ListEmptyComponent={ListEmptyComponentFollowing}
+        horizontal={false}
+        ListFooterComponent={<ActivityIndicator animating={true} />}
+      />
+    </View>
+  )
+
+  const ListEmptyComponentFollowers = (
+    <View style={styles.blank}>
+      <MaterialCommunityIcons
+        name='account-group-outline'
+        size={64}
+        style={styles.center}
+        color={theme.colors.onPrimaryContainer}
+      />
+      <Text variant='headlineSmall' style={styles.center}>
+        {t('contactsFeed.emptyTitleFollower')}
+      </Text>
+      <Text variant='bodyMedium' style={styles.center}>
+        {t('contactsFeed.emptyDescriptionFollower')}
+      </Text>
+      <Button
+        mode='contained'
+        compact
+        onPress={() => {
+          setShowNotification('keyCopied')
+          Clipboard.setString(nPub ?? '')
+        }}
+      >
+        {t('contactsFeed.emptyButtonFollower')}
+      </Button>
+    </View>
+  )
+
+  const Followers: JSX.Element = (
+    <View style={styles.container}>
+      <FlashList
+        style={styles.list}
+        data={followers.slice(0, pageSize)}
+        renderItem={renderContactItem}
+        ListEmptyComponent={ListEmptyComponentFollowers}
+        onScroll={onScroll}
+        ItemSeparatorComponent={Divider}
+        showsVerticalScrollIndicator={false}
+        ListFooterComponent={<ActivityIndicator animating={true} />}
+      />
     </View>
   )
 
   const renderScene: Record<string, JSX.Element> = {
     following: Following,
-    followers: Follower,
+    followers: Followers,
   }
 
   return (
@@ -409,6 +402,7 @@ export const ContactsFeed: React.FC = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    height: '90%',
   },
   tabsNavigator: {
     flexDirection: 'row',
@@ -462,9 +456,6 @@ const styles = StyleSheet.create({
   contactInfo: {
     flexDirection: 'row',
     alignContent: 'center',
-  },
-  contactFollow: {
-    justifyContent: 'center',
   },
   fab: {
     right: 16,
