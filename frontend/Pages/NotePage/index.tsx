@@ -9,8 +9,6 @@ import { FlashList, ListRenderItem } from '@shopify/flash-list'
 import { getDirectReplies } from '../../Functions/RelayFunctions/Events'
 import { AnimatedFAB, useTheme } from 'react-native-paper'
 import { UserContext } from '../../Contexts/UserContext'
-import RBSheet from 'react-native-raw-bottom-sheet'
-import ProfileCard from '../../Components/ProfileCard'
 import { navigate } from '../../lib/Navigation'
 import { useFocusEffect } from '@react-navigation/native'
 import { SkeletonNote } from '../../Components/SkeletonNote/SkeletonNote'
@@ -26,9 +24,7 @@ export const NotePage: React.FC<NotePageProps> = ({ route }) => {
   const [note, setNote] = useState<Note>()
   const [replies, setReplies] = useState<Note[]>()
   const [refreshing, setRefreshing] = useState(false)
-  const [profileCardPubkey, setProfileCardPubKey] = useState<string>()
   const theme = useTheme()
-  const bottomSheetProfileRef = React.useRef<RBSheet>(null)
 
   useFocusEffect(
     React.useCallback(() => {
@@ -98,42 +94,14 @@ export const NotePage: React.FC<NotePageProps> = ({ route }) => {
         )}
       </View>
       <View style={styles.noteCard}>
-        <NoteCard
-          note={item}
-          onPressUser={(user) => {
-            setProfileCardPubKey(user.id)
-            bottomSheetProfileRef.current?.open()
-          }}
-          showAnswerData={false}
-          showRepostPreview={false}
-        />
+        <NoteCard note={item} showAnswerData={false} showRepostPreview={false} />
       </View>
     </View>
   )
 
-  const bottomSheetStyles = React.useMemo(() => {
-    return {
-      container: {
-        backgroundColor: theme.colors.background,
-        paddingTop: 16,
-        paddingRight: 16,
-        paddingBottom: 32,
-        paddingLeft: 16,
-        borderTopRightRadius: 28,
-        borderTopLeftRadius: 28,
-        height: 'auto',
-      },
-    }
-  }, [])
-
-  const openProfileDrawer: () => void = () => {
-    setProfileCardPubKey(note?.pubkey)
-    bottomSheetProfileRef.current?.open()
-  }
-
   return note ? (
     <View>
-      <NoteCard note={note} onPressUser={openProfileDrawer} />
+      <NoteCard note={note} />
       <View style={[styles.list, { borderColor: theme.colors.onSecondary }]}>
         <FlashList
           estimatedItemSize={200}
@@ -169,9 +137,6 @@ export const NotePage: React.FC<NotePageProps> = ({ route }) => {
         iconMode='static'
         extended={false}
       />
-      <RBSheet ref={bottomSheetProfileRef} closeOnDragDown={true} customStyles={bottomSheetStyles}>
-        <ProfileCard userPubKey={profileCardPubkey ?? ''} bottomSheetRef={bottomSheetProfileRef} />
-      </RBSheet>
     </View>
   ) : (
     <View>

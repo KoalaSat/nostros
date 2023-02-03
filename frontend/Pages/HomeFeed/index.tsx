@@ -1,16 +1,13 @@
-import React, { useContext, useState } from 'react'
+import React, { useContext } from 'react'
 import { Dimensions, ScrollView, StyleSheet, View } from 'react-native'
 import { UserContext } from '../../Contexts/UserContext'
 import { RelayPoolContext } from '../../Contexts/RelayPoolContext'
 import { AnimatedFAB, Text, TouchableRipple } from 'react-native-paper'
-import RBSheet from 'react-native-raw-bottom-sheet'
-import ProfileCard from '../../Components/ProfileCard'
 import { useFocusEffect, useTheme } from '@react-navigation/native'
 import { navigate } from '../../lib/Navigation'
 import { t } from 'i18next'
 import GlobalFeed from '../GlobalFeed'
 import MyFeed from '../MyFeed'
-import { AppContext } from '../../Contexts/AppContext'
 import ReactionsFeed from '../ReactionsFeed'
 import RepostsFeed from '../RepostsFeed'
 
@@ -20,12 +17,9 @@ interface HomeFeedProps {
 
 export const HomeFeed: React.FC<HomeFeedProps> = ({ navigation }) => {
   const theme = useTheme()
-  const { showPublicImages } = useContext(AppContext)
   const { privateKey } = useContext(UserContext)
   const { relayPool } = useContext(RelayPoolContext)
   const [tabKey, setTabKey] = React.useState('myFeed')
-  const [profileCardPubkey, setProfileCardPubKey] = useState<string>()
-  const bottomSheetProfileRef = React.useRef<RBSheet>(null)
 
   useFocusEffect(
     React.useCallback(() => {
@@ -40,58 +34,11 @@ export const HomeFeed: React.FC<HomeFeedProps> = ({ navigation }) => {
     }, []),
   )
 
-  const bottomSheetStyles = React.useMemo(() => {
-    return {
-      container: {
-        backgroundColor: theme.colors.background,
-        paddingTop: 16,
-        paddingRight: 16,
-        paddingBottom: 32,
-        paddingLeft: 16,
-        borderTopRightRadius: 28,
-        borderTopLeftRadius: 28,
-        height: 'auto',
-      },
-    }
-  }, [])
-
   const renderScene: Record<string, JSX.Element> = {
-    globalFeed: (
-      <GlobalFeed
-        navigation={navigation}
-        setProfileCardPubKey={(value) => {
-          setProfileCardPubKey(value)
-          bottomSheetProfileRef.current?.open()
-        }}
-      />
-    ),
-    myFeed: (
-      <MyFeed
-        navigation={navigation}
-        setProfileCardPubKey={(value) => {
-          setProfileCardPubKey(value)
-          bottomSheetProfileRef.current?.open()
-        }}
-      />
-    ),
-    reactions: (
-      <ReactionsFeed
-        navigation={navigation}
-        setProfileCardPubKey={(value) => {
-          setProfileCardPubKey(value)
-          bottomSheetProfileRef.current?.open()
-        }}
-      />
-    ),
-    reposts: (
-      <RepostsFeed
-        navigation={navigation}
-        setProfileCardPubKey={(value) => {
-          setProfileCardPubKey(value)
-          bottomSheetProfileRef.current?.open()
-        }}
-      />
-    ),
+    globalFeed: <GlobalFeed navigation={navigation} />,
+    myFeed: <MyFeed navigation={navigation} />,
+    reactions: <ReactionsFeed navigation={navigation} />,
+    reposts: <RepostsFeed navigation={navigation} />,
   }
 
   return (
@@ -196,13 +143,6 @@ export const HomeFeed: React.FC<HomeFeedProps> = ({ navigation }) => {
           extended={false}
         />
       )}
-      <RBSheet ref={bottomSheetProfileRef} closeOnDragDown={true} customStyles={bottomSheetStyles}>
-        <ProfileCard
-          userPubKey={profileCardPubkey ?? ''}
-          bottomSheetRef={bottomSheetProfileRef}
-          showImages={tabKey === 'myFeed' || showPublicImages}
-        />
-      </RBSheet>
     </View>
   )
 }

@@ -11,6 +11,8 @@ export interface RelayPoolContextProps {
   relayPool?: RelayPool
   setRelayPool: (relayPool: RelayPool) => void
   lastEventId?: string
+  setDisplayrelayDrawer: (displayRelayDrawer: string | undefined) => void
+  displayRelayDrawer?: string
   lastConfirmationtId?: string
   relays: Relay[]
   addRelayItem: (relay: Relay) => Promise<void>
@@ -34,6 +36,7 @@ export const initialRelayPoolContext: RelayPoolContextProps = {
   removeRelayItem: async () => await new Promise(() => {}),
   updateRelayItem: async () => await new Promise(() => {}),
   relays: [],
+  setDisplayrelayDrawer: () => {},
 }
 
 export const RelayPoolContextProvider = ({
@@ -48,6 +51,7 @@ export const RelayPoolContextProvider = ({
   const [lastEventId, setLastEventId] = useState<string>('')
   const [lastConfirmationtId, setLastConfirmationId] = useState<string>('')
   const [relays, setRelays] = React.useState<Relay[]>([])
+  const [displayRelayDrawer, setDisplayrelayDrawer] = React.useState<string>()
 
   const changeEventIdHandler: (event: WebsocketEvent) => void = (event) => {
     setLastEventId(event.eventId)
@@ -151,6 +155,8 @@ export const RelayPoolContextProvider = ({
   return (
     <RelayPoolContext.Provider
       value={{
+        displayRelayDrawer,
+        setDisplayrelayDrawer,
         relayPoolReady,
         relayPool,
         setRelayPool,

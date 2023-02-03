@@ -14,9 +14,7 @@ import { RelayPoolContext } from '../../Contexts/RelayPoolContext'
 import { Kind } from 'nostr-tools'
 import { handleInfinityScroll } from '../../Functions/NativeFunctions'
 import { UserContext } from '../../Contexts/UserContext'
-import RBSheet from 'react-native-raw-bottom-sheet'
 import { ActivityIndicator, Button, Text, useTheme } from 'react-native-paper'
-import ProfileCard from '../../Components/ProfileCard'
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'
 import { useTranslation } from 'react-i18next'
 import { navigate } from '../../lib/Navigation'
@@ -35,9 +33,7 @@ export const NotificationsFeed: React.FC = () => {
   const { lastEventId, relayPool } = useContext(RelayPoolContext)
   const [pageSize, setPageSize] = useState<number>(initialPageSize)
   const [notes, setNotes] = useState<Note[]>([])
-  const bottomSheetProfileRef = React.useRef<RBSheet>(null)
   const [refreshing, setRefreshing] = useState(true)
-  const [profileCardPubkey, setProfileCardPubKey] = useState<string>()
 
   useFocusEffect(
     React.useCallback(() => {
@@ -143,13 +139,7 @@ export const NotificationsFeed: React.FC = () => {
   const renderItem: ListRenderItem<Note> = ({ item }) => {
     return (
       <View style={styles.noteCard} key={item.id}>
-        <NoteCard
-          note={item}
-          onPressUser={(user) => {
-            setProfileCardPubKey(user.id)
-            bottomSheetProfileRef.current?.open()
-          }}
-        />
+        <NoteCard note={item} />
       </View>
     )
   }
@@ -159,21 +149,6 @@ export const NotificationsFeed: React.FC = () => {
       setPageSize(pageSize + initialPageSize)
     }
   }
-
-  const bottomSheetStyles = React.useMemo(() => {
-    return {
-      container: {
-        backgroundColor: theme.colors.background,
-        paddingTop: 16,
-        paddingRight: 16,
-        paddingBottom: 32,
-        paddingLeft: 16,
-        borderTopRightRadius: 28,
-        borderTopLeftRadius: 28,
-        height: 'auto',
-      },
-    }
-  }, [])
 
   const ListEmptyComponent = React.useMemo(
     () => (
@@ -212,9 +187,6 @@ export const NotificationsFeed: React.FC = () => {
         horizontal={false}
         ListFooterComponent={<ActivityIndicator animating={true} />}
       />
-      <RBSheet ref={bottomSheetProfileRef} closeOnDragDown={true} customStyles={bottomSheetStyles}>
-        <ProfileCard userPubKey={profileCardPubkey ?? ''} bottomSheetRef={bottomSheetProfileRef} />
-      </RBSheet>
     </View>
   )
 }

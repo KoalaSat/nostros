@@ -8,7 +8,7 @@ import {
   Note,
   NoteRelay,
 } from '../../Functions/DatabaseFunctions/Notes'
-import { StyleSheet, View } from 'react-native'
+import { StyleSheet, TouchableNativeFeedback, View } from 'react-native'
 import { RelayPoolContext } from '../../Contexts/RelayPoolContext'
 import { AppContext } from '../../Contexts/AppContext'
 import { t } from 'i18next'
@@ -34,14 +34,12 @@ import {
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'
 import { REGEX_SOCKET_LINK } from '../../Constants/Relay'
 import { push } from '../../lib/Navigation'
-import { User } from '../../Functions/DatabaseFunctions/Users'
 import { Kind } from 'nostr-tools'
 import ProfileData from '../ProfileData'
 import { relayToColor } from '../../Functions/NativeFunctions'
 
 interface NoteCardProps {
   note?: Note
-  onPressUser?: (user: User) => void
   showAvatarImage?: boolean
   showAnswerData?: boolean
   showAction?: boolean
@@ -60,14 +58,13 @@ export const NoteCard: React.FC<NoteCardProps> = ({
   showActionCount = true,
   showPreview = true,
   showRepostPreview = true,
-  onPressUser = () => {},
   numberOfLines,
   mode = 'elevated',
 }) => {
   const theme = useTheme()
   const { publicKey, privateKey } = React.useContext(UserContext)
-  const { relayPool, lastEventId } = useContext(RelayPoolContext)
-  const { database, showSensitive } = useContext(AppContext)
+  const { relayPool, lastEventId, setDisplayrelayDrawer } = useContext(RelayPoolContext)
+  const { database, showSensitive, setDisplayUserDrawer } = useContext(AppContext)
   const [relayAdded, setRelayAdded] = useState<boolean>(false)
   const [positiveReactions, setPositiveReactions] = useState<number>(0)
   const [negaiveReactions, setNegativeReactions] = useState<number>(0)
@@ -171,7 +168,7 @@ export const NoteCard: React.FC<NoteCardProps> = ({
           ) : (
             <TextContent
               event={note}
-              onPressUser={onPressUser}
+              onPressUser={(user) => setDisplayUserDrawer(user.id)}
               showPreview={showPreview}
               numberOfLines={numberOfLines}
             />
@@ -266,7 +263,7 @@ export const NoteCard: React.FC<NoteCardProps> = ({
   return note ? (
     <Card mode={mode}>
       <Card.Content style={styles.title}>
-        <TouchableRipple onPress={() => onPressUser({ id: note.pubkey, name: note.name })}>
+        <TouchableRipple onPress={() => setDisplayUserDrawer(note.pubkey)}>
           <ProfileData
             username={note?.name}
             publicKey={note.pubkey}
@@ -283,13 +280,13 @@ export const NoteCard: React.FC<NoteCardProps> = ({
             <IconButton
               icon='dots-vertical'
               size={25}
-              onPress={() => onPressUser({ id: note.pubkey, name: note.name })}
+              onPress={() => setDisplayUserDrawer(note.pubkey)}
             />
           </View>
         )}
       </Card.Content>
       {getNoteContent()}
-      {showAction && !note?.blocked > 0 && (
+      {showAction && (
         <Card.Content style={[styles.bottomActions, { borderColor: theme.colors.onSecondary }]}>
           <Button
             icon={() => (
@@ -361,15 +358,19 @@ export const NoteCard: React.FC<NoteCardProps> = ({
       )}
       <Card.Content style={styles.relayList}>
         {relays.map((relay, index) => (
-          <View
+          <TouchableNativeFeedback
+            onPress={() => setDisplayrelayDrawer(relay.relay_url)}
             key={relay.relay_url}
-            style={[
-              styles.relay,
-              { backgroundColor: relayToColor(relay.relay_url) },
-              index === 0 ? { borderBottomLeftRadius: 50 } : {},
-              index === relays.length - 1 ? { borderBottomRightRadius: 50 } : {},
-            ]}
-          />
+          >
+            <View
+              style={[
+                styles.relay,
+                { backgroundColor: relayToColor(relay.relay_url) },
+                index === 0 ? { borderBottomLeftRadius: 50 } : {},
+                index === relays.length - 1 ? { borderBottomRightRadius: 50 } : {},
+              ]}
+            />
+          </TouchableNativeFeedback>
         ))}
       </Card.Content>
     </Card>

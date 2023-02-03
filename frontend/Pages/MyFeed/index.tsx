@@ -24,10 +24,9 @@ import { useTranslation } from 'react-i18next'
 
 interface MyFeedProps {
   navigation: any
-  setProfileCardPubKey: (profileCardPubKey: string) => void
 }
 
-export const MyFeed: React.FC<MyFeedProps> = ({ navigation, setProfileCardPubKey }) => {
+export const MyFeed: React.FC<MyFeedProps> = ({ navigation }) => {
   const theme = useTheme()
   const { t } = useTranslation('common')
   const { database } = useContext(AppContext)
@@ -128,12 +127,7 @@ export const MyFeed: React.FC<MyFeedProps> = ({ navigation, setProfileCardPubKey
   const renderItem: ListRenderItem<Note> = ({ item }) => {
     return (
       <View style={styles.noteCard} key={item.id}>
-        <NoteCard
-          note={item}
-          onPressUser={(user) => {
-            setProfileCardPubKey(user.id)
-          }}
-        />
+        <NoteCard note={item} />
       </View>
     )
   }
