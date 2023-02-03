@@ -282,7 +282,7 @@ export const NoteCard: React.FC<NoteCardProps> = ({
           <View style={styles.topAction}>
             <IconButton
               icon='dots-vertical'
-              size={25}
+              size={24}
               onPress={() => onPressUser({ id: note.pubkey, name: note.name })}
             />
           </View>
@@ -295,7 +295,7 @@ export const NoteCard: React.FC<NoteCardProps> = ({
             icon={() => (
               <MaterialCommunityIcons
                 name='message-outline'
-                size={25}
+                size={24}
                 color={theme.colors.onPrimaryContainer}
               />
             )}
@@ -307,7 +307,7 @@ export const NoteCard: React.FC<NoteCardProps> = ({
             icon={() => (
               <MaterialCommunityIcons
                 name='cached'
-                size={25}
+                size={24}
                 color={userReposted ? '#7ADC70' : theme.colors.onPrimaryContainer}
               />
             )}
@@ -328,7 +328,7 @@ export const NoteCard: React.FC<NoteCardProps> = ({
             icon={() => (
               <MaterialCommunityIcons
                 name={userDownvoted ? 'thumb-down' : 'thumb-down-outline'}
-                size={25}
+                size={24}
                 color={theme.colors.onPrimaryContainer}
               />
             )}
@@ -347,7 +347,7 @@ export const NoteCard: React.FC<NoteCardProps> = ({
             icon={() => (
               <MaterialCommunityIcons
                 name={userUpvoted ? 'thumb-up' : 'thumb-up-outline'}
-                size={25}
+                size={24}
                 color={theme.colors.onPrimaryContainer}
               />
             )}
@@ -381,7 +381,7 @@ export const NoteCard: React.FC<NoteCardProps> = ({
 const styles = StyleSheet.create({
   relayList: {
     flexDirection: 'row',
-    marginTop: 16,
+    marginTop: 8,
     marginBottom: -16,
     marginLeft: -16,
     marginRight: -16,
@@ -421,7 +421,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
   },
   bottomActions: {
-    paddingTop: 16,
+    paddingTop: 8,
     flexDirection: 'row',
     justifyContent: 'space-around',
     borderTopWidth: 1,
@@ -437,7 +437,7 @@ const styles = StyleSheet.create({
   },
   content: {
     borderTopWidth: 1,
-    padding: 16,
+    padding: 12,
   },
   link: {
     textDecorationLine: 'underline',

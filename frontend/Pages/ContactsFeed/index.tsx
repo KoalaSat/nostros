@@ -330,7 +330,7 @@ export const ContactsFeed: React.FC = () => {
       {renderScene[tabKey]}
       {privateKey && (
         <AnimatedFAB
-          style={[styles.fab, { top: Dimensions.get('window').height - 220 }]}
+          style={[styles.fab, { top: Dimensions.get('window').height - 216 }]}
           icon='account-multiple-plus-outline'
           label='Label'
           onPress={() => bottomSheetAddContactRef.current?.open()}

@@ -169,7 +169,7 @@ export const ConfigPage: React.FC = () => {
         title={t('configPage.imageHostingService')}
         onPress={() => bottomSheetImageHostingRef.current?.open()}
         right={() => (
-          <Text>
+          <Text style={{color: theme.colors.onSurfaceVariant}}>
             {imageHostingServices[imageHostingService]?.uri ??
               t(`configPage.${imageHostingService}`)}
           </Text>
