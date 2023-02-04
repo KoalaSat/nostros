@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState } from 'react'
-import { FlatList, ListRenderItem, StyleSheet, View } from 'react-native'
+import { StyleSheet, View } from 'react-native'
 import { AppContext } from '../../Contexts/AppContext'
 import { Event } from '../../lib/nostr/Events'
 import { useTranslation } from 'react-i18next'
@@ -13,7 +13,6 @@ import { Asset, launchImageLibrary } from 'react-native-image-picker'
 import {
   Button,
   Card,
-  Divider,
   IconButton,
   Snackbar,
   Switch,
@@ -61,19 +60,18 @@ export const SendPage: React.FC<SendPageProps> = ({ route }) => {
     const match = text.match(/.*@(.*)$/)
     const note: Note | undefined = route.params?.note
     if (database && match && match?.length > 0) {
-      let request = getUsers(database, { name: match[1], order: 'contact DESC,name ASC' })
-
       if (match[1] === '' && note) {
         const taggedPubKeys = getTaggedPubKeys(note)
-        request = getUsers(database, {
+        getUsers(database, {
           includeIds: [...taggedPubKeys, note.pubkey],
-          order: 'contact DESC,name ASC',
+        }).then((results) => {
+          if (results) setUserSuggestions(results.filter((item) => item.id !== publicKey))
+        })
+      } else {
+        getUsers(database, { name: match[1] }).then((results) => {
+          if (results) setUserSuggestions(results.filter((item) => item.id !== publicKey))
         })
       }
-
-      request.then((results) => {
-        setUserSuggestions(results.filter((item) => item.id !== publicKey))
-      })
     } else {
       setUserSuggestions([])
     }
@@ -180,7 +178,7 @@ export const SendPage: React.FC<SendPageProps> = ({ route }) => {
     setUserSuggestions([])
   }
 
-  const renderContactItem: ListRenderItem<User> = ({ item, index }) => (
+  const renderContactItem: (item: User, index: number) => JSX.Element = (item, index) => (
     <TouchableRipple onPress={() => addUserMention(item)}>
       <View key={index} style={styles.contactRow}>
         <ProfileData
@@ -216,7 +214,7 @@ export const SendPage: React.FC<SendPageProps> = ({ route }) => {
 
   return (
     <>
-      <View style={[styles.textInputContainer, { paddingBottom: note ? 200 : 10 }]}>
+      <View style={[styles.textInputContainer, { paddingBottom: note ? 230 : 10 }]}>
         {note && (
           <View style={styles.noteCard}>
             <NoteCard
@@ -245,12 +243,7 @@ export const SendPage: React.FC<SendPageProps> = ({ route }) => {
       <View style={styles.actions}>
         {userSuggestions.length > 0 ? (
           <View style={styles.contactsList}>
-            <FlatList
-              data={userSuggestions}
-              renderItem={renderContactItem}
-              ItemSeparatorComponent={Divider}
-              horizontal={false}
-            />
+            {userSuggestions.map((user, index) => renderContactItem(user, index))}
           </View>
         ) : (
           <View style={{ backgroundColor: theme.colors.elevation.level1 }}>
@@ -356,7 +349,7 @@ const styles = StyleSheet.create({
   },
   contactsList: {
     bottom: 0,
-    maxHeight: 200,
+    height: 200,
   },
   contactRow: {
     paddingLeft: 16,

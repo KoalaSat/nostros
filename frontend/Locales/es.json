@@ -69,7 +69,8 @@
       "satoshi": "Símbolo de satoshi",
       "imageHostingService": "Servicio de subida de imágenes",
       "random": "Aleatorio",
-      "language": "Idioma"
+      "language": "Idioma",
+      "relayColoruring": "Coloreado de relays"
     },
     "noteCard": {
       "answering": "Responder a {{pubkey}}",
@@ -249,7 +250,7 @@
     "language": {
       "en": "English",
       "es": "Español",
-      "fr": "François",
+      "fr": "Français",
       "ru": "Русский",
       "de": "Deutsch"
     },
