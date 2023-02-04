@@ -148,7 +148,7 @@
       "emptyTitle": "Du folgst niemandem",
       "emptyDescription": "Folge Anderen um hier etwas zu sehen",
       "emptyButton": "Kontakte",
-      "globalFeed": "Global Feed",
+      "globalFeed": "Globaler Feed",
       "newMessage": "{{newNotesCount}} neue Nachricht. Zum Aktualisieren wischen.",
       "newMessages": "{{newNotesCount}} neue Nachrichten. Zum Aktualisieren wischen.",
       "myFeed": "Mein Feed"
@@ -156,7 +156,7 @@
     "relayCard": {
       "moreInfo": "Mehr Infos",
       "lessInfo": "Weniger Infos",
-      "globalFeed": "Global Feed",
+      "globalFeed": "Globaler Feed",
       "active": "Aktiv",
       "share": "Teilen",
       "pubkey": "Öffentlicher Schlüssel",
@@ -214,7 +214,7 @@
       "nip05Title": "NIP-05",
       "directoryCancell": "Abbrechen",
       "directoryContinue": "Weiter",
-      "directoryDescription": "Nostr Directory ist ein Verzeichnis Nutzern und ihren öffentlichen Schlüsseln, die bereits auf anderen Platformen offiziell Inhalte veröffentlichen. Finde hier Leute, denen du bereits auf anderen Platformen folgst, und hinterlasse deinen öffentlichen Schlüssel, damit andere dich auf Nostr finden können.\n\nBeim Fortfahren muss der Verifikationsprozess auf externen Platformen durchgeführt werden.",
+      "directoryDescription": "Nostr Directory ist ein Verzeichnis von Nutzern und ihren öffentlichen Schlüsseln, die bereits auf anderen Platformen offiziell Inhalte veröffentlichen. Finde hier Leute, denen du bereits auf anderen Platformen folgst, und hinterlasse deinen öffentlichen Schlüssel, damit andere dich auf Nostr finden können.\n\nBeim Fortfahren muss der Verifikationsprozess auf externen Platformen durchgeführt werden.",
       "directoryTitle": "Nostr Directory",
       "publishPicture": "Veröffentlichen",
       "pictureUrl": "Bild URL",
