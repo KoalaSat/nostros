@@ -18,15 +18,26 @@ import ConfigPage from '../ConfigPage'
 import { RelayPoolContext } from '../../Contexts/RelayPoolContext'
 import { AppContext } from '../../Contexts/AppContext'
 import RelayCard from '../../Components/RelayCard'
+import ProfileShare from '../../Components/ProfileShare'
+import { updateAllRead } from '../../Functions/DatabaseFunctions/DirectMessages'
+import { getUnixTime } from 'date-fns'
 
 export const HomeNavigator: React.FC = () => {
   const theme = useTheme()
   const { t } = useTranslation('common')
   const { displayRelayDrawer, setDisplayrelayDrawer } = React.useContext(RelayPoolContext)
-  const { displayUserDrawer, setDisplayUserDrawer } = React.useContext(AppContext)
+  const {
+    displayUserDrawer,
+    setDisplayUserDrawer,
+    displayUserShareDrawer,
+    setDisplayUserShareDrawer,
+    setRefreshBottomBarAt,
+    database,
+  } = React.useContext(AppContext)
   const bottomSheetRef = React.useRef<RBSheet>(null)
   const bottomSheetProfileRef = React.useRef<RBSheet>(null)
   const bottomSheetRelayRef = React.useRef<RBSheet>(null)
+  const bottomSheetShareRef = React.useRef<RBSheet>(null)
   const Stack = React.useMemo(() => createStackNavigator(), [])
   const cardStyleInterpolator = React.useMemo(
     () =>
@@ -54,6 +65,11 @@ export const HomeNavigator: React.FC = () => {
     bottomSheetRef.current?.open()
   }
 
+  const onPressCheckAll: () => void = () => {
+    if (database) updateAllRead(database)
+    setRefreshBottomBarAt(getUnixTime(new Date()))
+  }
+
   React.useEffect(() => {
     if (displayRelayDrawer) bottomSheetRelayRef.current?.open()
   }, [displayRelayDrawer])
@@ -62,6 +78,10 @@ export const HomeNavigator: React.FC = () => {
     if (displayUserDrawer) bottomSheetProfileRef.current?.open()
   }, [displayUserDrawer])
 
+  React.useEffect(() => {
+    if (displayUserShareDrawer) bottomSheetShareRef.current?.open()
+  }, [displayUserShareDrawer])
+
   return (
     <>
       <Stack.Navigator
@@ -69,7 +89,12 @@ export const HomeNavigator: React.FC = () => {
           return {
             detachPreviousScreen: !navigation.isFocused(),
             cardStyleInterpolator,
-            header: ({ navigation, route, back }) => {
+            header: (headerData) => {
+              const { navigation, route, back } = headerData
+              const routes = navigation.getState().routes
+              const routeState = routes[0]?.state
+              const history = routeState?.history ?? []
+              const historyKey = history[0]?.key
               return (
                 <Appbar.Header>
                   {back ? (
@@ -100,6 +125,13 @@ export const HomeNavigator: React.FC = () => {
                       icon='help-circle-outline'
                       isLeading
                       onPress={() => onPressQuestion(route.name)}
+                    />
+                  )}
+                  {historyKey?.includes('messages-') && (
+                    <Appbar.Action
+                      icon='check-all'
+                      isLeading
+                      onPress={() => onPressCheckAll(route.name)}
                     />
                   )}
                 </Appbar.Header>
@@ -145,6 +177,14 @@ export const HomeNavigator: React.FC = () => {
           <Text variant='headlineSmall'>{t('drawers.relaysTitle')}</Text>
           <Text variant='bodyMedium'>{t('drawers.relaysDescription')}</Text>
         </View>
+      </RBSheet>
+      <RBSheet
+        ref={bottomSheetShareRef}
+        closeOnDragDown={true}
+        customStyles={bottomSheetStyles}
+        onClose={() => setDisplayUserShareDrawer(undefined)}
+      >
+        <ProfileShare />
       </RBSheet>
     </>
   )

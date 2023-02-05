@@ -103,9 +103,9 @@ public class RelayPoolModule extends ReactContextBaseJavaModule {
     }
 
     @ReactMethod
-    public void send(String message, boolean globalFeed) {
+    public void send(String message, boolean isGlobalFeed) {
         for (Relay relay : relays) {
-            if (relay.active() > 0 && (!globalFeed || relay.globalFeed > 0)) {
+            if (relay.active() > 0 && (!isGlobalFeed || relay.globalFeed > 0)) {
                 relay.send(message);
             }
         }

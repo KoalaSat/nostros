@@ -63,6 +63,7 @@ export const ConversationPage: React.FC<ConversationPageProps> = ({ route }) => 
   const loadDirectMessages: (subscribe: boolean) => void = (subscribe) => {
     if (database && publicKey) {
       const conversationId = route.params?.conversationId
+      updateConversationRead(conversationId, database)
       getUser(otherPubKey, database).then((user) => {
         if (user) setOtherUser(user)
       })
@@ -76,9 +77,6 @@ export const ConversationPage: React.FC<ConversationPageProps> = ({ route }) => 
                 return message
               }),
             )
-            if (results.length > 0) {
-              updateConversationRead(results[0].conversation_id, database)
-            }
             if (subscribe) {
               subscribeDirectMessages(results[0].created_at)
             }

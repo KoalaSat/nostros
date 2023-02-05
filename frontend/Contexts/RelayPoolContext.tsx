@@ -117,7 +117,7 @@ export const RelayPoolContextProvider = ({
     return await new Promise((resolve, _reject) => {
       if (relayPool && database && publicKey) {
         relayPool.add(relay.url, () => {
-          resolve()
+          loadRelays().then(resolve)
         })
       }
     })
@@ -128,7 +128,7 @@ export const RelayPoolContextProvider = ({
     return await new Promise((resolve, _reject) => {
       if (relayPool && database && publicKey) {
         relayPool.remove(relay.url, () => {
-          resolve()
+          loadRelays().then(resolve)
         })
       }
     })

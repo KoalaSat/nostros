@@ -7,7 +7,6 @@ import {
   StyleSheet,
   View,
 } from 'react-native'
-import Clipboard from '@react-native-clipboard/clipboard'
 import { Surface, Text, IconButton, ActivityIndicator, Snackbar } from 'react-native-paper'
 import { FlashList, ListRenderItem } from '@shopify/flash-list'
 import { AppContext } from '../../Contexts/AppContext'
@@ -24,7 +23,6 @@ import LnPayment from '../../Components/LnPayment'
 import { handleInfinityScroll } from '../../Functions/NativeFunctions'
 import { navigate } from '../../lib/Navigation'
 import { useFocusEffect } from '@react-navigation/native'
-import { getNpub } from '../../lib/nostr/Nip19'
 import ProfileData from '../../Components/ProfileData'
 
 interface ProfilePageProps {
@@ -32,7 +30,7 @@ interface ProfilePageProps {
 }
 
 export const ProfilePage: React.FC<ProfilePageProps> = ({ route }) => {
-  const { database } = useContext(AppContext)
+  const { database, setDisplayUserShareDrawer } = useContext(AppContext)
   const { publicKey } = useContext(UserContext)
   const { lastEventId, relayPool } = useContext(RelayPoolContext)
   const { t } = useTranslation('common')
@@ -219,15 +217,13 @@ export const ProfilePage: React.FC<ProfilePageProps> = ({ route }) => {
             </View>
             <View style={styles.actionButton}>
               <IconButton
-                icon='content-copy'
+                icon='share-variant-outline'
                 size={28}
                 onPress={() => {
-                  setShowNotification('copyNPub')
-                  const profileNPud = getNpub(route.params.pubKey)
-                  Clipboard.setString(profileNPud ?? '')
+                  setDisplayUserShareDrawer(user?.id)
                 }}
               />
-              <Text>{t('profilePage.copyNPub')}</Text>
+              <Text>{t('profileCard.share')}</Text>
             </View>
             <View style={styles.actionButton}>
               {user?.lnurl && (

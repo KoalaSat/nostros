@@ -35,6 +35,10 @@ export interface AppContextProps {
   checkClipboard: () => void
   displayUserDrawer?: string
   setDisplayUserDrawer: (displayUserDrawer: string | undefined) => void
+  displayUserShareDrawer?: string
+  setDisplayUserShareDrawer: (displayUserShareDrawer: string | undefined) => void
+  refreshBottomBarAt?: number
+  setRefreshBottomBarAt: (refreshBottomBarAt: number) => void
 }
 
 export interface AppContextProviderProps {
@@ -47,6 +51,8 @@ export const initialAppContext: AppContextProps = {
   database: null,
   notificationSeenAt: 0,
   setNotificationSeenAt: () => {},
+  refreshBottomBarAt: 0,
+  setRefreshBottomBarAt: () => {},
   showPublicImages: false,
   setShowPublicImages: () => {},
   language:
@@ -68,6 +74,7 @@ export const initialAppContext: AppContextProps = {
   getSatoshiSymbol: () => <></>,
   setClipboardNip21: () => {},
   setDisplayUserDrawer: () => {},
+  setDisplayUserShareDrawer: () => {},
 }
 
 export const AppContextProvider = ({ children }: AppContextProviderProps): JSX.Element => {
@@ -85,12 +92,14 @@ export const AppContextProvider = ({ children }: AppContextProviderProps): JSX.E
     initialAppContext.imageHostingService,
   )
   const [notificationSeenAt, setNotificationSeenAt] = React.useState<number>(0)
+  const [refreshBottomBarAt, setRefreshBottomBarAt] = React.useState<number>(0)
   const [satoshi, setSatoshi] = React.useState<'kebab' | 'sats'>(initialAppContext.satoshi)
   const [database, setDatabase] = useState<QuickSQLiteConnection | null>(null)
   const [loadingDb, setLoadingDb] = useState<boolean>(initialAppContext.loadingDb)
   const [clipboardLoads, setClipboardLoads] = React.useState<string[]>([])
   const [clipboardNip21, setClipboardNip21] = React.useState<string>()
   const [displayUserDrawer, setDisplayUserDrawer] = React.useState<string>()
+  const [displayUserShareDrawer, setDisplayUserShareDrawer] = React.useState<string>()
 
   useEffect(() => {
     const handleChange = AppState.addEventListener('change', (changedState) => {
@@ -209,6 +218,10 @@ export const AppContextProvider = ({ children }: AppContextProviderProps): JSX.E
         satoshi,
         setSatoshi,
         getSatoshiSymbol,
+        setDisplayUserShareDrawer,
+        displayUserShareDrawer,
+        refreshBottomBarAt,
+        setRefreshBottomBarAt,
       }}
     >
       {children}

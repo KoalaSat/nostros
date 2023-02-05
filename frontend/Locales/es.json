@@ -26,7 +26,8 @@
       "Config": "Configuración",
       "Send": "Send",
       "Relays": "Relays",
-      "ProfileConfig": "Mi perfil"
+      "ProfileConfig": "Mi perfil",
+      "markAllRead": "Marcar todo como leído"
     },
     "conversationPage": {
       "typeMessage": "Escribir mensaje",
@@ -131,7 +132,7 @@
       "emptyButtonFollower": "Copiar clave pública",
       "cancel": "Cancelar",
       "addContact": "Añadir contacto",
-      "addContactDescription": "Pega la clave pública de quien desees añadir.",
+      "addContactDescription": "Pega la clave pública o NIP-05 de quien desees añadir.",
       "addContactTitle": "Añadir contacto",
       "followers": "Seguidores ({{count}})",
       "following": "Siguiendo ({{count}})",
@@ -254,11 +255,18 @@
       "ru": "Русский",
       "de": "Deutsch"
     },
+    "profileShare": {
+      "notifications": {
+        "npubCopied": "Clave pública copiada.",
+        "nip05Copied": "NIP-05 copiada."
+      },
+      "copyNip05": "Copiar NIP-05",
+      "copyNPub": "Copiar clave"
+    },
     "profileCard": {
       "notifications": {
         "contactAdded": "Siguiendo",
-        "contactRemoved": "Dejando de seguir",
-        "npubCopied": "Clave pública copiada."
+        "contactRemoved": "Dejando de seguir"
       },
       "invoice": "Propina",
       "message": "Mensaje",
@@ -266,9 +274,7 @@
       "block": "Bloquear",
       "share": "Share",
       "unblock": "Desbloquear",
-      "unfollow": "Siguiendo",
-      "copyNip05": "Copiar NIP-05",
-      "copyNPub": "Copiar clave"
+      "unfollow": "Siguiendo"
     },
     "conversationsFeed": {
       "openMessage": "Comenzar conversación",

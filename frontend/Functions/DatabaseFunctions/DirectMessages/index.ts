@@ -21,6 +21,31 @@ export const updateConversationRead: (
   return db.execute(userQuery, [1, conversationId])
 }
 
+export const updateAllRead: (db: QuickSQLiteConnection) => Promise<QueryResult | null> = async (
+  db,
+) => {
+  const userQuery = `UPDATE nostros_direct_messages SET read = ?`
+  return db.execute(userQuery, [1])
+}
+
+export const getDirectMessagesCount: (
+  db: QuickSQLiteConnection,
+  pubKey: string
+) => Promise<number> = async (db, pubKey) => {
+  const repliesQuery = `
+    SELECT
+      COUNT(*)
+    FROM nostros_direct_messages
+    WHERE 
+    pubkey != '${pubKey}' 
+    AND read = 0
+  `
+  const resultSet = db.execute(repliesQuery)
+  const item: { 'COUNT(*)': number } = resultSet?.rows?.item(0)
+
+  return item['COUNT(*)'] ?? 0
+}
+
 export const getGroupedDirectMessages: (
   db: QuickSQLiteConnection,
   options: {

@@ -36,6 +36,7 @@ import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityI
 import { useFocusEffect } from '@react-navigation/native'
 import ProfileData from '../../Components/ProfileData'
 import { handleInfinityScroll } from '../../Functions/NativeFunctions'
+import { queryProfile } from 'nostr-tools/nip05'
 
 export const ContactsFeed: React.FC = () => {
   const { t } = useTranslation('common')
@@ -109,10 +110,19 @@ export const ContactsFeed: React.FC = () => {
     }
   }
 
-  const onPressAddContact: () => void = () => {
+  const onPressAddContact: () => Promise<void> = async () => {
     if (contactInput && relayPool && database && publicKey) {
       setIsAddingContact(true)
-      const hexKey = getNip19Key(contactInput) ?? contactInput
+
+      let hexKey = contactInput
+
+      if (contactInput.includes('@')) {
+        const profile = await queryProfile(contactInput)
+        hexKey = profile?.pubkey ?? hexKey
+      } else {
+        hexKey = getNip19Key(contactInput) ?? hexKey
+      }
+
       if (hexKey) {
         updateUserContact(hexKey, database, true)
           .then(() => {

@@ -26,7 +26,8 @@
       "Config": "Config",
       "Send": "Send",
       "Relays": "Relays",
-      "ProfileConfig": "My profile"
+      "ProfileConfig": "My profile",
+      "markAllRead": "Mark all as read"
     },
     "conversationPage": {
       "typeMessage": "Type message",
@@ -70,7 +71,7 @@
       "imageHostingService": "Image hosting service",
       "random": "Random",
       "language": "Language",
-      "relayColoruring": "Relay coloruring"
+      "relayColoruring": "Relay colouring"
     },
     "noteCard": {
       "answering": "Answer to {{pubkey}}",
@@ -130,7 +131,7 @@
       "emptyButtonFollower": "Copy public key",
       "cancel": "Cancel",
       "addContact": "Add contact",
-      "addContactDescription": "Paste here the public key of the profile you want to add.",
+      "addContactDescription": "Paste here the public key or NIP-05 of the profile you want to add.",
       "addContactTitle": "Add contact",
       "followers": "Followers ({{count}})",
       "following": "Following ({{count}})",
@@ -268,11 +269,18 @@
       "ru": "Русский",
       "de": "Deutsch"
     },
+    "profileShare": {
+      "notifications": {
+        "npubCopied": "Public key copied.",
+        "nip05Copied": "NIP-05 copied."
+      },
+      "copyNip05": "Copy NIP-05",
+      "copyNPub": "Copy key"
+    },
     "profileCard": {
       "notifications": {
         "contactAdded": "Profile followed",
-        "contactRemoved": "Profile unfollowed",
-        "npubCopied": "Public key copied."
+        "contactRemoved": "Profile unfollowed"
       },
       "invoice": "Tip",
       "message": "Message",
@@ -280,9 +288,7 @@
       "unfollow": "Following",
       "block": "Block",
       "unblock": "Unblock",
-      "share": "Share",
-      "copyNip05": "Copy NIP-05",
-      "copyNPub": "Copy key"
+      "share": "Share"
     },
     "conversationsFeed": {
       "openMessage": "Start conversation",

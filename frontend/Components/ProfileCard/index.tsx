@@ -1,8 +1,7 @@
 import { t } from 'i18next'
 import * as React from 'react'
 import { StyleSheet, View } from 'react-native'
-import Clipboard from '@react-native-clipboard/clipboard'
-import { Card, IconButton, Snackbar, Text, TouchableRipple, useTheme } from 'react-native-paper'
+import { Card, IconButton, Snackbar, Text, useTheme } from 'react-native-paper'
 import { AppContext } from '../../Contexts/AppContext'
 import { RelayPoolContext } from '../../Contexts/RelayPoolContext'
 import { UserContext } from '../../Contexts/UserContext'
@@ -12,7 +11,6 @@ import {
   updateUserContact,
   User,
 } from '../../Functions/DatabaseFunctions/Users'
-import Share from 'react-native-share'
 import { populatePets, usernamePubKey } from '../../Functions/RelayFunctions/Users'
 import LnPayment from '../LnPayment'
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'
@@ -20,7 +18,6 @@ import { navigate, push } from '../../lib/Navigation'
 import RBSheet from 'react-native-raw-bottom-sheet'
 import { getNpub } from '../../lib/nostr/Nip19'
 import ProfileData from '../ProfileData'
-import QRCode from 'react-native-qrcode-svg'
 
 interface ProfileCardProps {
   bottomSheetRef: React.RefObject<RBSheet>
@@ -30,8 +27,7 @@ interface ProfileCardProps {
 export const ProfileCard: React.FC<ProfileCardProps> = ({ bottomSheetRef, showImages = true }) => {
   const theme = useTheme()
   const { displayUserDrawer } = React.useContext(AppContext)
-  const bottomSheetShareRef = React.useRef<RBSheet>(null)
-  const { database } = React.useContext(AppContext)
+  const { database, setDisplayUserShareDrawer } = React.useContext(AppContext)
   const { publicKey } = React.useContext(UserContext)
   const { relayPool } = React.useContext(RelayPoolContext)
   const [user, setUser] = React.useState<User>()
@@ -39,7 +35,6 @@ export const ProfileCard: React.FC<ProfileCardProps> = ({ bottomSheetRef, showIm
   const [openLn, setOpenLn] = React.useState<boolean>(false)
   const [isContact, setIsContact] = React.useState<boolean>()
   const [showNotification, setShowNotification] = React.useState<undefined | string>()
-  const [qrCode, setQrCode] = React.useState<any>()
   const nPub = React.useMemo(() => getNpub(displayUserDrawer), [displayUserDrawer])
   const username = React.useMemo(() => usernamePubKey(user?.name ?? '', nPub), [nPub, user])
 
@@ -95,21 +90,6 @@ export const ProfileCard: React.FC<ProfileCardProps> = ({ bottomSheetRef, showIm
     bottomSheetRef.current?.close()
     push('Profile', { pubKey: displayUserDrawer, title: username })
   }
-
-  const bottomSheetStyles = React.useMemo(() => {
-    return {
-      container: {
-        backgroundColor: theme.colors.background,
-        paddingTop: 16,
-        paddingRight: 16,
-        paddingBottom: 32,
-        paddingLeft: 16,
-        borderTopRightRadius: 28,
-        borderTopLeftRadius: 28,
-        height: 'auto',
-      },
-    }
-  }, [])
 
   return (
     <View>
@@ -175,7 +155,7 @@ export const ProfileCard: React.FC<ProfileCardProps> = ({ bottomSheetRef, showIm
             icon='share-variant-outline'
             size={28}
             onPress={() => {
-              bottomSheetShareRef.current?.open()
+              setDisplayUserShareDrawer(user?.id)
             }}
           />
           <Text>{t('profileCard.share')}</Text>
@@ -214,60 +194,6 @@ export const ProfileCard: React.FC<ProfileCardProps> = ({ bottomSheetRef, showIm
         </Snackbar>
       )}
       <LnPayment setOpen={setOpenLn} open={openLn} user={user} />
-      <RBSheet ref={bottomSheetShareRef} closeOnDragDown={true} customStyles={bottomSheetStyles}>
-        <View style={styles.mainLayout}>
-          <View style={styles.qr}>
-            <TouchableRipple
-              onPress={() => {
-                if (qrCode) {
-                  qrCode.toDataURL((base64: string) => {
-                    Share.open({
-                      url: `data:image/png;base64,${base64}`,
-                      filename: user?.id ?? 'nostrosshare',
-                    })
-                  })
-                }
-              }}
-            >
-              <QRCode
-                quietZone={8}
-                value={`nostr:${nPub}`}
-                size={350}
-                logoBorderRadius={50}
-                logoSize={100}
-                logo={{ uri: user?.picture }}
-                getRef={setQrCode}
-              />
-            </TouchableRipple>
-          </View>
-          <View style={styles.shareActionButton}>
-            <IconButton
-              icon='key-outline'
-              size={28}
-              onPress={() => {
-                setShowNotification('npubCopied')
-                Clipboard.setString(nPub ?? '')
-                bottomSheetShareRef.current?.close()
-              }}
-            />
-            <Text>{t('profileCard.copyNPub')}</Text>
-          </View>
-          {user?.nip05 && (
-            <View style={styles.shareActionButton}>
-              <IconButton
-                icon='check-decagram-outline'
-                size={28}
-                onPress={() => {
-                  setShowNotification('npubCopied')
-                  Clipboard.setString(user?.nip05 ?? '')
-                  bottomSheetShareRef.current?.close()
-                }}
-              />
-              <Text>{t('profileCard.copyNip05')}</Text>
-            </View>
-          )}
-        </View>
-      </RBSheet>
     </View>
   )
 }

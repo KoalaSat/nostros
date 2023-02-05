@@ -26,7 +26,8 @@
       "Config": "Configuration",
       "Send": "Envoyer",
       "Relays": "Relais",
-      "ProfileConfig": "Mon profil"
+      "ProfileConfig": "Mon profil",
+      "markAllRead": "Mark all as read"
     },
     "conversationPage": {
       "typeMessage": "Écrire un message",
@@ -241,19 +242,25 @@
       "unfollow": "Abonné",
       "copyNPub": "Copier la clé"
     },
+    "profileShare": {
+      "notifications": {
+        "npubCopied": "Clé publique copiée",
+        "nip05Copied": "NIP-05 copied."
+      },
+      "copyNip05": "Copiar NIP-05",
+      "copyNPub": "Copier la clé"
+    },
     "profileCard": {
       "notifications": {
         "contactAdded": "Abonné",
-        "contactRemoved": "Vous ne suivez plus ce profil",
-        "npubCopied": "Clé publique copiée"
+        "contactRemoved": "Vous ne suivez plus ce profil"
       },
       "invoice": "Tip",
       "message": "Message",
       "follow": "Abonné",
       "block": "Bloquer",
       "unblock": "Débloquer",
-      "unfollow": "Abonné",
-      "copyNPub": "Copier la clé"
+      "unfollow": "Abonné"
     },
     "conversationsFeed": {
       "openMessage": "Commencer la conversation",
