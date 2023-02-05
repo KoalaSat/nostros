@@ -1,0 +1,299 @@
+{
+  "common": {
+    "drawers": {
+      "relaysTitle": "Relays",
+      "relaysDescription": "Relays are nodes on the network that act as intermediaries for the transmission of messages between applications.\n\n\nRelays can be used to improve network resiliency and availability by allowing messages to be delivered even when there are failures or interruptions in connectivity.\n\n\nRelays can also be used to improve privacy and network security, as they can hide the location and identity of applications that communicate with each other. This can be useful in environments where censorship or surveillance is an issue.\n\n\nIt is important to note that relays can also be used for malicious purposes, such as sniffing or censoring network traffic.\n\n\nTherefore, it is important to carefully evaluate the use of relays and consider appropriate security measures to protect privacy and network security.",
+      "keysTitle": "What are these keys?",
+      "keysDescription": "In nostr, you get two keys: your public key and your private key.",
+      "publicKeys": "Public key",
+      "publicKeysDescription": "Think of the public key as your username (like your @handle on other applications). Share it with other people so they can add you to their network.",
+      "privateKey": "Private key",
+      "privateKeyDescription": "Think of your private key as your password.",
+      "privateKeysSnackbarTitle": "Important.",
+      "privateKeysSnackbarDescription": "Keep your private key in a safe place. If you lose it, you will not be able to access it again or recover your account."
+    },
+    "homeNavigator": {
+      "ProfileCreate": "",
+      "ProfileConnect": "",
+      "ProfileLoad": "",
+      "Landing": "",
+      "Conversation": "Conversation",
+      "Repost": "Repost note",
+      "Reply": "Reply",
+      "Note": "Note",
+      "Profile": "Profile",
+      "About": "About",
+      "Config": "Config",
+      "Send": "Send",
+      "Relays": "Relays",
+      "ProfileConfig": "My profile"
+    },
+    "conversationPage": {
+      "typeMessage": "Type message",
+      "notifications": {
+        "privateMessageSendError": "There was an error sending your message."
+      }
+    },
+    "profileLoadPage": {
+      "relaysDescripion": "Connect with other relays if you have problems finding your data.",
+      "relays": "See relays",
+      "home": "Go Home",
+      "searchingProfile": "Searching for your profile",
+      "foundProfile": "Found profile",
+      "foundContacts": "{{contactsCount}} contacts found"
+    },
+    "sendPage": {
+      "isContact": "Following",
+      "isNotContact": "Not following",
+      "contentWarning": "Sensitive content",
+      "send": "Send",
+      "imageUploaded": "Your file has been uploaded.\nConsider donating to the service:\n{{uri}}",
+      "imageUploadErro": "There was an error while trying to upload your file",
+      "uploadImage": "Upload image now",
+      "cancel": "Cancel",
+      "poweredBy": "Powered by {{uri}}"
+    },
+    "menuItems": {
+      "relays": "Relays",
+      "notConnected": "Not connected",
+      "connectedRelays": "{{number}} connected",
+      "following": "{{following}} following",
+      "followers": "{{followers}} followers",
+      "configuration": "Configuration",
+      "about": "About",
+      "logout": "Logout"
+    },
+    "configPage": {
+      "showPublicImages": "Show images on public feed",
+      "showSensitive": "Show sensitive notes",
+      "satoshi": "Satoshi symbol",
+      "imageHostingService": "Image hosting service",
+      "random": "Random",
+      "language": "Language",
+      "relayColoruring": "Relay coloruring"
+    },
+    "noteCard": {
+      "answering": "Answer to {{pubkey}}",
+      "reposting": "Reposted {{pubkey}}",
+      "userBlocked": "User blocked",
+      "seeParent": "See note",
+      "contentWarning": "Sensitive content",
+      "recommendation": "Relay recomendation",
+      "addRelay": "Add relay"
+    },
+    "lnPayment": {
+      "monto": "Amount (sats)",
+      "comment": "Comment (optional)",
+      "generateInvoice": "Generate invoice",
+      "cancel": "Cancel",
+      "npub": "Public key",
+      "copy": "Copy",
+      "open": "Open wallet"
+    },
+    "notificationsFeed": {
+      "emptyTitle": "You don't have any notifications.",
+      "emptyDescription": "Write a message to get replies and reactions.",
+      "emptyButton": "Write a message."
+    },
+    "profileCreatePage": {
+      "notifications": {
+        "copied": "Private key copied.\n\nStore this key in a safe place."
+      },
+      "warningTitle": "Important",
+      "warningDescription": "Store your key in a safe place. If lose it, you won't be able to access or recover your profile.",
+      "warningAction": "Copy private key",
+      "accessButton": "Access",
+      "label": "Private key",
+      "copied": "Key copied",
+      "description": "Store your key in a safe place."
+    },
+    "loggerPage": {
+      "createButton": "Create keys",
+      "notKeys": "Don't have keys?",
+      "isPublic": "Access with public key",
+      "accessButton": "Access",
+      "privateKey": "Private key",
+      "publicKey": "Public key"
+    },
+    "contactsFeed": {
+      "notifications": {
+        "keyCopied": "Public key copied.",
+        "contactAdded": "Profile followed.",
+        "addContactError": "There was an error publishing your changes.",
+        "contactRemoved": "Profile unfollowed."
+      },
+      "emptyTitleFollowing": "You are not following anyone.",
+      "emptyDescriptionFollowing": "Follow other profiles to see content.",
+      "emptyButtonFollowing": "Paste public key",
+      "emptyTitleFollower": "You have no followers",
+      "emptyDescriptionFollower": "Share your public key so people can start following you.",
+      "emptyButtonFollower": "Copy public key",
+      "cancel": "Cancel",
+      "addContact": "Add contact",
+      "addContactDescription": "Paste here the public key of the profile you want to add.",
+      "addContactTitle": "Add contact",
+      "followers": "Followers ({{count}})",
+      "following": "Following ({{count}})",
+      "stopFollowing": "Stop Following",
+      "follow": "Follow"
+    },
+    "aboutPage": {
+      "gitHub": "GitHub",
+      "nostr": "nostr",
+      "nips": "NIPs",
+      "version": "Version"
+    },
+    "reactionsFeed": {
+      "emptyTitle": "You still didn't reacted",
+      "emptyDescription": "See here the notes you reacted to."
+    },
+    "repostsFeed": {
+      "emptyTitle": "You still didn't reposted",
+      "emptyDescription": "See here the notes you reposted."
+    },
+    "homeFeed": {
+      "emptyTitle": "You are not following anyone",
+      "emptyDescription": "Follow other profiles to see content.",
+      "emptyButton": "Go to contacts",
+      "globalFeed": "Global feed",
+      "myFeed": "My feed",
+      "reactions": "Reactions",
+      "mentions": "Mentions",
+      "reposts": "Reposts",
+      "newMessage": "{{newNotesCount}} new note. Pull to refresh.",
+      "newMessages": "{{newNotesCount}} new notes. Pull to refresh."
+    },
+    "relaysPage": {
+      "relayName": "Address",
+      "globalFeed": "Global feed",
+      "active": "Active",
+      "labelAdd": "Relay address",
+      "cancel": "Cancel",
+      "add": "Add",
+      "removeRelay": "Remove",
+      "copyRelay": "Copy",
+      "recommended": "Recommended",
+      "myList": "My relays",
+      "notifications": {
+        "globalFeedActive": "Global feed enabled.",
+        "globalFeedActiveUnactive": "Global feed disabled.",
+        "add": "Relay added.",
+        "remove": "Relay removed.",
+        "active": "Relay activated.",
+        "desactive": "Relay desactivated.",
+        "badFormat": "Relay URL has a bad format.",
+        "alreadyExists": "Relay already exists."
+      }
+    },
+    "relayCard": {
+      "moreInfo": "More info",
+      "lessInfo": "Less info",
+      "globalFeed": "Global Feed",
+      "active": "Active",
+      "share": "Share",
+      "pubkey": "Public key",
+      "contact": "Contact",
+      "supportedNips": "Supported NIPs",
+      "software": "Sowftware",
+      "version": "Version",
+      "description": "Description",
+      "obtainingInfo": "Obtaining relay information",
+      "notifications": {
+        "active": "Relay actived.",
+        "desactive": "Relay desactivated.",
+        "globalFeedActive": "Global feed enabled.",
+        "globalFeedActiveUnactive": "Global feed disabled.",
+        "pubkeyCopied": "Public key copied.",
+        "contactCopied": "Contact copied.",
+        "urlCopied": "URL copied."
+      }
+    },
+    "profileConfigPage": {
+      "notifications": {
+        "nsecCopied": "Secret key copied.",
+        "npubCopied": "Public key copied.",
+        "profilePublished": "Profile published.",
+        "lud06Published": "LUD-06 published.\n\n{{lud06}}",
+        "nip05Published": "NIP-05 published.\n\n{{nip05}}",
+        "picturePublished": "Picture published.",
+        "connectionError": "Connection error."
+      },
+      "publishLud06": "Publish",
+      "lud06Label": "LNURL / Lightning Address",
+      "lud06Description": "Link your identity with an LNURL or Lightning Address.",
+      "lud06Title": "LUD-06",
+      "publishNip05": "Publish",
+      "nip05Link": "Learn more.",
+      "nip05Description": "Link your identity with a domain.",
+      "nip05Title": "NIP-05",
+      "directoryCancell": "Cancel",
+      "directoryContinue": "Continue",
+      "directoryDescription": "Nostr Directory is a database of nostr public keys associated with official user accounts on other platforms. Find the people you already follow on other platforms on nostr and add your public key so that your followers can find you.\n\nIf you continue you will have to perform the verification process outside the application.",
+      "directoryTitle": "Nostr Directory",
+      "publishPicture": "Publish",
+      "pictureUrl": "Picture URL",
+      "pictureDescription": "Paste here the URL for the image you would like to display on your public profile.",
+      "pictureTitle": "Link profile's picture",
+      "publish": "Publish",
+      "nsec": "Secret key",
+      "npub": "Public key",
+      "copyNPub": "Copy",
+      "directory": "Directory",
+      "lud06": "LUD-06",
+      "nip05": "NIP-05",
+      "name": "Name",
+      "about": "Description"
+    },
+    "profilePage": {
+      "notifications": {
+        "contactAdded": "Profile followed",
+        "contactRemoved": "Profile unfollowed",
+        "npubCopied": "Public key copied."
+      },
+      "invoice": "Tip",
+      "message": "Message",
+      "follow": "Follow",
+      "unfollow": "Following",
+      "copyNPub": "Copy key"
+    },
+    "homePage": {
+      "clipboardTitle": "Nostr key detected",
+      "goToEvent": "Open",
+      "cancel": "Cancel"
+    },
+    "language": {
+      "en": "English",
+      "es": "Español",
+      "fr": "Français",
+      "ru": "Русский",
+      "de": "Deutsch"
+    },
+    "profileCard": {
+      "notifications": {
+        "contactAdded": "Profile followed",
+        "contactRemoved": "Profile unfollowed",
+        "npubCopied": "Public key copied."
+      },
+      "invoice": "Tip",
+      "message": "Message",
+      "follow": "Follow",
+      "unfollow": "Following",
+      "block": "Block",
+      "unblock": "Unblock",
+      "share": "Share",
+      "copyNip05": "Copy NIP-05",
+      "copyNPub": "Copy key"
+    },
+    "conversationsFeed": {
+      "openMessage": "Start conversation",
+      "openMessageLabel": "Public key",
+      "openMessageDescription": "Paste a public key to start a conversation.",
+      "openMessageTitle": "Start conversation with public key",
+      "addPubKey": "Start conversation with public key",
+      "newMessageContact": "Start conversation with contact",
+      "emptyTitle": "You don't have any message",
+      "emptyDescription": "Write direct messages to your contacts or others.",
+      "emptyButton": "Open a conversation"
+    }
+  }
+}
