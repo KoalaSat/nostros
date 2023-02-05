@@ -256,7 +256,8 @@
     },
     "profileShare": {
       "notifications": {
-        "npubCopied": "Public key copied."
+        "npubCopied": "Public key copied.",
+        "nip05Copied": "NIP-05 copied."
       },
       "copyNip05": "Copy NIP-05",
       "copyNPub": "Copy key"

@@ -71,7 +71,7 @@
       "imageHostingService": "Image hosting service",
       "random": "Random",
       "language": "Language",
-      "relayColoruring": "Relay coloruring"
+      "relayColoruring": "Relay colouring"
     },
     "noteCard": {
       "answering": "Answer to {{pubkey}}",
@@ -271,12 +271,12 @@
     },
     "profileShare": {
       "notifications": {
-        "npubCopied": "Public key copied."
+        "npubCopied": "Public key copied.",
+        "nip05Copied": "NIP-05 copied."
       },
       "copyNip05": "Copy NIP-05",
       "copyNPub": "Copy key"
     },
-
     "profileCard": {
       "notifications": {
         "contactAdded": "Profile followed",

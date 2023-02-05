@@ -244,7 +244,8 @@
     },
     "profileShare": {
       "notifications": {
-        "npubCopied": "Clé publique copiée"
+        "npubCopied": "Clé publique copiée",
+        "nip05Copied": "NIP-05 copied."
       },
       "copyNip05": "Copiar NIP-05",
       "copyNPub": "Copier la clé"

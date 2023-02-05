@@ -27,7 +27,6 @@ export const ProfileShare: React.FC = () => {
     if (database && displayUserShareDrawer) {
       getUser(displayUserShareDrawer, database).then((result) => {
         if (result) {
-          console.log(result)
           setUser(result)
         } else {
           setUser({ id: displayUserShareDrawer })
@@ -80,7 +79,7 @@ export const ProfileShare: React.FC = () => {
             icon='check-decagram-outline'
             size={28}
             onPress={() => {
-              setShowNotification('npubCopied')
+              setShowNotification('copyNip05')
               Clipboard.setString(user?.nip05 ?? '')
               bottomSheetShareRef.current?.close()
             }}

@@ -257,7 +257,8 @@
     },
     "profileShare": {
       "notifications": {
-        "npubCopied": "Öffentlichen Schlüssel kopiert"
+        "npubCopied": "Öffentlichen Schlüssel kopiert",
+        "nip05Copied": "NIP-05 copied."
       },
       "copyNip05": "NIP-05 kopieren",
       "copyNPub": "Schlüssel kopieren"

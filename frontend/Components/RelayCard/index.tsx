@@ -183,7 +183,7 @@ export const RelayCard: React.FC<RelayCardProps> = ({ url, bottomSheetRef }) => 
               ) : (
                 <View style={styles.loading}>
                   <Logo onlyIcon size='medium' />
-                  <Text variant='titleLarge'>{'relayCard.obtainingInfo'}</Text>
+                  <Text variant='titleLarge'>{t('relayCard.obtainingInfo')}</Text>
                 </View>
               )}
             </>
