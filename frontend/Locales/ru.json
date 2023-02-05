@@ -26,7 +26,8 @@
       "Config": "Настройки",
       "Send": "Отпраить",
       "Relays": "Реле",
-      "ProfileConfig": "Мой профиль"
+      "ProfileConfig": "Мой профиль",
+      "markAllRead": "Mark all as read"
     },
     "conversationPage": {
       "typeMessage": "Напишите сообщение",
@@ -130,7 +131,7 @@
       "emptyButtonFollower": "Copy public key",
       "cancel": "Отменить",
       "addContact": "Добавить контакт",
-      "addContactDescription": "Paste here the public key of the profile you want to add.",
+      "addContactDescription": "Paste here the public key or NIP-05 of the profile you want to add.",
       "addContactTitle": "Add contact",
       "followers": "Followers ({{count}})",
       "following": "Following ({{count}})",
@@ -253,11 +254,17 @@
       "ru": "Русский",
       "de": "Deutsch"
     },
+    "profileShare": {
+      "notifications": {
+        "npubCopied": "Public key copied."
+      },
+      "copyNip05": "Copy NIP-05",
+      "copyNPub": "Copy key"
+    },
     "profileCard": {
       "notifications": {
         "contactAdded": "Profile followed",
-        "contactRemoved": "Profile unfollowed",
-        "npubCopied": "Public key copied."
+        "contactRemoved": "Profile unfollowed"
       },
       "invoice": "Tip",
       "message": "Message",
@@ -265,9 +272,7 @@
       "block": "Block",
       "unblock": "Desbloquear",
       "unfollow": "Following",
-      "share": "Share",
-      "copyNip05": "Copy NIP-05",
-      "copyNPub": "Copy key"
+      "share": "Share"
     },
     "conversationsFeed": {
       "openMessage": "Start conversation",

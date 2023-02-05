@@ -31,7 +31,7 @@ export const ProfileCard: React.FC<ProfileCardProps> = ({ bottomSheetRef, showIm
   const theme = useTheme()
   const { displayUserDrawer } = React.useContext(AppContext)
   const bottomSheetShareRef = React.useRef<RBSheet>(null)
-  const { database } = React.useContext(AppContext)
+  const { database, setDisplayUserShareDrawer } = React.useContext(AppContext)
   const { publicKey } = React.useContext(UserContext)
   const { relayPool } = React.useContext(RelayPoolContext)
   const [user, setUser] = React.useState<User>()
@@ -175,7 +175,7 @@ export const ProfileCard: React.FC<ProfileCardProps> = ({ bottomSheetRef, showIm
             icon='share-variant-outline'
             size={28}
             onPress={() => {
-              bottomSheetShareRef.current?.open()
+              setDisplayUserShareDrawer(user?.id)
             }}
           />
           <Text>{t('profileCard.share')}</Text>
@@ -214,60 +214,6 @@ export const ProfileCard: React.FC<ProfileCardProps> = ({ bottomSheetRef, showIm
         </Snackbar>
       )}
       <LnPayment setOpen={setOpenLn} open={openLn} user={user} />
-      <RBSheet ref={bottomSheetShareRef} closeOnDragDown={true} customStyles={bottomSheetStyles}>
-        <View style={styles.mainLayout}>
-          <View style={styles.qr}>
-            <TouchableRipple
-              onPress={() => {
-                if (qrCode) {
-                  qrCode.toDataURL((base64: string) => {
-                    Share.open({
-                      url: `data:image/png;base64,${base64}`,
-                      filename: user?.id ?? 'nostrosshare',
-                    })
-                  })
-                }
-              }}
-            >
-              <QRCode
-                quietZone={8}
-                value={`nostr:${nPub}`}
-                size={350}
-                logoBorderRadius={50}
-                logoSize={100}
-                logo={{ uri: user?.picture }}
-                getRef={setQrCode}
-              />
-            </TouchableRipple>
-          </View>
-          <View style={styles.shareActionButton}>
-            <IconButton
-              icon='key-outline'
-              size={28}
-              onPress={() => {
-                setShowNotification('npubCopied')
-                Clipboard.setString(nPub ?? '')
-                bottomSheetShareRef.current?.close()
-              }}
-            />
-            <Text>{t('profileCard.copyNPub')}</Text>
-          </View>
-          {user?.nip05 && (
-            <View style={styles.shareActionButton}>
-              <IconButton
-                icon='check-decagram-outline'
-                size={28}
-                onPress={() => {
-                  setShowNotification('npubCopied')
-                  Clipboard.setString(user?.nip05 ?? '')
-                  bottomSheetShareRef.current?.close()
-                }}
-              />
-              <Text>{t('profileCard.copyNip05')}</Text>
-            </View>
-          )}
-        </View>
-      </RBSheet>
     </View>
   )
 }

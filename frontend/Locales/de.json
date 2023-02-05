@@ -26,7 +26,8 @@
       "Config": "Einstellungen",
       "Send": "Senden",
       "Relays": "Relays",
-      "ProfileConfig": "Mein Profil"
+      "ProfileConfig": "Mein Profil",
+      "markAllRead": "Mark all as read"
     },
     "conversationPage": {
       "typeMessage": "Nachricht schreiben",
@@ -254,11 +255,18 @@
       "ru": "Русский",
       "de": "Deutsch"
     },
+    "profileShare": {
+      "notifications": {
+        "npubCopied": "Öffentlichen Schlüssel kopiert"
+      },
+      "copyNip05": "NIP-05 kopieren",
+      "copyNPub": "Schlüssel kopieren"
+    },
+
     "profileCard": {
       "notifications": {
         "contactAdded": "Aboniert",
-        "contactRemoved": "Abo entfernt",
-        "npubCopied": "Öffentlichen Schlüssel kopiert"
+        "contactRemoved": "Abo entfernt"
       },
       "invoice": "Zap",
       "message": "Nachricht",
@@ -266,9 +274,7 @@
       "block": "Blockieren",
       "share": "Teilen",
       "unblock": "Unblock",
-      "unfollow": "Abo entfernen",
-      "copyNip05": "NIP-05 kopieren",
-      "copyNPub": "Schlüssel kopieren"
+      "unfollow": "Abo entfernen"
     },
     "conversationsFeed": {
       "openMessage": "Unterhaltung beginnen",
