@@ -37,6 +37,8 @@ export interface AppContextProps {
   setDisplayUserDrawer: (displayUserDrawer: string | undefined) => void
   displayUserShareDrawer?: string
   setDisplayUserShareDrawer: (displayUserShareDrawer: string | undefined) => void
+  refreshBottomBarAt?: number
+  setRefreshBottomBarAt: (refreshBottomBarAt: number) => void
 }
 
 export interface AppContextProviderProps {
@@ -49,6 +51,8 @@ export const initialAppContext: AppContextProps = {
   database: null,
   notificationSeenAt: 0,
   setNotificationSeenAt: () => {},
+  refreshBottomBarAt: 0,
+  setRefreshBottomBarAt: () => {},
   showPublicImages: false,
   setShowPublicImages: () => {},
   language:
@@ -88,6 +92,7 @@ export const AppContextProvider = ({ children }: AppContextProviderProps): JSX.E
     initialAppContext.imageHostingService,
   )
   const [notificationSeenAt, setNotificationSeenAt] = React.useState<number>(0)
+  const [refreshBottomBarAt, setRefreshBottomBarAt] = React.useState<number>(0)
   const [satoshi, setSatoshi] = React.useState<'kebab' | 'sats'>(initialAppContext.satoshi)
   const [database, setDatabase] = useState<QuickSQLiteConnection | null>(null)
   const [loadingDb, setLoadingDb] = useState<boolean>(initialAppContext.loadingDb)
@@ -214,7 +219,9 @@ export const AppContextProvider = ({ children }: AppContextProviderProps): JSX.E
         setSatoshi,
         getSatoshiSymbol,
         setDisplayUserShareDrawer,
-        displayUserShareDrawer
+        displayUserShareDrawer,
+        refreshBottomBarAt,
+        setRefreshBottomBarAt,
       }}
     >
       {children}

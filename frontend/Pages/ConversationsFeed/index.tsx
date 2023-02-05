@@ -34,7 +34,7 @@ import { fromUnixTime, formatDistance } from 'date-fns'
 export const ConversationsFeed: React.FC = () => {
   const theme = useTheme()
   const { t } = useTranslation('common')
-  const { database } = useContext(AppContext)
+  const { database, refreshBottomBarAt } = useContext(AppContext)
   const { publicKey, privateKey } = useContext(UserContext)
   const { relayPool, lastEventId } = useContext(RelayPoolContext)
   const [directMessages, settDirectMessages] = useState<DirectMessage[]>([])
@@ -54,7 +54,7 @@ export const ConversationsFeed: React.FC = () => {
 
   useEffect(() => {
     loadDirectMessages(false)
-  }, [lastEventId])
+  }, [lastEventId, refreshBottomBarAt])
 
   const loadDirectMessages: (subscribe: boolean) => void = (subscribe) => {
     if (database && publicKey) {

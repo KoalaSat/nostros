@@ -36,7 +36,6 @@ import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityI
 import { useFocusEffect } from '@react-navigation/native'
 import ProfileData from '../../Components/ProfileData'
 import { handleInfinityScroll } from '../../Functions/NativeFunctions'
-import { constant } from 'lodash'
 import { queryProfile } from 'nostr-tools/nip05'
 
 export const ContactsFeed: React.FC = () => {

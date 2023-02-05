@@ -16,15 +16,18 @@ import RBSheet from 'react-native-raw-bottom-sheet'
 import { useTranslation } from 'react-i18next'
 import { navigate } from '../../lib/Navigation'
 import { decode } from 'nostr-tools/nip19'
+import { getDirectMessagesCount } from '../../Functions/DatabaseFunctions/DirectMessages'
 
 export const HomePage: React.FC = () => {
   const theme = useTheme()
   const { t } = useTranslation('common')
   const { language } = React.useContext(AppContext)
   const { privateKey, publicKey } = React.useContext(UserContext)
-  const { database, notificationSeenAt, clipboardNip21, setClipboardNip21 } = useContext(AppContext)
+  const { database, notificationSeenAt, clipboardNip21, setClipboardNip21, refreshBottomBarAt } =
+    useContext(AppContext)
   const { relayPool, lastEventId } = useContext(RelayPoolContext)
   const [newNotifications, setNewNotifications] = useState<number>(0)
+  const [newdirectMessages, setNewdirectMessages] = useState<number>(0)
   const bottomSheetClipboardRef = React.useRef<RBSheet>(null)
 
   useEffect(() => {
@@ -36,8 +39,9 @@ export const HomePage: React.FC = () => {
   useEffect(() => {
     if (publicKey && database) {
       getNotificationsCount(database, publicKey, notificationSeenAt).then(setNewNotifications)
+      getDirectMessagesCount(database, publicKey).then(setNewdirectMessages)
     }
-  }, [lastEventId, notificationSeenAt])
+  }, [lastEventId, notificationSeenAt, refreshBottomBarAt])
 
   useEffect(() => {
     if (publicKey && database) {
@@ -131,11 +135,16 @@ export const HomePage: React.FC = () => {
             component={ConversationsFeed}
             options={{
               tabBarIcon: ({ focused, size }) => (
-                <MaterialCommunityIcons
-                  name={focused ? 'email' : 'email-outline'}
-                  size={size}
-                  color={theme.colors.onPrimaryContainer}
-                />
+                <>
+                  <MaterialCommunityIcons
+                    name={focused ? 'email' : 'email-outline'}
+                    size={size}
+                    color={theme.colors.onPrimaryContainer}
+                  />
+                  {newdirectMessages > 0 && (
+                    <Badge style={styles.notificationBadge}>{newdirectMessages}</Badge>
+                  )}
+                </>
               ),
             }}
           />
@@ -159,14 +168,14 @@ export const HomePage: React.FC = () => {
           options={{
             tabBarIcon: ({ focused, size }) => (
               <>
-                {newNotifications > 0 && (
-                  <Badge style={styles.notificationBadge}>{newNotifications}</Badge>
-                )}
                 <MaterialCommunityIcons
                   name={focused ? 'bell' : 'bell-outline'}
                   size={size}
                   color={theme.colors.onPrimaryContainer}
                 />
+                {newNotifications > 0 && (
+                  <Badge style={styles.notificationBadge}>{newNotifications}</Badge>
+                )}
               </>
             ),
           }}

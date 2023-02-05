@@ -19,6 +19,8 @@ import { RelayPoolContext } from '../../Contexts/RelayPoolContext'
 import { AppContext } from '../../Contexts/AppContext'
 import RelayCard from '../../Components/RelayCard'
 import ProfileShare from '../../Components/ProfileShare'
+import { updateAllRead } from '../../Functions/DatabaseFunctions/DirectMessages'
+import { getUnixTime } from 'date-fns'
 
 export const HomeNavigator: React.FC = () => {
   const theme = useTheme()
@@ -29,6 +31,8 @@ export const HomeNavigator: React.FC = () => {
     setDisplayUserDrawer,
     displayUserShareDrawer,
     setDisplayUserShareDrawer,
+    setRefreshBottomBarAt,
+    database,
   } = React.useContext(AppContext)
   const bottomSheetRef = React.useRef<RBSheet>(null)
   const bottomSheetProfileRef = React.useRef<RBSheet>(null)
@@ -61,6 +65,11 @@ export const HomeNavigator: React.FC = () => {
     bottomSheetRef.current?.open()
   }
 
+  const onPressCheckAll: () => void = () => {
+    if (database) updateAllRead(database)
+    setRefreshBottomBarAt(getUnixTime(new Date()))
+  }
+
   React.useEffect(() => {
     if (displayRelayDrawer) bottomSheetRelayRef.current?.open()
   }, [displayRelayDrawer])
@@ -82,6 +91,10 @@ export const HomeNavigator: React.FC = () => {
             cardStyleInterpolator,
             header: (headerData) => {
               const { navigation, route, back } = headerData
+              const routes = navigation.getState().routes
+              const routeState = routes[0]?.state
+              const history = routeState?.history ?? []
+              const historyKey = history[0]?.key
               return (
                 <Appbar.Header>
                   {back ? (
@@ -112,6 +125,13 @@ export const HomeNavigator: React.FC = () => {
                       icon='help-circle-outline'
                       isLeading
                       onPress={() => onPressQuestion(route.name)}
+                    />
+                  )}
+                  {historyKey?.includes('messages-') && (
+                    <Appbar.Action
+                      icon='check-all'
+                      isLeading
+                      onPress={() => onPressCheckAll(route.name)}
                     />
                   )}
                 </Appbar.Header>

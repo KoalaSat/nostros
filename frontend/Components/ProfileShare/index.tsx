@@ -4,10 +4,7 @@ import { StyleSheet, View } from 'react-native'
 import Clipboard from '@react-native-clipboard/clipboard'
 import { IconButton, Snackbar, Text, TouchableRipple } from 'react-native-paper'
 import { AppContext } from '../../Contexts/AppContext'
-import {
-  getUser,
-  User,
-} from '../../Functions/DatabaseFunctions/Users'
+import { getUser, User } from '../../Functions/DatabaseFunctions/Users'
 import Share from 'react-native-share'
 import RBSheet from 'react-native-raw-bottom-sheet'
 import { getNpub } from '../../lib/nostr/Nip19'

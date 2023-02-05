@@ -1,8 +1,7 @@
 import { t } from 'i18next'
 import * as React from 'react'
 import { StyleSheet, View } from 'react-native'
-import Clipboard from '@react-native-clipboard/clipboard'
-import { Card, IconButton, Snackbar, Text, TouchableRipple, useTheme } from 'react-native-paper'
+import { Card, IconButton, Snackbar, Text, useTheme } from 'react-native-paper'
 import { AppContext } from '../../Contexts/AppContext'
 import { RelayPoolContext } from '../../Contexts/RelayPoolContext'
 import { UserContext } from '../../Contexts/UserContext'
@@ -12,7 +11,6 @@ import {
   updateUserContact,
   User,
 } from '../../Functions/DatabaseFunctions/Users'
-import Share from 'react-native-share'
 import { populatePets, usernamePubKey } from '../../Functions/RelayFunctions/Users'
 import LnPayment from '../LnPayment'
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'
@@ -20,7 +18,6 @@ import { navigate, push } from '../../lib/Navigation'
 import RBSheet from 'react-native-raw-bottom-sheet'
 import { getNpub } from '../../lib/nostr/Nip19'
 import ProfileData from '../ProfileData'
-import QRCode from 'react-native-qrcode-svg'
 
 interface ProfileCardProps {
   bottomSheetRef: React.RefObject<RBSheet>
@@ -30,7 +27,6 @@ interface ProfileCardProps {
 export const ProfileCard: React.FC<ProfileCardProps> = ({ bottomSheetRef, showImages = true }) => {
   const theme = useTheme()
   const { displayUserDrawer } = React.useContext(AppContext)
-  const bottomSheetShareRef = React.useRef<RBSheet>(null)
   const { database, setDisplayUserShareDrawer } = React.useContext(AppContext)
   const { publicKey } = React.useContext(UserContext)
   const { relayPool } = React.useContext(RelayPoolContext)
@@ -39,7 +35,6 @@ export const ProfileCard: React.FC<ProfileCardProps> = ({ bottomSheetRef, showIm
   const [openLn, setOpenLn] = React.useState<boolean>(false)
   const [isContact, setIsContact] = React.useState<boolean>()
   const [showNotification, setShowNotification] = React.useState<undefined | string>()
-  const [qrCode, setQrCode] = React.useState<any>()
   const nPub = React.useMemo(() => getNpub(displayUserDrawer), [displayUserDrawer])
   const username = React.useMemo(() => usernamePubKey(user?.name ?? '', nPub), [nPub, user])
 
@@ -95,21 +90,6 @@ export const ProfileCard: React.FC<ProfileCardProps> = ({ bottomSheetRef, showIm
     bottomSheetRef.current?.close()
     push('Profile', { pubKey: displayUserDrawer, title: username })
   }
-
-  const bottomSheetStyles = React.useMemo(() => {
-    return {
-      container: {
-        backgroundColor: theme.colors.background,
-        paddingTop: 16,
-        paddingRight: 16,
-        paddingBottom: 32,
-        paddingLeft: 16,
-        borderTopRightRadius: 28,
-        borderTopLeftRadius: 28,
-        height: 'auto',
-      },
-    }
-  }, [])
 
   return (
     <View>
