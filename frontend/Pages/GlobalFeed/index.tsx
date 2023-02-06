@@ -28,7 +28,7 @@ interface GlobalFeedProps {
 
 export const GlobalFeed: React.FC<GlobalFeedProps> = ({ navigation }) => {
   const theme = useTheme()
-  const { database, showPublicImages } = useContext(AppContext)
+  const { database, showPublicImages, pushedTab } = useContext(AppContext)
   const { publicKey } = useContext(UserContext)
   const { lastEventId, relayPool, lastConfirmationtId } = useContext(RelayPoolContext)
   const initialPageSize = 10
@@ -37,10 +37,17 @@ export const GlobalFeed: React.FC<GlobalFeedProps> = ({ navigation }) => {
   const [newNotesCount, setNewNotesCount] = useState<number>(0)
   const [pageSize, setPageSize] = useState<number>(initialPageSize)
   const [refreshing, setRefreshing] = useState(false)
+  const flashListRef = React.useRef<FlashList<Note>>(null)
 
   useEffect(() => {
     subscribeNotes()
   }, [])
+
+  useEffect(() => {
+    if (pushedTab) {
+      flashListRef.current?.scrollToIndex({ animated: true, index: 0 })
+    }
+  }, [pushedTab])
 
   useEffect(() => {
     if (relayPool && publicKey) {
@@ -183,6 +190,7 @@ export const GlobalFeed: React.FC<GlobalFeedProps> = ({ navigation }) => {
           ListEmptyComponent={ListEmptyComponent}
           horizontal={false}
           ListFooterComponent={<ActivityIndicator animating={true} />}
+          ref={flashListRef}
         />
       </View>
     </View>

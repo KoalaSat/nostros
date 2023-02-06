@@ -39,6 +39,8 @@ export interface AppContextProps {
   setDisplayUserShareDrawer: (displayUserShareDrawer: string | undefined) => void
   refreshBottomBarAt?: number
   setRefreshBottomBarAt: (refreshBottomBarAt: number) => void
+  pushedTab?: string
+  setPushedTab: (pushedTab: string) => void
 }
 
 export interface AppContextProviderProps {
@@ -70,6 +72,8 @@ export const initialAppContext: AppContextProps = {
   checkClipboard: () => {},
   imageHostingService: 'random',
   setImageHostingService: () => {},
+  pushedTab: 'random',
+  setPushedTab: () => {},
   getImageHostingService: () => '',
   getSatoshiSymbol: () => <></>,
   setClipboardNip21: () => {},
@@ -100,6 +104,13 @@ export const AppContextProvider = ({ children }: AppContextProviderProps): JSX.E
   const [clipboardNip21, setClipboardNip21] = React.useState<string>()
   const [displayUserDrawer, setDisplayUserDrawer] = React.useState<string>()
   const [displayUserShareDrawer, setDisplayUserShareDrawer] = React.useState<string>()
+  const [pushedTab, setPushedTab] = useState<string>()
+
+  useEffect(() => {
+    if (pushedTab) {
+      setPushedTab(undefined)
+    }
+  }, [pushedTab])
 
   useEffect(() => {
     const handleChange = AppState.addEventListener('change', (changedState) => {
@@ -222,6 +233,8 @@ export const AppContextProvider = ({ children }: AppContextProviderProps): JSX.E
         displayUserShareDrawer,
         refreshBottomBarAt,
         setRefreshBottomBarAt,
+        pushedTab,
+        setPushedTab,
       }}
     >
       {children}
