@@ -30,7 +30,7 @@ export const updateAllRead: (db: QuickSQLiteConnection) => Promise<QueryResult |
 
 export const getDirectMessagesCount: (
   db: QuickSQLiteConnection,
-  pubKey: string
+  pubKey: string,
 ) => Promise<number> = async (db, pubKey) => {
   const repliesQuery = `
     SELECT
@@ -50,8 +50,9 @@ export const getGroupedDirectMessages: (
   db: QuickSQLiteConnection,
   options: {
     order?: 'DESC' | 'ASC'
+    limit?: number
   },
-) => Promise<DirectMessage[]> = async (db, { order = 'DESC' }) => {
+) => Promise<DirectMessage[]> = async (db, { limit }) => {
   let notesQuery = `
     SELECT
       *, MAX(created_at) AS request_id
@@ -59,7 +60,8 @@ export const getGroupedDirectMessages: (
       nostros_direct_messages
   `
   notesQuery += 'GROUP BY conversation_id '
-  notesQuery += `ORDER BY created_at ${order}`
+  notesQuery += 'ORDER BY created_at DESC '
+  if (limit) notesQuery += `LIMIT ${limit}`
 
   const resultSet = await db.execute(notesQuery)
   const items: object[] = getItems(resultSet)

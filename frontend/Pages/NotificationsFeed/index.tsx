@@ -93,37 +93,31 @@ export const NotificationsFeed: React.FC = () => {
 
   const loadNotes: () => void = () => {
     if (database && publicKey) {
-      getMentionNotes(database, publicKey, pageSize).then((notes) => {
+      getMentionNotes(database, publicKey, pageSize).then(async (notes) => {
         setNotes(notes)
         setRefreshing(false)
         if (notes.length > 0) {
           const notedIds = notes.map((note) => note.id ?? '')
           const authors = notes.map((note) => note.pubkey ?? '')
+          const lastReaction = await getLastReaction(database, { eventIds: notedIds })
+          const lastReply = await getLastReply(database, { eventIds: notedIds })
 
           relayPool?.subscribe('notification-meta', [
             {
               kinds: [Kind.Metadata],
               authors,
             },
+            {
+              kinds: [Kind.Reaction],
+              '#e': notedIds,
+              since: lastReaction?.created_at ?? 0,
+            },
+            {
+              kinds: [Kind.Text],
+              '#e': notedIds,
+              since: lastReply?.created_at ?? 0,
+            },
           ])
-          getLastReaction(database, { eventIds: notedIds }).then((lastReaction) => {
-            relayPool?.subscribe('notification-reactions', [
-              {
-                kinds: [Kind.Reaction],
-                '#e': notedIds,
-                since: lastReaction?.created_at ?? 0,
-              },
-            ])
-          })
-          getLastReply(database, { eventIds: notedIds }).then((lastReply) => {
-            relayPool?.subscribe('notification-replies', [
-              {
-                kinds: [Kind.Text],
-                '#e': notedIds,
-                since: lastReply?.created_at ?? 0,
-              },
-            ])
-          })
         }
       })
     }

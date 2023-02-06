@@ -6,12 +6,15 @@ import { AppContext } from '../../Contexts/AppContext'
 import { getUser, User } from '../../Functions/DatabaseFunctions/Users'
 import { formatPubKey } from '../../Functions/RelayFunctions/Users'
 import getUnixTime from 'date-fns/getUnixTime'
-import { Card, Text, useTheme } from 'react-native-paper'
+import { Avatar, Card, Text, useTheme } from 'react-native-paper'
 import { getNip19Key, getNpub } from '../../lib/nostr/Nip19'
 import { navigate } from '../../lib/Navigation'
 import { validBlueBirdUrl, validImageUrl, validMediaUrl } from '../../Functions/NativeFunctions'
 import Clipboard from '@react-native-clipboard/clipboard'
 import FastImage from 'react-native-fast-image'
+import { useTranslation } from 'react-i18next'
+import { decode, PaymentRequestObject, TagsObject } from 'bolt11'
+import LnPreview from '../LnPreview'
 
 interface TextContentProps {
   event?: Event
@@ -29,10 +32,16 @@ export const TextContent: React.FC<TextContentProps> = ({
   numberOfLines,
 }) => {
   const theme = useTheme()
-  const { database } = useContext(AppContext)
+  const { t } = useTranslation('common')
+  const { database, getSatoshiSymbol } = useContext(AppContext)
   const [userNames, setUserNames] = useState<Record<number, string>>({})
   const [loadedUsers, setLoadedUsers] = useState<number>(0)
   const [url, setUrl] = useState<string>()
+  const [lnUrl, setLnUrl] = useState<string>()
+  const [invoice, setInvoice] = useState<string>()
+  const [decodedLnUrl, setDecodedLnUrl] = useState<
+    PaymentRequestObject & { tagsObject: TagsObject }
+  >()
   const [linkPreview, setLinkPreview] = useState<string>()
   const [linkType, setLinkType] = useState<string>()
   const text = event?.content ?? content ?? ''
@@ -61,6 +70,10 @@ export const TextContent: React.FC<TextContentProps> = ({
     Linking.openURL(url)
   }
 
+  const handleLnUrlPress: () => void = () => {
+    setInvoice(lnUrl)
+  }
+
   const handleNip05NotePress: (nip19: string) => void = (nip19) => {
     const noteId = getNip19Key(nip19)
 
@@ -84,6 +97,14 @@ export const TextContent: React.FC<TextContentProps> = ({
     const userPubKey = event.tags[mentionIndex][1]
 
     onPressUser({ id: userPubKey, name: text })
+  }
+
+  const renderLnurl: (lnurl: string | undefined) => string = (lnurl) => {
+    if (!lnUrl && lnurl) {
+      setDecodedLnUrl(decode(lnurl))
+      setLnUrl(lnurl)
+    }
+    return ''
   }
 
   const renderMentionText: (matchingString: string, matches: string[]) => string = (
@@ -131,9 +152,9 @@ export const TextContent: React.FC<TextContentProps> = ({
   }
 
   const generatePreview: () => JSX.Element = () => {
-    if (!showPreview || !url) return <></>
+    if (!showPreview) return <></>
 
-    const getRequireCover: () => string = () => {
+    const getRequireCover: () => string | undefined = () => {
       if (linkType === 'image') return url
 
       return ''
@@ -150,34 +171,61 @@ export const TextContent: React.FC<TextContentProps> = ({
     }
 
     return (
-      <View style={styles.previewCard}>
-        <Card onPress={() => handleUrlPress(url)}>
-          <FastImage
-            style={[
-              styles.cardCover,
-              {
-                backgroundColor: theme.colors.backdrop,
-              },
-            ]}
-            source={{
-              uri: getRequireCover(),
-              priority: FastImage.priority.high,
-            }}
-            defaultSource={getDefaultCover()}
-            resizeMode={FastImage.resizeMode.contain}
-          />
-          <Card.Content style={styles.previewContent}>
-            <Text variant='bodyMedium' numberOfLines={3}>
-              {/* {linkPreview?.title ?? linkPreview?.url ?? url} */}
-              {url}
-            </Text>
-            {/* {linkPreview?.description && (
+      <View>
+        {decodedLnUrl && (
+          <Card onPress={handleLnUrlPress}>
+            <Card.Title
+              title={t('textContent.invoice')}
+              subtitle={
+                <>
+                  <Text>{decodedLnUrl.satoshis}</Text>
+                  {getSatoshiSymbol(16)}
+                </>
+              }
+              left={(props) => (
+                <Avatar.Icon
+                  {...props}
+                  icon='lightning-bolt'
+                  style={{
+                    backgroundColor: '#F5D112',
+                  }}
+                />
+              )}
+            />
+          </Card>
+        )}
+        {url && (
+          <View style={styles.previewCard}>
+            <Card onPress={() => handleUrlPress(url)}>
+              <FastImage
+                style={[
+                  styles.cardCover,
+                  {
+                    backgroundColor: theme.colors.backdrop,
+                  },
+                ]}
+                source={{
+                  uri: getRequireCover(),
+                  priority: FastImage.priority.high,
+                }}
+                defaultSource={getDefaultCover()}
+                resizeMode={FastImage.resizeMode.contain}
+              />
+              <Card.Content style={styles.previewContent}>
+                <Text variant='bodyMedium' numberOfLines={3}>
+                  {/* {linkPreview?.title ?? linkPreview?.url ?? url} */}
+                  {url}
+                </Text>
+                {/* {linkPreview?.description && (
               <Text variant='bodySmall' numberOfLines={3}>
                 {linkPreview.description}
               </Text>
             )} */}
-          </Card.Content>
-        </Card>
+              </Card.Content>
+            </Card>
+          </View>
+        )}
+        {invoice && <LnPreview invoice={invoice} setInvoice={setInvoice} />}
       </View>
     )
   }
@@ -185,7 +233,7 @@ export const TextContent: React.FC<TextContentProps> = ({
   return (
     <View style={styles.container}>
       <ParsedText
-        style={{ color: theme.colors.onSurfaceVariant }}
+        style={[styles.text, { color: theme.colors.onSurfaceVariant }]}
         parse={[
           { type: 'url', style: styles.url, onPress: handleUrlPress, renderText: renderUrlText },
           { type: 'email', style: styles.email, onPress: handleUrlPress },
@@ -200,6 +248,7 @@ export const TextContent: React.FC<TextContentProps> = ({
                 pattern: /#\[(\d+)\]/,
               },
           { pattern: /#(\w+)/, style: styles.hashTag },
+          { pattern: /(lnbc)\S*/, style: styles.nip19, renderText: renderLnurl },
           { pattern: /(nevent1)\S*/, style: styles.nip19, onPress: handleNip05NotePress },
           {
             pattern: /(npub1|nprofile1)\S*/,

@@ -127,12 +127,8 @@ export const HomeNavigator: React.FC = () => {
                       onPress={() => onPressQuestion(route.name)}
                     />
                   )}
-                  {historyKey?.includes('messages-') && (
-                    <Appbar.Action
-                      icon='check-all'
-                      isLeading
-                      onPress={() => onPressCheckAll(route.name)}
-                    />
+                  {['Landing'].includes(route.name) && historyKey?.includes('messages-') && (
+                    <Appbar.Action icon='check-all' isLeading onPress={() => onPressCheckAll()} />
                   )}
                 </Appbar.Header>
               )

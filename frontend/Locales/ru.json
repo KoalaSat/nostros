@@ -8,7 +8,7 @@
       "publicKeys": "Public key",
       "publicKeysDescription": "Think of the public key as your username (like your @handle on Twitter). Share it with other people so they can add you to their network.",
       "privateKey": "Приватный ключ",
-      "privateKeyDescription": "Представьте, что приватный ключ это пароль.",
+      "privateKeyDescription": "Представьте, что приватный(секретный) ключ это пароль.",
       "privateKeysSnackbarTitle": "Важно",
       "privateKeysSnackbarDescription": "Keep your private key in a safe place, if you lose it you will not be able to access it again or recover your account."
     },
@@ -80,7 +80,8 @@
       "userBlocked": "Пользователь заблокирован",
       "contentWarning": "Деликатный контент",
       "recommendation": "Рекомендованные реле",
-      "addRelay": "Agregar relay"
+      "addRelay": "Agregar relay",
+      "reposted": "Reposted"
     },
     "lnPayment": {
       "monto": "Cantity (sats.)",
@@ -113,29 +114,29 @@
       "notKeys": "Нет ключей?",
       "isPublic": "Access with public key",
       "accessButton": "Войти",
-      "privateKey": "Private key",
-      "publicKey": "Public key"
+      "privateKey": "Приватный ключ",
+      "publicKey": "Публичный ключ"
     },
     "contactsFeed": {
       "notifications": {
-        "keyCopied": "Public key copied.",
-        "contactAdded": "Profile followed.",
-        "addContactError": "There was an error publishing your changes.",
-        "contactRemoved": "Profile unfollowed."
+        "keyCopied": "Публичный ключ скопирован.",
+        "contactAdded": "Вы подписались.",
+        "addContactError": "Произошла ошибка при публикации изменений.",
+        "contactRemoved": "Вы отписались."
       },
-      "emptyTitleFollowing": "You are not following anyone.",
-      "emptyDescriptionFollowing": "Follow other profiles to see content.",
-      "emptyButtonFollowing": "Paste public key",
-      "emptyTitleFollower": "You have no followers",
+      "emptyTitleFollowing": "Вы ни на кого не подписаны",
+      "emptyDescriptionFollowing": "Подпишитесь на другие профили, чтобы увидеть их заметки",
+      "emptyButtonFollowing": "Вставить публичный ключ",
+      "emptyTitleFollower": "У Вас нет подписчиков",
       "emptyDescriptionFollower": "Share your public key so people can start following you.",
-      "emptyButtonFollower": "Copy public key",
+      "emptyButtonFollower": "Скопировать публичный ключ",
       "cancel": "Отменить",
       "addContact": "Добавить контакт",
       "addContactDescription": "Paste here the public key or NIP-05 of the profile you want to add.",
       "addContactTitle": "Add contact",
-      "followers": "Followers ({{count}})",
-      "following": "Following ({{count}})",
-      "stopFollowing": "Stop Following",
+      "followers": "Подписчики ({{count}})",
+      "following": "Подписки ({{count}})",
+      "stopFollowing": "Отписаться",
       "follow": "Подписаться"
     },
     "aboutPage": {
@@ -145,8 +146,8 @@
       "version": "Version"
     },
     "homeFeed": {
-      "emptyTitle": "You are not following anyone.",
-      "emptyDescription": "Follow other profiles to see content.",
+      "emptyTitle": "Вы ни на кого не подписаны",
+      "emptyDescription": "Подпишитесь на другие профили, что бы увидеть, чем они делятся",
       "emptyButton": "Посмотреть контакты",
       "globalFeed": "Global feed",
       "newMessage": "{{newNotesCount}} nota nueva. Desliza para recargar.",
@@ -154,31 +155,31 @@
       "myFeed": "My feed"
     },
     "relayCard": {
-      "moreInfo": "More info",
-      "lessInfo": "Less info",
-      "globalFeed": "Global Feed",
+      "moreInfo": "Узнать больше",
+      "lessInfo": "Скрыть",
+      "globalFeed": "Общая лента",
       "active": "Active",
-      "share": "Share",
-      "pubkey": "Public key",
-      "contact": "Contact",
+      "share": "Поделиться",
+      "pubkey": "Публичный ключ",
+      "contact": "Контакт",
       "supportedNips": "Supported NIPs",
       "software": "Sowftware",
-      "version": "Version",
-      "description": "Description",
+      "version": "Версия",
+      "description": "Описание",
       "obtainingInfo": "Obtaining relay information",
       "notifications": {
         "active": "Relay actived.",
         "desactive": "Relay desactivated.",
         "globalFeedActive": "Global feed enabled.",
-        "globalFeedActiveUnactive": "Global feed disabled.",
-        "pubkeyCopied": "Public key copied.",
-        "contactCopied": "Contact copied.",
-        "urlCopied": "URL copied."
+        "globalFeedActiveUnactive": "Global feed disabled",
+        "pubkeyCopied": "Публичный ключ скопирован",
+        "contactCopied": "Контакт скопирован",
+        "urlCopied": "URL скопирован"
       }
     },
     "relaysPage": {
       "relayName": "Address",
-      "globalFeed": "Global feed",
+      "globalFeed": "Общая лента",
       "active": "Active",
       "labelAdd": "Relay address",
       "cancel": "Отменить",
@@ -186,9 +187,9 @@
       "removeRelay": "Удалить",
       "copyRelay": "Скопировать",
       "notifications": {
-        "add": "Relay connected.",
-        "remove": "Relay removed.",
-        "active": "Relay acivado.",
+        "add": "Реле добавлено",
+        "remove": "Реле удалено",
+        "active": "Реле активировано",
         "desactive": "Relay desactivado.",
         "badFormat": "Relay URL has a bad format.",
         "alreadyExists": "Relay already exists."
@@ -196,13 +197,13 @@
     },
     "profileConfigPage": {
       "notifications": {
-        "nsecCopied": "Secret key copied.",
-        "npubCopied": "Public key copied.",
+        "nsecCopied": "Приватный ключ скопирован",
+        "npubCopied": "Публичный ключ скопирован",
         "profilePublished": "Profile published.",
         "lud06Published": "LUD-06 published.\n\n{{lud06}}",
         "nip05Published": "NIP-05 published.\n\n{{nip05}}",
         "picturePublished": "Picture published.",
-        "connectionError": "Connection error."
+        "connectionError": "Ошибка с подключением"
       },
       "publishLud06": "Опубликовть",
       "lud06Label": "LNURL / Lightning Address",
@@ -212,8 +213,8 @@
       "nip05Link": "Подробнее.",
       "nip05Description": "Link your identity with a domain.",
       "nip05Title": "NIP-05",
-      "directoryCancell": "Cancel",
-      "directoryContinue": "Continue",
+      "directoryCancell": "Отменить",
+      "directoryContinue": "Продолжить",
       "directoryDescription": "Nostr Directory is a database of nostr public keys associated with a Twitter account. Find the people you follow on Twitter on nostr and add your public key so your followers can find you if you want.\n\n\nVerifying your Twitter account will add a badge to your profile.\n\n\nYes you will have to carry out the verification process outside the application.",
       "directoryTitle": "Nostr Directory",
       "publishPicture": "Publish",
@@ -221,14 +222,14 @@
       "pictureDescription": "Paste here the URL for the image you would like to display on your public profile.",
       "pictureTitle": "Link profile's picture",
       "publish": "Publish",
-      "nsec": "Secret key",
-      "npub": "Public key",
+      "nsec": "Приватный ключ",
+      "npub": "Публичный ключ",
       "copyNPub": "Скопировать",
       "directory": "Directory",
       "lud06": "LUD-06",
       "nip05": "NIP-05",
       "name": "Name",
-      "about": "Description"
+      "about": "Описание"
     },
     "profilePage": {
       "notifications": {
@@ -237,14 +238,14 @@
         "npubCopied": "Public key copied."
       },
       "invoice": "Tip",
-      "message": "Message",
+      "message": "Сообщение",
       "follow": "Follow",
       "unfollow": "Following",
-      "copyNPub": "Copy key"
+      "copyNPub": "Скопировать ключ"
     },
     "homePage": {
       "clipboardTitle": "Se ha detectado una clave Nostr",
-      "goToEvent": "Abrir",
+      "goToEvent": "Открыть",
       "cancel": "Отменить"
     },
     "language": {
@@ -253,6 +254,9 @@
       "fr": "Français",
       "ru": "Русский",
       "de": "Deutsch"
+    },
+    "textContent": {
+      "invoice": "Lightning Network invoice"
     },
     "profileShare": {
       "notifications": {

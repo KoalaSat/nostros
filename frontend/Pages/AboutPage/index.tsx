@@ -49,7 +49,7 @@ export const AboutPage: React.FC = () => {
             )}
           />
         ),
-        onPress: async () => await Linking.openURL('https://usenostr.org'),
+        onPress: async () => await Linking.openURL('https://www.nostr.how'),
       },
       {
         key: 3,

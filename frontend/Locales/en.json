@@ -80,7 +80,8 @@
       "seeParent": "See note",
       "contentWarning": "Sensitive content",
       "recommendation": "Relay recomendation",
-      "addRelay": "Add relay"
+      "addRelay": "Add relay",
+      "reposted": "Reposted"
     },
     "lnPayment": {
       "monto": "Amount (sats)",
@@ -211,7 +212,7 @@
     },
     "profileConfigPage": {
       "notifications": {
-        "nsecCopied": "Secret key copied.",
+        "nsecCopied": "Private key copied.",
         "npubCopied": "Public key copied.",
         "profilePublished": "Profile published.",
         "lud06Published": "LUD-06 published.\n\n{{lud06}}",
@@ -236,7 +237,7 @@
       "pictureDescription": "Paste here the URL for the image you would like to display on your public profile.",
       "pictureTitle": "Link profile's picture",
       "publish": "Publish",
-      "nsec": "Secret key",
+      "nsec": "Private key",
       "npub": "Public key",
       "copyNPub": "Copy",
       "directory": "Directory",
@@ -244,6 +245,9 @@
       "nip05": "NIP-05",
       "name": "Name",
       "about": "Description"
+    },
+    "textContent": {
+      "invoice": "Lightning Network invoice"
     },
     "profilePage": {
       "notifications": {

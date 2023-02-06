@@ -16,7 +16,10 @@ import RBSheet from 'react-native-raw-bottom-sheet'
 import { useTranslation } from 'react-i18next'
 import { navigate } from '../../lib/Navigation'
 import { decode } from 'nostr-tools/nip19'
-import { getDirectMessagesCount } from '../../Functions/DatabaseFunctions/DirectMessages'
+import {
+  getDirectMessagesCount,
+  getGroupedDirectMessages,
+} from '../../Functions/DatabaseFunctions/DirectMessages'
 
 export const HomePage: React.FC = () => {
   const theme = useTheme()
@@ -45,19 +48,26 @@ export const HomePage: React.FC = () => {
 
   useEffect(() => {
     if (publicKey && database) {
-      getMentionNotes(database, publicKey, 1).then((results) => {
-        relayPool?.subscribe('notification-icon', [
-          {
-            kinds: [Kind.Text],
-            '#p': [publicKey],
-            since: results[0].created_at,
-          },
-          {
-            kinds: [Kind.Text],
-            '#e': [publicKey],
-            since: results[0].created_at,
-          },
-        ])
+      getMentionNotes(database, publicKey, 1).then((mentionResults) => {
+        getGroupedDirectMessages(database, { limit: 1 }).then((directMessageResults) => {
+          relayPool?.subscribe('notification-icon', [
+            {
+              kinds: [Kind.EncryptedDirectMessage],
+              '#p': [publicKey],
+              since: directMessageResults[0]?.created_at ?? 0,
+            },
+            {
+              kinds: [Kind.Text],
+              '#p': [publicKey],
+              since: mentionResults[0]?.created_at ?? 0,
+            },
+            {
+              kinds: [Kind.Text],
+              '#e': [publicKey],
+              since: mentionResults[0]?.created_at ?? 0,
+            },
+          ])
+        })
       })
     }
   }, [publicKey])

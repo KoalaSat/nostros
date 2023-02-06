@@ -96,12 +96,20 @@ export const GlobalFeed: React.FC<GlobalFeedProps> = ({ navigation }) => {
         setRefreshing(false)
         if (results.length > 0) {
           setNotes(results)
-          relayPool?.subscribe('homepage-global-meta', [
+          const repostIds = notes.filter((note) => note.repost_id).map((note) => note.id ?? '')
+          const message: RelayFilters[] = [
             {
               kinds: [Kind.Metadata],
               authors: results.map((note) => note.pubkey ?? ''),
             },
-          ])
+          ]
+          if (repostIds.length > 0) {
+            message.push({
+              kinds: [Kind.Text],
+              '#e': repostIds,
+            })
+          }
+          relayPool?.subscribe('homepage-global-meta', message)
         }
       })
     }

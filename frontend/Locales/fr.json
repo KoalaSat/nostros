@@ -79,7 +79,8 @@
       "reposting": "Republié {{pubkey}}",
       "seeParent": "Voir la note",
       "userBlocked": "Utilisateur bloqué",
-      "contentWarning": "Contenu sensible"
+      "contentWarning": "Contenu sensible",
+      "reposted": "Reposted"
     },
     "lnPayment": {
       "monto": "Quantité (sats.)",
@@ -249,6 +250,9 @@
       },
       "copyNip05": "Copiar NIP-05",
       "copyNPub": "Copier la clé"
+    },
+    "textContent": {
+      "invoice": "Lightning Network invoice"
     },
     "profileCard": {
       "notifications": {
