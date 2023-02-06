@@ -104,6 +104,14 @@ export const MyFeed: React.FC<MyFeedProps> = ({ navigation }) => {
             },
           )
           const repostIds = notes.filter((note) => note.repost_id).map((note) => note.id ?? '')
+          if (repostIds.length > 0) {
+            relayPool?.subscribe('homepage-reposts', [
+              {
+                kinds: [Kind.Text],
+                '#e': repostIds,
+              },
+            ])
+          }
           getLastReply(database, { eventIds: notes.map((note) => note.id ?? '') }).then(
             (lastReply) => {
               relayPool?.subscribe('homepage-replies', [
@@ -111,11 +119,7 @@ export const MyFeed: React.FC<MyFeedProps> = ({ navigation }) => {
                   kinds: [Kind.Text],
                   '#e': noteIds,
                   since: lastReply?.created_at ?? 0,
-                },
-                {
-                  kinds: [Kind.Text],
-                  '#e': repostIds,
-                },
+                }
               ])
             },
           )

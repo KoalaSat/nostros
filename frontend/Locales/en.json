@@ -211,7 +211,7 @@
     },
     "profileConfigPage": {
       "notifications": {
-        "nsecCopied": "Secret key copied.",
+        "nsecCopied": "Private key copied.",
         "npubCopied": "Public key copied.",
         "profilePublished": "Profile published.",
         "lud06Published": "LUD-06 published.\n\n{{lud06}}",
@@ -236,7 +236,7 @@
       "pictureDescription": "Paste here the URL for the image you would like to display on your public profile.",
       "pictureTitle": "Link profile's picture",
       "publish": "Publish",
-      "nsec": "Secret key",
+      "nsec": "Private key",
       "npub": "Public key",
       "copyNPub": "Copy",
       "directory": "Directory",

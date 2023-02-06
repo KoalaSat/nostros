@@ -20,10 +20,11 @@ import {
 import RBSheet from 'react-native-raw-bottom-sheet'
 import { relayToColor } from '../../Functions/NativeFunctions'
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'
+import { useFocusEffect } from '@react-navigation/native'
 
 export const RelaysPage: React.FC = () => {
   const defaultRelayInput = React.useMemo(() => 'wss://', [])
-  const { updateRelayItem, addRelayItem, removeRelayItem, relays } = useContext(RelayPoolContext)
+  const { updateRelayItem, addRelayItem, removeRelayItem, relays, relayPool } = useContext(RelayPoolContext)
   const { t } = useTranslation('common')
   const theme = useTheme()
   const bottomSheetAddRef = React.useRef<RBSheet>(null)
@@ -31,6 +32,14 @@ export const RelaysPage: React.FC = () => {
   const [selectedRelay, setSelectedRelay] = useState<Relay>()
   const [addRelayInput, setAddRelayInput] = useState<string>(defaultRelayInput)
   const [showNotification, setShowNotification] = useState<string>()
+
+  useFocusEffect(
+    React.useCallback(() => {
+      relayPool?.unsubscribeAll()
+
+      return () => {}
+    }, []),
+  )
 
   const addRelay: (url: string) => void = (url) => {
     addRelayItem({

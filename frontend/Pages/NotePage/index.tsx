@@ -36,6 +36,7 @@ export const NotePage: React.FC<NotePageProps> = ({ route }) => {
         relayPool?.unsubscribe([
           `meta-notepage${route.params.noteId}`,
           `notepage${route.params.noteId}`,
+          `notepage-replies-${route.params.noteId}`
         ])
     }, []),
   )
@@ -78,6 +79,8 @@ export const NotePage: React.FC<NotePageProps> = ({ route }) => {
           kinds: [Kind.Text],
           ids: [route.params.noteId],
         },
+      ])
+      relayPool?.subscribe(`notepage-replies-${route.params.noteId}`, [
         {
           kinds: [Kind.Reaction, Kind.Text, Kind.RecommendRelay],
           '#e': [route.params.noteId],

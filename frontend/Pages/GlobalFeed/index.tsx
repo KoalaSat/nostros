@@ -102,6 +102,15 @@ export const GlobalFeed: React.FC<GlobalFeedProps> = ({ navigation }) => {
               authors: results.map((note) => note.pubkey ?? ''),
             },
           ])
+          const repostIds = notes.filter((note) => note.repost_id).map((note) => note.id ?? '')
+          if (repostIds.length > 0) {
+            relayPool?.subscribe('homepage-global-reposts', [
+              {
+                kinds: [Kind.Text],
+                '#e': repostIds,
+              },
+            ])
+          }
         }
       })
     }
