@@ -30,6 +30,7 @@ import {
   IconButton,
   TouchableRipple,
   Chip,
+  Surface,
 } from 'react-native-paper'
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'
 import { REGEX_SOCKET_LINK } from '../../Constants/Relay'
@@ -37,6 +38,9 @@ import { push } from '../../lib/Navigation'
 import { Kind } from 'nostr-tools'
 import ProfileData from '../ProfileData'
 import { relayToColor } from '../../Functions/NativeFunctions'
+import { SvgXml } from 'react-native-svg'
+import { reactionIcon } from '../../Constants/Theme'
+import LnPayment from '../LnPayment'
 
 interface NoteCardProps {
   note?: Note
@@ -67,7 +71,7 @@ export const NoteCard: React.FC<NoteCardProps> = ({
   const { database, showSensitive, setDisplayUserDrawer, relayColouring } = useContext(AppContext)
   const [relayAdded, setRelayAdded] = useState<boolean>(false)
   const [positiveReactions, setPositiveReactions] = useState<number>(0)
-  const [negaiveReactions, setNegativeReactions] = useState<number>(0)
+  const [negativeReactions, setNegativeReactions] = useState<number>(0)
   const [userUpvoted, setUserUpvoted] = useState<boolean>(false)
   const [userDownvoted, setUserDownvoted] = useState<boolean>(false)
   const [repliesCount, setRepliesCount] = React.useState<number>(0)
@@ -76,6 +80,8 @@ export const NoteCard: React.FC<NoteCardProps> = ({
   const [hide, setHide] = useState<boolean>(isContentWarning(note))
   const [userReposted, setUserReposted] = useState<boolean>()
   const [repost, setRepost] = useState<Note>()
+  const [openLn, setOpenLn] = React.useState<boolean>(false)
+  const [showReactions, setShowReactions] = React.useState<boolean>(false)
 
   useEffect(() => {
     if (database && publicKey && note?.id) {
@@ -260,6 +266,79 @@ export const NoteCard: React.FC<NoteCardProps> = ({
     } else if (note?.kind === Kind.RecommendRelay) return recommendServer()
   }
 
+  const reactions: () => JSX.Element = () => (
+    <Card style={styles.reactionsPopup} elevation={3}>
+      <View style={styles.reactionsPopupContent}>
+        <Button
+          onPress={() => {
+            if (!userDownvoted && privateKey) {
+              setUserDownvoted(true)
+              setNegativeReactions((prev) => prev + 1)
+              publishReaction(false)
+            }
+            setShowReactions(false)
+          }}
+          icon={() => (
+            <MaterialCommunityIcons
+              name={userDownvoted ? 'thumb-down' : 'thumb-down-outline'}
+              size={24}
+              color={theme.colors.onPrimaryContainer}
+            />
+          )}
+        >
+          {showActionCount && (negativeReactions === undefined ? 0 : negativeReactions)}
+        </Button>
+        <Button
+          onPress={() => {
+            if (!userUpvoted && privateKey) {
+              setUserUpvoted(true)
+              setPositiveReactions((prev) => prev + 1)
+              publishReaction(true)
+            }
+            setShowReactions(false)
+          }}
+          icon={() => (
+            <MaterialCommunityIcons
+              name={userUpvoted ? 'thumb-up' : 'thumb-up-outline'}
+              size={24}
+              color={theme.colors.onPrimaryContainer}
+            />
+          )}
+        >
+          {showActionCount && (positiveReactions === undefined ? 0 : positiveReactions)}
+        </Button>
+      </View>
+    </Card>
+  )
+
+  const reactionsCount: () => number = () => {
+    if (userDownvoted) return negativeReactions
+    if (userUpvoted) return positiveReactions
+
+    return negativeReactions + positiveReactions
+  }
+
+  const reactionsIcon: () => JSX.Element = () => {
+    if (userUpvoted)
+      return (
+        <MaterialCommunityIcons
+          name={'thumb-up'}
+          size={24}
+          color={theme.colors.onPrimaryContainer}
+        />
+      )
+    if (userDownvoted)
+      return (
+        <MaterialCommunityIcons
+          name={'thumb-down'}
+          size={24}
+          color={theme.colors.onPrimaryContainer}
+        />
+      )
+
+    return <SvgXml height={22} xml={reactionIcon} color={theme.colors.onPrimaryContainer} />
+  }
+
   return note ? (
     <Card mode={mode}>
       <Card.Content style={styles.title}>
@@ -289,6 +368,7 @@ export const NoteCard: React.FC<NoteCardProps> = ({
       {showAction && (
         <Card.Content style={[styles.bottomActions, { borderColor: theme.colors.onSecondary }]}>
           <Button
+            style={styles.action}
             icon={() => (
               <MaterialCommunityIcons
                 name='message-outline'
@@ -301,6 +381,7 @@ export const NoteCard: React.FC<NoteCardProps> = ({
             {showActionCount && repliesCount}
           </Button>
           <Button
+            style={styles.action}
             icon={() => (
               <MaterialCommunityIcons
                 name='cached'
@@ -314,46 +395,26 @@ export const NoteCard: React.FC<NoteCardProps> = ({
           >
             {showActionCount && repostCount}
           </Button>
-          <Button
-            onPress={() => {
-              if (!userDownvoted && privateKey) {
-                setUserDownvoted(true)
-                setNegativeReactions((prev) => prev + 1)
-                publishReaction(false)
-              }
-            }}
-            icon={() => (
-              <MaterialCommunityIcons
-                name={userDownvoted ? 'thumb-down' : 'thumb-down-outline'}
-                size={24}
-                color={theme.colors.onPrimaryContainer}
-              />
-            )}
-          >
-            {showActionCount &&
-              (negaiveReactions === undefined || negaiveReactions === 0 ? '-' : negaiveReactions)}
-          </Button>
-          <Button
-            onPress={() => {
-              if (!userUpvoted && privateKey) {
-                setUserUpvoted(true)
-                setPositiveReactions((prev) => prev + 1)
-                publishReaction(true)
-              }
-            }}
-            icon={() => (
-              <MaterialCommunityIcons
-                name={userUpvoted ? 'thumb-up' : 'thumb-up-outline'}
-                size={24}
-                color={theme.colors.onPrimaryContainer}
-              />
-            )}
-          >
-            {showActionCount &&
-              (positiveReactions === undefined || positiveReactions === 0
-                ? '-'
-                : positiveReactions)}
-          </Button>
+          {showReactions && reactions()}
+          <Surface style={styles.action} elevation={showReactions ? 3 : 0}>
+            <Button icon={reactionsIcon} onPress={() => setShowReactions((prev) => !prev)}>
+              {showActionCount && reactionsCount()}
+            </Button>
+          </Surface>
+          {note.lnurl && (
+            <>
+              <Button
+                style={styles.action}
+                icon={() => (
+                  <MaterialCommunityIcons name='lightning-bolt' size={24} color={'#F5D112'} />
+                )}
+                onPress={() => setOpenLn(true)}
+              >
+                {''}
+              </Button>
+              {openLn && <LnPayment open={openLn} setOpen={setOpenLn} note={note} />}
+            </>
+          )}
         </Card.Content>
       )}
       <Card.Content style={styles.relayList}>
@@ -399,6 +460,15 @@ const styles = StyleSheet.create({
     paddingTop: 10,
     paddingLeft: 16,
   },
+  reactionsPopupContent: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+  },
+  reactionsPopup: {
+    position: 'absolute',
+    bottom: 50,
+    left: '48%',
+  },
   title: {
     flexDirection: 'row',
     justifyContent: 'space-between',
@@ -424,9 +494,14 @@ const styles = StyleSheet.create({
   },
   bottomActions: {
     paddingTop: 8,
+    flexWrap: 'wrap',
     flexDirection: 'row',
-    justifyContent: 'space-around',
     borderTopWidth: 1,
+    justifyContent: 'flex-start',
+  },
+  action: {
+    flexBasis: '25%',
+    borderRadius: 12,
   },
   topAction: {
     flexDirection: 'row',

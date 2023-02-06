@@ -9,7 +9,7 @@ import { AppContext } from '../../Contexts/AppContext'
 import { decode, PaymentRequestObject, TagsObject } from 'bolt11'
 
 interface LnPreviewProps {
-  invoice: string
+  invoice?: string
   setInvoice: (invoice: string | undefined) => void
 }
 
@@ -23,9 +23,16 @@ export const LnPreview: React.FC<LnPreviewProps> = ({ invoice, setInvoice }) => 
   >()
 
   useEffect(() => {
-    bottomSheetInvoiceRef.current?.open()
-    setDecodedLnUrl(decode(invoice))
-  }, [])
+    if (invoice) {
+      setDecodedLnUrl(decode(invoice))
+    }
+  }, [invoice])
+
+  useEffect(() => {
+    if (decodedLnUrl) {
+      bottomSheetInvoiceRef.current?.open()
+    }
+  }, [decodedLnUrl])
 
   const copyInvoice: () => void = () => {
     Clipboard.setString(invoice ?? '')
@@ -51,37 +58,35 @@ export const LnPreview: React.FC<LnPreviewProps> = ({ invoice, setInvoice }) => 
   }, [])
 
   return (
-    <>
-      <RBSheet
-        ref={bottomSheetInvoiceRef}
-        closeOnDragDown={true}
-        // height={630}
-        customStyles={rbSheetQrCustomStyles}
-        onClose={() => setInvoice(undefined)}
-      >
-        <Card style={styles.qrContainer}>
-          <Card.Content>
-            <View style={styles.qr}>
-              <QRCode value={invoice} size={300} quietZone={8} />
-            </View>
-            <View style={styles.qrText}>
-              <Text>{decodedLnUrl?.satoshis} </Text>
-              {getSatoshiSymbol(23)}
-            </View>
-          </Card.Content>
-        </Card>
-        <View style={styles.cardActions}>
-          <View style={styles.actionButton}>
-            <IconButton icon='content-copy' size={28} onPress={copyInvoice} />
-            <Text>{t('lnPayment.copy')}</Text>
+    <RBSheet
+      ref={bottomSheetInvoiceRef}
+      closeOnDragDown={true}
+      // height={630}
+      customStyles={rbSheetQrCustomStyles}
+      onClose={() => setInvoice(undefined)}
+    >
+      <Card style={styles.qrContainer}>
+        <Card.Content>
+          <View style={styles.qr}>
+            <QRCode value={invoice} size={300} quietZone={8} />
           </View>
-          <View style={styles.actionButton}>
-            <IconButton icon='wallet' size={28} onPress={openApp} />
-            <Text>{t('lnPayment.open')}</Text>
+          <View style={styles.qrText}>
+            <Text>{decodedLnUrl?.satoshis} </Text>
+            {getSatoshiSymbol(23)}
           </View>
+        </Card.Content>
+      </Card>
+      <View style={styles.cardActions}>
+        <View style={styles.actionButton}>
+          <IconButton icon='content-copy' size={28} onPress={copyInvoice} />
+          <Text>{t('lnPayment.copy')}</Text>
         </View>
-      </RBSheet>
-    </>
+        <View style={styles.actionButton}>
+          <IconButton icon='wallet' size={28} onPress={openApp} />
+          <Text>{t('lnPayment.open')}</Text>
+        </View>
+      </View>
+    </RBSheet>
   )
 }
 
