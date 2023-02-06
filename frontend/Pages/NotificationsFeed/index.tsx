@@ -27,13 +27,14 @@ import { FlashList, ListRenderItem } from '@shopify/flash-list'
 export const NotificationsFeed: React.FC = () => {
   const theme = useTheme()
   const { t } = useTranslation('common')
-  const { database, setNotificationSeenAt } = useContext(AppContext)
+  const { database, setNotificationSeenAt, pushedTab } = useContext(AppContext)
   const { publicKey } = useContext(UserContext)
   const initialPageSize = 10
   const { lastEventId, relayPool } = useContext(RelayPoolContext)
   const [pageSize, setPageSize] = useState<number>(initialPageSize)
   const [notes, setNotes] = useState<Note[]>([])
   const [refreshing, setRefreshing] = useState(true)
+  const flashListRef = React.useRef<FlashList<Note>>(null)
 
   useFocusEffect(
     React.useCallback(() => {
@@ -63,6 +64,12 @@ export const NotificationsFeed: React.FC = () => {
       loadNotes()
     }
   }, [pageSize])
+
+  useEffect(() => {
+    if (pushedTab) {
+      flashListRef.current?.scrollToIndex({ animated: true, index: 0 })
+    }
+  }, [pushedTab])
 
   const updateLastSeen: () => void = () => {
     const unixtime = getUnixTime(new Date())
@@ -180,6 +187,7 @@ export const NotificationsFeed: React.FC = () => {
         ListEmptyComponent={ListEmptyComponent}
         horizontal={false}
         ListFooterComponent={<ActivityIndicator animating={true} />}
+        ref={flashListRef}
       />
     </View>
   )

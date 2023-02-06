@@ -102,6 +102,7 @@ export const LnPayment: React.FC<LnPaymentProps> = ({ open, setOpen, event, user
             label={t('lnPayment.monto') ?? ''}
             onChangeText={setMonto}
             value={monto}
+            keyboardType='decimal-pad'
           />
           <TextInput
             style={styles.spacer}

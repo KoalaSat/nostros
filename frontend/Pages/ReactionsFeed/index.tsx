@@ -27,13 +27,14 @@ interface ReactionsFeedProps {
 
 export const ReactionsFeed: React.FC<ReactionsFeedProps> = ({ navigation }) => {
   const theme = useTheme()
-  const { database } = useContext(AppContext)
+  const { database, pushedTab } = useContext(AppContext)
   const { publicKey } = useContext(UserContext)
   const { lastEventId, relayPool, lastConfirmationtId } = useContext(RelayPoolContext)
   const initialPageSize = 10
   const [notes, setNotes] = useState<Note[]>([])
   const [pageSize, setPageSize] = useState<number>(initialPageSize)
   const [refreshing, setRefreshing] = useState(false)
+  const flashListRef = React.useRef<FlashList<Note>>(null)
 
   useEffect(() => {
     subscribeNotes()
@@ -51,6 +52,12 @@ export const ReactionsFeed: React.FC<ReactionsFeedProps> = ({ navigation }) => {
       subscribeNotes(true)
     }
   }, [pageSize])
+
+  useEffect(() => {
+    if (pushedTab) {
+      flashListRef.current?.scrollToIndex({ animated: true, index: 0 })
+    }
+  }, [pushedTab])
 
   const onRefresh = useCallback(() => {
     setRefreshing(true)
@@ -169,6 +176,7 @@ export const ReactionsFeed: React.FC<ReactionsFeedProps> = ({ navigation }) => {
         ListEmptyComponent={ListEmptyComponent}
         horizontal={false}
         ListFooterComponent={<ActivityIndicator animating={true} />}
+        ref={flashListRef}
       />
     </View>
   )

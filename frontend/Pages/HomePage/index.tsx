@@ -24,7 +24,7 @@ import {
 export const HomePage: React.FC = () => {
   const theme = useTheme()
   const { t } = useTranslation('common')
-  const { language } = React.useContext(AppContext)
+  const { language, setPushedTab } = React.useContext(AppContext)
   const { privateKey, publicKey } = React.useContext(UserContext)
   const { database, notificationSeenAt, clipboardNip21, setClipboardNip21, refreshBottomBarAt } =
     useContext(AppContext)
@@ -138,6 +138,9 @@ export const HomePage: React.FC = () => {
               />
             ),
           }}
+          listeners={{
+            tabPress: () => setPushedTab('Home'),
+          }}
         />
         {privateKey && (
           <Tab.Screen
@@ -188,6 +191,9 @@ export const HomePage: React.FC = () => {
                 )}
               </>
             ),
+          }}
+          listeners={{
+            tabPress: () => setPushedTab('Notifications'),
           }}
         />
       </Tab.Navigator>
