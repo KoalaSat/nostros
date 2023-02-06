@@ -9,6 +9,7 @@ import { AppContext } from '../../Contexts/AppContext'
 import LnPreview from '../LnPreview'
 import { Note } from '../../Functions/DatabaseFunctions/Notes'
 import { getNpub } from '../../lib/nostr/Nip19'
+import { formatPubKey } from '../../Functions/RelayFunctions/Users'
 
 interface LnPaymentProps {
   open: boolean
@@ -23,7 +24,7 @@ export const LnPayment: React.FC<LnPaymentProps> = ({ open, setOpen, note, user 
   const { getSatoshiSymbol } = React.useContext(AppContext)
   const bottomSheetLnPaymentRef = React.useRef<RBSheet>(null)
   const [monto, setMonto] = useState<string>('')
-  const defaultComment = note?.id ? `Tip for Nostr event nostr:${getNpub(note?.id)}` : ''
+  const defaultComment = note?.id ? `Nostr: ${formatPubKey(getNpub(note?.id))}` : ''
   const [comment, setComment] = useState<string>(defaultComment)
   const [invoice, setInvoice] = useState<string>()
   const [loading, setLoading] = useState<boolean>(false)
@@ -51,12 +52,16 @@ export const LnPayment: React.FC<LnPaymentProps> = ({ open, setOpen, note, user 
         comment,
       })
         .then((action) => {
+          console.log(action)
           if (action.hasValidAmount && action.invoice) {
             setInvoice(action.invoice)
           }
           setLoading(false)
         })
-        .catch(() => setLoading(false))
+        .catch((e) => {
+          console.log(e)
+          setLoading(false)
+        })
     }
   }
 
@@ -115,6 +120,7 @@ export const LnPayment: React.FC<LnPaymentProps> = ({ open, setOpen, note, user 
             mode='contained'
             disabled={loading || monto === ''}
             onPress={() => generateInvoice()}
+            loading={loading}
           >
             {t('lnPayment.generateInvoice')}
           </Button>
@@ -123,7 +129,7 @@ export const LnPayment: React.FC<LnPaymentProps> = ({ open, setOpen, note, user 
           </Button>
         </View>
       </RBSheet>
-      {invoice && <LnPreview invoice={invoice} setInvoice={setInvoice} />}
+      <LnPreview invoice={invoice} setInvoice={setInvoice} />
     </>
   ) : (
     <></>
