@@ -80,7 +80,8 @@
       "userBlocked": "Usuario bloqueado",
       "contentWarning": "Contenido sensible",
       "recommendation": "Recomendación de relay",
-      "addRelay": "Agregar relay"
+      "addRelay": "Agregar relay",
+      "reposted": "Reposteado"
     },
     "lnPayment": {
       "monto": "Cantidad (sats.)",
@@ -262,6 +263,9 @@
       },
       "copyNip05": "Copiar NIP-05",
       "copyNPub": "Copiar clave"
+    },
+    "textContent": {
+      "invoice": "Factura de Lightning Network"
     },
     "profileCard": {
       "notifications": {

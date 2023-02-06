@@ -36,7 +36,7 @@ export const NotePage: React.FC<NotePageProps> = ({ route }) => {
         relayPool?.unsubscribe([
           `meta-notepage${route.params.noteId}`,
           `notepage${route.params.noteId}`,
-          `notepage-replies-${route.params.noteId}`
+          `notepage-replies-${route.params.noteId}`,
         ])
     }, []),
   )

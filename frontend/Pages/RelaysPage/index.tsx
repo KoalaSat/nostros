@@ -24,7 +24,8 @@ import { useFocusEffect } from '@react-navigation/native'
 
 export const RelaysPage: React.FC = () => {
   const defaultRelayInput = React.useMemo(() => 'wss://', [])
-  const { updateRelayItem, addRelayItem, removeRelayItem, relays, relayPool } = useContext(RelayPoolContext)
+  const { updateRelayItem, addRelayItem, removeRelayItem, relays, relayPool } =
+    useContext(RelayPoolContext)
   const { t } = useTranslation('common')
   const theme = useTheme()
   const bottomSheetAddRef = React.useRef<RBSheet>(null)

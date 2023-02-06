@@ -17,7 +17,6 @@ import { useTranslation } from 'react-i18next'
 import { navigate } from '../../lib/Navigation'
 import { decode } from 'nostr-tools/nip19'
 import {
-  getDirectMessages,
   getDirectMessagesCount,
   getGroupedDirectMessages,
 } from '../../Functions/DatabaseFunctions/DirectMessages'

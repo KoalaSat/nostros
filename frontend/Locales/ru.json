@@ -80,7 +80,8 @@
       "userBlocked": "Пользователь заблокирован",
       "contentWarning": "Деликатный контент",
       "recommendation": "Рекомендованные реле",
-      "addRelay": "Agregar relay"
+      "addRelay": "Agregar relay",
+      "reposted": "Reposted"
     },
     "lnPayment": {
       "monto": "Cantity (sats.)",
@@ -253,6 +254,9 @@
       "fr": "Français",
       "ru": "Русский",
       "de": "Deutsch"
+    },
+    "textContent": {
+      "invoice": "Lightning Network invoice"
     },
     "profileShare": {
       "notifications": {

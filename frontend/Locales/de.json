@@ -80,7 +80,8 @@
       "userBlocked": "Benutzer blockiert",
       "contentWarning": "Sensibler Inhalt",
       "recommendation": "Relay Empfehlung",
-      "addRelay": "Relay hinzufügen"
+      "addRelay": "Relay hinzufügen",
+      "reposted": "Reposted"
     },
     "lnPayment": {
       "monto": "Betrag (sats.)",
@@ -194,6 +195,9 @@
         "badFormat": "Die URL des Relays hat kein gültiges Format.",
         "alreadyExists": "Relay already exists."
       }
+    },
+    "textContent": {
+      "invoice": "Lightning Network invoice"
     },
     "profileConfigPage": {
       "notifications": {

@@ -80,7 +80,8 @@
       "seeParent": "See note",
       "contentWarning": "Sensitive content",
       "recommendation": "Relay recomendation",
-      "addRelay": "Add relay"
+      "addRelay": "Add relay",
+      "reposted": "Reposted"
     },
     "lnPayment": {
       "monto": "Amount (sats)",
@@ -244,6 +245,9 @@
       "nip05": "NIP-05",
       "name": "Name",
       "about": "Description"
+    },
+    "textContent": {
+      "invoice": "Lightning Network invoice"
     },
     "profilePage": {
       "notifications": {

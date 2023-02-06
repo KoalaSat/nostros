@@ -75,45 +75,46 @@ export const ReactionsFeed: React.FC<ReactionsFeedProps> = ({ navigation }) => {
     }
   }
 
-  const loadNotes: () => void = () => {
+  const loadNotes: () => void = async () => {
     if (database && publicKey) {
-      getReactedNotes(database, publicKey, pageSize).then((notes) => {
+      relayPool?.unsubscribe(['homepage-reactions', 'homepage-replies', 'homepage-main'])
+      getReactedNotes(database, publicKey, pageSize).then(async (notes) => {
         setNotes(notes)
         if (notes.length > 0) {
-          relayPool?.subscribe('homepage-contacts-meta', [
+          const noteIds = notes.map((note) => note.id ?? '')
+          const messages: RelayFilters[] = [
             {
               kinds: [Kind.Metadata],
               authors: notes.map((note) => note.pubkey ?? ''),
             },
-          ])
-          const noteIds = notes.map((note) => note.id ?? '')
-          getLastReaction(database, { eventIds: notes.map((note) => note.id ?? '') }).then(
-            (lastReaction) => {
-              relayPool?.subscribe('homepage-reactions', [
-                {
-                  kinds: [Kind.Reaction],
-                  '#e': noteIds,
-                  since: lastReaction?.created_at ?? 0,
-                },
-              ])
-            },
-          )
+          ]
+          const lastReaction = await getLastReaction(database, {
+            eventIds: notes.map((note) => note.id ?? ''),
+          })
+          messages.push({
+            kinds: [Kind.Reaction],
+            '#e': noteIds,
+            since: lastReaction?.created_at ?? 0,
+          })
           const repostIds = notes.filter((note) => note.repost_id).map((note) => note.id ?? '')
-          getLastReply(database, { eventIds: notes.map((note) => note.id ?? '') }).then(
-            (lastReply) => {
-              relayPool?.subscribe('homepage-replies', [
-                {
-                  kinds: [Kind.Text],
-                  '#e': noteIds,
-                  since: lastReply?.created_at ?? 0,
-                },
-                {
-                  kinds: [Kind.Text],
-                  '#e': repostIds,
-                },
-              ])
+          if (repostIds.length > 0) {
+            messages.push({
+              kinds: [Kind.Text],
+              '#e': repostIds,
+            })
+          }
+          relayPool?.subscribe('homepage-contacts-meta', messages)
+
+          const lastReply = await getLastReply(database, {
+            eventIds: notes.map((note) => note.id ?? ''),
+          })
+          relayPool?.subscribe('homepage-contacts-replies', [
+            {
+              kinds: [Kind.Text],
+              '#e': noteIds,
+              since: lastReply?.created_at ?? 0,
             },
-          )
+          ])
         }
       })
     }

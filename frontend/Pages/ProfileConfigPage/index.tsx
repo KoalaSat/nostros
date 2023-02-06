@@ -20,6 +20,7 @@ import { RelayPoolContext } from '../../Contexts/RelayPoolContext'
 import RBSheet from 'react-native-raw-bottom-sheet'
 import NostrosAvatar from '../../Components/NostrosAvatar'
 import { getUnixTime } from 'date-fns'
+import { useFocusEffect } from '@react-navigation/native'
 
 export const ProfileConfigPage: React.FC = () => {
   const theme = useTheme()
@@ -50,17 +51,21 @@ export const ProfileConfigPage: React.FC = () => {
   const [isPublishingProfile, setIsPublishingProfile] = useState<string>()
   const { t } = useTranslation('common')
 
-  useEffect(() => {
-    if (database && publicKey) {
-      relayPool?.unsubscribeAll()
-      relayPool?.subscribe('loading-meta', [
-        {
-          kinds: [Kind.Metadata],
-          authors: [publicKey],
-        },
-      ])
-    }
-  }, [])
+  useFocusEffect(
+    React.useCallback(() => {
+      if (database && publicKey) {
+        relayPool?.subscribe('loading-meta', [
+          {
+            kinds: [Kind.Metadata],
+            authors: [publicKey],
+          },
+        ])
+      }
+      return () => {
+        relayPool?.unsubscribe(['loading-meta'])
+      }
+    }, []),
+  )
 
   useEffect(() => {
     if (isPublishingProfile) {

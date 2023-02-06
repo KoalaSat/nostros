@@ -30,7 +30,7 @@ export const updateAllRead: (db: QuickSQLiteConnection) => Promise<QueryResult |
 
 export const getDirectMessagesCount: (
   db: QuickSQLiteConnection,
-  pubKey: string
+  pubKey: string,
 ) => Promise<number> = async (db, pubKey) => {
   const repliesQuery = `
     SELECT

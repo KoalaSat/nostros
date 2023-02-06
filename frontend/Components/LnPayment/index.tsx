@@ -1,23 +1,22 @@
 import React, { useEffect, useState } from 'react'
 import { requestInvoice } from 'lnurl-pay'
-import QRCode from 'react-native-qrcode-svg'
 import { Event } from '../../lib/nostr/Events'
 import { User } from '../../Functions/DatabaseFunctions/Users'
-import { Linking, StyleSheet, View } from 'react-native'
-import Clipboard from '@react-native-clipboard/clipboard'
+import { StyleSheet, View } from 'react-native'
 import { useTranslation } from 'react-i18next'
 import RBSheet from 'react-native-raw-bottom-sheet'
-import { Button, Card, IconButton, Text, TextInput, useTheme } from 'react-native-paper'
+import { Button, Text, TextInput, useTheme } from 'react-native-paper'
 import { AppContext } from '../../Contexts/AppContext'
+import LnPreview from '../LnPreview'
 
-interface TextContentProps {
+interface LnPaymentProps {
   open: boolean
   setOpen: (open: boolean) => void
   event?: Event
   user?: User
 }
 
-export const LnPayment: React.FC<TextContentProps> = ({ open, setOpen, event, user }) => {
+export const LnPayment: React.FC<LnPaymentProps> = ({ open, setOpen, event, user }) => {
   const theme = useTheme()
   const { t } = useTranslation('common')
   const { getSatoshiSymbol } = React.useContext(AppContext)
@@ -43,14 +42,6 @@ export const LnPayment: React.FC<TextContentProps> = ({ open, setOpen, event, us
     setComment(defaultComment)
   }, [event, open])
 
-  const copyInvoice: () => void = () => {
-    Clipboard.setString(invoice ?? '')
-  }
-
-  const openApp: () => void = () => {
-    Linking.openURL(`lightning:${invoice}`)
-  }
-
   const generateInvoice: () => void = async () => {
     if (user?.lnurl && monto !== '') {
       setLoading(true)
@@ -71,21 +62,6 @@ export const LnPayment: React.FC<TextContentProps> = ({ open, setOpen, event, us
   }
 
   const rbSheetCustomStyles = React.useMemo(() => {
-    return {
-      container: {
-        backgroundColor: theme.colors.background,
-        paddingTop: 16,
-        paddingRight: 16,
-        paddingBottom: 32,
-        paddingLeft: 16,
-        borderTopRightRadius: 28,
-        borderTopLeftRadius: 28,
-        height: 'auto',
-      },
-    }
-  }, [])
-
-  const rbSheetQrCustomStyles = React.useMemo(() => {
     return {
       container: {
         backgroundColor: theme.colors.background,
@@ -147,40 +123,7 @@ export const LnPayment: React.FC<TextContentProps> = ({ open, setOpen, event, us
           </Button>
         </View>
       </RBSheet>
-      <RBSheet
-        ref={bottomSheetInvoiceRef}
-        closeOnDragDown={true}
-        // height={630}
-        customStyles={rbSheetQrCustomStyles}
-        onClose={() => setOpen(false)}
-      >
-        <Card style={styles.qrContainer}>
-          <Card.Content>
-            <View style={styles.qr}>
-              <QRCode value={invoice} size={300} quietZone={8} />
-            </View>
-            <View style={styles.qrText}>
-              <Text>{monto} </Text>
-              {getSatoshiSymbol(23)}
-            </View>
-            {comment && (
-              <View style={styles.qrText}>
-                <Text>{comment}</Text>
-              </View>
-            )}
-          </Card.Content>
-        </Card>
-        <View style={styles.cardActions}>
-          <View style={styles.actionButton}>
-            <IconButton icon='content-copy' size={28} onPress={copyInvoice} />
-            <Text>{t('lnPayment.copy')}</Text>
-          </View>
-          <View style={styles.actionButton}>
-            <IconButton icon='wallet' size={28} onPress={openApp} />
-            <Text>{t('lnPayment.open')}</Text>
-          </View>
-        </View>
-      </RBSheet>
+      {invoice && <LnPreview invoice={invoice} setInvoice={setInvoice} />}
     </>
   ) : (
     <></>

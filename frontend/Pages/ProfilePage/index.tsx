@@ -54,9 +54,9 @@ export const ProfilePage: React.FC<ProfilePageProps> = ({ route }) => {
 
       return () =>
         relayPool?.unsubscribe([
-          `main-profile${route.params.pubKey}`,
-          `user-profile${route.params.pubKey}`,
-          `answers-profile${route.params.pubKey}`,
+          `profile${route.params.pubKey}`,
+          `profile-user${route.params.pubKey}`,
+          `profile-answers${route.params.pubKey}`,
         ])
     }, []),
   )
@@ -101,7 +101,7 @@ export const ProfilePage: React.FC<ProfilePageProps> = ({ route }) => {
           setNotes(results)
           setRefreshing(false)
           if (results.length > 0) {
-            relayPool?.subscribe(`answers-profile${route.params.pubKey}`, [
+            relayPool?.subscribe(`profile-answers${route.params.pubKey}`, [
               {
                 kinds: [Kind.Reaction, Kind.Text, Kind.RecommendRelay],
                 '#e': results.map((note) => note.id ?? ''),
@@ -114,7 +114,7 @@ export const ProfilePage: React.FC<ProfilePageProps> = ({ route }) => {
   }
 
   const subscribeProfile: () => Promise<void> = async () => {
-    relayPool?.subscribe(`user-profile${route.params.pubKey}`, [
+    relayPool?.subscribe(`profile-user${route.params.pubKey}`, [
       {
         kinds: [Kind.Metadata, Kind.Contacts],
         authors: [route.params.pubKey],
@@ -130,7 +130,7 @@ export const ProfilePage: React.FC<ProfilePageProps> = ({ route }) => {
       authors: [route.params.pubKey],
       limit: pageSize,
     }
-    relayPool?.subscribe(`main-profile${route.params.pubKey}`, [message])
+    relayPool?.subscribe(`profile${route.params.pubKey}`, [message])
   }
 
   const removeContact: () => void = () => {
