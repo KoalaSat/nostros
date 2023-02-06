@@ -1,6 +1,5 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useMemo, useState } from 'react'
 import { requestInvoice } from 'lnurl-pay'
-import { Event } from '../../lib/nostr/Events'
 import { User } from '../../Functions/DatabaseFunctions/Users'
 import { StyleSheet, View } from 'react-native'
 import { useTranslation } from 'react-i18next'
@@ -8,25 +7,28 @@ import RBSheet from 'react-native-raw-bottom-sheet'
 import { Button, Text, TextInput, useTheme } from 'react-native-paper'
 import { AppContext } from '../../Contexts/AppContext'
 import LnPreview from '../LnPreview'
+import { Note } from '../../Functions/DatabaseFunctions/Notes'
+import { getNpub } from '../../lib/nostr/Nip19'
+import { formatPubKey } from '../../Functions/RelayFunctions/Users'
 
 interface LnPaymentProps {
   open: boolean
   setOpen: (open: boolean) => void
-  event?: Event
+  note?: Note
   user?: User
 }
 
-export const LnPayment: React.FC<LnPaymentProps> = ({ open, setOpen, event, user }) => {
+export const LnPayment: React.FC<LnPaymentProps> = ({ open, setOpen, note, user }) => {
   const theme = useTheme()
   const { t } = useTranslation('common')
   const { getSatoshiSymbol } = React.useContext(AppContext)
   const bottomSheetLnPaymentRef = React.useRef<RBSheet>(null)
-  const bottomSheetInvoiceRef = React.useRef<RBSheet>(null)
   const [monto, setMonto] = useState<string>('')
-  const defaultComment = event?.id ? `Tip for Nostr event ${event?.id}` : ''
+  const defaultComment = note?.id ? `Nostr: ${formatPubKey(getNpub(note?.id))}` : ''
   const [comment, setComment] = useState<string>(defaultComment)
   const [invoice, setInvoice] = useState<string>()
   const [loading, setLoading] = useState<boolean>(false)
+  const lnurl = useMemo(() => user?.lnurl ?? note?.lnurl, [open])
 
   useEffect(() => {
     setMonto('')
@@ -34,30 +36,32 @@ export const LnPayment: React.FC<LnPaymentProps> = ({ open, setOpen, event, user
       bottomSheetLnPaymentRef.current?.open()
     } else {
       bottomSheetLnPaymentRef.current?.close()
-      bottomSheetInvoiceRef.current?.close()
     }
   }, [open])
 
   useEffect(() => {
     setComment(defaultComment)
-  }, [event, open])
+  }, [note, open])
 
   const generateInvoice: () => void = async () => {
-    if (user?.lnurl && monto !== '') {
+    if (lnurl && monto !== '') {
       setLoading(true)
       requestInvoice({
-        lnUrlOrAddress: user.lnurl,
-        tokens: parseInt(monto, 10),
+        lnUrlOrAddress: lnurl,
+        tokens: parseInt(monto, 10) ?? 0,
         comment,
       })
         .then((action) => {
+          console.log(action)
           if (action.hasValidAmount && action.invoice) {
             setInvoice(action.invoice)
-            bottomSheetInvoiceRef.current?.open()
           }
           setLoading(false)
         })
-        .catch(() => setLoading(false))
+        .catch((e) => {
+          console.log(e)
+          setLoading(false)
+        })
     }
   }
 
@@ -76,7 +80,7 @@ export const LnPayment: React.FC<LnPaymentProps> = ({ open, setOpen, event, user
     }
   }, [])
 
-  return user?.lnurl ? (
+  return lnurl ? (
     <>
       <RBSheet
         ref={bottomSheetLnPaymentRef}
@@ -116,6 +120,7 @@ export const LnPayment: React.FC<LnPaymentProps> = ({ open, setOpen, event, user
             mode='contained'
             disabled={loading || monto === ''}
             onPress={() => generateInvoice()}
+            loading={loading}
           >
             {t('lnPayment.generateInvoice')}
           </Button>
@@ -124,7 +129,7 @@ export const LnPayment: React.FC<LnPaymentProps> = ({ open, setOpen, event, user
           </Button>
         </View>
       </RBSheet>
-      {invoice && <LnPreview invoice={invoice} setInvoice={setInvoice} />}
+      <LnPreview invoice={invoice} setInvoice={setInvoice} />
     </>
   ) : (
     <></>
