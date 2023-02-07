@@ -13,7 +13,7 @@
       "privateKeysSnackbarDescription": "请妥善保管您的私钥。如果遗失，您将无法访问或恢复您的账号。"
     },
     "homeNavigator": {
-      "ProfileCreate": "",
+      "ProfileCreate": "Create profile",
       "ProfileConnect": "",
       "ProfileLoad": "",
       "Landing": "",
@@ -97,11 +97,17 @@
     },
     "profileCreatePage": {
       "notifications": {
-        "copied": "已复制私钥 \n\n 请妥善保管您的私钥"
+        "copied": "已复制私钥 \n\n 请妥善保管您的私钥",
+        "wrongWords": "The words doesn't match"
       },
       "warningTitle": "注意",
       "warningDescription": "请妥善保管您的私钥。如果遗失，您将无法访问或恢复您的账号。",
       "warningAction": "复制私钥",
+      "continue": "Continue",
+      "mnemonicTitle": "These words or your private key are the only way to recover your account.",
+      "mnemonicDescription": "Write them down and keep them in a safe place, if you lose them you will not be able to access again.",
+      "introTitle": "Your device will generate 12 words and your private key.",
+      "wordsNoted": "I have saved my words and/or my private key.",
       "accessButton": "登入",
       "label": "私钥",
       "copied": "已复制的公钥",
@@ -113,7 +119,9 @@
       "isPublic": "用公钥登录",
       "accessButton": "登入",
       "privateKey": "私钥",
-      "publicKey": "公钥"
+      "publicKey": "公钥",
+      "loginMethod": "Login with",
+      "mnemonic": "Mnemonic"
     },
     "contactsFeed": {
       "notifications": {

@@ -13,7 +13,7 @@
       "privateKeysSnackbarDescription": "Keep your private key in a safe place, if you lose it you will not be able to access it again or recover your account."
     },
     "homeNavigator": {
-      "ProfileCreate": "",
+      "ProfileCreate": "Create profile",
       "ProfileConnect": "",
       "ProfileLoad": "",
       "Landing": "",
@@ -99,11 +99,17 @@
     },
     "profileCreatePage": {
       "notifications": {
-        "copied": "Приватный ключ скопирован.\n\nСохраните этот ключ в надежном месте."
+        "copied": "Приватный ключ скопирован.\n\nСохраните этот ключ в надежном месте.",
+        "wrongWords": "The words doesn't match"
       },
       "warningTitle": "Важно",
       "warningDescription": "Сохраните этот ключ в надежном месте. В случае утери ключа, Вы не сможете войти или восстановить доступ к профилю.",
       "warningAction": "Скопировать приватный ключ",
+      "continue": "Continue",
+      "mnemonicTitle": "These words or your private key are the only way to recover your account.",
+      "mnemonicDescription": "Write them down and keep them in a safe place, if you lose them you will not be able to access again.",
+      "introTitle": "Your device will generate 12 words and your private key.",
+      "wordsNoted": "I have saved my words and/or my private key.",
       "accessButton": "Access",
       "label": "Приватный ключ",
       "copied": "Ключ скопирован",
@@ -115,7 +121,9 @@
       "isPublic": "Access with public key",
       "accessButton": "Войти",
       "privateKey": "Приватный ключ",
-      "publicKey": "Публичный ключ"
+      "publicKey": "Публичный ключ",
+      "loginMethod": "Login with",
+      "mnemonic": "Mnemonic"
     },
     "contactsFeed": {
       "notifications": {

@@ -147,7 +147,7 @@ export const RelaysPage: React.FC = () => {
     return (
       <List.Item
         key={index}
-        title={item.url.split('wss://')[1]?.split('/')[0]}
+        title={item.url}
         right={() => (
           <>
             <Switch
@@ -186,7 +186,7 @@ export const RelaysPage: React.FC = () => {
     return (
       <List.Item
         key={index}
-        title={item.split('wss://')[1]?.split('/')[0]}
+        title={item}
         left={() => (
           <MaterialCommunityIcons
             style={styles.relayColor}
@@ -245,9 +245,6 @@ export const RelaysPage: React.FC = () => {
           data={Object.keys(relayPool?.resilientAssignation.resilientRelays ?? {})}
           renderItem={(data) => renderResilienceItem(data.item, data.index)}
         />
-        <View style={styles.titleWrapper}>
-          <Divider />
-        </View>
         <FlatList
           showsVerticalScrollIndicator={false}
           data={Object.keys(relayPool?.resilientAssignation.centralizedRelays ?? {})}
@@ -393,7 +390,7 @@ export const RelaysPage: React.FC = () => {
             </View>
           </View>
           <Divider style={styles.divider} />
-          <Text variant='titleLarge'>{selectedRelay?.url.split('wss://')[1]?.split('/')[0]}</Text>
+          <Text variant='titleLarge'>{selectedRelay?.url}</Text>
         </View>
       </RBSheet>
     </View>
@@ -468,7 +465,7 @@ const styles = StyleSheet.create({
     paddingRight: 10,
   },
   resilienceDrawer: {
-    height: 630,
+    height: 63,
     justifyContent: 'space-between',
   },
 })

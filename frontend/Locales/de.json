@@ -98,13 +98,18 @@
     },
     "profileCreatePage": {
       "notifications": {
-        "copied": "Privaten Schlüssel kopiert. Verwahre ihn an einem sicheren Ort!"
+        "copied": "Privaten Schlüssel kopiert. Verwahre ihn an einem sicheren Ort!",
+        "wrongWords": "The words doesn't match"
       },
       "snackbarDescription": "Wichtig. Verwahre den Schlüssel an einem sicheren Ort. Bei Verlust kann dieses Konto nie wieder benutzt werden!",
       "snackbarAction": "Privaten Schlüssel kopieren",
       "warningTitle": "Wichtig!",
       "warningDescription": "Verwahre den Schlüssel an einem sicheren Ort. Bei Verlust kann dieses Konto nie wieder benutzt werden!",
       "warningAction": "Schlüssel kopiert",
+      "continue": "Continue",
+      "mnemonicTitle": "These words or your private key are the only way to recover your account.",
+      "introTitle": "Your device will generate 12 words and your private key.",
+      "wordsNoted": "I have saved my words and/or my private key.",
       "accessButton": "Zutritt",
       "label": "Privater Schlüssel",
       "copied": "Schlüssel kopiert",
@@ -116,7 +121,9 @@
       "isPublic": "Mit öffentlichem Schlüssel anmelden",
       "accessButton": "Zugriff",
       "privateKey": "Privater Schlüssel",
-      "publicKey": "Öffentlicher Schlüssel"
+      "publicKey": "Öffentlicher Schlüssel",
+      "loginMethod": "Login with",
+      "mnemonic": "Mnemonic"
     },
     "contactsFeed": {
       "notifications": {
