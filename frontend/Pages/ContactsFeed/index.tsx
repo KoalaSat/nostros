@@ -1,19 +1,14 @@
 import React, { useContext, useEffect, useState } from 'react'
-import {
-  ActivityIndicator,
-  Dimensions,
-  NativeScrollEvent,
-  NativeSyntheticEvent,
-  StyleSheet,
-  View,
-} from 'react-native'
+import { Dimensions, NativeScrollEvent, NativeSyntheticEvent, StyleSheet, View } from 'react-native'
 import Clipboard from '@react-native-clipboard/clipboard'
 import { AppContext } from '../../Contexts/AppContext'
 import { Kind } from 'nostr-tools'
 import { useTranslation } from 'react-i18next'
 import { FlashList, ListRenderItem } from '@shopify/flash-list'
 import {
+  getBlocked,
   getFollowersAndFollowing,
+  updateUserBlock,
   updateUserContact,
   User,
 } from '../../Functions/DatabaseFunctions/Users'
@@ -51,6 +46,7 @@ export const ContactsFeed: React.FC = () => {
   // State
   const [followers, setFollowers] = useState<User[]>([])
   const [following, setFollowing] = useState<User[]>([])
+  const [blocked, setBlocked] = useState<User[]>([])
   const [contactInput, setContactInput] = useState<string>()
   const [isAddingContact, setIsAddingContact] = useState<boolean>(false)
   const [showNotification, setShowNotification] = useState<undefined | string>()
@@ -72,6 +68,9 @@ export const ContactsFeed: React.FC = () => {
 
   const loadUsers: () => void = () => {
     if (database && publicKey) {
+      getBlocked(database).then((results) => {
+        if (results) setBlocked(results)
+      })
       getFollowersAndFollowing(database).then((results) => {
         const followers: User[] = []
         const following: User[] = []
@@ -169,6 +168,15 @@ export const ContactsFeed: React.FC = () => {
     }
   }
 
+  const unblock: (user: User) => void = (user) => {
+    if (relayPool && database && publicKey) {
+      updateUserBlock(user.id, database, false).then(() => {
+        setShowNotification('contactUnblocked')
+        loadUsers()
+      })
+    }
+  }
+
   const renderContactItem: ListRenderItem<User> = ({ index, item }) => {
     return (
       <TouchableRipple
@@ -193,6 +201,34 @@ export const ContactsFeed: React.FC = () => {
             <Button onPress={() => (item.contact ? removeContact(item) : addContact(item))}>
               {item.contact ? t('contactsFeed.stopFollowing') : t('contactsFeed.follow')}
             </Button>
+          </View>
+        </View>
+      </TouchableRipple>
+    )
+  }
+
+  const renderBlockedItem: ListRenderItem<User> = ({ index, item }) => {
+    return (
+      <TouchableRipple
+        onPress={() => {
+          setDisplayUserDrawer(item.id)
+          bottomSheetProfileRef.current?.open()
+        }}
+      >
+        <View key={item.id} style={styles.contactRow}>
+          <View style={styles.profileData}>
+            <ProfileData
+              username={item?.name}
+              publicKey={getNpub(item.id)}
+              validNip05={item?.valid_nip05}
+              nip05={item?.nip05}
+              lud06={item?.lnurl}
+              picture={item?.picture}
+              avatarSize={40}
+            />
+          </View>
+          <View>
+            <Button onPress={() => unblock(item)}>{t('contactsFeed.unblock')}</Button>
           </View>
         </View>
       </TouchableRipple>
@@ -250,7 +286,6 @@ export const ContactsFeed: React.FC = () => {
         onScroll={onScroll}
         ListEmptyComponent={ListEmptyComponentFollowing}
         horizontal={false}
-        ListFooterComponent={<ActivityIndicator animating={true} />}
       />
     </View>
   )
@@ -293,7 +328,37 @@ export const ContactsFeed: React.FC = () => {
         onScroll={onScroll}
         ItemSeparatorComponent={Divider}
         showsVerticalScrollIndicator={false}
-        ListFooterComponent={<ActivityIndicator animating={true} />}
+      />
+    </View>
+  )
+
+  const ListEmptyComponentBlocked = (
+    <View style={styles.blankNoButton}>
+      <MaterialCommunityIcons
+        name='account-group-outline'
+        size={64}
+        style={styles.center}
+        color={theme.colors.onPrimaryContainer}
+      />
+      <Text variant='headlineSmall' style={styles.center}>
+        {t('contactsFeed.emptyTitleBlocked')}
+      </Text>
+      <Text variant='bodyMedium' style={styles.center}>
+        {t('contactsFeed.emptyDescriptionBlocked')}
+      </Text>
+    </View>
+  )
+
+  const Blocked: JSX.Element = (
+    <View style={styles.container}>
+      <FlashList
+        estimatedItemSize={71}
+        showsVerticalScrollIndicator={false}
+        data={blocked.slice(0, pageSize)}
+        renderItem={renderBlockedItem}
+        onScroll={onScroll}
+        ListEmptyComponent={ListEmptyComponentBlocked}
+        horizontal={false}
       />
     </View>
   )
@@ -301,6 +366,7 @@ export const ContactsFeed: React.FC = () => {
   const renderScene: Record<string, JSX.Element> = {
     following: Following,
     followers: Followers,
+    blocked: Blocked,
   }
 
   return (
@@ -331,6 +397,20 @@ export const ContactsFeed: React.FC = () => {
           <TouchableRipple style={styles.textWrapper} onPress={() => setTabKey('followers')}>
             <Text style={styles.tabText}>
               {t('contactsFeed.followers', { count: followers.length })}
+            </Text>
+          </TouchableRipple>
+        </View>
+        <View
+          style={[
+            styles.tab,
+            tabKey === 'blocked'
+              ? { ...styles.tabActive, borderBottomColor: theme.colors.primary }
+              : {},
+          ]}
+        >
+          <TouchableRipple style={styles.textWrapper} onPress={() => setTabKey('blocked')}>
+            <Text style={styles.tabText}>
+              {t('contactsFeed.blocked', { count: blocked.length })}
             </Text>
           </TouchableRipple>
         </View>
@@ -474,6 +554,12 @@ const styles = StyleSheet.create({
   blank: {
     justifyContent: 'space-between',
     height: 252,
+    marginTop: 75,
+    padding: 16,
+  },
+  blankNoButton: {
+    justifyContent: 'space-between',
+    height: 192,
     marginTop: 75,
     padding: 16,
   },

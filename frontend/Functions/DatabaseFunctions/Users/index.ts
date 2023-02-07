@@ -84,6 +84,18 @@ export const getFollowersCount: (db: QuickSQLiteConnection) => Promise<number> =
   return item['COUNT(*)'] ?? 0
 }
 
+export const getBlocked: (db: QuickSQLiteConnection) => Promise<User[]> = async (db) => {
+  const userQuery = 'SELECT * FROM nostros_users WHERE blocked = 1 ORDER BY created_at DESC'
+  const resultSet = db.execute(userQuery)
+  if (resultSet.rows && resultSet.rows.length > 0) {
+    const items: object[] = getItems(resultSet)
+    const users: User[] = items.map((object) => databaseToEntity(object))
+    return users
+  } else {
+    return []
+  }
+}
+
 export const getFollowersAndFollowing: (db: QuickSQLiteConnection) => Promise<User[]> = async (
   db,
 ) => {

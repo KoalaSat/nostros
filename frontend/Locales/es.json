@@ -131,7 +131,8 @@
         "keyCopied": "Clave pública copiada.",
         "contactAdded": "Perfil seguido.",
         "addContactError": "Se ha producido un error al publicar tus cambios.",
-        "contactRemoved": "Has dejado de seguir a un perfil"
+        "contactRemoved": "Has dejado de seguir a un perfil",
+        "contactUnblocked": "Perfil desbloqueado."
       },
       "emptyTitleFollowing": "No sigues a nadie",
       "emptyDescriptionFollowing": "Sigue otros perfiles para ver contenido aquí.",
@@ -145,6 +146,8 @@
       "addContactTitle": "Añadir contacto",
       "followers": "Seguidores ({{count}})",
       "following": "Siguiendo ({{count}})",
+      "blocked": "Bloqueados ({{count}})",
+      "unblock": "Desbloquear",
       "stopFollowing": "Dejar de seguir",
       "follow": "Seguir"
     },
@@ -188,9 +191,9 @@
     },
     "relaysPage": {
       "resilienceTitle": "Resilience (experimental)",
-      "resilienceDescription": "The nostr protocol provides a good amount of tools to build a desentralized network, but unlike other desentralized protocols such as Bitcoin, it's not inherent by defaul on his usage.\n\nTo ahcieve such goal, clients and relays should activally colaborate. Nostros resiliense mode tries to, first, expose these concerns to their users, and secondly, start experimening with new pattern and way to help on network' resilency.\n\nFunctional implementation will soon endup appearing on Nostros by default.",
+      "resilienceDescription": "The nostr protocol provides a good amount of tools to build a decentralized network, but unlike other decentralized protocols such as Bitcoin, it's not inherent by default on his usage.\n\nIn order to achieve this goal, clients and relays should actively collaborate. Nostros resilience mode tries to, first, expose these concerns to their users, and secondly, start experimenting with new patterns and ways to help on network resiliency.\n\nFunctional implementations will soon end up appearing on Nostros by default.",
       "resilienceCategories": "Resilience exposure",
-      "resilienceCategoriesDescription": "A first approach Nostros is testing is randomly calculate (based on received contats' events) what are the most resilient relays. It tries to avoid both relays with too much events (centralization) and relays with almost no events (battery draining).\n\nThe goal is to generate a list of 5 relays and cover all contacts. But if this is not possible, it will search among other realys, warning to the user about it.",
+      "resilienceCategoriesDescription": "A first approach Nostros is testing is to randomly calculate (based on received contacts' events) what are the most resilient relays. It tries to avoid both relays with too many events (centralization) and relays with almost no events (battery draining).\n\nThe goal is to generate a list of 5 relays and cover all contacts. But if this is not possible, it will search among other relays, warning to the user about it.\n\nKeep in mind 'Centralized' and 'Small' tags reffers to how your data is stored, not their presense in the network.",
       "centralized": "Centralizado",
       "small": "Pequeño",
       "contacts": "Nº contactos",

@@ -238,7 +238,7 @@ export const SendPage: React.FC<SendPageProps> = ({ route }) => {
       </View>
       <View style={styles.actions}>
         {userSuggestions.length > 0 ? (
-          <View style={styles.contactsList}>
+          <View style={[styles.contactsList, { backgroundColor: theme.colors.background }]}>
             {userSuggestions.map((user, index) => renderContactItem(user, index))}
           </View>
         ) : (
