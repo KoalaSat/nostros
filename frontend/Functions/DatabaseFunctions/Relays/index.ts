@@ -1,11 +1,15 @@
 import { QueryResult, QuickSQLiteConnection } from 'react-native-quick-sqlite'
 import { getItems } from '..'
+import { median } from '../../NativeFunctions'
+import { getNoteRelaysUsage } from '../NotesRelays'
 
 export interface Relay {
   url: string
   name?: string
   active?: number
   global_feed?: number
+  resilient?: number
+  manual?: number
 }
 
 export interface RelayInfo {
@@ -60,4 +64,40 @@ export const createRelay: (db: QuickSQLiteConnection, url: string) => Promise<Qu
     INSERT OR IGNORE INTO nostros_relays (url) VALUES (?)
   `
   return db.execute(query, [url])
+}
+
+export const createResilientRelay: (
+  db: QuickSQLiteConnection,
+  url: string,
+) => Promise<QueryResult> = async (db, url) => {
+  const query = `
+    INSERT OR IGNORE INTO nostros_relays (url, resilient, active) VALUES (?, ?, ?)
+  `
+  return db.execute(query, [url, 1, 0])
+}
+
+export const activateResilientRelays: (
+  db: QuickSQLiteConnection,
+  relayUrls: string[],
+) => Promise<QueryResult> = async (db, relayUrls) => {
+  const userQuery = `UPDATE nostros_relays SET resilient = 1 WHERE url IN ('${relayUrls.join(
+    "', '",
+  )}');`
+  return db.execute(userQuery)
+}
+
+export const desactivateResilientRelays: (
+  db: QuickSQLiteConnection,
+) => Promise<QueryResult> = async (db) => {
+  const userQuery = `UPDATE nostros_relays SET resilient = 0 WHERE resilient = 1;`
+  return db.execute(userQuery)
+}
+
+export const getResilientRelays: (db: QuickSQLiteConnection) => Promise<string[]> = async (db) => {
+  const relayUsage = await getNoteRelaysUsage(db)
+  const medianUsage = median(Object.values(relayUsage))
+  const resilientRelays = Object.keys(relayUsage).sort((n1: string, n2: string) => {
+    return Math.abs(relayUsage[n1] - medianUsage) - Math.abs(relayUsage[n2] - medianUsage)
+  })
+  return resilientRelays
 }

@@ -36,7 +36,7 @@ interface ConversationPageProps {
 export const ConversationPage: React.FC<ConversationPageProps> = ({ route }) => {
   const theme = useTheme()
   const scrollViewRef = useRef<ScrollView>()
-  const { database } = useContext(AppContext)
+  const { database, setRefreshBottomBarAt } = useContext(AppContext)
   const { relayPool, lastEventId } = useContext(RelayPoolContext)
   const { publicKey, privateKey, name } = useContext(UserContext)
   const otherPubKey = useMemo(() => route.params.pubKey, [])
@@ -64,6 +64,7 @@ export const ConversationPage: React.FC<ConversationPageProps> = ({ route }) => 
     if (database && publicKey) {
       const conversationId = route.params?.conversationId
       updateConversationRead(conversationId, database)
+      setRefreshBottomBarAt(getUnixTime(new Date()))
       getUser(otherPubKey, database).then((user) => {
         if (user) setOtherUser(user)
       })

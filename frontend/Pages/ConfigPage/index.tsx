@@ -92,7 +92,7 @@ export const ConfigPage: React.FC = () => {
   }, [])
 
   const languageOptions = React.useMemo(() => {
-    return ['en', 'es', 'fr', 'ru', 'de'].map((language, index) => {
+    return ['en', 'es', 'fr', 'ru', 'de', 'zhCn'].map((language, index) => {
       return {
         key: index,
         title: <Text>{t(`language.${language}`)}</Text>,

@@ -3,7 +3,7 @@ import RelayPool from '../lib/nostr/RelayPool/intex'
 import { AppContext } from './AppContext'
 import { DeviceEventEmitter } from 'react-native'
 import debounce from 'lodash.debounce'
-import { createRelay, getRelays, Relay } from '../Functions/DatabaseFunctions/Relays'
+import { getRelays, Relay } from '../Functions/DatabaseFunctions/Relays'
 import { UserContext } from './UserContext'
 
 export interface RelayPoolContextProps {
@@ -74,6 +74,7 @@ export const RelayPoolContextProvider = ({
       DeviceEventEmitter.addListener('WebsocketEvent', debouncedEventIdHandler)
       DeviceEventEmitter.addListener('WebsocketConfirmation', debouncedConfirmationHandler)
       const initRelayPool = new RelayPool(privateKey)
+      await initRelayPool.resilientMode(database, publicKey)
       initRelayPool.connect(publicKey, () => setRelayPoolReady(true))
       setRelayPool(initRelayPool)
       loadRelays()
@@ -139,18 +140,6 @@ export const RelayPoolContextProvider = ({
       loadRelayPool()
     }
   }, [publicKey])
-
-  useEffect(() => {
-    if (database) {
-      getRelays(database).then((results) => {
-        if (results.length === 0) {
-          createRelay(database, 'wss://brb.io')
-          createRelay(database, 'wss://damus.io')
-          createRelay(database, 'wss://nostr-pub.wellorder.net')
-        }
-      })
-    }
-  }, [database])
 
   return (
     <RelayPoolContext.Provider
