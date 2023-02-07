@@ -169,7 +169,7 @@
       "resilienceTitle": "Resilience (experimental)",
       "resilienceDescription": "The nostr protocol provides a good amount of tools to build a desentralized network, but unlike other desentralized protocols such as Bitcoin, it's not inherent by defaul on his usage.\n\nTo ahcieve such goal, clients and relays should activally colaborate. Nostros resiliense mode tries to, first, expose these concerns to their users, and secondly, start experimening with new pattern and way to help on network' resilency.\n\nFunctional implementation will soon endup appearing on Nostros by default.",
       "resilienceCategories": "Resilience exposure",
-      "resilienceCategoriesDescription": "A first approach Nostros is testing is randomly calculate (based on received contats' events) what are the most resilient relays. It tries to avoid both relays with too much events (centralization) and relays with almost no events (battery draining).\n\nThe goal is to generate a list of 5 relays and cover all contacts. But if this is not possible, it will search among other realys, warning to the user about it.",
+      "resilienceCategoriesDescription": "A first approach Nostros is testing is randomly calculate (based on received contats' events) what are the most resilient relays. It tries to avoid both relays with too much events (centralization) and relays with almost no events (battery draining).\n\nThe goal is to generate a list of 5 relays and cover all contacts. But if this is not possible, it will search among other relays, warning to the user about it.",
       "centralized": "Centralized",
       "small": "Small",
       "contacts": "# Contacts",
