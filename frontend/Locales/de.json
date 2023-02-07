@@ -151,9 +151,13 @@
       "emptyDescription": "Folge Anderen um hier etwas zu sehen",
       "emptyButton": "Kontakte",
       "globalFeed": "Globaler Feed",
+      "myFeed": "Mein Feed",
+      "reactions": "Reaktionen",
+      "mentions": "Erwähnungen",
+      "reposts": "Reposts",
       "newMessage": "{{newNotesCount}} neue Nachricht. Zum Aktualisieren wischen.",
-      "newMessages": "{{newNotesCount}} neue Nachrichten. Zum Aktualisieren wischen.",
-      "myFeed": "Mein Feed"
+      "newMessages": "{{newNotesCount}} neue Nachrichten. Zum Aktualisieren wischen."
+     
     },
     "relayCard": {
       "moreInfo": "Mehr Infos",
