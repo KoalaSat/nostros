@@ -13,7 +13,7 @@
       "privateKeysSnackbarDescription": "Conservez votre clé privée dans un endroit sûr. Si vous la perdez, vous ne pourrez plus avoir accès ni récupérer votre compte."
     },
     "homeNavigator": {
-      "ProfileCreate": "",
+      "ProfileCreate": "Create profile",
       "ProfileConnect": "",
       "ProfileLoad": "",
       "Landing": "",
@@ -98,13 +98,19 @@
     },
     "profileCreatePage": {
       "notifications": {
-        "copied": "Clé privée copiée. Gardez-la dans un endroit sûr."
+        "copied": "Clé privée copiée. Gardez-la dans un endroit sûr.",
+        "wrongWords": "The words doesn't match"
       },
       "snackbarDescription": "Important. Conservez votre clé dans un endroit sûr, si vous le perdez, vous ne pourrez pas accéder à votre compte.",
       "snackbarAction": "Copier la clé privée",
       "warningTitle": "Important",
       "warningDescription": "Conservez votre clé dans un endroit sûr, si vous le perdez, vous ne pourrez pas accéder à votre compte.",
       "warningAction": "Copier la clé privée",
+      "continue": "Continue",
+      "mnemonicTitle": "These words or your private key are the only way to recover your account.",
+      "mnemonicDescription": "Write them down and keep them in a safe place, if you lose them you will not be able to access again.",
+      "introTitle": "Your device will generate 12 words and your private key.",
+      "wordsNoted": "I have saved my words and/or my private key.",
       "accessButton": "Accés",
       "label": "Clé privée",
       "copied": "Clé copiée",
@@ -116,7 +122,9 @@
       "isPublic": "Accès avec la clé publique",
       "accessButton": "Accés",
       "privateKey": "Clé privée",
-      "publicKey": "Clé publique"
+      "publicKey": "Clé publique",
+      "loginMethod": "Login with",
+      "mnemonic": "Mnemonic"
     },
     "contactsFeed": {
       "notifications": {

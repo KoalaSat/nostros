@@ -33,7 +33,7 @@ export const RelayCard: React.FC<RelayCardProps> = ({ url, bottomSheetRef }) => 
 
   React.useEffect(() => {
     if (relay) {
-      setUri(relay.url.split('wss://')[1]?.split('/')[0])
+      setUri(relay.url)
     }
   }, [relay])
 
@@ -119,7 +119,7 @@ export const RelayCard: React.FC<RelayCardProps> = ({ url, bottomSheetRef }) => 
             name='circle'
             color={relayToColor(relay.url)}
           />
-          <Text>{relay.url.split('wss://')[1]?.split('/')[0]}</Text>
+          <Text>{relay.url}</Text>
         </View>
         <Text>{relay.url}</Text>
         <View style={styles.moreInfo}>

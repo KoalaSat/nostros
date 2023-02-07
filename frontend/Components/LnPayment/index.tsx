@@ -52,14 +52,12 @@ export const LnPayment: React.FC<LnPaymentProps> = ({ open, setOpen, note, user 
         comment,
       })
         .then((action) => {
-          console.log(action)
           if (action.hasValidAmount && action.invoice) {
             setInvoice(action.invoice)
           }
           setLoading(false)
         })
         .catch((e) => {
-          console.log(e)
           setLoading(false)
         })
     }

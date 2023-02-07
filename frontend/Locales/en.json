@@ -13,7 +13,7 @@
       "privateKeysSnackbarDescription": "Keep your private key in a safe place. If you lose it, you will not be able to access it again or recover your account."
     },
     "homeNavigator": {
-      "ProfileCreate": "",
+      "ProfileCreate": "Create profile",
       "ProfileConnect": "",
       "ProfileLoad": "",
       "Landing": "",
@@ -99,11 +99,16 @@
     },
     "profileCreatePage": {
       "notifications": {
-        "copied": "Private key copied.\n\nStore this key in a safe place."
+        "copied": "Private key copied.\n\nStore this key in a safe place.",
+        "wrongWords": "The words doesn't match"
       },
       "warningTitle": "Important",
       "warningDescription": "Store your key in a safe place. If lose it, you won't be able to access or recover your profile.",
       "warningAction": "Copy private key",
+      "continue": "Continue",
+      "mnemonicTitle": "These words or your private key are the only way to recover your account.",
+      "introTitle": "Your device will generate 12 words and your private key.",
+      "wordsNoted": "I have saved my words and/or my private key.",
       "accessButton": "Access",
       "label": "Private key",
       "copied": "Key copied",
@@ -115,7 +120,10 @@
       "isPublic": "Access with public key",
       "accessButton": "Access",
       "privateKey": "Private key",
-      "publicKey": "Public key"
+      "publicKey": "Public key",
+      "loginMethod": "Login with",
+      "mnemonic": "Mnemonic",
+      "mnemonicInput": "Type your mnemonic words in the correct order to login."
     },
     "contactsFeed": {
       "notifications": {
