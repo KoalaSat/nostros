@@ -2,7 +2,7 @@
   "common": {
     "drawers": {
       "relaysTitle": "Relays",
-      "relaysDescription": "Relays sind Nodes (Netzknoten) im Netzwerk, die als Vermittler von Nachrichten zwischen den Anwendungen dienen.\n\n\nRelays können die Belastbarkeit und die Verfügbarkeit des Netzwerks verbessern, indem sie dafür sorgen, das Nachrichten trotz Unterbrechungen oder Ausfällen der Verfügbarkeit ausgeliefert werden.\n\n\nRelays können Privatsphäre und Netzwerksicherheit erhöhen, indem sie Aufenthaltsort und Identität der Anwendungen bzw. der Benutzer, die miteinander kommunizieren, verbergen\n\n\nDies kann von Wert sein in Umgebungen, in denen Zensur oder Überwachung ein Problem ist.\n\n\nEs ist wichitg darauf hinzuweisen, das Relays für schadhafte Zwecke missbraucht werden können, wie zum Beispiel Sniffing oder das Zensieren von Netzwerkverkehr.\n\n\nDeswegen ist es von Bedeutung, die Nutzung von Relays sorgfältig abzuwägen, und angemessenene Sichheitsmassnahmen anzuwenden, um Identität, Privatsphäre und Netzwerksicherheit zu schützen.",
+      "relaysDescription": "Relays sind Nodes (Netzknoten) im Netzwerk, die als Vermittler von Nachrichten zwischen den Anwendungen dienen.\n\n\nRelays können die Belastbarkeit und die Verfügbarkeit des Netzwerks verbessern, indem sie dafür sorgen, das Nachrichten trotz Unterbrechungen oder Ausfällen der Verfügbarkeit ausgeliefert werden.\n\n\nRelays können Privatsphäre und Netzwerksicherheit erhöhen, indem sie Aufenthaltsort und Identität der Anwendungen bzw. der Benutzer, die miteinander kommunizieren, verbergen\n\n\nDies kann von Wert sein in Umgebungen, in denen Zensur oder Überwachung ein Problem ist.\n\n\nEs ist wichtig darauf hinzuweisen, das Relays für schadhafte Zwecke missbraucht werden können, wie zum Beispiel Sniffing oder das Zensieren von Netzwerkverkehr.\n\n\nDeswegen ist es von Bedeutung, die Nutzung von Relays sorgfältig abzuwägen, und angemessenene Sichheitsmassnahmen anzuwenden, um Identität, Privatsphäre und Netzwerksicherheit zu schützen.",
       "keysTitle": "Was sind Schlüssel?",
       "keysDescription": "In Nostr gibt es zwei Schlüssel: Einen öffentlichen, und einen privaten Schlüssel",
       "publicKeys": "Öffentliche Schlüssel",
@@ -27,7 +27,7 @@
       "Send": "Senden",
       "Relays": "Relays",
       "ProfileConfig": "Mein Profil",
-      "markAllRead": "Mark all as read"
+      "markAllRead": "Alle als gelesen markieren"
     },
     "conversationPage": {
       "typeMessage": "Nachricht schreiben",
@@ -85,7 +85,7 @@
     },
     "lnPayment": {
       "monto": "Betrag (sats.)",
-      "comment": "Kommentar (opcional)",
+      "comment": "Kommentar (optional)",
       "generateInvoice": "Invoice generieren",
       "cancel": "Abbrechen",
       "copy": "Kopieren",
@@ -133,7 +133,7 @@
       "emptyButtonFollower": "Öffentlichen Schlüssel kopieren",
       "cancel": "Abbrechen",
       "addContact": "Kontakt hinzufügen",
-      "addContactDescription": "Öffentlichen Schlüssel hinzufügen, wenn du jemandem folgen möchtest",
+      "addContactDescription": "Öffentlichen Schlüssel oder NIP-05 hinzufügen, wenn du jemandem folgen möchtest",
       "addContactTitle": "Kontakt hinzufügen",
       "followers": "({{count}}) folgen mir",
       "following": "Ich folge ({{count}})",
@@ -151,9 +151,13 @@
       "emptyDescription": "Folge Anderen um hier etwas zu sehen",
       "emptyButton": "Kontakte",
       "globalFeed": "Globaler Feed",
+      "myFeed": "Mein Feed",
+      "reactions": "Reaktionen",
+      "mentions": "Erwähnungen",
+      "reposts": "Reposts",
       "newMessage": "{{newNotesCount}} neue Nachricht. Zum Aktualisieren wischen.",
-      "newMessages": "{{newNotesCount}} neue Nachrichten. Zum Aktualisieren wischen.",
-      "myFeed": "Mein Feed"
+      "newMessages": "{{newNotesCount}} neue Nachrichten. Zum Aktualisieren wischen."
+     
     },
     "relayCard": {
       "moreInfo": "Mehr Infos",
@@ -181,7 +185,7 @@
     "relaysPage": {
       "relayName": "Addresse",
       "globalFeed": "Globaler Feed",
-      "active": "Active",
+      "active": "Aktiv",
       "labelAdd": "Beschreibung des Relay",
       "cancel": "Abbrechen",
       "add": "Hinzufügen",
@@ -193,11 +197,11 @@
         "active": "Relay aktivieren.",
         "desactive": "Relay deaktivieren.",
         "badFormat": "Die URL des Relays hat kein gültiges Format.",
-        "alreadyExists": "Relay already exists."
+        "alreadyExists": "Relay existiert bereits"
       }
     },
     "textContent": {
-      "invoice": "Lightning Network invoice"
+      "invoice": "Lightning Invoice"
     },
     "profileConfigPage": {
       "notifications": {
@@ -262,7 +266,7 @@
     "profileShare": {
       "notifications": {
         "npubCopied": "Öffentlichen Schlüssel kopiert",
-        "nip05Copied": "NIP-05 copied."
+        "nip05Copied": "NIP-05 kopiert."
       },
       "copyNip05": "NIP-05 kopieren",
       "copyNPub": "Schlüssel kopieren"
@@ -278,7 +282,7 @@
       "follow": "Folgen",
       "block": "Blockieren",
       "share": "Teilen",
-      "unblock": "Unblock",
+      "unblock": "Erlauben",
       "unfollow": "Abo entfernen"
     },
     "conversationsFeed": {
