@@ -44,6 +44,12 @@ public class Event {
     public void save(SQLiteDatabase database, String userPubKey, String relayUrl) {
         if (isValid()) {
             try {
+                ContentValues relayValues = new ContentValues();
+                relayValues.put("note_id", id);
+                relayValues.put("pubkey", pubkey);
+                relayValues.put("relay_url", relayUrl);
+                database.replace("nostros_notes_relays", null, relayValues);
+
                 if (kind.equals("0")) {
                     saveUserMeta(database);
                 } else if (kind.equals("1") || kind.equals("2")) {
@@ -180,12 +186,6 @@ public class Event {
     }
 
     protected void saveNote(SQLiteDatabase database, String userPubKey, String relayUrl) {
-        ContentValues relayValues = new ContentValues();
-        relayValues.put("note_id", id);
-        relayValues.put("pubkey", pubkey);
-        relayValues.put("relay_url", relayUrl);
-        database.replace("nostros_notes_relays", null, relayValues);
-
         ContentValues values = new ContentValues();
         values.put("id", id);
         values.put("content", content.replace("'", "''"));
@@ -286,6 +286,7 @@ public class Event {
         for (int i = 0; i < tags.length(); ++i) {
             JSONArray tag = tags.getJSONArray(i);
             String petId = tag.getString(1);
+            String relay = tag.getString(2);
             String name = "";
             if (tag.length() >= 4) {
                 name = tag.getString(3);
@@ -298,6 +299,7 @@ public class Event {
                 values.put("name", name);
                 values.put("contact", true);
                 values.put("blocked", 0);
+                values.put("main_relay", relay);
                 values.put("pet_at", created_at);
                 database.insert("nostros_users", null, values);
             }

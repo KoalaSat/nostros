@@ -4,7 +4,7 @@ import Clipboard from '@react-native-clipboard/clipboard'
 import { useTranslation } from 'react-i18next'
 import { RelayPoolContext } from '../../Contexts/RelayPoolContext'
 import { Relay } from '../../Functions/DatabaseFunctions/Relays'
-import { defaultRelays, REGEX_SOCKET_LINK } from '../../Constants/Relay'
+import { REGEX_SOCKET_LINK } from '../../Constants/Relay'
 import {
   List,
   Switch,
@@ -22,6 +22,21 @@ import { relayToColor } from '../../Functions/NativeFunctions'
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'
 import { useFocusEffect } from '@react-navigation/native'
 
+export const defaultRelays = [
+  'wss://brb.io',
+  'wss://damus.io',
+  'wss://nostr-pub.wellorder.net',
+  'wss://nostr.swiss-enigma.ch',
+  'wss://nostr.onsats.org',
+  'wss://nostr-pub.semisol.dev',
+  'wss://nostr.openchain.fr',
+  'wss://relay.nostr.info',
+  'wss://nostr.oxtr.dev',
+  'wss://nostr.ono.re',
+  'wss://relay.grunch.dev',
+  'wss://nostr.developer.li',
+]
+
 export const RelaysPage: React.FC = () => {
   const defaultRelayInput = React.useMemo(() => 'wss://', [])
   const { updateRelayItem, addRelayItem, removeRelayItem, relays, relayPool } =
@@ -30,6 +45,7 @@ export const RelaysPage: React.FC = () => {
   const theme = useTheme()
   const bottomSheetAddRef = React.useRef<RBSheet>(null)
   const bottomSheetEditRef = React.useRef<RBSheet>(null)
+  const bottomSheetResilenseRef = React.useRef<RBSheet>(null)
   const [selectedRelay, setSelectedRelay] = useState<Relay>()
   const [addRelayInput, setAddRelayInput] = useState<string>(defaultRelayInput)
   const [showNotification, setShowNotification] = useState<string>()
@@ -119,13 +135,13 @@ export const RelaysPage: React.FC = () => {
     }
   }, [])
 
-  const myRelays = relays
-    .filter((relay) => !defaultRelays.includes(relay.url))
-    .sort((a, b) => {
-      if (a.url > b.url) return 1
-      if (a.url < b.url) return -1
-      return 0
-    })
+  const relayList = relays.sort((a, b) => {
+    if (a.url > b.url) return 1
+    if (a.url < b.url) return -1
+    return 0
+  })
+
+  const myRelays = relayList.filter((relay) => !defaultRelays.includes(relay.url))
 
   const renderItem: ListRenderItem<Relay> = ({ item, index }) => {
     return (
@@ -162,18 +178,86 @@ export const RelaysPage: React.FC = () => {
     )
   }
 
-  return (
-    <View style={styles.container}>
+  const renderResilienceItem: (item: string, index: number, type?: string) => JSX.Element = (
+    item,
+    index,
+    type,
+  ) => {
+    return (
       <List.Item
-        title={t('relaysPage.relayName')}
+        key={index}
+        title={item.split('wss://')[1]?.split('/')[0]}
+        left={() => (
+          <MaterialCommunityIcons
+            style={styles.relayColor}
+            name='circle'
+            color={relayToColor(item)}
+          />
+        )}
         right={() => (
           <>
-            <Text style={styles.listHeader}>{t('relaysPage.globalFeed')}</Text>
-            <Text style={styles.listHeader}>{t('relaysPage.active')}</Text>
+            {type === 'centralized' && (
+              <Text style={[styles.smallRelay, { color: theme.colors.errorContainer }]}>
+                {relayPool?.resilientAssignation.centralizedRelays[item] &&
+                  t('relaysPage.centralized')}
+              </Text>
+            )}
+            {type === 'small' && (
+              <Text style={[styles.smallRelay, { color: theme.colors.error }]}>
+                {relayPool?.resilientAssignation.smallRelays[item] && t('relaysPage.small')}
+              </Text>
+            )}
+            <Text>
+              {type === undefined && relayPool?.resilientAssignation.resilientRelays[item]?.length}
+              {type === 'small' && relayPool?.resilientAssignation.smallRelays[item]?.length}
+              {type === 'centralized' &&
+                relayPool?.resilientAssignation.centralizedRelays[item]?.length}
+            </Text>
           </>
         )}
       />
+    )
+  }
+
+  return (
+    <View style={styles.container}>
       <ScrollView horizontal={false}>
+        <View style={styles.titleWrapper}>
+          <View style={styles.title}>
+            <Text style={styles.title} variant='titleMedium'>
+              {t('relaysPage.resilienceMode')}
+            </Text>
+            <IconButton
+              style={styles.titleAction}
+              icon='question'
+              size={20}
+              onPress={() => bottomSheetResilenseRef.current?.open()}
+            />
+          </View>
+          <Divider />
+        </View>
+        <List.Item
+          title={t('relaysPage.relayName')}
+          right={() => <Text style={styles.listHeader}>{t('relaysPage.contacts')}</Text>}
+        />
+        <FlatList
+          showsVerticalScrollIndicator={false}
+          data={Object.keys(relayPool?.resilientAssignation.resilientRelays ?? {})}
+          renderItem={(data) => renderResilienceItem(data.item, data.index)}
+        />
+        <View style={styles.titleWrapper}>
+          <Divider />
+        </View>
+        <FlatList
+          showsVerticalScrollIndicator={false}
+          data={Object.keys(relayPool?.resilientAssignation.centralizedRelays ?? {})}
+          renderItem={(data) => renderResilienceItem(data.item, data.index, 'centralized')}
+        />
+        <FlatList
+          showsVerticalScrollIndicator={false}
+          data={Object.keys(relayPool?.resilientAssignation.smallRelays ?? {})}
+          renderItem={(data) => renderResilienceItem(data.item, data.index, 'small')}
+        />
         {myRelays.length > 0 && (
           <>
             <View style={styles.titleWrapper}>
@@ -182,6 +266,15 @@ export const RelaysPage: React.FC = () => {
               </Text>
               <Divider />
             </View>
+            <List.Item
+              title={t('relaysPage.relayName')}
+              right={() => (
+                <>
+                  <Text style={styles.listHeader}>{t('relaysPage.globalFeed')}</Text>
+                  <Text style={styles.listHeader}>{t('relaysPage.active')}</Text>
+                </>
+              )}
+            />
             <FlatList
               showsVerticalScrollIndicator={false}
               data={myRelays}
@@ -195,6 +288,15 @@ export const RelaysPage: React.FC = () => {
           </Text>
           <Divider />
         </View>
+        <List.Item
+          title={t('relaysPage.relayName')}
+          right={() => (
+            <>
+              <Text style={styles.listHeader}>{t('relaysPage.globalFeed')}</Text>
+              <Text style={styles.listHeader}>{t('relaysPage.active')}</Text>
+            </>
+          )}
+        />
         <FlatList
           showsVerticalScrollIndicator={false}
           data={defaultRelays.map(
@@ -227,6 +329,18 @@ export const RelaysPage: React.FC = () => {
           {t(`relaysPage.notifications.${showNotification}`)}
         </Snackbar>
       )}
+      <RBSheet
+        ref={bottomSheetResilenseRef}
+        closeOnDragDown={true}
+        customStyles={rbSheetCustomStyles}
+      >
+        <View style={styles.resilienceDrawer}>
+          <Text variant='headlineSmall'>{t('relaysPage.resilienceTitle')}</Text>
+          <Text variant='bodyMedium'>{t('relaysPage.resilienceDescription')}</Text>
+          <Text variant='titleMedium'>{t('relaysPage.resilienceCategories')}</Text>
+          <Text variant='bodyMedium'>{t('relaysPage.resilienceCategoriesDescription')}</Text>
+        </View>
+      </RBSheet>
       <RBSheet ref={bottomSheetAddRef} closeOnDragDown={true} customStyles={rbSheetCustomStyles}>
         <View style={styles.addRelay}>
           <View style={styles.bottomDrawerButton}>
@@ -294,6 +408,12 @@ const styles = StyleSheet.create({
   },
   title: {
     marginBottom: 8,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+  },
+  titleAction: {
+    marginTop: -5,
+    marginBottom: -10,
   },
   bottomDrawerButton: {
     paddingBottom: 16,
@@ -340,6 +460,16 @@ const styles = StyleSheet.create({
   divider: {
     marginBottom: 26,
     marginTop: 26,
+  },
+  centralizedRelay: {
+    paddingRight: 10,
+  },
+  smallRelay: {
+    paddingRight: 10,
+  },
+  resilienceDrawer: {
+    height: 600,
+    justifyContent: 'space-between',
   },
 })
 

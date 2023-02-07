@@ -40,8 +40,8 @@ public class DatabaseModule {
                 "        picture TEXT,\n" +
                 "        about TEXT,\n" +
                 "        main_relay TEXT,\n" +
-                "        contact BOOLEAN DEFAULT 0,\n" +
-                "        follower BOOLEAN DEFAULT 0\n" +
+                "        contact INT DEFAULT 0,\n" +
+                "        follower INT DEFAULT 0\n" +
                 "      );");
         database.execSQL("CREATE TABLE IF NOT EXISTS nostros_relays(\n" +
                 "          url TEXT PRIMARY KEY NOT NULL,\n" +
@@ -56,11 +56,11 @@ public class DatabaseModule {
                 "          sig TEXT NOT NULL,\n" +
                 "          tags TEXT NOT NULL,\n" +
                 "          conversation_id TEXT NOT NULL,\n" +
-                "          read BOOLEAN DEFAULT 0\n" +
+                "          read INT DEFAULT 0\n" +
                 "        );");
         try {
-            database.execSQL("ALTER TABLE nostros_notes ADD COLUMN user_mentioned BOOLEAN DEFAULT 0;");
-            database.execSQL("ALTER TABLE nostros_notes ADD COLUMN seen BOOLEAN DEFAULT 0;");
+            database.execSQL("ALTER TABLE nostros_notes ADD COLUMN user_mentioned INT DEFAULT 0;");
+            database.execSQL("ALTER TABLE nostros_notes ADD COLUMN seen INT DEFAULT 0;");
         } catch (SQLException e) { }
         try {
             database.execSQL("ALTER TABLE nostros_users ADD COLUMN lnurl TEXT;");
@@ -77,7 +77,7 @@ public class DatabaseModule {
                 "          pubkey TEXT NOT NULL,\n" +
                 "          sig TEXT NOT NULL,\n" +
                 "          tags TEXT NOT NULL,\n" +
-                "          positive BOOLEAN DEFAULT 1,\n" +
+                "          positive INT DEFAULT 1,\n" +
                 "          reacted_event_id TEXT,\n" +
                 "          reacted_user_id TEXT\n" +
                 "        );");
@@ -98,15 +98,11 @@ public class DatabaseModule {
         } catch (SQLException e) { }
         try {
             database.execSQL("ALTER TABLE nostros_users ADD COLUMN nip05 TEXT;");
-        } catch (SQLException e) { }
-        try {
-            database.execSQL("ALTER TABLE nostros_users ADD COLUMN valid_nip05 BOOLEAN DEFAULT 0;");
+            database.execSQL("ALTER TABLE nostros_users ADD COLUMN valid_nip05 INT DEFAULT 0;");
         } catch (SQLException e) { }
         try {
             database.execSQL("ALTER TABLE nostros_notes ADD COLUMN repost_id TEXT;");
-        } catch (SQLException e) { }
-        try {
-            database.execSQL("ALTER TABLE nostros_relays ADD COLUMN active BOOLEAN DEFAULT 1;");
+            database.execSQL("ALTER TABLE nostros_relays ADD COLUMN active INT DEFAULT 1;");
         } catch (SQLException e) { }
         try {
             database.execSQL("CREATE INDEX nostros_notes_repost_id_created_at_index ON nostros_notes(repost_id, pubkey, created_at); ");
@@ -122,12 +118,9 @@ public class DatabaseModule {
 
             database.execSQL("CREATE INDEX nostros_users_contact_follower_index ON nostros_users(contact, follower); ");
             database.execSQL("CREATE INDEX nostros_users_id_name_index ON nostros_users(id, name); ");
-        } catch (SQLException e) { }
-        try {
+
             database.execSQL("DROP TABLE IF EXISTS nostros_config;");
-        } catch (SQLException e) { }
-        try {
-            database.execSQL("ALTER TABLE nostros_users ADD COLUMN blocked BOOLEAN DEFAULT 0;");
+            database.execSQL("ALTER TABLE nostros_users ADD COLUMN blocked INT DEFAULT 0;");
         } catch (SQLException e) { }
         try {
             database.execSQL("CREATE TABLE IF NOT EXISTS nostros_notes_relays(\n" +
@@ -140,9 +133,13 @@ public class DatabaseModule {
             database.execSQL("CREATE INDEX nostros_notes_relays_pubkey_index ON nostros_notes_relays(pubkey);");
         } catch (SQLException e) { }
         try {
-            database.execSQL("ALTER TABLE nostros_relays ADD COLUMN global_feed BOOLEAN DEFAULT 1;");
             database.execSQL("ALTER TABLE nostros_users ADD COLUMN pet_at INT;");
             database.execSQL("ALTER TABLE nostros_users ADD COLUMN follower_at INT;");
+            database.execSQL("ALTER TABLE nostros_relays ADD COLUMN global_feed INT DEFAULT 1;");
+        } catch (SQLException e) { }
+        try {
+            database.execSQL("ALTER TABLE nostros_relays ADD COLUMN resilient INT DEFAULT 0;");
+            database.execSQL("ALTER TABLE nostros_relays ADD COLUMN manual INT DEFAULT 1;");
         } catch (SQLException e) { }
     }
 
