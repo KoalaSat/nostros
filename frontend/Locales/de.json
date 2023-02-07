@@ -157,7 +157,6 @@
       "reposts": "Reposts",
       "newMessage": "{{newNotesCount}} neue Nachricht. Zum Aktualisieren wischen.",
       "newMessages": "{{newNotesCount}} neue Nachrichten. Zum Aktualisieren wischen."
-     
     },
     "relayCard": {
       "moreInfo": "Mehr Infos",
@@ -269,7 +268,8 @@
       "es": "Español",
       "fr": "Français",
       "ru": "Русский",
-      "de": "Deutsch"
+      "de": "Deutsch",
+      "zhCn": "简体中文"
     },
     "profileShare": {
       "notifications": {
