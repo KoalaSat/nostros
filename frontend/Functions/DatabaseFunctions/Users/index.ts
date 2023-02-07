@@ -68,25 +68,6 @@ export const addUser: (pubKey: string, db: QuickSQLiteConnection) => Promise<Que
   return db.execute(query, [pubKey])
 }
 
-export const getMainRelays: (
-  db: QuickSQLiteConnection,
-) => Promise<Record<string, { count: number }>> = async (db) => {
-  const result: Record<string, { count: number }> = {}
-  const query = `
-    SELECT main_relay, COUNT(*) as count FROM nostros_users
-    WHERE nostros_users.contact > 0
-    GROUP BY main_relay
-  `
-  const resultSet = db.execute(query)
-  if (resultSet?.rows?.length) {
-    for (let index = 0; index < resultSet?.rows?.length; index++) {
-      const row = resultSet?.rows?.item(index)
-      console.log(row)
-    }
-  }
-  return result
-}
-
 export const getContactsCount: (db: QuickSQLiteConnection) => Promise<number> = async (db) => {
   const countQuery = 'SELECT COUNT(*) FROM nostros_users WHERE contact = 1'
   const resultSet = db.execute(countQuery)
