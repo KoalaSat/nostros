@@ -468,7 +468,7 @@ const styles = StyleSheet.create({
     paddingRight: 10,
   },
   resilienceDrawer: {
-    height: 600,
+    height: 630,
     justifyContent: 'space-between',
   },
 })
