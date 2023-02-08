@@ -131,7 +131,8 @@
         "keyCopied": "Öffentlichen Schlüssel kopiert",
         "contactAdded": "Kontakt hinzugefügt",
         "addContactError": "Ein Fehler ist aufgetreten.",
-        "contactRemoved": "Abo wurde entfernt"
+        "contactRemoved": "Abo wurde entfernt",
+        "contactUnblocked": "Profile unblocked."
       },
       "emptyTitleFollowing": "Du folgst niemandem",
       "emptyDescriptionFollowing": "Folge anderen, und sieh hier was sie posten",
@@ -145,6 +146,8 @@
       "addContactTitle": "Kontakt hinzufügen",
       "followers": "({{count}}) folgen mir",
       "following": "Ich folge ({{count}})",
+      "blocked": "Blocked ({{count}})",
+      "unblock": "Unblock",
       "stopFollowing": "Abo stoppen",
       "follow": "Folgen"
     },
