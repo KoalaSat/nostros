@@ -13,7 +13,7 @@
       "privateKeysSnackbarDescription": "Keep your private key in a safe place. If you lose it, you will not be able to access it again or recover your account."
     },
     "homeNavigator": {
-      "ProfileCreate": "",
+      "ProfileCreate": "Create profile",
       "ProfileConnect": "",
       "ProfileLoad": "",
       "Landing": "",
@@ -40,8 +40,9 @@
       "relays": "See relays",
       "home": "Go Home",
       "searchingProfile": "Searching for your profile",
-      "foundProfile": "Found profile",
-      "foundContacts": "{{contactsCount}} contacts found"
+      "foundProfile": "Profile found",
+      "foundContacts": "{{contactsCount}} contacts found",
+      "storing": "Storing {{lastEventId}} on database."
     },
     "sendPage": {
       "isContact": "Following",
@@ -99,11 +100,16 @@
     },
     "profileCreatePage": {
       "notifications": {
-        "copied": "Private key copied.\n\nStore this key in a safe place."
+        "copied": "Private key copied.\n\nStore this key in a safe place.",
+        "wrongWords": "The words doesn't match"
       },
       "warningTitle": "Important",
       "warningDescription": "Store your key in a safe place. If lose it, you won't be able to access or recover your profile.",
       "warningAction": "Copy private key",
+      "continue": "Continue",
+      "mnemonicTitle": "These words or your private key are the only way to recover your account.",
+      "introTitle": "Your device will generate 12 words and your private key.",
+      "wordsNoted": "I have saved my words and/or my private key.",
       "accessButton": "Access",
       "label": "Private key",
       "copied": "Key copied",
@@ -115,15 +121,17 @@
       "isPublic": "Access with public key",
       "accessButton": "Access",
       "privateKey": "Private key",
-      "publicKey": "Public key"
+      "publicKey": "Public key",
+      "loginMethod": "Login with",
+      "mnemonic": "Mnemonic",
+      "mnemonicInput": "Type your mnemonic words in the correct order to login."
     },
     "contactsFeed": {
       "notifications": {
         "keyCopied": "Public key copied.",
         "contactAdded": "Profile followed.",
         "addContactError": "There was an error publishing your changes.",
-        "contactRemoved": "Profile unfollowed.",
-        "contactUnblocked": "Profile unblocked."
+        "contactRemoved": "Profile unfollowed."
       },
       "emptyTitleFollowing": "You are not following anyone.",
       "emptyDescriptionFollowing": "Follow other profiles to see content.",
@@ -137,10 +145,6 @@
       "addContactTitle": "Add contact",
       "followers": "Followers ({{count}})",
       "following": "Following ({{count}})",
-      "blocked": "Blocked ({{count}})",
-      "unblock": "Unblock",
-      "emptyTitleBlocked": "You are not blocking anyone.",
-      "emptyDescriptionBlocked": "You can always block on the bottom drawer menu.",
       "stopFollowing": "Stop Following",
       "follow": "Follow"
     },
@@ -172,9 +176,9 @@
     },
     "relaysPage": {
       "resilienceTitle": "Resilience (experimental)",
-      "resilienceDescription": "The nostr protocol provides a good amount of tools to build a decentralized network, but unlike other decentralized protocols such as Bitcoin, it's not inherent by default on his usage.\n\nIn order to achieve this goal, clients and relays should actively collaborate. Nostros resilience mode tries to, first, expose these concerns to their users, and secondly, start experimenting with new patterns and ways to help on network resiliency.\n\nFunctional implementations will soon end up appearing on Nostros by default.",
+      "resilienceDescription": "The Nostr protocol provides a good number of tools to build a decentralized network, but unlike other decentralized protocols such as Bitcoin, it is not inherently bound to its use. To achieve the goal of a decentralized network, clients (e.g., Nostros) and relays (content servers) should actively cooperate. The Nostros resilience mode seeks first to raise awareness of this among users, and second to test new patterns and methods to improve the resilience of the network.\nA working implementation for this will soon be applied in Nostros.",
       "resilienceCategories": "Resilience exposure",
-      "resilienceCategoriesDescription": "A first approach Nostros is testing is to randomly calculate (based on received contacts' events) what are the most resilient relays. It tries to avoid both relays with too many events (centralization) and relays with almost no events (battery draining).\n\nThe goal is to generate a list of 5 relays and cover all contacts. But if this is not possible, it will search among other relays, warning to the user about it.\n\nKeep in mind 'Centralized' and 'Small' tags reffers to how your data is stored, not their presense in the network.",
+      "resilienceCategoriesDescription": "An initial approach that Nostros is testing is to randomly calculate (based on received contact events) which relays are most balanced. This tries to avoid both relays with too many events (centralization) and relays with almost no events (battery discharge).\n\nThe goal is to create a list of 5 relays that cover all contacts. However, if this is not possible, Nostros will search among other relays and warn the user about it.",
       "centralized": "Centralized",
       "small": "Small",
       "contacts": "# Contacts",
@@ -266,13 +270,18 @@
       "notifications": {
         "contactAdded": "Profile followed",
         "contactRemoved": "Profile unfollowed",
-        "npubCopied": "Public key copied."
+        "npubCopied": "Public key copied.",
+        "active": "Relay activated.",
+        "desactive": "Relay desactivated."
       },
       "invoice": "Tip",
       "message": "Message",
       "follow": "Follow",
       "unfollow": "Following",
-      "copyNPub": "Copy key"
+      "copyNPub": "Copy key",
+      "relaysTitle": "Relays",
+      "isFollower": "follows you",
+      "relaysDescription": "These are {{username}}'s relays, activate the ones you want to be connected."
     },
     "homePage": {
       "clipboardTitle": "Nostr key detected",
