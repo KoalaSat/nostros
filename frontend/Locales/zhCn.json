@@ -115,11 +115,11 @@
     },
     "loggerPage": {
       "createButton": "创建密钥",
-      "notKeys": "还没有密钥？",
+      "notKeys": "没有密钥？",
       "isPublic": "用公钥登录",
       "accessButton": "登入",
-      "privateKey": "私钥",
-      "publicKey": "公钥",
+      "privateKey": "您的私钥",
+      "publicKey": "您的公钥",
       "loginMethod": "登入",
       "mnemonic": "助记词"
     },
