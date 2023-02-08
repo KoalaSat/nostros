@@ -85,7 +85,7 @@
       "reposted": "Reposted"
     },
     "lnPayment": {
-      "monto": "Betrag (sats.)",
+      "monto": "Betrag (Sats)",
       "comment": "Kommentar (optional)",
       "generateInvoice": "Invoice generieren",
       "cancel": "Abbrechen",
@@ -100,17 +100,17 @@
     "profileCreatePage": {
       "notifications": {
         "copied": "Privaten Schlüssel kopiert. Verwahre ihn an einem sicheren Ort!",
-        "wrongWords": "The words doesn't match"
+        "wrongWords": "Die Wörter stimmen nicht überein"
       },
       "snackbarDescription": "Wichtig. Verwahre den Schlüssel an einem sicheren Ort. Bei Verlust kann dieses Konto nie wieder benutzt werden!",
       "snackbarAction": "Privaten Schlüssel kopieren",
       "warningTitle": "Wichtig!",
       "warningDescription": "Verwahre den Schlüssel an einem sicheren Ort. Bei Verlust kann dieses Konto nie wieder benutzt werden!",
       "warningAction": "Schlüssel kopiert",
-      "continue": "Continue",
-      "mnemonicTitle": "These words or your private key are the only way to recover your account.",
-      "introTitle": "Your device will generate 12 words and your private key.",
-      "wordsNoted": "I have saved my words and/or my private key.",
+      "continue": "Weiter",
+      "mnemonicTitle": "Diese Wörter oder dein privater Schlüssel sind die einzige Möglickeit, deinen Account wieder herzustellen.",
+      "introTitle": "Dein Gerät wird 12 Wörter und einen privaten Schlüssel generieren.",
+      "wordsNoted": "Ich habe meine 12 Wörter und/oder meinen privaten Schlüssel gespeichert.",
       "accessButton": "Zutritt",
       "label": "Privater Schlüssel",
       "copied": "Schlüssel kopiert",
@@ -123,7 +123,7 @@
       "accessButton": "Zugriff",
       "privateKey": "Privater Schlüssel",
       "publicKey": "Öffentlicher Schlüssel",
-      "loginMethod": "Login with",
+      "loginMethod": "Einloggen mit",
       "mnemonic": "Mnemonic"
     },
     "contactsFeed": {
@@ -156,15 +156,15 @@
     },
     "homeFeed": {
       "emptyTitle": "Du folgst niemandem",
-      "emptyDescription": "Folge Anderen um hier etwas zu sehen",
+      "emptyDescription": "Folge anderen um hier etwas zu sehen",
       "emptyButton": "Kontakte",
       "globalFeed": "Globaler Feed",
       "myFeed": "Mein Feed",
       "reactions": "Reaktionen",
       "mentions": "Erwähnungen",
       "reposts": "Reposts",
-      "newMessage": "{{newNotesCount}} neue Nachricht. Zum Aktualisieren wischen.",
-      "newMessages": "{{newNotesCount}} neue Nachrichten. Zum Aktualisieren wischen."
+      "newMessage": "{{newNotesCount}} neue Nachricht. Zum Aktualisieren tippen.",
+      "newMessages": "{{newNotesCount}} neue Nachrichten. Zum Aktualisieren tippen."
     },
     "relayCard": {
       "moreInfo": "Mehr Infos",
@@ -175,7 +175,7 @@
       "pubkey": "Öffentlicher Schlüssel",
       "contact": "Kontakt",
       "supportedNips": "Unterstützte NIPs",
-      "software": "Sowftware",
+      "software": "Softtware",
       "version": "Version",
       "description": "Beschreibung",
       "obtainingInfo": "Relay Infos einholen",
@@ -190,18 +190,18 @@
       }
     },
     "relaysPage": {
-      "resilienceTitle": "Resilience (experimental)",
-      "resilienceDescription": "The nostr protocol provides a good amount of tools to build a desentralized network, but unlike other desentralized protocols such as Bitcoin, it's not inherent by defaul on his usage.\n\nTo ahcieve such goal, clients and relays should activally colaborate. Nostros resiliense mode tries to, first, expose these concerns to their users, and secondly, start experimening with new pattern and way to help on network' resilency.\n\nFunctional implementation will soon endup appearing on Nostros by default.",
+      "resilienceTitle": "Beständigkeit (experimental)",
+      "resilienceDescription": "Das Nostr Protokoll stellt eine gute Anzahl Tools zur Verfügung, um ein dezentrales Netzwerk zu bauen, aber im Gegensatz zu anderen dezentralen Protokollen wie Bitcoin, ist es nicht von vornherein an seine Verwendung gebunden.\n\nUm das Ziel eines dezentralen Netzwerks zu erreichen, sollten Clients (z.B. Nostros) und Relays (Content-Server) aktiv zusammenarbeiten. Der Nostros-Resilienzmodus versucht erstens, dafür ein Gewahrsein bei den Nutzern zu wecken, und zweitens, neue Muster und Methoden zu erproben, um die Resilienz des Netzwerks zu verbessern.\n\nEine funktionierende Implementation hierfür wird bald in Nostros zur Anwendung kommen",
       "resilienceCategories": "Resilience exposure",
-      "resilienceCategoriesDescription": "A first approach Nostros is testing is randomly calculate (based on received contats' events) what are the most resilient relays. It tries to avoid both relays with too much events (centralization) and relays with almost no events (battery draining).\n\nThe goal is to generate a list of 5 relays and cover all contacts. But if this is not possible, it will search among other realys, warning to the user about it.",
-      "centralized": "Centralized",
-      "small": "Small",
-      "contacts": "# Contacts",
-      "resilienceMode": "Resilience (experimental)",
+      "resilienceCategoriesDescription": "Ein erster Ansatz, den Nostros testet, ist die zufällige Berechnung (auf der Grundlage der empfangenen Kontaktereignisse), welche Relays am ausgewogensten sind. Dabei wird versucht, sowohl Relays mit zu vielen Ereignissen (Zentralisierung) als auch Relays mit fast keinen Ereignissen (Akkuentladung) zu vermeiden\n\nEs ist das Ziel, eine Liste von 5 Relays zu erstellen, die alle Kontakte abdeckt. Sollte dies jedoch nicht möglich sein, wird Nostros unter anderen Relays suchen und den Benutzer darüber warnen.",
+      "centralized": "Zentralisiert",
+      "small": "Klein",
+      "contacts": "# Kontakte",
+      "resilienceMode": "Beständigkeit (experimental)",
       "relayName": "Addresse",
       "globalFeed": "Globaler Feed",
       "active": "Aktiv",
-      "labelAdd": "Beschreibung des Relay",
+      "labelAdd": "Beschreibung des Relays",
       "cancel": "Abbrechen",
       "add": "Hinzufügen",
       "removeRelay": "Entfernen",
