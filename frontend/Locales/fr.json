@@ -42,7 +42,7 @@
       "searchingProfile": "A la recherche de votre profil",
       "foundProfile": "Profil trouvé",
       "foundContacts": "{{contactsCount}} contacts trouvés",
-      "storing": "Storing {{lastEventId}} on database."
+      "storing": "Event {{lastEventId}} stored on database."
     },
     "sendPage": {
       "isContact": "Abonné",

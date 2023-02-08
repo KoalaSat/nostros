@@ -54,12 +54,7 @@ export const ProfileLoadPage: React.FC = () => {
     setTimeout(loadMeta, 1000)
   }, [profileFound, publicKey, relayPoolReady])
 
-  useEffect(() => {
-    console.log('publicKey', publicKey)
-  }, [publicKey])
-
   const loadMeta: () => void = () => {
-    console.log(relayPoolReady)
     if (publicKey && relayPoolReady) {
       relayPool?.subscribe('profile-load-meta', [
         {

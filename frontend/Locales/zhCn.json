@@ -41,7 +41,7 @@
       "searchingProfile": "搜索用户",
       "foundProfile": "已找到的用户",
       "foundContacts": "已找到 {{contactsCount}} 个联系人",
-      "storing": "Storing {{lastEventId}} on database."
+      "storing": "Event {{lastEventId}} stored on database."
     },
     "sendPage": {
       "isContact": "正在关注",

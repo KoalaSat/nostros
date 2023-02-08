@@ -42,7 +42,7 @@
       "searchingProfile": "Ищем Ваш профиль.",
       "foundProfile": "Профиль найден.",
       "foundContacts": "{{contactsCount}} контакта(ов) найдено",
-      "storing": "Storing {{lastEventId}} on database."
+      "storing": "Event {{lastEventId}} stored on database."
     },
     "sendPage": {
       "isContact": "Подписаны",
