@@ -198,7 +198,7 @@
         "add": "Relay added.",
         "remove": "Relay removed.",
         "active": "Relay activated.",
-        "desactive": "Relay desactivated.",
+        "desactive": "Relay deactivated.",
         "badFormat": "Relay URL has a bad format.",
         "alreadyExists": "Relay already exists."
       }
@@ -212,13 +212,13 @@
       "pubkey": "Public key",
       "contact": "Contact",
       "supportedNips": "Supported NIPs",
-      "software": "Sowftware",
+      "software": "Software",
       "version": "Version",
       "description": "Description",
       "obtainingInfo": "Obtaining relay information",
       "notifications": {
-        "active": "Relay actived.",
-        "desactive": "Relay desactivated.",
+        "active": "Relay activated.",
+        "desactive": "Relay deactivated.",
         "globalFeedActive": "Global feed enabled.",
         "globalFeedActiveUnactive": "Global feed disabled.",
         "pubkeyCopied": "Public key copied.",
