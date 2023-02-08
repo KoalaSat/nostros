@@ -42,7 +42,7 @@
       "searchingProfile": "Ищем Ваш профиль.",
       "foundProfile": "Профиль найден.",
       "foundContacts": "{{contactsCount}} контакта(ов) найдено",
-      "storing": "Storing {{lastEventId}} on database."
+      "storing": "Event {{lastEventId}} stored on database."
     },
     "sendPage": {
       "isContact": "Подписаны",
@@ -134,6 +134,8 @@
         "contactRemoved": "Вы отписались.",
         "contactUnblocked": "Profile unblocked."
       },
+      "emptyTitleBlocked": "You have no blocked profiles", 
+      "emptyDescriptionBlocked": "You can always block a someone on the profile view.",
       "emptyTitleFollowing": "Вы ни на кого не подписаны",
       "emptyDescriptionFollowing": "Подпишитесь на другие профили, чтобы увидеть их заметки",
       "emptyButtonFollowing": "Вставить публичный ключ",

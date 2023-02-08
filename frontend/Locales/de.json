@@ -42,7 +42,7 @@
       "searchingProfile": "Durchsuche Profil",
       "foundProfile": "Profil gefunden",
       "foundContacts": "{{contactsCount}} Kontakte gefunden",
-      "storing": "Storing {{lastEventId}} on database."
+      "storing": "Event {{lastEventId}} stored on database."
     },
     "sendPage": {
       "isContact": "Folge ich",
@@ -134,6 +134,8 @@
         "contactRemoved": "Abo wurde entfernt",
         "contactUnblocked": "Profile unblocked."
       },
+      "emptyTitleBlocked": "You have no blocked profiles", 
+      "emptyDescriptionBlocked": "You can always block a someone on the profile view.",
       "emptyTitleFollowing": "Du folgst niemandem",
       "emptyDescriptionFollowing": "Folge anderen, und sieh hier was sie posten",
       "emptyButtonFollowing": "Folge öffentlichen Schlüsseln",
