@@ -79,7 +79,7 @@
       "userBlocked": "User blocked",
       "seeParent": "See note",
       "contentWarning": "Sensitive content",
-      "recommendation": "Relay recomendation",
+      "recommendation": "Relay recommendation",
       "addRelay": "Add relay",
       "reposted": "Reposted"
     },
@@ -100,7 +100,7 @@
     "profileCreatePage": {
       "notifications": {
         "copied": "Private key copied.\n\nStore this key in a safe place.",
-        "wrongWords": "The words doesn't match"
+        "wrongWords": "The words don't match"
       },
       "warningTitle": "Important",
       "warningDescription": "Store your key in a safe place. If lose it, you won't be able to access or recover your profile.",
