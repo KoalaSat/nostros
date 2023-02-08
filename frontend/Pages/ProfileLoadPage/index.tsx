@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState } from 'react'
-import { RelayPoolContext } from '../../Contexts/RelayPoolContext'
+import { RelayPoolContext, WebsocketEvent } from '../../Contexts/RelayPoolContext'
 import { Kind } from 'nostr-tools'
 import { AppContext } from '../../Contexts/AppContext'
 import { UserContext } from '../../Contexts/UserContext'
@@ -7,28 +7,32 @@ import { getUsers, User } from '../../Functions/DatabaseFunctions/Users'
 import { useTranslation } from 'react-i18next'
 import getUnixTime from 'date-fns/getUnixTime'
 import debounce from 'lodash.debounce'
-import { StyleSheet, View } from 'react-native'
+import { DeviceEventEmitter, StyleSheet, View } from 'react-native'
 import Logo from '../../Components/Logo'
 import { Button, Text, useTheme } from 'react-native-paper'
 import { navigate } from '../../lib/Navigation'
 import { useFocusEffect } from '@react-navigation/native'
+import { formatId } from '../../Functions/RelayFunctions/Users'
 
 export const ProfileLoadPage: React.FC = () => {
   const theme = useTheme()
   const { database } = useContext(AppContext)
-  const { relayPool, lastEventId, relayPoolReady } = useContext(RelayPoolContext)
+  const { relayPool, relayPoolReady } = useContext(RelayPoolContext)
   const { publicKey, reloadUser, setUserState, name } = useContext(UserContext)
   const { t } = useTranslation('common')
   const [profileFound, setProfileFound] = useState<boolean>(false)
   const [contactsCount, setContactsCount] = useState<number>(0)
+  const [lastEventId, setLastEventId] = useState<string>('')
 
   useFocusEffect(
     React.useCallback(() => {
+      DeviceEventEmitter.addListener('WebsocketEvent', (event: WebsocketEvent) =>
+        setLastEventId(event.eventId),
+      )
       debounce(() => {
         loadMeta()
-        loadPets()
+        reloadUser()
       }, 1000)
-
       return () =>
         relayPool?.unsubscribe([
           'profile-load-meta',
@@ -39,14 +43,16 @@ export const ProfileLoadPage: React.FC = () => {
   )
 
   useEffect(() => {
-    loadMeta()
-    loadPets()
-    reloadUser()
-    if (name) {
-      setProfileFound(true)
-      loadPets()
-    }
-  }, [lastEventId, name])
+    if (!name) reloadUser()
+  }, [lastEventId, publicKey, relayPoolReady])
+
+  useEffect(() => {
+    if (name) setProfileFound(true)
+  }, [name])
+
+  useEffect(() => {
+    if (profileFound) loadPets()
+  }, [profileFound, publicKey, relayPoolReady])
 
   useEffect(() => {
     if (publicKey && relayPoolReady) loadMeta()
@@ -56,14 +62,8 @@ export const ProfileLoadPage: React.FC = () => {
     if (publicKey && relayPoolReady) {
       relayPool?.subscribe('profile-load-meta', [
         {
-          kinds: [Kind.Text, Kind.Contacts, Kind.Metadata],
+          kinds: [Kind.Contacts, Kind.Metadata],
           authors: [publicKey],
-        },
-      ])
-      relayPool?.subscribe('profile-load-meta-pets', [
-        {
-          kinds: [Kind.Contacts],
-          '#p': [publicKey],
         },
       ])
     }
@@ -72,7 +72,7 @@ export const ProfileLoadPage: React.FC = () => {
   const loadPets: () => void = () => {
     if (database && publicKey && relayPoolReady) {
       getUsers(database, {}).then((results) => {
-        if (results && results.length > 0) {
+        if (results.length > 0) {
           setContactsCount(results.filter((user) => user.contact).length)
           const authors = [...results.map((user: User) => user.id), publicKey]
           relayPool?.subscribe('profile-load-notes', [
@@ -103,6 +103,9 @@ export const ProfileLoadPage: React.FC = () => {
         <Text variant='titleMedium' style={styles.center}>
           {t('profileLoadPage.foundContacts', { contactsCount })}
         </Text>
+        <Text variant='titleMedium' style={styles.center}>
+          {t('profileLoadPage.storing', { lastEventId: formatId(lastEventId) })}
+        </Text>
         <Button mode='contained' onPress={() => setUserState('ready')}>
           {t('profileLoadPage.home')}
         </Button>
@@ -114,6 +117,7 @@ export const ProfileLoadPage: React.FC = () => {
             style={styles.warningAction}
             mode='text'
             onPress={() => {
+              reloadUser()
               navigate('Relays')
             }}
           >

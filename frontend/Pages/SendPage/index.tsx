@@ -126,15 +126,11 @@ export const SendPage: React.FC<SendPageProps> = ({ route }) => {
       let tags: string[][] = []
 
       let rawContent = content
-
       if (note?.id) {
+        tags = note.tags
         if (route.params?.type === 'reply') {
-          tags = note.tags
-          if (getETags(note).length === 0) {
-            tags.push(['e', note.id, '', 'root'])
-          } else {
-            tags.push(['e', note.id, '', 'reply'])
-          }
+          const eTags = getETags(note)
+          tags.push(['e', note.id, '', eTags.length > 0 ? 'reply' : 'root'])
           tags.push(['p', note.pubkey, ''])
         } else if (route.params?.type === 'repost') {
           rawContent = `#[${tags.length}] ${rawContent}`
@@ -149,7 +145,7 @@ export const SendPage: React.FC<SendPageProps> = ({ route }) => {
           const userText = mentionText(user)
           if (rawContent.includes(userText)) {
             rawContent = rawContent.replace(userText, `#[${tags.length}]`)
-            tags.push(['p', user.id])
+            tags.push(['p', user.id, ''])
           }
         })
       }

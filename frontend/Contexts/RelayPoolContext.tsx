@@ -1,10 +1,11 @@
 import React, { useContext, useEffect, useMemo, useState } from 'react'
-import RelayPool from '../lib/nostr/RelayPool/intex'
+import RelayPool, { fallbackRelays } from '../lib/nostr/RelayPool/intex'
 import { AppContext } from './AppContext'
 import { DeviceEventEmitter } from 'react-native'
 import debounce from 'lodash.debounce'
-import { getRelays, Relay } from '../Functions/DatabaseFunctions/Relays'
+import { getActiveRelays, getRelays, Relay } from '../Functions/DatabaseFunctions/Relays'
 import { UserContext } from './UserContext'
+import { randomInt } from '../Functions/NativeFunctions'
 
 export interface RelayPoolContextProps {
   relayPoolReady: boolean
@@ -69,15 +70,25 @@ export const RelayPoolContextProvider = ({
     [setLastConfirmationId],
   )
 
+  const createRandomRelays: () => Promise<void> = async () => {
+    const randomrelays: string[] = []
+    while (randomrelays.length < 5) {
+      const index = randomInt(0, fallbackRelays.length - 1)
+      const url = fallbackRelays[index]
+      if (!randomrelays.includes(url)) {
+        randomrelays.push(fallbackRelays[index])
+        await addRelayItem({ url })
+      }
+    }
+  }
+
   const loadRelayPool: () => void = async () => {
     if (database && publicKey) {
-      DeviceEventEmitter.addListener('WebsocketEvent', debouncedEventIdHandler)
-      DeviceEventEmitter.addListener('WebsocketConfirmation', debouncedConfirmationHandler)
       const initRelayPool = new RelayPool(privateKey)
-      await initRelayPool.resilientMode(database, publicKey)
-      initRelayPool.connect(publicKey, () => setRelayPoolReady(true))
-      setRelayPool(initRelayPool)
-      loadRelays()
+      initRelayPool.connect(publicKey, () => {
+        initRelayPool.resilientMode(database, publicKey)
+        setRelayPool(initRelayPool)
+      })
     }
   }
 
@@ -137,9 +148,22 @@ export const RelayPoolContextProvider = ({
 
   useEffect(() => {
     if (publicKey && publicKey !== '') {
+      DeviceEventEmitter.addListener('WebsocketEvent', debouncedEventIdHandler)
+      DeviceEventEmitter.addListener('WebsocketConfirmation', debouncedConfirmationHandler)
       loadRelayPool()
     }
   }, [publicKey])
+
+  useEffect(() => {
+    if (database && relayPool) {
+      getActiveRelays(database).then((results) => {
+        if (results.length < 1) {
+          createRandomRelays()
+        }
+        loadRelays().then(() => setRelayPoolReady(true))
+      })
+    }
+  }, [relayPool])
 
   return (
     <RelayPoolContext.Provider

@@ -35,8 +35,6 @@ export interface AppContextProps {
   checkClipboard: () => void
   displayUserDrawer?: string
   setDisplayUserDrawer: (displayUserDrawer: string | undefined) => void
-  displayUserShareDrawer?: string
-  setDisplayUserShareDrawer: (displayUserShareDrawer: string | undefined) => void
   refreshBottomBarAt?: number
   setRefreshBottomBarAt: (refreshBottomBarAt: number) => void
   pushedTab?: string
@@ -78,7 +76,6 @@ export const initialAppContext: AppContextProps = {
   getSatoshiSymbol: () => <></>,
   setClipboardNip21: () => {},
   setDisplayUserDrawer: () => {},
-  setDisplayUserShareDrawer: () => {},
 }
 
 export const AppContextProvider = ({ children }: AppContextProviderProps): JSX.Element => {
@@ -103,7 +100,6 @@ export const AppContextProvider = ({ children }: AppContextProviderProps): JSX.E
   const [clipboardLoads, setClipboardLoads] = React.useState<string[]>([])
   const [clipboardNip21, setClipboardNip21] = React.useState<string>()
   const [displayUserDrawer, setDisplayUserDrawer] = React.useState<string>()
-  const [displayUserShareDrawer, setDisplayUserShareDrawer] = React.useState<string>()
   const [pushedTab, setPushedTab] = useState<string>()
 
   useEffect(() => {
@@ -229,8 +225,6 @@ export const AppContextProvider = ({ children }: AppContextProviderProps): JSX.E
         satoshi,
         setSatoshi,
         getSatoshiSymbol,
-        setDisplayUserShareDrawer,
-        displayUserShareDrawer,
         refreshBottomBarAt,
         setRefreshBottomBarAt,
         pushedTab,

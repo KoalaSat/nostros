@@ -40,7 +40,8 @@
       "home": "去首页",
       "searchingProfile": "搜索用户",
       "foundProfile": "已找到的用户",
-      "foundContacts": "已找到 {{contactsCount}} 个联系人"
+      "foundContacts": "已找到 {{contactsCount}} 个联系人",
+      "storing": "Storing {{lastEventId}} on database."
     },
     "sendPage": {
       "isContact": "正在关注",
@@ -232,7 +233,9 @@
         "lud06Published": "LUD-06 已发布 \n\n{{lud06}}",
         "nip05Published": "NIP-05 已发布 \n\n{{nip05}}",
         "picturePublished": "头像已发布",
-        "connectionError": "连接错误"
+        "connectionError": "连接错误",
+        "active": "中继已启用",
+        "desactive": "中继已停用"
       },
       "publishLud06": "发布",
       "lud06Label": "LNURL / Lightning 地址",
@@ -269,8 +272,11 @@
       "invoice": "赞赏",
       "message": "私信",
       "follow": "关注",
+      "isFollower": "follows you",
       "unfollow": "关注中",
-      "copyNPub": "复制公钥"
+      "copyNPub": "复制公钥",
+      "relaysTitle": "Relays",
+      "relaysDescription": "These are {{username}}'s relays, activate the ones you want to be connected."
     },
     "homePage": {
       "clipboardTitle": "检测到 Nostr 公钥",

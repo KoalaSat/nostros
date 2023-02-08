@@ -7,30 +7,28 @@ import {
   StyleSheet,
   View,
 } from 'react-native'
-import { Surface, Text, IconButton, ActivityIndicator, Snackbar } from 'react-native-paper'
+import { Surface, Text, ActivityIndicator, Snackbar, Divider } from 'react-native-paper'
 import { FlashList, ListRenderItem } from '@shopify/flash-list'
 import { AppContext } from '../../Contexts/AppContext'
 import { UserContext } from '../../Contexts/UserContext'
 import { RelayPoolContext } from '../../Contexts/RelayPoolContext'
 import { getNotes, Note } from '../../Functions/DatabaseFunctions/Notes'
-import { getUser, updateUserContact, User } from '../../Functions/DatabaseFunctions/Users'
+import { getUser, User } from '../../Functions/DatabaseFunctions/Users'
 import { Kind } from 'nostr-tools'
-import { populatePets, username } from '../../Functions/RelayFunctions/Users'
 import { useTranslation } from 'react-i18next'
 import { RelayFilters } from '../../lib/nostr/RelayPool/intex'
 import NoteCard from '../../Components/NoteCard'
-import LnPayment from '../../Components/LnPayment'
 import { handleInfinityScroll } from '../../Functions/NativeFunctions'
-import { navigate } from '../../lib/Navigation'
 import { useFocusEffect } from '@react-navigation/native'
 import ProfileData from '../../Components/ProfileData'
+import ProfileActions from '../../Components/ProfileActions'
 
 interface ProfilePageProps {
   route: { params: { pubKey: string } }
 }
 
 export const ProfilePage: React.FC<ProfilePageProps> = ({ route }) => {
-  const { database, setDisplayUserShareDrawer } = useContext(AppContext)
+  const { database } = useContext(AppContext)
   const { publicKey } = useContext(UserContext)
   const { lastEventId, relayPool } = useContext(RelayPoolContext)
   const { t } = useTranslation('common')
@@ -38,9 +36,7 @@ export const ProfilePage: React.FC<ProfilePageProps> = ({ route }) => {
   const [showNotification, setShowNotification] = useState<undefined | string>()
   const [notes, setNotes] = useState<Note[]>()
   const [user, setUser] = useState<User>()
-  const [openLn, setOpenLn] = React.useState<boolean>(false)
   const [pageSize, setPageSize] = useState<number>(initialPageSize)
-  const [isContact, setIsContact] = useState<boolean>()
   const [refreshing, setRefreshing] = useState(false)
   const [firstLoad, setFirstLoad] = useState(true)
 
@@ -84,7 +80,6 @@ export const ProfilePage: React.FC<ProfilePageProps> = ({ route }) => {
       getUser(route.params.pubKey, database).then((result) => {
         if (result) {
           setUser(result)
-          setIsContact(result?.contact)
         } else if (route.params.pubKey === publicKey) {
           setUser({
             id: publicKey,
@@ -133,26 +128,6 @@ export const ProfilePage: React.FC<ProfilePageProps> = ({ route }) => {
     relayPool?.subscribe(`profile${route.params.pubKey}`, [message])
   }
 
-  const removeContact: () => void = () => {
-    if (relayPool && database && publicKey) {
-      updateUserContact(route.params.pubKey, database, false).then(() => {
-        populatePets(relayPool, database, publicKey)
-        setIsContact(false)
-        setShowNotification('contactRemoved')
-      })
-    }
-  }
-
-  const addContact: () => void = () => {
-    if (relayPool && database && publicKey) {
-      updateUserContact(route.params.pubKey, database, true).then(() => {
-        populatePets(relayPool, database, publicKey)
-        setIsContact(true)
-        setShowNotification('contactAdded')
-      })
-    }
-  }
-
   const onScroll: (event: NativeSyntheticEvent<NativeScrollEvent>) => void = (event) => {
     if (handleInfinityScroll(event)) {
       setPageSize(pageSize + initialPageSize)
@@ -174,70 +149,24 @@ export const ProfilePage: React.FC<ProfilePageProps> = ({ route }) => {
         refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
       >
         <Surface style={styles.container} elevation={1}>
-          <ProfileData
-            username={user?.name}
-            publicKey={route.params.pubKey}
-            validNip05={user?.valid_nip05}
-            nip05={user?.nip05}
-            lud06={user?.lnurl}
-            picture={user?.picture}
-            avatarSize={56}
-          />
+          <View style={styles.profileData}>
+            <ProfileData
+              username={user?.name}
+              publicKey={route.params.pubKey}
+              validNip05={user?.valid_nip05}
+              nip05={user?.nip05}
+              lud06={user?.lnurl}
+              picture={user?.picture}
+              avatarSize={56}
+            />
+            <Text>{user?.follower && user.follower > 0 ? t('profilePage.isFollower') : ''}</Text>
+          </View>
           <View>
             <Text>{user?.about}</Text>
           </View>
-          <View style={styles.mainLayout}>
-            {route.params.pubKey !== publicKey && (
-              <View style={styles.actionButton}>
-                <IconButton
-                  icon={
-                    isContact ? 'account-multiple-remove-outline' : 'account-multiple-plus-outline'
-                  }
-                  size={28}
-                  onPress={() => {
-                    isContact ? removeContact() : addContact()
-                  }}
-                  disabled={route.params.pubKey === publicKey}
-                />
-                <Text>{isContact ? t('profilePage.unfollow') : t('profilePage.follow')}</Text>
-              </View>
-            )}
-            <View style={styles.actionButton}>
-              <IconButton
-                icon='message-plus-outline'
-                size={28}
-                onPress={() => {
-                  navigate('Conversation', {
-                    pubKey: route.params.pubKey,
-                    title: user ? username(user) : route.params.pubKey,
-                  })
-                }}
-              />
-              <Text>{t('profilePage.message')}</Text>
-            </View>
-            <View style={styles.actionButton}>
-              <IconButton
-                icon='share-variant-outline'
-                size={28}
-                onPress={() => {
-                  setDisplayUserShareDrawer(user?.id)
-                }}
-              />
-              <Text>{t('profileCard.share')}</Text>
-            </View>
-            <View style={styles.actionButton}>
-              {user?.lnurl && (
-                <>
-                  <IconButton
-                    icon='lightning-bolt'
-                    size={28}
-                    onPress={() => setOpenLn(true)}
-                    iconColor='#F5D112'
-                  />
-                  <Text>{t('profilePage.invoice')}</Text>
-                </>
-              )}
-            </View>
+          <Divider style={styles.divider} />
+          <View style={styles.profileActions}>
+            {user && <ProfileActions user={user} setUser={setUser} />}
           </View>
         </Surface>
         <View style={styles.list}>
@@ -265,7 +194,6 @@ export const ProfilePage: React.FC<ProfilePageProps> = ({ route }) => {
           {t(`profilePage.${showNotification}`)}
         </Snackbar>
       )}
-      <LnPayment setOpen={setOpenLn} open={openLn} user={user} />
     </View>
   )
 }
@@ -274,26 +202,6 @@ const styles = StyleSheet.create({
   container: {
     padding: 16,
   },
-  contacts: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-around',
-  },
-  mainLayout: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  userData: {
-    paddingLeft: 16,
-  },
-  userName: {
-    flexDirection: 'row',
-  },
-  actionButton: {
-    justifyContent: 'center',
-    alignItems: 'center',
-    width: 100,
-  },
   snackbar: {
     margin: 16,
     bottom: 70,
@@ -301,12 +209,19 @@ const styles = StyleSheet.create({
   list: {
     padding: 16,
   },
+  divider: {
+    marginTop: 16,
+  },
+  profileActions: {
+    marginRight: 16,
+    marginLeft: 16,
+  },
   noteCard: {
     marginBottom: 16,
   },
-  verifyIcon: {
-    paddingTop: 6,
-    paddingLeft: 5,
+  profileData: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
   },
 })
 

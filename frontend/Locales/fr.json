@@ -41,7 +41,8 @@
       "home": "Accès",
       "searchingProfile": "A la recherche de votre profil",
       "foundProfile": "Profil trouvé",
-      "foundContacts": "{{contactsCount}} contacts trouvés"
+      "foundContacts": "{{contactsCount}} contacts trouvés",
+      "storing": "Storing {{lastEventId}} on database."
     },
     "sendPage": {
       "isContact": "Abonné",
@@ -252,13 +253,18 @@
       "notifications": {
         "contactAdded": "Abonné",
         "contactRemoved": "Vous ne suivez plus ce profil",
-        "npubCopied": "Clé publique copiée"
+        "npubCopied": "Clé publique copiée",
+        "active": "Actif",
+        "share": "Partager"
       },
       "invoice": "Facture",
       "message": "Message",
       "follow": "Suivre",
+      "isFollower": "follows you",
       "unfollow": "Abonné",
-      "copyNPub": "Copier la clé"
+      "copyNPub": "Copier la clé",
+      "relaysTitle": "Relays",
+      "relaysDescription": "These are {{username}}'s relays, activate the ones you want to be connected."
     },
     "profileShare": {
       "notifications": {

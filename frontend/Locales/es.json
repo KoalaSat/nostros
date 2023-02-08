@@ -41,7 +41,8 @@
       "home": "Acceder",
       "searchingProfile": "Buscando tu perfil",
       "foundProfile": "Perfil encontrado",
-      "foundContacts": "{{contactsCount}} contactos encontrados"
+      "foundContacts": "{{contactsCount}} contactos encontrados",
+      "storing": "Guardando {{lastEventId}} en base de datos."
     },
     "sendPage": {
       "isContact": "Siguiendo",
@@ -251,13 +252,18 @@
       "notifications": {
         "contactAdded": "Siguiendo",
         "contactRemoved": "Dejando de seguir ",
-        "npubCopied": "Clave pública copiada."
+        "npubCopied": "Clave pública copiada.",
+        "active": "Relay activado.",
+        "desactive": "Relay desactivado."
       },
       "invoice": "Propina",
       "message": "Mensaje",
+      "isFollower": "te sigue",
       "follow": "Seguir",
       "unfollow": "Siguiendo",
-      "copyNPub": "Copiar clave"
+      "copyNPub": "Copiar clave",
+      "relaysTitle": "Relays",
+      "relaysDescription": "Estos son los relays de {{username}}, activa aquellos a los que quieras estar conectado."
     },
     "homePage": {
       "clipboardTitle": "Se ha detectado una clave Nostr",

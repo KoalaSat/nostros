@@ -18,7 +18,6 @@ import ConfigPage from '../ConfigPage'
 import { RelayPoolContext } from '../../Contexts/RelayPoolContext'
 import { AppContext } from '../../Contexts/AppContext'
 import RelayCard from '../../Components/RelayCard'
-import ProfileShare from '../../Components/ProfileShare'
 import { updateAllRead } from '../../Functions/DatabaseFunctions/DirectMessages'
 import { getUnixTime } from 'date-fns'
 
@@ -26,18 +25,11 @@ export const HomeNavigator: React.FC = () => {
   const theme = useTheme()
   const { t } = useTranslation('common')
   const { displayRelayDrawer, setDisplayrelayDrawer } = React.useContext(RelayPoolContext)
-  const {
-    displayUserDrawer,
-    setDisplayUserDrawer,
-    displayUserShareDrawer,
-    setDisplayUserShareDrawer,
-    setRefreshBottomBarAt,
-    database,
-  } = React.useContext(AppContext)
+  const { displayUserDrawer, setDisplayUserDrawer, setRefreshBottomBarAt, database } =
+    React.useContext(AppContext)
   const bottomSheetRef = React.useRef<RBSheet>(null)
   const bottomSheetProfileRef = React.useRef<RBSheet>(null)
   const bottomSheetRelayRef = React.useRef<RBSheet>(null)
-  const bottomSheetShareRef = React.useRef<RBSheet>(null)
   const Stack = React.useMemo(() => createStackNavigator(), [])
   const cardStyleInterpolator = React.useMemo(
     () =>
@@ -77,10 +69,6 @@ export const HomeNavigator: React.FC = () => {
   React.useEffect(() => {
     if (displayUserDrawer) bottomSheetProfileRef.current?.open()
   }, [displayUserDrawer])
-
-  React.useEffect(() => {
-    if (displayUserShareDrawer) bottomSheetShareRef.current?.open()
-  }, [displayUserShareDrawer])
 
   return (
     <>
@@ -173,14 +161,6 @@ export const HomeNavigator: React.FC = () => {
           <Text variant='headlineSmall'>{t('drawers.relaysTitle')}</Text>
           <Text variant='bodyMedium'>{t('drawers.relaysDescription')}</Text>
         </View>
-      </RBSheet>
-      <RBSheet
-        ref={bottomSheetShareRef}
-        closeOnDragDown={true}
-        customStyles={bottomSheetStyles}
-        onClose={() => setDisplayUserShareDrawer(undefined)}
-      >
-        <ProfileShare />
       </RBSheet>
     </>
   )
