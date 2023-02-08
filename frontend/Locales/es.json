@@ -134,6 +134,8 @@
         "contactRemoved": "Has dejado de seguir a un perfil",
         "contactUnblocked": "Perfil desbloqueado."
       },
+      "emptyTitleBlocked": "No tienes perfiles bloqueado", 
+      "emptyDescriptionBlocked": "Siempre puede bloquear a alguien en su vista de perfil.",
       "emptyTitleFollowing": "No sigues a nadie",
       "emptyDescriptionFollowing": "Sigue otros perfiles para ver contenido aquí.",
       "emptyButtonFollowing": "Pegar clave pública",

@@ -135,6 +135,8 @@
         "contactRemoved": "Vous ne suivez plus ce profil",
         "contactUnblocked": "Profile unblocked."
       },
+      "emptyTitleBlocked": "You have no blocked profiles", 
+      "emptyDescriptionBlocked": "You can always block a someone on the profile view.",
       "emptyTitleFollowing": "Vous ne suivez personne",
       "emptyDescriptionFollowing": "Suivez les autres profils pour voir le contenu ici.",
       "emptyButtonFollowing": "Coller la clé publique",
