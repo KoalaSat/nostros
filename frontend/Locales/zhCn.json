@@ -1,8 +1,8 @@
 {
   "common": {
     "drawers": {
-      "relaysTitle": "关于中继器",
-      "relaysDescription": "中继器是网络上的节点，作为应用程序之间传输消息的中介。\n\n\n 中继器可用于提高网络的弹性和可用性，即使在连接出现故障或中断的情况下，也能传递消息。 \n\n\n 中继器还可用于提高隐私和网络安全，因为它们可以隐藏相互通信的应用程序的位置和身份。 \n\n\n 这在审查或监视是一个问题的环境中是很有用的。 \n\n\n 需要注意的是，中继也可以用于恶意的目的，如嗅探或审查网络流量。",
+      "relaysTitle": "关于中继",
+      "relaysDescription": "中继是网络上的节点，作为应用程序之间传输消息的中介。\n\n\n 中继可用于提高网络的弹性和可用性，即使在连接出现故障或中断的情况下，也能传递消息。 \n\n\n 中继还可用于提高隐私和网络安全，因为它们可以隐藏相互通信的应用程序的位置和身份。 \n\n\n 这在审查或监视是一个问题的环境中是很有用的。 \n\n\n 需要注意的是，中继也可以用于恶意的目的，如嗅探或审查网络流量。",
       "keysTitle": "这些密钥是什么？",
       "keysDescription": "在 Nostr, 您会有两个密钥: 公钥和私钥",
       "publicKeys": "公钥",
@@ -13,7 +13,7 @@
       "privateKeysSnackbarDescription": "请妥善保管您的私钥。如果遗失，您将无法访问或恢复您的账号。"
     },
     "homeNavigator": {
-      "ProfileCreate": "Create profile",
+      "ProfileCreate": "创建用户",
       "ProfileConnect": "",
       "ProfileLoad": "",
       "Landing": "",
@@ -25,7 +25,7 @@
       "About": "关于",
       "Config": "配置",
       "Send": "发送",
-      "Relays": "中继器",
+      "Relays": "中继",
       "ProfileConfig": "简介设置"
     },
     "conversationPage": {
@@ -35,17 +35,17 @@
       }
     },
     "profileLoadPage": {
-      "relaysDescripion": "若查看您的数据时遇到问题，可尝试连接其他中继器重试",
-      "relays": "查看中继器",
+      "relaysDescripion": "若查看您的数据时遇到问题，可尝试连接其他中继重试",
+      "relays": "查看中继",
       "home": "去首页",
-      "searchingProfile": "搜索",
+      "searchingProfile": "搜索用户",
       "foundProfile": "已找到的用户",
-      "foundContacts": "已找到{{contactsCount}}个联系人"
+      "foundContacts": "已找到 {{contactsCount}} 个联系人"
     },
     "sendPage": {
-      "isContact": "关注中",
-      "isNotContact": "未关注",
-      "contentWarning": "敏感内容",
+      "isContact": "正在关注",
+      "isNotContact": "关注",
+      "contentWarning": "设为敏感内容",
       "send": "发送",
       "imageUploaded": "您的图片已上传 \n 请赞助我们的服务：",
       "imageUploadErro": "上传图片出现错误",
@@ -54,14 +54,14 @@
       "poweredBy": "由{{uri}}提供支持"
     },
     "menuItems": {
-      "relays": "中继器",
+      "relays": "中继",
       "notConnected": "未连接",
-      "connectedRelays": "已连接{{number}}个中继器",
-      "following": "{{following}} 关注中",
+      "connectedRelays": "已连接 {{number}} 个中继",
+      "following": "{{following}} 正在关注",
       "followers": "{{followers}} 关注者",
-      "configuration": "配置",
+      "configuration": "设置",
       "about": "关于",
-      "logout": "退出登录"
+      "logout": "登出"
     },
     "configPage": {
       "showPublicImages": "在公共信息流显示图片",
@@ -70,7 +70,7 @@
       "imageHostingService": "图片托管服务",
       "random": "随机",
       "language": "语言",
-      "relayColoruring": "颜色标示中继器状态"
+      "relayColoruring": "颜色标示中继状态"
     },
     "noteCard": {
       "answering": "回复 {{pubkey}}",
@@ -78,8 +78,8 @@
       "userBlocked": "用户已屏蔽",
       "seeParent": "查看 Note",
       "contentWarning": "敏感内容",
-      "recommendation": "推荐的中继器",
-      "addRelay": "添加中继器"
+      "recommendation": "推荐的中继",
+      "addRelay": "添加中继"
     },
     "lnPayment": {
       "monto": "数量(聪)",
@@ -91,37 +91,37 @@
       "open": "打开钱包"
     },
     "notificationsFeed": {
-      "emptyTitle": "没有新通知",
-      "emptyDescription": "今天有什么新鲜事",
-      "emptyButton": "撰写信息"
+      "emptyTitle": "还没有新通知",
+      "emptyDescription": "发布信息以获得回复和回应",
+      "emptyButton": "发布信息"
     },
     "profileCreatePage": {
       "notifications": {
         "copied": "已复制私钥 \n\n 请妥善保管您的私钥",
-        "wrongWords": "The words doesn't match"
+        "wrongWords": "助记词不匹配"
       },
       "warningTitle": "注意",
-      "warningDescription": "请妥善保管您的私钥。如果遗失，您将无法访问或恢复您的账号。",
+      "warningDescription": "请妥善保管您的私钥。如果遗失，您将无法登入或恢复您的账号。",
       "warningAction": "复制私钥",
-      "continue": "Continue",
-      "mnemonicTitle": "These words or your private key are the only way to recover your account.",
-      "mnemonicDescription": "Write them down and keep them in a safe place, if you lose them you will not be able to access again.",
-      "introTitle": "Your device will generate 12 words and your private key.",
-      "wordsNoted": "I have saved my words and/or my private key.",
+      "continue": "继续",
+      "mnemonicTitle": "这些助记词或私钥是恢复您帐户的唯一方法。",
+      "mnemonicDescription": "将它们写下来并保存在安全的地方，如果你丢失了它们，你将无法再次登入您的账号",
+      "introTitle": "您的设备将生成 12 组助记词和您的私钥。",
+      "wordsNoted": "我已保存我的助记词和私钥",
       "accessButton": "登入",
       "label": "私钥",
-      "copied": "已复制的公钥",
+      "copied": "已复制私钥",
       "description": "请妥善保管您的私钥"
     },
     "loggerPage": {
       "createButton": "创建密钥",
-      "notKeys": "“还没有密钥？",
+      "notKeys": "还没有密钥？",
       "isPublic": "用公钥登录",
       "accessButton": "登入",
       "privateKey": "私钥",
       "publicKey": "公钥",
-      "loginMethod": "Login with",
-      "mnemonic": "Mnemonic"
+      "loginMethod": "登入",
+      "mnemonic": "助记词"
     },
     "contactsFeed": {
       "notifications": {
@@ -135,15 +135,15 @@
       "emptyButtonFollowing": "粘贴公钥",
       "emptyTitleFollower": "还没有用户关注您",
       "emptyDescriptionFollower": "分享您的公钥以便其他用户关注您",
-      "emptyButtonFollower": "复制公钥",
+      "emptyButtonFollower": "复制我的公钥",
       "cancel": "取消",
       "addContact": "添加联系人",
       "addContactDescription": "请粘贴您要添加的联系人的公钥",
       "addContactTitle": "添加联系人",
       "followers": "关注者 ({{count}})",
       "following": "关注中 ({{count}})",
-      "stopFollowing": "取消关注",
-      "follow": "关注"
+      "stopFollowing": "正在关注",
+      "follow": "回关"
     },
     "aboutPage": {
       "gitHub": "GitHub",
@@ -169,36 +169,36 @@
       "mentions": "提及",
       "reposts": "转发",
       "newMessage": "有 {{newNotesCount}} 条新的 Notes，下拉刷新",
-      "newMessages": "{{newNotesCount}} 条新的 Notes，下拉刷新"
+      "newMessages": "有 {{newNotesCount}} 条新的 Notes，下拉刷新"
     },
     "relaysPage": {
-      "resilienceTitle": "Resilience (experimental)",
-      "resilienceDescription": "The nostr protocol provides a good amount of tools to build a desentralized network, but unlike other desentralized protocols such as Bitcoin, it's not inherent by defaul on his usage.\n\nTo ahcieve such goal, clients and relays should activally colaborate. Nostros resiliense mode tries to, first, expose these concerns to their users, and secondly, start experimening with new pattern and way to help on network' resilency.\n\nFunctional implementation will soon endup appearing on Nostros by default.",
-      "resilienceCategories": "Resilience exposure",
-      "resilienceCategoriesDescription": "A first approach Nostros is testing is randomly calculate (based on received contats' events) what are the most resilient relays. It tries to avoid both relays with too much events (centralization) and relays with almost no events (battery draining).\n\nThe goal is to generate a list of 5 relays and cover all contacts. But if this is not possible, it will search among other realys, warning to the user about it.",
-      "centralized": "Centralized",
-      "small": "Small",
-      "contacts": "# Contacts",
-      "resilienceMode": "Resilience (experimental)",
-      "relayName": "中继器链接地址",
+      "resilienceTitle": "弹性模式 (试验性)",
+      "resilienceDescription": "Nostr 协议提供了大量工具来构建去中心化网络，但与比特币等其他去中心化协议不同，它并不是默认使用的。 \n\n 为了实现这样的目标，客户端和中继应该积极协作。 Nostros 弹性模式首先尝试将这些问题暴露给用户，其次开始尝试新的模式和方法来帮助提高网络的弹性。 \n\n 该功能的实现将很快默认出现在 Nostros 上",
+      "resilienceCategories": "弹性暴露",
+      "resilienceCategoriesDescription": "Nostros 正在测试的第一个方法是随机计算（基于收到的联系人的事件）什么是最有弹性的中继。它试图避免有太多事件的中继（集中化）和几乎没有事件的中继（电池耗尽）。 \n\n 它的目标是生成一个 5 个中继的列表，并覆盖所有联系人。但如果这是不可能的，它将向用户发出警告并在其他中继中继续尝试。 \n\n 请注意，被称为 “集中式” 或“小型” 的中继并不意味着它们与网络相连，而只是与你的数据相连。",
+      "centralized": "集中式",
+      "small": "小型",
+      "contacts": "# 联系人",
+      "resilienceMode": "弹性模式 (试验性)",
+      "relayName": "中继地址",
       "globalFeed": "全局信息流",
-      "active": "激活",
-      "labelAdd": "中继器链接地址",
+      "active": "启用",
+      "labelAdd": "中继地址",
       "cancel": "取消",
       "add": "添加",
       "removeRelay": "移除",
       "copyRelay": "复制",
-      "recommended": "推荐的中继器",
-      "myList": "我的中继器",
+      "recommended": "推荐的中继",
+      "myList": "我的中继",
       "notifications": {
         "globalFeedActive": "全局信息流已开启",
-        "globalFeedActiveUnactive": "全局信息流已关闭",
+        "globalFeedActiveUnactive": "全局信息流已禁用",
         "add": "中继已添加",
-        "remove": "中继器已移除",
-        "active": "中继器已激活",
-        "desactive": "中继器已停用",
-        "badFormat": "中继器链接格式不正确",
-        "alreadyExists": "中继器已存在"
+        "remove": "中继已移除",
+        "active": "中继已启用",
+        "desactive": "中继已停用",
+        "badFormat": "中继链接格式不正确",
+        "alreadyExists": "中继已存在"
       }
     },
     "relayCard": {
@@ -213,12 +213,12 @@
       "software": "软件",
       "version": "版本",
       "description": "描述",
-      "obtainingInfo": "获取中继器信息中",
+      "obtainingInfo": "获取中继信息中",
       "notifications": {
-        "active": "中继器已激活",
-        "desactive": "中继器已停用",
+        "active": "中继已启用",
+        "desactive": "中继已停用",
         "globalFeedActive": "全局信息流已开启",
-        "globalFeedActiveUnactive": "全局信息流已关闭",
+        "globalFeedActiveUnactive": "全局信息流已禁用",
         "pubkeyCopied": "已复制私钥",
         "contactCopied": "已复制联系人",
         "urlCopied": "已复制链接"
@@ -244,11 +244,11 @@
       "nip05Title": "NIP-05",
       "directoryCancell": "取消",
       "directoryContinue": "继续",
-      "directoryDescription": "Nostr 目录是一个与其他平台的官方用户账户相关的nostr公钥数据库。在nostr上找到您已经在其他平台上关注的人，并添加您的公钥，这样您的关注者就能找到您。 \n\n 如果继续，您将得在应用程序之外执行验证过程。",
+      "directoryDescription": "Nostr 目录是一个与其他平台的官方用户账户相关的 Nostr 公钥数据库。在 Nostr 上找到您已经在其他平台上关注的人，并添加您的公钥，这样您的关注者就能找到您。 \n\n 如果继续，您将在应用程序之外执行验证过程。",
       "directoryTitle": "Nostr 目录",
       "publishPicture": "发布",
       "pictureUrl": "头像链接地址",
-      "pictureDescription": "请粘贴您希望在公开个人资料中显示的图像的链接地址",
+      "pictureDescription": "请粘贴您希望在公开个人资料中显示的头像的图像链接地址",
       "pictureTitle": "设置头像",
       "publish": "发布",
       "nsec": "私钥",
@@ -263,7 +263,7 @@
     "profilePage": {
       "notifications": {
         "contactAdded": "已关注用户",
-        "contactRemoved": "已取关用户",
+        "contactRemoved": "已取消关注",
         "npubCopied": "已复制公钥"
       },
       "invoice": "赞赏",
@@ -294,7 +294,7 @@
       "invoice": "赞赏",
       "message": "私信",
       "follow": "关注",
-      "unfollow": "关注中",
+      "unfollow": "正在关注",
       "block": "屏蔽",
       "unblock": "取消屏蔽",
       "share": "分享",
@@ -302,15 +302,15 @@
       "copyNPub": "复制公钥"
     },
     "conversationsFeed": {
-      "openMessage": "开始会话",
+      "openMessage": "发送私信",
       "openMessageLabel": "公钥",
-      "openMessageDescription": "粘贴公钥以开始会话",
-      "openMessageTitle": "用公钥开始会话",
-      "addPubKey": "用公钥开始会话",
-      "newMessageContact": "与联系人会话",
+      "openMessageDescription": "通过公钥发送私信",
+      "openMessageTitle": "发送私信",
+      "addPubKey": "通过公钥发送私信",
+      "newMessageContact": "给联系人发送私信",
       "emptyTitle": "您还没有收到过私信",
       "emptyDescription": "给您的联系人或其他用户发送私信",
-      "emptyButton": "打开会话"
+      "emptyButton": "发送私信"
     }
   }
 }
