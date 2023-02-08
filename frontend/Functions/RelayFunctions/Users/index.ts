@@ -38,7 +38,13 @@ export const formatPubKey: (pubKey: string | undefined) => string = (pubKey) => 
 
   const uniqueCode = pubKey.replace('npub1', '')
 
-  return `${uniqueCode.slice(0, 8)}:${uniqueCode.slice(-8)}`
+  return formatId(uniqueCode)
+}
+
+export const formatId: (key: string | undefined) => string = (key) => {
+  if (!key) return ''
+
+  return `${key.slice(0, 8)}:${key.slice(-8)}`
 }
 
 export const getNip05Domain: (nip05: string | undefined) => string | null = (nip05) => {

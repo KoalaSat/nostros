@@ -126,13 +126,13 @@ export const NoteCard: React.FC<NoteCardProps> = ({
   }, [database])
 
   const publishReaction: (positive: boolean) => void = (positive) => {
-    if (note && publicKey) {
+    if (note?.id && publicKey) {
       const event: Event = {
         content: positive ? '+' : '-',
         created_at: getUnixTime(new Date()),
         kind: Kind.Reaction,
         pubkey: publicKey,
-        tags: [...(note.tags ?? []), ['e', note.id], ['p', note.pubkey]],
+        tags: [...note.tags, ['e', note.id], ['p', note.pubkey]],
       }
       relayPool?.sendEvent(event)
     }

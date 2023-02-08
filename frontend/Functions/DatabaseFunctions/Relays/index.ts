@@ -33,12 +33,20 @@ export const searchRelays: (
   const searchQuery = `SELECT * FROM nostros_relays WHERE url = '${relayUrl}';`
   const results = await db.execute(searchQuery)
   const items: object[] = getItems(results)
-  const notes: Relay[] = items.map((object) => databaseToEntity(object))
-  return notes
+  const relays: Relay[] = items.map((object) => databaseToEntity(object))
+  return relays
 }
 
 export const getRelays: (db: QuickSQLiteConnection) => Promise<Relay[]> = async (db) => {
   const notesQuery = 'SELECT * FROM nostros_relays;'
+  const resultSet = await db.execute(notesQuery)
+  const items: object[] = getItems(resultSet)
+  const relays: Relay[] = items.map((object) => databaseToEntity(object))
+  return relays
+}
+
+export const getActiveRelays: (db: QuickSQLiteConnection) => Promise<Relay[]> = async (db) => {
+  const notesQuery = 'SELECT * FROM nostros_relays WHERE active = 1;'
   const resultSet = await db.execute(notesQuery)
   const items: object[] = getItems(resultSet)
   const relays: Relay[] = items.map((object) => databaseToEntity(object))

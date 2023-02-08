@@ -3,7 +3,7 @@ import { FlatList, ListRenderItem, ScrollView, StyleSheet, View } from 'react-na
 import Clipboard from '@react-native-clipboard/clipboard'
 import { useTranslation } from 'react-i18next'
 import { RelayPoolContext } from '../../Contexts/RelayPoolContext'
-import { Relay } from '../../Functions/DatabaseFunctions/Relays'
+import { getRelays, Relay } from '../../Functions/DatabaseFunctions/Relays'
 import { REGEX_SOCKET_LINK } from '../../Constants/Relay'
 import {
   List,
@@ -21,6 +21,7 @@ import RBSheet from 'react-native-raw-bottom-sheet'
 import { relayToColor } from '../../Functions/NativeFunctions'
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'
 import { useFocusEffect } from '@react-navigation/native'
+import { AppContext } from '../../Contexts/AppContext'
 
 export const defaultRelays = [
   'wss://brb.io',
@@ -39,13 +40,14 @@ export const defaultRelays = [
 
 export const RelaysPage: React.FC = () => {
   const defaultRelayInput = React.useMemo(() => 'wss://', [])
-  const { updateRelayItem, addRelayItem, removeRelayItem, relays, relayPool } =
-    useContext(RelayPoolContext)
+  const { updateRelayItem, addRelayItem, removeRelayItem, relayPool } = useContext(RelayPoolContext)
+  const { database } = useContext(AppContext)
   const { t } = useTranslation('common')
   const theme = useTheme()
   const bottomSheetAddRef = React.useRef<RBSheet>(null)
   const bottomSheetEditRef = React.useRef<RBSheet>(null)
   const bottomSheetResilenseRef = React.useRef<RBSheet>(null)
+  const [relays, setRelays] = React.useState<Relay[]>([])
   const [selectedRelay, setSelectedRelay] = useState<Relay>()
   const [addRelayInput, setAddRelayInput] = useState<string>(defaultRelayInput)
   const [showNotification, setShowNotification] = useState<string>()
@@ -53,10 +55,15 @@ export const RelaysPage: React.FC = () => {
   useFocusEffect(
     React.useCallback(() => {
       relayPool?.unsubscribeAll()
+      updateRelays()
 
       return () => {}
     }, []),
   )
+
+  const updateRelays: () => void = () => {
+    if (database) getRelays(database).then(setRelays)
+  }
 
   const addRelay: (url: string) => void = (url) => {
     addRelayItem({
@@ -64,6 +71,7 @@ export const RelaysPage: React.FC = () => {
       active: 1,
       global_feed: 1,
     }).then(() => {
+      updateRelays()
       setShowNotification('add')
     })
   }
@@ -72,6 +80,7 @@ export const RelaysPage: React.FC = () => {
     removeRelayItem({
       url,
     }).then(() => {
+      updateRelays()
       setShowNotification('remove')
     })
   }
@@ -79,6 +88,7 @@ export const RelaysPage: React.FC = () => {
   const activeRelay: (relay: Relay) => void = (relay) => {
     relay.active = 1
     updateRelayItem(relay).then(() => {
+      updateRelays()
       setShowNotification('active')
     })
   }
@@ -87,6 +97,7 @@ export const RelaysPage: React.FC = () => {
     relay.active = 0
     relay.global_feed = 0
     updateRelayItem(relay).then(() => {
+      updateRelays()
       setShowNotification('desactive')
     })
   }
@@ -95,6 +106,7 @@ export const RelaysPage: React.FC = () => {
     relay.active = 1
     relay.global_feed = 1
     updateRelayItem(relay).then(() => {
+      updateRelays()
       setShowNotification('globalFeedActive')
     })
   }
@@ -102,6 +114,7 @@ export const RelaysPage: React.FC = () => {
   const desactiveGlobalFeedRelay: (relay: Relay) => void = (relay) => {
     relay.global_feed = 0
     updateRelayItem(relay).then(() => {
+      updateRelays()
       setShowNotification('globalFeedActiveUnactive')
     })
   }
@@ -229,7 +242,7 @@ export const RelaysPage: React.FC = () => {
             </Text>
             <IconButton
               style={styles.titleAction}
-              icon='question'
+              icon='help'
               size={20}
               onPress={() => bottomSheetResilenseRef.current?.open()}
             />

@@ -53,7 +53,7 @@ export const initialUserContext: UserContextProps = {
 
 export const UserContextProvider = ({ children }: UserContextProviderProps): JSX.Element => {
   const { database, loadingDb, init } = useContext(AppContext)
-  const { relayPool } = useContext(RelayPoolContext)
+  const { relayPool, relayPoolReady } = useContext(RelayPoolContext)
   const [userState, setUserState] = useState<'loading' | 'access' | 'ready'>('loading')
   const [publicKey, setPublicKey] = useState<string>()
   const [nPub, setNpub] = useState<string>()
@@ -123,10 +123,10 @@ export const UserContextProvider = ({ children }: UserContextProviderProps): JSX
   }, [publicKey])
 
   useEffect(() => {
-    if (userState === 'ready' && publicKey) {
+    if (userState === 'ready' && publicKey && relayPoolReady) {
       navigate('Feed')
     }
-  }, [userState, publicKey])
+  }, [userState, publicKey, relayPoolReady])
 
   useEffect(() => {
     if (!loadingDb) {

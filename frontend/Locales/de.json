@@ -41,7 +41,8 @@
       "home": "Start",
       "searchingProfile": "Durchsuche Profil",
       "foundProfile": "Profil gefunden",
-      "foundContacts": "{{contactsCount}} Kontakte gefunden"
+      "foundContacts": "{{contactsCount}} Kontakte gefunden",
+      "storing": "Storing {{lastEventId}} on database."
     },
     "sendPage": {
       "isContact": "Folge ich",
@@ -257,13 +258,18 @@
       "notifications": {
         "contactAdded": "Kontakt hinzugefügt",
         "contactRemoved": "Entfernt ",
-        "npubCopied": "Öffentlicher Schlüssel kopiert."
+        "npubCopied": "Öffentlicher Schlüssel kopiert.",
+        "active": "Relay aktiviert.",
+        "desactive": "Relay deaktiviert."
       },
       "invoice": "Zap",
       "message": "Nachricht",
       "follow": "Folgen",
+      "isFollower": "follows you",
       "unfollow": "Nicht mehr folgen",
-      "copyNPub": "Schlüssel kopieren"
+      "copyNPub": "Schlüssel kopieren",
+      "relaysTitle": "Relays",
+      "relaysDescription": "These are {{username}}'s relays, activate the ones you want to be connected."
     },
     "homePage": {
       "clipboardTitle": "Nostr Schlüssel entdeckt",

@@ -3,37 +3,21 @@ import * as React from 'react'
 import { StyleSheet, View } from 'react-native'
 import Clipboard from '@react-native-clipboard/clipboard'
 import { IconButton, Snackbar, Text, TouchableRipple } from 'react-native-paper'
-import { AppContext } from '../../Contexts/AppContext'
-import { getUser, User } from '../../Functions/DatabaseFunctions/Users'
+import { User } from '../../Functions/DatabaseFunctions/Users'
 import Share from 'react-native-share'
 import RBSheet from 'react-native-raw-bottom-sheet'
 import { getNpub } from '../../lib/nostr/Nip19'
 import QRCode from 'react-native-qrcode-svg'
 
-export const ProfileShare: React.FC = () => {
-  const { displayUserShareDrawer } = React.useContext(AppContext)
+interface ProfileShareProps {
+  user: User
+}
+
+export const ProfileShare: React.FC<ProfileShareProps> = ({ user }) => {
   const bottomSheetShareRef = React.useRef<RBSheet>(null)
-  const { database } = React.useContext(AppContext)
-  const [user, setUser] = React.useState<User>()
   const [qrCode, setQrCode] = React.useState<any>()
   const [showNotification, setShowNotification] = React.useState<undefined | string>()
-  const nPub = React.useMemo(() => getNpub(displayUserShareDrawer), [displayUserShareDrawer])
-
-  React.useEffect(() => {
-    loadUser()
-  }, [])
-
-  const loadUser: () => void = () => {
-    if (database && displayUserShareDrawer) {
-      getUser(displayUserShareDrawer, database).then((result) => {
-        if (result) {
-          setUser(result)
-        } else {
-          setUser({ id: displayUserShareDrawer })
-        }
-      })
-    }
-  }
+  const nPub = React.useMemo(() => getNpub(user.id), [user])
 
   return (
     <View style={styles.mainLayout}>
@@ -73,20 +57,19 @@ export const ProfileShare: React.FC = () => {
         />
         <Text>{t('profileShare.copyNPub')}</Text>
       </View>
-      {user?.nip05 && (
-        <View style={styles.shareActionButton}>
-          <IconButton
-            icon='check-decagram-outline'
-            size={28}
-            onPress={() => {
-              setShowNotification('copyNip05')
-              Clipboard.setString(user?.nip05 ?? '')
-              bottomSheetShareRef.current?.close()
-            }}
-          />
-          <Text>{t('profileShare.copyNip05')}</Text>
-        </View>
-      )}
+      <View style={styles.shareActionButton}>
+        <IconButton
+          icon='check-decagram-outline'
+          size={28}
+          onPress={() => {
+            setShowNotification('nip05Copied')
+            Clipboard.setString(user?.nip05 ?? '')
+            bottomSheetShareRef.current?.close()
+          }}
+          disabled={!user.nip05}
+        />
+        <Text>{t('profileShare.copyNip05')}</Text>
+      </View>
       {showNotification && (
         <Snackbar
           style={styles.snackbar}

@@ -60,7 +60,6 @@ export const ProfileCreatePage: React.FC<ProfileCreatePageProps> = ({ navigation
 
   const onPress: () => void = () => {
     if (step > 1) {
-      console.log(validConfirmation())
       if (validConfirmation()) {
         setPrivateKey(key)
         setUserState('ready')
