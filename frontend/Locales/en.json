@@ -131,7 +131,8 @@
         "keyCopied": "Public key copied.",
         "contactAdded": "Profile followed.",
         "addContactError": "There was an error publishing your changes.",
-        "contactRemoved": "Profile unfollowed."
+        "contactRemoved": "Profile unfollowed.",
+        "contactUnblocked": "Profile unblocked."
       },
       "emptyTitleFollowing": "You are not following anyone.",
       "emptyDescriptionFollowing": "Follow other profiles to see content.",
@@ -146,7 +147,9 @@
       "followers": "Followers ({{count}})",
       "following": "Following ({{count}})",
       "stopFollowing": "Stop Following",
-      "follow": "Follow"
+      "follow": "Follow",
+      "blocked": "Blocked ({{count}})",
+      "unblock": "Unblock"
     },
     "aboutPage": {
       "gitHub": "GitHub",

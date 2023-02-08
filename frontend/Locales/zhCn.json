@@ -129,7 +129,8 @@
         "keyCopied": "已复制公钥",
         "contactAdded": "已关注",
         "addContactError": "发布更新时发生了错误",
-        "contactRemoved": "已取消关注"
+        "contactRemoved": "已取消关注",
+        "contactUnblocked": "Profile unblocked."
       },
       "emptyTitleFollowing": "您还没有关注任何用户",
       "emptyDescriptionFollowing": "关注一些用户以查看内容",
@@ -144,7 +145,9 @@
       "followers": "关注者 ({{count}})",
       "following": "关注中 ({{count}})",
       "stopFollowing": "正在关注",
-      "follow": "回关"
+      "follow": "回关",
+      "blocked": "Blocked ({{count}})",
+      "unblock": "Unblock"
     },
     "aboutPage": {
       "gitHub": "GitHub",
