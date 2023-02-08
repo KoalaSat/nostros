@@ -42,7 +42,7 @@
       "searchingProfile": "Durchsuche Profil",
       "foundProfile": "Profil gefunden",
       "foundContacts": "{{contactsCount}} Kontakte gefunden",
-      "storing": "Event {{lastEventId}} stored on database."
+      "storing": "Speichere {{lastEventId}} in Datenbank."
     },
     "sendPage": {
       "isContact": "Folge ich",
@@ -197,7 +197,7 @@
     "relaysPage": {
       "resilienceTitle": "Beständigkeit (experimental)",
       "resilienceDescription": "Das Nostr Protokoll stellt eine gute Anzahl Tools zur Verfügung, um ein dezentrales Netzwerk zu bauen, aber im Gegensatz zu anderen dezentralen Protokollen wie Bitcoin, ist es nicht von vornherein an seine Verwendung gebunden.\n\nUm das Ziel eines dezentralen Netzwerks zu erreichen, sollten Clients (z.B. Nostros) und Relays (Content-Server) aktiv zusammenarbeiten. Der Nostros-Resilienzmodus versucht erstens, dafür ein Gewahrsein bei den Nutzern zu wecken, und zweitens, neue Muster und Methoden zu erproben, um die Resilienz des Netzwerks zu verbessern.\n\nEine funktionierende Implementation hierfür wird bald in Nostros zur Anwendung kommen",
-      "resilienceCategories": "Resilience exposure",
+      "resilienceCategories": "Ausgewogenheitsfindung",
       "resilienceCategoriesDescription": "Ein erster Ansatz, den Nostros testet, ist die zufällige Berechnung (auf der Grundlage der empfangenen Kontaktereignisse), welche Relays am ausgewogensten sind. Dabei wird versucht, sowohl Relays mit zu vielen Ereignissen (Zentralisierung) als auch Relays mit fast keinen Ereignissen (Akkuentladung) zu vermeiden\n\nEs ist das Ziel, eine Liste von 5 Relays zu erstellen, die alle Kontakte abdeckt. Sollte dies jedoch nicht möglich sein, wird Nostros unter anderen Relays suchen und den Benutzer darüber warnen.",
       "centralized": "Zentralisiert",
       "small": "Klein",
@@ -270,11 +270,11 @@
       "invoice": "Zap",
       "message": "Nachricht",
       "follow": "Folgen",
-      "isFollower": "follows you",
+      "isFollower": "folgt dir",
       "unfollow": "Nicht mehr folgen",
       "copyNPub": "Schlüssel kopieren",
       "relaysTitle": "Relays",
-      "relaysDescription": "These are {{username}}'s relays, activate the ones you want to be connected."
+      "relaysDescription": "Dies sind {{username}}'s Relays, aktiviere diejenigen, zu denen du verbunden werden möchtest."
     },
     "homePage": {
       "clipboardTitle": "Nostr Schlüssel entdeckt",
