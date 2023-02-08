@@ -6,7 +6,6 @@ import { UserContext } from '../../Contexts/UserContext'
 import { getUsers, User } from '../../Functions/DatabaseFunctions/Users'
 import { useTranslation } from 'react-i18next'
 import getUnixTime from 'date-fns/getUnixTime'
-import debounce from 'lodash.debounce'
 import { DeviceEventEmitter, StyleSheet, View } from 'react-native'
 import Logo from '../../Components/Logo'
 import { Button, Text, useTheme } from 'react-native-paper'
@@ -29,10 +28,7 @@ export const ProfileLoadPage: React.FC = () => {
       DeviceEventEmitter.addListener('WebsocketEvent', (event: WebsocketEvent) =>
         setLastEventId(event.eventId),
       )
-      debounce(() => {
-        loadMeta()
-        reloadUser()
-      }, 1000)
+      setTimeout(() => loadMeta(), 1000)
       return () =>
         relayPool?.unsubscribe([
           'profile-load-meta',
@@ -55,10 +51,15 @@ export const ProfileLoadPage: React.FC = () => {
   }, [profileFound, publicKey, relayPoolReady])
 
   useEffect(() => {
-    if (publicKey && relayPoolReady) loadMeta()
-  }, [publicKey, relayPoolReady])
+    setTimeout(loadMeta, 1000)
+  }, [profileFound, publicKey, relayPoolReady])
+
+  useEffect(() => {
+    console.log('publicKey', publicKey)
+  }, [publicKey])
 
   const loadMeta: () => void = () => {
+    console.log(relayPoolReady)
     if (publicKey && relayPoolReady) {
       relayPool?.subscribe('profile-load-meta', [
         {
@@ -66,6 +67,8 @@ export const ProfileLoadPage: React.FC = () => {
           authors: [publicKey],
         },
       ])
+    } else {
+      setTimeout(() => loadMeta(), 1000)
     }
   }
 
@@ -103,9 +106,11 @@ export const ProfileLoadPage: React.FC = () => {
         <Text variant='titleMedium' style={styles.center}>
           {t('profileLoadPage.foundContacts', { contactsCount })}
         </Text>
-        <Text variant='titleMedium' style={styles.center}>
-          {t('profileLoadPage.storing', { lastEventId: formatId(lastEventId) })}
-        </Text>
+        {lastEventId && (
+          <Text variant='titleMedium' style={styles.center}>
+            {t('profileLoadPage.storing', { lastEventId: formatId(lastEventId) })}
+          </Text>
+        )}
         <Button mode='contained' onPress={() => setUserState('ready')}>
           {t('profileLoadPage.home')}
         </Button>
