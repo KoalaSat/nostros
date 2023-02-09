@@ -6,7 +6,7 @@
       "keysTitle": "这些密钥是什么？",
       "keysDescription": "在 Nostr, 您会有两个密钥: 公钥和私钥",
       "publicKeys": "公钥",
-      "publicKeysDescription": "您可以将公钥看作是您的用户名 (像是其他应用中的 @handle )。您可以分享公钥以便其他用户将您添加到他们的网络",
+      "publicKeysDescription": "您可以将公钥看作是您的用户名 (类似其他应用中的 @handle )。您可以分享公钥以便其他用户将您添加到他们的网络",
       "privateKey": "私钥",
       "privateKeyDescription": "您可以将私钥看作是您的密码",
       "privateKeysSnackbarTitle": "注意",
@@ -23,7 +23,7 @@
       "Note": "Note",
       "Profile": "简介",
       "About": "关于",
-      "Config": "配置",
+      "Config": "设置",
       "Send": "发送",
       "Relays": "中继",
       "ProfileConfig": "简介设置"
@@ -203,7 +203,7 @@
         "remove": "中继已移除",
         "active": "中继已启用",
         "desactive": "中继已停用",
-        "badFormat": "中继链接格式不正确",
+        "badFormat": "中继地址格式不正确",
         "alreadyExists": "中继已存在"
       }
     },
@@ -280,7 +280,7 @@
       "isFollower": "关注了你",
       "unfollow": "关注中",
       "copyNPub": "复制公钥",
-      "relaysTitle": "Relays",
+      "relaysTitle": "中继",
       "relaysDescription": "以下是{{username}}的中继，您可以激活想要连接的中继"
     },
     "homePage": {
