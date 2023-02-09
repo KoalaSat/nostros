@@ -134,8 +134,8 @@
         "contactRemoved": "Abo wurde entfernt",
         "contactUnblocked": "Profile unblocked."
       },
-      "emptyTitleBlocked": "You have no blocked profiles", 
-      "emptyDescriptionBlocked": "You can always block a someone on the profile view.",
+      "emptyTitleBlocked": "Du hast keine geblockten Profile", 
+      "emptyDescriptionBlocked": "In der Profil Ansicht kannst du jederzeit jemanden blocken",
       "emptyTitleFollowing": "Du folgst niemandem",
       "emptyDescriptionFollowing": "Folge anderen, und sieh hier was sie posten",
       "emptyButtonFollowing": "Folge öffentlichen Schlüsseln",
