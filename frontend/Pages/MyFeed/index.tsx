@@ -63,12 +63,16 @@ export const MyFeed: React.FC<MyFeedProps> = ({ navigation }) => {
 
   const onRefresh = useCallback(() => {
     setRefreshing(true)
+    relayPool?.unsubscribe([
+      'homepage-contacts-main',
+      'homepage-contacts-meta',
+      'homepage-contacts-replies',
+    ])
     subscribeNotes()
   }, [])
 
   const subscribeNotes: (past?: boolean) => void = async (past) => {
     if (!database || !publicKey) return
-
     const users: User[] = await getUsers(database, { contacts: true, order: 'created_at DESC' })
     const authors: string[] = [...users.map((user) => user.id), publicKey]
 
@@ -89,7 +93,6 @@ export const MyFeed: React.FC<MyFeedProps> = ({ navigation }) => {
 
   const loadNotes: () => void = async () => {
     if (database && publicKey) {
-      relayPool?.unsubscribe(['homepage-reactions', 'homepage-replies', 'homepage-main'])
       getMainNotes(database, publicKey, pageSize, true).then(async (notes) => {
         setNotes(notes)
         if (notes.length > 0) {
@@ -175,7 +178,9 @@ export const MyFeed: React.FC<MyFeedProps> = ({ navigation }) => {
         refreshing={refreshing}
         ListEmptyComponent={ListEmptyComponent}
         horizontal={false}
-        ListFooterComponent={<ActivityIndicator animating={true} />}
+        ListFooterComponent={
+          notes.length > 0 ? <ActivityIndicator style={styles.loading} animating={true} /> : <></>
+        }
         ref={flashListRef}
       />
     </View>
@@ -183,6 +188,9 @@ export const MyFeed: React.FC<MyFeedProps> = ({ navigation }) => {
 }
 
 const styles = StyleSheet.create({
+  loading: {
+    paddingTop: 16,
+  },
   list: {
     height: '100%',
   },

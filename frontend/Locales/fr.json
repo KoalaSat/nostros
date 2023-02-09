@@ -102,6 +102,8 @@
         "copied": "Clé privée copiée. Gardez-la dans un endroit sûr.",
         "wrongWords": "The words doesn't match"
       },
+      "skip": "Skip",
+      "confirmTitle": "Type the words in the right order.",
       "snackbarDescription": "Important. Conservez votre clé dans un endroit sûr, si vous le perdez, vous ne pourrez pas accéder à votre compte.",
       "snackbarAction": "Copier la clé privée",
       "warningTitle": "Important",
@@ -135,7 +137,7 @@
         "contactRemoved": "Vous ne suivez plus ce profil",
         "contactUnblocked": "Profile unblocked."
       },
-      "emptyTitleBlocked": "You have no blocked profiles", 
+      "emptyTitleBlocked": "You have no blocked profiles",
       "emptyDescriptionBlocked": "You can always block a someone on the profile view.",
       "emptyTitleFollowing": "Vous ne suivez personne",
       "emptyDescriptionFollowing": "Suivez les autres profils pour voir le contenu ici.",
@@ -170,6 +172,7 @@
       "myFeed": "Mon flux"
     },
     "relayCard": {
+      "pushDone": "Completed",
       "moreInfo": "Plus d'info",
       "lessInfo": "Moins d'info",
       "globalFeed": "Flux Global",
@@ -199,7 +202,7 @@
       "resilienceCategoriesDescription": "An initial approach that Nostros is testing is to randomly calculate (based on received contact events) which relays are most balanced. This tries to avoid both relays with too many events (centralization) and relays with almost no events (battery discharge).\n\nThe goal is to create a list of 5 relays that cover all contacts. However, if this is not possible, Nostros will search among other relays and warn the user about it.",
       "centralized": "Centralized",
       "small": "Small",
-      "contacts": "# Contacts",
+      "contacts": "Assigned Contacts",
       "resilienceMode": "Resilience (experimental)",
       "relayName": "Adresse",
       "globalFeed": "Flux global",
@@ -268,7 +271,6 @@
       "isFollower": "follows you",
       "unfollow": "Abonné",
       "copyNPub": "Copier la clé",
-      "relaysTitle": "Relays",
       "relaysDescription": "These are {{username}}'s relays, activate the ones you want to be connected."
     },
     "profileShare": {
@@ -285,14 +287,17 @@
     "profileCard": {
       "notifications": {
         "contactAdded": "Abonné",
-        "contactRemoved": "Vous ne suivez plus ce profil"
+        "contactRemoved": "Vous ne suivez plus ce profil",
+        "userUnblocked": "Profile unblocked",
+        "userBlocked": "Profile unblocked"
       },
       "invoice": "Tip",
       "message": "Message",
       "follow": "Abonné",
       "block": "Bloquer",
       "unblock": "Débloquer",
-      "unfollow": "Abonné"
+      "unfollow": "Abonné",
+      "relaysTitle": "Relays"
     },
     "conversationsFeed": {
       "openMessage": "Commencer la conversation",

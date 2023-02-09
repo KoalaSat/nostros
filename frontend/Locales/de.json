@@ -102,6 +102,8 @@
         "copied": "Privaten Schlüssel kopiert. Verwahre ihn an einem sicheren Ort!",
         "wrongWords": "Die Wörter stimmen nicht überein"
       },
+      "skip": "Skip",
+      "confirmTitle": "Type the words in the right order.",
       "snackbarDescription": "Wichtig. Verwahre den Schlüssel an einem sicheren Ort. Bei Verlust kann dieses Konto nie wieder benutzt werden!",
       "snackbarAction": "Privaten Schlüssel kopieren",
       "warningTitle": "Wichtig!",
@@ -134,7 +136,7 @@
         "contactRemoved": "Abo wurde entfernt",
         "contactUnblocked": "Profile unblocked."
       },
-      "emptyTitleBlocked": "You have no blocked profiles", 
+      "emptyTitleBlocked": "You have no blocked profiles",
       "emptyDescriptionBlocked": "You can always block a someone on the profile view.",
       "emptyTitleFollowing": "Du folgst niemandem",
       "emptyDescriptionFollowing": "Folge anderen, und sieh hier was sie posten",
@@ -172,6 +174,7 @@
       "newMessages": "{{newNotesCount}} neue Nachrichten. Zum Aktualisieren tippen."
     },
     "relayCard": {
+      "pushDone": "Completed",
       "moreInfo": "Mehr Infos",
       "lessInfo": "Weniger Infos",
       "globalFeed": "Globaler Feed",
@@ -273,7 +276,6 @@
       "isFollower": "folgt dir",
       "unfollow": "Nicht mehr folgen",
       "copyNPub": "Schlüssel kopieren",
-      "relaysTitle": "Relays",
       "relaysDescription": "Dies sind {{username}}'s Relays, aktiviere diejenigen, zu denen du verbunden werden möchtest."
     },
     "homePage": {
@@ -301,7 +303,9 @@
     "profileCard": {
       "notifications": {
         "contactAdded": "Aboniert",
-        "contactRemoved": "Abo entfernt"
+        "contactRemoved": "Abo entfernt",
+        "userUnblocked": "Profile unblocked",
+        "userBlocked": "Profile unblocked"
       },
       "invoice": "Zap",
       "message": "Nachricht",
@@ -309,7 +313,8 @@
       "block": "Blockieren",
       "share": "Teilen",
       "unblock": "Erlauben",
-      "unfollow": "Abo entfernen"
+      "unfollow": "Abo entfernen",
+      "relaysTitle": "Relays"
     },
     "conversationsFeed": {
       "openMessage": "Unterhaltung beginnen",

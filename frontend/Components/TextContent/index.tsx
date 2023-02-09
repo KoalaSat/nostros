@@ -48,6 +48,7 @@ export const TextContent: React.FC<TextContentProps> = ({
   const DEFAULT_COVER = '../../../assets/images/placeholders/placeholder_url.png'
   const MEDIA_COVER = '../../../assets/images/placeholders/placeholder_media.png'
   const IMAGE_COVER = '../../../assets/images/placeholders/placeholder_image.png'
+  const BLUEBIRD_COVER = '../../../assets/images/placeholders/placeholder_bluebird.png'
 
   useEffect(() => {
     if (!linkPreview && url) {
@@ -162,11 +163,9 @@ export const TextContent: React.FC<TextContentProps> = ({
 
     const getDefaultCover: () => number = () => {
       if (!linkPreview) return require(DEFAULT_COVER)
+      if (linkType === 'blueBird') return require(BLUEBIRD_COVER)
       if (linkType === 'audio') return require(MEDIA_COVER)
       if (linkType === 'video') return require(MEDIA_COVER)
-      if (linkType === 'blueBird') return require(DEFAULT_COVER)
-      if (linkType === 'image') return require(IMAGE_COVER)
-
       return require(DEFAULT_COVER)
     }
 
@@ -197,31 +196,37 @@ export const TextContent: React.FC<TextContentProps> = ({
         {url && (
           <View style={styles.previewCard}>
             <Card onPress={() => handleUrlPress(url)}>
-              <FastImage
-                style={[
-                  styles.cardCover,
-                  {
-                    backgroundColor: theme.colors.backdrop,
-                  },
-                ]}
-                source={{
-                  uri: getRequireCover(),
-                  priority: FastImage.priority.high,
-                }}
-                defaultSource={getDefaultCover()}
-                resizeMode={FastImage.resizeMode.contain}
-              />
-              <Card.Content style={styles.previewContent}>
-                <Text variant='bodyMedium' numberOfLines={3}>
-                  {/* {linkPreview?.title ?? linkPreview?.url ?? url} */}
-                  {url}
-                </Text>
-                {/* {linkPreview?.description && (
+              {linkType === 'image' ? (
+                <FastImage
+                  style={[
+                    styles.cardCover,
+                    {
+                      backgroundColor: theme.colors.backdrop,
+                    },
+                  ]}
+                  source={{
+                    uri: getRequireCover(),
+                    priority: FastImage.priority.high,
+                  }}
+                  resizeMode={FastImage.resizeMode.contain}
+                  defaultSource={require(IMAGE_COVER)}
+                />
+              ) : (
+                <Card.Cover source={getDefaultCover()} resizeMode='contain' />
+              )}
+              {linkType !== 'image' && (
+                <Card.Content style={styles.previewContent}>
+                  <Text variant='bodyMedium' numberOfLines={3}>
+                    {/* {linkPreview?.title ?? linkPreview?.url ?? url} */}
+                    {url}
+                  </Text>
+                  {/* {linkPreview?.description && (
               <Text variant='bodySmall' numberOfLines={3}>
                 {linkPreview.description}
               </Text>
             )} */}
-              </Card.Content>
+                </Card.Content>
+              )}
             </Card>
           </View>
         )}
@@ -274,8 +279,7 @@ const styles = StyleSheet.create({
   cardCover: {
     flex: 1,
     height: 180,
-    borderTopLeftRadius: 16,
-    borderTopRightRadius: 16,
+    borderRadius: 16,
   },
   url: {
     textDecorationLine: 'underline',

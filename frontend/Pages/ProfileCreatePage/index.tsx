@@ -71,6 +71,11 @@ export const ProfileCreatePage: React.FC<ProfileCreatePageProps> = ({ navigation
     }
   }
 
+  const onPressSkip: () => void = () => {
+    setPrivateKey(key)
+    setUserState('ready')
+  }
+
   const onChangeTextConfirm: (value: string, position: number) => void = (value, position) => {
     setConfirmWords((prev) => {
       prev[position] = value
@@ -208,6 +213,13 @@ export const ProfileCreatePage: React.FC<ProfileCreatePageProps> = ({ navigation
               {` ${step + 1}/3`}
             </Button>
           </View>
+          {step > 1 && (
+            <View style={styles.bottomButton}>
+              <Button mode='outlined' compact onPress={onPressSkip}>
+                {t('profileCreatePage.skip')}
+              </Button>
+            </View>
+          )}
         </View>
       )}
       {showNotification && (
@@ -288,6 +300,9 @@ const styles = StyleSheet.create({
   },
   bold: {
     fontWeight: 'bold',
+  },
+  bottomButton: {
+    marginTop: 16,
   },
 })
 

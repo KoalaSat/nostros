@@ -61,6 +61,11 @@ export const ReactionsFeed: React.FC<ReactionsFeedProps> = ({ navigation }) => {
 
   const onRefresh = useCallback(() => {
     setRefreshing(true)
+    relayPool?.unsubscribe([
+      'homepage-contacts-main',
+      'homepage-contacts-meta',
+      'homepage-contacts-replies',
+    ])
     subscribeNotes()
   }, [])
 
@@ -84,7 +89,6 @@ export const ReactionsFeed: React.FC<ReactionsFeedProps> = ({ navigation }) => {
 
   const loadNotes: () => void = async () => {
     if (database && publicKey) {
-      relayPool?.unsubscribe(['homepage-reactions', 'homepage-replies', 'homepage-main'])
       getReactedNotes(database, publicKey, pageSize).then(async (notes) => {
         setNotes(notes)
         if (notes.length > 0) {
@@ -175,7 +179,9 @@ export const ReactionsFeed: React.FC<ReactionsFeedProps> = ({ navigation }) => {
         refreshing={refreshing}
         ListEmptyComponent={ListEmptyComponent}
         horizontal={false}
-        ListFooterComponent={<ActivityIndicator animating={true} />}
+        ListFooterComponent={
+          notes.length > 0 ? <ActivityIndicator style={styles.loading} animating={true} /> : <></>
+        }
         ref={flashListRef}
       />
     </View>
@@ -183,6 +189,9 @@ export const ReactionsFeed: React.FC<ReactionsFeedProps> = ({ navigation }) => {
 }
 
 const styles = StyleSheet.create({
+  loading: {
+    paddingTop: 16,
+  },
   list: {
     height: '100%',
   },

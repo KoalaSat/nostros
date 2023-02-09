@@ -102,6 +102,8 @@
         "copied": "Clave privada copiada. Guárdala en un lugar seguro.",
         "wrongWords": "Las palabras no coinciden."
       },
+      "skip": "Skip",
+      "confirmTitle": "Type the words in the right order.",
       "snackbarDescription": "Importante. Guarda tu clave en un lugar seguro, si la pierdes, no será posible acceder a tu perfil.",
       "snackbarAction": "Copiar clave privada",
       "warningTitle": "Importante",
@@ -134,7 +136,7 @@
         "contactRemoved": "Has dejado de seguir a un perfil",
         "contactUnblocked": "Perfil desbloqueado."
       },
-      "emptyTitleBlocked": "No tienes perfiles bloqueado", 
+      "emptyTitleBlocked": "No tienes perfiles bloqueado",
       "emptyDescriptionBlocked": "Siempre puede bloquear a alguien en su vista de perfil.",
       "emptyTitleFollowing": "No sigues a nadie",
       "emptyDescriptionFollowing": "Sigue otros perfiles para ver contenido aquí.",
@@ -169,6 +171,7 @@
       "myFeed": "Mi feed"
     },
     "relayCard": {
+      "pushDone": "Completado",
       "moreInfo": "Más información",
       "lessInfo": "Menos información",
       "globalFeed": "Feed Global",
@@ -267,7 +270,6 @@
       "follow": "Seguir",
       "unfollow": "Siguiendo",
       "copyNPub": "Copiar clave",
-      "relaysTitle": "Relays",
       "relaysDescription": "Estos son los relays de {{username}}, activa aquellos a los que quieras estar conectado."
     },
     "homePage": {
@@ -297,7 +299,9 @@
     "profileCard": {
       "notifications": {
         "contactAdded": "Siguiendo",
-        "contactRemoved": "Dejando de seguir"
+        "contactRemoved": "Dejando de seguir",
+        "userUnblocked": "Perfil desbloqueado",
+        "userBlocked": "Perfil bloqueado"
       },
       "invoice": "Propina",
       "message": "Mensaje",
@@ -305,7 +309,8 @@
       "block": "Bloquear",
       "share": "Share",
       "unblock": "Desbloquear",
-      "unfollow": "Siguiendo"
+      "unfollow": "Siguiendo",
+      "relaysTitle": "Relays"
     },
     "conversationsFeed": {
       "openMessage": "Comenzar conversación",

@@ -110,4 +110,22 @@ public class RelayPoolModule extends ReactContextBaseJavaModule {
             }
         }
     }
+
+    @ReactMethod
+    public void sendAll(String message, boolean isGlobalFeed) {
+        for (Relay relay : relays) {
+            if (relay.active() > 0 && (!isGlobalFeed || relay.globalFeed > 0)) {
+                relay.send(message);
+            }
+        }
+    }
+
+    @ReactMethod
+    public void sendRelay(String message, String relayUrl) {
+        for (Relay relay : relays) {
+            if (relay.active() > 0 && relayUrl.equals(relay.url)) {
+                relay.send(message);
+            }
+        }
+    }
 }

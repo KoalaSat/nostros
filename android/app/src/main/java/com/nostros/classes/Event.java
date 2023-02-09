@@ -188,7 +188,7 @@ public class Event {
     protected void saveNote(SQLiteDatabase database, String userPubKey, String relayUrl) {
         ContentValues values = new ContentValues();
         values.put("id", id);
-        values.put("content", content.replace("'", "''"));
+        values.put("content", content);
         values.put("created_at", created_at);
         values.put("kind", kind);
         values.put("pubkey", pubkey);

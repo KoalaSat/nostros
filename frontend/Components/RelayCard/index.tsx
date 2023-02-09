@@ -1,7 +1,16 @@
 import { t } from 'i18next'
 import * as React from 'react'
 import { StyleSheet, Switch, View } from 'react-native'
-import { Divider, IconButton, List, Snackbar, Text } from 'react-native-paper'
+import {
+  Button,
+  Checkbox,
+  Divider,
+  IconButton,
+  List,
+  Snackbar,
+  Text,
+  useTheme,
+} from 'react-native-paper'
 import { AppContext } from '../../Contexts/AppContext'
 import { RelayPoolContext } from '../../Contexts/RelayPoolContext'
 import RBSheet from 'react-native-raw-bottom-sheet'
@@ -12,6 +21,10 @@ import axios from 'axios'
 import { ScrollView } from 'react-native-gesture-handler'
 import Clipboard from '@react-native-clipboard/clipboard'
 import Logo from '../Logo'
+import { getRawUserNotes } from '../../Functions/DatabaseFunctions/Notes'
+import { UserContext } from '../../Contexts/UserContext'
+import { getRawUserReactions } from '../../Functions/DatabaseFunctions/Reactions'
+import { getRawUserConversation } from '../../Functions/DatabaseFunctions/DirectMessages'
 
 interface RelayCardProps {
   url?: string
@@ -19,17 +32,48 @@ interface RelayCardProps {
 }
 
 export const RelayCard: React.FC<RelayCardProps> = ({ url, bottomSheetRef }) => {
-  const { updateRelayItem } = React.useContext(RelayPoolContext)
+  const theme = useTheme()
+  const { publicKey } = React.useContext(UserContext)
+  const { updateRelayItem, relayPool } = React.useContext(RelayPoolContext)
   const { database } = React.useContext(AppContext)
   const [relay, setRelay] = React.useState<Relay>()
   const [uri, setUri] = React.useState<string>()
   const [relayInfo, setRelayInfo] = React.useState<RelayInfo>()
   const [showNotification, setShowNotification] = React.useState<string>()
+  const [checkedPush, setCheckedPush] = React.useState<'checked' | 'unchecked' | 'indeterminate'>(
+    'unchecked',
+  )
   const [moreInfo, setMoreInfo] = React.useState<boolean>(false)
+  const [pushDone, setPushDone] = React.useState<boolean>(false)
+  const [pushUserHistoric, setPushUserHistoric] = React.useState<boolean>(false)
+  const bottomSheetPushRelayRef = React.useRef<RBSheet>(null)
 
   React.useEffect(() => {
     loadRelay()
   }, [])
+
+  React.useEffect(() => {
+    if (pushUserHistoric && url && database && publicKey && relayPool) {
+      getRawUserNotes(database, publicKey).then((resultNotes) => {
+        resultNotes.forEach((note) => {
+          note.content = note.content.replace("''", "'")
+          relayPool.sendEvent(note, url)
+        })
+      })
+      getRawUserReactions(database, publicKey).then((resultReactions) => {
+        resultReactions.forEach((reaction) => {
+          relayPool.sendEvent(reaction, url)
+        })
+      })
+      getRawUserConversation(database, publicKey).then((resultConversations) => {
+        resultConversations.forEach((conversation) => {
+          conversation.content = conversation.content.replace("''", "'")
+          relayPool.sendEvent(conversation, url)
+        })
+        setPushDone(true)
+      })
+    }
+  }, [pushUserHistoric])
 
   React.useEffect(() => {
     if (relay) {
@@ -109,6 +153,21 @@ export const RelayCard: React.FC<RelayCardProps> = ({ url, bottomSheetRef }) => 
       })
     }
   }
+
+  const bottomSheetStyles = React.useMemo(() => {
+    return {
+      container: {
+        backgroundColor: theme.colors.background,
+        paddingTop: 16,
+        paddingRight: 16,
+        paddingBottom: 32,
+        paddingLeft: 16,
+        borderTopRightRadius: 28,
+        borderTopLeftRadius: 28,
+        height: 'auto',
+      },
+    }
+  }, [])
 
   return relay ? (
     <View>
@@ -217,6 +276,14 @@ export const RelayCard: React.FC<RelayCardProps> = ({ url, bottomSheetRef }) => 
       <View style={styles.actions}>
         <View style={styles.actionButton}>
           <IconButton
+            icon={'upload-multiple'}
+            size={28}
+            onPress={() => bottomSheetPushRelayRef.current?.open()}
+          />
+          <Text>{t('relayCard.pushRelay')}</Text>
+        </View>
+        <View style={styles.actionButton}>
+          <IconButton
             icon={'share-variant-outline'}
             size={28}
             onPress={() => {
@@ -238,6 +305,50 @@ export const RelayCard: React.FC<RelayCardProps> = ({ url, bottomSheetRef }) => 
           {t(`relayCard.notifications.${showNotification}`)}
         </Snackbar>
       )}
+      <RBSheet
+        ref={bottomSheetPushRelayRef}
+        closeOnPressMask={!pushUserHistoric}
+        customStyles={bottomSheetStyles}
+        onClose={() => {}}
+      >
+        <Text variant='titleLarge'>{t('relayCard.pushHistoricTitle')}</Text>
+        <Text>{t('relayCard.pushHistoricDescription')}</Text>
+        <View style={[styles.warning, { backgroundColor: '#683D00' }]}>
+          <Text variant='titleSmall' style={[styles.warningTitle, { color: '#FFDCBB' }]}>
+            {t('relayCard.pushHistoricAlertTitle')}
+          </Text>
+          <Text style={{ color: '#FFDCBB' }}>{t('relayCard.pushHistoricAlert')}</Text>
+        </View>
+        <View style={styles.row}>
+          <Text>{t('relayCard.pushConsent')}</Text>
+          <Checkbox
+            status={checkedPush}
+            onPress={() => setCheckedPush(checkedPush === 'checked' ? 'unchecked' : 'checked')}
+          />
+        </View>
+        <Button
+          style={styles.buttonSpacer}
+          mode='contained'
+          onPress={() => setPushUserHistoric(true)}
+          disabled={pushUserHistoric || checkedPush !== 'checked'}
+          loading={pushUserHistoric && !pushDone}
+        >
+          {pushDone
+            ? t('relayCard.pushDone')
+            : pushUserHistoric
+            ? t('relayCard.pushingEvent')
+            : t('relayCard.pushHistoricTitle')}
+        </Button>
+        <Button
+          mode='outlined'
+          onPress={() => {
+            bottomSheetPushRelayRef.current?.close()
+          }}
+          disabled={pushUserHistoric}
+        >
+          {t('relayCard.cancel')}
+        </Button>
+      </RBSheet>
     </View>
   ) : (
     <></>
@@ -245,6 +356,12 @@ export const RelayCard: React.FC<RelayCardProps> = ({ url, bottomSheetRef }) => 
 }
 
 const styles = StyleSheet.create({
+  row: {
+    alignItems: 'center',
+    flexDirection: 'row',
+    height: 56,
+    justifyContent: 'space-between',
+  },
   container: {
     padding: 16,
   },
@@ -286,6 +403,19 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginBottom: 4,
     width: '33%',
+  },
+  buttonSpacer: {
+    marginTop: 16,
+    marginBottom: 16,
+  },
+  warning: {
+    borderRadius: 4,
+    padding: 16,
+    marginTop: 16,
+    marginBottom: 16,
+  },
+  warningTitle: {
+    marginBottom: 8,
   },
 })
 

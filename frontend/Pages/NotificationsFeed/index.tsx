@@ -186,7 +186,9 @@ export const NotificationsFeed: React.FC = () => {
         refreshing={refreshing}
         ListEmptyComponent={ListEmptyComponent}
         horizontal={false}
-        ListFooterComponent={<ActivityIndicator animating={true} />}
+        ListFooterComponent={
+          notes.length > 0 ? <ActivityIndicator style={styles.loading} animating={true} /> : <></>
+        }
         ref={flashListRef}
       />
     </View>
@@ -194,6 +196,9 @@ export const NotificationsFeed: React.FC = () => {
 }
 
 const styles = StyleSheet.create({
+  loading: {
+    paddingTop: 16,
+  },
   container: {
     flex: 1,
     paddingLeft: 16,

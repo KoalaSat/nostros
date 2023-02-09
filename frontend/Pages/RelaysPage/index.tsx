@@ -1,6 +1,5 @@
 import React, { useContext, useState } from 'react'
 import { FlatList, ListRenderItem, ScrollView, StyleSheet, View } from 'react-native'
-import Clipboard from '@react-native-clipboard/clipboard'
 import { useTranslation } from 'react-i18next'
 import { RelayPoolContext } from '../../Contexts/RelayPoolContext'
 import { getRelays, Relay } from '../../Functions/DatabaseFunctions/Relays'
@@ -40,15 +39,14 @@ export const defaultRelays = [
 
 export const RelaysPage: React.FC = () => {
   const defaultRelayInput = React.useMemo(() => 'wss://', [])
-  const { updateRelayItem, addRelayItem, removeRelayItem, relayPool } = useContext(RelayPoolContext)
+  const { updateRelayItem, addRelayItem, relayPool, setDisplayrelayDrawer } =
+    useContext(RelayPoolContext)
   const { database } = useContext(AppContext)
   const { t } = useTranslation('common')
   const theme = useTheme()
   const bottomSheetAddRef = React.useRef<RBSheet>(null)
-  const bottomSheetEditRef = React.useRef<RBSheet>(null)
   const bottomSheetResilenseRef = React.useRef<RBSheet>(null)
   const [relays, setRelays] = React.useState<Relay[]>([])
-  const [selectedRelay, setSelectedRelay] = useState<Relay>()
   const [addRelayInput, setAddRelayInput] = useState<string>(defaultRelayInput)
   const [showNotification, setShowNotification] = useState<string>()
 
@@ -66,24 +64,26 @@ export const RelaysPage: React.FC = () => {
   }
 
   const addRelay: (url: string) => void = (url) => {
-    addRelayItem({
-      url,
-      active: 1,
-      global_feed: 1,
-    }).then(() => {
-      updateRelays()
-      setShowNotification('add')
-    })
+    if (!relayList.find((relay) => relay.url === url)) {
+      addRelayItem({
+        url,
+        active: 1,
+        global_feed: 1,
+      }).then(() => {
+        updateRelays()
+        setShowNotification('add')
+      })
+    }
   }
 
-  const removeRelay: (url: string) => void = (url) => {
-    removeRelayItem({
-      url,
-    }).then(() => {
-      updateRelays()
-      setShowNotification('remove')
-    })
-  }
+  // const removeRelay: (url: string) => void = (url) => {
+  //   removeRelayItem({
+  //     url,
+  //   }).then(() => {
+  //     updateRelays()
+  //     setShowNotification('remove')
+  //   })
+  // }
 
   const activeRelay: (relay: Relay) => void = (relay) => {
     relay.active = 1
@@ -184,8 +184,7 @@ export const RelaysPage: React.FC = () => {
           />
         )}
         onPress={() => {
-          setSelectedRelay(item)
-          bottomSheetEditRef.current?.open()
+          setDisplayrelayDrawer(item.url)
         }}
       />
     )
@@ -375,35 +374,6 @@ export const RelaysPage: React.FC = () => {
           >
             {t('relaysPage.cancel')}
           </Button>
-        </View>
-      </RBSheet>
-      <RBSheet ref={bottomSheetEditRef} closeOnDragDown={true} customStyles={rbSheetCustomStyles}>
-        <View>
-          <View style={styles.relayActions}>
-            <View style={styles.actionButton}>
-              <IconButton
-                icon='trash-can-outline'
-                size={28}
-                onPress={() => {
-                  if (selectedRelay) removeRelay(selectedRelay.url)
-                  bottomSheetEditRef.current?.close()
-                }}
-              />
-              <Text>{t('relaysPage.removeRelay')}</Text>
-            </View>
-            <View style={styles.actionButton}>
-              <IconButton
-                icon='content-copy'
-                size={28}
-                onPress={() => {
-                  if (selectedRelay) Clipboard.setString(selectedRelay.url)
-                }}
-              />
-              <Text>{t('relaysPage.copyRelay')}</Text>
-            </View>
-          </View>
-          <Divider style={styles.divider} />
-          <Text variant='titleLarge'>{selectedRelay?.url}</Text>
         </View>
       </RBSheet>
     </View>

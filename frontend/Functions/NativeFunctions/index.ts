@@ -36,7 +36,7 @@ export const relayToColor: (string: string) => string = (string) => {
   for (let i = 0; i < string.length; i++) {
     hash = string.charCodeAt(i) + ((hash << 5) - hash)
   }
-  return relayColors[(Math.abs(hash) % relayColors.length) - 1]
+  return relayColors[Math.abs(hash) % (relayColors.length - 1)]
 }
 
 export const pickRandomItems = <T extends unknown>(arr: T[], n: number): T[] => {
@@ -65,7 +65,7 @@ export const validMediaUrl: (url: string | undefined) => boolean = (url) => {
 
 export const validBlueBirdUrl: (url: string | undefined) => boolean = (url) => {
   if (url) {
-    const serviceRegexp = /^(https?:\/\/(?:twitter.com).*)$/
+    const serviceRegexp = /^(https?:\/\/(?:twitter.com|t.co).*)$/
     return serviceRegexp.test(url)
   } else {
     return false

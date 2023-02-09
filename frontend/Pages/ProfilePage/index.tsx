@@ -179,7 +179,13 @@ export const ProfilePage: React.FC<ProfilePageProps> = ({ route }) => {
             onScroll={onScroll}
             refreshing={refreshing}
             horizontal={false}
-            ListFooterComponent={<ActivityIndicator animating={true} />}
+            ListFooterComponent={
+              notes && notes.length > 0 ? (
+                <ActivityIndicator style={styles.loading} animating={true} />
+              ) : (
+                <></>
+              )
+            }
           />
         </View>
       </ScrollView>
@@ -199,6 +205,9 @@ export const ProfilePage: React.FC<ProfilePageProps> = ({ route }) => {
 }
 
 const styles = StyleSheet.create({
+  loading: {
+    paddingTop: 16,
+  },
   container: {
     padding: 16,
   },
