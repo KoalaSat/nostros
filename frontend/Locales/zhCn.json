@@ -6,7 +6,7 @@
       "keysTitle": "这些密钥是什么？",
       "keysDescription": "在 Nostr, 您会有两个密钥: 公钥和私钥",
       "publicKeys": "公钥",
-      "publicKeysDescription": "您可以将公钥看作是您的用户名 (像是其他应用中的 @handle )。您可以分享公钥以便其他用户将您添加到他们的网络",
+      "publicKeysDescription": "您可以将公钥看作是您的用户名 (类似其他应用中的 @handle )。您可以分享公钥以便其他用户将您添加到他们的网络",
       "privateKey": "私钥",
       "privateKeyDescription": "您可以将私钥看作是您的密码",
       "privateKeysSnackbarTitle": "注意",
@@ -23,7 +23,7 @@
       "Note": "Note",
       "Profile": "简介",
       "About": "关于",
-      "Config": "配置",
+      "Config": "设置",
       "Send": "发送",
       "Relays": "中继",
       "ProfileConfig": "简介设置"
@@ -41,7 +41,7 @@
       "searchingProfile": "搜索用户",
       "foundProfile": "已找到的用户",
       "foundContacts": "已找到 {{contactsCount}} 个联系人",
-      "storing": "Event {{lastEventId}} stored on database."
+      "storing": "事件 {{lastEventId}} 已存储到数据库"
     },
     "sendPage": {
       "isContact": "正在关注",
@@ -130,10 +130,10 @@
         "contactAdded": "已关注",
         "addContactError": "发布更新时发生了错误",
         "contactRemoved": "已取消关注",
-        "contactUnblocked": "Profile unblocked."
+        "contactUnblocked": "用户已屏蔽"
       },
-      "emptyTitleBlocked": "You have no blocked profiles", 
-      "emptyDescriptionBlocked": "You can always block a someone on the profile view.",
+      "emptyTitleBlocked": "您还没有屏蔽任何人", 
+      "emptyDescriptionBlocked": "您可以在用户详情页屏蔽用户",
       "emptyTitleFollowing": "您还没有关注任何用户",
       "emptyDescriptionFollowing": "关注一些用户以查看内容",
       "emptyButtonFollowing": "粘贴公钥",
@@ -148,8 +148,8 @@
       "following": "关注中 ({{count}})",
       "stopFollowing": "正在关注",
       "follow": "回关",
-      "blocked": "Blocked ({{count}})",
-      "unblock": "Unblock"
+      "blocked": "已屏蔽 ({{count}}) 个用户",
+      "unblock": "取消屏蔽"
     },
     "aboutPage": {
       "gitHub": "GitHub",
@@ -203,7 +203,7 @@
         "remove": "中继已移除",
         "active": "中继已启用",
         "desactive": "中继已停用",
-        "badFormat": "中继链接格式不正确",
+        "badFormat": "中继地址格式不正确",
         "alreadyExists": "中继已存在"
       }
     },
@@ -277,11 +277,11 @@
       "invoice": "赞赏",
       "message": "私信",
       "follow": "关注",
-      "isFollower": "follows you",
+      "isFollower": "关注了你",
       "unfollow": "关注中",
       "copyNPub": "复制公钥",
-      "relaysTitle": "Relays",
-      "relaysDescription": "These are {{username}}'s relays, activate the ones you want to be connected."
+      "relaysTitle": "中继",
+      "relaysDescription": "以下是{{username}}的中继，您可以激活想要连接的中继"
     },
     "homePage": {
       "clipboardTitle": "检测到 Nostr 公钥",
