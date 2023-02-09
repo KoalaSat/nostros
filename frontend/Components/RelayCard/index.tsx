@@ -25,6 +25,11 @@ import { getRawUserNotes } from '../../Functions/DatabaseFunctions/Notes'
 import { UserContext } from '../../Contexts/UserContext'
 import { getRawUserReactions } from '../../Functions/DatabaseFunctions/Reactions'
 import { getRawUserConversation } from '../../Functions/DatabaseFunctions/DirectMessages'
+import { getUsers } from '../../Functions/DatabaseFunctions/Users'
+import { Event } from '../../lib/nostr/Events'
+import { getUnixTime } from 'date-fns'
+import { Kind } from 'nostr-tools'
+import { usersToTags } from '../../Functions/RelayFunctions/Users'
 
 interface RelayCardProps {
   url?: string
@@ -70,6 +75,18 @@ export const RelayCard: React.FC<RelayCardProps> = ({ url, bottomSheetRef }) => 
           conversation.content = conversation.content.replace("''", "'")
           relayPool.sendEvent(conversation, url)
         })
+      })
+      getUsers(database, { exludeIds: [publicKey], contacts: true }).then((users) => {
+        if (users) {
+          const event: Event = {
+            content: '',
+            created_at: getUnixTime(new Date()),
+            kind: Kind.Contacts,
+            pubkey: publicKey,
+            tags: usersToTags(users),
+          }
+          relayPool?.sendEvent(event, url)
+        }
         setPushDone(true)
       })
     }
