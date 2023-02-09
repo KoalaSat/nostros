@@ -6,6 +6,7 @@ import { AppContext } from '../../Contexts/AppContext'
 import { RelayPoolContext } from '../../Contexts/RelayPoolContext'
 import { UserContext } from '../../Contexts/UserContext'
 import {
+  addUser,
   getUser,
   updateUserBlock,
   updateUserContact,
@@ -32,6 +33,7 @@ export const ProfileActions: React.FC<ProfileActionsProps> = ({ user, setUser })
   const { publicKey } = React.useContext(UserContext)
   const { relayPool, updateRelayItem } = React.useContext(RelayPoolContext)
   const [isContact, setIsContact] = React.useState<boolean>()
+  const [isBlocked, setIsBlocked] = React.useState<boolean>()
   const [showNotification, setShowNotification] = React.useState<undefined | string>()
   const [showNotificationRelay, setShowNotificationRelay] = React.useState<undefined | string>()
   const bottomSheetRelaysRef = React.useRef<RBSheet>(null)
@@ -59,6 +61,8 @@ export const ProfileActions: React.FC<ProfileActionsProps> = ({ user, setUser })
       getUser(user.id, database).then((result) => {
         if (result) {
           setUser(result)
+          setIsContact(result.contact)
+          setIsBlocked(result.blocked !== undefined && result.blocked > 0)
         } else if (user.id === publicKey) {
           setUser({
             id: publicKey,
@@ -69,9 +73,12 @@ export const ProfileActions: React.FC<ProfileActionsProps> = ({ user, setUser })
   }
 
   const onChangeBlockUser: () => void = () => {
-    if (database && user?.blocked !== undefined) {
-      updateUserBlock(user.id, database, !user?.blocked).then(() => {
-        loadUser()
+    if (database) {
+      addUser(user.id, database).then(() => {
+        updateUserBlock(user.id, database, !isBlocked).then(() => {
+          loadUser()
+          setShowNotificationRelay(isBlocked ? 'userUnblocked' : 'userBlocked')
+        })
       })
     }
   }
@@ -160,7 +167,7 @@ export const ProfileActions: React.FC<ProfileActionsProps> = ({ user, setUser })
             }}
             disabled={user.id === publicKey}
           />
-          <Text>{isContact ? t('profilePage.unfollow') : t('profilePage.follow')}</Text>
+          <Text>{isContact ? t('profileCard.unfollow') : t('profileCard.follow')}</Text>
         </View>
         <View style={styles.actionButton}>
           <IconButton
@@ -173,7 +180,7 @@ export const ProfileActions: React.FC<ProfileActionsProps> = ({ user, setUser })
               })
             }}
           />
-          <Text>{t('profilePage.message')}</Text>
+          <Text>{t('profileCard.message')}</Text>
         </View>
         <View style={styles.actionButton}>
           <IconButton
@@ -183,7 +190,7 @@ export const ProfileActions: React.FC<ProfileActionsProps> = ({ user, setUser })
             disabled={!user?.lnurl}
             iconColor='#F5D112'
           />
-          <Text>{t('profilePage.invoice')}</Text>
+          <Text>{t('profileCard.invoice')}</Text>
         </View>
       </View>
       <View style={styles.mainLayout}>
@@ -211,14 +218,14 @@ export const ProfileActions: React.FC<ProfileActionsProps> = ({ user, setUser })
             size={28}
             onPress={() => bottomSheetRelaysRef.current?.open()}
           />
-          <Text>{t('profilePage.relaysTitle')}</Text>
+          <Text>{t('profileCard.relaysTitle')}</Text>
         </View>
       </View>
       <RBSheet ref={bottomSheetRelaysRef} closeOnDragDown={true} customStyles={bottomSheetStyles}>
         <View>
-          <Text variant='titleLarge'>{t('profilePage.relaysTitle')}</Text>
+          <Text variant='titleLarge'>{t('profileCard.relaysTitle')}</Text>
           <Text variant='bodyMedium'>
-            {t('profilePage.relaysDescription', { username: username(user) })}
+            {t('profileCard.relaysDescription', { username: username(user) })}
           </Text>
           <List.Item
             title={t('relaysPage.relayName')}
@@ -242,7 +249,7 @@ export const ProfileActions: React.FC<ProfileActionsProps> = ({ user, setUser })
             onIconPress={() => setShowNotificationRelay(undefined)}
             onDismiss={() => setShowNotificationRelay(undefined)}
           >
-            {t(`profilePage.${showNotificationRelay}`)}
+            {t(`profileCard.notifications.${showNotificationRelay}`)}
           </Snackbar>
         )}
       </RBSheet>
@@ -258,7 +265,7 @@ export const ProfileActions: React.FC<ProfileActionsProps> = ({ user, setUser })
           onIconPress={() => setShowNotification(undefined)}
           onDismiss={() => setShowNotification(undefined)}
         >
-          {t(`profilePage.${showNotification}`)}
+          {t(`profileCard.notifications.${showNotification}`)}
         </Snackbar>
       )}
     </View>

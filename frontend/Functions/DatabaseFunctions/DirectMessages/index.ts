@@ -1,6 +1,6 @@
 import { QueryResult, QuickSQLiteConnection } from 'react-native-quick-sqlite'
 import { getItems } from '..'
-import { Event } from '../../../lib/nostr/Events'
+import { Event, evetDatabaseToEntity } from '../../../lib/nostr/Events'
 
 export interface DirectMessage extends Event {
   conversation_id: string
@@ -11,6 +11,21 @@ export interface DirectMessage extends Event {
 const databaseToEntity: (object: any) => DirectMessage = (object = {}) => {
   object.tags = object.tags ? JSON.parse(object.tags) : []
   return object as DirectMessage
+}
+
+export const getRawUserConversation: (
+  db: QuickSQLiteConnection,
+  pubKey: string,
+) => Promise<Event[]> = async (db, pubKey) => {
+  const notesQuery = `SELECT * FROM nostros_direct_messages
+    WHERE pubkey = ? 
+    ORDER BY created_at DESC 
+  `
+  const resultSet = await db.execute(notesQuery, [pubKey])
+  const items: object[] = getItems(resultSet)
+  const notes: Event[] = items.map((object) => evetDatabaseToEntity(object))
+
+  return notes
 }
 
 export const updateConversationRead: (

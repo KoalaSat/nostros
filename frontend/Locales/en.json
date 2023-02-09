@@ -103,6 +103,8 @@
         "copied": "Private key copied.\n\nStore this key in a safe place.",
         "wrongWords": "The words don't match"
       },
+      "skip": "Skip",
+      "confirmTitle": "Type the words in the right order.",
       "warningTitle": "Important",
       "warningDescription": "Store your key in a safe place. If lose it, you won't be able to access or recover your profile.",
       "warningAction": "Copy private key",
@@ -139,8 +141,8 @@
       "emptyButtonFollowing": "Paste public key",
       "emptyTitleFollower": "You have no followers",
       "emptyDescriptionFollower": "Share your public key so people can start following you.",
-      "emptyTitleBlocked": "You have no blocked profiles", 
-      "emptyDescriptionBlocked": "You can always block someone on the profile view.",
+      "emptyTitleBlocked": "You have no blocked profiles",
+      "emptyDescriptionBlocked": "You can always block a someone on the profile view.",
       "emptyButtonFollower": "Copy public key",
       "cancel": "Cancel",
       "addContact": "Add contact",
@@ -186,7 +188,7 @@
       "resilienceCategoriesDescription": "An initial approach that Nostros is testing is to randomly calculate (based on received contact events) which relays are most balanced. This tries to avoid both relays with too many events (centralization) and relays with almost no events (battery discharge).\n\nThe goal is to create a list of 5 relays that cover all contacts. However, if this is not possible, Nostros will search among other relays and warn the user about it.",
       "centralized": "Centralized",
       "small": "Small",
-      "contacts": "# Contacts",
+      "contacts": "Assigned Contacts",
       "resilienceMode": "Resilience (experimental)",
       "relayName": "Address",
       "globalFeed": "Global feed",
@@ -210,6 +212,15 @@
       }
     },
     "relayCard": {
+      "pushDone": "Completed",
+      "pushHistoricTitle": "Push all my data",
+      "pushHistoricDescription": "Nostros stores on his own database all the data received from relays. With this option you can push to any relay all the data Nostros has associated to your profile.",
+      "pushHistoricAlertTitle": "Important",
+      "pushHistoricAlert": "Public relays have strong anti-spam policies and this action might ban your key. Make sure you are allowed to send big chunks of data to this relay.\n\nWe recomend to use this feature only for private relays like Umbrel's Nostr Relay.",
+      "pushConsent": "I'm pushing my events to a private relay",
+      "pushingEvent": "Event {{eventId}} pushed",
+      "pushRelay": "Push all my data",
+      "cancel": "Cancel",
       "moreInfo": "More info",
       "lessInfo": "Less info",
       "globalFeed": "Global Feed",
@@ -284,7 +295,6 @@
       "follow": "Follow",
       "unfollow": "Following",
       "copyNPub": "Copy key",
-      "relaysTitle": "Relays",
       "isFollower": "follows you",
       "relaysDescription": "These are {{username}}'s relays, activate the ones you want to be connected."
     },
@@ -312,7 +322,9 @@
     "profileCard": {
       "notifications": {
         "contactAdded": "Profile followed",
-        "contactRemoved": "Profile unfollowed"
+        "contactRemoved": "Profile unfollowed",
+        "userUnblocked": "Profile unblocked",
+        "userBlocked": "Profile unblocked"
       },
       "invoice": "Tip",
       "message": "Message",
@@ -320,7 +332,8 @@
       "unfollow": "Following",
       "block": "Block",
       "unblock": "Unblock",
-      "share": "Share"
+      "share": "Share",
+      "relaysTitle": "Relays"
     },
     "conversationsFeed": {
       "openMessage": "Start conversation",

@@ -29,6 +29,7 @@ export interface ResilientAssignation {
   resilientRelays: Record<string, string[]>
   smallRelays: Record<string, string[]>
   centralizedRelays: Record<string, string[]>
+  fallback: Record<string, string[]>
 }
 
 export const fallbackRelays = [
@@ -62,12 +63,20 @@ class RelayPool {
   private subscriptions: Record<string, string[]>
   public resilientAssignation: ResilientAssignation
 
-  private readonly send: (message: object, globalFeed?: boolean) => void = async (
+  private readonly sendAll: (message: object, globalFeed?: boolean) => void = async (
     message,
     globalFeed,
   ) => {
     const tosend = JSON.stringify(message)
-    RelayPoolModule.send(tosend, globalFeed ?? false)
+    RelayPoolModule.sendAll(tosend, globalFeed ?? false)
+  }
+
+  private readonly sendRelay: (message: object, relayUrl: string) => void = async (
+    message,
+    relayUrl,
+  ) => {
+    const tosend = JSON.stringify(message)
+    RelayPoolModule.sendRelay(tosend, relayUrl)
   }
 
   public readonly connect: (publicKey: string, onEventId: (eventId: string) => void) => void =
@@ -181,13 +190,23 @@ class RelayPool {
     RelayPoolModule.update(relayUrl, active, globalfeed, callback)
   }
 
-  public readonly sendEvent: (event: Event) => Promise<Event | null> = async (event) => {
+  public readonly sendEvent: (event: Event, relayUrl?: string) => Promise<Event | null> = async (
+    event,
+    relayUrl,
+  ) => {
     if (this.privateKey) {
-      const signedEvent: Event = await signEvent(event, this.privateKey)
+      let signedEvent: Event = event
+
+      if (!event.sig) {
+        signedEvent = await signEvent(event, this.privateKey)
+      }
 
       if (validateEvent(signedEvent)) {
-        this.send(['EVENT', event])
-
+        if (relayUrl) {
+          this.sendRelay(['EVENT', event], relayUrl)
+        } else {
+          this.sendAll(['EVENT', event])
+        }
         return signedEvent
       } else {
         console.log('Not valid event', event)
@@ -206,7 +225,7 @@ class RelayPool {
     if (this.subscriptions[subId]?.includes(id)) {
       console.log('Subscription already done!', subId)
     } else {
-      this.send([...['REQ', subId], ...(filters ?? [])], subId.includes('-global-'))
+      this.sendAll([...['REQ', subId], ...(filters ?? [])], subId.includes('-global-'))
       const newSubscriptions = [...(this.subscriptions[subId] ?? []), id]
       this.subscriptions[subId] = newSubscriptions
     }
@@ -214,7 +233,7 @@ class RelayPool {
 
   public readonly unsubscribe: (subIds: string[]) => void = async (subIds) => {
     subIds.forEach((subId: string) => {
-      this.send(['CLOSE', subId])
+      this.sendAll(['CLOSE', subId])
       delete this.subscriptions[subId]
     })
   }

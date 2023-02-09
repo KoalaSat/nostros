@@ -260,7 +260,9 @@ export const SendPage: React.FC<SendPageProps> = ({ route }) => {
               <Button
                 mode='contained'
                 onPress={onPressSend}
-                disabled={route.params?.type !== 'repost' && (!content || content === '')}
+                disabled={
+                  isSending || (route.params?.type !== 'repost' && (!content || content === ''))
+                }
                 loading={isSending || uploadingFile}
               >
                 {t('sendPage.send')}

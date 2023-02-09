@@ -11,6 +11,19 @@ export interface Event {
   tags: string[][]
 }
 
+export const evetDatabaseToEntity: (object: any) => Event = (object = {}) => {
+  const event: Event = {
+    created_at: object.created_at,
+    content: object.content,
+    id: object.id,
+    kind: object.kind,
+    pubkey: object.pubkey,
+    sig: object.sig,
+    tags: object.tags ? JSON.parse(object.tags) : [],
+  }
+  return event
+}
+
 export const serializeEvent: (event: Event) => string = (event) => {
   return JSON.stringify([0, event.pubkey, event.created_at, event.kind, event.tags, event.content])
 }

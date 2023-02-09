@@ -101,6 +101,8 @@
         "copied": "已复制私钥 \n\n 请妥善保管您的私钥",
         "wrongWords": "助记词不匹配"
       },
+      "skip": "Skip",
+      "confirmTitle": "Type the words in the right order.",
       "warningTitle": "注意",
       "warningDescription": "请妥善保管您的私钥。如果遗失，您将无法登入或恢复您的账号。",
       "warningAction": "复制私钥",
@@ -208,6 +210,7 @@
       }
     },
     "relayCard": {
+      "pushDone": "Completed",
       "moreInfo": "更多",
       "lessInfo": "收起",
       "globalFeed": "全局信息流",
@@ -300,7 +303,9 @@
       "notifications": {
         "contactAdded": "已关注",
         "contactRemoved": "已取消关注",
-        "npubCopied": "已复制公钥"
+        "npubCopied": "已复制公钥",
+        "userUnblocked": "Profile unblocked",
+        "userBlocked": "Profile unblocked"
       },
       "invoice": "赞赏",
       "message": "私信",
@@ -310,7 +315,8 @@
       "unblock": "取消屏蔽",
       "share": "分享",
       "copyNip05": "复制 NIP-05",
-      "copyNPub": "复制公钥"
+      "copyNPub": "复制公钥",
+      "relaysTitle": "Relays"
     },
     "conversationsFeed": {
       "openMessage": "发送私信",

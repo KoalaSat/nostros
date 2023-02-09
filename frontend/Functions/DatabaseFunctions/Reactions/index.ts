@@ -1,6 +1,6 @@
 import { QuickSQLiteConnection } from 'react-native-quick-sqlite'
 import { getItems } from '..'
-import { Event } from '../../../lib/nostr/Events'
+import { Event, evetDatabaseToEntity } from '../../../lib/nostr/Events'
 
 export interface Reaction extends Event {
   positive: boolean
@@ -10,6 +10,21 @@ export interface Reaction extends Event {
 
 const databaseToEntity: (object: object) => Reaction = (object) => {
   return object as Reaction
+}
+
+export const getRawUserReactions: (
+  db: QuickSQLiteConnection,
+  pubKey: string,
+) => Promise<Event[]> = async (db, pubKey) => {
+  const notesQuery = `SELECT * FROM nostros_reactions
+    WHERE pubkey = ? 
+    ORDER BY created_at DESC 
+  `
+  const resultSet = await db.execute(notesQuery, [pubKey])
+  const items: object[] = getItems(resultSet)
+  const notes: Event[] = items.map((object) => evetDatabaseToEntity(object))
+
+  return notes
 }
 
 export const getReactions: (

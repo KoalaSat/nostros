@@ -69,6 +69,9 @@ export const GlobalFeed: React.FC<GlobalFeedProps> = ({ navigation }) => {
     setRefreshing(true)
     updateLastLoad()
     setNewNotesCount(0)
+    relayPool?.unsubscribe(['homepage-global-main', 'homepage-global-meta'])
+    subscribeNotes()
+    flashListRef.current?.scrollToIndex({ animated: true, index: 0 })
   }, [])
 
   const subscribeNotes: (past?: boolean) => void = async (past) => {
@@ -160,24 +163,6 @@ export const GlobalFeed: React.FC<GlobalFeedProps> = ({ navigation }) => {
 
   return (
     <View>
-      {newNotesCount > 0 && (
-        <View style={styles.refreshChipWrapper}>
-          <Chip
-            icon={() => (
-              <MaterialCommunityIcons name='cached' color={theme.colors.onSurface} size={20} />
-            )}
-            onPress={onRefresh}
-            // visible={newNotesCount > 0}
-            compact
-            elevated
-            style={styles.refreshChip}
-          >
-            {t(newNotesCount < 2 ? 'homeFeed.newMessage' : 'homeFeed.newMessages', {
-              newNotesCount,
-            })}
-          </Chip>
-        </View>
-      )}
       <View style={styles.list}>
         <FlashList
           estimatedItemSize={200}
@@ -189,22 +174,45 @@ export const GlobalFeed: React.FC<GlobalFeedProps> = ({ navigation }) => {
           refreshing={refreshing}
           ListEmptyComponent={ListEmptyComponent}
           horizontal={false}
-          ListFooterComponent={<ActivityIndicator animating={true} />}
+          ListFooterComponent={
+            notes.length > 0 ? <ActivityIndicator style={styles.loading} animating={true} /> : <></>
+          }
           ref={flashListRef}
         />
       </View>
+      {newNotesCount > 0 && (
+        <View style={styles.refreshChipWrapper}>
+          <Chip
+            icon={() => (
+              <MaterialCommunityIcons name='cached' color={theme.colors.onSurface} size={20} />
+            )}
+            onPress={onRefresh}
+            compact
+            elevated
+            style={styles.refreshChip}
+          >
+            {t(newNotesCount < 2 ? 'homeFeed.newMessage' : 'homeFeed.newMessages', {
+              newNotesCount,
+            })}
+          </Chip>
+        </View>
+      )}
     </View>
   )
 }
 
 const styles = StyleSheet.create({
+  loading: {
+    paddingTop: 16,
+  },
   list: {
     height: '100%',
   },
   refreshChipWrapper: {
-    flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'center',
+    justifyContent: 'space-between',
+    position: 'absolute',
+    width: '100%',
   },
   refreshChip: {
     marginTop: 16,
