@@ -108,7 +108,7 @@
       "warningAction": "复制私钥",
       "continue": "继续",
       "mnemonicTitle": "这些助记词或私钥是恢复您帐户的唯一方法。",
-      "mnemonicDescription": "请将它们写下来并保存在安全的地方，如果你丢失了它们，你将无法再次登入您的账号",
+      "mnemonicDescription": "请将它们写下来并保存在安全的地方。如果丢失了它们，您将无法再次登入您的账号",
       "introTitle": "您的设备将生成 12 组助记词和您的私钥。",
       "wordsNoted": "我已保存我的助记词和私钥",
       "accessButton": "登入",
