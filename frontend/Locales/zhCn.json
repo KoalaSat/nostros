@@ -2,7 +2,7 @@
   "common": {
     "drawers": {
       "relaysTitle": "关于中继",
-      "relaysDescription": "中继是网络上的节点，作为应用程序之间传输消息的中介。\n\n\n 中继可用于提高网络的弹性和可用性，即使在连接出现故障或中断的情况下，也能传递消息。 \n\n\n 中继还可用于提高隐私和网络安全，因为它们可以隐藏相互通信的应用程序的位置和身份。 \n\n\n 这在审查或监视是一个问题的环境中是很有用的。 \n\n\n 需要注意的是，中继也可以用于恶意的目的，如嗅探或审查网络流量。",
+      "relaysDescription": "中继是网络上的节点，作为应用程序之间传输消息的中介。\n\n\n中继可用于提高网络的弹性和可用性，即使在连接出现故障或中断的情况下，也能传递消息。 \n\n\n中继还可用于提高隐私和网络安全，因为它们可以隐藏相互通信的用户的位置和身份。 \n\n\n这在审查或监视是一个问题的环境中是很有用的。 \n\n\n需要注意的是，中继也可以用于恶意的目的，如嗅探或审查网络流量。",
       "keysTitle": "这些密钥是什么？",
       "keysDescription": "在 Nostr, 您会有两个密钥: 公钥和私钥",
       "publicKeys": "公钥",
@@ -48,7 +48,7 @@
       "isNotContact": "关注",
       "contentWarning": "设为敏感内容",
       "send": "发送",
-      "imageUploaded": "您的图片已上传 \n 请赞助我们的服务：",
+      "imageUploaded": "您的图片已上传 \n请赞助我们的服务：",
       "imageUploadErro": "上传图片出现错误",
       "uploadImage": "上传图片",
       "cancel": "取消",
@@ -98,17 +98,17 @@
     },
     "profileCreatePage": {
       "notifications": {
-        "copied": "已复制私钥 \n\n 请妥善保管您的私钥",
+        "copied": "已复制私钥\n\n请妥善保管您的私钥",
         "wrongWords": "助记词不匹配"
       },
-      "skip": "Skip",
-      "confirmTitle": "Type the words in the right order.",
+      "skip": "跳过",
+      "confirmTitle": "请按正确的顺序输入助记词",
       "warningTitle": "注意",
       "warningDescription": "请妥善保管您的私钥。如果遗失，您将无法登入或恢复您的账号。",
       "warningAction": "复制私钥",
       "continue": "继续",
       "mnemonicTitle": "这些助记词或私钥是恢复您帐户的唯一方法。",
-      "mnemonicDescription": "将它们写下来并保存在安全的地方，如果你丢失了它们，你将无法再次登入您的账号",
+      "mnemonicDescription": "请将它们写下来并保存在安全的地方，如果你丢失了它们，你将无法再次登入您的账号",
       "introTitle": "您的设备将生成 12 组助记词和您的私钥。",
       "wordsNoted": "我已保存我的助记词和私钥",
       "accessButton": "登入",
@@ -135,7 +135,7 @@
         "contactUnblocked": "用户已屏蔽"
       },
       "emptyTitleBlocked": "您还没有屏蔽任何人", 
-      "emptyDescriptionBlocked": "您可以在用户详情页屏蔽用户",
+      "emptyDescriptionBlocked": "您可以随时在用户详情页屏蔽用户",
       "emptyTitleFollowing": "您还没有关注任何用户",
       "emptyDescriptionFollowing": "关注一些用户以查看内容",
       "emptyButtonFollowing": "粘贴公钥",
@@ -150,12 +150,12 @@
       "following": "关注中 ({{count}})",
       "stopFollowing": "正在关注",
       "follow": "回关",
-      "blocked": "已屏蔽 ({{count}}) 个用户",
+      "blocked": "已屏蔽 ({{count}})",
       "unblock": "取消屏蔽"
     },
     "aboutPage": {
       "gitHub": "GitHub",
-      "nostr": "nostr",
+      "nostr": "Nostr",
       "nips": "NIPs",
       "version": "版本"
     },
@@ -176,14 +176,14 @@
       "reactions": "回应",
       "mentions": "提及",
       "reposts": "转发",
-      "newMessage": "有 {{newNotesCount}} 条新的 Notes，下拉刷新",
-      "newMessages": "有 {{newNotesCount}} 条新的 Notes，下拉刷新"
+      "newMessage": "有{{newNotesCount}}条新的 Notes，下拉刷新",
+      "newMessages": "有{{newNotesCount}}条新的 Notes，下拉刷新"
     },
     "relaysPage": {
       "resilienceTitle": "弹性模式 (试验性)",
-      "resilienceDescription": "Nostr 协议提供了大量工具来构建去中心化网络，但与比特币等其他去中心化协议不同，它并不是默认使用的。 \n\n 为了实现这样的目标，客户端和中继应该积极协作。 Nostros 弹性模式首先尝试将这些问题暴露给用户，其次开始尝试新的模式和方法来帮助提高网络的弹性。 \n\n 该功能的实现将很快默认出现在 Nostros 上",
+      "resilienceDescription": "Nostr 协议提供了大量工具来构建去中心化网络，但与比特币等其他去中心化协议不同，它并不是默认使用的。 \n\n为了实现这样的目标，客户端和中继应该积极协作。 Nostros 弹性模式首先尝试将这些问题暴露给用户，其次开始尝试新的模式和方法来帮助提高网络的弹性。 \n\n该功能的实现将很快默认出现在 Nostros 上",
       "resilienceCategories": "弹性暴露",
-      "resilienceCategoriesDescription": "Nostros 正在测试的第一个方法是随机计算（基于收到的联系人的事件）什么是最有弹性的中继。它试图避免有太多事件的中继（集中化）和几乎没有事件的中继（电池耗尽）。 \n\n 它的目标是生成一个 5 个中继的列表，并覆盖所有联系人。但如果这是不可能的，它将向用户发出警告并在其他中继中继续尝试。 \n\n 请注意，被称为 “集中式” 或“小型” 的中继并不意味着它们与网络相连，而只是与你的数据相连。",
+      "resilienceCategoriesDescription": "Nostros 正在测试的第一个方法是随机计算（基于收到的联系人的事件）什么是最有弹性的中继。它试图避免有太多事件的中继（集中化）和几乎没有事件的中继（电池耗尽）。 \n\n它的目标是生成一个 5 个中继的列表，并覆盖所有联系人。但如果这不可能，它将向用户发出警告并在其他中继中继续尝试。 \n\n请注意，被称为 “集中式” 或“小型” 的中继并不意味着它们与网络相连，而只是与您的数据相连。",
       "centralized": "集中式",
       "small": "小型",
       "contacts": "# 联系人",
@@ -210,7 +210,7 @@
       }
     },
     "relayCard": {
-      "pushDone": "Completed",
+      "pushDone": "已完成",
       "moreInfo": "更多",
       "lessInfo": "收起",
       "globalFeed": "全局信息流",
@@ -255,7 +255,7 @@
       "nip05Title": "NIP-05",
       "directoryCancell": "取消",
       "directoryContinue": "继续",
-      "directoryDescription": "Nostr 目录是一个与其他平台的官方用户账户相关的 Nostr 公钥数据库。在 Nostr 上找到您已经在其他平台上关注的人，并添加您的公钥，这样您的关注者就能找到您。 \n\n 如果继续，您将在应用程序之外执行验证过程。",
+      "directoryDescription": "Nostr 目录是一个与其他平台的官方用户账户相关的 Nostr 公钥数据库。在 Nostr 上找到您已经在其他平台上关注的人，并添加您的公钥，这样您的关注者就能找到您。 \n\n如果继续，您将在应用程序之外执行验证过程。",
       "directoryTitle": "Nostr 目录",
       "publishPicture": "发布",
       "pictureUrl": "头像链接地址",
@@ -304,8 +304,8 @@
         "contactAdded": "已关注",
         "contactRemoved": "已取消关注",
         "npubCopied": "已复制公钥",
-        "userUnblocked": "Profile unblocked",
-        "userBlocked": "Profile unblocked"
+        "userUnblocked": "已屏蔽",
+        "userBlocked": "已取消屏蔽"
       },
       "invoice": "赞赏",
       "message": "私信",
@@ -316,7 +316,7 @@
       "share": "分享",
       "copyNip05": "复制 NIP-05",
       "copyNPub": "复制公钥",
-      "relaysTitle": "Relays"
+      "relaysTitle": "中继"
     },
     "conversationsFeed": {
       "openMessage": "发送私信",
