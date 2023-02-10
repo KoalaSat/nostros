@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState } from 'react'
-import { Dimensions, FlatList, ListRenderItem, StyleSheet, View } from 'react-native'
+import { Dimensions, FlatList, ListRenderItem, NativeScrollEvent, NativeSyntheticEvent, StyleSheet, View } from 'react-native'
 import Clipboard from '@react-native-clipboard/clipboard'
 import { AppContext } from '../../Contexts/AppContext'
 import { RelayPoolContext } from '../../Contexts/RelayPoolContext'
@@ -30,11 +30,14 @@ import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityI
 import { useFocusEffect } from '@react-navigation/native'
 import ProfileData from '../../Components/ProfileData'
 import { fromUnixTime, formatDistance } from 'date-fns'
+import { handleInfinityScroll } from '../../Functions/NativeFunctions'
 
 export const ConversationsFeed: React.FC = () => {
+  const initialPageSize = 14
   const theme = useTheme()
   const { t } = useTranslation('common')
   const { database, refreshBottomBarAt } = useContext(AppContext)
+  const [pageSize, setPageSize] = useState<number>(initialPageSize)
   const { publicKey, privateKey } = useContext(UserContext)
   const { relayPool, lastEventId } = useContext(RelayPoolContext)
   const [directMessages, settDirectMessages] = useState<DirectMessage[]>([])
@@ -48,7 +51,12 @@ export const ConversationsFeed: React.FC = () => {
     React.useCallback(() => {
       loadDirectMessages(true)
 
-      return () => relayPool?.unsubscribe(['directmessages-meta', 'directmessages'])
+      return () =>
+        relayPool?.unsubscribe([
+          'directmessages-meta',
+          'directmessages-user',
+          'directmessages-others',
+        ])
     }, []),
   )
 
@@ -58,7 +66,7 @@ export const ConversationsFeed: React.FC = () => {
 
   const loadDirectMessages: (subscribe: boolean) => void = (subscribe) => {
     if (database && publicKey) {
-      getGroupedDirectMessages(database, {}).then((results) => {
+      getGroupedDirectMessages(database, { limit: pageSize }).then((results) => {
         if (results && results.length > 0) {
           settDirectMessages(results)
           const otherUsers = results.map((message) => getOtherPubKey(message, publicKey))
@@ -81,12 +89,14 @@ export const ConversationsFeed: React.FC = () => {
 
   const subscribeDirectMessages: (lastCreateAt?: number) => void = async (lastCreateAt) => {
     if (publicKey) {
-      relayPool?.subscribe('directmessages', [
+      relayPool?.subscribe('directmessages-user', [
         {
           kinds: [Kind.EncryptedDirectMessage],
           authors: [publicKey],
           since: lastCreateAt ?? 0,
         },
+      ])
+      relayPool?.subscribe('directmessages-others', [
         {
           kinds: [Kind.EncryptedDirectMessage],
           '#p': [publicKey],
@@ -156,6 +166,12 @@ export const ConversationsFeed: React.FC = () => {
       },
     }
   }, [])
+
+  const onScroll: (event: NativeSyntheticEvent<NativeScrollEvent>) => void = (event) => {
+    if (handleInfinityScroll(event)) {
+      setPageSize(pageSize + initialPageSize)
+    }
+  }
 
   const createOptions = React.useMemo(() => {
     return [
@@ -229,6 +245,7 @@ export const ConversationsFeed: React.FC = () => {
           renderItem={renderConversationItem}
           ItemSeparatorComponent={Divider}
           horizontal={false}
+          onScroll={onScroll}
         />
       ) : (
         <View style={styles.blank}>

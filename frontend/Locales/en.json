@@ -48,9 +48,15 @@
       "isContact": "Following",
       "isNotContact": "Not following",
       "contentWarning": "Sensitive content",
-      "send": "Send",
-      "imageUploaded": "Your file has been uploaded.\nConsider donating to the service:\n{{uri}}",
-      "imageUploadErro": "There was an error while trying to upload your file",
+      "send": "Send"
+    },
+    "uploadImage": {
+      "notifications": {
+        "imageUploaded": "Your file has been uploaded.\nConsider donating to the service:\n{{uri}}",
+        "imageUploadErro": "There was an error while trying to upload your file"
+      },
+      "uploadImageWarningTitle": "Important",
+      "uploadImageWarning": "Your image will be uploaded to a public hosting service and will be visible for anyone.",
       "uploadImage": "Upload image now",
       "cancel": "Cancel",
       "poweredBy": "Powered by {{uri}}"
@@ -226,6 +232,8 @@
       "globalFeed": "Global Feed",
       "active": "Active",
       "share": "Share",
+      "copy": "Copy",
+      "remove": "Delete",
       "pubkey": "Public key",
       "contact": "Contact",
       "supportedNips": "Supported NIPs",

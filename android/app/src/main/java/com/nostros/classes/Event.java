@@ -256,12 +256,16 @@ public class Event {
         @SuppressLint("Recycle") Cursor cursor = database.rawQuery(query, new String[] {pubkey});
 
         String nip05 = userContent.optString("nip05");
+        String lud = userContent.optString("lud06");
+        if (lud.isEmpty()) {
+            lud = userContent.optString("lud16");
+        }
 
         ContentValues values = new ContentValues();
         values.put("name", userContent.optString("name"));
         values.put("picture", userContent.optString("picture"));
         values.put("about", userContent.optString("about"));
-        values.put("lnurl", userContent.optString("lud06"));
+        values.put("lnurl", lud);
         values.put("nip05", nip05);
         values.put("main_relay", userContent.optString("main_relay"));
         values.put("created_at", created_at);
