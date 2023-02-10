@@ -48,9 +48,15 @@
       "isContact": "Folge ich",
       "isNotContact": "ohne Abo",
       "contentWarning": "Sensibler Inhalt!",
-      "send": "Senden",
-      "imageUploaded": "Dein Bild wurde hochgeladen.\nBitte dem Service etwas spenden servicio:\n{{uri}}",
-      "imageUploadErro": "Fehler beim Hochladen",
+      "send": "Senden"
+    },
+    "uploadImage": {
+      "notifications": {
+        "imageUploaded": "Dein Bild wurde hochgeladen.\nBitte dem Service etwas spenden servicio:\n{{uri}}",
+        "imageUploadErro": "Fehler beim Hochladen"
+      },
+      "uploadImageWarningTitle": "Important",
+      "uploadImageWarning": "Your image will be uploaded to a public hosting service and will be visible for anyone.",
       "uploadImage": "Bild hochladen",
       "cancel": "Abbrechen",
       "poweredBy": "poweredBy {{uri}}"
@@ -182,6 +188,8 @@
       "share": "Teilen",
       "pubkey": "Öffentlicher Schlüssel",
       "contact": "Kontakt",
+      "copy":"Kopieren",
+      "remove":"Delete",
       "supportedNips": "Unterstützte NIPs",
       "software": "Softtware",
       "version": "Version",

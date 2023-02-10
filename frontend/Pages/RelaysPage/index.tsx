@@ -76,15 +76,6 @@ export const RelaysPage: React.FC = () => {
     }
   }
 
-  // const removeRelay: (url: string) => void = (url) => {
-  //   removeRelayItem({
-  //     url,
-  //   }).then(() => {
-  //     updateRelays()
-  //     setShowNotification('remove')
-  //   })
-  // }
-
   const activeRelay: (relay: Relay) => void = (relay) => {
     relay.active = 1
     updateRelayItem(relay).then(() => {

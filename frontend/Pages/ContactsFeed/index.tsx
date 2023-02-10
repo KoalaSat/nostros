@@ -57,7 +57,7 @@ export const ContactsFeed: React.FC = () => {
       subscribeContacts()
       loadUsers()
 
-      return () => relayPool?.unsubscribe(['contacts', 'contacts-meta'])
+      return () => relayPool?.unsubscribe(['followers', 'following', 'contacts-meta'])
     }, []),
   )
 
@@ -96,11 +96,13 @@ export const ContactsFeed: React.FC = () => {
 
   const subscribeContacts: () => void = async () => {
     if (publicKey) {
-      relayPool?.subscribe('contacts', [
+      relayPool?.subscribe('followers', [
         {
           kinds: [Kind.Contacts],
           authors: [publicKey],
         },
+      ])
+      relayPool?.subscribe('following', [
         {
           kinds: [Kind.Contacts],
           '#p': [publicKey],

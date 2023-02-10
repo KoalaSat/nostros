@@ -77,7 +77,11 @@ export const ProfileCard: React.FC<ProfileCardProps> = ({ bottomSheetRef, showIm
         </View>
       </TouchableRipple>
       <Divider />
-      {user && <ProfileActions user={user} setUser={setUser} />}
+      {user && (
+        <View style={styles.profileActions}>
+          <ProfileActions user={user} setUser={setUser} />
+        </View>
+      )}
       {showNotification && (
         <Snackbar
           style={styles.snackbar}
@@ -103,6 +107,10 @@ const styles = StyleSheet.create({
   },
   usernameData: {
     paddingLeft: 16,
+  },
+  profileActions: {
+    paddingLeft: 16,
+    paddingRight: 16
   },
   username: {
     flexDirection: 'row',
