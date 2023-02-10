@@ -91,7 +91,7 @@ export const getDirectMessages: (
   publicKey: string,
   otherPubKey: string,
   options: {
-    order?: 'DESC' | 'ASC',
+    order?: 'DESC' | 'ASC'
     limit?: number
   },
 ) => Promise<DirectMessage[]> = async (

@@ -110,7 +110,7 @@ const styles = StyleSheet.create({
   },
   profileActions: {
     paddingLeft: 16,
-    paddingRight: 16
+    paddingRight: 16,
   },
   username: {
     flexDirection: 'row',

@@ -40,10 +40,7 @@ export const GlobalFeed: React.FC<GlobalFeedProps> = ({ navigation }) => {
   const flashListRef = React.useRef<FlashList<Note>>(null)
 
   const unsubscribe: () => void = () => {
-    relayPool?.unsubscribe([
-      'homepage-global-main',
-      'homepage-global-meta-repost'
-    ])
+    relayPool?.unsubscribe(['homepage-global-main', 'homepage-global-meta-repost'])
   }
 
   useEffect(() => {

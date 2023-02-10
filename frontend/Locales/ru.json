@@ -70,6 +70,7 @@
       "configuration": "Настройки",
       "about": "Подроблее",
       "logout": "Выйти",
+      "reportBug": "Report a bug",
       "imageHostingService": "Хостинг изображений"
     },
     "configPage": {
@@ -162,6 +163,7 @@
       "follow": "Подписаться"
     },
     "aboutPage": {
+      "telegram": "Telegram",
       "gitHub": "GitHub",
       "nostr": "nostr",
       "nips": "NIPs",
@@ -182,8 +184,8 @@
       "lessInfo": "Скрыть",
       "globalFeed": "Общая лента",
       "active": "Active",
-      "copy":"Скопировать",
-      "remove":"Delete",
+      "copy": "Скопировать",
+      "remove": "Delete",
       "share": "Поделиться",
       "pubkey": "Публичный ключ",
       "contact": "Контакт",

@@ -341,7 +341,7 @@ const styles = StyleSheet.create({
   snackbar: {
     margin: 16,
     bottom: 70,
-  }
+  },
 })
 
 export default ConversationPage
