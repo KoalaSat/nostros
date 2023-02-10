@@ -69,6 +69,7 @@
       "followers": "{{followers}} followers",
       "configuration": "Configuration",
       "about": "About",
+      "reportBug": "Report a bug",
       "logout": "Logout"
     },
     "configPage": {
@@ -162,6 +163,7 @@
       "unblock": "Unblock"
     },
     "aboutPage": {
+      "telegram": "Telegram",
       "gitHub": "GitHub",
       "nostr": "nostr",
       "nips": "NIPs",

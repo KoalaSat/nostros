@@ -69,6 +69,7 @@
       "followers": "{{followers}} seguidores",
       "configuration": "Configuración",
       "about": "Sobre Nostros",
+      "reportBug": "Reportar un bug",
       "logout": "Salir"
     },
     "configPage": {
@@ -162,6 +163,7 @@
       "follow": "Seguir"
     },
     "aboutPage": {
+      "telegram": "Telegram",
       "gitHub": "GitHub",
       "nostr": "nostr",
       "nips": "NIPs",
@@ -182,8 +184,8 @@
       "lessInfo": "Menos información",
       "globalFeed": "Feed Global",
       "active": "Activo",
-      "copy":"Copiar",
-      "remove":"Borrar",
+      "copy": "Copiar",
+      "remove": "Borrar",
       "share": "Compartir",
       "pubkey": "Clave pública",
       "contact": "Contacto",

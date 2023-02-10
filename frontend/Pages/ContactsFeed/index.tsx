@@ -81,12 +81,14 @@ export const ContactsFeed: React.FC = () => {
               if (user.contact) following.push(user)
             }
           })
-          relayPool?.subscribe('contacts-meta', [
-            {
-              kinds: [Kind.Metadata],
-              authors: results.map((user) => user.id),
-            },
-          ])
+          if (results.length > 0) {
+            relayPool?.subscribe('contacts-meta', [
+              {
+                kinds: [Kind.Metadata],
+                authors: results.map((user) => user.id),
+              },
+            ])
+          }
           setFollowers(followers)
           setFollowing(following)
         }

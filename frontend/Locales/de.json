@@ -69,6 +69,7 @@
       "followers": "{{followers}} folgen mir",
       "configuration": "Einstellungen",
       "about": "Über Nostros",
+      "reportBug": "Report a bug",
       "logout": "Abmelden"
     },
     "configPage": {
@@ -142,7 +143,7 @@
         "contactRemoved": "Abo wurde entfernt",
         "contactUnblocked": "Profile unblocked."
       },
-      "emptyTitleBlocked": "Du hast keine geblockten Profile", 
+      "emptyTitleBlocked": "Du hast keine geblockten Profile",
       "emptyDescriptionBlocked": "In der Profil Ansicht kannst du jederzeit jemanden blocken",
       "emptyTitleFollowing": "Du folgst niemandem",
       "emptyDescriptionFollowing": "Folge anderen, und sieh hier was sie posten",
@@ -162,6 +163,7 @@
       "follow": "Folgen"
     },
     "aboutPage": {
+      "telegram": "Telegram",
       "gitHub": "GitHub",
       "nostr": "nostr",
       "nips": "NIPs",
@@ -188,8 +190,8 @@
       "share": "Teilen",
       "pubkey": "Öffentlicher Schlüssel",
       "contact": "Kontakt",
-      "copy":"Kopieren",
-      "remove":"Delete",
+      "copy": "Kopieren",
+      "remove": "Delete",
       "supportedNips": "Unterstützte NIPs",
       "software": "Softtware",
       "version": "Version",

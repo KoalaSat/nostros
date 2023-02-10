@@ -68,6 +68,7 @@
       "followers": "{{followers}} 关注者",
       "configuration": "设置",
       "about": "关于",
+      "reportBug": "Report a bug",
       "logout": "登出"
     },
     "configPage": {
@@ -140,7 +141,7 @@
         "contactRemoved": "已取消关注",
         "contactUnblocked": "用户已屏蔽"
       },
-      "emptyTitleBlocked": "您还没有屏蔽任何人", 
+      "emptyTitleBlocked": "您还没有屏蔽任何人",
       "emptyDescriptionBlocked": "您可以在用户详情页屏蔽用户",
       "emptyTitleFollowing": "您还没有关注任何用户",
       "emptyDescriptionFollowing": "关注一些用户以查看内容",
@@ -160,6 +161,7 @@
       "unblock": "取消屏蔽"
     },
     "aboutPage": {
+      "telegram": "Telegram",
       "gitHub": "GitHub",
       "nostr": "nostr",
       "nips": "NIPs",
@@ -220,8 +222,8 @@
       "moreInfo": "更多",
       "lessInfo": "收起",
       "globalFeed": "全局信息流",
-      "copy":"复制",
-      "remove":"Delete",
+      "copy": "复制",
+      "remove": "Delete",
       "active": "激活",
       "share": "分享",
       "pubkey": "公钥",

@@ -44,7 +44,7 @@ export const MyFeed: React.FC<MyFeedProps> = ({ navigation }) => {
       'homepage-contacts-meta',
       'homepage-contacts-replies',
       'homepage-contacts-reactions',
-      'homepage-contacts-repost'
+      'homepage-contacts-repost',
     ])
   }
 
@@ -114,11 +114,13 @@ export const MyFeed: React.FC<MyFeedProps> = ({ navigation }) => {
           const lastReaction = await getLastReaction(database, {
             eventIds: notes.map((note) => note.id ?? ''),
           })
-          relayPool?.subscribe('homepage-contacts-reactions', [{
-            kinds: [Kind.Reaction],
-            '#e': noteIds,
-            since: lastReaction?.created_at ?? 0,
-          }])
+          relayPool?.subscribe('homepage-contacts-reactions', [
+            {
+              kinds: [Kind.Reaction],
+              '#e': noteIds,
+              since: lastReaction?.created_at ?? 0,
+            },
+          ])
 
           const lastReply = await getLastReply(database, {
             eventIds: notes.map((note) => note.id ?? ''),
@@ -133,10 +135,12 @@ export const MyFeed: React.FC<MyFeedProps> = ({ navigation }) => {
 
           const repostIds = notes.filter((note) => note.repost_id).map((note) => note.id ?? '')
           if (repostIds.length > 0) {
-            relayPool?.subscribe('homepage-contacts-repost', [{
-              kinds: [Kind.Text],
-              '#e': repostIds,
-            }])
+            relayPool?.subscribe('homepage-contacts-repost', [
+              {
+                kinds: [Kind.Text],
+                '#e': repostIds,
+              },
+            ])
           }
         }
       })
