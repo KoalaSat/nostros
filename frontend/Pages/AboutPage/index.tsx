@@ -26,7 +26,7 @@ export const AboutPage: React.FC = () => {
           <List.Icon
             icon={() => (
               <MaterialCommunityIcons
-                name='file-tree-outline'
+                name='source-branch'
                 size={25}
                 color={theme.colors.onPrimaryContainer}
               />
@@ -37,6 +37,22 @@ export const AboutPage: React.FC = () => {
       },
       {
         key: 2,
+        title: t('aboutPage.telegram'),
+        left: (
+          <List.Icon
+            icon={() => (
+              <MaterialCommunityIcons
+                name='send-circle'
+                size={25}
+                color={theme.colors.onPrimaryContainer}
+              />
+            )}
+          />
+        ),
+        onPress: async () => await Linking.openURL('https://t.me/+zhvZAE9L0X40ZjI0'),
+      },
+      {
+        key: 3,
         title: t('aboutPage.nostr'),
         left: (
           <List.Icon
@@ -52,7 +68,7 @@ export const AboutPage: React.FC = () => {
         onPress: async () => await Linking.openURL('https://www.nostr.how'),
       },
       {
-        key: 3,
+        key: 4,
         title: t('aboutPage.nips'),
         left: (
           <List.Icon
@@ -69,7 +85,7 @@ export const AboutPage: React.FC = () => {
         onPress: async () => await Linking.openURL('https://github.com/nostr-protocol/nips'),
       },
       {
-        key: 4,
+        key: 5,
         title: t('aboutPage.version'),
         left: (
           <List.Icon

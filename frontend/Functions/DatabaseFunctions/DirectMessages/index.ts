@@ -67,7 +67,7 @@ export const getGroupedDirectMessages: (
     order?: 'DESC' | 'ASC'
     limit?: number
   },
-) => Promise<DirectMessage[]> = async (db, { limit }) => {
+) => Promise<DirectMessage[]> = async (db, { limit, order = 'DESC' }) => {
   let notesQuery = `
     SELECT
       *, MAX(created_at) AS request_id
@@ -75,7 +75,7 @@ export const getGroupedDirectMessages: (
       nostros_direct_messages
   `
   notesQuery += 'GROUP BY conversation_id '
-  notesQuery += 'ORDER BY created_at DESC '
+  notesQuery += `ORDER BY created_at ${order} `
   if (limit) notesQuery += `LIMIT ${limit}`
 
   const resultSet = await db.execute(notesQuery)
@@ -92,23 +92,26 @@ export const getDirectMessages: (
   otherPubKey: string,
   options: {
     order?: 'DESC' | 'ASC'
+    limit?: number
   },
 ) => Promise<DirectMessage[]> = async (
   db,
   conversationId,
   publicKey,
   otherPubKey,
-  { order = 'DESC' },
+  { order = 'DESC', limit },
 ) => {
-  const notesQuery = `
+  let notesQuery = `
     SELECT
       *
     FROM
       nostros_direct_messages
     WHERE conversation_id = "${conversationId}"
-    ORDER BY created_at ${order}
+    ORDER BY created_at ${order} 
   `
-  // WHERE conversation_id = "${conversationId}"
+  if (limit) {
+    notesQuery += `LIMIT ${limit}`
+  }
 
   const resultSet = await db.execute(notesQuery)
   const items: object[] = getItems(resultSet)

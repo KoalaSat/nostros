@@ -39,7 +39,7 @@ interface RelayCardProps {
 export const RelayCard: React.FC<RelayCardProps> = ({ url, bottomSheetRef }) => {
   const theme = useTheme()
   const { publicKey } = React.useContext(UserContext)
-  const { updateRelayItem, relayPool } = React.useContext(RelayPoolContext)
+  const { updateRelayItem, relayPool, removeRelayItem } = React.useContext(RelayPoolContext)
   const { database } = React.useContext(AppContext)
   const [relay, setRelay] = React.useState<Relay>()
   const [uri, setUri] = React.useState<string>()
@@ -115,6 +115,14 @@ export const RelayCard: React.FC<RelayCardProps> = ({ url, bottomSheetRef }) => 
         })
     }
   }, [moreInfo])
+
+  const removeRelay: () => void = () => {
+    if (relay) {
+      removeRelayItem(relay).then(() => {
+        bottomSheetRef.current?.close()
+      })
+    }
+  }
 
   const activeRelay: () => void = () => {
     if (relay) {
@@ -301,14 +309,18 @@ export const RelayCard: React.FC<RelayCardProps> = ({ url, bottomSheetRef }) => 
         </View>
         <View style={styles.actionButton}>
           <IconButton
-            icon={'share-variant-outline'}
+            icon='content-copy'
             size={28}
             onPress={() => {
               Clipboard.setString(relay.url)
               setShowNotification('urlCopied')
             }}
           />
-          <Text>{t('relayCard.share')}</Text>
+          <Text>{t('relayCard.copy')}</Text>
+        </View>
+        <View style={styles.actionButton}>
+          <IconButton icon={'trash-can-outline'} size={28} onPress={removeRelay} />
+          <Text>{t('relayCard.remove')}</Text>
         </View>
       </View>
       {showNotification && (
@@ -324,7 +336,7 @@ export const RelayCard: React.FC<RelayCardProps> = ({ url, bottomSheetRef }) => 
       )}
       <RBSheet
         ref={bottomSheetPushRelayRef}
-        closeOnPressMask={!pushUserHistoric}
+        closeOnPressMask={!pushUserHistoric || pushDone}
         customStyles={bottomSheetStyles}
         onClose={() => {}}
       >

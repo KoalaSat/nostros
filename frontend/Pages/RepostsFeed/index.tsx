@@ -36,7 +36,18 @@ export const RepostsFeed: React.FC<RepostsFeedProps> = ({ navigation }) => {
   const [refreshing, setRefreshing] = useState(false)
   const flashListRef = React.useRef<FlashList<Note>>(null)
 
+  const unsubscribe: () => void = () => {
+    relayPool?.unsubscribe([
+      'homepage-contacts-main',
+      'homepage-contacts-meta',
+      'homepage-contacts-replies',
+      'homepage-contacts-reactions',
+      'homepage-contacts-repost',
+    ])
+  }
+
   useEffect(() => {
+    unsubscribe()
     subscribeNotes()
     loadNotes()
   }, [])
@@ -61,11 +72,7 @@ export const RepostsFeed: React.FC<RepostsFeedProps> = ({ navigation }) => {
 
   const onRefresh = useCallback(() => {
     setRefreshing(true)
-    relayPool?.unsubscribe([
-      'homepage-contacts-main',
-      'homepage-contacts-meta',
-      'homepage-contacts-replies',
-    ])
+    unsubscribe()
     subscribeNotes()
   }, [])
 
@@ -93,28 +100,23 @@ export const RepostsFeed: React.FC<RepostsFeedProps> = ({ navigation }) => {
         setNotes(notes)
         if (notes.length > 0) {
           const noteIds = notes.map((note) => note.id ?? '')
-          const messages: RelayFilters[] = [
+          relayPool?.subscribe('homepage-contacts-meta', [
             {
               kinds: [Kind.Metadata],
               authors: notes.map((note) => note.pubkey ?? ''),
             },
-          ]
+          ])
+
           const lastReaction = await getLastReaction(database, {
             eventIds: notes.map((note) => note.id ?? ''),
           })
-          messages.push({
-            kinds: [Kind.Reaction],
-            '#e': noteIds,
-            since: lastReaction?.created_at ?? 0,
-          })
-          const repostIds = notes.filter((note) => note.repost_id).map((note) => note.id ?? '')
-          if (repostIds.length > 0) {
-            messages.push({
-              kinds: [Kind.Text],
-              '#e': repostIds,
-            })
-          }
-          relayPool?.subscribe('homepage-contacts-meta', messages)
+          relayPool?.subscribe('homepage-contacts-reactions', [
+            {
+              kinds: [Kind.Reaction],
+              '#e': noteIds,
+              since: lastReaction?.created_at ?? 0,
+            },
+          ])
 
           const lastReply = await getLastReply(database, {
             eventIds: notes.map((note) => note.id ?? ''),
@@ -126,6 +128,16 @@ export const RepostsFeed: React.FC<RepostsFeedProps> = ({ navigation }) => {
               since: lastReply?.created_at ?? 0,
             },
           ])
+
+          const repostIds = notes.filter((note) => note.repost_id).map((note) => note.id ?? '')
+          if (repostIds.length > 0) {
+            relayPool?.subscribe('homepage-contacts-repost', [
+              {
+                kinds: [Kind.Text],
+                '#e': repostIds,
+              },
+            ])
+          }
         }
       })
     }

@@ -50,6 +50,17 @@
       "contentWarning": "Contenu sensible",
       "send": "Envoyer"
     },
+    "uploadImage": {
+      "notifications": {
+        "imageUploaded": "Your file has been uploaded.\nConsider donating to the service:\n{{uri}}",
+        "imageUploadErro": "There was an error while trying to upload your file"
+      },
+      "uploadImageWarningTitle": "Important",
+      "uploadImageWarning": "Your image will be uploaded to a public hosting service and will be visible for anyone.",
+      "uploadImage": "Upload image now",
+      "cancel": "Cancel",
+      "poweredBy": "Powered by {{uri}}"
+    },
     "menuItems": {
       "relays": "Relais",
       "notConnected": "Non connecté",
@@ -58,6 +69,7 @@
       "followers": "{{followers}} abonnés",
       "configuration": "Configuration",
       "about": "À propos de Nostros",
+      "reportBug": "Report a bug",
       "logout": "Sortir"
     },
     "language": {
@@ -157,6 +169,7 @@
       "follow": "Suivre"
     },
     "aboutPage": {
+      "telegram": "Telegram",
       "gitHub": "GitHub",
       "nostr": "nostr",
       "nips": "NIPs",
@@ -178,6 +191,8 @@
       "globalFeed": "Flux Global",
       "active": "Actif",
       "share": "Partager",
+      "copy": "Copier",
+      "remove": "Delete",
       "pubkey": "Clé Publique",
       "contact": "Contact",
       "supportedNips": "NIPs Supportés",

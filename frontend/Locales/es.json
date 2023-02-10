@@ -48,9 +48,15 @@
       "isContact": "Siguiendo",
       "isNotContact": "Sin seguir",
       "contentWarning": "Contenido sensible",
-      "send": "Enviar",
-      "imageUploaded": "Tu archivo se ha subido.\nConsidera donar al servicio:\n{{uri}}",
-      "imageUploadErro": "Se ha producido un error al subir la imagen.",
+      "send": "Enviar"
+    },
+    "uploadImage": {
+      "notifications": {
+        "imageUploaded": "Tu archivo se ha subido.\nConsidera donar al servicio:\n{{uri}}",
+        "imageUploadErro": "Se ha producido un error al subir la imagen."
+      },
+      "uploadImageWarningTitle": "Importante",
+      "uploadImageWarning": "Tu imagen se subirá a un servicio público de almacenamiento y será visible para cualquiera.",
       "uploadImage": "Subir imagen ahora",
       "cancel": "Cancelar",
       "poweredBy": "Servido por {{uri}}"
@@ -63,6 +69,7 @@
       "followers": "{{followers}} seguidores",
       "configuration": "Configuración",
       "about": "Sobre Nostros",
+      "reportBug": "Reportar un bug",
       "logout": "Salir"
     },
     "configPage": {
@@ -156,6 +163,7 @@
       "follow": "Seguir"
     },
     "aboutPage": {
+      "telegram": "Telegram",
       "gitHub": "GitHub",
       "nostr": "nostr",
       "nips": "NIPs",
@@ -176,6 +184,8 @@
       "lessInfo": "Menos información",
       "globalFeed": "Feed Global",
       "active": "Activo",
+      "copy": "Copiar",
+      "remove": "Borrar",
       "share": "Compartir",
       "pubkey": "Clave pública",
       "contact": "Contacto",

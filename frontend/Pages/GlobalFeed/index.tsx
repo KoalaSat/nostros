@@ -39,7 +39,12 @@ export const GlobalFeed: React.FC<GlobalFeedProps> = ({ navigation }) => {
   const [refreshing, setRefreshing] = useState(false)
   const flashListRef = React.useRef<FlashList<Note>>(null)
 
+  const unsubscribe: () => void = () => {
+    relayPool?.unsubscribe(['homepage-global-main', 'homepage-global-meta-repost'])
+  }
+
   useEffect(() => {
+    unsubscribe()
     subscribeNotes()
   }, [])
 
@@ -69,7 +74,7 @@ export const GlobalFeed: React.FC<GlobalFeedProps> = ({ navigation }) => {
     setRefreshing(true)
     updateLastLoad()
     setNewNotesCount(0)
-    relayPool?.unsubscribe(['homepage-global-main', 'homepage-global-meta'])
+    unsubscribe()
     subscribeNotes()
     flashListRef.current?.scrollToIndex({ animated: true, index: 0 })
   }, [])
@@ -119,7 +124,7 @@ export const GlobalFeed: React.FC<GlobalFeedProps> = ({ navigation }) => {
               '#e': repostIds,
             })
           }
-          relayPool?.subscribe('homepage-global-meta', message)
+          relayPool?.subscribe('homepage-global-meta-repost', message)
         }
       })
     }

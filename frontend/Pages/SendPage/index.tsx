@@ -9,12 +9,9 @@ import { Note } from '../../Functions/DatabaseFunctions/Notes'
 import { getETags, getTaggedPubKeys } from '../../Functions/RelayFunctions/Events'
 import { getUsers, User } from '../../Functions/DatabaseFunctions/Users'
 import { formatPubKey } from '../../Functions/RelayFunctions/Users'
-import { Asset, launchImageLibrary } from 'react-native-image-picker'
 import {
   Button,
-  Card,
   IconButton,
-  Snackbar,
   Switch,
   Text,
   TextInput,
@@ -26,8 +23,7 @@ import { goBack } from '../../lib/Navigation'
 import { Kind } from 'nostr-tools'
 import ProfileData from '../../Components/ProfileData'
 import NoteCard from '../../Components/NoteCard'
-import { imageHostingServices } from '../../Constants/Services'
-import RBSheet from 'react-native-raw-bottom-sheet'
+import UploadImage from '../../Components/UploadImage'
 
 interface SendPageProps {
   route: { params: { note: Note; type?: 'reply' | 'repost' } | undefined }
@@ -35,22 +31,19 @@ interface SendPageProps {
 
 export const SendPage: React.FC<SendPageProps> = ({ route }) => {
   const theme = useTheme()
-  const { database, getImageHostingService } = useContext(AppContext)
+  const { database } = useContext(AppContext)
   const { publicKey } = useContext(UserContext)
   const { relayPool, lastConfirmationtId } = useContext(RelayPoolContext)
   const { t } = useTranslation('common')
   // state
-  const [showNotification, setShowNotification] = useState<undefined | string>()
-  const [uploadingFile, setUploadingFile] = useState<boolean>(false)
   const [content, setContent] = useState<string>('')
   const [contentWarning, setContentWarning] = useState<boolean>(false)
   const [userSuggestions, setUserSuggestions] = useState<User[]>([])
   const [userMentions, setUserMentions] = useState<User[]>([])
   const [isSending, setIsSending] = useState<boolean>(false)
-  const [imageUpload, setImageUpload] = useState<Asset>()
+  const [uploadingFile, setUploadingFile] = useState<boolean>(false)
+  const [startUpload, setStartUpload] = useState<boolean>(false)
   const note = React.useMemo(() => route.params?.note, [])
-  const [imageHostingService] = useState<string>(getImageHostingService())
-  const bottomSheetImageRef = React.useRef<RBSheet>(null)
 
   useEffect(() => {
     if (isSending) goBack()
@@ -80,44 +73,6 @@ export const SendPage: React.FC<SendPageProps> = ({ route }) => {
 
   const mentionText: (user: User) => string = (user) => {
     return `@${user.name ?? formatPubKey(user.id)}`
-  }
-
-  const getImage: () => void = () => {
-    launchImageLibrary({ selectionLimit: 1, mediaType: 'photo' }, async (result) => {
-      const assets = result?.assets
-      if (assets && assets.length > 0) {
-        const file = assets[0]
-        if (file.uri && file.type && file.fileName) {
-          setImageUpload(file)
-          bottomSheetImageRef.current?.open()
-        } else {
-          setUploadingFile(false)
-          setShowNotification('imageUploadErro')
-        }
-      } else {
-        setUploadingFile(false)
-        setShowNotification('imageUploadErro')
-      }
-    })
-  }
-
-  const uploadImage: () => void = async () => {
-    if (imageUpload?.uri && imageUpload.type && imageUpload.fileName) {
-      imageHostingServices[imageHostingService]
-        .sendFunction(imageUpload.uri, imageUpload.type, imageUpload.fileName)
-        .then((imageUri) => {
-          bottomSheetImageRef.current?.close()
-          setUploadingFile(false)
-          setContent((prev) => `${prev}\n\n${imageUri}`)
-          setImageUpload(undefined)
-          setShowNotification('imageUploaded')
-        })
-        .catch(() => {
-          bottomSheetImageRef.current?.close()
-          setUploadingFile(false)
-          setShowNotification('imageUploadErro')
-        })
-    }
   }
 
   const onPressSend: () => void = () => {
@@ -193,21 +148,6 @@ export const SendPage: React.FC<SendPageProps> = ({ route }) => {
     </TouchableRipple>
   )
 
-  const bottomSheetStyles = React.useMemo(() => {
-    return {
-      container: {
-        backgroundColor: theme.colors.background,
-        paddingTop: 16,
-        paddingRight: 16,
-        paddingBottom: 32,
-        paddingLeft: 16,
-        borderTopRightRadius: 28,
-        borderTopLeftRadius: 28,
-        height: 'auto',
-      },
-    }
-  }, [])
-
   return (
     <>
       <View style={[styles.textInputContainer, { paddingBottom: note ? 230 : 10 }]}>
@@ -252,7 +192,7 @@ export const SendPage: React.FC<SendPageProps> = ({ route }) => {
                 icon='image-outline'
                 size={25}
                 style={styles.imageButton}
-                onPress={getImage}
+                onPress={() => setStartUpload(true)}
                 disabled={uploadingFile}
               />
             </View>
@@ -271,46 +211,15 @@ export const SendPage: React.FC<SendPageProps> = ({ route }) => {
           </View>
         )}
       </View>
-      <RBSheet ref={bottomSheetImageRef} closeOnDragDown={true} customStyles={bottomSheetStyles}>
-        <Card style={styles.imageUploadPreview}>
-          {imageUpload && (
-            <Card.Cover source={{ uri: imageUpload?.uri ?? '' }} resizeMode='contain' />
-          )}
-        </Card>
-        <Text>
-          {t('sendPage.poweredBy', { uri: imageHostingServices[imageHostingService].uri })}
-        </Text>
-        <Button
-          style={styles.buttonSpacer}
-          mode='contained'
-          onPress={uploadImage}
-          loading={uploadingFile}
-        >
-          {t('sendPage.uploadImage')}
-        </Button>
-        <Button
-          mode='outlined'
-          onPress={() => {
-            bottomSheetImageRef.current?.close()
-            setImageUpload(undefined)
-          }}
-        >
-          {t('sendPage.cancel')}
-        </Button>
-      </RBSheet>
-      {showNotification && (
-        <Snackbar
-          style={styles.snackbar}
-          visible={showNotification !== undefined}
-          duration={Snackbar.DURATION_SHORT}
-          onIconPress={() => setShowNotification(undefined)}
-          onDismiss={() => setShowNotification(undefined)}
-        >
-          {t(`sendPage.${showNotification}`, {
-            uri: imageHostingServices[imageHostingService].donation,
-          })}
-        </Snackbar>
-      )}
+      <UploadImage
+        startUpload={startUpload}
+        setImageUri={(imageUri) => {
+          setContent((prev) => `${prev}\n\n${imageUri}`)
+          setStartUpload(false)
+        }}
+        uploadingFile={uploadingFile}
+        setUploadingFile={setUploadingFile}
+      />
     </>
   )
 }

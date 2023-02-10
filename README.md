@@ -33,11 +33,10 @@ Local setup: https://github.com/KoalaSat/nostros/blob/main/SETUP.md
 - [x] Deep Links
 - [ ] Search
 - [x] Mnemonic login
-- [X] Upload images to hosting services
-- [X] Push all data to a relay
-- [X] Global feed filters and blocked users
-- [X] Relay colouring
-
+- [x] Upload images to hosting services
+- [x] Push all data to a relay
+- [x] Global feed filters and blocked users
+- [x] Relay colouring
 
 # Kudos
 

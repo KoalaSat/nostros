@@ -57,7 +57,7 @@ export const ContactsFeed: React.FC = () => {
       subscribeContacts()
       loadUsers()
 
-      return () => relayPool?.unsubscribe(['contacts', 'contacts-meta'])
+      return () => relayPool?.unsubscribe(['followers', 'following', 'contacts-meta'])
     }, []),
   )
 
@@ -81,12 +81,14 @@ export const ContactsFeed: React.FC = () => {
               if (user.contact) following.push(user)
             }
           })
-          relayPool?.subscribe('contacts-meta', [
-            {
-              kinds: [Kind.Metadata],
-              authors: results.map((user) => user.id),
-            },
-          ])
+          if (results.length > 0) {
+            relayPool?.subscribe('contacts-meta', [
+              {
+                kinds: [Kind.Metadata],
+                authors: results.map((user) => user.id),
+              },
+            ])
+          }
           setFollowers(followers)
           setFollowing(following)
         }
@@ -96,11 +98,13 @@ export const ContactsFeed: React.FC = () => {
 
   const subscribeContacts: () => void = async () => {
     if (publicKey) {
-      relayPool?.subscribe('contacts', [
+      relayPool?.subscribe('followers', [
         {
           kinds: [Kind.Contacts],
           authors: [publicKey],
         },
+      ])
+      relayPool?.subscribe('following', [
         {
           kinds: [Kind.Contacts],
           '#p': [publicKey],

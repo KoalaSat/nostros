@@ -48,9 +48,15 @@
       "isContact": "Подписаны",
       "isNotContact": "Подписаться",
       "contentWarning": "Делекатный контент",
-      "send": "Отправить",
-      "imageUploaded": "Tu archivo se ha subido.\nConsidera donar al servicio:\n{{uri}}",
-      "imageUploadErro": "Se ha producido un error al subir la imagen.",
+      "send": "Отправить"
+    },
+    "uploadImage": {
+      "notifications": {
+        "imageUploaded": "Tu archivo se ha subido.\nConsidera donar al servicio:\n{{uri}}",
+        "imageUploadErro": "Se ha producido un error al subir la imagen."
+      },
+      "uploadImageWarningTitle": "Important",
+      "uploadImageWarning": "Your image will be uploaded to a public hosting service and will be visible for anyone.",
       "uploadImage": "Subir imagen ahora",
       "cancel": "Отменить",
       "poweredBy": "Powered by {{uri}}"
@@ -64,6 +70,7 @@
       "configuration": "Настройки",
       "about": "Подроблее",
       "logout": "Выйти",
+      "reportBug": "Report a bug",
       "imageHostingService": "Хостинг изображений"
     },
     "configPage": {
@@ -156,6 +163,7 @@
       "follow": "Подписаться"
     },
     "aboutPage": {
+      "telegram": "Telegram",
       "gitHub": "GitHub",
       "nostr": "nostr",
       "nips": "NIPs",
@@ -176,6 +184,8 @@
       "lessInfo": "Скрыть",
       "globalFeed": "Общая лента",
       "active": "Active",
+      "copy": "Скопировать",
+      "remove": "Delete",
       "share": "Поделиться",
       "pubkey": "Публичный ключ",
       "contact": "Контакт",

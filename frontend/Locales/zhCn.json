@@ -48,8 +48,14 @@
       "isNotContact": "关注",
       "contentWarning": "敏感内容",
       "send": "发送",
+    },
+    "uploadImage": {
+      "notifications": {
       "imageUploaded": "您的图片已上传\n请赞助我们的服务：",
       "imageUploadErro": "上传图片出现错误",
+      },
+      "uploadImageWarningTitle": "Important",
+      "uploadImageWarning": "Your image will be uploaded to a public hosting service and will be visible for anyone.",
       "uploadImage": "上传图片",
       "cancel": "取消",
       "poweredBy": "由{{uri}}提供支持"
@@ -62,6 +68,7 @@
       "followers": "{{followers}} 关注者",
       "configuration": "设置",
       "about": "关于",
+      "reportBug": "Report a bug",
       "logout": "登出"
     },
     "configPage": {
@@ -154,6 +161,7 @@
       "unblock": "取消屏蔽"
     },
     "aboutPage": {
+      "telegram": "Telegram",
       "gitHub": "GitHub",
       "nostr": "Nostr",
       "nips": "NIPs",
@@ -214,6 +222,8 @@
       "moreInfo": "更多",
       "lessInfo": "收起",
       "globalFeed": "发现页",
+      "copy": "复制",
+      "remove": "Delete",
       "active": "激活",
       "share": "分享",
       "pubkey": "公钥",

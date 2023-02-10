@@ -1,5 +1,5 @@
 import * as React from 'react'
-import { StyleSheet, View } from 'react-native'
+import { Linking, StyleSheet, View } from 'react-native'
 import { DrawerContentScrollView } from '@react-navigation/drawer'
 import {
   Button,
@@ -139,6 +139,17 @@ export const MenuItems: React.FC = () => {
             active={drawerItemIndex === 2}
             onPress={() => onPressItem('about', 2)}
             onTouchEnd={() => setDrawerItemIndex(-1)}
+          />
+        </Drawer.Section>
+        <Drawer.Section showDivider={false}>
+          <Drawer.Item
+            label={t('menuItems.reportBug')}
+            icon='bug-outline'
+            key='bug'
+            active={drawerItemIndex === 2}
+            onPress={async () =>
+              await Linking.openURL('https://github.com/KoalaSat/nostros/issues/new/choose')
+            }
           />
         </Drawer.Section>
       </DrawerContentScrollView>
