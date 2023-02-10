@@ -30,8 +30,14 @@ Local setup: https://github.com/KoalaSat/nostros/blob/main/SETUP.md
 - [x] Public Feed
 - [x] Block users and content
 - [ ] Channels
-- [ ] Deep Links
+- [x] Deep Links
 - [ ] Search
+- [x] Mnemonic login
+- [X] Upload images to hosting services
+- [X] Push all data to a relay
+- [X] Global feed filters and blocked users
+- [X] Relay colouring
+
 
 # Kudos
 
