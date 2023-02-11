@@ -53,7 +53,7 @@ public class Event {
                 if (kind.equals("0")) {
                     saveUserMeta(database);
                 } else if (kind.equals("1") || kind.equals("2")) {
-                    saveNote(database, userPubKey, relayUrl);
+                    saveNote(database, userPubKey);
                 } else if (kind.equals("3")) {
                     if (pubkey.equals(userPubKey)) {
                         savePets(database);
@@ -64,6 +64,8 @@ public class Event {
                     saveDirectMessage(database);
                 } else if (kind.equals("7")) {
                     saveReaction(database);
+                } else if (kind.equals("40")) {
+                    saveGroup(database);
                 }
             } catch (JSONException e) {
                 e.printStackTrace();
@@ -185,7 +187,7 @@ public class Event {
         return false;
     }
 
-    protected void saveNote(SQLiteDatabase database, String userPubKey, String relayUrl) {
+    protected void saveNote(SQLiteDatabase database, String userPubKey) {
         ContentValues values = new ContentValues();
         values.put("id", id);
         values.put("content", content);
@@ -199,6 +201,23 @@ public class Event {
         values.put("user_mentioned", getUserMentioned(userPubKey));
         values.put("repost_id", getRepostId());
         database.replace("nostros_notes", null, values);
+    }
+
+    protected void saveGroup(SQLiteDatabase database) throws JSONException {
+        JSONObject groupContent = new JSONObject(content);
+
+        ContentValues values = new ContentValues();
+        values.put("id", id);
+        values.put("content", content);
+        values.put("created_at", created_at);
+        values.put("kind", kind);
+        values.put("pubkey", pubkey);
+        values.put("sig", sig);
+        values.put("tags", tags.toString());
+        values.put("name", groupContent.optString("name"));
+        values.put("about", groupContent.optString("about"));
+        values.put("picture", groupContent.optString("picture"));
+        database.replace("nostros_groups", null, values);
     }
 
     protected void saveDirectMessage(SQLiteDatabase database) throws JSONException {

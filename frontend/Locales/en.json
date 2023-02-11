@@ -17,6 +17,7 @@
       "ProfileConnect": "",
       "ProfileLoad": "",
       "Landing": "",
+      "Contacts": "Contacts",
       "Conversation": "Conversation",
       "Repost": "Repost note",
       "Reply": "Reply",
@@ -69,6 +70,7 @@
       "followers": "{{followers}} followers",
       "configuration": "Configuration",
       "about": "About",
+      "contacts": "Contacts",
       "reportBug": "Report a bug",
       "logout": "Logout"
     },
@@ -135,7 +137,7 @@
       "mnemonic": "Mnemonic",
       "mnemonicInput": "Type your mnemonic words in the correct order to login."
     },
-    "contactsFeed": {
+    "contactsPage": {
       "notifications": {
         "keyCopied": "Public key copied.",
         "contactAdded": "Profile followed.",

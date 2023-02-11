@@ -21,8 +21,11 @@ import RBSheet from 'react-native-raw-bottom-sheet'
 import NostrosAvatar from '../../Components/NostrosAvatar'
 import { getUnixTime } from 'date-fns'
 import { useFocusEffect } from '@react-navigation/native'
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'
+import UploadImage from '../../Components/UploadImage'
 
 export const ProfileConfigPage: React.FC = () => {
+  const { t } = useTranslation('common')
   const theme = useTheme()
   const bottomSheetPictureRef = React.useRef<RBSheet>(null)
   const bottomSheetDirectoryRef = React.useRef<RBSheet>(null)
@@ -49,7 +52,8 @@ export const ProfileConfigPage: React.FC = () => {
   // State
   const [showNotification, setShowNotification] = useState<undefined | string>()
   const [isPublishingProfile, setIsPublishingProfile] = useState<string>()
-  const { t } = useTranslation('common')
+  const [startUpload, setStartUpload] = useState<boolean>(false)
+  const [uploadingFile, setUploadingFile] = useState<boolean>(false)
 
   useFocusEffect(
     React.useCallback(() => {
@@ -291,6 +295,18 @@ export const ProfileConfigPage: React.FC = () => {
                 forceTextInputFocus={false}
               />
             }
+            left={
+              <TextInput.Icon
+                icon={() => (
+                  <MaterialCommunityIcons
+                    name='image-outline'
+                    size={25}
+                    color={theme.colors.onPrimaryContainer}
+                  />
+                )}
+                onPress={() => setStartUpload(true)}
+              />
+            }
           />
           <Button
             mode='contained'
@@ -405,6 +421,16 @@ export const ProfileConfigPage: React.FC = () => {
           {t(`profileConfigPage.notifications.${showNotification}`, { nip05, lud06: lnurl })}
         </Snackbar>
       )}
+      <UploadImage
+        startUpload={startUpload}
+        setImageUri={(imageUri) => {
+          setPicture(imageUri)
+          setStartUpload(false)
+        }}
+        uploadingFile={uploadingFile}
+        setUploadingFile={setUploadingFile}
+        alert={false}
+      />
     </View>
   )
 }

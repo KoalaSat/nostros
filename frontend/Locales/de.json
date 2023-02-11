@@ -17,6 +17,7 @@
       "ProfileConnect": "Profil verbinden",
       "ProfileLoad": "Profil laden",
       "Landing": "Start",
+      "Contacts": "Contacts",
       "Conversation": "Unterhaltung",
       "Reply": "Antworten",
       "Repost": "Notiz zitieren",
@@ -63,6 +64,7 @@
     },
     "menuItems": {
       "relays": "Relays",
+      "contacts": "Contacts",
       "notConnected": "Nicht verbunden",
       "connectedRelays": "{{number}} verbunden",
       "following": "{{following}} folge ich",
@@ -135,7 +137,7 @@
       "loginMethod": "Einloggen mit",
       "mnemonic": "Mnemonic"
     },
-    "contactsFeed": {
+    "contactsPage": {
       "notifications": {
         "keyCopied": "Öffentlichen Schlüssel kopiert",
         "contactAdded": "Kontakt hinzugefügt",

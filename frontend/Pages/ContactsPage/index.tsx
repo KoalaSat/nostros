@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState } from 'react'
-import { Dimensions, NativeScrollEvent, NativeSyntheticEvent, StyleSheet, View } from 'react-native'
+import { NativeScrollEvent, NativeSyntheticEvent, StyleSheet, View } from 'react-native'
 import Clipboard from '@react-native-clipboard/clipboard'
 import { AppContext } from '../../Contexts/AppContext'
 import { Kind } from 'nostr-tools'
@@ -33,7 +33,7 @@ import ProfileData from '../../Components/ProfileData'
 import { handleInfinityScroll } from '../../Functions/NativeFunctions'
 import { queryProfile } from 'nostr-tools/nip05'
 
-export const ContactsFeed: React.FC = () => {
+export const ContactsPage: React.FC = () => {
   const { t } = useTranslation('common')
   const initialPageSize = 20
   const { database, setDisplayUserDrawer } = useContext(AppContext)
@@ -203,7 +203,7 @@ export const ContactsFeed: React.FC = () => {
           </View>
           <View>
             <Button onPress={() => (item.contact ? removeContact(item) : addContact(item))}>
-              {item.contact ? t('contactsFeed.stopFollowing') : t('contactsFeed.follow')}
+              {item.contact ? t('contactsPage.stopFollowing') : t('contactsPage.follow')}
             </Button>
           </View>
         </View>
@@ -232,7 +232,7 @@ export const ContactsFeed: React.FC = () => {
             />
           </View>
           <View>
-            <Button onPress={() => unblock(item)}>{t('contactsFeed.unblock')}</Button>
+            <Button onPress={() => unblock(item)}>{t('contactsPage.unblock')}</Button>
           </View>
         </View>
       </TouchableRipple>
@@ -269,13 +269,13 @@ export const ContactsFeed: React.FC = () => {
         color={theme.colors.onPrimaryContainer}
       />
       <Text variant='headlineSmall' style={styles.center}>
-        {t('contactsFeed.emptyTitleFollowing')}
+        {t('contactsPage.emptyTitleFollowing')}
       </Text>
       <Text variant='bodyMedium' style={styles.center}>
-        {t('contactsFeed.emptyDescriptionFollowing')}
+        {t('contactsPage.emptyDescriptionFollowing')}
       </Text>
       <Button mode='contained' compact onPress={() => bottomSheetAddContactRef.current?.open()}>
-        {t('contactsFeed.emptyButtonFollowing')}
+        {t('contactsPage.emptyButtonFollowing')}
       </Button>
     </View>
   )
@@ -288,6 +288,7 @@ export const ContactsFeed: React.FC = () => {
         data={following.slice(0, pageSize)}
         renderItem={renderContactItem}
         onScroll={onScroll}
+        ItemSeparatorComponent={Divider}
         ListEmptyComponent={ListEmptyComponentFollowing}
         horizontal={false}
       />
@@ -303,10 +304,10 @@ export const ContactsFeed: React.FC = () => {
         color={theme.colors.onPrimaryContainer}
       />
       <Text variant='headlineSmall' style={styles.center}>
-        {t('contactsFeed.emptyTitleFollower')}
+        {t('contactsPage.emptyTitleFollower')}
       </Text>
       <Text variant='bodyMedium' style={styles.center}>
-        {t('contactsFeed.emptyDescriptionFollower')}
+        {t('contactsPage.emptyDescriptionFollower')}
       </Text>
       <Button
         mode='contained'
@@ -316,7 +317,7 @@ export const ContactsFeed: React.FC = () => {
           Clipboard.setString(nPub ?? '')
         }}
       >
-        {t('contactsFeed.emptyButtonFollower')}
+        {t('contactsPage.emptyButtonFollower')}
       </Button>
     </View>
   )
@@ -345,10 +346,10 @@ export const ContactsFeed: React.FC = () => {
         color={theme.colors.onPrimaryContainer}
       />
       <Text variant='headlineSmall' style={styles.center}>
-        {t('contactsFeed.emptyTitleBlocked')}
+        {t('contactsPage.emptyTitleBlocked')}
       </Text>
       <Text variant='bodyMedium' style={styles.center}>
-        {t('contactsFeed.emptyDescriptionBlocked')}
+        {t('contactsPage.emptyDescriptionBlocked')}
       </Text>
     </View>
   )
@@ -361,6 +362,7 @@ export const ContactsFeed: React.FC = () => {
         data={blocked.slice(0, pageSize)}
         renderItem={renderBlockedItem}
         onScroll={onScroll}
+        ItemSeparatorComponent={Divider}
         ListEmptyComponent={ListEmptyComponentBlocked}
         horizontal={false}
       />
@@ -386,7 +388,7 @@ export const ContactsFeed: React.FC = () => {
         >
           <TouchableRipple style={styles.textWrapper} onPress={() => setTabKey('following')}>
             <Text style={styles.tabText}>
-              {t('contactsFeed.following', { count: following.length })}
+              {t('contactsPage.following', { count: following.length })}
             </Text>
           </TouchableRipple>
         </View>
@@ -400,7 +402,7 @@ export const ContactsFeed: React.FC = () => {
         >
           <TouchableRipple style={styles.textWrapper} onPress={() => setTabKey('followers')}>
             <Text style={styles.tabText}>
-              {t('contactsFeed.followers', { count: followers.length })}
+              {t('contactsPage.followers', { count: followers.length })}
             </Text>
           </TouchableRipple>
         </View>
@@ -414,7 +416,7 @@ export const ContactsFeed: React.FC = () => {
         >
           <TouchableRipple style={styles.textWrapper} onPress={() => setTabKey('blocked')}>
             <Text style={styles.tabText}>
-              {t('contactsFeed.blocked', { count: blocked.length })}
+              {t('contactsPage.blocked', { count: blocked.length })}
             </Text>
           </TouchableRipple>
         </View>
@@ -422,7 +424,7 @@ export const ContactsFeed: React.FC = () => {
       {renderScene[tabKey]}
       {privateKey && (
         <AnimatedFAB
-          style={[styles.fab, { top: Dimensions.get('window').height - 216 }]}
+          style={styles.fab}
           icon='account-multiple-plus-outline'
           label='Label'
           onPress={() => bottomSheetAddContactRef.current?.open()}
@@ -438,12 +440,12 @@ export const ContactsFeed: React.FC = () => {
         onClose={() => setContactInput('')}
       >
         <View>
-          <Text variant='titleLarge'>{t('contactsFeed.addContactTitle')}</Text>
-          <Text variant='bodyMedium'>{t('contactsFeed.addContactDescription')}</Text>
+          <Text variant='titleLarge'>{t('contactsPage.addContactTitle')}</Text>
+          <Text variant='bodyMedium'>{t('contactsPage.addContactDescription')}</Text>
           <TextInput
             style={styles.input}
             mode='outlined'
-            label={t('contactsFeed.addContact') ?? ''}
+            label={t('contactsPage.addContact') ?? ''}
             onChangeText={setContactInput}
             value={contactInput}
             right={
@@ -461,7 +463,7 @@ export const ContactsFeed: React.FC = () => {
             onPress={onPressAddContact}
             loading={isAddingContact}
           >
-            {t('contactsFeed.addContact')}
+            {t('contactsPage.addContact')}
           </Button>
           <Button
             mode='outlined'
@@ -470,7 +472,7 @@ export const ContactsFeed: React.FC = () => {
               setContactInput('')
             }}
           >
-            {t('contactsFeed.cancel')}
+            {t('contactsPage.cancel')}
           </Button>
         </View>
       </RBSheet>
@@ -482,7 +484,7 @@ export const ContactsFeed: React.FC = () => {
           onIconPress={() => setShowNotification(undefined)}
           onDismiss={() => setShowNotification(undefined)}
         >
-          {t(`contactsFeed.notifications.${showNotification}`)}
+          {t(`contactsPage.notifications.${showNotification}`)}
         </Snackbar>
       )}
     </>
@@ -531,9 +533,7 @@ const styles = StyleSheet.create({
     marginBottom: 95,
   },
   contactRow: {
-    paddingLeft: 16,
-    paddingRight: 16,
-    paddingTop: 16,
+    padding: 16,
     flexDirection: 'row',
     justifyContent: 'space-between',
   },
@@ -548,6 +548,7 @@ const styles = StyleSheet.create({
     alignContent: 'center',
   },
   fab: {
+    bottom: 65,
     right: 16,
     position: 'absolute',
   },
@@ -582,4 +583,4 @@ const styles = StyleSheet.create({
   },
 })
 
-export default ContactsFeed
+export default ContactsPage

@@ -41,6 +41,8 @@ export const MenuItems: React.FC = () => {
       navigate('About')
     } else if (key === 'config') {
       navigate('Config')
+    } else if (key === 'contacts') {
+      navigate('Contacts')
     }
   }
 
@@ -92,8 +94,8 @@ export const MenuItems: React.FC = () => {
             </Card.Content>
           </Card>
         )}
-        {publicKey && (
-          <Drawer.Section showDivider={false}>
+        <Drawer.Section>
+          {publicKey && (
             <Drawer.Item
               label={t('menuItems.relays')}
               icon={() => (
@@ -119,9 +121,15 @@ export const MenuItems: React.FC = () => {
                 )
               }
             />
-          </Drawer.Section>
-        )}
-        <Drawer.Section>
+          )}
+          <Drawer.Item
+            label={t('menuItems.contacts')}
+            icon='contacts-outline'
+            key='contacts'
+            active={drawerItemIndex === 1}
+            onPress={() => onPressItem('contacts', 1)}
+            onTouchEnd={() => setDrawerItemIndex(-1)}
+          />
           <Drawer.Item
             label={t('menuItems.configuration')}
             icon='cog'

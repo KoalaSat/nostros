@@ -17,6 +17,7 @@
       "ProfileConnect": "",
       "ProfileLoad": "",
       "Landing": "",
+      "Contacts": "Contacts",
       "Conversation": "Диалог",
       "Reply": "Ответ",
       "Note": "Заметка",
@@ -63,6 +64,7 @@
     },
     "menuItems": {
       "relays": "Реле",
+      "contacts": "Contacts",
       "notConnected": "Not connected",
       "connectedRelays": "{{number}} подключено",
       "following": "{{following}} following",
@@ -135,7 +137,7 @@
       "loginMethod": "Login with",
       "mnemonic": "Mnemonic"
     },
-    "contactsFeed": {
+    "contactsPage": {
       "notifications": {
         "keyCopied": "Публичный ключ скопирован.",
         "contactAdded": "Вы подписались.",

@@ -20,6 +20,9 @@ import { AppContext } from '../../Contexts/AppContext'
 import RelayCard from '../../Components/RelayCard'
 import { updateAllRead } from '../../Functions/DatabaseFunctions/DirectMessages'
 import { getUnixTime } from 'date-fns'
+import ContactsPage from '../ContactsPage'
+import GroupPage from '../GroupPage'
+import GroupHeaderIcon from '../../Components/GroupHeaderIcon'
 
 export const HomeNavigator: React.FC = () => {
   const theme = useTheme()
@@ -118,6 +121,9 @@ export const HomeNavigator: React.FC = () => {
                   {['Landing'].includes(route.name) && historyKey?.includes('messages-') && (
                     <Appbar.Action icon='check-all' isLeading onPress={() => onPressCheckAll()} />
                   )}
+                  {['GroupPage'].includes(route.name) && (
+                    <GroupHeaderIcon groupId={route.params?.groupId}/>
+                  )}
                 </Appbar.Header>
               )
             },
@@ -131,8 +137,10 @@ export const HomeNavigator: React.FC = () => {
           <Stack.Screen name='Repost' component={SendPage} />
           <Stack.Screen name='Reply' component={SendPage} />
           <Stack.Screen name='Conversation' component={ConversationPage} />
+          <Stack.Screen name='GroupPage' component={GroupPage} />
         </Stack.Group>
         <Stack.Group>
+          <Stack.Screen name='Contacts' component={ContactsPage} />
           <Stack.Screen name='Relays' component={RelaysPage} />
           <Stack.Screen name='About' component={AboutPage} />
           <Stack.Screen name='Config' component={ConfigPage} />

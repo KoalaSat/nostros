@@ -15,6 +15,7 @@
     "homeNavigator": {
       "ProfileCreate": "创建用户",
       "ProfileConnect": "",
+      "Contacts": "Contacts",
       "ProfileLoad": "",
       "Landing": "",
       "Conversation": "会话",
@@ -47,12 +48,12 @@
       "isContact": "正在关注",
       "isNotContact": "关注",
       "contentWarning": "敏感内容",
-      "send": "发送",
+      "send": "发送"
     },
     "uploadImage": {
       "notifications": {
-      "imageUploaded": "您的图片已上传\n请赞助我们的服务：",
-      "imageUploadErro": "上传图片出现错误",
+        "imageUploaded": "您的图片已上传\n请赞助我们的服务：",
+        "imageUploadErro": "上传图片出现错误"
       },
       "uploadImageWarningTitle": "Important",
       "uploadImageWarning": "Your image will be uploaded to a public hosting service and will be visible for anyone.",
@@ -61,6 +62,7 @@
       "poweredBy": "由{{uri}}提供支持"
     },
     "menuItems": {
+      "contacts": "Contacts",
       "relays": "中继",
       "notConnected": "未连接",
       "connectedRelays": "已连接 {{number}} 个中继",
@@ -133,7 +135,7 @@
       "loginMethod": "登入",
       "mnemonic": "助记词"
     },
-    "contactsFeed": {
+    "contactsPage": {
       "notifications": {
         "keyCopied": "已复制公钥",
         "contactAdded": "已关注",

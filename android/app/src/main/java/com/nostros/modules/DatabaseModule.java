@@ -141,6 +141,21 @@ public class DatabaseModule {
             database.execSQL("ALTER TABLE nostros_relays ADD COLUMN resilient INT DEFAULT 0;");
             database.execSQL("ALTER TABLE nostros_relays ADD COLUMN manual INT DEFAULT 1;");
         } catch (SQLException e) { }
+        try {
+            database.execSQL("CREATE TABLE IF NOT EXISTS nostros_groups(\n" +
+                    "          id TEXT PRIMARY KEY NOT NULL, \n" +
+                    "          content TEXT NOT NULL,\n" +
+                    "          created_at INT NOT NULL,\n" +
+                    "          kind INT NOT NULL,\n" +
+                    "          pubkey TEXT NOT NULL,\n" +
+                    "          sig TEXT NOT NULL,\n" +
+                    "          tags TEXT NOT NULL,\n" +
+                    "          name TEXT NOT NULL,\n" +
+                    "          about TEXT NOT NULL,\n" +
+                    "          picture TEXT NOT NULL\n" +
+                    "        );");
+            database.execSQL("CREATE INDEX nostros_groups_pubkey_index ON nostros_groups(pubkey);");
+        } catch (SQLException e) { }
     }
 
     public void saveEvent(JSONObject data, String userPubKey, String relayUrl) throws JSONException {
