@@ -68,7 +68,7 @@ public class Event {
                     updateGroup(database);
                 } else if (kind.equals("42")) {
                     saveGroupMessage(database);
-                } else if (kind.equals("42")) {
+                } else if (kind.equals("43")) {
                     hideGroupMessage(database);
                 } else if (kind.equals("44")) {
                     blockUser(database);

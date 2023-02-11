@@ -108,7 +108,6 @@ export const RelayCard: React.FC<RelayCardProps> = ({ url, bottomSheetRef }) => 
           headers,
         })
         .then((response) => {
-          console.log(response)
           setRelayInfo(response.data)
         })
         .catch((e) => {
