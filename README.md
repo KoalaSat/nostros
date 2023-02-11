@@ -10,7 +10,7 @@
 
 # Getting Started
 
-What is Nostr: https://github.com/nostr-protocol/nostr
+What is Nostr: https://www.nostr.how
 
 Local setup: https://github.com/KoalaSat/nostros/blob/main/SETUP.md
 
