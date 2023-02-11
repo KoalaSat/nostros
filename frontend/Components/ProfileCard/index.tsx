@@ -79,7 +79,11 @@ export const ProfileCard: React.FC<ProfileCardProps> = ({ bottomSheetRef, showIm
       <Divider />
       {user && (
         <View style={styles.profileActions}>
-          <ProfileActions user={user} setUser={setUser} onActionDone={() => bottomSheetRef.current?.close()}/>
+          <ProfileActions
+            user={user}
+            setUser={setUser}
+            onActionDone={() => bottomSheetRef.current?.close()}
+          />
         </View>
       )}
       {showNotification && (
@@ -176,7 +180,7 @@ const styles = StyleSheet.create({
   },
   arrow: {
     alignContent: 'center',
-    justifyContent: 'center'
+    justifyContent: 'center',
   },
 })
 

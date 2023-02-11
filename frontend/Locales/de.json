@@ -62,6 +62,9 @@
       "cancel": "Abbrechen",
       "poweredBy": "poweredBy {{uri}}"
     },
+    "groupPage": {
+      "typeMessage": "Nachricht schreiben"
+    },
     "menuItems": {
       "relays": "Relays",
       "contacts": "Contacts",

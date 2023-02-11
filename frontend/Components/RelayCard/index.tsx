@@ -104,10 +104,11 @@ export const RelayCard: React.FC<RelayCardProps> = ({ url, bottomSheetRef }) => 
         Accept: 'application/nostr+json',
       }
       axios
-        .get('http://' + uri, {
+        .get('http://' + uri.replace('wss://', '').replace('ws://', ''), {
           headers,
         })
         .then((response) => {
+          console.log(response)
           setRelayInfo(response.data)
         })
         .catch((e) => {

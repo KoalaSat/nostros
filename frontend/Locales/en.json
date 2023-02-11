@@ -310,6 +310,22 @@
       "isFollower": "follows you",
       "relaysDescription": "These are {{username}}'s relays, activate the ones you want to be connected."
     },
+    "groupPage": {
+      "typeMessage": "Type message"
+    },
+    "groupsFeed": {
+      "delete": "Delete",
+      "updateTitle": "Update group",
+      "newGroupName": "Name",
+      "newGroupDescription": "Description",
+      "newGroupPicture": "Picture",
+      "groupUpdate": "Update",
+      "newGroupCreate": "Create",
+      "createTitle": "Create group",
+      "groupId": "Group id",
+      "addTitle": "Add existing group",
+      "add": "Add"
+    },
     "homePage": {
       "clipboardTitle": "Nostr key detected",
       "goToEvent": "Open",

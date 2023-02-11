@@ -62,6 +62,9 @@
       "cancel": "Отменить",
       "poweredBy": "Powered by {{uri}}"
     },
+    "groupPage": {
+      "typeMessage": "Напишите сообщение"
+    },
     "menuItems": {
       "relays": "Реле",
       "contacts": "Contacts",

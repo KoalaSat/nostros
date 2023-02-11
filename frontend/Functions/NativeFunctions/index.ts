@@ -74,7 +74,7 @@ export const validBlueBirdUrl: (url: string | undefined) => boolean = (url) => {
 
 export const validNip21: (string: string | undefined) => boolean = (string) => {
   if (string) {
-    const regexp = /^(nostr:)?(npub1|nprofile1|nevent1|nrelay1)\S*$/
+    const regexp = /^(nostr:)?(npub1|nprofile1|nevent1|nrelay1|note1)\S*$/
     return regexp.test(string)
   } else {
     return false

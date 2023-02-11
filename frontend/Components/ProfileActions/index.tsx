@@ -5,6 +5,7 @@ import { IconButton, List, Snackbar, Text, useTheme } from 'react-native-paper'
 import { AppContext } from '../../Contexts/AppContext'
 import { RelayPoolContext } from '../../Contexts/RelayPoolContext'
 import { UserContext } from '../../Contexts/UserContext'
+import { Event } from '../../lib/nostr/Events'
 import {
   addUser,
   getUser,
@@ -21,6 +22,10 @@ import { getUserRelays, NoteRelay } from '../../Functions/DatabaseFunctions/Note
 import { relayToColor } from '../../Functions/NativeFunctions'
 import { Relay } from '../../Functions/DatabaseFunctions/Relays'
 import ProfileShare from '../ProfileShare'
+import { deleteGroupMessages } from '../../Functions/DatabaseFunctions/Groups'
+import { getUnixTime } from 'date-fns'
+import { Kind } from 'nostr-tools'
+import { ScrollView } from 'react-native-gesture-handler'
 
 interface ProfileActionsProps {
   user: User
@@ -78,12 +83,25 @@ export const ProfileActions: React.FC<ProfileActionsProps> = ({
   }
 
   const onChangeBlockUser: () => void = () => {
-    if (database) {
+    if (database && publicKey) {
       addUser(user.id, database).then(() => {
         updateUserBlock(user.id, database, !isBlocked).then(() => {
           loadUser()
           setShowNotificationRelay(isBlocked ? 'userUnblocked' : 'userBlocked')
         })
+        if (!isBlocked) {
+          const event: Event = {
+            content: '',
+            created_at: getUnixTime(new Date()),
+            kind: Kind.ChannelMuteUser,
+            pubkey: publicKey,
+            tags: [['p', user.id]],
+          }
+          relayPool?.sendEvent(event)
+          deleteGroupMessages(database, user.id).then(() => {
+            onActionDone()
+          })
+        }
       })
     }
   }
@@ -231,7 +249,7 @@ export const ProfileActions: React.FC<ProfileActionsProps> = ({
         <View>
           <Text variant='titleLarge'>{t('profileCard.relaysTitle')}</Text>
           <Text variant='bodyMedium'>
-            {t('profileCard.relaysDescription', { username: username(user) })}
+            {t('profilePage.relaysDescription', { username: username(user) })}
           </Text>
           <List.Item
             title={t('relaysPage.relayName')}
@@ -241,11 +259,13 @@ export const ProfileActions: React.FC<ProfileActionsProps> = ({
               </>
             )}
           />
-          <FlatList
-            showsVerticalScrollIndicator={false}
-            data={userRelays}
-            renderItem={renderRelayItem}
-          />
+          <ScrollView>
+            <FlatList
+              showsVerticalScrollIndicator={false}
+              data={userRelays}
+              renderItem={renderRelayItem}
+            />
+          </ScrollView>
         </View>
         {showNotificationRelay && (
           <Snackbar
