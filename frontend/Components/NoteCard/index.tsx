@@ -473,7 +473,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignContent: 'center',
-    paddingBottom: 16
+    paddingBottom: 16,
   },
   userBlockedWrapper: {
     flexDirection: 'row',

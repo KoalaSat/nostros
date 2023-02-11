@@ -231,7 +231,7 @@ const styles = StyleSheet.create({
   profileData: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    paddingBottom: 16
+    paddingBottom: 16,
   },
 })
 

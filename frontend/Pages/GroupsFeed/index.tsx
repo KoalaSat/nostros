@@ -1,10 +1,12 @@
 import React, { useContext, useEffect, useState } from 'react'
-import { Dimensions, StyleSheet, View } from 'react-native'
+import { Clipboard, Dimensions, FlatList, StyleSheet, View } from 'react-native'
 import { useTranslation } from 'react-i18next'
 import {
   AnimatedFAB,
   Button,
   Divider,
+  List,
+  Snackbar,
   Text,
   TextInput,
   TouchableRipple,
@@ -25,25 +27,31 @@ import { formatId, username } from '../../Functions/RelayFunctions/Users'
 import NostrosAvatar from '../../Components/NostrosAvatar'
 import { navigate } from '../../lib/Navigation'
 import { FlashList, ListRenderItem } from '@shopify/flash-list'
+import { RelayFilters } from '../../lib/nostr/RelayPool/intex'
+import { validNip21 } from '../../Functions/NativeFunctions'
+import { getNip19Key } from '../../lib/nostr/Nip19'
 
 export const GroupsFeed: React.FC = () => {
   const { t } = useTranslation('common')
   const theme = useTheme()
   const { database } = useContext(AppContext)
   const { publicKey } = useContext(UserContext)
-  const { relayPool, lastEventId } = useContext(RelayPoolContext)
+  const { relayPool, lastEventId, lastConfirmationtId } = useContext(RelayPoolContext)
+  const bottomSheetSearchRef = React.useRef<RBSheet>(null)
   const bottomSheetCreateRef = React.useRef<RBSheet>(null)
+  const bottomSheetFabActionRef = React.useRef<RBSheet>(null)
   const [groups, setGroups] = useState<Group[]>([])
+  const [searchGroup, setSearchGroup] = useState<string>()
   const [newGroupName, setNewGroupName] = useState<string>()
   const [newGroupDescription, setNewGroupDescription] = useState<string>()
   const [newGroupPicture, setNewGroupPicture] = useState<string>()
   const [startUpload, setStartUpload] = useState<boolean>(false)
   const [uploadingFile, setUploadingFile] = useState<boolean>(false)
+  const [showNotification, setShowNotification] = useState<string>()
 
   useFocusEffect(
     React.useCallback(() => {
       loadGroups()
-      subscribeGroups()
 
       return () => relayPool?.unsubscribe(['groups-create', 'groups-meta', 'groups-messages'])
     }, []),
@@ -51,27 +59,56 @@ export const GroupsFeed: React.FC = () => {
 
   useEffect(() => {
     loadGroups()
-  }, [lastEventId])
+  }, [lastEventId, lastConfirmationtId])
 
-  const subscribeGroups: () => void = async () => {
-    if (publicKey) {
-      relayPool?.subscribe('groups-create', [
-        {
-          kinds: [Kind.ChannelCreation],
-          authors: [publicKey],
-        },
-      ])
+  const pastePicture: () => void = () => {
+    Clipboard.getString().then((value) => {
+      setNewGroupPicture(value ?? '')
+    })
+  }
+
+  const loadGroups: (newGroupId?: string) => void = (newGroupId) => {
+    if (database && publicKey) {
+      getGroups(database).then((results) => {
+        const filters: RelayFilters[] = [
+          {
+            kinds: [Kind.ChannelCreation],
+            authors: [publicKey],
+          },
+        ]
+        if (results && results.length > 0) {
+          setGroups(results)
+          filters.push({
+            kinds: [Kind.Metadata],
+            ids: [...results.map((group) => group.pubkey)],
+          })
+          filters.push({
+            kinds: [Kind.ChannelMetadata],
+            ids: [...results.map((group) => group.id ?? ''), publicKey, newGroupId ?? ''],
+          })
+          if (newGroupId) {
+            filters.push({
+              kinds: [Kind.ChannelCreation],
+              ids: [newGroupId],
+            })
+          }
+        }
+        relayPool?.subscribe('groups-create', filters)
+      })
     }
   }
 
-  const loadGroups: () => void = () => {
-    if (database && publicKey) {
-      getGroups(database).then((results) => {
-        if (results && results.length > 0) {
-          setGroups(results)
-        }
-      })
+  const addGroup: () => void = () => {
+    if (!searchGroup) return
+    if (validNip21(searchGroup)) {
+      const key = getNip19Key(searchGroup)
+      if (key) loadGroups(key)
+    } else {
+      loadGroups(searchGroup)
     }
+    setSearchGroup(undefined)
+    bottomSheetSearchRef.current?.close()
+    bottomSheetFabActionRef.current?.close()
   }
 
   const createNewGroup: () => void = () => {
@@ -89,6 +126,7 @@ export const GroupsFeed: React.FC = () => {
       }
       relayPool?.sendEvent(event)
       bottomSheetCreateRef.current?.close()
+      bottomSheetFabActionRef.current?.close()
     }
   }
 
@@ -96,7 +134,7 @@ export const GroupsFeed: React.FC = () => {
     return (
       <TouchableRipple
         onPress={() =>
-          navigate('GroupPage', {
+          navigate('Group', {
             groupId: item.id,
             title: item.name || formatId(item.id),
           })
@@ -158,13 +196,52 @@ export const GroupsFeed: React.FC = () => {
         color={theme.colors.onPrimaryContainer}
       />
       <Text variant='headlineSmall' style={styles.center}>
-        {t('contactsPage.emptyTitleBlocked')}
+        {t('groupsFeed.emptyTitleBlocked')}
       </Text>
       <Text variant='bodyMedium' style={styles.center}>
-        {t('contactsPage.emptyDescriptionBlocked')}
+        {t('groupsFeed.emptyDescriptionBlocked')}
       </Text>
     </View>
   )
+
+  const fabOptions = React.useMemo(() => {
+    return [
+      {
+        key: 1,
+        title: t('groupsFeed.createTitle'),
+        left: () => (
+          <List.Icon
+            icon={() => (
+              <MaterialCommunityIcons
+                name='account-multiple-plus-outline'
+                size={25}
+                color={theme.colors.onPrimaryContainer}
+              />
+            )}
+          />
+        ),
+        onPress: async () => bottomSheetCreateRef.current?.open(),
+      },
+      {
+        key: 2,
+        title: t('groupsFeed.add'),
+        left: () => (
+          <List.Icon
+            icon={() => (
+              <MaterialCommunityIcons
+                name='plus'
+                size={25}
+                color={theme.colors.onPrimaryContainer}
+              />
+            )}
+          />
+        ),
+        onPress: async () => bottomSheetSearchRef.current?.open(),
+        disabled: false,
+        style: {},
+      },
+    ]
+  }, [])
 
   return (
     <View style={styles.container}>
@@ -181,7 +258,7 @@ export const GroupsFeed: React.FC = () => {
         style={[styles.fab, { top: Dimensions.get('window').height - 216 }]}
         icon='plus'
         label='Label'
-        onPress={() => bottomSheetCreateRef.current?.open()}
+        onPress={() => bottomSheetFabActionRef.current?.open()}
         animateFrom='right'
         iconMode='static'
         extended={false}
@@ -208,7 +285,6 @@ export const GroupsFeed: React.FC = () => {
           />
           <TextInput
             style={styles.input}
-            multiline
             mode='outlined'
             label={t('groupsFeed.newGroupPicture') ?? ''}
             onChangeText={setNewGroupPicture}
@@ -223,6 +299,13 @@ export const GroupsFeed: React.FC = () => {
                   />
                 )}
                 onPress={() => setStartUpload(true)}
+              />
+            }
+            right={
+              <TextInput.Icon
+                icon='content-paste'
+                onPress={pastePicture}
+                forceTextInputFocus={false}
               />
             }
           />
@@ -240,6 +323,57 @@ export const GroupsFeed: React.FC = () => {
           />
         </View>
       </RBSheet>
+      <RBSheet ref={bottomSheetSearchRef} closeOnDragDown={true} customStyles={bottomSheetStyles}>
+        <View>
+          <Text style={styles.input} variant='titleLarge'>
+            {t('groupsFeed.addTitle')}
+          </Text>
+          <TextInput
+            style={styles.input}
+            mode='outlined'
+            label={t('groupsFeed.groupId') ?? ''}
+            onChangeText={setSearchGroup}
+            value={searchGroup}
+          />
+          <Button mode='contained' disabled={!searchGroup} onPress={addGroup}>
+            {t('groupsFeed.add')}
+          </Button>
+        </View>
+      </RBSheet>
+      <RBSheet
+        ref={bottomSheetFabActionRef}
+        closeOnDragDown={true}
+        customStyles={bottomSheetStyles}
+      >
+        <FlatList
+          data={fabOptions}
+          renderItem={({ item }) => {
+            return (
+              <List.Item
+                key={item.key}
+                title={item.title}
+                onPress={item.onPress}
+                left={item.left}
+                disabled={item.disabled}
+                titleStyle={item.style}
+              />
+            )
+          }}
+          ItemSeparatorComponent={Divider}
+          horizontal={false}
+        />
+      </RBSheet>
+      {showNotification && (
+        <Snackbar
+          style={styles.snackbar}
+          visible={showNotification !== undefined}
+          duration={Snackbar.DURATION_SHORT}
+          onIconPress={() => setShowNotification(undefined)}
+          onDismiss={() => setShowNotification(undefined)}
+        >
+          {t(`groupsFeed.notifications.${showNotification}`)}
+        </Snackbar>
+      )}
     </View>
   )
 }
@@ -271,6 +405,10 @@ const styles = StyleSheet.create({
   list: {
     paddingLeft: 16,
     paddingRight: 16,
+  },
+  snackbar: {
+    marginLeft: 16,
+    bottom: 16,
   },
   containerAvatar: {
     marginTop: 10,

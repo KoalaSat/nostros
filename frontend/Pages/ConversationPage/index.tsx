@@ -34,7 +34,7 @@ export const ConversationPage: React.FC<ConversationPageProps> = ({ route }) => 
   const scrollViewRef = useRef<ScrollView>()
   const { database, setRefreshBottomBarAt, setDisplayUserDrawer } = useContext(AppContext)
   const { relayPool, lastEventId } = useContext(RelayPoolContext)
-  const { publicKey, privateKey, name, picture } = useContext(UserContext)
+  const { publicKey, privateKey, name, picture, validNip05 } = useContext(UserContext)
   const otherPubKey = useMemo(() => route.params.pubKey, [])
   const [pageSize, setPageSize] = useState<number>(initialPageSize)
   const [decryptedMessages, setDecryptedMessages] = useState<Record<string, string>>({})
@@ -91,7 +91,8 @@ export const ConversationPage: React.FC<ConversationPageProps> = ({ route }) => 
               return message
             }),
           )
-          if (subscribe) subscribeDirectMessages(results[0].created_at)
+          const lastCreateAt = pageSize <= results.length ? results[0].created_at : 0
+          if (subscribe) subscribeDirectMessages(lastCreateAt)
         } else if (subscribe) {
           subscribeDirectMessages()
         }
@@ -144,6 +145,7 @@ export const ConversationPage: React.FC<ConversationPageProps> = ({ route }) => 
 
       const directMessage = event as DirectMessage
       directMessage.pending = true
+      directMessage.valid_nip05 = validNip05
       setSendingMessages((prev) => [...prev, directMessage])
       setInput('')
     }
@@ -155,6 +157,7 @@ export const ConversationPage: React.FC<ConversationPageProps> = ({ route }) => 
     const displayName =
       item.pubkey === publicKey ? usernamePubKey(name, publicKey) : username(otherUser)
     const showAvatar = directMessages[index - 1]?.pubkey !== item.pubkey
+    const nip05 = item.pubkey === publicKey ? validNip05 : otherUser.valid_nip05
 
     return (
       <View style={styles.messageRow}>
@@ -184,7 +187,18 @@ export const ConversationPage: React.FC<ConversationPageProps> = ({ route }) => 
         >
           <Card.Content>
             <View style={styles.cardContentInfo}>
-              <Text>{displayName}</Text>
+              <View style={styles.cardContentName}>
+                <Text>{displayName}</Text>
+                {nip05 ? (
+                  <MaterialCommunityIcons
+                    name='check-decagram-outline'
+                    color={theme.colors.onPrimaryContainer}
+                    style={styles.verifyIcon}
+                  />
+                ) : (
+                  <></>
+                )}
+              </View>
               <View style={styles.cardContentDate}>
                 {item.pending && (
                   <View style={styles.cardContentPending}>
@@ -310,7 +324,9 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
   },
   container: {
-    padding: 16,
+    paddingLeft: 16,
+    paddingBottom: 16,
+    paddingRight: 16,
     justifyContent: 'space-between',
     flex: 1,
   },
@@ -348,6 +364,13 @@ const styles = StyleSheet.create({
   snackbar: {
     margin: 16,
     bottom: 70,
+  },
+  verifyIcon: {
+    paddingTop: 4,
+    paddingLeft: 5,
+  },
+  cardContentName: {
+    flexDirection: 'row',
   },
 })
 

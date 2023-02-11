@@ -10,9 +10,21 @@ export interface Group extends Event {
   valid_nip05: boolean
 }
 
-const databaseToEntity: (object: any) => Group = (object = {}) => {
+export interface GroupMessage extends Event {
+  pending: boolean
+  name: string
+  picture?: string
+  valid_nip05?: boolean
+}
+
+const databaseToGroup: (object: any) => Group = (object = {}) => {
   object.tags = object.tags ? JSON.parse(object.tags) : []
   return object as Group
+}
+
+const databaseToGroupMessage: (object: any) => GroupMessage = (object = {}) => {
+  object.tags = object.tags ? JSON.parse(object.tags) : []
+  return object as GroupMessage
 }
 
 export const updateConversationRead: (
@@ -30,9 +42,7 @@ export const updateAllRead: (db: QuickSQLiteConnection) => Promise<QueryResult |
   return db.execute(userQuery, [1])
 }
 
-export const getGroups: (
-  db: QuickSQLiteConnection
-) => Promise<Group[]> = async (db) => {
+export const getGroups: (db: QuickSQLiteConnection) => Promise<Group[]> = async (db) => {
   const groupsQuery = `
     SELECT
       nostros_groups.*, nostros_users.name as user_name, nostros_users.valid_nip05
@@ -43,15 +53,15 @@ export const getGroups: (
   `
   const resultSet = await db.execute(groupsQuery)
   const items: object[] = getItems(resultSet)
-  const notes: Group[] = items.map((object) => databaseToEntity(object))
+  const notes: Group[] = items.map((object) => databaseToGroup(object))
 
   return notes
 }
 
-export const getGroup: (
-  db: QuickSQLiteConnection,
-  groupId: string
-) => Promise<Group> = async (db, groupId) => {
+export const getGroup: (db: QuickSQLiteConnection, groupId: string) => Promise<Group> = async (
+  db,
+  groupId,
+) => {
   const groupsQuery = `
     SELECT
       *
@@ -62,7 +72,65 @@ export const getGroup: (
   `
   const resultSet = await db.execute(groupsQuery, [groupId])
   const items: object[] = getItems(resultSet)
-  const group: Group = databaseToEntity(items[0])
+  const group: Group = databaseToGroup(items[0])
 
   return group
+}
+
+export const getGroupMessages: (
+  db: QuickSQLiteConnection,
+  groupId: string,
+  options: {
+    order?: 'DESC' | 'ASC'
+    limit?: number
+  },
+) => Promise<GroupMessage[]> = async (db, groupId, { order = 'DESC', limit }) => {
+  let notesQuery = `
+    SELECT
+      nostros_group_messages.*, nostros_users.name, nostros_users.picture, nostros_users.valid_nip05
+    FROM
+      nostros_group_messages
+    LEFT JOIN
+      nostros_users ON nostros_users.id = nostros_group_messages.pubkey
+    WHERE group_id = "${groupId}"
+    AND nostros_users.muted_groups < 1
+    ORDER BY created_at ${order} 
+  `
+  if (limit) {
+    notesQuery += `LIMIT ${limit}`
+  }
+
+  const resultSet = await db.execute(notesQuery)
+  const items: object[] = getItems(resultSet)
+  const messages: GroupMessage[] = items.map((object) => databaseToGroupMessage(object))
+
+  return messages
+}
+
+export const deleteGroupMessages: (
+  db: QuickSQLiteConnection,
+  pubkey: string,
+) => Promise<QueryResult> = async (db, pubkey) => {
+  const deleteQuery = `
+    DELETE FROM nostros_group_messages 
+    WHERE pubkey = ?
+  `
+
+  return db.execute(deleteQuery, [pubkey])
+}
+
+export const deleteGroup: (
+  db: QuickSQLiteConnection,
+  groupId: string,
+) => Promise<QueryResult> = async (db, groupId) => {
+  const deleteMessagesQuery = `
+    DELETE FROM nostros_group_messages 
+    WHERE group_id = ?
+  `
+  await db.execute(deleteMessagesQuery, [groupId])
+  const deleteQuery = `
+    DELETE FROM nostros_groups
+    WHERE id = ?
+  `
+  return db.execute(deleteQuery, [groupId])
 }

@@ -121,8 +121,8 @@ export const HomeNavigator: React.FC = () => {
                   {['Landing'].includes(route.name) && historyKey?.includes('messages-') && (
                     <Appbar.Action icon='check-all' isLeading onPress={() => onPressCheckAll()} />
                   )}
-                  {['GroupPage'].includes(route.name) && (
-                    <GroupHeaderIcon groupId={route.params?.groupId}/>
+                  {['Group'].includes(route.name) && (
+                    <GroupHeaderIcon groupId={route.params?.groupId} />
                   )}
                 </Appbar.Header>
               )
@@ -137,7 +137,7 @@ export const HomeNavigator: React.FC = () => {
           <Stack.Screen name='Repost' component={SendPage} />
           <Stack.Screen name='Reply' component={SendPage} />
           <Stack.Screen name='Conversation' component={ConversationPage} />
-          <Stack.Screen name='GroupPage' component={GroupPage} />
+          <Stack.Screen name='Group' component={GroupPage} />
         </Stack.Group>
         <Stack.Group>
           <Stack.Screen name='Contacts' component={ContactsPage} />

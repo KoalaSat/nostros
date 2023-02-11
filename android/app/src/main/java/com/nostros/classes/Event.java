@@ -4,7 +4,6 @@ import android.annotation.SuppressLint;
 import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.util.Log;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -17,7 +16,6 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.List;
 import java.util.UUID;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -66,6 +64,14 @@ public class Event {
                     saveReaction(database);
                 } else if (kind.equals("40")) {
                     saveGroup(database);
+                } else if (kind.equals("41")) {
+                    updateGroup(database);
+                } else if (kind.equals("42")) {
+                    saveGroupMessage(database);
+                } else if (kind.equals("43")) {
+                    hideGroupMessage(database);
+                } else if (kind.equals("44")) {
+                    blockUser(database);
                 }
             } catch (JSONException e) {
                 e.printStackTrace();
@@ -203,6 +209,61 @@ public class Event {
         database.replace("nostros_notes", null, values);
     }
 
+    protected void updateGroup(SQLiteDatabase database) throws JSONException {
+        JSONObject groupContent = new JSONObject(content);
+        JSONArray eTags = filterTags("e");
+        String groupId = eTags.getJSONArray(0).getString(1);
+        String query = "SELECT created_at, pubkey FROM nostros_groups WHERE id = ?";
+        @SuppressLint("Recycle") Cursor cursor = database.rawQuery(query, new String[] {groupId});
+
+        if (cursor.moveToFirst() && created_at > cursor.getInt(0) && pubkey.equals(cursor.getString(1))) {
+            ContentValues values = new ContentValues();
+            values.put("name", groupContent.optString("name"));
+            values.put("about", groupContent.optString("about"));
+            values.put("picture", groupContent.optString("picture"));
+
+            String whereClause = "id = ?";
+            String[] whereArgs = new String[] {
+                    groupId
+            };
+            database.update("nostros_groups", values, whereClause, whereArgs);
+        }
+    }
+
+    protected void blockUser(SQLiteDatabase database) throws JSONException {
+        JSONArray pTags = filterTags("p");
+        String groupId = pTags.getJSONArray(0).getString(1);
+        String query = "SELECT id FROM nostros_users WHERE id = ?";
+        @SuppressLint("Recycle") Cursor cursor = database.rawQuery(query, new String[] {groupId});
+
+        if (cursor.getCount() == 0) {
+            ContentValues values = new ContentValues();
+            values.put("muted_groups", 1);
+            String whereClause = "id = ?";
+            String[] whereArgs = new String[] {
+                    groupId
+            };
+            database.update("nostros_users", values, whereClause, whereArgs);
+        }
+    }
+
+    protected void hideGroupMessage(SQLiteDatabase database) throws JSONException {
+        JSONArray eTags = filterTags("e");
+        String groupId = eTags.getJSONArray(0).getString(1);
+        String query = "SELECT id FROM nostros_group_messages WHERE id = ?";
+        @SuppressLint("Recycle") Cursor cursor = database.rawQuery(query, new String[] {groupId});
+
+        if (cursor.getCount() == 0) {
+            ContentValues values = new ContentValues();
+            values.put("hidden", 1);
+            String whereClause = "id = ?";
+            String[] whereArgs = new String[] {
+                    groupId
+            };
+            database.update("nostros_group_messages", values, whereClause, whereArgs);
+        }
+    }
+
     protected void saveGroup(SQLiteDatabase database) throws JSONException {
         JSONObject groupContent = new JSONObject(content);
 
@@ -217,7 +278,24 @@ public class Event {
         values.put("name", groupContent.optString("name"));
         values.put("about", groupContent.optString("about"));
         values.put("picture", groupContent.optString("picture"));
-        database.replace("nostros_groups", null, values);
+        database.insert("nostros_groups", null, values);
+    }
+
+    protected void saveGroupMessage(SQLiteDatabase database) throws JSONException {
+        JSONArray eTags = filterTags("e");
+        String groupId = eTags.getJSONArray(0).getString(1);
+
+        ContentValues values = new ContentValues();
+        values.put("id", id);
+        values.put("content", content);
+        values.put("created_at", created_at);
+        values.put("kind", kind);
+        values.put("pubkey", pubkey);
+        values.put("sig", sig);
+        values.put("tags", tags.toString());
+        values.put("group_id", groupId);
+
+        database.insert("nostros_group_messages", null, values);
     }
 
     protected void saveDirectMessage(SQLiteDatabase database) throws JSONException {
@@ -230,7 +308,7 @@ public class Event {
 
         ContentValues values = new ContentValues();
         values.put("id", id);
-        values.put("content", content.replace("'", "''"));
+        values.put("content", content);
         values.put("created_at", created_at);
         values.put("kind", kind);
         values.put("pubkey", pubkey);
@@ -256,7 +334,7 @@ public class Event {
 
         ContentValues values = new ContentValues();
         values.put("id", id);
-        values.put("content", content.replace("'", "''"));
+        values.put("content", content);
         values.put("created_at", created_at);
         values.put("kind", kind);
         values.put("pubkey", pubkey);

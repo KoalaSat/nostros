@@ -151,7 +151,7 @@ export const RelaysPage: React.FC = () => {
     return (
       <List.Item
         key={index}
-        title={item.url}
+        title={item.url.replace('wss://', '').replace('ws://', '')}
         right={() => (
           <>
             <Switch
@@ -189,7 +189,7 @@ export const RelaysPage: React.FC = () => {
     return (
       <List.Item
         key={index}
-        title={item}
+        title={item.replace('wss://', '').replace('ws://', '')}
         left={() => (
           <MaterialCommunityIcons
             style={styles.relayColor}
