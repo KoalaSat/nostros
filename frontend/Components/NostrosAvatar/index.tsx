@@ -48,11 +48,12 @@ export const NostrosAvatar: React.FC<NostrosAvatarProps> = ({
           <PaperAvatar.Text size={size} label={displayName.substring(0, 2).toUpperCase()} />
         )}
       </View>
-      {hasLud06 ? (
+      {hasLud06 && (
         <PaperAvatar.Icon
           size={lud06IconSize}
           icon='lightning-bolt'
           style={[
+            styles.iconLightning,
             {
               right: -(size - lud06IconSize),
               backgroundColor: theme.colors.secondaryContainer,
@@ -61,8 +62,6 @@ export const NostrosAvatar: React.FC<NostrosAvatarProps> = ({
           ]}
           color='#F5D112'
         />
-      ) : (
-        <View style={styles.iconLightning} />
       )}
     </View>
   )
@@ -70,7 +69,7 @@ export const NostrosAvatar: React.FC<NostrosAvatarProps> = ({
 
 const styles = StyleSheet.create({
   iconLightning: {
-    marginBottom: 16,
+    marginBottom: -16,
   },
 })
 

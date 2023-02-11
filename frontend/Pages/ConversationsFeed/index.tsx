@@ -349,9 +349,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   contactRow: {
-    paddingLeft: 16,
-    paddingRight: 16,
-    paddingTop: 16,
+    padding: 16,
     flexDirection: 'row',
     justifyContent: 'space-between',
     width: '100%',

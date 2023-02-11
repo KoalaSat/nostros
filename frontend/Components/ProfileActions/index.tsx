@@ -25,9 +25,14 @@ import ProfileShare from '../ProfileShare'
 interface ProfileActionsProps {
   user: User
   setUser: (user: User) => void
+  onActionDone?: () => void
 }
 
-export const ProfileActions: React.FC<ProfileActionsProps> = ({ user, setUser }) => {
+export const ProfileActions: React.FC<ProfileActionsProps> = ({
+  user,
+  setUser,
+  onActionDone = () => {},
+}) => {
   const theme = useTheme()
   const { database } = React.useContext(AppContext)
   const { publicKey } = React.useContext(UserContext)
@@ -174,6 +179,7 @@ export const ProfileActions: React.FC<ProfileActionsProps> = ({ user, setUser })
             icon='message-plus-outline'
             size={28}
             onPress={() => {
+              onActionDone()
               navigate('Conversation', {
                 pubKey: user.id,
                 title: username(user),

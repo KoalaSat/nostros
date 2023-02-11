@@ -24,20 +24,19 @@ import NostrosAvatar from '../../Components/NostrosAvatar'
 import { FlashList, ListRenderItem } from '@shopify/flash-list'
 import UploadImage from '../../Components/UploadImage'
 
-interface ConversationPageProps {
-  route: { params: { pubKey: string; conversationId: string } }
+interface GroupPageProps {
+  route: { params: { groupId: string } }
 }
 
-export const ConversationPage: React.FC<ConversationPageProps> = ({ route }) => {
+export const GroupPage: React.FC<GroupPageProps> = ({ route }) => {
   const initialPageSize = 10
   const theme = useTheme()
   const scrollViewRef = useRef<ScrollView>()
   const { database, setRefreshBottomBarAt, setDisplayUserDrawer } = useContext(AppContext)
   const { relayPool, lastEventId } = useContext(RelayPoolContext)
   const { publicKey, privateKey, name, picture } = useContext(UserContext)
-  const otherPubKey = useMemo(() => route.params.pubKey, [])
+  const otherPubKey = useMemo(() => route.params.groupId, [])
   const [pageSize, setPageSize] = useState<number>(initialPageSize)
-  const [decryptedMessages, setDecryptedMessages] = useState<Record<string, string>>({})
   const [directMessages, setDirectMessages] = useState<DirectMessage[]>([])
   const [sendingMessages, setSendingMessages] = useState<DirectMessage[]>([])
   const [otherUser, setOtherUser] = useState<User>({ id: otherPubKey })
@@ -53,7 +52,7 @@ export const ConversationPage: React.FC<ConversationPageProps> = ({ route }) => 
       loadDirectMessages(true)
       subscribeDirectMessages()
 
-      return () => relayPool?.unsubscribe([`conversation${route.params.pubKey}`])
+      return () => relayPool?.unsubscribe([`conversation${route.params.groupId}`])
     }, []),
   )
 
@@ -75,22 +74,16 @@ export const ConversationPage: React.FC<ConversationPageProps> = ({ route }) => 
       }).then((results) => {
         if (results.length > 0) {
           setSendingMessages([])
-          setDirectMessages(
-            results.map((message) => {
-              if (message?.id) {
-                if (decryptedMessages[message.id]) {
-                  message.content = decryptedMessages[message.id]
-                } else {
-                  message.content = decrypt(privateKey, otherPubKey, message.content ?? '')
-                  setDecryptedMessages((prev) => {
-                    if (message?.id) prev[message.id] = message.content
-                    return prev
-                  })
-                }
+          setDirectMessages((prev) => {
+            return results.map((message, index) => {
+              if (prev.length > index) {
+                return prev[index]
+              } else {
+                message.content = decrypt(privateKey, otherPubKey, message.content ?? '')
+                return message
               }
-              return message
-            }),
-          )
+            })
+          })
           if (subscribe) subscribeDirectMessages(results[0].created_at)
         } else if (subscribe) {
           subscribeDirectMessages()
@@ -101,7 +94,7 @@ export const ConversationPage: React.FC<ConversationPageProps> = ({ route }) => 
 
   const subscribeDirectMessages: (lastCreateAt?: number) => void = async (lastCreateAt) => {
     if (publicKey && otherPubKey) {
-      relayPool?.subscribe(`conversation${route.params.pubKey}`, [
+      relayPool?.subscribe(`conversation${route.params.groupId}`, [
         {
           kinds: [Kind.EncryptedDirectMessage],
           authors: [publicKey],
@@ -351,4 +344,4 @@ const styles = StyleSheet.create({
   },
 })
 
-export default ConversationPage
+export default GroupPage

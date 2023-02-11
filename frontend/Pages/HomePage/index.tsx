@@ -1,6 +1,5 @@
 import React, { useContext, useEffect, useState } from 'react'
 import { Badge, Button, Text, TouchableRipple, useTheme } from 'react-native-paper'
-import ContactsFeed from '../ContactsFeed'
 import ConversationsFeed from '../ConversationsFeed'
 import HomeFeed from '../HomeFeed'
 import NotificationsFeed from '../NotificationsFeed'
@@ -20,6 +19,7 @@ import {
   getDirectMessagesCount,
   getGroupedDirectMessages,
 } from '../../Functions/DatabaseFunctions/DirectMessages'
+import GroupsFeed from '../GroupsFeed'
 
 export const HomePage: React.FC = () => {
   const theme = useTheme()
@@ -143,38 +143,40 @@ export const HomePage: React.FC = () => {
           }}
         />
         {privateKey && (
-          <Tab.Screen
-            name='messages'
-            component={ConversationsFeed}
-            options={{
-              tabBarIcon: ({ focused, size }) => (
-                <>
+          <>
+            <Tab.Screen
+              name='groups'
+              component={GroupsFeed}
+              options={{
+                tabBarIcon: ({ focused, size }) => (
                   <MaterialCommunityIcons
-                    name={focused ? 'email' : 'email-outline'}
+                    name={focused ? 'account-group' : 'account-group-outline'}
                     size={size}
                     color={theme.colors.onPrimaryContainer}
                   />
-                  {newdirectMessages > 0 && (
-                    <Badge style={styles.notificationBadge}>{newdirectMessages}</Badge>
-                  )}
-                </>
-              ),
-            }}
-          />
+                ),
+              }}
+            />
+            <Tab.Screen
+              name='messages'
+              component={ConversationsFeed}
+              options={{
+                tabBarIcon: ({ focused, size }) => (
+                  <>
+                    <MaterialCommunityIcons
+                      name={focused ? 'email' : 'email-outline'}
+                      size={size}
+                      color={theme.colors.onPrimaryContainer}
+                    />
+                    {newdirectMessages > 0 && (
+                      <Badge style={styles.notificationBadge}>{newdirectMessages}</Badge>
+                    )}
+                  </>
+                ),
+              }}
+            />
+          </>
         )}
-        <Tab.Screen
-          name='contacts'
-          component={ContactsFeed}
-          options={{
-            tabBarIcon: ({ focused, size }) => (
-              <MaterialCommunityIcons
-                name={focused ? 'account-group' : 'account-group-outline'}
-                size={size}
-                color={theme.colors.onPrimaryContainer}
-              />
-            ),
-          }}
-        />
         <Tab.Screen
           name='notifications'
           component={NotificationsFeed}
