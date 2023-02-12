@@ -63,7 +63,6 @@ export const ProfileCard: React.FC<ProfileCardProps> = ({ bottomSheetRef, showIm
                 nip05={user?.nip05}
                 lud06={user?.lnurl}
                 picture={showImages ? user?.picture : undefined}
-                avatarSize={54}
               />
             </View>
           </View>
@@ -149,7 +148,6 @@ const styles = StyleSheet.create({
   },
   cardUserMain: {
     flexDirection: 'row',
-    alignItems: 'center',
   },
   actionButton: {
     justifyContent: 'center',

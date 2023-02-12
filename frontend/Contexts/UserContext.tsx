@@ -8,6 +8,7 @@ import { dropTables } from '../Functions/DatabaseFunctions'
 import { navigate } from '../lib/Navigation'
 import { nsecEncode } from 'nostr-tools/nip19'
 import { getNpub } from '../lib/nostr/Nip19'
+import { addGroup, getGroups } from '../Functions/DatabaseFunctions/Groups'
 
 export interface UserContextProps {
   userState: 'loading' | 'access' | 'ready'
@@ -123,7 +124,12 @@ export const UserContextProvider = ({ children }: UserContextProviderProps): JSX
   }, [publicKey])
 
   useEffect(() => {
-    if (userState === 'ready' && publicKey && relayPoolReady) {
+    if (userState === 'ready' && publicKey && relayPoolReady && database) {
+      getGroups(database).then((results) => {
+        if (results.length === 0) {
+          addGroup(database, '8d37308d97356600f67a28039d598a52b8c4fa1b73ef6f2e7b7d40197c3afa56')
+        }
+      })
       navigate('Feed')
     }
   }, [userState, publicKey, relayPoolReady])

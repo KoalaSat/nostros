@@ -35,42 +35,62 @@ export const ProfileData: React.FC<ProfileCardProps> = ({
       timestamp ? formatDistance(fromUnixTime(timestamp), new Date(), { addSuffix: true }) : null,
     [timestamp],
   )
-
   return (
     <View style={styles.container}>
-      <NostrosAvatar name={username} pubKey={nPub} src={picture} lud06={lud06} size={avatarSize} />
-      <View style={[styles.contactData, { height: avatarSize }]}>
-        <View style={styles.contactName}>
-          <Text variant='titleSmall' numberOfLines={1}>
-            {usernamePubKey(username, nPub)}
-          </Text>
-          {validNip05 ? (
-            <MaterialCommunityIcons
-              name='check-decagram-outline'
-              color={theme.colors.onPrimaryContainer}
-              style={styles.verifyIcon}
-            />
-          ) : (
-            <></>
-          )}
+      <View style={styles.left}>
+        <NostrosAvatar
+          name={username}
+          pubKey={nPub}
+          src={picture}
+          lud06={lud06}
+          size={avatarSize}
+        />
+        <View style={[styles.contactData, { height: avatarSize }]}>
+          <View style={styles.contactName}>
+            <Text variant='titleSmall' numberOfLines={1}>
+              {usernamePubKey(username, nPub)}
+            </Text>
+            {validNip05 ? (
+              <MaterialCommunityIcons
+                name='check-decagram-outline'
+                color={theme.colors.onPrimaryContainer}
+                style={styles.verifyIcon}
+              />
+            ) : (
+              <></>
+            )}
+          </View>
+          <Text numberOfLines={1}>{validNip05 ? getNip05Domain(nip05) : ''}</Text>
         </View>
-        <Text numberOfLines={1}>{validNip05 ? getNip05Domain(nip05) : ''}</Text>
-        <Text numberOfLines={1}>{date ?? ''}</Text>
+      </View>
+      <View style={styles.right}>
+        <View style={styles.contactData}>
+          <Text numberOfLines={1}>{date ?? ''}</Text>
+        </View>
       </View>
     </View>
   )
 }
 
 const styles = StyleSheet.create({
+  right: {
+    flexDirection: 'row',
+    width: '50%',
+    justifyContent: 'flex-end',
+  },
+  left: {
+    flexDirection: 'row',
+    width: '50%',
+  },
   container: {
     flexDirection: 'row',
+    justifyContent: 'space-between',
   },
   contactName: {
     flexDirection: 'row',
   },
   contactData: {
     flexDirection: 'column',
-    justifyContent: 'center',
     marginLeft: 12,
   },
   verifyIcon: {

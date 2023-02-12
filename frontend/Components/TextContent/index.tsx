@@ -152,7 +152,43 @@ export const TextContent: React.FC<TextContentProps> = ({
     return matchingString
   }
 
-  const generatePreview: () => JSX.Element = () => {
+  const parsedText = React.useMemo(
+    () => (
+      <ParsedText
+        style={[styles.text, { color: theme.colors.onSurfaceVariant }]}
+        parse={[
+          { type: 'url', style: styles.url, onPress: handleUrlPress, renderText: renderUrlText },
+          { type: 'email', style: styles.email, onPress: handleUrlPress },
+          event
+            ? {
+                pattern: /#\[(\d+)\]/,
+                style: styles.mention,
+                onPress: handleMentionPress,
+                renderText: renderMentionText,
+              }
+            : {
+                pattern: /#\[(\d+)\]/,
+              },
+          { pattern: /#(\w+)/, style: styles.hashTag },
+          { pattern: /(lnbc)\S*/, style: styles.nip19, renderText: renderLnurl },
+          { pattern: /(nevent1)\S*/, style: styles.nip19, onPress: handleNip05NotePress },
+          {
+            pattern: /(npub1|nprofile1)\S*/,
+            style: styles.nip19,
+            onPress: handleNip05ProfilePress,
+          },
+        ]}
+        childrenProps={{ allowFontScaling: false }}
+        onLongPress={() => Clipboard.setString(text)}
+        numberOfLines={numberOfLines}
+      >
+        {text}
+      </ParsedText>
+    ),
+    [loadedUsers],
+  )
+
+  const preview = React.useMemo(() => {
     if (!showPreview) return <></>
 
     const getRequireCover: () => string | undefined = () => {
@@ -233,41 +269,12 @@ export const TextContent: React.FC<TextContentProps> = ({
         {invoice && <LnPreview invoice={invoice} setInvoice={setInvoice} />}
       </View>
     )
-  }
+  }, [invoice, url, linkType])
 
   return (
     <View style={styles.container}>
-      <ParsedText
-        style={[styles.text, { color: theme.colors.onSurfaceVariant }]}
-        parse={[
-          { type: 'url', style: styles.url, onPress: handleUrlPress, renderText: renderUrlText },
-          { type: 'email', style: styles.email, onPress: handleUrlPress },
-          event
-            ? {
-                pattern: /#\[(\d+)\]/,
-                style: styles.mention,
-                onPress: handleMentionPress,
-                renderText: renderMentionText,
-              }
-            : {
-                pattern: /#\[(\d+)\]/,
-              },
-          { pattern: /#(\w+)/, style: styles.hashTag },
-          { pattern: /(lnbc)\S*/, style: styles.nip19, renderText: renderLnurl },
-          { pattern: /(nevent1)\S*/, style: styles.nip19, onPress: handleNip05NotePress },
-          {
-            pattern: /(npub1|nprofile1)\S*/,
-            style: styles.nip19,
-            onPress: handleNip05ProfilePress,
-          },
-        ]}
-        childrenProps={{ allowFontScaling: false }}
-        onLongPress={() => Clipboard.setString(text)}
-        numberOfLines={numberOfLines}
-      >
-        {text}
-      </ParsedText>
-      {generatePreview()}
+      {parsedText}
+      {preview}
     </View>
   )
 }

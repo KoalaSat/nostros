@@ -27,14 +27,13 @@ import {
   Text,
   useTheme,
   Avatar,
-  IconButton,
   TouchableRipple,
   Chip,
   Surface,
 } from 'react-native-paper'
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'
 import { REGEX_SOCKET_LINK } from '../../Constants/Relay'
-import { push } from '../../lib/Navigation'
+import { navigate, push } from '../../lib/Navigation'
 import { Kind } from 'nostr-tools'
 import ProfileData from '../ProfileData'
 import { relayToColor } from '../../Functions/NativeFunctions'
@@ -141,7 +140,7 @@ export const NoteCard: React.FC<NoteCardProps> = ({
   const textNote: () => JSX.Element = () => {
     return (
       <>
-        {note?.reply_event_id && showAnswerData && (
+        {note?.reply_event_id && !note.repost_id && showAnswerData && (
           <TouchableRipple
             onPress={() =>
               note.kind !== Kind.RecommendRelay && push('Note', { noteId: note.reply_event_id })
@@ -150,15 +149,11 @@ export const NoteCard: React.FC<NoteCardProps> = ({
             <Card.Content style={[styles.answerContent, { borderColor: theme.colors.onSecondary }]}>
               <View style={styles.answerData}>
                 <MaterialCommunityIcons
-                  name={note.repost_id ? 'cached' : 'arrow-left-top'}
+                  name='arrow-left-top'
                   size={16}
                   color={theme.colors.onPrimaryContainer}
                 />
-                <Text>
-                  {note.repost_id
-                    ? t('noteCard.reposting', { pubkey: formatPubKey(note.pubkey) })
-                    : t('noteCard.answering', { pubkey: formatPubKey(note.pubkey) })}
-                </Text>
+                <Text>{t('noteCard.answering', { pubkey: formatPubKey(note.pubkey) })}</Text>
               </View>
               <View>
                 <Text style={styles.link}>{t('noteCard.seeParent')}</Text>
@@ -179,13 +174,42 @@ export const NoteCard: React.FC<NoteCardProps> = ({
               numberOfLines={numberOfLines}
             />
           )}
-          {showRepostPreview && repost && (
-            <NoteCard
-              note={repost}
-              showAction={false}
-              showPreview={showPreview}
-              showRepostPreview={false}
-            />
+          {note?.repost_id && (
+            <>
+              {repost && showRepostPreview ? (
+                <NoteCard
+                  note={repost}
+                  showActionCount={false}
+                  showPreview={showPreview}
+                  showRepostPreview={false}
+                />
+              ) : (
+                <TouchableRipple
+                  style={{
+                    marginTop: note.content.length > 5 ? 16 : -16,
+                  }}
+                  onPress={() => navigate('Note', { noteId: note.repost_id })}
+                >
+                  <Chip
+                    icon={() => (
+                      <MaterialCommunityIcons
+                        name='cached'
+                        size={16}
+                        color={theme.colors.onTertiaryContainer}
+                      />
+                    )}
+                    style={{
+                      backgroundColor: theme.colors.secondaryContainer,
+                      color: theme.colors.onTertiaryContainer,
+                    }}
+                  >
+                    <Text style={{ color: theme.colors.onTertiaryContainer }}>
+                      {t('noteCard.reposted')}
+                    </Text>
+                  </Chip>
+                </TouchableRipple>
+              )}
+            </>
           )}
         </Card.Content>
       </>
@@ -351,18 +375,8 @@ export const NoteCard: React.FC<NoteCardProps> = ({
             lud06={note?.lnurl}
             picture={showAvatarImage ? note?.picture : undefined}
             timestamp={note?.created_at}
-            avatarSize={56}
           />
         </TouchableRipple>
-        {showAction && (
-          <View style={styles.topAction}>
-            <IconButton
-              icon='dots-vertical'
-              size={24}
-              onPress={() => setDisplayUserDrawer(note.pubkey)}
-            />
-          </View>
-        )}
       </Card.Content>
       {getNoteContent()}
       {showAction && (
@@ -471,9 +485,8 @@ const styles = StyleSheet.create({
   },
   title: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignContent: 'center',
     paddingBottom: 16,
+    flex: 1,
   },
   userBlockedWrapper: {
     flexDirection: 'row',
