@@ -58,6 +58,16 @@ export const getGroups: (db: QuickSQLiteConnection) => Promise<Group[]> = async 
   return notes
 }
 
+export const addGroup: (
+  db: QuickSQLiteConnection,
+  groupId: string,
+) => Promise<QueryResult> = async (db, groupId) => {
+  const query = `
+    INSERT OR IGNORE INTO nostros_groups (id) VALUES (?)
+  `
+  return db.execute(query, [groupId])
+}
+
 export const getGroup: (db: QuickSQLiteConnection, groupId: string) => Promise<Group> = async (
   db,
   groupId,

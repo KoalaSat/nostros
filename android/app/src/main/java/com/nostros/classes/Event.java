@@ -209,27 +209,6 @@ public class Event {
         database.replace("nostros_notes", null, values);
     }
 
-    protected void updateGroup(SQLiteDatabase database) throws JSONException {
-        JSONObject groupContent = new JSONObject(content);
-        JSONArray eTags = filterTags("e");
-        String groupId = eTags.getJSONArray(0).getString(1);
-        String query = "SELECT created_at, pubkey FROM nostros_groups WHERE id = ?";
-        @SuppressLint("Recycle") Cursor cursor = database.rawQuery(query, new String[] {groupId});
-
-        if (cursor.moveToFirst() && created_at > cursor.getInt(0) && pubkey.equals(cursor.getString(1))) {
-            ContentValues values = new ContentValues();
-            values.put("name", groupContent.optString("name"));
-            values.put("about", groupContent.optString("about"));
-            values.put("picture", groupContent.optString("picture"));
-
-            String whereClause = "id = ?";
-            String[] whereArgs = new String[] {
-                    groupId
-            };
-            database.update("nostros_groups", values, whereClause, whereArgs);
-        }
-    }
-
     protected void blockUser(SQLiteDatabase database) throws JSONException {
         JSONArray pTags = filterTags("p");
         String groupId = pTags.getJSONArray(0).getString(1);
@@ -266,19 +245,60 @@ public class Event {
 
     protected void saveGroup(SQLiteDatabase database) throws JSONException {
         JSONObject groupContent = new JSONObject(content);
+        String query = "SELECT created_at, pubkey FROM nostros_groups WHERE id = ?";
+        @SuppressLint("Recycle") Cursor cursor = database.rawQuery(query, new String[] {id});
 
         ContentValues values = new ContentValues();
-        values.put("id", id);
         values.put("content", content);
         values.put("created_at", created_at);
         values.put("kind", kind);
         values.put("pubkey", pubkey);
         values.put("sig", sig);
         values.put("tags", tags.toString());
+
+        if (cursor.getCount() == 0) {
+            values.put("id", id);
+            values.put("name", groupContent.optString("name"));
+            values.put("about", groupContent.optString("about"));
+            values.put("picture", groupContent.optString("picture"));
+            database.insert("nostros_groups", null, values);
+        } else if (cursor.moveToFirst() && cursor.getString(0).isEmpty()) {
+            String whereClause = "id = ?";
+            String[] whereArgs = new String[] {
+                    id
+            };
+            database.update("nostros_groups", values, whereClause, whereArgs);
+        }
+    }
+
+    protected void updateGroup(SQLiteDatabase database) throws JSONException {
+        JSONObject groupContent = new JSONObject(content);
+        JSONArray eTags = filterTags("e");
+        String groupId = eTags.getJSONArray(0).getString(1);
+        String query = "SELECT created_at, pubkey FROM nostros_groups WHERE id = ?";
+        @SuppressLint("Recycle") Cursor cursor = database.rawQuery(query, new String[] {groupId});
+
+        ContentValues values = new ContentValues();
         values.put("name", groupContent.optString("name"));
         values.put("about", groupContent.optString("about"));
         values.put("picture", groupContent.optString("picture"));
-        database.insert("nostros_groups", null, values);
+
+        if (cursor.getCount() == 0) {
+            values.put("id", groupId);
+            values.put("content", content);
+            values.put("created_at", created_at);
+            values.put("kind", kind);
+            values.put("pubkey", pubkey);
+            values.put("sig", sig);
+            values.put("tags", tags.toString());
+            database.insert("nostros_groups", null, values);
+        } else if (cursor.moveToFirst() && created_at > cursor.getInt(0) && pubkey.equals(cursor.getString(1))) {
+            String whereClause = "id = ?";
+            String[] whereArgs = new String[] {
+                    groupId
+            };
+            database.update("nostros_groups", values, whereClause, whereArgs);
+        }
     }
 
     protected void saveGroupMessage(SQLiteDatabase database) throws JSONException {

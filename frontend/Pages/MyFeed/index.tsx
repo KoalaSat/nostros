@@ -132,13 +132,14 @@ export const MyFeed: React.FC<MyFeedProps> = ({ navigation }) => {
               since: lastReply?.created_at ?? 0,
             },
           ])
-
-          const repostIds = notes.filter((note) => note.repost_id).map((note) => note.id ?? '')
+          const repostIds = notes
+            .filter((note) => note.repost_id)
+            .map((note) => note.repost_id ?? '')
           if (repostIds.length > 0) {
             relayPool?.subscribe('homepage-contacts-repost', [
               {
                 kinds: [Kind.Text],
-                '#e': repostIds,
+                ids: repostIds,
               },
             ])
           }

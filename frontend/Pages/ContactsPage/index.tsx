@@ -198,7 +198,6 @@ export const ContactsPage: React.FC = () => {
               nip05={item?.nip05}
               lud06={item?.lnurl}
               picture={item?.picture}
-              avatarSize={40}
             />
           </View>
           <View>
@@ -228,7 +227,6 @@ export const ContactsPage: React.FC = () => {
               nip05={item?.nip05}
               lud06={item?.lnurl}
               picture={item?.picture}
-              avatarSize={40}
             />
           </View>
           <View>

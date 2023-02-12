@@ -13,6 +13,7 @@ import { navigate } from '../../lib/Navigation'
 import { useFocusEffect } from '@react-navigation/native'
 import { SkeletonNote } from '../../Components/SkeletonNote/SkeletonNote'
 import { ScrollView } from 'react-native-gesture-handler'
+import { RelayFilters } from '../../lib/nostr/RelayPool/intex'
 
 interface NotePageProps {
   route: { params: { noteId: string } }
@@ -54,12 +55,19 @@ export const NotePage: React.FC<NotePageProps> = ({ route }) => {
 
         const notes = await getNotes(database, { filters: { reply_event_id: route.params.noteId } })
         const rootReplies = getDirectReplies(event, notes)
-        relayPool?.subscribe(`meta-notepage${route.params.noteId}`, [
+        const filters: RelayFilters[] = [
           {
             kinds: [Kind.Metadata],
             authors: [...rootReplies.map((note) => note.pubkey), event.pubkey],
           },
-        ])
+        ]
+        if (event.repost_id) {
+          filters.push({
+            kinds: [Kind.Text],
+            ids: [event.repost_id],
+          })
+        }
+        relayPool?.subscribe(`meta-notepage${route.params.noteId.substring(0, 8)}`, filters)
         setReplies(rootReplies as Note[])
       }
       setRefreshing(false)
@@ -74,13 +82,13 @@ export const NotePage: React.FC<NotePageProps> = ({ route }) => {
 
   const subscribeNotes: (past?: boolean) => Promise<void> = async (past) => {
     if (database && route.params.noteId) {
-      relayPool?.subscribe(`notepage${route.params.noteId}`, [
+      relayPool?.subscribe(`notepage${route.params.noteId.substring(0, 8)}`, [
         {
           kinds: [Kind.Text],
           ids: [route.params.noteId],
         },
       ])
-      relayPool?.subscribe(`notepage-replies-${route.params.noteId}`, [
+      relayPool?.subscribe(`notepage-replies-${route.params.noteId.substring(0, 8)}`, [
         {
           kinds: [Kind.Reaction, Kind.Text, Kind.RecommendRelay],
           '#e': [route.params.noteId],
