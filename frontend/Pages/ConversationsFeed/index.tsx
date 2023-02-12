@@ -139,7 +139,6 @@ export const ConversationsFeed: React.FC = () => {
             nip05={user?.nip05}
             lud06={user?.lnurl}
             picture={user?.picture}
-            avatarSize={40}
           />
           <View style={styles.contactInfo}>
             <View style={styles.contactDate}>
@@ -238,7 +237,6 @@ export const ConversationsFeed: React.FC = () => {
           nip05={item?.nip05}
           lud06={item?.lnurl}
           picture={item?.picture}
-          avatarSize={40}
         />
       </View>
     </TouchableRipple>

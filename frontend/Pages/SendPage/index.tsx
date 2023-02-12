@@ -139,7 +139,6 @@ export const SendPage: React.FC<SendPageProps> = ({ route }) => {
           nip05={item?.nip05}
           lud06={item?.lnurl}
           picture={item?.picture}
-          avatarSize={40}
         />
         <View style={styles.contactFollow}>
           <Text>{item.contact ? t('sendPage.isContact') : t('sendPage.isNotContact')}</Text>

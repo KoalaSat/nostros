@@ -82,6 +82,10 @@ export const RelayPoolContextProvider = ({
     }
   }
 
+  const addNostrosGroup: () => Promise<void> = async () => {
+    addGroup(database, '')
+  }
+
   const loadRelayPool: () => void = async () => {
     if (database && publicKey) {
       const initRelayPool = new RelayPool(privateKey)
@@ -159,6 +163,7 @@ export const RelayPoolContextProvider = ({
       getActiveRelays(database).then((results) => {
         if (results.length < 1) {
           createRandomRelays()
+          addNostrosGroup()
         }
         loadRelays().then(() => setRelayPoolReady(true))
       })
