@@ -102,8 +102,10 @@ export const TextContent: React.FC<TextContentProps> = ({
 
   const renderLnurl: (lnurl: string | undefined) => string = (lnurl) => {
     if (!lnUrl && lnurl) {
-      setDecodedLnUrl(decode(lnurl))
-      setLnUrl(lnurl)
+      try {
+        setDecodedLnUrl(decode(lnurl))
+        setLnUrl(lnurl)
+      } catch {}
     }
     return ''
   }
@@ -170,10 +172,10 @@ export const TextContent: React.FC<TextContentProps> = ({
                 pattern: /#\[(\d+)\]/,
               },
           { pattern: /#(\w+)/, style: styles.hashTag },
-          { pattern: /(lnbc)\S*/, style: styles.nip19, renderText: renderLnurl },
-          { pattern: /(nevent1)\S*/, style: styles.nip19, onPress: handleNip05NotePress },
+          { pattern: /(lnbc)\S+/, style: styles.nip19, renderText: renderLnurl },
+          { pattern: /(nevent1)\S+/, style: styles.nip19, onPress: handleNip05NotePress },
           {
-            pattern: /(npub1|nprofile1)\S*/,
+            pattern: /(npub1|nprofile1)\S+/,
             style: styles.nip19,
             onPress: handleNip05ProfilePress,
           },

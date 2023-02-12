@@ -15,6 +15,7 @@ What is Nostr: https://www.nostr.how
 Local setup: https://github.com/KoalaSat/nostros/blob/main/SETUP.md
 
 Nostros chat
+
 ```
 8d37308d97356600f67a28039d598a52b8c4fa1b73ef6f2e7b7d40197c3afa56
 ```
