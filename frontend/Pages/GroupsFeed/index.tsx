@@ -92,6 +92,12 @@ export const GroupsFeed: React.FC = () => {
     }
   }
 
+  const pasteGroupId: () => void = () => {
+    Clipboard.getString().then((value) => {
+      setSearchGroup(value ?? '')
+    })
+  }
+
   const addGroup: () => void = () => {
     if (!searchGroup) return
     if (validNip21(searchGroup)) {
@@ -329,6 +335,13 @@ export const GroupsFeed: React.FC = () => {
             label={t('groupsFeed.groupId') ?? ''}
             onChangeText={setSearchGroup}
             value={searchGroup}
+            right={
+              <TextInput.Icon
+                icon='content-paste'
+                onPress={pasteGroupId}
+                forceTextInputFocus={false}
+              />
+            }
           />
           <Button mode='contained' disabled={!searchGroup} onPress={addGroup}>
             {t('groupsFeed.add')}
