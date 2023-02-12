@@ -8,11 +8,16 @@
 
 ![Frame 360](https://user-images.githubusercontent.com/4659020/216438281-db5d4c20-bcf4-49dd-aa0f-9f92b207d075.png)
 
-# Getting Started
+# Getting Starte
 
 What is Nostr: https://www.nostr.how
 
 Local setup: https://github.com/KoalaSat/nostros/blob/main/SETUP.md
+
+Nostros chat
+```
+8d37308d97356600f67a28039d598a52b8c4fa1b73ef6f2e7b7d40197c3afa56
+```
 
 # Features
 
