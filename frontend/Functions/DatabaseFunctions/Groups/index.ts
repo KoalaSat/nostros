@@ -105,7 +105,7 @@ export const getGroupMessages: (
     LEFT JOIN
       nostros_users ON nostros_users.id = nostros_group_messages.pubkey
     WHERE group_id = "${groupId}"
-    AND nostros_users.muted_groups < 1
+    AND (nostros_users.muted_groups IS NULL OR nostros_users.muted_groups < 1)
     ORDER BY created_at ${order} 
   `
   if (limit) {
