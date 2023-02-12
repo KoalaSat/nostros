@@ -73,25 +73,19 @@ export const GroupsFeed: React.FC = () => {
         const filters: RelayFilters[] = [
           {
             kinds: [Kind.ChannelCreation],
-            authors: [publicKey],
+            authors: [publicKey, newGroupId ?? ''],
           },
         ]
-        if (results && results.length > 0) {
+        filters.push({
+          kinds: [Kind.ChannelMetadata],
+          ids: [...results.map((group) => group.id ?? ''), publicKey, newGroupId ?? ''],
+        })
+        if (results.length > 0) {
           setGroups(results)
           filters.push({
             kinds: [Kind.Metadata],
             ids: [...results.map((group) => group.pubkey)],
           })
-          filters.push({
-            kinds: [Kind.ChannelMetadata],
-            ids: [...results.map((group) => group.id ?? ''), publicKey, newGroupId ?? ''],
-          })
-          if (newGroupId) {
-            filters.push({
-              kinds: [Kind.ChannelCreation],
-              ids: [newGroupId],
-            })
-          }
         }
         relayPool?.subscribe('groups-create', filters)
       })
@@ -157,13 +151,13 @@ export const GroupsFeed: React.FC = () => {
           <View>
             <View style={styles.username}>
               <Text>{username({ name: item.user_name, id: item.pubkey })}</Text>
-              {item.valid_nip05 && (
+              {item.valid_nip05 ? (
                 <MaterialCommunityIcons
                   name='check-decagram-outline'
                   color={theme.colors.onPrimaryContainer}
                   style={styles.verifyIcon}
                 />
-              )}
+              ) : <></>}
             </View>
             <Text style={{ color: theme.colors.onSurfaceVariant }}>{formatId(item.id)}</Text>
           </View>
@@ -246,7 +240,6 @@ export const GroupsFeed: React.FC = () => {
   return (
     <View style={styles.container}>
       <FlashList
-        estimatedItemSize={71}
         showsVerticalScrollIndicator={false}
         data={groups}
         renderItem={renderGroupItem}

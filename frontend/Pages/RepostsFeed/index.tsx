@@ -106,7 +106,6 @@ export const RepostsFeed: React.FC<RepostsFeedProps> = ({ navigation }) => {
               authors: notes.map((note) => note.pubkey ?? ''),
             },
           ])
-
           const lastReaction = await getLastReaction(database, {
             eventIds: notes.map((note) => note.id ?? ''),
           })
@@ -128,13 +127,12 @@ export const RepostsFeed: React.FC<RepostsFeedProps> = ({ navigation }) => {
               since: lastReply?.created_at ?? 0,
             },
           ])
-
-          const repostIds = notes.filter((note) => note.repost_id).map((note) => note.id ?? '')
+          const repostIds = notes.filter((note) => note.repost_id).map((note) => note.repost_id ?? '')
           if (repostIds.length > 0) {
             relayPool?.subscribe('homepage-contacts-repost', [
               {
                 kinds: [Kind.Text],
-                '#e': repostIds,
+                ids: repostIds,
               },
             ])
           }
