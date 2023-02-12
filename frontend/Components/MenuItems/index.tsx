@@ -79,7 +79,6 @@ export const MenuItems: React.FC = () => {
                   nip05={nip05}
                   lud06={lnurl}
                   picture={picture}
-                  avatarSize={56}
                 />
               </TouchableRipple>
               <View style={styles.cardEdit}>
@@ -96,40 +95,43 @@ export const MenuItems: React.FC = () => {
         )}
         <Drawer.Section>
           {publicKey && (
-            <Drawer.Item
-              label={t('menuItems.relays')}
-              icon={() => (
-                <MaterialCommunityIcons
-                  name='chart-timeline-variant'
-                  size={25}
-                  color={theme.colors.onPrimaryContainer}
-                />
-              )}
-              key='relays'
-              active={drawerItemIndex === 0}
-              onPress={() => onPressItem('relays', 0)}
-              onTouchEnd={() => setDrawerItemIndex(-1)}
-              right={() =>
-                relays.length < 1 ? (
-                  <Text style={{ color: theme.colors.error }}>{t('menuItems.notConnected')}</Text>
-                ) : (
-                  <Text style={{ color: theme.colors.inversePrimary }}>
-                    {t('menuItems.connectedRelays', {
-                      number: relays.filter((relay) => relay.active).length,
-                    })}
-                  </Text>
-                )
-              }
-            />
+            <>
+              <Drawer.Item
+                label={t('menuItems.relays')}
+                icon={() => (
+                  <MaterialCommunityIcons
+                    name='chart-timeline-variant'
+                    size={25}
+                    color={theme.colors.onPrimaryContainer}
+                  />
+                )}
+                key='relays'
+                active={drawerItemIndex === 0}
+                onPress={() => onPressItem('relays', 0)}
+                onTouchEnd={() => setDrawerItemIndex(-1)}
+                right={() =>
+                  relays.length < 1 ? (
+                    <Text style={{ color: theme.colors.error }}>{t('menuItems.notConnected')}</Text>
+                  ) : (
+                    <Text style={{ color: theme.colors.inversePrimary }}>
+                      {t('menuItems.connectedRelays', {
+                        number: relays.filter((relay) => relay.active).length,
+                      })}
+                    </Text>
+                  )
+                }
+              />
+
+              <Drawer.Item
+                label={t('menuItems.contacts')}
+                icon='contacts-outline'
+                key='contacts'
+                active={drawerItemIndex === 1}
+                onPress={() => onPressItem('contacts', 1)}
+                onTouchEnd={() => setDrawerItemIndex(-1)}
+              />
+            </>
           )}
-          <Drawer.Item
-            label={t('menuItems.contacts')}
-            icon='contacts-outline'
-            key='contacts'
-            active={drawerItemIndex === 1}
-            onPress={() => onPressItem('contacts', 1)}
-            onTouchEnd={() => setDrawerItemIndex(-1)}
-          />
           <Drawer.Item
             label={t('menuItems.configuration')}
             icon='cog'

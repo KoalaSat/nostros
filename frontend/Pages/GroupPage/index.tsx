@@ -1,5 +1,12 @@
-import React, { useContext, useEffect, useMemo, useRef, useState } from 'react'
-import { NativeScrollEvent, NativeSyntheticEvent, ScrollView, StyleSheet, View } from 'react-native'
+import React, { useContext, useEffect, useState } from 'react'
+import {
+  FlatList,
+  ListRenderItem,
+  NativeScrollEvent,
+  NativeSyntheticEvent,
+  StyleSheet,
+  View,
+} from 'react-native'
 import { AppContext } from '../../Contexts/AppContext'
 import { RelayPoolContext } from '../../Contexts/RelayPoolContext'
 import { Event } from '../../lib/nostr/Events'
@@ -7,14 +14,20 @@ import { useTranslation } from 'react-i18next'
 import { username, usernamePubKey } from '../../Functions/RelayFunctions/Users'
 import { getUnixTime, formatDistance, fromUnixTime } from 'date-fns'
 import TextContent from '../../Components/TextContent'
-import { Card, useTheme, TextInput, TouchableRipple, Text } from 'react-native-paper'
+import {
+  Card,
+  useTheme,
+  TextInput,
+  TouchableRipple,
+  Text,
+  ActivityIndicator,
+} from 'react-native-paper'
 import { UserContext } from '../../Contexts/UserContext'
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'
 import { useFocusEffect } from '@react-navigation/native'
 import { Kind } from 'nostr-tools'
 import { handleInfinityScroll } from '../../Functions/NativeFunctions'
 import NostrosAvatar from '../../Components/NostrosAvatar'
-import { FlashList, ListRenderItem } from '@shopify/flash-list'
 import UploadImage from '../../Components/UploadImage'
 import { getGroupMessages, GroupMessage } from '../../Functions/DatabaseFunctions/Groups'
 import { RelayFilters } from '../../lib/nostr/RelayPool/intex'
@@ -26,11 +39,9 @@ interface GroupPageProps {
 export const GroupPage: React.FC<GroupPageProps> = ({ route }) => {
   const initialPageSize = 10
   const theme = useTheme()
-  const scrollViewRef = useRef<ScrollView>()
   const { database, setDisplayUserDrawer } = useContext(AppContext)
   const { relayPool, lastEventId } = useContext(RelayPoolContext)
   const { publicKey, privateKey, name, picture, validNip05 } = useContext(UserContext)
-  const otherPubKey = useMemo(() => route.params.groupId, [])
   const [pageSize, setPageSize] = useState<number>(initialPageSize)
   const [groupMessages, setGroupMessages] = useState<GroupMessage[]>([])
   const [sendingMessages, setSendingMessages] = useState<GroupMessage[]>([])
@@ -50,10 +61,10 @@ export const GroupPage: React.FC<GroupPageProps> = ({ route }) => {
 
   useEffect(() => {
     loadGroupMessages(false)
-  }, [lastEventId])
+  }, [lastEventId, pageSize])
 
   const loadGroupMessages: (subscribe: boolean) => void = (subscribe) => {
-    if (database && publicKey && privateKey && route.params.groupId) {
+    if (database && publicKey && route.params.groupId) {
       getGroupMessages(database, route.params.groupId, {
         order: 'DESC',
         limit: pageSize,
@@ -64,7 +75,7 @@ export const GroupPage: React.FC<GroupPageProps> = ({ route }) => {
           const pubKeys = results
             .map((message) => message.pubkey)
             .filter((key, index, array) => array.indexOf(key) === index)
-          const lastCreateAt = pageSize <= results.length ? results[0].created_at : 0
+          const lastCreateAt = results.length < pageSize ? 0 : results[0].created_at
           if (subscribe) subscribeGroupMessages(lastCreateAt, pubKeys)
         } else if (subscribe) {
           subscribeGroupMessages()
@@ -77,7 +88,7 @@ export const GroupPage: React.FC<GroupPageProps> = ({ route }) => {
     lastCreateAt,
     pubKeys,
   ) => {
-    if (publicKey && otherPubKey && route.params.groupId) {
+    if (publicKey && route.params.groupId) {
       const filters: RelayFilters[] = [
         {
           kinds: [Kind.ChannelCreation],
@@ -94,7 +105,6 @@ export const GroupPage: React.FC<GroupPageProps> = ({ route }) => {
           limit: pageSize,
         },
       ]
-
       if (pubKeys && pubKeys.length > 0) {
         filters.push({
           kinds: [Kind.Metadata],
@@ -102,12 +112,12 @@ export const GroupPage: React.FC<GroupPageProps> = ({ route }) => {
         })
       }
 
-      relayPool?.subscribe(`group${route.params.groupId}`, filters)
+      relayPool?.subscribe(`group${route.params.groupId.substring(0, 8)}`, filters)
     }
   }
 
   const send: () => void = () => {
-    if (input !== '' && otherPubKey && publicKey && privateKey && route.params.groupId) {
+    if (input !== '' && publicKey && privateKey && route.params.groupId) {
       const event: Event = {
         content: input,
         created_at: getUnixTime(new Date()),
@@ -131,17 +141,16 @@ export const GroupPage: React.FC<GroupPageProps> = ({ route }) => {
       item.pubkey === publicKey
         ? usernamePubKey(name, publicKey)
         : username({ name: item.name, id: item.pubkey })
-    const showAvatar = groupMessages[index - 1]?.pubkey !== item.pubkey
-
+    const showAvatar = [...groupMessages, ...sendingMessages][index - 1]?.pubkey !== item.pubkey
     return (
-      <View style={styles.messageRow}>
+      <View style={styles.messageRow} key={index}>
         {publicKey !== item.pubkey && (
           <View style={styles.pictureSpaceLeft}>
             {showAvatar && (
-              <TouchableRipple onPress={() => setDisplayUserDrawer(otherPubKey)}>
+              <TouchableRipple onPress={() => setDisplayUserDrawer(item.pubkey)}>
                 <NostrosAvatar
                   name={displayName}
-                  pubKey={otherPubKey}
+                  pubKey={item.pubkey}
                   src={item.picture}
                   size={40}
                 />
@@ -212,14 +221,20 @@ export const GroupPage: React.FC<GroupPageProps> = ({ route }) => {
 
   return (
     <View style={styles.container}>
-      <FlashList
-        inverted
+      <FlatList
+        style={styles.list}
         data={[...sendingMessages, ...groupMessages]}
         renderItem={renderGroupMessageItem}
         horizontal={false}
-        ref={scrollViewRef}
-        estimatedItemSize={100}
         onScroll={onScroll}
+        showsVerticalScrollIndicator={false}
+        ListFooterComponent={
+          groupMessages.length > 0 ? (
+            <ActivityIndicator style={styles.loading} animating={true} />
+          ) : (
+            <></>
+          )
+        }
       />
       <View
         style={[
@@ -235,7 +250,6 @@ export const GroupPage: React.FC<GroupPageProps> = ({ route }) => {
           label={t('groupPage.typeMessage') ?? ''}
           value={input}
           onChangeText={setInput}
-          onFocus={() => scrollViewRef.current?.scrollToEnd({ animated: true })}
           left={
             <TextInput.Icon
               icon={() => (
@@ -276,12 +290,16 @@ export const GroupPage: React.FC<GroupPageProps> = ({ route }) => {
 }
 
 const styles = StyleSheet.create({
+  list: {
+    scaleY: -1,
+  },
   scrollView: {
     paddingBottom: 16,
   },
   messageRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
+    scaleY: -1,
   },
   cardContentDate: {
     flexDirection: 'row',
@@ -323,6 +341,9 @@ const styles = StyleSheet.create({
   input: {
     flexDirection: 'column-reverse',
     marginTop: 16,
+  },
+  loading: {
+    paddingTop: 16,
   },
   snackbar: {
     margin: 16,

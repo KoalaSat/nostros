@@ -1,5 +1,13 @@
 import React, { useContext, useEffect, useMemo, useRef, useState } from 'react'
-import { NativeScrollEvent, NativeSyntheticEvent, ScrollView, StyleSheet, View } from 'react-native'
+import {
+  FlatList,
+  ListRenderItem,
+  NativeScrollEvent,
+  NativeSyntheticEvent,
+  ScrollView,
+  StyleSheet,
+  View,
+} from 'react-native'
 import { AppContext } from '../../Contexts/AppContext'
 import { RelayPoolContext } from '../../Contexts/RelayPoolContext'
 import { Event } from '../../lib/nostr/Events'
@@ -21,7 +29,6 @@ import { useFocusEffect } from '@react-navigation/native'
 import { Kind } from 'nostr-tools'
 import { handleInfinityScroll } from '../../Functions/NativeFunctions'
 import NostrosAvatar from '../../Components/NostrosAvatar'
-import { FlashList, ListRenderItem } from '@shopify/flash-list'
 import UploadImage from '../../Components/UploadImage'
 
 interface ConversationPageProps {
@@ -102,7 +109,7 @@ export const ConversationPage: React.FC<ConversationPageProps> = ({ route }) => 
 
   const subscribeDirectMessages: (lastCreateAt?: number) => void = async (lastCreateAt) => {
     if (publicKey && otherPubKey) {
-      relayPool?.subscribe(`conversation${route.params.pubKey}`, [
+      relayPool?.subscribe(`conversation${route.params.pubKey.substring(0, 8)}`, [
         {
           kinds: [Kind.EncryptedDirectMessage],
           authors: [publicKey],
@@ -145,7 +152,7 @@ export const ConversationPage: React.FC<ConversationPageProps> = ({ route }) => 
 
       const directMessage = event as DirectMessage
       directMessage.pending = true
-      directMessage.valid_nip05 = validNip05
+      directMessage.valid_nip05 = validNip05 ?? false
       setSendingMessages((prev) => [...prev, directMessage])
       setInput('')
     }
@@ -238,8 +245,8 @@ export const ConversationPage: React.FC<ConversationPageProps> = ({ route }) => 
 
   return (
     <View style={styles.container}>
-      <FlashList
-        inverted
+      <FlatList
+        style={styles.list}
         data={[...sendingMessages, ...directMessages]}
         renderItem={renderDirectMessageItem}
         horizontal={false}
@@ -313,12 +320,16 @@ export const ConversationPage: React.FC<ConversationPageProps> = ({ route }) => 
 }
 
 const styles = StyleSheet.create({
+  list: {
+    scaleY: -1,
+  },
   scrollView: {
     paddingBottom: 16,
   },
   messageRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
+    scaleY: -1,
   },
   cardContentDate: {
     flexDirection: 'row',
