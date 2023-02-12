@@ -8,7 +8,7 @@ import { useTranslation } from 'react-i18next'
 import getUnixTime from 'date-fns/getUnixTime'
 import { DeviceEventEmitter, StyleSheet, View } from 'react-native'
 import Logo from '../../Components/Logo'
-import { Button, Text, useTheme } from 'react-native-paper'
+import { ActivityIndicator, Button, Text, useTheme } from 'react-native-paper'
 import { navigate } from '../../lib/Navigation'
 import { useFocusEffect } from '@react-navigation/native'
 import { formatId } from '../../Functions/RelayFunctions/Users'
@@ -95,9 +95,14 @@ export const ProfileLoadPage: React.FC = () => {
         <View style={styles.logo}>
           <Logo onlyIcon size='medium' />
         </View>
-        <Text variant='titleMedium' style={styles.center}>
-          {profileFound ? t('profileLoadPage.foundProfile') : t('profileLoadPage.searchingProfile')}
-        </Text>
+        <View style={styles.loadingProfile}>
+          {!profileFound && <ActivityIndicator animating={true} style={styles.activityIndicator} />}
+          <Text variant='titleMedium' style={styles.center}>
+            {profileFound
+              ? t('profileLoadPage.foundProfile')
+              : t('profileLoadPage.searchingProfile')}
+          </Text>
+        </View>
         <Text variant='titleMedium' style={styles.center}>
           {t('profileLoadPage.foundContacts', { contactsCount })}
         </Text>
@@ -164,6 +169,14 @@ const styles = StyleSheet.create({
   warningActionOuterLayout: {
     flexDirection: 'row',
     justifyContent: 'flex-end',
+  },
+  loadingProfile: {
+    justifyContent: 'center',
+    alignContent: 'center',
+    flexDirection: 'row',
+  },
+  activityIndicator: {
+    paddingRight: 16,
   },
 })
 
