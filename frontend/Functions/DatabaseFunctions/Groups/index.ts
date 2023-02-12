@@ -62,7 +62,7 @@ export const addGroup: (
   db: QuickSQLiteConnection,
   groupId: string,
   groupName: string,
-  pubkey: string
+  pubkey: string,
 ) => Promise<QueryResult> = async (db, groupId, groupName, pubkey) => {
   const query = `
     INSERT OR IGNORE INTO nostros_group_meta (id, name, created_at, pubkey) VALUES (?, ?, ?, ?)

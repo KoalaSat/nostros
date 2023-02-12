@@ -53,8 +53,7 @@ export const GroupsFeed: React.FC = () => {
     React.useCallback(() => {
       loadGroups()
 
-      return () =>
-        relayPool?.unsubscribe(['groups-user', 'groups-others', 'groups-messages'])
+      return () => relayPool?.unsubscribe(['groups-user', 'groups-others', 'groups-messages'])
     }, []),
   )
 
@@ -93,10 +92,6 @@ export const GroupsFeed: React.FC = () => {
               kinds: [Kind.ChannelMetadata],
               '#e': results.map((group) => group.id ?? ''),
             },
-            {
-              kinds: [Kind.Metadata],
-              authors: [...results.map((group) => group.pubkey)],
-            },
           ])
         }
       })
@@ -115,10 +110,10 @@ export const GroupsFeed: React.FC = () => {
     if (validNip21(searchGroup)) {
       const key = getNip19Key(searchGroup)
       if (key) {
-        addGroup(database, searchGroup, '').then(() => loadGroups())
+        addGroup(database, searchGroup, '', '').then(() => loadGroups())
       }
     } else {
-      addGroup(database, searchGroup, '').then(() => loadGroups())
+      addGroup(database, searchGroup, '', '').then(() => loadGroups())
     }
     setSearchGroup(undefined)
     bottomSheetSearchRef.current?.close()

@@ -256,13 +256,19 @@ public class Event {
         values.put("tags", tags.toString());
 
         if (cursor.getCount() == 0) {
-            values.put("id", id);
-            values.put("created_at", created_at);
             values.put("name", groupContent.optString("name"));
             values.put("about", groupContent.optString("about"));
             values.put("picture", groupContent.optString("picture"));
+            values.put("id", id);
+            values.put("created_at", created_at);
             database.insert("nostros_group_meta", null, values);
-        } else if (cursor.moveToFirst() && pubkey.equals(cursor.getString(1))) {
+        } else if (cursor.moveToFirst()) {
+            if (created_at > cursor.getInt(0)) {
+                values.put("name", groupContent.optString("name"));
+                values.put("about", groupContent.optString("about"));
+                values.put("picture", groupContent.optString("picture"));
+                values.put("created_at", created_at);
+            }
             String whereClause = "id = ?";
             String[] whereArgs = new String[] {
                     id
@@ -282,6 +288,7 @@ public class Event {
         values.put("name", groupContent.optString("name"));
         values.put("about", groupContent.optString("about"));
         values.put("picture", groupContent.optString("picture"));
+        values.put("created_at", created_at);
 
         if (cursor.getCount() == 0) {
             values.put("id", groupId);
@@ -291,8 +298,7 @@ public class Event {
             values.put("sig", sig);
             values.put("tags", tags.toString());
             database.insert("nostros_group_meta", null, values);
-        } else if (cursor.moveToFirst() && created_at > cursor.getInt(0) && pubkey.equals(cursor.getString(1))) {
-            values.put("created_at", created_at);
+        } else if (cursor.moveToFirst() && created_at > cursor.getInt(0)) {
             String whereClause = "id = ?";
             String[] whereArgs = new String[] {
                     groupId
