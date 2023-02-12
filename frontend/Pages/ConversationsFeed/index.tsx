@@ -15,6 +15,7 @@ import { Kind } from 'nostr-tools'
 import {
   DirectMessage,
   getGroupedDirectMessages,
+  getUserLastDirectMessages,
 } from '../../Functions/DatabaseFunctions/DirectMessages'
 import { getUsers, User } from '../../Functions/DatabaseFunctions/Users'
 import { getOtherPubKey } from '../../Functions/RelayFunctions/DirectMessages'
@@ -96,21 +97,23 @@ export const ConversationsFeed: React.FC = () => {
   }
 
   const subscribeDirectMessages: (lastCreateAt?: number) => void = async (lastCreateAt) => {
-    if (publicKey) {
-      relayPool?.subscribe('directmessages-user', [
-        {
-          kinds: [Kind.EncryptedDirectMessage],
-          authors: [publicKey],
-          since: lastCreateAt ?? 0,
-        },
-      ])
-      relayPool?.subscribe('directmessages-others', [
-        {
-          kinds: [Kind.EncryptedDirectMessage],
-          '#p': [publicKey],
-          since: lastCreateAt ?? 0,
-        },
-      ])
+    if (publicKey && database) {
+      getUserLastDirectMessages(database, publicKey).then((result) => {
+        relayPool?.subscribe('directmessages-user', [
+          {
+            kinds: [Kind.EncryptedDirectMessage],
+            authors: [publicKey],
+            since: result?.created_at ?? 0,
+          },
+        ])
+        relayPool?.subscribe('directmessages-others', [
+          {
+            kinds: [Kind.EncryptedDirectMessage],
+            '#p': [publicKey],
+            since: result?.created_at ?? 0,
+          },
+        ])
+      })
     }
   }
 

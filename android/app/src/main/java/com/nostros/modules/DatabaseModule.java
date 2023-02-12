@@ -142,18 +142,17 @@ public class DatabaseModule {
             database.execSQL("ALTER TABLE nostros_relays ADD COLUMN manual INT DEFAULT 1;");
         } catch (SQLException e) { }
         try {
-            database.execSQL("ALTER TABLE nostros_users ADD COLUMN muted_groups INT DEFAULT 0;");
-            database.execSQL("CREATE TABLE IF NOT EXISTS nostros_groups(\n" +
+            database.execSQL("CREATE TABLE IF NOT EXISTS nostros_group_meta(\n" +
                     "          id TEXT PRIMARY KEY NOT NULL, \n" +
-                    "          content TEXT NOT NULL,\n" +
-                    "          created_at INT NOT NULL,\n" +
-                    "          kind INT NOT NULL,\n" +
-                    "          pubkey TEXT NOT NULL,\n" +
-                    "          sig TEXT NOT NULL,\n" +
-                    "          tags TEXT NOT NULL,\n" +
-                    "          name TEXT NOT NULL,\n" +
-                    "          about TEXT NOT NULL,\n" +
-                    "          picture TEXT NOT NULL\n" +
+                    "          content TEXT,\n" +
+                    "          created_at INT,\n" +
+                    "          kind INT,\n" +
+                    "          pubkey TEXT,\n" +
+                    "          sig TEXT,\n" +
+                    "          tags TEXT,\n" +
+                    "          name TEXT,\n" +
+                    "          about TEXT,\n" +
+                    "          picture TEXT\n" +
                     "        );");
             database.execSQL("CREATE TABLE IF NOT EXISTS nostros_group_messages(\n" +
                     "          id TEXT PRIMARY KEY NOT NULL, \n" +
@@ -167,6 +166,7 @@ public class DatabaseModule {
                     "          hidden INT DEFAULT 0\n" +
                     "        );");
             database.execSQL("CREATE INDEX nostros_group_messages_group_id_index ON nostros_group_messages(group_id, created_at);");
+            database.execSQL("ALTER TABLE nostros_users ADD COLUMN muted_groups INT DEFAULT 0;");
         } catch (SQLException e) { }
     }
 

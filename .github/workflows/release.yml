@@ -20,11 +20,13 @@ jobs:
         uses: softprops/action-gh-release@v1
         with:
           body: |
-            **New Release [${{ github.ref_name }}]**
+            **New Nostros Release [${{ github.ref_name }}]**
 
-            https://github.com/KoalaSat/nostros/releases/${{ github.ref_name }}
+            **What's Changed**
 
             **Changelog**
+
+            https://github.com/KoalaSat/nostros/releases/${{ github.ref_name }}
 
             **Download**
 

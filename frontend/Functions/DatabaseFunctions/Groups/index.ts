@@ -3,7 +3,7 @@ import { getItems } from '..'
 import { Event } from '../../../lib/nostr/Events'
 
 export interface Group extends Event {
-  name: string
+  name?: string
   about?: string
   picture?: string
   user_name?: string
@@ -45,11 +45,11 @@ export const updateAllRead: (db: QuickSQLiteConnection) => Promise<QueryResult |
 export const getGroups: (db: QuickSQLiteConnection) => Promise<Group[]> = async (db) => {
   const groupsQuery = `
     SELECT
-      nostros_groups.*, nostros_users.name as user_name, nostros_users.valid_nip05
+      nostros_group_meta.*, nostros_users.name as user_name, nostros_users.valid_nip05
     FROM
-      nostros_groups
+      nostros_group_meta
     LEFT JOIN
-      nostros_users ON nostros_users.id = nostros_groups.pubkey
+      nostros_users ON nostros_users.id = nostros_group_meta.pubkey
   `
   const resultSet = await db.execute(groupsQuery)
   const items: object[] = getItems(resultSet)
@@ -61,11 +61,13 @@ export const getGroups: (db: QuickSQLiteConnection) => Promise<Group[]> = async 
 export const addGroup: (
   db: QuickSQLiteConnection,
   groupId: string,
-) => Promise<QueryResult> = async (db, groupId) => {
+  groupName: string,
+  pubkey: string
+) => Promise<QueryResult> = async (db, groupId, groupName, pubkey) => {
   const query = `
-    INSERT OR IGNORE INTO nostros_groups (id) VALUES (?)
+    INSERT OR IGNORE INTO nostros_group_meta (id, name, created_at, pubkey) VALUES (?, ?, ?, ?)
   `
-  return db.execute(query, [groupId])
+  return db.execute(query, [groupId, groupName, 0, pubkey])
 }
 
 export const getGroup: (db: QuickSQLiteConnection, groupId: string) => Promise<Group> = async (
@@ -76,7 +78,7 @@ export const getGroup: (db: QuickSQLiteConnection, groupId: string) => Promise<G
     SELECT
       *
     FROM
-      nostros_groups
+      nostros_group_meta
     WHERE
       id = ?
   `
@@ -139,7 +141,7 @@ export const deleteGroup: (
   `
   await db.execute(deleteMessagesQuery, [groupId])
   const deleteQuery = `
-    DELETE FROM nostros_groups
+    DELETE FROM nostros_group_meta
     WHERE id = ?
   `
   return db.execute(deleteQuery, [groupId])

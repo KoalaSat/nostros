@@ -127,7 +127,12 @@ export const UserContextProvider = ({ children }: UserContextProviderProps): JSX
     if (userState === 'ready' && publicKey && relayPoolReady && database) {
       getGroups(database).then((results) => {
         if (results.length === 0) {
-          addGroup(database, '8d37308d97356600f67a28039d598a52b8c4fa1b73ef6f2e7b7d40197c3afa56')
+          addGroup(
+            database,
+            '8d37308d97356600f67a28039d598a52b8c4fa1b73ef6f2e7b7d40197c3afa56',
+            'Nostros',
+            '645681b9d067b1a362c4bee8ddff987d2466d49905c26cb8fec5e6fb73af5c84',
+          )
         }
       })
       navigate('Feed')
