@@ -93,11 +93,7 @@ export const getDirectMessages: (
     order?: 'DESC' | 'ASC'
     limit?: number
   },
-) => Promise<DirectMessage[]> = async (
-  db,
-  conversationId,
-  { order = 'DESC', limit },
-) => {
+) => Promise<DirectMessage[]> = async (db, conversationId, { order = 'DESC', limit }) => {
   let notesQuery = `
     SELECT
       *
@@ -120,10 +116,7 @@ export const getDirectMessages: (
 export const getUserLastDirectMessages: (
   db: QuickSQLiteConnection,
   userId: string,
-) => Promise<DirectMessage | null> = async (
-  db,
-  userId
-) => {
+) => Promise<DirectMessage | null> = async (db, userId) => {
   const messageQuery = `
     SELECT
       *
