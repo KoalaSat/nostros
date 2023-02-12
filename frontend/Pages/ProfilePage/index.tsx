@@ -96,7 +96,7 @@ export const ProfilePage: React.FC<ProfilePageProps> = ({ route }) => {
           setNotes(results)
           setRefreshing(false)
           if (results.length > 0) {
-            relayPool?.subscribe(`profile-answers${route.params.pubKey.substring(0,8)}`, [
+            relayPool?.subscribe(`profile-answers${route.params.pubKey.substring(0, 8)}`, [
               {
                 kinds: [Kind.Reaction, Kind.Text, Kind.RecommendRelay],
                 '#e': results.map((note) => note.id ?? ''),
@@ -109,7 +109,7 @@ export const ProfilePage: React.FC<ProfilePageProps> = ({ route }) => {
   }
 
   const subscribeProfile: () => Promise<void> = async () => {
-    relayPool?.subscribe(`profile-user${route.params.pubKey.substring(0,8)}`, [
+    relayPool?.subscribe(`profile-user${route.params.pubKey.substring(0, 8)}`, [
       {
         kinds: [Kind.Metadata, Kind.Contacts],
         authors: [route.params.pubKey],
@@ -125,7 +125,7 @@ export const ProfilePage: React.FC<ProfilePageProps> = ({ route }) => {
       authors: [route.params.pubKey],
       limit: pageSize,
     }
-    relayPool?.subscribe(`profile${route.params.pubKey.substring(0,8)}`, [message])
+    relayPool?.subscribe(`profile${route.params.pubKey.substring(0, 8)}`, [message])
   }
 
   const onScroll: (event: NativeSyntheticEvent<NativeScrollEvent>) => void = (event) => {
@@ -157,7 +157,6 @@ export const ProfilePage: React.FC<ProfilePageProps> = ({ route }) => {
               nip05={user?.nip05}
               lud06={user?.lnurl}
               picture={user?.picture}
-              avatarSize={56}
             />
             <Text>{user?.follower && user.follower > 0 ? t('profilePage.isFollower') : ''}</Text>
           </View>

@@ -111,7 +111,9 @@ export const GlobalFeed: React.FC<GlobalFeedProps> = ({ navigation }) => {
         setRefreshing(false)
         if (results.length > 0) {
           setNotes(results)
-          const repostIds = notes.filter((note) => note.repost_id).map((note) => note.repost_id ?? '')
+          const repostIds = notes
+            .filter((note) => note.repost_id)
+            .map((note) => note.repost_id ?? '')
           if (repostIds.length > 0) {
             const message: RelayFilters[] = [
               {

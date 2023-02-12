@@ -157,7 +157,9 @@ export const GroupsFeed: React.FC = () => {
                   color={theme.colors.onPrimaryContainer}
                   style={styles.verifyIcon}
                 />
-              ) : <></>}
+              ) : (
+                <></>
+              )}
             </View>
             <Text style={{ color: theme.colors.onSurfaceVariant }}>{formatId(item.id)}</Text>
           </View>

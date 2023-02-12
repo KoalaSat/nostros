@@ -1,5 +1,13 @@
 import React, { useContext, useEffect, useMemo, useRef, useState } from 'react'
-import { FlatList, ListRenderItem, NativeScrollEvent, NativeSyntheticEvent, ScrollView, StyleSheet, View } from 'react-native'
+import {
+  FlatList,
+  ListRenderItem,
+  NativeScrollEvent,
+  NativeSyntheticEvent,
+  ScrollView,
+  StyleSheet,
+  View,
+} from 'react-native'
 import { AppContext } from '../../Contexts/AppContext'
 import { RelayPoolContext } from '../../Contexts/RelayPoolContext'
 import { Event } from '../../lib/nostr/Events'
@@ -101,7 +109,7 @@ export const ConversationPage: React.FC<ConversationPageProps> = ({ route }) => 
 
   const subscribeDirectMessages: (lastCreateAt?: number) => void = async (lastCreateAt) => {
     if (publicKey && otherPubKey) {
-      relayPool?.subscribe(`conversation${route.params.pubKey.substring(0,8)}`, [
+      relayPool?.subscribe(`conversation${route.params.pubKey.substring(0, 8)}`, [
         {
           kinds: [Kind.EncryptedDirectMessage],
           authors: [publicKey],
@@ -313,7 +321,7 @@ export const ConversationPage: React.FC<ConversationPageProps> = ({ route }) => 
 
 const styles = StyleSheet.create({
   list: {
-    scaleY: -1
+    scaleY: -1,
   },
   scrollView: {
     paddingBottom: 16,
@@ -321,7 +329,7 @@ const styles = StyleSheet.create({
   messageRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    scaleY: -1
+    scaleY: -1,
   },
   cardContentDate: {
     flexDirection: 'row',

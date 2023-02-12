@@ -35,7 +35,6 @@ export const ProfileData: React.FC<ProfileCardProps> = ({
       timestamp ? formatDistance(fromUnixTime(timestamp), new Date(), { addSuffix: true }) : null,
     [timestamp],
   )
-
   return (
     <View style={styles.container}>
       <View style={styles.left}>
@@ -77,16 +76,15 @@ const styles = StyleSheet.create({
   right: {
     flexDirection: 'row',
     width: '50%',
-    justifyContent: 'flex-end'
+    justifyContent: 'flex-end',
   },
   left: {
     flexDirection: 'row',
-    width: '50%'
+    width: '50%',
   },
   container: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    flex: 1
   },
   contactName: {
     flexDirection: 'row',

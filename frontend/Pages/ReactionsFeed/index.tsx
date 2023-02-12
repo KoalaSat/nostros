@@ -129,7 +129,9 @@ export const ReactionsFeed: React.FC<ReactionsFeedProps> = ({ navigation }) => {
             },
           ])
 
-          const repostIds = notes.filter((note) => note.repost_id).map((note) => note.repost_id ?? '')
+          const repostIds = notes
+            .filter((note) => note.repost_id)
+            .map((note) => note.repost_id ?? '')
           if (repostIds.length > 0) {
             relayPool?.subscribe('homepage-contacts-repost', [
               {

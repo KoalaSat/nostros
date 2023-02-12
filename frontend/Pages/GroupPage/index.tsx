@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useMemo, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import {
   FlatList,
   ListRenderItem,
@@ -42,7 +42,6 @@ export const GroupPage: React.FC<GroupPageProps> = ({ route }) => {
   const { database, setDisplayUserDrawer } = useContext(AppContext)
   const { relayPool, lastEventId } = useContext(RelayPoolContext)
   const { publicKey, privateKey, name, picture, validNip05 } = useContext(UserContext)
-  const otherPubKey = useMemo(() => route.params.groupId, [])
   const [pageSize, setPageSize] = useState<number>(initialPageSize)
   const [groupMessages, setGroupMessages] = useState<GroupMessage[]>([])
   const [sendingMessages, setSendingMessages] = useState<GroupMessage[]>([])
@@ -65,7 +64,7 @@ export const GroupPage: React.FC<GroupPageProps> = ({ route }) => {
   }, [lastEventId, pageSize])
 
   const loadGroupMessages: (subscribe: boolean) => void = (subscribe) => {
-    if (database && publicKey && privateKey && route.params.groupId) {
+    if (database && publicKey && route.params.groupId) {
       getGroupMessages(database, route.params.groupId, {
         order: 'DESC',
         limit: pageSize,
@@ -77,8 +76,8 @@ export const GroupPage: React.FC<GroupPageProps> = ({ route }) => {
             .map((message) => message.pubkey)
             .filter((key, index, array) => array.indexOf(key) === index)
           const lastCreateAt = results.length < pageSize ? 0 : results[0].created_at
-          subscribeGroupMessages(lastCreateAt, pubKeys)
-        } else {
+          if (subscribe) subscribeGroupMessages(lastCreateAt, pubKeys)
+        } else if (subscribe) {
           subscribeGroupMessages()
         }
       })
@@ -89,7 +88,7 @@ export const GroupPage: React.FC<GroupPageProps> = ({ route }) => {
     lastCreateAt,
     pubKeys,
   ) => {
-    if (publicKey && otherPubKey && route.params.groupId) {
+    if (publicKey && route.params.groupId) {
       const filters: RelayFilters[] = [
         {
           kinds: [Kind.ChannelCreation],
@@ -106,7 +105,6 @@ export const GroupPage: React.FC<GroupPageProps> = ({ route }) => {
           limit: pageSize,
         },
       ]
-
       if (pubKeys && pubKeys.length > 0) {
         filters.push({
           kinds: [Kind.Metadata],
@@ -119,7 +117,7 @@ export const GroupPage: React.FC<GroupPageProps> = ({ route }) => {
   }
 
   const send: () => void = () => {
-    if (input !== '' && otherPubKey && publicKey && privateKey && route.params.groupId) {
+    if (input !== '' && publicKey && privateKey && route.params.groupId) {
       const event: Event = {
         content: input,
         created_at: getUnixTime(new Date()),
@@ -144,16 +142,15 @@ export const GroupPage: React.FC<GroupPageProps> = ({ route }) => {
         ? usernamePubKey(name, publicKey)
         : username({ name: item.name, id: item.pubkey })
     const showAvatar = [...groupMessages, ...sendingMessages][index - 1]?.pubkey !== item.pubkey
-
     return (
       <View style={styles.messageRow} key={index}>
         {publicKey !== item.pubkey && (
           <View style={styles.pictureSpaceLeft}>
             {showAvatar && (
-              <TouchableRipple onPress={() => setDisplayUserDrawer(otherPubKey)}>
+              <TouchableRipple onPress={() => setDisplayUserDrawer(item.pubkey)}>
                 <NostrosAvatar
                   name={displayName}
-                  pubKey={otherPubKey}
+                  pubKey={item.pubkey}
                   src={item.picture}
                   size={40}
                 />
@@ -294,7 +291,7 @@ export const GroupPage: React.FC<GroupPageProps> = ({ route }) => {
 
 const styles = StyleSheet.create({
   list: {
-    scaleY: -1
+    scaleY: -1,
   },
   scrollView: {
     paddingBottom: 16,
@@ -302,7 +299,7 @@ const styles = StyleSheet.create({
   messageRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    scaleY: -1
+    scaleY: -1,
   },
   cardContentDate: {
     flexDirection: 'row',
@@ -312,7 +309,7 @@ const styles = StyleSheet.create({
     paddingBottom: 16,
     paddingRight: 16,
     justifyContent: 'space-between',
-    flex: 1
+    flex: 1,
   },
   card: {
     marginTop: 16,

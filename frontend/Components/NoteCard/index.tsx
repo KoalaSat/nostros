@@ -375,7 +375,6 @@ export const NoteCard: React.FC<NoteCardProps> = ({
             lud06={note?.lnurl}
             picture={showAvatarImage ? note?.picture : undefined}
             timestamp={note?.created_at}
-            avatarSize={40}
           />
         </TouchableRipple>
       </Card.Content>

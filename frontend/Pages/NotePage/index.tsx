@@ -67,7 +67,7 @@ export const NotePage: React.FC<NotePageProps> = ({ route }) => {
             ids: [event.repost_id],
           })
         }
-        relayPool?.subscribe(`meta-notepage${route.params.noteId.substring(0,8)}`, filters)
+        relayPool?.subscribe(`meta-notepage${route.params.noteId.substring(0, 8)}`, filters)
         setReplies(rootReplies as Note[])
       }
       setRefreshing(false)
@@ -82,13 +82,13 @@ export const NotePage: React.FC<NotePageProps> = ({ route }) => {
 
   const subscribeNotes: (past?: boolean) => Promise<void> = async (past) => {
     if (database && route.params.noteId) {
-      relayPool?.subscribe(`notepage${route.params.noteId.substring(0,8)}`, [
+      relayPool?.subscribe(`notepage${route.params.noteId.substring(0, 8)}`, [
         {
           kinds: [Kind.Text],
           ids: [route.params.noteId],
         },
       ])
-      relayPool?.subscribe(`notepage-replies-${route.params.noteId.substring(0,8)}`, [
+      relayPool?.subscribe(`notepage-replies-${route.params.noteId.substring(0, 8)}`, [
         {
           kinds: [Kind.Reaction, Kind.Text, Kind.RecommendRelay],
           '#e': [route.params.noteId],

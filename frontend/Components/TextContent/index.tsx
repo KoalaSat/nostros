@@ -152,8 +152,9 @@ export const TextContent: React.FC<TextContentProps> = ({
     return matchingString
   }
 
-  const parsedText = React.useMemo(() => (
-    <ParsedText
+  const parsedText = React.useMemo(
+    () => (
+      <ParsedText
         style={[styles.text, { color: theme.colors.onSurfaceVariant }]}
         parse={[
           { type: 'url', style: styles.url, onPress: handleUrlPress, renderText: renderUrlText },
@@ -183,7 +184,9 @@ export const TextContent: React.FC<TextContentProps> = ({
       >
         {text}
       </ParsedText>
-  ), [loadedUsers])
+    ),
+    [loadedUsers],
+  )
 
   const preview = React.useMemo(() => {
     if (!showPreview) return <></>
