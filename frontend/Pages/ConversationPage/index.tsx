@@ -76,7 +76,7 @@ export const ConversationPage: React.FC<ConversationPageProps> = ({ route }) => 
       getUser(otherPubKey, database).then((user) => {
         if (user) setOtherUser(user)
       })
-      getDirectMessages(database, conversationId, publicKey, otherPubKey, {
+      getDirectMessages(database, conversationId, {
         order: 'DESC',
         limit: pageSize,
       }).then((results) => {
