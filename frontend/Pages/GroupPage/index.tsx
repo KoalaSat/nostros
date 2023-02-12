@@ -101,7 +101,6 @@ export const GroupPage: React.FC<GroupPageProps> = ({ route }) => {
         {
           kinds: [Kind.ChannelMessage],
           '#e': [route.params.groupId],
-          since: lastCreateAt ?? 0,
           limit: pageSize,
         },
       ]

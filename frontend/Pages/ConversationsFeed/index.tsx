@@ -135,14 +135,16 @@ export const ConversationsFeed: React.FC = () => {
         }
       >
         <View key={user.id} style={styles.contactRow}>
-          <ProfileData
-            username={user?.name}
-            publicKey={user.id}
-            validNip05={user?.valid_nip05}
-            nip05={user?.nip05}
-            lud06={user?.lnurl}
-            picture={user?.picture}
-          />
+          <View style={styles.profileData}>
+            <ProfileData
+              username={user?.name}
+              publicKey={user.id}
+              validNip05={user?.valid_nip05}
+              nip05={user?.nip05}
+              lud06={user?.lnurl}
+              picture={user?.picture}
+            />
+          </View>
           <View style={styles.contactInfo}>
             <View style={styles.contactDate}>
               <Text>
@@ -349,11 +351,13 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
   },
+  profileData: {
+    flex: 1,
+  },
   contactRow: {
     padding: 16,
     flexDirection: 'row',
     justifyContent: 'space-between',
-    width: '100%',
   },
   contactDate: {
     paddingLeft: 16,

@@ -13,10 +13,11 @@
       "privateKeysSnackbarDescription": "Verwahre den privaten Schlüssel an einem sicheren Ort. Geht der Schlüssel verloren, kann er nicht wiederhergestellt werden. Das Konto kann nie wieder benutzt werden."
     },
     "homeNavigator": {
+      "Group": "",
       "ProfileCreate": "Profil anlegen",
-      "ProfileConnect": "Profil verbinden",
-      "ProfileLoad": "Profil laden",
-      "Landing": "Start",
+      "ProfileConnect": "",
+      "ProfileLoad": "",
+      "Landing": "",
       "Contacts": "Contacts",
       "Conversation": "Unterhaltung",
       "Reply": "Antworten",

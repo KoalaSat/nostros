@@ -15,6 +15,7 @@
     "homeNavigator": {
       "ProfileCreate": "Create profile",
       "ProfileConnect": "",
+      "Group": "",
       "ProfileLoad": "",
       "Landing": "",
       "Contacts": "Contacts",

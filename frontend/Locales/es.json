@@ -13,6 +13,7 @@
       "privateKeysSnackbarDescription": "Guarda tu clave privada en un lugar seguro, si la pierdes no podrás volver a acceder con ella ni recuperar tu cuenta."
     },
     "homeNavigator": {
+      "Group": "",
       "ProfileCreate": "Crear perfil",
       "ProfileConnect": "",
       "ProfileLoad": "",
