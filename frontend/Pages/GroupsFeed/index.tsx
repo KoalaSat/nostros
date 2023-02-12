@@ -22,7 +22,7 @@ import { RelayPoolContext } from '../../Contexts/RelayPoolContext'
 import { getUnixTime } from 'date-fns'
 import { useFocusEffect } from '@react-navigation/native'
 import { AppContext } from '../../Contexts/AppContext'
-import { getGroups, Group } from '../../Functions/DatabaseFunctions/Groups'
+import { addGroup, getGroups, Group } from '../../Functions/DatabaseFunctions/Groups'
 import { formatId, username } from '../../Functions/RelayFunctions/Users'
 import NostrosAvatar from '../../Components/NostrosAvatar'
 import { navigate } from '../../lib/Navigation'
@@ -53,7 +53,8 @@ export const GroupsFeed: React.FC = () => {
     React.useCallback(() => {
       loadGroups()
 
-      return () => relayPool?.unsubscribe(['groups-create', 'groups-meta', 'groups-messages'])
+      return () =>
+        relayPool?.unsubscribe(['groups-user', 'groups-others', 'groups-messages'])
     }, []),
   )
 
@@ -67,27 +68,37 @@ export const GroupsFeed: React.FC = () => {
     })
   }
 
-  const loadGroups: (newGroupId?: string) => void = (newGroupId) => {
+  const loadGroups: () => void = () => {
     if (database && publicKey) {
       getGroups(database).then((results) => {
         const filters: RelayFilters[] = [
           {
             kinds: [Kind.ChannelCreation],
-            authors: [publicKey, newGroupId ?? ''],
+            authors: [publicKey],
+          },
+          {
+            kinds: [Kind.ChannelMetadata],
+            authors: [publicKey],
           },
         ]
-        filters.push({
-          kinds: [Kind.ChannelMetadata],
-          ids: [...results.map((group) => group.id ?? ''), publicKey, newGroupId ?? ''],
-        })
+        relayPool?.subscribe('groups-user', filters)
         if (results.length > 0) {
           setGroups(results)
-          filters.push({
-            kinds: [Kind.Metadata],
-            ids: [...results.map((group) => group.pubkey)],
-          })
+          relayPool?.subscribe('groups-others', [
+            {
+              kinds: [Kind.ChannelCreation],
+              ids: results.map((group) => group.id ?? ''),
+            },
+            {
+              kinds: [Kind.ChannelMetadata],
+              '#e': results.map((group) => group.id ?? ''),
+            },
+            {
+              kinds: [Kind.Metadata],
+              authors: [...results.map((group) => group.pubkey)],
+            },
+          ])
         }
-        relayPool?.subscribe('groups-create', filters)
       })
     }
   }
@@ -98,13 +109,16 @@ export const GroupsFeed: React.FC = () => {
     })
   }
 
-  const addGroup: () => void = () => {
-    if (!searchGroup) return
+  const onAddGroup: () => void = () => {
+    if (!searchGroup || !database) return
+
     if (validNip21(searchGroup)) {
       const key = getNip19Key(searchGroup)
-      if (key) loadGroups(key)
+      if (key) {
+        addGroup(database, searchGroup, '').then(() => loadGroups())
+      }
     } else {
-      loadGroups(searchGroup)
+      addGroup(database, searchGroup, '').then(() => loadGroups())
     }
     setSearchGroup(undefined)
     bottomSheetSearchRef.current?.close()
@@ -136,7 +150,7 @@ export const GroupsFeed: React.FC = () => {
         onPress={() =>
           navigate('Group', {
             groupId: item.id,
-            title: item.name || formatId(item.id),
+            title: item.name ?? formatId(item.id),
           })
         }
       >
@@ -189,23 +203,6 @@ export const GroupsFeed: React.FC = () => {
     }
   }, [])
 
-  const ListEmptyComponentBlocked = (
-    <View style={styles.blankNoButton}>
-      <MaterialCommunityIcons
-        name='account-group-outline'
-        size={64}
-        style={styles.center}
-        color={theme.colors.onPrimaryContainer}
-      />
-      <Text variant='headlineSmall' style={styles.center}>
-        {t('groupsFeed.emptyTitleBlocked')}
-      </Text>
-      <Text variant='bodyMedium' style={styles.center}>
-        {t('groupsFeed.emptyDescriptionBlocked')}
-      </Text>
-    </View>
-  )
-
   const fabOptions = React.useMemo(() => {
     return [
       {
@@ -252,7 +249,6 @@ export const GroupsFeed: React.FC = () => {
         data={groups}
         renderItem={renderGroupItem}
         ItemSeparatorComponent={Divider}
-        ListEmptyComponent={ListEmptyComponentBlocked}
         horizontal={false}
       />
       <AnimatedFAB
@@ -343,7 +339,7 @@ export const GroupsFeed: React.FC = () => {
               />
             }
           />
-          <Button mode='contained' disabled={!searchGroup} onPress={addGroup}>
+          <Button mode='contained' disabled={!searchGroup} onPress={onAddGroup}>
             {t('groupsFeed.add')}
           </Button>
         </View>
