@@ -52,6 +52,19 @@
       "contentWarning": "Contenido sensible",
       "send": "Enviar"
     },
+    "groupsFeed": {
+      "delete": "Salir del grupo",
+      "updateTitle": "Actualizar grupo",
+      "newGroupName": "Nombre",
+      "newGroupDescription": "Descripción",
+      "newGroupPicture": "Imagen",
+      "groupUpdate": "Actualizar grupo",
+      "newGroupCreate": "Crear grupo",
+      "createTitle": "Crear grupo",
+      "groupId": "Id del grupo",
+      "addTitle": "Agregar grupo existente",
+      "add": "Agregar grupo"
+    },
     "uploadImage": {
       "notifications": {
         "imageUploaded": "Tu archivo se ha subido.\nConsidera donar al servicio:\n{{uri}}",

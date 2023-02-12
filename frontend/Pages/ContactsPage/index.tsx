@@ -229,7 +229,7 @@ export const ContactsPage: React.FC = () => {
               picture={item?.picture}
             />
           </View>
-          <View>
+          <View style={styles.contactInfo}>
             <Button onPress={() => unblock(item)}>{t('contactsPage.unblock')}</Button>
           </View>
         </View>
@@ -542,8 +542,8 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
   },
   contactInfo: {
-    flexDirection: 'row',
     alignContent: 'center',
+    justifyContent: 'space-between',
   },
   fab: {
     bottom: 65,
@@ -577,7 +577,7 @@ const styles = StyleSheet.create({
     paddingLeft: 5,
   },
   profileData: {
-    maxWidth: 300,
+    flex: 1,
   },
 })
 

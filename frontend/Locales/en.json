@@ -315,17 +315,17 @@
       "typeMessage": "Type message"
     },
     "groupsFeed": {
-      "delete": "Delete",
+      "delete": "Leave group",
       "updateTitle": "Update group",
       "newGroupName": "Name",
       "newGroupDescription": "Description",
       "newGroupPicture": "Picture",
-      "groupUpdate": "Update",
-      "newGroupCreate": "Create",
+      "groupUpdate": "Update group",
+      "newGroupCreate": "Create group",
       "createTitle": "Create group",
       "groupId": "Group id",
       "addTitle": "Add existing group",
-      "add": "Add"
+      "add": "Add group"
     },
     "homePage": {
       "clipboardTitle": "Nostr key detected",

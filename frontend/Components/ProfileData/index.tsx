@@ -64,7 +64,7 @@ export const ProfileData: React.FC<ProfileCardProps> = ({
         </View>
       </View>
       <View style={styles.right}>
-        <View style={styles.contactData}>
+        <View style={styles.date}>
           <Text numberOfLines={1}>{date ?? ''}</Text>
         </View>
       </View>
