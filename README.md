@@ -35,7 +35,7 @@ Nostros chat
 - [x] Bech-32 keys
 - [x] Public Feed
 - [x] Block users and content
-- [ ] Channels
+- [X] Channels
 - [x] Deep Links
 - [ ] Search
 - [x] Mnemonic login
