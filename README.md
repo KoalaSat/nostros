@@ -8,7 +8,7 @@
 
 ![Frame 360](https://user-images.githubusercontent.com/4659020/218563725-08732841-56f6-4444-b0bf-f01230b47ece.png)
 
-# Getting Starte
+# Getting Started
 
 What is Nostr: https://www.nostr.how
 
