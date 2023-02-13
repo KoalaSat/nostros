@@ -30,6 +30,19 @@
       "Relays": "中继",
       "ProfileConfig": "简介设置"
     },
+    "groupsFeed": {
+      "delete": "Leave group",
+      "updateTitle": "Update group",
+      "newGroupName": "Name",
+      "newGroupDescription": "Description",
+      "newGroupPicture": "Picture",
+      "groupUpdate": "Update group",
+      "newGroupCreate": "Create group",
+      "createTitle": "Create group",
+      "groupId": "Group id",
+      "addTitle": "Add existing group",
+      "add": "Add group"
+    },
     "conversationPage": {
       "typeMessage": "输入信息",
       "notifications": {

@@ -154,11 +154,11 @@ export const GroupsFeed: React.FC = () => {
             <NostrosAvatar src={item.picture} name={item.name} pubKey={item.pubkey} />
             <View style={styles.groupDescription}>
               <Text>
-                {item.name && item.name?.length > 30 ? `${item.name?.slice(0, 30)}...` : item.name}
+                {item.name && item.name?.length > 25 ? `${item.name?.slice(0, 25)}...` : item.name}
               </Text>
               <Text style={{ color: theme.colors.onSurfaceVariant }}>
-                {item.about && item.about?.length > 30
-                  ? `${item.about?.slice(0, 30)}...`
+                {item.about && item.about?.length > 25
+                  ? `${item.about?.slice(0, 25)}...`
                   : item.about}
               </Text>
             </View>

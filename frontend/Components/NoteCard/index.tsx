@@ -486,7 +486,6 @@ const styles = StyleSheet.create({
   title: {
     flexDirection: 'row',
     paddingBottom: 16,
-    flex: 1,
   },
   userBlockedWrapper: {
     flexDirection: 'row',

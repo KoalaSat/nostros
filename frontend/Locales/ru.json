@@ -31,6 +31,19 @@
       "ProfileConfig": "Мой профиль",
       "markAllRead": "Mark all as read"
     },
+    "groupsFeed": {
+      "delete": "Leave group",
+      "updateTitle": "Update group",
+      "newGroupName": "Name",
+      "newGroupDescription": "Description",
+      "newGroupPicture": "Picture",
+      "groupUpdate": "Update group",
+      "newGroupCreate": "Create group",
+      "createTitle": "Create group",
+      "groupId": "Group id",
+      "addTitle": "Add existing group",
+      "add": "Add group"
+    },
     "conversationPage": {
       "typeMessage": "Напишите сообщение",
       "notifications": {

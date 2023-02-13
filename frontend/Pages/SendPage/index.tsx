@@ -140,9 +140,6 @@ export const SendPage: React.FC<SendPageProps> = ({ route }) => {
           lud06={item?.lnurl}
           picture={item?.picture}
         />
-        <View style={styles.contactFollow}>
-          <Text>{item.contact ? t('sendPage.isContact') : t('sendPage.isNotContact')}</Text>
-        </View>
       </View>
     </TouchableRipple>
   )

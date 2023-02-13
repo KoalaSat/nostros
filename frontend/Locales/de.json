@@ -12,6 +12,19 @@
       "privateKeysSnackbarTitle": "Wichtig!",
       "privateKeysSnackbarDescription": "Verwahre den privaten Schlüssel an einem sicheren Ort. Geht der Schlüssel verloren, kann er nicht wiederhergestellt werden. Das Konto kann nie wieder benutzt werden."
     },
+    "groupsFeed": {
+      "delete": "Leave group",
+      "updateTitle": "Update group",
+      "newGroupName": "Name",
+      "newGroupDescription": "Description",
+      "newGroupPicture": "Picture",
+      "groupUpdate": "Update group",
+      "newGroupCreate": "Create group",
+      "createTitle": "Create group",
+      "groupId": "Group id",
+      "addTitle": "Add existing group",
+      "add": "Add group"
+    },
     "homeNavigator": {
       "Group": "",
       "ProfileCreate": "Profil anlegen",
