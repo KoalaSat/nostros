@@ -11,27 +11,14 @@
       "privateKeyDescription": "Behandele den privaten Schlüssel wie ein Passwort",
       "privateKeysSnackbarTitle": "Wichtig!",
       "privateKeysSnackbarDescription": "Verwahre den privaten Schlüssel an einem sicheren Ort. Geht der Schlüssel verloren, kann er nicht wiederhergestellt werden. Das Konto kann nie wieder benutzt werden."
-    },
-    "groupsFeed": {
-      "delete": "Leave group",
-      "updateTitle": "Update group",
-      "newGroupName": "Name",
-      "newGroupDescription": "Description",
-      "newGroupPicture": "Picture",
-      "groupUpdate": "Update group",
-      "newGroupCreate": "Create group",
-      "createTitle": "Create group",
-      "groupId": "Group id",
-      "addTitle": "Add existing group",
-      "add": "Add group"
-    },
+       },
     "homeNavigator": {
       "Group": "",
       "ProfileCreate": "Profil anlegen",
       "ProfileConnect": "",
       "ProfileLoad": "",
       "Landing": "",
-      "Contacts": "Contacts",
+      "Contacts": "Kontakte",
       "Conversation": "Unterhaltung",
       "Reply": "Antworten",
       "Repost": "Notiz zitieren",
@@ -70,8 +57,8 @@
         "imageUploaded": "Dein Bild wurde hochgeladen.\nBitte dem Service etwas spenden servicio:\n{{uri}}",
         "imageUploadErro": "Fehler beim Hochladen"
       },
-      "uploadImageWarningTitle": "Important",
-      "uploadImageWarning": "Your image will be uploaded to a public hosting service and will be visible for anyone.",
+      "uploadImageWarningTitle": "Achtung",
+      "uploadImageWarning": "Dein Bild wird auf einen öffentlichen Hosting Service hochgeladen und für jedermann sichtbar.",
       "uploadImage": "Bild hochladen",
       "cancel": "Abbrechen",
       "poweredBy": "poweredBy {{uri}}"
@@ -81,14 +68,14 @@
     },
     "menuItems": {
       "relays": "Relays",
-      "contacts": "Contacts",
+      "contacts": "Kontakte",
       "notConnected": "Nicht verbunden",
       "connectedRelays": "{{number}} verbunden",
       "following": "{{following}} folge ich",
       "followers": "{{followers}} folgen mir",
       "configuration": "Einstellungen",
       "about": "Über Nostros",
-      "reportBug": "Report a bug",
+      "reportBug": "Bug melden",
       "logout": "Abmelden"
     },
     "configPage": {
@@ -128,8 +115,8 @@
         "copied": "Privaten Schlüssel kopiert. Verwahre ihn an einem sicheren Ort!",
         "wrongWords": "Die Wörter stimmen nicht überein"
       },
-      "skip": "Skip",
-      "confirmTitle": "Type the words in the right order.",
+      "skip": "Überspringen",
+      "confirmTitle": "Wörter in der richtigen Reihenfolge eingeben",
       "snackbarDescription": "Wichtig. Verwahre den Schlüssel an einem sicheren Ort. Bei Verlust kann dieses Konto nie wieder benutzt werden!",
       "snackbarAction": "Privaten Schlüssel kopieren",
       "warningTitle": "Wichtig!",
@@ -160,7 +147,7 @@
         "contactAdded": "Kontakt hinzugefügt",
         "addContactError": "Ein Fehler ist aufgetreten.",
         "contactRemoved": "Abo wurde entfernt",
-        "contactUnblocked": "Profile unblocked."
+        "contactUnblocked": "Profil entsperrt."
       },
       "emptyTitleBlocked": "Du hast keine geblockten Profile",
       "emptyDescriptionBlocked": "In der Profil Ansicht kannst du jederzeit jemanden blocken",
@@ -176,8 +163,8 @@
       "addContactTitle": "Kontakt hinzufügen",
       "followers": "({{count}}) folgen mir",
       "following": "Ich folge ({{count}})",
-      "blocked": "Blocked ({{count}})",
-      "unblock": "Unblock",
+      "blocked": "({{count}}) blockiert",
+      "unblock": "entsperren",
       "stopFollowing": "Abo stoppen",
       "follow": "Folgen"
     },
@@ -187,6 +174,14 @@
       "nostr": "nostr",
       "nips": "NIPs",
       "version": "Version"
+    },
+ 	"reactionsFeed": {
+      "emptyTitle": "Du hast noch keine Reaktionen",
+      "emptyDescription": "Hier siehst du Notizen, auf die du reagiert hast."
+    },
+    "repostsFeed": {
+      "emptyTitle": "Du hast noch nichts repostet",
+      "emptyDescription": "Hier sind Notizen, du du repostet hast"
     },
     "homeFeed": {
       "emptyTitle": "Du folgst niemandem",
@@ -200,17 +195,56 @@
       "newMessage": "{{newNotesCount}} neue Nachricht. Zum Aktualisieren tippen.",
       "newMessages": "{{newNotesCount}} neue Nachrichten. Zum Aktualisieren tippen."
     },
+    "relaysPage": {
+      "resilienceTitle": "Beständigkeit (experimental)",
+      "resilienceDescription": "Das Nostr Protokoll stellt eine Reihe von Tools zur Verfügung, um ein dezentrales Netzwerk zu bauen, aber im Gegensatz zu anderen dezentralen Protokollen wie Bitcoin, ist es nicht von vornherein an seine Verwendung gebunden.\n\nUm das Ziel eines dezentralen Netzwerks zu erreichen, sollten Clients (z.B. Nostros) und Relays (Content-Server) aktiv zusammenarbeiten. Der Nostros-Resilienzmodus versucht erstens, dafür ein Gewahrsein bei den Nutzern zu wecken, und zweitens, neue Muster und Methoden zu erproben, um die Resilienz des Netzwerks zu verbessern.\n\nEine funktionierende Implementation hierfür wird bald in Nostros zur Anwendung kommen",
+      "resilienceCategories": "Ausgewogenheitsfindung",
+      "resilienceCategoriesDescription": "Ein erster Ansatz, den Nostros testet, ist die zufällige Berechnung (auf der Grundlage der empfangenen Kontaktereignisse), welche Relays am ausgewogensten sind. Dabei wird versucht, sowohl Relays mit zu vielen Ereignissen (Zentralisierung) als auch Relays mit fast keinen Ereignissen (Akkuentladung) zu vermeiden\n\nEs ist das Ziel, eine Liste von 5 Relays zu erstellen, die alle Kontakte abdeckt. Sollte dies jedoch nicht möglich sein, wird Nostros unter anderen Relays suchen und den Benutzer darüber warnen.",
+      "centralized": "Zentralisiert",
+      "small": "Klein",
+      "contacts": "# Kontakte",
+      "resilienceMode": "Beständigkeit (experimental)",
+      "relayName": "Addresse",
+      "globalFeed": "Globaler Feed",
+      "active": "Aktiv",
+      "labelAdd": "Beschreibung des Relays",
+      "cancel": "Abbrechen",
+      "add": "Hinzufügen",
+      "removeRelay": "Entfernen",
+      "copyRelay": "Kopieren",
+      "recommended": "Empfohlen",
+      "myList": "Meine Relays",
+      "notifications": {
+      "globalFeedActive": "Globaler Feed aktiv.",
+      "globalFeedActiveUnactive": "Global Feed daktiviert.",
+      "add": "Relay verbinden",
+      "remove": "Relay entfernen",
+      "active": "Relay aktivieren.",
+      "desactive": "Relay deaktivieren.",
+      "badFormat": "Die URL des Relays hat kein gültiges Format.",
+      "alreadyExists": "Relay existiert bereits"
+      }
+    },
+  
     "relayCard": {
-      "pushDone": "Completed",
+      "pushDone": "Fertig",
+      "pushHistoricTitle": "Alle meine Daten hochladen",
+      "pushHistoricDescription": "Alle Daten die Nostros von Relays empfängt, werden in einer lokalen Datenbank gespeichert. Mit dieser Funktion kannst du alle Daten, die Nostros mit deinem Profil verbindet, hochladen",
+      "pushHistoricAlertTitle": "Wichtig!",
+      "pushHistoricAlert": "Öffentliche Relays haben strenge Anti-Spam Regeln, diese Aktion kann dein Profil sperren oder verbannen. Stelle zuvor sicher, das du große Datenmengen auf diesen Relay schieben darfst.\n\nWir empfehlen, dieses Feature ausschlisslich für private Relays zu benutzen, wie z.B. Umbrel's Nostr Relay.",
+      "pushConsent": "Ich schiebe meine Daten auf einen privaten Relay",
+      "pushingEvent": "Event {{eventId}} pushed",
+      "pushRelay": "Alle meine Daten hochladen",
+      "cancel": "Abbrechen",
       "moreInfo": "Mehr Infos",
       "lessInfo": "Weniger Infos",
       "globalFeed": "Globaler Feed",
       "active": "Aktiv",
       "share": "Teilen",
+      "copy": "Kopieren",
+      "remove": "Entfernen",
       "pubkey": "Öffentlicher Schlüssel",
       "contact": "Kontakt",
-      "copy": "Kopieren",
-      "remove": "Delete",
       "supportedNips": "Unterstützte NIPs",
       "software": "Softtware",
       "version": "Version",
@@ -226,35 +260,7 @@
         "urlCopied": "URL kopiert."
       }
     },
-    "relaysPage": {
-      "resilienceTitle": "Beständigkeit (experimental)",
-      "resilienceDescription": "Das Nostr Protokoll stellt eine gute Anzahl Tools zur Verfügung, um ein dezentrales Netzwerk zu bauen, aber im Gegensatz zu anderen dezentralen Protokollen wie Bitcoin, ist es nicht von vornherein an seine Verwendung gebunden.\n\nUm das Ziel eines dezentralen Netzwerks zu erreichen, sollten Clients (z.B. Nostros) und Relays (Content-Server) aktiv zusammenarbeiten. Der Nostros-Resilienzmodus versucht erstens, dafür ein Gewahrsein bei den Nutzern zu wecken, und zweitens, neue Muster und Methoden zu erproben, um die Resilienz des Netzwerks zu verbessern.\n\nEine funktionierende Implementation hierfür wird bald in Nostros zur Anwendung kommen",
-      "resilienceCategories": "Ausgewogenheitsfindung",
-      "resilienceCategoriesDescription": "Ein erster Ansatz, den Nostros testet, ist die zufällige Berechnung (auf der Grundlage der empfangenen Kontaktereignisse), welche Relays am ausgewogensten sind. Dabei wird versucht, sowohl Relays mit zu vielen Ereignissen (Zentralisierung) als auch Relays mit fast keinen Ereignissen (Akkuentladung) zu vermeiden\n\nEs ist das Ziel, eine Liste von 5 Relays zu erstellen, die alle Kontakte abdeckt. Sollte dies jedoch nicht möglich sein, wird Nostros unter anderen Relays suchen und den Benutzer darüber warnen.",
-      "centralized": "Zentralisiert",
-      "small": "Klein",
-      "contacts": "# Kontakte",
-      "resilienceMode": "Beständigkeit (experimental)",
-      "relayName": "Addresse",
-      "globalFeed": "Globaler Feed",
-      "active": "Aktiv",
-      "labelAdd": "Beschreibung des Relays",
-      "cancel": "Abbrechen",
-      "add": "Hinzufügen",
-      "removeRelay": "Entfernen",
-      "copyRelay": "Kopieren",
-      "notifications": {
-        "add": "Relay verbinden",
-        "remove": "Relay entfernen",
-        "active": "Relay aktivieren.",
-        "desactive": "Relay deaktivieren.",
-        "badFormat": "Die URL des Relays hat kein gültiges Format.",
-        "alreadyExists": "Relay existiert bereits"
-      }
-    },
-    "textContent": {
-      "invoice": "Lightning Invoice"
-    },
+    
     "profileConfigPage": {
       "notifications": {
         "nsecCopied": "Privater Schlüssel kopiert.",
@@ -291,10 +297,13 @@
       "name": "Name",
       "about": "Über mich"
     },
+ 	 "textContent": {
+      "invoice": "Lightning Invoice"
+       },
     "profilePage": {
       "notifications": {
         "contactAdded": "Kontakt hinzugefügt",
-        "contactRemoved": "Entfernt ",
+        "contactRemoved": "Kontakt Entfernt ",
         "npubCopied": "Öffentlicher Schlüssel kopiert.",
         "active": "Relay aktiviert.",
         "desactive": "Relay deaktiviert."
@@ -306,6 +315,22 @@
       "unfollow": "Nicht mehr folgen",
       "copyNPub": "Schlüssel kopieren",
       "relaysDescription": "Dies sind {{username}}'s Relays, aktiviere diejenigen, zu denen du verbunden werden möchtest."
+ },
+    "groupPage": {
+      "typeMessage": "Nachricht schreiben"
+    },
+    "groupsFeed": {
+      "delete": "Gruppe verlassen",
+      "updateTitle": "Gruppe aktualisieren",
+      "newGroupName": "Name",
+      "newGroupDescription": "Beschreibung",
+      "newGroupPicture": "Bild",
+      "groupUpdate": "Gruppe aktualisieren",
+      "newGroupCreate": "Gruppe erstellen",
+      "createTitle": "Gruppe erstellen",
+      "groupId": "Gruppen ID",
+      "addTitle": "Bestehende Gruppe hinzufügen",
+      "add": "Gruppe hinzufügen"
     },
     "homePage": {
       "clipboardTitle": "Nostr Schlüssel entdeckt",
@@ -333,8 +358,8 @@
       "notifications": {
         "contactAdded": "Aboniert",
         "contactRemoved": "Abo entfernt",
-        "userUnblocked": "Profile unblocked",
-        "userBlocked": "Profile unblocked"
+        "userUnblocked": "Profil entblockt",
+        "userBlocked": "Profile geblockt"
       },
       "invoice": "Zap",
       "message": "Nachricht",
