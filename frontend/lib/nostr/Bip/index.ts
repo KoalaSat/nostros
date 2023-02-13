@@ -1,17 +1,6 @@
-import ecurve from 'ecurve'
-import BigInteger from 'bigi'
 import { generateSecureRandom } from 'react-native-securerandom'
 import schnorr from 'bip-schnorr'
-
-export const getPublickey: (privateKey: string) => string = (privateKey) => {
-  const privateKeyBuffer = Buffer.from(privateKey, 'hex')
-  const ecparams = ecurve.getCurveByName('secp256k1')
-
-  const curvePt = ecparams.G.multiply(BigInteger.fromBuffer(privateKeyBuffer))
-  const publicKey = curvePt.getEncoded(true)
-
-  return publicKey.toString('hex').slice(2)
-}
+import { wordlist } from '@scure/bip39/wordlists/english.js'
 
 export const generateRandomKey: () => Promise<string> = async () => {
   for (;;) {
@@ -25,4 +14,16 @@ export const generateRandomKey: () => Promise<string> = async () => {
       // out of range, generate another one
     }
   }
+}
+
+export const generateRandomMnemonic: () => Promise<Record<number, string>> = async () => {
+  const result: Record<number, string> = {}
+  for (let index = 0; index < 12; index++) {
+    const random = await generateSecureRandom(4)
+    const totalRandom = random.reduce((sum, current) => sum + current, 0)
+    const position = totalRandom % wordlist.length
+    result[index + 1] = wordlist[position]
+  }
+
+  return result
 }

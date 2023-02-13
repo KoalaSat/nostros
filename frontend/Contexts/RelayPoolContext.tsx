@@ -1,20 +1,24 @@
 import React, { useContext, useEffect, useMemo, useState } from 'react'
-import RelayPool from '../lib/nostr/RelayPool/intex'
+import RelayPool, { fallbackRelays } from '../lib/nostr/RelayPool/intex'
 import { AppContext } from './AppContext'
 import { DeviceEventEmitter } from 'react-native'
 import debounce from 'lodash.debounce'
-import { getRelays, Relay } from '../Functions/DatabaseFunctions/Relays'
+import { getActiveRelays, getRelays, Relay } from '../Functions/DatabaseFunctions/Relays'
 import { UserContext } from './UserContext'
+import { randomInt } from '../Functions/NativeFunctions'
 
 export interface RelayPoolContextProps {
   relayPoolReady: boolean
   relayPool?: RelayPool
   setRelayPool: (relayPool: RelayPool) => void
   lastEventId?: string
+  setDisplayrelayDrawer: (displayRelayDrawer: string | undefined) => void
+  displayRelayDrawer?: string
   lastConfirmationtId?: string
   relays: Relay[]
   addRelayItem: (relay: Relay) => Promise<void>
   removeRelayItem: (relay: Relay) => Promise<void>
+  updateRelayItem: (relay: Relay) => Promise<void>
 }
 
 export interface WebsocketEvent {
@@ -31,7 +35,9 @@ export const initialRelayPoolContext: RelayPoolContextProps = {
   setRelayPool: () => {},
   addRelayItem: async () => await new Promise(() => {}),
   removeRelayItem: async () => await new Promise(() => {}),
+  updateRelayItem: async () => await new Promise(() => {}),
   relays: [],
+  setDisplayrelayDrawer: () => {},
 }
 
 export const RelayPoolContextProvider = ({
@@ -46,6 +52,7 @@ export const RelayPoolContextProvider = ({
   const [lastEventId, setLastEventId] = useState<string>('')
   const [lastConfirmationtId, setLastConfirmationId] = useState<string>('')
   const [relays, setRelays] = React.useState<Relay[]>([])
+  const [displayRelayDrawer, setDisplayrelayDrawer] = React.useState<string>()
 
   const changeEventIdHandler: (event: WebsocketEvent) => void = (event) => {
     setLastEventId(event.eventId)
@@ -63,41 +70,77 @@ export const RelayPoolContextProvider = ({
     [setLastConfirmationId],
   )
 
-  const loadRelayPool: () => void = async () => {
-    if (database && publicKey) {
-      DeviceEventEmitter.addListener('WebsocketEvent', debouncedEventIdHandler)
-      DeviceEventEmitter.addListener('WebsocketConfirmation', debouncedConfirmationHandler)
-      const initRelayPool = new RelayPool([], privateKey)
-      initRelayPool.connect(publicKey, (eventId: string) => setLastEventId(eventId))
-      setRelayPool(initRelayPool)
-      setRelayPoolReady(true)
-      loadRelays()
+  const createRandomRelays: () => Promise<void> = async () => {
+    const randomrelays: string[] = []
+    while (randomrelays.length < 5) {
+      const index = randomInt(0, fallbackRelays.length - 1)
+      const url = fallbackRelays[index]
+      if (!randomrelays.includes(url)) {
+        randomrelays.push(fallbackRelays[index])
+        await addRelayItem({ url })
+      }
     }
   }
 
-  const loadRelays: () => void = () => {
-    if (database) {
-      getRelays(database).then((results) => setRelays(results))
+  const loadRelayPool: () => void = async () => {
+    if (database && publicKey) {
+      const initRelayPool = new RelayPool(privateKey)
+      initRelayPool.connect(publicKey, () => {
+        initRelayPool.resilientMode(database, publicKey)
+        setRelayPool(initRelayPool)
+      })
     }
+  }
+
+  const loadRelays: () => Promise<void> = async () => {
+    return await new Promise<void>((resolve, _reject) => {
+      if (database) {
+        getRelays(database).then((results) => {
+          setRelays(results)
+          resolve()
+        })
+      } else {
+        resolve()
+      }
+    })
+  }
+
+  const updateRelayItem: (relay: Relay) => Promise<void> = async (relay) => {
+    setRelays((prev) => {
+      return prev.map((item) => {
+        if (item.url === relay.url) {
+          return relay
+        } else {
+          return item
+        }
+      })
+    })
+    return await new Promise((resolve, _reject) => {
+      if (relayPool && database && publicKey) {
+        relayPool.update(relay.url, relay.active ?? 1, relay.global_feed ?? 1, () => {
+          loadRelays().then(resolve)
+        })
+      }
+    })
   }
 
   const addRelayItem: (relay: Relay) => Promise<void> = async (relay) => {
+    setRelays((prev) => [...prev, relay])
     return await new Promise((resolve, _reject) => {
       if (relayPool && database && publicKey) {
         relayPool.add(relay.url, () => {
-          setRelays((prev) => [...prev, relay])
-          resolve()
+          loadRelays().then(resolve)
         })
       }
     })
   }
 
   const removeRelayItem: (relay: Relay) => Promise<void> = async (relay) => {
+    setRelays((prev) => prev.filter((item) => item.url !== relay.url))
     return await new Promise((resolve, _reject) => {
       if (relayPool && database && publicKey) {
         relayPool.remove(relay.url, () => {
-          setRelays((prev) => prev.filter((item) => item.url !== relay.url))
-          resolve()
+          loadRelays().then(resolve)
         })
       }
     })
@@ -105,13 +148,28 @@ export const RelayPoolContextProvider = ({
 
   useEffect(() => {
     if (publicKey && publicKey !== '') {
+      DeviceEventEmitter.addListener('WebsocketEvent', debouncedEventIdHandler)
+      DeviceEventEmitter.addListener('WebsocketConfirmation', debouncedConfirmationHandler)
       loadRelayPool()
     }
   }, [publicKey])
 
+  useEffect(() => {
+    if (database && relayPool) {
+      getActiveRelays(database).then((results) => {
+        if (results.length < 1) {
+          createRandomRelays()
+        }
+        loadRelays().then(() => setRelayPoolReady(true))
+      })
+    }
+  }, [relayPool])
+
   return (
     <RelayPoolContext.Provider
       value={{
+        displayRelayDrawer,
+        setDisplayrelayDrawer,
         relayPoolReady,
         relayPool,
         setRelayPool,
@@ -120,6 +178,7 @@ export const RelayPoolContextProvider = ({
         relays,
         addRelayItem,
         removeRelayItem,
+        updateRelayItem,
       }}
     >
       {children}

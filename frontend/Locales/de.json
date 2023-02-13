@@ -1,0 +1,360 @@
+{
+  "common": {
+    "drawers": {
+      "relaysTitle": "Relays",
+      "relaysDescription": "Relays sind Nodes (Netzknoten) im Netzwerk, die als Vermittler von Nachrichten zwischen den Anwendungen dienen.\n\n\nRelays können die Belastbarkeit und die Verfügbarkeit des Netzwerks verbessern, indem sie dafür sorgen, das Nachrichten trotz Unterbrechungen oder Ausfällen der Verfügbarkeit ausgeliefert werden.\n\n\nRelays können Privatsphäre und Netzwerksicherheit erhöhen, indem sie Aufenthaltsort und Identität der Anwendungen bzw. der Benutzer, die miteinander kommunizieren, verbergen\n\n\nDies kann von Wert sein in Umgebungen, in denen Zensur oder Überwachung ein Problem ist.\n\n\nEs ist wichtig darauf hinzuweisen, das Relays für schadhafte Zwecke missbraucht werden können, wie zum Beispiel Sniffing oder das Zensieren von Netzwerkverkehr.\n\n\nDeswegen ist es von Bedeutung, die Nutzung von Relays sorgfältig abzuwägen, und angemessenene Sichheitsmassnahmen anzuwenden, um Identität, Privatsphäre und Netzwerksicherheit zu schützen.",
+      "keysTitle": "Was sind Schlüssel?",
+      "keysDescription": "In Nostr gibt es zwei Schlüssel: Einen öffentlichen, und einen privaten Schlüssel",
+      "publicKeys": "Öffentliche Schlüssel",
+      "publicKeysDescription": "Verwende einen öffentlichen Schlüssel wie einen Benutzernamen (auch @handle in anderen Anwendungen genannt). Teile diesen, damit Andere dir in Ihren Netzwerken folgen können .",
+      "privateKey": "Privater Schlüssel",
+      "privateKeyDescription": "Behandele den privaten Schlüssel wie ein Passwort",
+      "privateKeysSnackbarTitle": "Wichtig!",
+      "privateKeysSnackbarDescription": "Verwahre den privaten Schlüssel an einem sicheren Ort. Geht der Schlüssel verloren, kann er nicht wiederhergestellt werden. Das Konto kann nie wieder benutzt werden."
+    },
+    "groupsFeed": {
+      "delete": "Leave group",
+      "updateTitle": "Update group",
+      "newGroupName": "Name",
+      "newGroupDescription": "Description",
+      "newGroupPicture": "Picture",
+      "groupUpdate": "Update group",
+      "newGroupCreate": "Create group",
+      "createTitle": "Create group",
+      "groupId": "Group id",
+      "addTitle": "Add existing group",
+      "add": "Add group"
+    },
+    "homeNavigator": {
+      "Group": "",
+      "ProfileCreate": "Profil anlegen",
+      "ProfileConnect": "",
+      "ProfileLoad": "",
+      "Landing": "",
+      "Contacts": "Contacts",
+      "Conversation": "Unterhaltung",
+      "Reply": "Antworten",
+      "Repost": "Notiz zitieren",
+      "Note": "Notiz",
+      "Profile": "Profil",
+      "About": "Über",
+      "Config": "Einstellungen",
+      "Send": "Senden",
+      "Relays": "Relays",
+      "ProfileConfig": "Mein Profil",
+      "markAllRead": "Alle als gelesen markieren"
+    },
+    "conversationPage": {
+      "typeMessage": "Nachricht schreiben",
+      "notifications": {
+        "privateMessageSendError": "Fehler beim Senden der Nachricht."
+      }
+    },
+    "profileLoadPage": {
+      "relaysDescripion": "Verbinde dich zu einem anderen Relay falls deine Daten nicht gefunden werden.",
+      "relays": "Deine Relays",
+      "home": "Start",
+      "searchingProfile": "Durchsuche Profil",
+      "foundProfile": "Profil gefunden",
+      "foundContacts": "{{contactsCount}} Kontakte gefunden",
+      "storing": "Speichere {{lastEventId}} in Datenbank."
+    },
+    "sendPage": {
+      "isContact": "Folge ich",
+      "isNotContact": "ohne Abo",
+      "contentWarning": "Sensibler Inhalt!",
+      "send": "Senden"
+    },
+    "uploadImage": {
+      "notifications": {
+        "imageUploaded": "Dein Bild wurde hochgeladen.\nBitte dem Service etwas spenden servicio:\n{{uri}}",
+        "imageUploadErro": "Fehler beim Hochladen"
+      },
+      "uploadImageWarningTitle": "Important",
+      "uploadImageWarning": "Your image will be uploaded to a public hosting service and will be visible for anyone.",
+      "uploadImage": "Bild hochladen",
+      "cancel": "Abbrechen",
+      "poweredBy": "poweredBy {{uri}}"
+    },
+    "groupPage": {
+      "typeMessage": "Nachricht schreiben"
+    },
+    "menuItems": {
+      "relays": "Relays",
+      "contacts": "Contacts",
+      "notConnected": "Nicht verbunden",
+      "connectedRelays": "{{number}} verbunden",
+      "following": "{{following}} folge ich",
+      "followers": "{{followers}} folgen mir",
+      "configuration": "Einstellungen",
+      "about": "Über Nostros",
+      "reportBug": "Report a bug",
+      "logout": "Abmelden"
+    },
+    "configPage": {
+      "showPublicImages": "Bilder aus globalem Feed Anzeigen",
+      "showSensitive": "Sensible Inhalte anzeigen",
+      "satoshi": "Satoshi Symbol",
+      "imageHostingService": "Bilder Hosting Service",
+      "random": "zufällig",
+      "language": "Sprache",
+      "relayColoruring": "Relays farblich darstellen"
+    },
+    "noteCard": {
+      "answering": "{{pubkey}} antworten",
+      "reposting": "{{pubkey}} reposten",
+      "seeParent": "Notiz ansehen",
+      "userBlocked": "Benutzer blockiert",
+      "contentWarning": "Sensibler Inhalt",
+      "recommendation": "Relay Empfehlung",
+      "addRelay": "Relay hinzufügen",
+      "reposted": "Reposted"
+    },
+    "lnPayment": {
+      "monto": "Betrag (Sats)",
+      "comment": "Kommentar (optional)",
+      "generateInvoice": "Invoice generieren",
+      "cancel": "Abbrechen",
+      "copy": "Kopieren",
+      "open": "Öffne Wallet"
+    },
+    "notificationsFeed": {
+      "emptyTitle": "Keine Benachrichtigung.",
+      "emptyDescription": "Poste etwas und erhalte Antworten und Reaktionen.",
+      "emptyButton": "Post verfassen"
+    },
+    "profileCreatePage": {
+      "notifications": {
+        "copied": "Privaten Schlüssel kopiert. Verwahre ihn an einem sicheren Ort!",
+        "wrongWords": "Die Wörter stimmen nicht überein"
+      },
+      "skip": "Skip",
+      "confirmTitle": "Type the words in the right order.",
+      "snackbarDescription": "Wichtig. Verwahre den Schlüssel an einem sicheren Ort. Bei Verlust kann dieses Konto nie wieder benutzt werden!",
+      "snackbarAction": "Privaten Schlüssel kopieren",
+      "warningTitle": "Wichtig!",
+      "warningDescription": "Verwahre den Schlüssel an einem sicheren Ort. Bei Verlust kann dieses Konto nie wieder benutzt werden!",
+      "warningAction": "Schlüssel kopiert",
+      "continue": "Weiter",
+      "mnemonicTitle": "Diese Wörter oder dein privater Schlüssel sind die einzige Möglickeit, deinen Account wieder herzustellen.",
+      "introTitle": "Dein Gerät wird 12 Wörter und einen privaten Schlüssel generieren.",
+      "wordsNoted": "Ich habe meine 12 Wörter und/oder meinen privaten Schlüssel gespeichert.",
+      "accessButton": "Zutritt",
+      "label": "Privater Schlüssel",
+      "copied": "Schlüssel kopiert",
+      "description": "Verwahre den Schlüssel an einem sicheren Ort"
+    },
+    "loggerPage": {
+      "createButton": "Schlüssel erstellen",
+      "notKeys": "Du hast keinen Schlüssel",
+      "isPublic": "Mit öffentlichem Schlüssel anmelden",
+      "accessButton": "Zugriff",
+      "privateKey": "Privater Schlüssel",
+      "publicKey": "Öffentlicher Schlüssel",
+      "loginMethod": "Einloggen mit",
+      "mnemonic": "Mnemonic"
+    },
+    "contactsPage": {
+      "notifications": {
+        "keyCopied": "Öffentlichen Schlüssel kopiert",
+        "contactAdded": "Kontakt hinzugefügt",
+        "addContactError": "Ein Fehler ist aufgetreten.",
+        "contactRemoved": "Abo wurde entfernt",
+        "contactUnblocked": "Profile unblocked."
+      },
+      "emptyTitleBlocked": "Du hast keine geblockten Profile",
+      "emptyDescriptionBlocked": "In der Profil Ansicht kannst du jederzeit jemanden blocken",
+      "emptyTitleFollowing": "Du folgst niemandem",
+      "emptyDescriptionFollowing": "Folge anderen, und sieh hier was sie posten",
+      "emptyButtonFollowing": "Folge öffentlichen Schlüsseln",
+      "emptyTitleFollower": "Niemand folgt dir",
+      "emptyDescriptionFollower": "Teile deinen öffentlichen Schlüssel damit andere dir folgen können",
+      "emptyButtonFollower": "Öffentlichen Schlüssel kopieren",
+      "cancel": "Abbrechen",
+      "addContact": "Kontakt hinzufügen",
+      "addContactDescription": "Öffentlichen Schlüssel oder NIP-05 hinzufügen, wenn du jemandem folgen möchtest",
+      "addContactTitle": "Kontakt hinzufügen",
+      "followers": "({{count}}) folgen mir",
+      "following": "Ich folge ({{count}})",
+      "blocked": "Blocked ({{count}})",
+      "unblock": "Unblock",
+      "stopFollowing": "Abo stoppen",
+      "follow": "Folgen"
+    },
+    "aboutPage": {
+      "telegram": "Telegram",
+      "gitHub": "GitHub",
+      "nostr": "nostr",
+      "nips": "NIPs",
+      "version": "Version"
+    },
+    "homeFeed": {
+      "emptyTitle": "Du folgst niemandem",
+      "emptyDescription": "Folge anderen um hier etwas zu sehen",
+      "emptyButton": "Kontakte",
+      "globalFeed": "Globaler Feed",
+      "myFeed": "Mein Feed",
+      "reactions": "Reaktionen",
+      "mentions": "Erwähnungen",
+      "reposts": "Reposts",
+      "newMessage": "{{newNotesCount}} neue Nachricht. Zum Aktualisieren tippen.",
+      "newMessages": "{{newNotesCount}} neue Nachrichten. Zum Aktualisieren tippen."
+    },
+    "relayCard": {
+      "pushDone": "Completed",
+      "moreInfo": "Mehr Infos",
+      "lessInfo": "Weniger Infos",
+      "globalFeed": "Globaler Feed",
+      "active": "Aktiv",
+      "share": "Teilen",
+      "pubkey": "Öffentlicher Schlüssel",
+      "contact": "Kontakt",
+      "copy": "Kopieren",
+      "remove": "Delete",
+      "supportedNips": "Unterstützte NIPs",
+      "software": "Softtware",
+      "version": "Version",
+      "description": "Beschreibung",
+      "obtainingInfo": "Relay Infos einholen",
+      "notifications": {
+        "active": "Relay aktiviert.",
+        "desactive": "Relay deaktiviert.",
+        "globalFeedActive": "Globaler Feed aktiv.",
+        "globalFeedActiveUnactive": "Globaler Feed inaktiv.",
+        "pubkeyCopied": "Öffentlichen Schlüssel kopiert.",
+        "contactCopied": "Kontakt kopiert.",
+        "urlCopied": "URL kopiert."
+      }
+    },
+    "relaysPage": {
+      "resilienceTitle": "Beständigkeit (experimental)",
+      "resilienceDescription": "Das Nostr Protokoll stellt eine gute Anzahl Tools zur Verfügung, um ein dezentrales Netzwerk zu bauen, aber im Gegensatz zu anderen dezentralen Protokollen wie Bitcoin, ist es nicht von vornherein an seine Verwendung gebunden.\n\nUm das Ziel eines dezentralen Netzwerks zu erreichen, sollten Clients (z.B. Nostros) und Relays (Content-Server) aktiv zusammenarbeiten. Der Nostros-Resilienzmodus versucht erstens, dafür ein Gewahrsein bei den Nutzern zu wecken, und zweitens, neue Muster und Methoden zu erproben, um die Resilienz des Netzwerks zu verbessern.\n\nEine funktionierende Implementation hierfür wird bald in Nostros zur Anwendung kommen",
+      "resilienceCategories": "Ausgewogenheitsfindung",
+      "resilienceCategoriesDescription": "Ein erster Ansatz, den Nostros testet, ist die zufällige Berechnung (auf der Grundlage der empfangenen Kontaktereignisse), welche Relays am ausgewogensten sind. Dabei wird versucht, sowohl Relays mit zu vielen Ereignissen (Zentralisierung) als auch Relays mit fast keinen Ereignissen (Akkuentladung) zu vermeiden\n\nEs ist das Ziel, eine Liste von 5 Relays zu erstellen, die alle Kontakte abdeckt. Sollte dies jedoch nicht möglich sein, wird Nostros unter anderen Relays suchen und den Benutzer darüber warnen.",
+      "centralized": "Zentralisiert",
+      "small": "Klein",
+      "contacts": "# Kontakte",
+      "resilienceMode": "Beständigkeit (experimental)",
+      "relayName": "Addresse",
+      "globalFeed": "Globaler Feed",
+      "active": "Aktiv",
+      "labelAdd": "Beschreibung des Relays",
+      "cancel": "Abbrechen",
+      "add": "Hinzufügen",
+      "removeRelay": "Entfernen",
+      "copyRelay": "Kopieren",
+      "notifications": {
+        "add": "Relay verbinden",
+        "remove": "Relay entfernen",
+        "active": "Relay aktivieren.",
+        "desactive": "Relay deaktivieren.",
+        "badFormat": "Die URL des Relays hat kein gültiges Format.",
+        "alreadyExists": "Relay existiert bereits"
+      }
+    },
+    "textContent": {
+      "invoice": "Lightning Invoice"
+    },
+    "profileConfigPage": {
+      "notifications": {
+        "nsecCopied": "Privater Schlüssel kopiert.",
+        "npubCopied": "Öffentlicher Schlüssel kopiert.",
+        "profilePublished": "Profil veröffentlicht.",
+        "lud06Published": "LUD-06 veröffentlicht.\n\n{{lud06}}",
+        "nip05Published": "NIP-05 veröffentlicht.\n\n{{nip05}}",
+        "picturePublished": "Bild veröffentlicht.",
+        "connectionError": "Verbindungsfehler"
+      },
+      "publishLud06": "Veröffentlicht",
+      "lud06Label": "LNURL / Lightning Addresse",
+      "lud06Description": "Profil verknüpfen mit LNURL oder Lightning Addresse.",
+      "lud06Title": "LUD-06",
+      "publishNip05": "Veröffentlichen",
+      "nip05Link": "Mehr erfahren",
+      "nip05Description": "Profil mit Domain verbinden.",
+      "nip05Title": "NIP-05",
+      "directoryCancell": "Abbrechen",
+      "directoryContinue": "Weiter",
+      "directoryDescription": "Nostr Directory ist ein Verzeichnis von Nutzern und ihren öffentlichen Schlüsseln, die bereits auf anderen Platformen offiziell Inhalte veröffentlichen. Finde hier Leute, denen du bereits auf anderen Platformen folgst, und hinterlasse deinen öffentlichen Schlüssel, damit andere dich auf Nostr finden können.\n\nBeim Fortfahren muss der Verifikationsprozess auf externen Platformen durchgeführt werden.",
+      "directoryTitle": "Nostr Directory",
+      "publishPicture": "Veröffentlichen",
+      "pictureUrl": "Bild URL",
+      "pictureDescription": "URL des Bildes einfügen, das im öffentlichen Profl erscheinen soll",
+      "pictureTitle": "Name des Profilbildes",
+      "publish": "Veröffentlichen",
+      "nsec": "Privater Schlüssel",
+      "npub": "Öffentlicher Schlüssel",
+      "copyNPub": "Kopieren",
+      "directory": "Verzeichnis",
+      "lud06": "LUD-06",
+      "nip05": "NIP-05",
+      "name": "Name",
+      "about": "Über mich"
+    },
+    "profilePage": {
+      "notifications": {
+        "contactAdded": "Kontakt hinzugefügt",
+        "contactRemoved": "Entfernt ",
+        "npubCopied": "Öffentlicher Schlüssel kopiert.",
+        "active": "Relay aktiviert.",
+        "desactive": "Relay deaktiviert."
+      },
+      "invoice": "Zap",
+      "message": "Nachricht",
+      "follow": "Folgen",
+      "isFollower": "folgt dir",
+      "unfollow": "Nicht mehr folgen",
+      "copyNPub": "Schlüssel kopieren",
+      "relaysDescription": "Dies sind {{username}}'s Relays, aktiviere diejenigen, zu denen du verbunden werden möchtest."
+    },
+    "homePage": {
+      "clipboardTitle": "Nostr Schlüssel entdeckt",
+      "goToEvent": "Öffnen",
+      "cancel": "Abbrechen"
+    },
+    "language": {
+      "en": "English",
+      "es": "Español",
+      "fr": "Français",
+      "ru": "Русский",
+      "de": "Deutsch",
+      "zhCn": "简体中文"
+    },
+    "profileShare": {
+      "notifications": {
+        "npubCopied": "Öffentlichen Schlüssel kopiert",
+        "nip05Copied": "NIP-05 kopiert."
+      },
+      "copyNip05": "NIP-05 kopieren",
+      "copyNPub": "Schlüssel kopieren"
+    },
+
+    "profileCard": {
+      "notifications": {
+        "contactAdded": "Aboniert",
+        "contactRemoved": "Abo entfernt",
+        "userUnblocked": "Profile unblocked",
+        "userBlocked": "Profile unblocked"
+      },
+      "invoice": "Zap",
+      "message": "Nachricht",
+      "follow": "Folgen",
+      "block": "Blockieren",
+      "share": "Teilen",
+      "unblock": "Erlauben",
+      "unfollow": "Abo entfernen",
+      "relaysTitle": "Relays"
+    },
+    "conversationsFeed": {
+      "openMessage": "Unterhaltung beginnen",
+      "openMessageLabel": "Öffentlicher Schlüssel",
+      "openMessageDescription": "Öffentlichen Schlüssel einfügen um Unterhaltung zu beginnen",
+      "openMessageTitle": "Unterhaltung beginnen",
+      "addPubKey": "Unterhaltung beginnen",
+      "newMessageContact": "Unterhaltung mit Kontakt beginnen",
+      "emptyTitle": "Keine Nachrichten",
+      "emptyDescription": "Direkte Nachricht an Kontakt oder andere schreiben",
+      "emptyButton": "Unterhaltung beginnen"
+    }
+  }
+}

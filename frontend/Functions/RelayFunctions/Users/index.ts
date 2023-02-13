@@ -1,9 +1,10 @@
-import moment from 'moment'
+import getUnixTime from 'date-fns/getUnixTime'
 import { QuickSQLiteConnection } from 'react-native-quick-sqlite'
 import RelayPool from '../../../lib/nostr/RelayPool/intex'
 import { getUser, getUsers, User } from '../../DatabaseFunctions/Users'
 import { Event } from '../../../lib/nostr/Events'
 import { getNpub } from '../../../lib/nostr/Nip19'
+import { Kind } from 'nostr-tools'
 
 export const usersToTags: (users: User[]) => string[][] = (users) => {
   return users.map((user): string[] => {
@@ -19,18 +20,41 @@ export const tagToUser: (tag: string[]) => User = (tag) => {
   }
 }
 
-export const username: (user: User) => string = (user) => {
+export const username: (user: User | undefined) => string = (user) => {
+  if (!user) return ''
+
   return user.name && user.name !== '' ? user.name : formatPubKey(getNpub(user.id))
 }
 
-export const usernamePubKey: (name: string, pubKey: string) => string = (name, pubKey) => {
+export const usernamePubKey: (name: string | undefined, pubKey: string | undefined) => string = (
+  name,
+  pubKey,
+) => {
   return name && name !== '' ? name : formatPubKey(pubKey)
 }
 
-export const formatPubKey: (pubKey: string) => string = (pubKey) => {
+export const formatPubKey: (pubKey: string | undefined) => string = (pubKey) => {
   if (!pubKey) return ''
 
-  return `${pubKey.slice(0, 6)}...${pubKey.slice(-6)}`
+  const uniqueCode = pubKey.replace('npub1', '')
+
+  return formatId(uniqueCode)
+}
+
+export const formatId: (key: string | undefined) => string = (key) => {
+  if (!key) return ''
+
+  return `${key.slice(0, 8)}:${key.slice(-8)}`
+}
+
+export const getNip05Domain: (nip05: string | undefined) => string | null = (nip05) => {
+  if (!nip05) return null
+
+  const splitString = nip05.split('@')
+
+  if (splitString.length < 2) return null
+
+  return `@${splitString[1]}`
 }
 
 export const populatePets: (
@@ -42,8 +66,8 @@ export const populatePets: (
   if (results) {
     const event: Event = {
       content: '',
-      created_at: moment().unix(),
-      kind: 3,
+      created_at: getUnixTime(new Date()),
+      kind: Kind.Contacts,
       pubkey: publicKey,
       tags: usersToTags(results),
     }
@@ -66,8 +90,8 @@ export const populateProfile: (
     }
     const event: Event = {
       content: JSON.stringify(profile),
-      created_at: moment().unix(),
-      kind: 0,
+      created_at: getUnixTime(new Date()),
+      kind: Kind.Metadata,
       pubkey: publicKey,
       tags: usersToTags([result]),
     }

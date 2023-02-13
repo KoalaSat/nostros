@@ -2,29 +2,34 @@
   "common": {
     "drawers": {
       "relaysTitle": "Relays",
-      "relaysDescription": "Relays are nodes on the network that act as intermediaries for the transmission of messages between applications.\n\n\nRelays can be used to improve network resiliency and availability by allowing messages to be delivered even when there are failures or interruptions in connectivity.\n\n\nRelays can also be used to improve privacy and network security, as they can hide the location and identity of applications that communicate with each other over This can be useful in environments where censorship or surveillance is an issue.\n\n\nIt is important to note that relays can also be used for malicious purposes, such as sniffing or censoring network traffic.\n \n\nTherefore, it is important to carefully evaluate the use of relays and consider appropriate security measures to protect privacy and network security.",
+      "relaysDescription": "Relays are nodes on the network that act as intermediaries for the transmission of messages between applications.\n\n\nRelays can be used to improve network resiliency and availability by allowing messages to be delivered even when there are failures or interruptions in connectivity.\n\n\nRelays can also be used to improve privacy and network security, as they can hide the location and identity of applications that communicate with each other. This can be useful in environments where censorship or surveillance is an issue.\n\n\nIt is important to note that relays can also be used for malicious purposes, such as sniffing or censoring network traffic.\n\n\nTherefore, it is important to carefully evaluate the use of relays and consider appropriate security measures to protect privacy and network security.",
       "keysTitle": "What are these keys?",
-      "keysDescription": "In nostr you got two keys: your public key and your private key.",
+      "keysDescription": "In nostr, you get two keys: your public key and your private key.",
       "publicKeys": "Public key",
-      "publicKeysDescription": "Think of the public key as your username (like your @handle on Twitter). Share it with other people so they can add you to their network.",
+      "publicKeysDescription": "Think of the public key as your username (like your @handle on other applications). Share it with other people so they can add you to their network.",
       "privateKey": "Private key",
       "privateKeyDescription": "Think of your private key as your password.",
       "privateKeysSnackbarTitle": "Important.",
-      "privateKeysSnackbarDescription": "Keep your private key in a safe place, if you lose it you will not be able to access it again or recover your account."
+      "privateKeysSnackbarDescription": "Keep your private key in a safe place. If you lose it, you will not be able to access it again or recover your account."
     },
     "homeNavigator": {
-      "ProfileCreate": "",
+      "ProfileCreate": "Create profile",
       "ProfileConnect": "",
+      "Group": "",
       "ProfileLoad": "",
       "Landing": "",
+      "Contacts": "Contacts",
       "Conversation": "Conversation",
+      "Repost": "Repost note",
       "Reply": "Reply",
       "Note": "Note",
       "Profile": "Profile",
       "About": "About",
+      "Config": "Config",
       "Send": "Send",
       "Relays": "Relays",
-      "ProfileConfig": "My profile"
+      "ProfileConfig": "My profile",
+      "markAllRead": "Mark all as read"
     },
     "conversationPage": {
       "typeMessage": "Type message",
@@ -37,14 +42,26 @@
       "relays": "See relays",
       "home": "Go Home",
       "searchingProfile": "Searching for your profile",
-      "foundProfile": "Found profile",
-      "foundContacts": "{{contactsCount}} contacts found"
+      "foundProfile": "Profile found",
+      "foundContacts": "{{contactsCount}} contacts found",
+      "storing": "Event {{lastEventId}} stored on database."
     },
     "sendPage": {
       "isContact": "Following",
       "isNotContact": "Not following",
       "contentWarning": "Sensitive content",
       "send": "Send"
+    },
+    "uploadImage": {
+      "notifications": {
+        "imageUploaded": "Your file has been uploaded.\nConsider donating to the service:\n{{uri}}",
+        "imageUploadErro": "There was an error while trying to upload your file"
+      },
+      "uploadImageWarningTitle": "Important",
+      "uploadImageWarning": "Your image will be uploaded to a public hosting service and will be visible for anyone.",
+      "uploadImage": "Upload image now",
+      "cancel": "Cancel",
+      "poweredBy": "Powered by {{uri}}"
     },
     "menuItems": {
       "relays": "Relays",
@@ -54,15 +71,31 @@
       "followers": "{{followers}} followers",
       "configuration": "Configuration",
       "about": "About",
+      "contacts": "Contacts",
+      "reportBug": "Report a bug",
       "logout": "Logout"
     },
+    "configPage": {
+      "showPublicImages": "Show images on public feed",
+      "showSensitive": "Show sensitive notes",
+      "satoshi": "Satoshi symbol",
+      "imageHostingService": "Image hosting service",
+      "random": "Random",
+      "language": "Language",
+      "relayColoruring": "Relay colouring"
+    },
     "noteCard": {
-      "answering": "Answer to {{username}}",
+      "answering": "Answer to {{pubkey}}",
+      "reposting": "Reposted {{pubkey}}",
+      "userBlocked": "User blocked",
       "seeParent": "See note",
-      "contentWarning": "Sensitive content"
+      "contentWarning": "Sensitive content",
+      "recommendation": "Relay recommendation",
+      "addRelay": "Add relay",
+      "reposted": "Reposted"
     },
     "lnPayment": {
-      "monto": "Cantity (sats.)",
+      "monto": "Amount (sats)",
       "comment": "Comment (optional)",
       "generateInvoice": "Generate invoice",
       "cancel": "Cancel",
@@ -71,21 +104,28 @@
       "open": "Open wallet"
     },
     "notificationsFeed": {
-      "emptyTitle": "You don't have notifications",
+      "emptyTitle": "You don't have any notifications.",
       "emptyDescription": "Write a message to get replies and reactions.",
-      "emptyButton": "Write a message"
+      "emptyButton": "Write a message."
     },
     "profileCreatePage": {
       "notifications": {
-        "copied": "Private key copied.\n\nSave this key on a safe place."
+        "copied": "Private key copied.\n\nStore this key in a safe place.",
+        "wrongWords": "The words don't match"
       },
+      "skip": "Skip",
+      "confirmTitle": "Type the words in the right order.",
       "warningTitle": "Important",
-      "warningDescription": "Save your key on a safe place, if loose it, you won't be able to access or recover your profile.",
+      "warningDescription": "Store your key in a safe place. If lose it, you won't be able to access or recover your profile.",
       "warningAction": "Copy private key",
+      "continue": "Continue",
+      "mnemonicTitle": "These words or your private key are the only way to recover your account.",
+      "introTitle": "Your device will generate 12 words and your private key.",
+      "wordsNoted": "I have saved my words and/or my private key.",
       "accessButton": "Access",
       "label": "Private key",
       "copied": "Key copied",
-      "description": "Save your key on a safe place."
+      "description": "Store your key in a safe place."
     },
     "loggerPage": {
       "createButton": "Create keys",
@@ -93,55 +133,132 @@
       "isPublic": "Access with public key",
       "accessButton": "Access",
       "privateKey": "Private key",
-      "publicKey": "Public key"
+      "publicKey": "Public key",
+      "loginMethod": "Login with",
+      "mnemonic": "Mnemonic",
+      "mnemonicInput": "Type your mnemonic words in the correct order to login."
     },
-    "contactsFeed": {
+    "contactsPage": {
       "notifications": {
         "keyCopied": "Public key copied.",
         "contactAdded": "Profile followed.",
         "addContactError": "There was an error publishing your changes.",
-        "contactRemoved": "Profile unfollowed."
+        "contactRemoved": "Profile unfollowed.",
+        "contactUnblocked": "Profile unblocked."
       },
-      "emptyTitleFollowing": "You are not following no one",
+      "emptyTitleFollowing": "You are not following anyone.",
       "emptyDescriptionFollowing": "Follow other profiles to see content.",
       "emptyButtonFollowing": "Paste public key",
       "emptyTitleFollower": "You have no followers",
       "emptyDescriptionFollower": "Share your public key so people can start following you.",
+      "emptyTitleBlocked": "You have no blocked profiles",
+      "emptyDescriptionBlocked": "You can always block a someone on the profile view.",
       "emptyButtonFollower": "Copy public key",
       "cancel": "Cancel",
       "addContact": "Add contact",
-      "addContactDescription": "Paste here the public key of the profile you want to add.",
+      "addContactDescription": "Paste here the public key or NIP-05 of the profile you want to add.",
       "addContactTitle": "Add contact",
       "followers": "Followers ({{count}})",
       "following": "Following ({{count}})",
       "stopFollowing": "Stop Following",
-      "follow": "Follow"
+      "follow": "Follow",
+      "blocked": "Blocked ({{count}})",
+      "unblock": "Unblock"
     },
     "aboutPage": {
+      "telegram": "Telegram",
       "gitHub": "GitHub",
       "nostr": "nostr",
-      "nips": "NIPs"
+      "nips": "NIPs",
+      "version": "Version"
+    },
+    "reactionsFeed": {
+      "emptyTitle": "You still didn't reacted",
+      "emptyDescription": "See here the notes you reacted to."
+    },
+    "repostsFeed": {
+      "emptyTitle": "You still didn't reposted",
+      "emptyDescription": "See here the notes you reposted."
     },
     "homeFeed": {
-      "emptyTitle": "You are not following no one",
+      "emptyTitle": "You are not following anyone",
       "emptyDescription": "Follow other profiles to see content.",
-      "emptyButton": "Go to contacts"
+      "emptyButton": "Go to contacts",
+      "globalFeed": "Global feed",
+      "myFeed": "My feed",
+      "reactions": "Reactions",
+      "mentions": "Mentions",
+      "reposts": "Reposts",
+      "newMessage": "{{newNotesCount}} new note. Pull to refresh.",
+      "newMessages": "{{newNotesCount}} new notes. Pull to refresh."
     },
     "relaysPage": {
+      "resilienceTitle": "Resilience (experimental)",
+      "resilienceDescription": "The Nostr protocol provides a good number of tools to build a decentralized network, but unlike other decentralized protocols such as Bitcoin, it is not inherently bound to its use. To achieve the goal of a decentralized network, clients (e.g., Nostros) and relays (content servers) should actively cooperate. The Nostros resilience mode seeks first to raise awareness of this among users, and second to test new patterns and methods to improve the resilience of the network.\nA working implementation for this will soon be applied in Nostros.",
+      "resilienceCategories": "Resilience exposure",
+      "resilienceCategoriesDescription": "An initial approach that Nostros is testing is to randomly calculate (based on received contact events) which relays are most balanced. This tries to avoid both relays with too many events (centralization) and relays with almost no events (battery discharge).\n\nThe goal is to create a list of 5 relays that cover all contacts. However, if this is not possible, Nostros will search among other relays and warn the user about it.",
+      "centralized": "Centralized",
+      "small": "Small",
+      "contacts": "Assigned Contacts",
+      "resilienceMode": "Resilience (experimental)",
+      "relayName": "Address",
+      "globalFeed": "Global feed",
+      "active": "Active",
       "labelAdd": "Relay address",
       "cancel": "Cancel",
       "add": "Add",
       "removeRelay": "Remove",
       "copyRelay": "Copy",
+      "recommended": "Recommended",
+      "myList": "My relays",
       "notifications": {
-        "add": "Relay connected.",
+        "globalFeedActive": "Global feed enabled.",
+        "globalFeedActiveUnactive": "Global feed disabled.",
+        "add": "Relay added.",
         "remove": "Relay removed.",
-        "badFormat": "Relay URL has a bad format."
+        "active": "Relay activated.",
+        "desactive": "Relay deactivated.",
+        "badFormat": "Relay URL has a bad format.",
+        "alreadyExists": "Relay already exists."
+      }
+    },
+    "relayCard": {
+      "pushDone": "Completed",
+      "pushHistoricTitle": "Push all my data",
+      "pushHistoricDescription": "Nostros stores on his own database all the data received from relays. With this option you can push to any relay all the data Nostros has associated to your profile.",
+      "pushHistoricAlertTitle": "Important",
+      "pushHistoricAlert": "Public relays have strong anti-spam policies and this action might ban your key. Make sure you are allowed to send big chunks of data to this relay.\n\nWe recomend to use this feature only for private relays like Umbrel's Nostr Relay.",
+      "pushConsent": "I'm pushing my events to a private relay",
+      "pushingEvent": "Event {{eventId}} pushed",
+      "pushRelay": "Push all my data",
+      "cancel": "Cancel",
+      "moreInfo": "More info",
+      "lessInfo": "Less info",
+      "globalFeed": "Global Feed",
+      "active": "Active",
+      "share": "Share",
+      "copy": "Copy",
+      "remove": "Delete",
+      "pubkey": "Public key",
+      "contact": "Contact",
+      "supportedNips": "Supported NIPs",
+      "software": "Software",
+      "version": "Version",
+      "description": "Description",
+      "obtainingInfo": "Obtaining relay information",
+      "notifications": {
+        "active": "Relay activated.",
+        "desactive": "Relay deactivated.",
+        "globalFeedActive": "Global feed enabled.",
+        "globalFeedActiveUnactive": "Global feed disabled.",
+        "pubkeyCopied": "Public key copied.",
+        "contactCopied": "Contact copied.",
+        "urlCopied": "URL copied."
       }
     },
     "profileConfigPage": {
       "notifications": {
-        "nsecCopied": "Secret key copied.",
+        "nsecCopied": "Private key copied.",
         "npubCopied": "Public key copied.",
         "profilePublished": "Profile published.",
         "lud06Published": "LUD-06 published.\n\n{{lud06}}",
@@ -151,7 +268,7 @@
       },
       "publishLud06": "Publish",
       "lud06Label": "LNURL / Lightning Address",
-      "lud06Description": "Link your identity with a LNURL or Lightning Address.",
+      "lud06Description": "Link your identity with an LNURL or Lightning Address.",
       "lud06Title": "LUD-06",
       "publishNip05": "Publish",
       "nip05Link": "Learn more.",
@@ -159,14 +276,14 @@
       "nip05Title": "NIP-05",
       "directoryCancell": "Cancel",
       "directoryContinue": "Continue",
-      "directoryDescription": "Nostr Directory is a database of nostr public keys associated with a Twitter account. Find the people you follow on Twitter on nostr and add your public key so your followers can find you if you want.\n\n\nVerifying your Twitter account will add a badge to your profile.\n\n\nYes you will have to carry out the verification process outside the application.",
+      "directoryDescription": "Nostr Directory is a database of nostr public keys associated with official user accounts on other platforms. Find the people you already follow on other platforms on nostr and add your public key so that your followers can find you.\n\nIf you continue you will have to perform the verification process outside the application.",
       "directoryTitle": "Nostr Directory",
       "publishPicture": "Publish",
       "pictureUrl": "Picture URL",
       "pictureDescription": "Paste here the URL for the image you would like to display on your public profile.",
       "pictureTitle": "Link profile's picture",
       "publish": "Publish",
-      "nsec": "Secret key",
+      "nsec": "Private key",
       "npub": "Public key",
       "copyNPub": "Copy",
       "directory": "Directory",
@@ -175,29 +292,77 @@
       "name": "Name",
       "about": "Description"
     },
+    "textContent": {
+      "invoice": "Lightning Network invoice"
+    },
     "profilePage": {
       "notifications": {
         "contactAdded": "Profile followed",
         "contactRemoved": "Profile unfollowed",
-        "npubCopied": "Public key copied."
+        "npubCopied": "Public key copied.",
+        "active": "Relay activated.",
+        "desactive": "Relay desactivated."
       },
       "invoice": "Tip",
       "message": "Message",
       "follow": "Follow",
       "unfollow": "Following",
+      "copyNPub": "Copy key",
+      "isFollower": "follows you",
+      "relaysDescription": "These are {{username}}'s relays, activate the ones you want to be connected."
+    },
+    "groupPage": {
+      "typeMessage": "Type message"
+    },
+    "groupsFeed": {
+      "delete": "Leave group",
+      "updateTitle": "Update group",
+      "newGroupName": "Name",
+      "newGroupDescription": "Description",
+      "newGroupPicture": "Picture",
+      "groupUpdate": "Update group",
+      "newGroupCreate": "Create group",
+      "createTitle": "Create group",
+      "groupId": "Group id",
+      "addTitle": "Add existing group",
+      "add": "Add group"
+    },
+    "homePage": {
+      "clipboardTitle": "Nostr key detected",
+      "goToEvent": "Open",
+      "cancel": "Cancel"
+    },
+    "language": {
+      "en": "English",
+      "es": "Español",
+      "fr": "Français",
+      "ru": "Русский",
+      "de": "Deutsch",
+      "zhCn": "简体中文"
+    },
+    "profileShare": {
+      "notifications": {
+        "npubCopied": "Public key copied.",
+        "nip05Copied": "NIP-05 copied."
+      },
+      "copyNip05": "Copy NIP-05",
       "copyNPub": "Copy key"
     },
     "profileCard": {
       "notifications": {
         "contactAdded": "Profile followed",
         "contactRemoved": "Profile unfollowed",
-        "npubCopied": "Public key copied."
+        "userUnblocked": "Profile unblocked",
+        "userBlocked": "Profile unblocked"
       },
       "invoice": "Tip",
       "message": "Message",
       "follow": "Follow",
       "unfollow": "Following",
-      "copyNPub": "Copy key"
+      "block": "Block",
+      "unblock": "Unblock",
+      "share": "Share",
+      "relaysTitle": "Relays"
     },
     "conversationsFeed": {
       "openMessage": "Start conversation",

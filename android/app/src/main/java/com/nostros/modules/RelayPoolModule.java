@@ -38,7 +38,7 @@ public class RelayPoolModule extends ReactContextBaseJavaModule {
     @ReactMethod
     public void add(String url) {
         try {
-            Relay relay = new Relay(url, database, context);
+            Relay relay = new Relay(url, 1, 1, database, context);
             relay.connect(userPubKey);
             relays.add(relay);
             database.saveRelay(relay);
@@ -63,17 +63,38 @@ public class RelayPoolModule extends ReactContextBaseJavaModule {
     }
 
     @ReactMethod
+    public void update(String url, int active, int globalFeed, Callback callback) throws IOException {
+        ListIterator<Relay> iterator = relays.listIterator();
+        boolean relayExists = false;
+        while(iterator.hasNext()){
+            Relay relay = iterator.next();
+            if(url.equals(relay.url)){
+                int index = relays.indexOf(relay);
+                relay.connect(userPubKey);
+                relay.setActive(active);
+                relay.setGlobalFeed(globalFeed);
+                relay.save(database.database);
+                this.relays.set(index, relay);
+                relayExists = true;
+            }
+        }
+
+        if (!relayExists) {
+            this.add(url);
+        }
+
+        callback.invoke();
+    }
+
+    @ReactMethod
     public void connect(String pubKey, Callback callback) {
         userPubKey = pubKey;
         relays = database.getRelays(context);
-        if (relays.isEmpty()) {
-            add("wss://damus.io");
-            add("wss://brb.io");
-            add("wss://nostr-relay.wlvs.space");
-        }
         for (Relay relay : relays) {
             try {
-                relay.connect(pubKey);
+                if (relay.active() > 0) {
+                    relay.connect(pubKey);
+                }
             } catch (IOException e) {
                 Log.d("WebSocket", e.toString());
             }
@@ -82,9 +103,29 @@ public class RelayPoolModule extends ReactContextBaseJavaModule {
     }
 
     @ReactMethod
-    public void send(String message) {
+    public void send(String message, boolean isGlobalFeed) {
         for (Relay relay : relays) {
-            relay.send(message);
+            if (relay.active() > 0 && (!isGlobalFeed || relay.globalFeed > 0)) {
+                relay.send(message);
+            }
+        }
+    }
+
+    @ReactMethod
+    public void sendAll(String message, boolean isGlobalFeed) {
+        for (Relay relay : relays) {
+            if (relay.active() > 0 && (!isGlobalFeed || relay.globalFeed > 0)) {
+                relay.send(message);
+            }
+        }
+    }
+
+    @ReactMethod
+    public void sendRelay(String message, String relayUrl) {
+        for (Relay relay : relays) {
+            if (relay.active() > 0 && relayUrl.equals(relay.url)) {
+                relay.send(message);
+            }
         }
     }
 }

@@ -10,6 +10,7 @@ import { useTranslation } from 'react-i18next'
 import ProfileCreatePage from '../../Pages/ProfileCreatePage'
 import { DrawerNavigationProp } from '@react-navigation/drawer'
 import RelaysPage from '../RelaysPage'
+import ConfigPage from '../ConfigPage'
 
 export const HomeNavigator: React.FC = () => {
   const theme = useTheme()
@@ -107,16 +108,20 @@ export const HomeNavigator: React.FC = () => {
         <Stack.Group>
           <Stack.Screen name='About' component={AboutPage} />
           <Stack.Screen name='Relays' component={RelaysPage} />
+          <Stack.Screen name='Config' component={ConfigPage} />
         </Stack.Group>
       </Stack.Navigator>
       <RBSheet
         ref={bottomSheetKeysRef}
         closeOnDragDown={true}
-        height={430}
+        height={420}
         customStyles={{
           container: {
             backgroundColor: theme.colors.background,
-            padding: 16,
+            paddingTop: 16,
+            paddingRight: 16,
+            paddingBottom: 32,
+            paddingLeft: 16,
             borderTopRightRadius: 28,
             borderTopLeftRadius: 28,
           },
@@ -127,13 +132,16 @@ export const HomeNavigator: React.FC = () => {
       <RBSheet
         ref={bottomSheetRelaysRef}
         closeOnDragDown={true}
-        height={680}
         customStyles={{
           container: {
             backgroundColor: theme.colors.background,
-            padding: 16,
+            paddingTop: 16,
+            paddingRight: 16,
+            paddingBottom: 32,
+            paddingLeft: 16,
             borderTopRightRadius: 28,
             borderTopLeftRadius: 28,
+            height: 'auto',
           },
         }}
       >

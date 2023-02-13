@@ -1,0 +1,228 @@
+import React, { useContext, useEffect, useState } from 'react'
+import { Clipboard, StyleSheet, View } from 'react-native'
+import RBSheet from 'react-native-raw-bottom-sheet'
+import {
+  Avatar as PaperAvatar,
+  Button,
+  Text,
+  TextInput,
+  TouchableRipple,
+  useTheme,
+} from 'react-native-paper'
+import { deleteGroup, getGroup, Group } from '../../Functions/DatabaseFunctions/Groups'
+import { AppContext } from '../../Contexts/AppContext'
+import { validImageUrl } from '../../Functions/NativeFunctions'
+import FastImage from 'react-native-fast-image'
+import { useTranslation } from 'react-i18next'
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'
+import UploadImage from '../UploadImage'
+import { UserContext } from '../../Contexts/UserContext'
+import { getUnixTime } from 'date-fns'
+import { Kind } from 'nostr-tools'
+import { RelayPoolContext } from '../../Contexts/RelayPoolContext'
+import { Event } from '../../lib/nostr/Events'
+import { goBack } from '../../lib/Navigation'
+
+interface GroupHeaderIconProps {
+  groupId: string
+}
+
+export const GroupHeaderIcon: React.FC<GroupHeaderIconProps> = ({ groupId }) => {
+  const { t } = useTranslation('common')
+  const { database } = useContext(AppContext)
+  const { publicKey } = useContext(UserContext)
+  const { relayPool, lastEventId } = useContext(RelayPoolContext)
+  const theme = useTheme()
+  const [group, setGroup] = useState<Group>()
+  const [newGroupName, setNewGroupName] = useState<string>()
+  const [newGroupDescription, setNewGroupDescription] = useState<string>()
+  const [newGroupPicture, setNewGroupPicture] = useState<string>()
+  const [startUpload, setStartUpload] = useState<boolean>(false)
+  const [uploadingFile, setUploadingFile] = useState<boolean>(false)
+  const bottomSheetActionsGroupRef = React.useRef<RBSheet>(null)
+  const bottomSheetEditGroupRef = React.useRef<RBSheet>(null)
+
+  useEffect(() => {
+    if (database && groupId) {
+      getGroup(database, groupId).then((result) => {
+        setGroup(result)
+        setNewGroupName(result.name)
+        setNewGroupDescription(result.about)
+        setNewGroupPicture(result.picture)
+      })
+    }
+  }, [lastEventId])
+
+  const pastePicture: () => void = () => {
+    Clipboard.getString().then((value) => {
+      setNewGroupPicture(value ?? '')
+    })
+  }
+
+  const onDeleteGroup: () => void = () => {
+    if (database && group?.id) {
+      deleteGroup(database, group?.id)
+      goBack()
+      bottomSheetActionsGroupRef.current?.close()
+    }
+  }
+
+  const updateGroup: () => void = () => {
+    if (newGroupName && publicKey && group?.id) {
+      const event: Event = {
+        content: JSON.stringify({
+          name: newGroupName,
+          about: newGroupDescription,
+          picture: newGroupPicture,
+        }),
+        created_at: getUnixTime(new Date()),
+        kind: Kind.ChannelMetadata,
+        pubkey: publicKey,
+        tags: [['e', group?.id, '']],
+      }
+      relayPool?.sendEvent(event)
+      bottomSheetEditGroupRef.current?.close()
+    }
+  }
+
+  const bottomSheetStyles = React.useMemo(() => {
+    return {
+      container: {
+        backgroundColor: theme.colors.background,
+        paddingTop: 16,
+        paddingRight: 16,
+        paddingBottom: 32,
+        paddingLeft: 16,
+        borderTopRightRadius: 28,
+        borderTopLeftRadius: 28,
+        height: 'auto',
+      },
+    }
+  }, [])
+
+  return (
+    <View style={styles.container}>
+      <TouchableRipple
+        onPress={() =>
+          group?.pubkey === publicKey
+            ? bottomSheetEditGroupRef.current?.open()
+            : bottomSheetActionsGroupRef.current?.open()
+        }
+      >
+        {validImageUrl(group?.picture) ? (
+          <FastImage
+            style={[
+              {
+                backgroundColor: theme.colors.backdrop,
+                borderRadius: 33,
+                width: 35,
+                height: 35,
+              },
+            ]}
+            source={{
+              uri: group?.picture,
+              priority: FastImage.priority.normal,
+            }}
+            resizeMode={FastImage.resizeMode.contain}
+          />
+        ) : (
+          <PaperAvatar.Text size={35} label={group?.name ?? group?.id ?? ''} />
+        )}
+      </TouchableRipple>
+      <RBSheet
+        ref={bottomSheetActionsGroupRef}
+        closeOnDragDown={true}
+        customStyles={bottomSheetStyles}
+      >
+        <View>
+          <Button mode='contained' onPress={onDeleteGroup}>
+            {t('groupsFeed.delete')}
+          </Button>
+        </View>
+      </RBSheet>
+      <RBSheet
+        ref={bottomSheetEditGroupRef}
+        closeOnDragDown={true}
+        customStyles={bottomSheetStyles}
+      >
+        <View>
+          <Text style={styles.input} variant='titleLarge'>
+            {t('groupsFeed.updateTitle')}
+          </Text>
+          <TextInput
+            style={styles.input}
+            mode='outlined'
+            label={t('groupsFeed.newGroupName') ?? ''}
+            onChangeText={setNewGroupName}
+            value={newGroupName}
+          />
+          <TextInput
+            style={styles.input}
+            multiline
+            mode='outlined'
+            label={t('groupsFeed.newGroupDescription') ?? ''}
+            onChangeText={setNewGroupDescription}
+            value={newGroupDescription}
+          />
+          <TextInput
+            style={styles.input}
+            mode='outlined'
+            label={t('groupsFeed.newGroupPicture') ?? ''}
+            onChangeText={setNewGroupPicture}
+            value={newGroupPicture}
+            left={
+              <TextInput.Icon
+                icon={() => (
+                  <MaterialCommunityIcons
+                    name='image-outline'
+                    size={25}
+                    color={theme.colors.onPrimaryContainer}
+                  />
+                )}
+                onPress={() => setStartUpload(true)}
+              />
+            }
+            right={
+              <TextInput.Icon
+                icon='content-paste'
+                onPress={pastePicture}
+                forceTextInputFocus={false}
+              />
+            }
+          />
+          <Button
+            mode='contained'
+            disabled={!newGroupName}
+            onPress={() => updateGroup()}
+            style={styles.input}
+          >
+            {t('groupsFeed.groupUpdate')}
+          </Button>
+          <Button mode='outlined' onPress={onDeleteGroup}>
+            {t('groupsFeed.delete')}
+          </Button>
+          <UploadImage
+            startUpload={startUpload}
+            setImageUri={(imageUri) => {
+              setNewGroupPicture(imageUri)
+              setStartUpload(false)
+            }}
+            uploadingFile={uploadingFile}
+            setUploadingFile={setUploadingFile}
+          />
+        </View>
+      </RBSheet>
+    </View>
+  )
+}
+
+const styles = StyleSheet.create({
+  container: {
+    paddingRight: 8,
+  },
+  input: {
+    marginBottom: 16,
+  },
+})
+
+export default GroupHeaderIcon

@@ -1,65 +1,44 @@
 import { t } from 'i18next'
 import * as React from 'react'
-import { Clipboard, StyleSheet, View } from 'react-native'
-import { Card, IconButton, Snackbar, Text } from 'react-native-paper'
+import { StyleSheet, View } from 'react-native'
+import { Divider, Snackbar, TouchableRipple, useTheme } from 'react-native-paper'
 import { AppContext } from '../../Contexts/AppContext'
-import { RelayPoolContext } from '../../Contexts/RelayPoolContext'
-import { UserContext } from '../../Contexts/UserContext'
-import { getUser, updateUserContact, User } from '../../Functions/DatabaseFunctions/Users'
-import { populatePets, usernamePubKey } from '../../Functions/RelayFunctions/Users'
-import NostrosAvatar from '../NostrosAvatar'
+import { getUser, User } from '../../Functions/DatabaseFunctions/Users'
+import { usernamePubKey } from '../../Functions/RelayFunctions/Users'
 import LnPayment from '../LnPayment'
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'
-import { navigate, push } from '../../lib/Navigation'
+import { push } from '../../lib/Navigation'
 import RBSheet from 'react-native-raw-bottom-sheet'
 import { getNpub } from '../../lib/nostr/Nip19'
+import ProfileData from '../ProfileData'
+import ProfileActions from '../ProfileActions'
 
 interface ProfileCardProps {
-  userPubKey: string
   bottomSheetRef: React.RefObject<RBSheet>
+  showImages?: boolean
 }
 
-export const ProfileCard: React.FC<ProfileCardProps> = ({ userPubKey, bottomSheetRef }) => {
+export const ProfileCard: React.FC<ProfileCardProps> = ({ bottomSheetRef, showImages = true }) => {
+  const theme = useTheme()
+  const { displayUserDrawer } = React.useContext(AppContext)
   const { database } = React.useContext(AppContext)
-  const { publicKey } = React.useContext(UserContext)
-  const { relayPool } = React.useContext(RelayPoolContext)
   const [user, setUser] = React.useState<User>()
   const [openLn, setOpenLn] = React.useState<boolean>(false)
-  const [isContact, setIsContact] = React.useState<boolean>()
   const [showNotification, setShowNotification] = React.useState<undefined | string>()
-  const nPub = React.useMemo(() => getNpub(userPubKey), [userPubKey])
+  const nPub = React.useMemo(() => getNpub(displayUserDrawer), [displayUserDrawer])
   const username = React.useMemo(() => usernamePubKey(user?.name ?? '', nPub), [nPub, user])
 
   React.useEffect(() => {
     loadUser()
   }, [])
 
-  const removeContact: () => void = () => {
-    if (relayPool && database && publicKey) {
-      updateUserContact(userPubKey, database, false).then(() => {
-        populatePets(relayPool, database, publicKey)
-        setIsContact(false)
-        setShowNotification('contactRemoved')
-      })
-    }
-  }
-
-  const addContact: () => void = () => {
-    if (relayPool && database && publicKey) {
-      updateUserContact(userPubKey, database, true).then(() => {
-        populatePets(relayPool, database, publicKey)
-        setIsContact(true)
-        setShowNotification('contactAdded')
-      })
-    }
-  }
-
   const loadUser: () => void = () => {
-    if (database) {
-      getUser(userPubKey, database).then((result) => {
+    if (database && displayUserDrawer) {
+      getUser(displayUserDrawer, database).then((result) => {
         if (result) {
           setUser(result)
-          setIsContact(result?.contact)
+        } else {
+          setUser({ id: displayUserDrawer })
         }
       })
     }
@@ -67,94 +46,45 @@ export const ProfileCard: React.FC<ProfileCardProps> = ({ userPubKey, bottomShee
 
   const goToProfile: () => void = () => {
     bottomSheetRef.current?.close()
-    push('Profile', { pubKey: userPubKey, title: username })
+    push('Profile', { pubKey: displayUserDrawer, title: username })
   }
 
   return (
     <View>
-      <Card onPress={goToProfile}>
-        <Card.Content style={styles.card}>
-          <View style={styles.cardUser}>
-            <View style={styles.cardUserMain}>
-              <View>
-                <NostrosAvatar
-                  name={user?.name}
-                  pubKey={nPub}
-                  src={user?.picture}
-                  lud06={user?.lnurl}
-                  size={54}
-                />
-              </View>
-              <View>
-                <View style={styles.username}>
-                  <Text variant='titleMedium'>{username}</Text>
-                  {/* <MaterialCommunityIcons name="check-decagram-outline" size={16} /> */}
-                  <Text>{user?.nip05}</Text>
-                </View>
-              </View>
-            </View>
-            <View style={styles.about}>
-              <Text>
-                {`${user?.about ? user?.about?.slice(0, 75) : ''}${
-                  user?.about && user?.about?.length > 75 ? ' ...' : ''
-                }`}
-              </Text>
-            </View>
-          </View>
+      <Divider />
+      <TouchableRipple onPress={goToProfile}>
+        <View style={styles.cardUser}>
           <View>
-            <MaterialCommunityIcons name='menu-right' size={25} />
-          </View>
-        </Card.Content>
-      </Card>
-      <View style={styles.mainLayout}>
-        {userPubKey !== publicKey && (
-          <View style={styles.actionButton}>
-            <IconButton
-              icon={isContact ? 'account-multiple-remove-outline' : 'account-multiple-plus-outline'}
-              size={28}
-              onPress={() => {
-                isContact ? removeContact() : addContact()
-              }}
-            />
-            <Text>{isContact ? t('profileCard.unfollow') : t('profileCard.follow')}</Text>
-          </View>
-        )}
-        <View style={styles.actionButton}>
-          <IconButton
-            icon='message-plus-outline'
-            size={28}
-            onPress={() => {
-              navigate('Conversation', { pubKey: userPubKey, title: username })
-              bottomSheetRef.current?.close()
-            }}
-          />
-          <Text>{t('profileCard.message')}</Text>
-        </View>
-        <View style={styles.actionButton}>
-          <IconButton
-            icon='content-copy'
-            size={28}
-            onPress={() => {
-              setShowNotification('npubCopied')
-              Clipboard.setString(nPub ?? '')
-            }}
-          />
-          <Text>{t('profileCard.copyNPub')}</Text>
-        </View>
-        <View style={styles.actionButton}>
-          {user?.lnurl && (
-            <>
-              <IconButton
-                icon='lightning-bolt'
-                size={28}
-                onPress={() => setOpenLn(true)}
-                iconColor='#F5D112'
+            <View style={styles.cardUserMain}>
+              <ProfileData
+                username={user?.name}
+                publicKey={user?.id ?? displayUserDrawer}
+                validNip05={user?.valid_nip05}
+                nip05={user?.nip05}
+                lud06={user?.lnurl}
+                picture={showImages ? user?.picture : undefined}
               />
-              <Text>{t('profileCard.invoice')}</Text>
-            </>
-          )}
+            </View>
+          </View>
+          <View style={styles.arrow}>
+            <MaterialCommunityIcons
+              name='menu-right'
+              size={25}
+              color={theme.colors.onPrimaryContainer}
+            />
+          </View>
         </View>
-      </View>
+      </TouchableRipple>
+      <Divider />
+      {user && (
+        <View style={styles.profileActions}>
+          <ProfileActions
+            user={user}
+            setUser={setUser}
+            onActionDone={() => bottomSheetRef.current?.close()}
+          />
+        </View>
+      )}
       {showNotification && (
         <Snackbar
           style={styles.snackbar}
@@ -176,11 +106,17 @@ const styles = StyleSheet.create({
     padding: 16,
   },
   snackbar: {
-    margin: 16,
-    width: '100%',
+    marginBottom: 85,
+  },
+  usernameData: {
+    paddingLeft: 16,
+  },
+  profileActions: {
+    paddingLeft: 16,
+    paddingRight: 16,
   },
   username: {
-    paddingLeft: 16,
+    flexDirection: 'row',
   },
   contacts: {
     flexDirection: 'row',
@@ -189,8 +125,9 @@ const styles = StyleSheet.create({
   },
   mainLayout: {
     flexDirection: 'row',
+    flexWrap: 'wrap',
     alignItems: 'center',
-    justifyContent: 'space-around',
+    justifyContent: 'flex-start',
   },
   about: {
     maxHeight: 50,
@@ -199,6 +136,11 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
   },
+  cardUser: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    padding: 16,
+  },
   card: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -206,18 +148,37 @@ const styles = StyleSheet.create({
   },
   cardUserMain: {
     flexDirection: 'row',
-    alignItems: 'center',
   },
   actionButton: {
     justifyContent: 'center',
     alignItems: 'center',
-    minWidth: 58,
+    flexBasis: '25%',
+    marginBottom: 4,
+  },
+  qr: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 16,
+  },
+  shareActionButton: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    flexBasis: '50%',
+    marginBottom: 4,
   },
   list: {
     padding: 16,
   },
-  cardUser: {
-    flex: 1,
+  verifyIcon: {
+    paddingTop: 6,
+    paddingLeft: 5,
+  },
+  dividerTop: {
+    marginBottom: 16,
+  },
+  arrow: {
+    alignContent: 'center',
+    justifyContent: 'center',
   },
 })
 

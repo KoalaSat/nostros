@@ -2,29 +2,47 @@
   "common": {
     "drawers": {
       "relaysTitle": "Реле",
-      "relaysDescription": "Relays are nodes on the network that act as intermediaries for the transmission of messages between applications.\n\n\nRelays can be used to improve network resiliency and availability by allowing messages to be delivered even when there are failures or interruptions in connectivity.\n\n\nRelays can also be used to improve privacy and network security, as they can hide the location and identity of applications that communicate with each other over This can be useful in environments where censorship or surveillance is an issue.\n\n\nIt is important to note that relays can also be used for malicious purposes, such as sniffing or censoring network traffic.\n \n\nTherefore, it is important to carefully evaluate the use of relays and consider appropriate security measures to protect privacy and network security.",
+      "relaysDescription": "Реле(ретрансляторы) — это сетевые узлы, которые работают как посредники для передачи сообщений между приложениями.\n\n\nРетрансляторы можно использовать для повышения отказоустойчивости и доступности сети, позволяя доставлять сообщения даже при сбоях и проблемах с подключением. n\n\nРеле также можно использовать для повышения конфиденциальности и сетевой безопасности, поскольку они могут скрывать местоположение и идентификационные данные приложений, которые обмениваются данными. Это может быть полезно в условиях цензуры или слежки.\n\n \nВажно отметить, что реле также могут использоваться в злонамеренных целях, таких как прослушивание или цензура сетевого трафика.\n \n\nПоэтому важно тщательно оценивать использование реле и принимать соответствующие меры безопасности для защиты конфиденциальности и сетевой безопасности.",
       "keysTitle": "Что такое ключи?",
       "keysDescription": "In nostr you got two keys: your public key and your private key.",
       "publicKeys": "Public key",
       "publicKeysDescription": "Think of the public key as your username (like your @handle on Twitter). Share it with other people so they can add you to their network.",
       "privateKey": "Приватный ключ",
-      "privateKeyDescription": "Представьте, что приватный ключ это пароль.",
+      "privateKeyDescription": "Представьте, что приватный(секретный) ключ это пароль.",
       "privateKeysSnackbarTitle": "Важно",
       "privateKeysSnackbarDescription": "Keep your private key in a safe place, if you lose it you will not be able to access it again or recover your account."
     },
     "homeNavigator": {
-      "ProfileCreate": "",
+      "Group": "",
+      "ProfileCreate": "Create profile",
       "ProfileConnect": "",
       "ProfileLoad": "",
       "Landing": "",
+      "Contacts": "Contacts",
       "Conversation": "Диалог",
       "Reply": "Ответ",
       "Note": "Заметка",
+      "Repost": "Поделиться",
       "Profile": "Профиль",
       "About": "О нас",
+      "Config": "Настройки",
       "Send": "Отпраить",
       "Relays": "Реле",
-      "ProfileConfig": "Мой аккаунт"
+      "ProfileConfig": "Мой профиль",
+      "markAllRead": "Mark all as read"
+    },
+    "groupsFeed": {
+      "delete": "Leave group",
+      "updateTitle": "Update group",
+      "newGroupName": "Name",
+      "newGroupDescription": "Description",
+      "newGroupPicture": "Picture",
+      "groupUpdate": "Update group",
+      "newGroupCreate": "Create group",
+      "createTitle": "Create group",
+      "groupId": "Group id",
+      "addTitle": "Add existing group",
+      "add": "Add group"
     },
     "conversationPage": {
       "typeMessage": "Напишите сообщение",
@@ -33,40 +51,71 @@
       }
     },
     "profileLoadPage": {
-      "relaysDescripion": "Connect with other relays if you have problems finding your data.",
+      "relaysDescripion": "При проблемах с получением данных, подключитесь к другим реле.",
       "relays": "Посмотреть реле",
       "home": "На главную",
-      "searchingProfile": "Searching for your profile",
-      "foundProfile": "Found profile",
-      "foundContacts": "{{contactsCount}} contacts found"
+      "searchingProfile": "Ищем Ваш профиль.",
+      "foundProfile": "Профиль найден.",
+      "foundContacts": "{{contactsCount}} контакта(ов) найдено",
+      "storing": "Event {{lastEventId}} stored on database."
     },
     "sendPage": {
-      "isContact": "Following",
-      "isNotContact": "Not following",
-      "contentWarning": "Sensitive content",
-      "send": "Send"
+      "isContact": "Подписаны",
+      "isNotContact": "Подписаться",
+      "contentWarning": "Делекатный контент",
+      "send": "Отправить"
+    },
+    "uploadImage": {
+      "notifications": {
+        "imageUploaded": "Tu archivo se ha subido.\nConsidera donar al servicio:\n{{uri}}",
+        "imageUploadErro": "Se ha producido un error al subir la imagen."
+      },
+      "uploadImageWarningTitle": "Important",
+      "uploadImageWarning": "Your image will be uploaded to a public hosting service and will be visible for anyone.",
+      "uploadImage": "Subir imagen ahora",
+      "cancel": "Отменить",
+      "poweredBy": "Powered by {{uri}}"
+    },
+    "groupPage": {
+      "typeMessage": "Напишите сообщение"
     },
     "menuItems": {
       "relays": "Реле",
+      "contacts": "Contacts",
       "notConnected": "Not connected",
-      "connectedRelays": "{{number}} connected",
+      "connectedRelays": "{{number}} подключено",
       "following": "{{following}} following",
       "followers": "{{followers}} followers",
-      "configuration": "Configuration",
-      "about": "About",
-      "logout": "Выйти"
+      "configuration": "Настройки",
+      "about": "Подроблее",
+      "logout": "Выйти",
+      "reportBug": "Report a bug",
+      "imageHostingService": "Хостинг изображений"
+    },
+    "configPage": {
+      "showPublicImages": "Show images on public feed",
+      "showSensitive": "Show sensitive notes",
+      "satoshi": "Satoshi symbol",
+      "random": "Random",
+      "language": "Язык",
+      "relayColoruring": "Relay coloruring"
     },
     "noteCard": {
-      "answering": "Ответить {{username}}",
+      "answering": "Ответить {{pubkey}}",
+      "reposting": "Reposted {{pubkey}}",
       "seeParent": "See note",
-      "contentWarning": "Sensitive content"
+      "userBlocked": "Пользователь заблокирован",
+      "contentWarning": "Деликатный контент",
+      "recommendation": "Рекомендованные реле",
+      "addRelay": "Agregar relay",
+      "reposted": "Reposted"
     },
     "lnPayment": {
       "monto": "Cantity (sats.)",
       "comment": "Коментарий (optional)",
       "generateInvoice": "Generate invoice",
       "cancel": "Отменить",
-      "npub": "Public key",
+      "npub": "Публичный ключ",
       "copy": "Скопировать",
       "open": "Открыть кошелек"
     },
@@ -77,77 +126,140 @@
     },
     "profileCreatePage": {
       "notifications": {
-        "copied": "Private key copied.\n\nSave this key on a safe place."
+        "copied": "Приватный ключ скопирован.\n\nСохраните этот ключ в надежном месте.",
+        "wrongWords": "The words doesn't match"
       },
+      "skip": "Skip",
+      "confirmTitle": "Type the words in the right order.",
       "warningTitle": "Важно",
-      "warningDescription": "Save your key on a safe place, if loose it, you won't be able to access or recover your profile.",
-      "warningAction": "Copy private key",
+      "warningDescription": "Сохраните этот ключ в надежном месте. В случае утери ключа, Вы не сможете войти или восстановить доступ к профилю.",
+      "warningAction": "Скопировать приватный ключ",
+      "continue": "Continue",
+      "mnemonicTitle": "These words or your private key are the only way to recover your account.",
+      "mnemonicDescription": "Write them down and keep them in a safe place, if you lose them you will not be able to access again.",
+      "introTitle": "Your device will generate 12 words and your private key.",
+      "wordsNoted": "I have saved my words and/or my private key.",
       "accessButton": "Access",
-      "label": "Private key",
-      "copied": "Key copied",
-      "description": "Save your key on a safe place."
+      "label": "Приватный ключ",
+      "copied": "Ключ скопирован",
+      "description": "Сохраните ключ в надежном месте."
     },
     "loggerPage": {
-      "createButton": "Create keys",
-      "notKeys": "Don't have keys?",
+      "createButton": "Создать ключи",
+      "notKeys": "Нет ключей?",
       "isPublic": "Access with public key",
-      "accessButton": "Access",
-      "privateKey": "Private key",
-      "publicKey": "Public key"
+      "accessButton": "Войти",
+      "privateKey": "Приватный ключ",
+      "publicKey": "Публичный ключ",
+      "loginMethod": "Login with",
+      "mnemonic": "Mnemonic"
     },
-    "contactsFeed": {
+    "contactsPage": {
       "notifications": {
-        "keyCopied": "Public key copied.",
-        "contactAdded": "Profile followed.",
-        "addContactError": "There was an error publishing your changes.",
-        "contactRemoved": "Profile unfollowed."
+        "keyCopied": "Публичный ключ скопирован.",
+        "contactAdded": "Вы подписались.",
+        "addContactError": "Произошла ошибка при публикации изменений.",
+        "contactRemoved": "Вы отписались.",
+        "contactUnblocked": "Profile unblocked."
       },
-      "emptyTitleFollowing": "You are not following no one",
-      "emptyDescriptionFollowing": "Follow other profiles to see content.",
-      "emptyButtonFollowing": "Paste public key",
-      "emptyTitleFollower": "You have no followers",
+      "emptyTitleBlocked": "You have no blocked profiles",
+      "emptyDescriptionBlocked": "You can always block a someone on the profile view.",
+      "emptyTitleFollowing": "Вы ни на кого не подписаны",
+      "emptyDescriptionFollowing": "Подпишитесь на другие профили, чтобы увидеть их заметки",
+      "emptyButtonFollowing": "Вставить публичный ключ",
+      "emptyTitleFollower": "У Вас нет подписчиков",
       "emptyDescriptionFollower": "Share your public key so people can start following you.",
-      "emptyButtonFollower": "Copy public key",
-      "cancel": "Cancel",
-      "addContact": "Add contact",
-      "addContactDescription": "Paste here the public key of the profile you want to add.",
+      "emptyButtonFollower": "Скопировать публичный ключ",
+      "cancel": "Отменить",
+      "addContact": "Добавить контакт",
+      "addContactDescription": "Paste here the public key or NIP-05 of the profile you want to add.",
       "addContactTitle": "Add contact",
-      "followers": "Followers ({{count}})",
-      "following": "Following ({{count}})",
-      "stopFollowing": "Stop Following",
-      "follow": "Follow"
+      "followers": "Подписчики ({{count}})",
+      "following": "Подписки ({{count}})",
+      "blocked": "Blocked ({{count}})",
+      "unblock": "Unblock",
+      "stopFollowing": "Отписаться",
+      "follow": "Подписаться"
     },
     "aboutPage": {
+      "telegram": "Telegram",
       "gitHub": "GitHub",
       "nostr": "nostr",
-      "nips": "NIPs"
+      "nips": "NIPs",
+      "version": "Version"
     },
     "homeFeed": {
-      "emptyTitle": "You are not following no one",
-      "emptyDescription": "Follow other profiles to see content.",
-      "emptyButton": "Go to contacts"
+      "emptyTitle": "Вы ни на кого не подписаны",
+      "emptyDescription": "Подпишитесь на другие профили, что бы увидеть, чем они делятся",
+      "emptyButton": "Посмотреть контакты",
+      "globalFeed": "Global feed",
+      "newMessage": "{{newNotesCount}} nota nueva. Desliza para recargar.",
+      "newMessages": "{{newNotesCount}} notas nuevas. Desliza para refrescar.",
+      "myFeed": "My feed"
+    },
+    "relayCard": {
+      "pushDone": "Completed",
+      "moreInfo": "Узнать больше",
+      "lessInfo": "Скрыть",
+      "globalFeed": "Общая лента",
+      "active": "Active",
+      "copy": "Скопировать",
+      "remove": "Delete",
+      "share": "Поделиться",
+      "pubkey": "Публичный ключ",
+      "contact": "Контакт",
+      "supportedNips": "Supported NIPs",
+      "software": "Sowftware",
+      "version": "Версия",
+      "description": "Описание",
+      "obtainingInfo": "Obtaining relay information",
+      "notifications": {
+        "active": "Relay actived.",
+        "desactive": "Relay desactivated.",
+        "globalFeedActive": "Global feed enabled.",
+        "globalFeedActiveUnactive": "Global feed disabled",
+        "pubkeyCopied": "Публичный ключ скопирован",
+        "contactCopied": "Контакт скопирован",
+        "urlCopied": "URL скопирован"
+      }
     },
     "relaysPage": {
+      "resilienceTitle": "Resilience (experimental)",
+      "resilienceDescription": "The Nostr protocol provides a good number of tools to build a decentralized network, but unlike other decentralized protocols such as Bitcoin, it is not inherently bound to its use. To achieve the goal of a decentralized network, clients (e.g., Nostros) and relays (content servers) should actively cooperate. The Nostros resilience mode seeks first to raise awareness of this among users, and second to test new patterns and methods to improve the resilience of the network.\nA working implementation for this will soon be applied in Nostros.",
+      "resilienceCategories": "Resilience exposure",
+      "resilienceCategoriesDescription": "An initial approach that Nostros is testing is to randomly calculate (based on received contact events) which relays are most balanced. This tries to avoid both relays with too many events (centralization) and relays with almost no events (battery discharge).\n\nThe goal is to create a list of 5 relays that cover all contacts. However, if this is not possible, Nostros will search among other relays and warn the user about it.",
+      "centralized": "Centralized",
+      "small": "Small",
+      "contacts": "Assigned Contacts",
+      "resilienceMode": "Resilience (experimental)",
+      "relayName": "Address",
+      "globalFeed": "Общая лента",
+      "active": "Active",
       "labelAdd": "Relay address",
       "cancel": "Отменить",
       "add": "Добавить",
       "removeRelay": "Удалить",
       "copyRelay": "Скопировать",
       "notifications": {
-        "add": "Relay connected.",
-        "remove": "Relay removed.",
-        "badFormat": "Relay URL has a bad format."
+        "add": "Реле добавлено",
+        "remove": "Реле удалено",
+        "active": "Реле активировано",
+        "desactive": "Relay desactivado.",
+        "badFormat": "Relay URL has a bad format.",
+        "alreadyExists": "Relay already exists."
       }
     },
     "profileConfigPage": {
       "notifications": {
-        "nsecCopied": "Secret key copied.",
-        "npubCopied": "Public key copied.",
+        "nsecCopied": "Приватный ключ скопирован",
+        "npubCopied": "Публичный ключ скопирован",
         "profilePublished": "Profile published.",
         "lud06Published": "LUD-06 published.\n\n{{lud06}}",
         "nip05Published": "NIP-05 published.\n\n{{nip05}}",
         "picturePublished": "Picture published.",
-        "connectionError": "Connection error."
+        "connectionError": "Ошибка с подключением",
+        "active": "Relay actived.",
+        "desactive": "Relay desactivated."
       },
       "publishLud06": "Опубликовть",
       "lud06Label": "LNURL / Lightning Address",
@@ -157,8 +269,8 @@
       "nip05Link": "Подробнее.",
       "nip05Description": "Link your identity with a domain.",
       "nip05Title": "NIP-05",
-      "directoryCancell": "Cancel",
-      "directoryContinue": "Continue",
+      "directoryCancell": "Отменить",
+      "directoryContinue": "Продолжить",
       "directoryDescription": "Nostr Directory is a database of nostr public keys associated with a Twitter account. Find the people you follow on Twitter on nostr and add your public key so your followers can find you if you want.\n\n\nVerifying your Twitter account will add a badge to your profile.\n\n\nYes you will have to carry out the verification process outside the application.",
       "directoryTitle": "Nostr Directory",
       "publishPicture": "Publish",
@@ -166,14 +278,14 @@
       "pictureDescription": "Paste here the URL for the image you would like to display on your public profile.",
       "pictureTitle": "Link profile's picture",
       "publish": "Publish",
-      "nsec": "Secret key",
-      "npub": "Public key",
+      "nsec": "Приватный ключ",
+      "npub": "Публичный ключ",
       "copyNPub": "Скопировать",
       "directory": "Directory",
       "lud06": "LUD-06",
       "nip05": "NIP-05",
       "name": "Name",
-      "about": "Description"
+      "about": "Описание"
     },
     "profilePage": {
       "notifications": {
@@ -182,22 +294,52 @@
         "npubCopied": "Public key copied."
       },
       "invoice": "Tip",
-      "message": "Message",
+      "message": "Сообщение",
       "follow": "Follow",
       "unfollow": "Following",
+      "isFollower": "follows you",
+      "copyNPub": "Скопировать ключ",
+      "relaysDescription": "These are {{username}}'s relays, activate the ones you want to be connected."
+    },
+    "homePage": {
+      "clipboardTitle": "Se ha detectado una clave Nostr",
+      "goToEvent": "Открыть",
+      "cancel": "Отменить"
+    },
+    "language": {
+      "en": "English",
+      "es": "Español",
+      "fr": "Français",
+      "ru": "Русский",
+      "de": "Deutsch",
+      "zhCn": "简体中文"
+    },
+    "textContent": {
+      "invoice": "Lightning Network invoice"
+    },
+    "profileShare": {
+      "notifications": {
+        "npubCopied": "Public key copied.",
+        "nip05Copied": "NIP-05 copied."
+      },
+      "copyNip05": "Copy NIP-05",
       "copyNPub": "Copy key"
     },
     "profileCard": {
       "notifications": {
         "contactAdded": "Profile followed",
         "contactRemoved": "Profile unfollowed",
-        "npubCopied": "Public key copied."
+        "userUnblocked": "Profile unblocked",
+        "userBlocked": "Profile unblocked"
       },
       "invoice": "Tip",
       "message": "Message",
       "follow": "Follow",
+      "block": "Block",
+      "unblock": "Desbloquear",
       "unfollow": "Following",
-      "copyNPub": "Copy key"
+      "share": "Share",
+      "relaysTitle": "Relays"
     },
     "conversationsFeed": {
       "openMessage": "Start conversation",

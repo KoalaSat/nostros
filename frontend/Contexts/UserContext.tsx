@@ -1,18 +1,14 @@
 import React, { useContext, useEffect, useState } from 'react'
-import { getPublickey } from '../lib/nostr/Bip'
 import SInfo from 'react-native-sensitive-info'
 import { RelayPoolContext } from './RelayPoolContext'
 import { AppContext } from './AppContext'
-import {
-  getContactsCount,
-  getFollowersCount,
-  getUser,
-  User,
-} from '../Functions/DatabaseFunctions/Users'
+import { getUser } from '../Functions/DatabaseFunctions/Users'
+import { getPublicKey } from 'nostr-tools'
 import { dropTables } from '../Functions/DatabaseFunctions'
 import { navigate } from '../lib/Navigation'
 import { nsecEncode } from 'nostr-tools/nip19'
 import { getNpub } from '../lib/nostr/Nip19'
+import { addGroup, getGroups } from '../Functions/DatabaseFunctions/Groups'
 
 export interface UserContextProps {
   userState: 'loading' | 'access' | 'ready'
@@ -23,14 +19,19 @@ export interface UserContextProps {
   setPublicKey: (privateKey: string | undefined) => void
   privateKey?: string
   setPrivateKey: (privateKey: string | undefined) => void
-  setUser: (user: User) => void
-  user?: User
-  contactsCount: number
-  followersCount: number
-  setContantsCount: (count: number) => void
-  setFollowersCount: (count: number) => void
   reloadUser: () => void
   logout: () => void
+  name?: string
+  setName: (value: string) => void
+  picture?: string
+  setPicture: (value: string) => void
+  about?: string
+  setAbout: (value: string) => void
+  lnurl?: string
+  setLnurl: (value: string) => void
+  nip05?: string
+  setNip05: (value: string) => void
+  validNip05?: boolean
 }
 
 export interface UserContextProviderProps {
@@ -42,40 +43,42 @@ export const initialUserContext: UserContextProps = {
   setUserState: () => {},
   setPublicKey: () => {},
   setPrivateKey: () => {},
-  setUser: () => {},
   reloadUser: () => {},
   logout: () => {},
-  setContantsCount: () => {},
-  setFollowersCount: () => {},
-  contactsCount: 0,
-  followersCount: 0,
+  setName: () => {},
+  setPicture: () => {},
+  setAbout: () => {},
+  setLnurl: () => {},
+  setNip05: () => {},
 }
 
 export const UserContextProvider = ({ children }: UserContextProviderProps): JSX.Element => {
   const { database, loadingDb, init } = useContext(AppContext)
-  const { relayPool } = useContext(RelayPoolContext)
+  const { relayPool, relayPoolReady } = useContext(RelayPoolContext)
   const [userState, setUserState] = useState<'loading' | 'access' | 'ready'>('loading')
   const [publicKey, setPublicKey] = useState<string>()
   const [nPub, setNpub] = useState<string>()
   const [nSec, setNsec] = useState<string>()
   const [privateKey, setPrivateKey] = useState<string>()
-  const [user, setUser] = React.useState<User>()
-  const [contactsCount, setContantsCount] = React.useState<number>(0)
-  const [followersCount, setFollowersCount] = React.useState<number>(0)
+  const [name, setName] = useState<string>()
+  const [picture, setPicture] = useState<string>()
+  const [about, setAbout] = useState<string>()
+  const [lnurl, setLnurl] = useState<string>()
+  const [nip05, setNip05] = useState<string>()
+  const [validNip05, setValidNip05] = useState<boolean>()
 
   const reloadUser: () => void = () => {
     if (database && publicKey) {
       getUser(publicKey, database).then((result) => {
         if (result) {
-          setUser(result)
-        } else {
-          setUser({
-            id: publicKey,
-          })
+          setName(result.name)
+          setPicture(result.picture)
+          setAbout(result.about)
+          setLnurl(result.lnurl)
+          setNip05(result.nip05)
+          setValidNip05(result.valid_nip05)
         }
       })
-      getContactsCount(database).then(setContantsCount)
-      getFollowersCount(database).then(setFollowersCount)
     }
   }
 
@@ -86,7 +89,12 @@ export const UserContextProvider = ({ children }: UserContextProviderProps): JSX
       setPublicKey(undefined)
       setNpub(undefined)
       setNsec(undefined)
-      setUser(undefined)
+      setName(undefined)
+      setPicture(undefined)
+      setAbout(undefined)
+      setLnurl(undefined)
+      setNip05(undefined)
+      setValidNip05(undefined)
       dropTables(database).then(() => {
         SInfo.deleteItem('privateKey', {}).then(() => {
           SInfo.deleteItem('publicKey', {}).then(() => {
@@ -103,8 +111,7 @@ export const UserContextProvider = ({ children }: UserContextProviderProps): JSX
     if (privateKey && privateKey !== '') {
       SInfo.setItem('privateKey', privateKey, {})
       setNsec(nsecEncode(privateKey))
-      const publicKey: string = getPublickey(privateKey)
-      setPublicKey(publicKey)
+      setPublicKey(getPublicKey(privateKey))
     }
   }, [privateKey])
 
@@ -117,10 +124,20 @@ export const UserContextProvider = ({ children }: UserContextProviderProps): JSX
   }, [publicKey])
 
   useEffect(() => {
-    if (userState === 'ready' && publicKey) {
+    if (userState === 'ready' && publicKey && relayPoolReady && database) {
+      getGroups(database).then((results) => {
+        if (results.length === 0) {
+          addGroup(
+            database,
+            '8d37308d97356600f67a28039d598a52b8c4fa1b73ef6f2e7b7d40197c3afa56',
+            'Nostros',
+            '645681b9d067b1a362c4bee8ddff987d2466d49905c26cb8fec5e6fb73af5c84',
+          )
+        }
+      })
       navigate('Feed')
     }
-  }, [userState, publicKey])
+  }, [userState, publicKey, relayPoolReady])
 
   useEffect(() => {
     if (!loadingDb) {
@@ -147,18 +164,23 @@ export const UserContextProvider = ({ children }: UserContextProviderProps): JSX
         setUserState,
         nSec,
         nPub,
-        setUser,
         publicKey,
         setPublicKey,
         privateKey,
         setPrivateKey,
-        user,
-        contactsCount,
-        followersCount,
         reloadUser,
         logout,
-        setContantsCount,
-        setFollowersCount,
+        name,
+        setName,
+        picture,
+        setPicture,
+        about,
+        setAbout,
+        lnurl,
+        setLnurl,
+        nip05,
+        setNip05,
+        validNip05,
       }}
     >
       {children}

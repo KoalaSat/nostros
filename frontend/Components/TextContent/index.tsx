@@ -5,54 +5,90 @@ import { Linking, StyleSheet, View } from 'react-native'
 import { AppContext } from '../../Contexts/AppContext'
 import { getUser, User } from '../../Functions/DatabaseFunctions/Users'
 import { formatPubKey } from '../../Functions/RelayFunctions/Users'
-import moment from 'moment'
-import { Card, Text, useTheme } from 'react-native-paper'
-import { getLinkPreview } from 'link-preview-js'
-import { validImageUrl } from '../../Functions/NativeFunctions'
-import { getNpub } from '../../lib/nostr/Nip19'
+import getUnixTime from 'date-fns/getUnixTime'
+import { Avatar, Card, Text, useTheme } from 'react-native-paper'
+import { getNip19Key, getNpub } from '../../lib/nostr/Nip19'
+import { navigate } from '../../lib/Navigation'
+import { validBlueBirdUrl, validImageUrl, validMediaUrl } from '../../Functions/NativeFunctions'
+import Clipboard from '@react-native-clipboard/clipboard'
+import FastImage from 'react-native-fast-image'
+import { useTranslation } from 'react-i18next'
+import { decode, PaymentRequestObject, TagsObject } from 'bolt11'
+import LnPreview from '../LnPreview'
 
 interface TextContentProps {
   event?: Event
   content?: string
-  preview?: boolean
+  showPreview?: boolean
   onPressUser?: (user: User) => void
-}
-
-interface LinkPreviewMedia {
-  url: string
-  title: string
-  siteName: string | undefined
-  description: string | undefined
-  mediaType: string
-  contentType: string | undefined
-  images: string[]
-  videos: Array<{
-    url: string | undefined
-    secureUrl: string | null | undefined
-    type: string | null | undefined
-    width: string | undefined
-    height: string | undefined
-  }>
-  favicons: string[]
+  numberOfLines?: number
 }
 
 export const TextContent: React.FC<TextContentProps> = ({
   event,
   content,
-  preview = true,
+  showPreview = true,
   onPressUser = () => {},
+  numberOfLines,
 }) => {
   const theme = useTheme()
-  const { database } = useContext(AppContext)
+  const { t } = useTranslation('common')
+  const { database, getSatoshiSymbol } = useContext(AppContext)
   const [userNames, setUserNames] = useState<Record<number, string>>({})
   const [loadedUsers, setLoadedUsers] = useState<number>(0)
-  const [linkPreview, setLinkPreview] = useState<LinkPreviewMedia>()
+  const [url, setUrl] = useState<string>()
+  const [lnUrl, setLnUrl] = useState<string>()
+  const [invoice, setInvoice] = useState<string>()
+  const [decodedLnUrl, setDecodedLnUrl] = useState<
+    PaymentRequestObject & { tagsObject: TagsObject }
+  >()
+  const [linkPreview, setLinkPreview] = useState<string>()
+  const [linkType, setLinkType] = useState<string>()
   const text = event?.content ?? content ?? ''
+  const DEFAULT_COVER = '../../../assets/images/placeholders/placeholder_url.png'
+  const MEDIA_COVER = '../../../assets/images/placeholders/placeholder_media.png'
+  const IMAGE_COVER = '../../../assets/images/placeholders/placeholder_image.png'
+  const BLUEBIRD_COVER = '../../../assets/images/placeholders/placeholder_bluebird.png'
 
-  useEffect(() => {}, [loadedUsers, linkPreview])
+  useEffect(() => {
+    if (!linkPreview && url) {
+      if (validMediaUrl(url)) {
+        setLinkPreview(url)
+        setLinkType('video')
+      } else if (validImageUrl(url)) {
+        setLinkPreview(url)
+        setLinkType('image')
+      } else if (validBlueBirdUrl(url)) {
+        setLinkPreview(url)
+        setLinkType('blueBird')
+      }
+    }
+  }, [loadedUsers, url])
 
-  const handleUrlPress: (url: string) => void = (url) => {
+  const handleUrlPress: (url: string | undefined) => void = (url) => {
+    if (!url) return
+
     Linking.openURL(url)
+  }
+
+  const handleLnUrlPress: () => void = () => {
+    setInvoice(lnUrl)
+  }
+
+  const handleNip05NotePress: (nip19: string) => void = (nip19) => {
+    const noteId = getNip19Key(nip19)
+
+    if (noteId) {
+      navigate('Note', { noteId })
+    }
+  }
+
+  const handleNip05ProfilePress: (nip19: string) => void = (nip19) => {
+    const pubKey = getNip19Key(nip19)
+
+    if (pubKey) {
+      navigate('Profile', { pubKey })
+    }
   }
 
   const handleMentionPress: (text: string) => void = (text) => {
@@ -64,6 +100,16 @@ export const TextContent: React.FC<TextContentProps> = ({
     onPressUser({ id: userPubKey, name: text })
   }
 
+  const renderLnurl: (lnurl: string | undefined) => string = (lnurl) => {
+    if (!lnUrl && lnurl) {
+      try {
+        setDecodedLnUrl(decode(lnurl))
+        setLnUrl(lnurl)
+      } catch {}
+    }
+    return ''
+  }
+
   const renderMentionText: (matchingString: string, matches: string[]) => string = (
     matchingString,
     matches,
@@ -73,17 +119,26 @@ export const TextContent: React.FC<TextContentProps> = ({
     if (userNames[mentionIndex]) {
       return userNames[mentionIndex]
     } else if (event) {
-      const pudKey = event.tags[mentionIndex][1]
-      if (database) {
-        getUser(pudKey, database).then((user) => {
-          setLoadedUsers(moment().unix())
-          setUserNames((prev) => {
-            if (user?.name) prev[mentionIndex] = `@${user.name}`
-            return prev
+      const tag = event.tags[mentionIndex]
+      if (tag) {
+        const kind = tag[0]
+        const pudKey = tag[1]
+
+        if (kind === 'e') return ''
+
+        if (database) {
+          getUser(pudKey, database).then((user) => {
+            setLoadedUsers(getUnixTime(new Date()))
+            setUserNames((prev) => {
+              if (user?.name) prev[mentionIndex] = `@${user.name}`
+              return prev
+            })
           })
-        })
+        }
+        return `@${formatPubKey(getNpub(pudKey))}`
+      } else {
+        return matchingString
       }
-      return `@${formatPubKey(getNpub(pudKey))}`
     } else {
       return matchingString
     }
@@ -93,35 +148,16 @@ export const TextContent: React.FC<TextContentProps> = ({
     matchingString,
     _matches,
   ) => {
-    if (!linkPreview) {
-      getLinkPreview(matchingString).then((data) => {
-        setLinkPreview(data as LinkPreviewMedia)
-      })
-    }
-
+    setUrl((prev) => {
+      return prev ?? matchingString
+    })
     return matchingString
   }
 
-  const generatePreview: () => JSX.Element = () => {
-    if (!linkPreview) return <></>
-
-    const coverUrl = linkPreview.images?.length > 0 ? linkPreview.images[0] : linkPreview.url
-
-    return (
-      <Card style={styles.previewCard} onPress={() => handleUrlPress(linkPreview.url)}>
-        {validImageUrl(coverUrl) && <Card.Cover source={{ uri: coverUrl }} resizeMode='contain' />}
-        <Card.Content style={styles.previewContent}>
-          <Text variant='titleSmall'>{linkPreview.title || linkPreview.url}</Text>
-          {linkPreview.description && <Text variant='bodySmall'>{linkPreview.description}</Text>}
-        </Card.Content>
-      </Card>
-    )
-  }
-
-  return (
-    <View style={styles.container}>
+  const parsedText = React.useMemo(
+    () => (
       <ParsedText
-        style={{ color: theme.colors.onSurfaceVariant }}
+        style={[styles.text, { color: theme.colors.onSurfaceVariant }]}
         parse={[
           { type: 'url', style: styles.url, onPress: handleUrlPress, renderText: renderUrlText },
           { type: 'email', style: styles.email, onPress: handleUrlPress },
@@ -136,12 +172,111 @@ export const TextContent: React.FC<TextContentProps> = ({
                 pattern: /#\[(\d+)\]/,
               },
           { pattern: /#(\w+)/, style: styles.hashTag },
+          { pattern: /(lnbc)\S+/, style: styles.nip19, renderText: renderLnurl },
+          { pattern: /(nevent1)\S+/, style: styles.nip19, onPress: handleNip05NotePress },
+          {
+            pattern: /(npub1|nprofile1)\S+/,
+            style: styles.nip19,
+            onPress: handleNip05ProfilePress,
+          },
         ]}
         childrenProps={{ allowFontScaling: false }}
+        onLongPress={() => Clipboard.setString(text)}
+        numberOfLines={numberOfLines}
       >
         {text}
       </ParsedText>
-      {linkPreview && generatePreview()}
+    ),
+    [loadedUsers],
+  )
+
+  const preview = React.useMemo(() => {
+    if (!showPreview) return <></>
+
+    const getRequireCover: () => string | undefined = () => {
+      if (linkType === 'image') return url
+
+      return ''
+    }
+
+    const getDefaultCover: () => number = () => {
+      if (!linkPreview) return require(DEFAULT_COVER)
+      if (linkType === 'blueBird') return require(BLUEBIRD_COVER)
+      if (linkType === 'audio') return require(MEDIA_COVER)
+      if (linkType === 'video') return require(MEDIA_COVER)
+      return require(DEFAULT_COVER)
+    }
+
+    return (
+      <View>
+        {decodedLnUrl && (
+          <Card onPress={handleLnUrlPress}>
+            <Card.Title
+              title={t('textContent.invoice')}
+              subtitle={
+                <>
+                  <Text>{decodedLnUrl.satoshis}</Text>
+                  {getSatoshiSymbol(16)}
+                </>
+              }
+              left={(props) => (
+                <Avatar.Icon
+                  {...props}
+                  icon='lightning-bolt'
+                  style={{
+                    backgroundColor: '#F5D112',
+                  }}
+                />
+              )}
+            />
+          </Card>
+        )}
+        {url && (
+          <View style={styles.previewCard}>
+            <Card onPress={() => handleUrlPress(url)}>
+              {linkType === 'image' ? (
+                <FastImage
+                  style={[
+                    styles.cardCover,
+                    {
+                      backgroundColor: theme.colors.backdrop,
+                    },
+                  ]}
+                  source={{
+                    uri: getRequireCover(),
+                    priority: FastImage.priority.high,
+                  }}
+                  resizeMode={FastImage.resizeMode.contain}
+                  defaultSource={require(IMAGE_COVER)}
+                />
+              ) : (
+                <Card.Cover source={getDefaultCover()} resizeMode='contain' />
+              )}
+              {linkType !== 'image' && (
+                <Card.Content style={styles.previewContent}>
+                  <Text variant='bodyMedium' numberOfLines={3}>
+                    {/* {linkPreview?.title ?? linkPreview?.url ?? url} */}
+                    {url}
+                  </Text>
+                  {/* {linkPreview?.description && (
+              <Text variant='bodySmall' numberOfLines={3}>
+                {linkPreview.description}
+              </Text>
+            )} */}
+                </Card.Content>
+              )}
+            </Card>
+          </View>
+        )}
+        {invoice && <LnPreview invoice={invoice} setInvoice={setInvoice} />}
+      </View>
+    )
+  }, [invoice, url, linkType])
+
+  return (
+    <View style={styles.container}>
+      {parsedText}
+      {preview}
     </View>
   )
 }
@@ -150,7 +285,15 @@ const styles = StyleSheet.create({
   container: {
     width: '100%',
   },
+  cardCover: {
+    flex: 1,
+    height: 180,
+    borderRadius: 16,
+  },
   url: {
+    textDecorationLine: 'underline',
+  },
+  nip19: {
     textDecorationLine: 'underline',
   },
   email: {
@@ -167,7 +310,7 @@ const styles = StyleSheet.create({
     padding: 16,
   },
   previewCard: {
-    marginTop: 16,
+    paddingTop: 16,
   },
 })
 

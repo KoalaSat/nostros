@@ -1,0 +1,348 @@
+{
+  "common": {
+    "drawers": {
+      "relaysTitle": "Relais",
+      "relaysDescription": "Les relais sont des nœuds du réseau qui servent d'intermédiaires pour la transmission de messages entre les applications.\n\nLes relais peuvent être utilisés pour améliorer la résilience et la disponibilité des réseaux en permettant la transmission des messages même en cas de défaillance ou d'interruption de la connectivité.\n\nLes relais peuvent également être utilisés pour améliorer la confidentialité et la sécurité des réseaux, car ils peuvent cacher l'emplacement et l'identité des applications qui communiquent entre elles par leur intermédiaire. Cela peut être utile dans les environnements où la censure ou la surveillance est un problème.\n\nIl est important de noter que les relais peuvent également être utilisés à des fins malveillantes, par exemple pour suivre ou censurer le trafic réseau.\n\nIl est donc important d'évaluer soigneusement l'utilisation des relais et d'envisager des mesures de sécurité appropriées pour protéger la vie privée et la sécurité du réseau.",
+      "keysTitle": "C'est quoi les clés ?",
+      "keysDescription": "Dans nostr, vous disposez de deux clés : votre clé publique et votre clé privée.",
+      "publicKeys": "Clé publique",
+      "publicKeysDescription": "Considérez la clé publique comme votre nom d'utilisateur (aimer votre @nomdutilisateur sur d'autres applications). Partagez-la avec d'autres personnes afin qu'elles puissent vous ajouter à leur réseau.",
+      "privateKey": "Clé privée",
+      "privateKeyDescription": "Considérez votre clé privée comme votre mot de passe.",
+      "privateKeysSnackbarTitle": "Très important.",
+      "privateKeysSnackbarDescription": "Conservez votre clé privée dans un endroit sûr. Si vous la perdez, vous ne pourrez plus avoir accès ni récupérer votre compte."
+    },
+    "homeNavigator": {
+      "Group": "",
+      "ProfileCreate": "Create profile",
+      "ProfileConnect": "",
+      "ProfileLoad": "",
+      "Landing": "",
+      "Contacts": "Contacts",
+      "Conversation": "Conversation",
+      "Reply": "Répondre",
+      "Repost": "Citer la note",
+      "Note": "Note",
+      "Profile": "Profil",
+      "About": "À propos de Nostros",
+      "Config": "Configuration",
+      "Send": "Envoyer",
+      "Relays": "Relais",
+      "ProfileConfig": "Mon profil",
+      "markAllRead": "Mark all as read"
+    },
+    "groupsFeed": {
+      "delete": "Leave group",
+      "updateTitle": "Update group",
+      "newGroupName": "Name",
+      "newGroupDescription": "Description",
+      "newGroupPicture": "Picture",
+      "groupUpdate": "Update group",
+      "newGroupCreate": "Create group",
+      "createTitle": "Create group",
+      "groupId": "Group id",
+      "addTitle": "Add existing group",
+      "add": "Add group"
+    },
+    "conversationPage": {
+      "typeMessage": "Écrire un message",
+      "notifications": {
+        "privateMessageSendError": "Une erreur s'est produite lors de l'envoi du message."
+      }
+    },
+    "profileLoadPage": {
+      "relaysDescripion": "Connectez-vous à d'autres relais si vous avez des problèmes pour trouver vos données.",
+      "relays": "Voir relais",
+      "home": "Accès",
+      "searchingProfile": "A la recherche de votre profil",
+      "foundProfile": "Profil trouvé",
+      "foundContacts": "{{contactsCount}} contacts trouvés",
+      "storing": "Event {{lastEventId}} stored on database."
+    },
+    "sendPage": {
+      "isContact": "Abonné",
+      "isNotContact": "Sans abonné",
+      "contentWarning": "Contenu sensible",
+      "send": "Envoyer"
+    },
+    "uploadImage": {
+      "notifications": {
+        "imageUploaded": "Your file has been uploaded.\nConsider donating to the service:\n{{uri}}",
+        "imageUploadErro": "There was an error while trying to upload your file"
+      },
+      "uploadImageWarningTitle": "Important",
+      "uploadImageWarning": "Your image will be uploaded to a public hosting service and will be visible for anyone.",
+      "uploadImage": "Upload image now",
+      "cancel": "Cancel",
+      "poweredBy": "Powered by {{uri}}"
+    },
+    "groupPage": {
+      "typeMessage": "Écrire un message"
+    },
+    "menuItems": {
+      "relays": "Relais",
+      "contacts": "Contacts",
+      "notConnected": "Non connecté",
+      "connectedRelays": "{{number}} connecté",
+      "following": "{{following}} abonnements",
+      "followers": "{{followers}} abonnés",
+      "configuration": "Configuration",
+      "about": "À propos de Nostros",
+      "reportBug": "Report a bug",
+      "logout": "Sortir"
+    },
+    "language": {
+      "en": "English",
+      "es": "Español",
+      "fr": "Français",
+      "ru": "Русский",
+      "de": "Deutsch",
+      "zhCn": "简体中文"
+    },
+    "configPage": {
+      "showPublicImages": "Afficher les images dans le flux global",
+      "showSensitive": "Montrer les notes sensibles",
+      "satoshi": "Symbole de satoshi",
+      "imageHostingService": "Service d'hébergement d'images",
+      "language": "Langue",
+      "relayColoruring": "Relay coloruring"
+    },
+    "noteCard": {
+      "answering": "Répondre à {{pubkey}}",
+      "reposting": "Republié {{pubkey}}",
+      "seeParent": "Voir la note",
+      "userBlocked": "Utilisateur bloqué",
+      "contentWarning": "Contenu sensible",
+      "reposted": "Reposted"
+    },
+    "lnPayment": {
+      "monto": "Quantité (sats.)",
+      "comment": "Commentaire (optionnel)",
+      "generateInvoice": "Générer une facture",
+      "cancel": "Annuler",
+      "copy": "Copier",
+      "open": "Ouvrir le wallet"
+    },
+    "notificationsFeed": {
+      "emptyTitle": "Vous n'avez pas de notification.",
+      "emptyDescription": "Écrivez une note pour obtenir des réponses et des réactions.",
+      "emptyButton": "Écrivez une note"
+    },
+    "profileCreatePage": {
+      "notifications": {
+        "copied": "Clé privée copiée. Gardez-la dans un endroit sûr.",
+        "wrongWords": "The words doesn't match"
+      },
+      "skip": "Skip",
+      "confirmTitle": "Type the words in the right order.",
+      "snackbarDescription": "Important. Conservez votre clé dans un endroit sûr, si vous le perdez, vous ne pourrez pas accéder à votre compte.",
+      "snackbarAction": "Copier la clé privée",
+      "warningTitle": "Important",
+      "warningDescription": "Conservez votre clé dans un endroit sûr, si vous le perdez, vous ne pourrez pas accéder à votre compte.",
+      "warningAction": "Copier la clé privée",
+      "continue": "Continue",
+      "mnemonicTitle": "These words or your private key are the only way to recover your account.",
+      "mnemonicDescription": "Write them down and keep them in a safe place, if you lose them you will not be able to access again.",
+      "introTitle": "Your device will generate 12 words and your private key.",
+      "wordsNoted": "I have saved my words and/or my private key.",
+      "accessButton": "Accés",
+      "label": "Clé privée",
+      "copied": "Clé copiée",
+      "description": "Conservez la clé dans un endroit sûr."
+    },
+    "loggerPage": {
+      "createButton": "Créer les clés",
+      "notKeys": "Vous n'avez pas de clés",
+      "isPublic": "Accès avec la clé publique",
+      "accessButton": "Accés",
+      "privateKey": "Clé privée",
+      "publicKey": "Clé publique",
+      "loginMethod": "Login with",
+      "mnemonic": "Mnemonic"
+    },
+    "contactsPage": {
+      "notifications": {
+        "keyCopied": "Clé publique copiée.",
+        "contactAdded": "Profil suivi.",
+        "addContactError": "Une erreur s'est produite lors de vos modifications.",
+        "contactRemoved": "Vous ne suivez plus ce profil",
+        "contactUnblocked": "Profile unblocked."
+      },
+      "emptyTitleBlocked": "You have no blocked profiles",
+      "emptyDescriptionBlocked": "You can always block a someone on the profile view.",
+      "emptyTitleFollowing": "Vous ne suivez personne",
+      "emptyDescriptionFollowing": "Suivez les autres profils pour voir le contenu ici.",
+      "emptyButtonFollowing": "Coller la clé publique",
+      "emptyTitleFollower": "Vous n'avez pas d'abonnés",
+      "emptyDescriptionFollower": "Partagez votre clé publique afin que d'autres puissent commencer à vous suivre.",
+      "emptyButtonFollower": "Copier la clé publique",
+      "cancel": "Annuler",
+      "addContact": "Ajouter un contact",
+      "addContactDescription": "Collez la clé publique de la personne que vous voulez ajouter.",
+      "addContactTitle": "Ajouter un contact",
+      "followers": "Abonnés ({{count}})",
+      "following": "Abonnements ({{count}})",
+      "blocked": "Blocked ({{count}})",
+      "unblock": "Unblock",
+      "stopFollowing": "Cessez de suivre",
+      "follow": "Suivre"
+    },
+    "aboutPage": {
+      "telegram": "Telegram",
+      "gitHub": "GitHub",
+      "nostr": "nostr",
+      "nips": "NIPs",
+      "version": "Version"
+    },
+    "homeFeed": {
+      "emptyTitle": "Vous ne suivez personne",
+      "emptyDescription": "Suivez les autres profils pour voir le contenu ici.",
+      "emptyButton": "Accéder aux contacts",
+      "globalFeed": "Flux global",
+      "newMessage": "{{newNotesCount}} nouvelle note. Balayez pour recharger.",
+      "newMessages": "{{newNotesCount}} nouvelles notes. Balayez pour recharger.",
+      "myFeed": "Mon flux"
+    },
+    "relayCard": {
+      "pushDone": "Completed",
+      "moreInfo": "Plus d'info",
+      "lessInfo": "Moins d'info",
+      "globalFeed": "Flux Global",
+      "active": "Actif",
+      "share": "Partager",
+      "copy": "Copier",
+      "remove": "Delete",
+      "pubkey": "Clé Publique",
+      "contact": "Contact",
+      "supportedNips": "NIPs Supportés",
+      "software": "Logiciel",
+      "version": "Version",
+      "description": "Description",
+      "obtainingInfo": "Entrain d'obtenir des informations sur les relais ",
+      "notifications": {
+        "active": "Relais activé.",
+        "desactive": "Relais desactivaté.",
+        "globalFeedActive": "Flux global activé.",
+        "globalFeedActiveUnactive": "Flux global désactivé.",
+        "pubkeyCopied": "Clé publique copiée.",
+        "contactCopied": "Contact copié.",
+        "urlCopied": "URL copié."
+      }
+    },
+    "relaysPage": {
+      "resilienceTitle": "Resilience (experimental)",
+      "resilienceDescription": "The Nostr protocol provides a good number of tools to build a decentralized network, but unlike other decentralized protocols such as Bitcoin, it is not inherently bound to its use. To achieve the goal of a decentralized network, clients (e.g., Nostros) and relays (content servers) should actively cooperate. The Nostros resilience mode seeks first to raise awareness of this among users, and second to test new patterns and methods to improve the resilience of the network.\nA working implementation for this will soon be applied in Nostros.",
+      "resilienceCategories": "Resilience exposure",
+      "resilienceCategoriesDescription": "An initial approach that Nostros is testing is to randomly calculate (based on received contact events) which relays are most balanced. This tries to avoid both relays with too many events (centralization) and relays with almost no events (battery discharge).\n\nThe goal is to create a list of 5 relays that cover all contacts. However, if this is not possible, Nostros will search among other relays and warn the user about it.",
+      "centralized": "Centralized",
+      "small": "Small",
+      "contacts": "Assigned Contacts",
+      "resilienceMode": "Resilience (experimental)",
+      "relayName": "Adresse",
+      "globalFeed": "Flux global",
+      "active": "Actif",
+      "labelAdd": "Adresse du relais",
+      "cancel": "Annuler",
+      "add": "Ajouter",
+      "removeRelay": "Supprimer",
+      "copyRelay": "Copier",
+      "notifications": {
+        "add": "Relai connecté",
+        "remove": "Relais supprimé",
+        "active": "Relais activé.",
+        "desactive": "Relais desactivé.",
+        "badFormat": "L'URL du relais n'est pas correctement formaté.",
+        "alreadyExists": "Le relais existe déjà."
+      }
+    },
+    "profileConfigPage": {
+      "notifications": {
+        "nsecCopied": "Clé privée copiée",
+        "npubCopied": "Clé publique copiée",
+        "profilePublished": "Votre profil a été publié",
+        "lud06Published": "LUD-06 publié.\n\n{{lud06}}",
+        "nip05Published": "NIP-05 publié.\n\n{{nip05}}",
+        "picturePublished": "Image publiée.",
+        "connectionError": "Erreur de connexion"
+      },
+      "publishLud06": "Publier",
+      "lud06Label": "LNURL / Adresse Lightning",
+      "lud06Description": "Associez votre profil à LNURL ou à l'adresse Lightning.",
+      "lud06Title": "LUD-06",
+      "publishNip05": "Publier",
+      "nip05Link": "En savoir plus.",
+      "nip05Description": "Associez votre profil à un domaine.",
+      "nip05Title": "NIP-05",
+      "directoryCancell": "Annuler",
+      "directoryContinue": "Continuer",
+      "directoryDescription": "Nostr Directory est une base de données des clés publiques de nostr associées à des comptes d'utilisateurs officiels sur d'autres plateformes. Retrouvez sur nostr les personnes que vous suivez déjà sur d'autres plateformes et ajoutez votre clé publique pour que vos followers puissent vous retrouver.\n\nSi vous continuez, vous devrez passer par le processus de vérification en dehors de l'application.",
+      "directoryTitle": "Nostr Directory",
+      "publishPicture": "Publier",
+      "pictureUrl": "URL de l'image",
+      "pictureDescription": "Collez l'URL de l'image que vous souhaitez afficher sur votre profil public.",
+      "pictureTitle": "Reliez votre photo de profil",
+      "publish": "Publier",
+      "nsec": "Clé privée",
+      "npub": "Clé publique",
+      "copyNPub": "Copier",
+      "directory": "Directory",
+      "lud06": "LUD-06",
+      "nip05": "NIP-05",
+      "name": "Nom",
+      "about": "Description"
+    },
+    "profilePage": {
+      "notifications": {
+        "contactAdded": "Abonné",
+        "contactRemoved": "Vous ne suivez plus ce profil",
+        "npubCopied": "Clé publique copiée",
+        "active": "Actif",
+        "share": "Partager"
+      },
+      "invoice": "Facture",
+      "message": "Message",
+      "follow": "Suivre",
+      "isFollower": "follows you",
+      "unfollow": "Abonné",
+      "copyNPub": "Copier la clé",
+      "relaysDescription": "These are {{username}}'s relays, activate the ones you want to be connected."
+    },
+    "profileShare": {
+      "notifications": {
+        "npubCopied": "Clé publique copiée",
+        "nip05Copied": "NIP-05 copied."
+      },
+      "copyNip05": "Copiar NIP-05",
+      "copyNPub": "Copier la clé"
+    },
+    "textContent": {
+      "invoice": "Lightning Network invoice"
+    },
+    "profileCard": {
+      "notifications": {
+        "contactAdded": "Abonné",
+        "contactRemoved": "Vous ne suivez plus ce profil",
+        "userUnblocked": "Profile unblocked",
+        "userBlocked": "Profile unblocked"
+      },
+      "invoice": "Tip",
+      "message": "Message",
+      "follow": "Abonné",
+      "block": "Bloquer",
+      "unblock": "Débloquer",
+      "unfollow": "Abonné",
+      "relaysTitle": "Relays"
+    },
+    "conversationsFeed": {
+      "openMessage": "Commencer la conversation",
+      "openMessageLabel": "Clé publique",
+      "openMessageDescription": "Collez une clé publique pour commencer une conversation.",
+      "openMessageTitle": "Commencez la conversation avec une clé publique",
+      "addPubKey": "Commencez la conversation avec une clé publique",
+      "newMessageContact": "Commencer une conversation avec un contact",
+      "emptyTitle": "Vous n'avez pas de messages",
+      "emptyDescription": "Écrivez un message direct à vos contacts ou à d'autres personnes.",
+      "emptyButton": "Ouvrir une conversation"
+    }
+  }
+}

@@ -1,0 +1,362 @@
+{
+  "common": {
+    "drawers": {
+      "relaysTitle": "关于中继",
+      "relaysDescription": "中继是网络上的节点，作为应用程序之间传输消息的中介。\n\n\n中继可用于提高网络的弹性和可用性，即使在连接出现故障或中断的情况下，也能传递消息。 \n\n\n中继还可用于提高隐私和网络安全，因为它们可以隐藏相互通信的用户的位置和身份。 \n\n\n这在审查或监视是一个问题的环境中是很有用的。 \n\n\n需要注意的是，中继也可以用于恶意的目的，如嗅探或审查网络流量。",
+      "keysTitle": "这些密钥是什么？",
+      "keysDescription": "在 Nostr, 您会有两个密钥: 公钥和私钥",
+      "publicKeys": "公钥",
+      "publicKeysDescription": "您可以将公钥看作是您的用户名 (类似其他应用中的 @handle )。您可以分享公钥以便其他用户将您添加到他们的网络",
+      "privateKey": "私钥",
+      "privateKeyDescription": "您可以将私钥看作是您的密码",
+      "privateKeysSnackbarTitle": "注意",
+      "privateKeysSnackbarDescription": "请妥善保管您的私钥。如果遗失，您将无法访问或恢复您的账号。"
+    },
+    "homeNavigator": {
+      "Group": "",
+      "ProfileCreate": "创建用户",
+      "ProfileConnect": "",
+      "Contacts": "Contacts",
+      "ProfileLoad": "",
+      "Landing": "",
+      "Conversation": "会话",
+      "Repost": "转发",
+      "Reply": "回复",
+      "Note": "Note",
+      "Profile": "简介",
+      "About": "关于",
+      "Config": "设置",
+      "Send": "发送",
+      "Relays": "中继",
+      "ProfileConfig": "简介设置"
+    },
+    "groupsFeed": {
+      "delete": "Leave group",
+      "updateTitle": "Update group",
+      "newGroupName": "Name",
+      "newGroupDescription": "Description",
+      "newGroupPicture": "Picture",
+      "groupUpdate": "Update group",
+      "newGroupCreate": "Create group",
+      "createTitle": "Create group",
+      "groupId": "Group id",
+      "addTitle": "Add existing group",
+      "add": "Add group"
+    },
+    "conversationPage": {
+      "typeMessage": "输入信息",
+      "notifications": {
+        "privateMessageSendError": "发送私信时发生了错误"
+      }
+    },
+    "profileLoadPage": {
+      "relaysDescripion": "若查看您的数据时遇到问题，可尝试连接其他中继重试",
+      "relays": "查看中继",
+      "home": "去首页",
+      "searchingProfile": "搜索用户",
+      "foundProfile": "已找到的用户",
+      "foundContacts": "已找到 {{contactsCount}} 个联系人",
+      "storing": "事件 {{lastEventId}} 已存储到数据库"
+    },
+    "sendPage": {
+      "isContact": "正在关注",
+      "isNotContact": "关注",
+      "contentWarning": "敏感内容",
+      "send": "发送"
+    },
+    "uploadImage": {
+      "notifications": {
+        "imageUploaded": "您的图片已上传\n请赞助我们的服务：",
+        "imageUploadErro": "上传图片出现错误"
+      },
+      "uploadImageWarningTitle": "Important",
+      "uploadImageWarning": "Your image will be uploaded to a public hosting service and will be visible for anyone.",
+      "uploadImage": "上传图片",
+      "cancel": "取消",
+      "poweredBy": "由{{uri}}提供支持"
+    },
+    "groupPage": {
+      "typeMessage": "输入信息"
+    },
+    "menuItems": {
+      "contacts": "Contacts",
+      "relays": "中继",
+      "notConnected": "未连接",
+      "connectedRelays": "已连接 {{number}} 个中继",
+      "following": "{{following}} 正在关注",
+      "followers": "{{followers}} 关注者",
+      "configuration": "设置",
+      "about": "关于",
+      "reportBug": "Report a bug",
+      "logout": "登出"
+    },
+    "configPage": {
+      "showPublicImages": "在发现页显示图片",
+      "showSensitive": "显示敏感的 Notes",
+      "satoshi": "聪符号",
+      "imageHostingService": "图片托管服务",
+      "random": "随机",
+      "language": "语言",
+      "relayColoruring": "颜色标示中继状态"
+    },
+    "noteCard": {
+      "answering": "回复 {{pubkey}}",
+      "reposting": "已转发 {{pubkey}}",
+      "userBlocked": "用户已屏蔽",
+      "seeParent": "查看 Note",
+      "contentWarning": "敏感内容",
+      "recommendation": "推荐的中继",
+      "addRelay": "添加中继"
+    },
+    "lnPayment": {
+      "monto": "数量(聪)",
+      "comment": "评论(可选)",
+      "generateInvoice": "生成账单",
+      "cancel": "取消",
+      "npub": "公钥",
+      "copy": "复制",
+      "open": "打开钱包"
+    },
+    "notificationsFeed": {
+      "emptyTitle": "还没有新通知",
+      "emptyDescription": "发布信息以获得回复和回应",
+      "emptyButton": "发布信息"
+    },
+    "profileCreatePage": {
+      "notifications": {
+        "copied": "已复制私钥\n\n请妥善保管您的私钥",
+        "wrongWords": "助记词不匹配"
+      },
+      "skip": "跳过",
+      "confirmTitle": "请按正确的顺序输入助记词",
+      "warningTitle": "注意",
+      "warningDescription": "请妥善保管您的私钥。如果遗失，您将无法登入或恢复您的账号。",
+      "warningAction": "复制私钥",
+      "continue": "继续",
+      "mnemonicTitle": "这些助记词或私钥是恢复您帐户的唯一方法。",
+      "mnemonicDescription": "请将它们写下来并保存在安全的地方。如果丢失了它们，您将无法再次登入您的账号",
+      "introTitle": "您的设备将生成 12 组助记词和您的私钥。",
+      "wordsNoted": "我已保存我的助记词和私钥",
+      "accessButton": "登入",
+      "label": "私钥",
+      "copied": "已复制私钥",
+      "description": "请妥善保管您的私钥"
+    },
+    "loggerPage": {
+      "createButton": "创建密钥",
+      "notKeys": "没有密钥？",
+      "isPublic": "用公钥登录",
+      "accessButton": "登入",
+      "privateKey": "您的私钥",
+      "publicKey": "您的公钥",
+      "loginMethod": "登入",
+      "mnemonic": "助记词"
+    },
+    "contactsPage": {
+      "notifications": {
+        "keyCopied": "已复制公钥",
+        "contactAdded": "已关注",
+        "addContactError": "发布更新时发生了错误",
+        "contactRemoved": "已取消关注",
+        "contactUnblocked": "用户已屏蔽"
+      },
+      "emptyTitleBlocked": "您还没有屏蔽任何人",
+      "emptyDescriptionBlocked": "您可以随时在用户详情页屏蔽用户",
+      "emptyTitleFollowing": "您还没有关注任何用户",
+      "emptyDescriptionFollowing": "关注一些用户以查看内容",
+      "emptyButtonFollowing": "粘贴公钥",
+      "emptyTitleFollower": "还没有用户关注您",
+      "emptyDescriptionFollower": "分享您的公钥以便其他用户关注您",
+      "emptyButtonFollower": "复制我的公钥",
+      "cancel": "取消",
+      "addContact": "添加联系人",
+      "addContactDescription": "请粘贴您要添加的联系人的公钥",
+      "addContactTitle": "添加联系人",
+      "followers": "关注者 ({{count}})",
+      "following": "关注中 ({{count}})",
+      "stopFollowing": "正在关注",
+      "follow": "回关",
+      "blocked": "已屏蔽 ({{count}})",
+      "unblock": "取消屏蔽"
+    },
+    "aboutPage": {
+      "telegram": "Telegram",
+      "gitHub": "GitHub",
+      "nostr": "Nostr",
+      "nips": "NIPs",
+      "version": "版本"
+    },
+    "reactionsFeed": {
+      "emptyTitle": "您还没有任何回应",
+      "emptyDescription": "查看您回应过的 Notes"
+    },
+    "repostsFeed": {
+      "emptyTitle": "您还没有转发任何 Notes",
+      "emptyDescription": "查看您您转发过的 Notes"
+    },
+    "homeFeed": {
+      "emptyTitle": "您还没有关注任何人",
+      "emptyDescription": "关注其他人以查看内容",
+      "emptyButton": "查看联系人",
+      "globalFeed": "发现",
+      "myFeed": "关注中",
+      "reactions": "回应",
+      "mentions": "提及",
+      "reposts": "转发",
+      "newMessage": "有{{newNotesCount}}条新的 Notes，下拉刷新",
+      "newMessages": "有{{newNotesCount}}条新的 Notes，下拉刷新"
+    },
+    "relaysPage": {
+      "resilienceTitle": "弹性模式 (试验性)",
+      "resilienceDescription": "Nostr 协议提供了大量工具来构建去中心化网络，但与比特币等其他去中心化协议不同，它并不是默认使用的。 \n\n为了实现这样的目标，客户端和中继应该积极协作。 Nostros 弹性模式首先尝试将这些问题暴露给用户，其次开始尝试新的模式和方法来帮助提高网络的弹性。 \n\n该功能的实现将很快默认出现在 Nostros 上",
+      "resilienceCategories": "弹性暴露",
+      "resilienceCategoriesDescription": "Nostros 正在测试的第一个方法是随机计算（基于收到的联系人的事件）什么是最有弹性的中继。它试图避免有太多事件的中继（集中化）和几乎没有事件的中继（电池耗尽）。 \n\n它的目标是生成一个 5 个中继的列表，并覆盖所有联系人。但如果这不可能，它将向用户发出警告并在其他中继中继续尝试。 \n\n请注意，被称为 “集中式” 或“小型” 的中继并不意味着它们与网络相连，而只是与您的数据相连。",
+      "centralized": "集中式",
+      "small": "小型",
+      "contacts": "# 联系人",
+      "resilienceMode": "弹性模式 (试验性)",
+      "relayName": "中继地址",
+      "globalFeed": "发现页",
+      "active": "启用",
+      "labelAdd": "中继地址",
+      "cancel": "取消",
+      "add": "添加",
+      "removeRelay": "移除",
+      "copyRelay": "复制",
+      "recommended": "推荐的中继",
+      "myList": "我的中继",
+      "notifications": {
+        "globalFeedActive": "发现页已开启",
+        "globalFeedActiveUnactive": "发现页已禁用",
+        "add": "中继已添加",
+        "remove": "中继已移除",
+        "active": "中继已启用",
+        "desactive": "中继已停用",
+        "badFormat": "中继地址格式不正确",
+        "alreadyExists": "中继已存在"
+      }
+    },
+    "relayCard": {
+      "pushDone": "已完成",
+      "moreInfo": "更多",
+      "lessInfo": "收起",
+      "globalFeed": "发现页",
+      "copy": "复制",
+      "remove": "Delete",
+      "active": "激活",
+      "share": "分享",
+      "pubkey": "公钥",
+      "contact": "联系人",
+      "supportedNips": "支持的 NIPs",
+      "software": "软件",
+      "version": "版本",
+      "description": "描述",
+      "obtainingInfo": "获取中继信息中",
+      "notifications": {
+        "active": "中继已启用",
+        "desactive": "中继已停用",
+        "globalFeedActive": "发现页已开启",
+        "globalFeedActiveUnactive": "发现页已禁用",
+        "pubkeyCopied": "已复制私钥",
+        "contactCopied": "已复制联系人",
+        "urlCopied": "已复制链接"
+      }
+    },
+    "profileConfigPage": {
+      "notifications": {
+        "nsecCopied": "已复制私钥",
+        "npubCopied": "已复制公钥",
+        "profilePublished": "简介已发布",
+        "lud06Published": "LUD-06 已发布 \n\n{{lud06}}",
+        "nip05Published": "NIP-05 已发布 \n\n{{nip05}}",
+        "picturePublished": "头像已发布",
+        "connectionError": "连接错误",
+        "active": "中继已启用",
+        "desactive": "中继已停用"
+      },
+      "publishLud06": "发布",
+      "lud06Label": "LNURL / Lightning 地址",
+      "lud06Description": "链接您的身份到 LNURL 或 Lightning 地址",
+      "lud06Title": "LUD-06",
+      "publishNip05": "发布",
+      "nip05Link": "了解更多",
+      "nip05Description": "链接接到域名",
+      "nip05Title": "NIP-05",
+      "directoryCancell": "取消",
+      "directoryContinue": "继续",
+      "directoryDescription": "Nostr 目录是一个与其他平台的官方用户账户相关的 Nostr 公钥数据库。在 Nostr 上找到您已经在其他平台上关注的人，并添加您的公钥，这样您的关注者就能找到您。 \n\n如果继续，您将在应用程序之外执行验证过程。",
+      "directoryTitle": "Nostr 目录",
+      "publishPicture": "发布",
+      "pictureUrl": "头像链接地址",
+      "pictureDescription": "请粘贴您希望在公开个人资料中显示的头像的图像链接地址",
+      "pictureTitle": "设置头像",
+      "publish": "发布",
+      "nsec": "私钥",
+      "npub": "公钥",
+      "copyNPub": "复制",
+      "directory": "目录",
+      "lud06": "LUD-06",
+      "nip05": "NIP-05",
+      "name": "用户名",
+      "about": "简介"
+    },
+    "profilePage": {
+      "notifications": {
+        "contactAdded": "已关注用户",
+        "contactRemoved": "已取消关注",
+        "npubCopied": "已复制公钥"
+      },
+      "invoice": "赞赏",
+      "message": "私信",
+      "follow": "关注",
+      "isFollower": "关注了你",
+      "unfollow": "关注中",
+      "copyNPub": "复制公钥",
+      "relaysTitle": "中继",
+      "relaysDescription": "以下是{{username}}的中继，您可以激活想要连接的中继"
+    },
+    "homePage": {
+      "clipboardTitle": "检测到 Nostr 公钥",
+      "goToEvent": "打开",
+      "cancel": "取消"
+    },
+    "language": {
+      "en": "English",
+      "es": "Español",
+      "fr": "Français",
+      "ru": "Русский",
+      "de": "Deutsch",
+      "zhCn": "简体中文"
+    },
+    "profileCard": {
+      "notifications": {
+        "contactAdded": "已关注",
+        "contactRemoved": "已取消关注",
+        "npubCopied": "已复制公钥",
+        "userUnblocked": "已屏蔽",
+        "userBlocked": "已取消屏蔽"
+      },
+      "invoice": "赞赏",
+      "message": "私信",
+      "follow": "关注",
+      "unfollow": "正在关注",
+      "block": "屏蔽",
+      "unblock": "取消屏蔽",
+      "share": "分享",
+      "copyNip05": "复制 NIP-05",
+      "copyNPub": "复制公钥",
+      "relaysTitle": "中继"
+    },
+    "conversationsFeed": {
+      "openMessage": "发送私信",
+      "openMessageLabel": "公钥",
+      "openMessageDescription": "通过公钥发送私信",
+      "openMessageTitle": "发送私信",
+      "addPubKey": "通过公钥发送私信",
+      "newMessageContact": "给联系人发送私信",
+      "emptyTitle": "您还没有收到过私信",
+      "emptyDescription": "给您的联系人或其他用户发送私信",
+      "emptyButton": "发送私信"
+    }
+  }
+}

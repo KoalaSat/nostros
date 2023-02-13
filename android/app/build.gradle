@@ -93,7 +93,7 @@ apply from: "../../node_modules/react-native-vector-icons/fonts.gradle"
  * Upload all the APKs to the Play Store and people will download
  * the correct one based on the CPU architecture of their device.
  */
-def enableSeparateBuildPerCPUArchitecture = false
+def enableSeparateBuildPerCPUArchitecture = true
 
 /**
  * Run Proguard to shrink the Java bytecode in release builds.
@@ -139,8 +139,8 @@ android {
         applicationId "com.nostros"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 27
-        versionName "0.2.1.1-alpha"
+        versionCode 46
+        versionName "v0.3.0.0-alpha"
         buildConfigField "boolean", "IS_NEW_ARCHITECTURE_ENABLED", isNewArchitectureEnabled().toString()
 
         if (isNewArchitectureEnabled()) {
@@ -152,11 +152,6 @@ android {
                         "-DREACT_ANDROID_BUILD_DIR=$rootDir/../node_modules/react-native/ReactAndroid/build",
                         "-DNODE_MODULES_DIR=$rootDir/../node_modules",
                         "-DANDROID_STL=c++_shared"
-                }
-            }
-            if (!enableSeparateBuildPerCPUArchitecture) {
-                ndk {
-                    abiFilters (*reactNativeArchitectures())
                 }
             }
         }
@@ -207,7 +202,7 @@ android {
         abi {
             reset()
             enable enableSeparateBuildPerCPUArchitecture
-            universalApk false  // If true, also generate a universal APK
+            universalApk true  // If true, also generate a universal APK
             include (*reactNativeArchitectures())
         }
     }
@@ -259,7 +254,10 @@ dependencies {
 
     implementation 'com.neovisionaries:nv-websocket-client:2.14'
 
-    implementation 'com.facebook.fresco:webpsupport:2.0.0'
+    implementation 'com.facebook.fresco:animated-webp:2.6.0'
+    implementation 'com.facebook.fresco:webpsupport:2.6.0'
+
+    implementation 'com.facebook.fresco:animated-gif:2.6.0'
 
     debugImplementation("com.facebook.flipper:flipper:${FLIPPER_VERSION}") {
         exclude group:'com.facebook.fbjni'

@@ -1,9 +1,9 @@
 import { decode, EventPointer, npubEncode, ProfilePointer } from 'nostr-tools/nip19'
 
-export function getNpub(key: string): string {
-
+export function getNpub(key: string | undefined): string {
+  if (!key) return ''
   if (isPublicKey(key)) return key
-  
+
   try {
     return npubEncode(key)
   } catch {
@@ -14,10 +14,10 @@ export function getNpub(key: string): string {
 }
 
 export function getNip19Key(nip19: string): string | null {
-  let result = nip19
+  let result = null
 
   try {
-    const decoded = decode(result)
+    const decoded = decode(nip19)
     if (decoded.type === 'nprofile') {
       const data = decoded.data as ProfilePointer
       result = data.pubkey
@@ -28,10 +28,10 @@ export function getNip19Key(nip19: string): string | null {
       result = decoded.data as string
     }
   } catch (e) {
-    console.log('Error decoding getPublicKey', e)
+    console.log('Error decoding getNip19Key', e)
   }
 
-  return null
+  return result
 }
 
 export function isPrivateKey(nip19: string): boolean {

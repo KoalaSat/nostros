@@ -1,6 +1,5 @@
 import React, { useCallback, useContext, useEffect, useState } from 'react'
 import {
-  Clipboard,
   NativeScrollEvent,
   NativeSyntheticEvent,
   RefreshControl,
@@ -8,32 +7,21 @@ import {
   StyleSheet,
   View,
 } from 'react-native'
-import {
-  Surface,
-  Text,
-  IconButton,
-  ActivityIndicator,
-  useTheme,
-  Snackbar,
-} from 'react-native-paper'
-import NostrosAvatar from '../../Components/NostrosAvatar'
+import { Surface, Text, ActivityIndicator, Snackbar, Divider } from 'react-native-paper'
+import { FlashList, ListRenderItem } from '@shopify/flash-list'
 import { AppContext } from '../../Contexts/AppContext'
 import { UserContext } from '../../Contexts/UserContext'
 import { RelayPoolContext } from '../../Contexts/RelayPoolContext'
 import { getNotes, Note } from '../../Functions/DatabaseFunctions/Notes'
-import { getUser, updateUserContact, User } from '../../Functions/DatabaseFunctions/Users'
-import { EventKind } from '../../lib/nostr/Events'
-import { populatePets, username } from '../../Functions/RelayFunctions/Users'
+import { getUser, User } from '../../Functions/DatabaseFunctions/Users'
+import { Kind } from 'nostr-tools'
 import { useTranslation } from 'react-i18next'
 import { RelayFilters } from '../../lib/nostr/RelayPool/intex'
 import NoteCard from '../../Components/NoteCard'
-import LnPayment from '../../Components/LnPayment'
 import { handleInfinityScroll } from '../../Functions/NativeFunctions'
-import RBSheet from 'react-native-raw-bottom-sheet'
-import ProfileCard from '../../Components/ProfileCard'
-import { navigate } from '../../lib/Navigation'
 import { useFocusEffect } from '@react-navigation/native'
-import { getNpub } from '../../lib/nostr/Nip19'
+import ProfileData from '../../Components/ProfileData'
+import ProfileActions from '../../Components/ProfileActions'
 
 interface ProfilePageProps {
   route: { params: { pubKey: string } }
@@ -44,15 +32,11 @@ export const ProfilePage: React.FC<ProfilePageProps> = ({ route }) => {
   const { publicKey } = useContext(UserContext)
   const { lastEventId, relayPool } = useContext(RelayPoolContext)
   const { t } = useTranslation('common')
-  const bottomSheetProfileRef = React.useRef<RBSheet>(null)
-  const theme = useTheme()
   const initialPageSize = 10
   const [showNotification, setShowNotification] = useState<undefined | string>()
   const [notes, setNotes] = useState<Note[]>()
   const [user, setUser] = useState<User>()
-  const [openLn, setOpenLn] = React.useState<boolean>(false)
   const [pageSize, setPageSize] = useState<number>(initialPageSize)
-  const [isContact, setIsContact] = useState<boolean>()
   const [refreshing, setRefreshing] = useState(false)
   const [firstLoad, setFirstLoad] = useState(true)
 
@@ -66,9 +50,9 @@ export const ProfilePage: React.FC<ProfilePageProps> = ({ route }) => {
 
       return () =>
         relayPool?.unsubscribe([
-          `main-profile${route.params.pubKey}`,
-          `user-profile${route.params.pubKey}`,
-          `answers-profile${route.params.pubKey}`,
+          `profile${route.params.pubKey}`,
+          `profile-user${route.params.pubKey}`,
+          `profile-answers${route.params.pubKey}`,
         ])
     }, []),
   )
@@ -96,7 +80,6 @@ export const ProfilePage: React.FC<ProfilePageProps> = ({ route }) => {
       getUser(route.params.pubKey, database).then((result) => {
         if (result) {
           setUser(result)
-          setIsContact(result?.contact)
         } else if (route.params.pubKey === publicKey) {
           setUser({
             id: publicKey,
@@ -113,9 +96,9 @@ export const ProfilePage: React.FC<ProfilePageProps> = ({ route }) => {
           setNotes(results)
           setRefreshing(false)
           if (results.length > 0) {
-            relayPool?.subscribe(`answers-profile${route.params.pubKey}`, [
+            relayPool?.subscribe(`profile-answers${route.params.pubKey.substring(0, 8)}`, [
               {
-                kinds: [EventKind.reaction, EventKind.textNote, EventKind.recommendServer],
+                kinds: [Kind.Reaction, Kind.Text, Kind.RecommendRelay],
                 '#e': results.map((note) => note.id ?? ''),
               },
             ])
@@ -126,9 +109,9 @@ export const ProfilePage: React.FC<ProfilePageProps> = ({ route }) => {
   }
 
   const subscribeProfile: () => Promise<void> = async () => {
-    relayPool?.subscribe(`user-profile${route.params.pubKey}`, [
+    relayPool?.subscribe(`profile-user${route.params.pubKey.substring(0, 8)}`, [
       {
-        kinds: [EventKind.meta, EventKind.petNames],
+        kinds: [Kind.Metadata, Kind.Contacts],
         authors: [route.params.pubKey],
       },
     ])
@@ -138,31 +121,11 @@ export const ProfilePage: React.FC<ProfilePageProps> = ({ route }) => {
     if (!database) return
 
     const message: RelayFilters = {
-      kinds: [EventKind.textNote, EventKind.recommendServer],
+      kinds: [Kind.Text, Kind.RecommendRelay],
       authors: [route.params.pubKey],
       limit: pageSize,
     }
-    relayPool?.subscribe(`main-profile${route.params.pubKey}`, [message])
-  }
-
-  const removeContact: () => void = () => {
-    if (relayPool && database && publicKey) {
-      updateUserContact(route.params.pubKey, database, false).then(() => {
-        populatePets(relayPool, database, publicKey)
-        setIsContact(false)
-        setShowNotification('contactRemoved')
-      })
-    }
-  }
-
-  const addContact: () => void = () => {
-    if (relayPool && database && publicKey) {
-      updateUserContact(route.params.pubKey, database, true).then(() => {
-        populatePets(relayPool, database, publicKey)
-        setIsContact(true)
-        setShowNotification('contactAdded')
-      })
-    }
+    relayPool?.subscribe(`profile${route.params.pubKey.substring(0, 8)}`, [message])
   }
 
   const onScroll: (event: NativeSyntheticEvent<NativeScrollEvent>) => void = (event) => {
@@ -171,22 +134,11 @@ export const ProfilePage: React.FC<ProfilePageProps> = ({ route }) => {
     }
   }
 
-  const renderItem: (note: Note) => JSX.Element = (note) => (
-    <View style={styles.noteCard} key={note.id}>
-      <NoteCard note={note} onPressUser={() => bottomSheetProfileRef.current?.open()} />
+  const renderItem: ListRenderItem<Note> = ({ item }) => (
+    <View style={styles.noteCard} key={item.id}>
+      <NoteCard note={item} />
     </View>
   )
-
-  const bottomSheetStyles = React.useMemo(() => {
-    return {
-      container: {
-        backgroundColor: theme.colors.background,
-        padding: 16,
-        borderTopRightRadius: 28,
-        borderTopLeftRadius: 28,
-      },
-    }
-  }, [])
 
   return (
     <View>
@@ -197,90 +149,44 @@ export const ProfilePage: React.FC<ProfilePageProps> = ({ route }) => {
         refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
       >
         <Surface style={styles.container} elevation={1}>
-          <View style={styles.mainLayout}>
-            <View>
-              <NostrosAvatar
-                name={user?.name}
-                pubKey={getNpub(route.params.pubKey)}
-                src={user?.picture}
-                lud06={user?.lnurl}
-                size={54}
-              />
-            </View>
-            <View>
-              <View style={styles.userName}>
-                <Text variant='titleMedium'>{user && username(user)}</Text>
-                {/* <MaterialCommunityIcons name="check-decagram-outline" size={16} /> */}
-                <Text>{user?.nip05}</Text>
-              </View>
-            </View>
+          <View style={styles.profileData}>
+            <ProfileData
+              username={user?.name}
+              publicKey={route.params.pubKey}
+              validNip05={user?.valid_nip05}
+              nip05={user?.nip05}
+              lud06={user?.lnurl}
+              picture={user?.picture}
+            />
+            <Text>{user?.follower && user.follower > 0 ? t('profilePage.isFollower') : ''}</Text>
           </View>
           <View>
             <Text>{user?.about}</Text>
           </View>
-          <View style={styles.mainLayout}>
-            {route.params.pubKey !== publicKey && (
-              <View style={styles.actionButton}>
-                <IconButton
-                  icon={
-                    isContact ? 'account-multiple-remove-outline' : 'account-multiple-plus-outline'
-                  }
-                  size={28}
-                  onPress={() => {
-                    isContact ? removeContact() : addContact()
-                  }}
-                  disabled={route.params.pubKey === publicKey}
-                />
-                <Text>{isContact ? t('profilePage.unfollow') : t('profilePage.follow')}</Text>
-              </View>
-            )}
-            <View style={styles.actionButton}>
-              <IconButton
-                icon='message-plus-outline'
-                size={28}
-                onPress={() => {
-                  navigate('Conversation', {
-                    pubKey: route.params.pubKey,
-                    title: user ? username(user) : route.params.pubKey,
-                  })
-                  bottomSheetProfileRef.current?.close()
-                }}
-              />
-              <Text>{t('profilePage.message')}</Text>
-            </View>
-            <View style={styles.actionButton}>
-              <IconButton
-                icon='content-copy'
-                size={28}
-                onPress={() => {
-                  setShowNotification('copyNPub')
-                  const profileNPud = getNpub(route.params.pubKey)
-                  Clipboard.setString(profileNPud ?? '')
-                }}
-              />
-              <Text>{t('profilePage.copyNPub')}</Text>
-            </View>
-            <View style={styles.actionButton}>
-              {user?.lnurl && (
-                <>
-                  <IconButton
-                    icon='lightning-bolt'
-                    size={28}
-                    onPress={() => setOpenLn(true)}
-                    iconColor='#F5D112'
-                  />
-                  <Text>{t('profilePage.invoice')}</Text>
-                </>
-              )}
-            </View>
+          <Divider style={styles.divider} />
+          <View style={styles.profileActions}>
+            {user && <ProfileActions user={user} setUser={setUser} />}
           </View>
         </Surface>
-        {notes && notes.length > 0 && (
-          <View style={styles.list}>
-            {notes.map((note) => renderItem(note))}
-            {notes.length >= 10 && <ActivityIndicator animating={true} />}
-          </View>
-        )}
+        <View style={styles.list}>
+          <FlashList
+            estimatedItemSize={200}
+            showsVerticalScrollIndicator={false}
+            data={notes}
+            renderItem={renderItem}
+            refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
+            onScroll={onScroll}
+            refreshing={refreshing}
+            horizontal={false}
+            ListFooterComponent={
+              notes && notes.length > 0 ? (
+                <ActivityIndicator style={styles.loading} animating={true} />
+              ) : (
+                <></>
+              )
+            }
+          />
+        </View>
       </ScrollView>
       {showNotification && (
         <Snackbar
@@ -293,42 +199,16 @@ export const ProfilePage: React.FC<ProfilePageProps> = ({ route }) => {
           {t(`profilePage.${showNotification}`)}
         </Snackbar>
       )}
-      <LnPayment setOpen={setOpenLn} open={openLn} user={user} />
-      <RBSheet
-        ref={bottomSheetProfileRef}
-        closeOnDragDown={true}
-        height={280}
-        customStyles={bottomSheetStyles}
-      >
-        <ProfileCard
-          userPubKey={route.params.pubKey ?? ''}
-          bottomSheetRef={bottomSheetProfileRef}
-        />
-      </RBSheet>
     </View>
   )
 }
 
 const styles = StyleSheet.create({
+  loading: {
+    paddingTop: 16,
+  },
   container: {
     padding: 16,
-  },
-  contacts: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-around',
-  },
-  mainLayout: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  userName: {
-    paddingLeft: 16,
-  },
-  actionButton: {
-    justifyContent: 'center',
-    alignItems: 'center',
-    width: 100,
   },
   snackbar: {
     margin: 16,
@@ -337,8 +217,20 @@ const styles = StyleSheet.create({
   list: {
     padding: 16,
   },
+  divider: {
+    marginTop: 16,
+  },
+  profileActions: {
+    marginRight: 16,
+    marginLeft: 16,
+  },
   noteCard: {
     marginBottom: 16,
+  },
+  profileData: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    paddingBottom: 16,
   },
 })
 

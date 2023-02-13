@@ -2,29 +2,34 @@
   "common": {
     "drawers": {
       "relaysTitle": "Relés",
-      "relaysDescription": "Los relés son nodos en la red que actúan como intermediarios para la transmisión demensajes entre aplicaciones.\n\n\nLos relés pueden ser utilizados para mejorar la resiliencia yla disponibilidad de la red, ya que permiten que los mensajes sean entregados aun cuandohay fallos o interrupciones en la conectividad.\n\n\nLos relés también pueden ser utilizadospara mejorar la privacidad y la seguridad de la red, ya que pueden ocultar la ubicación yel identidad de las aplicaciones que se comunican entre sí a través de ellos. Esto puedeser útil en entornos donde la censura o la vigilancia son un problema.\n\n\nEs importante teneren cuenta que los relés también pueden ser utilizados para propósitos malintencionados,como para rastrear o censurar el tráfico de la red.\n\n\nPor lo tanto, es importante evaluarcuidadosamente el uso de relés y considerar medidas de seguridad adecuadas para protegerla privacidad y la seguridad de la red.",
+      "relaysDescription": "Los relays son nodos en la red que actúan como intermediarios para la transmisión demensajes entre aplicaciones.\n\n\nLos relays pueden ser utilizados para mejorar la resiliencia yla disponibilidad de la red, ya que permiten que los mensajes sean entregados aun cuandohay fallos o interrupciones en la conectividad.\n\n\nLos relays también pueden ser utilizadospara mejorar la privacidad y la seguridad de la red, ya que pueden ocultar la ubicación yel identidad de las aplicaciones que se comunican entre sí a través de ellos. Esto puedeser útil en entornos donde la censura o la vigilancia son un problema.\n\n\nEs importante teneren cuenta que los relays también pueden ser utilizados para propósitos malintencionados,como para rastrear o censurar el tráfico de la red.\n\n\nPor lo tanto, es importante evaluarcuidadosamente el uso de relays y considerar medidas de seguridad adecuadas para protegerla privacidad y la seguridad de la red.",
       "keysTitle": "¿Qué son las claves?",
       "keysDescription": "En nostr tienes dos claves: tu clave pública y tu clave privada.",
       "publicKeys": "Clave pública",
-      "publicKeysDescription": "Piensa en la clave pública como tu nombre de usuario (como tu @handle en Twitter). Compártela con otras personas para que te añadan a su red.",
+      "publicKeysDescription": "Piensa en la clave pública como tu nombre de usuario (como tu @handle en otras aplicaciones). Compártela con otras personas para que te añadan a su red.",
       "privateKey": "Clave privada",
       "privateKeyDescription": "Piensa en tu clave privada como tu contraseña.",
       "privateKeysSnackbarTitle": "Muy importante.",
       "privateKeysSnackbarDescription": "Guarda tu clave privada en un lugar seguro, si la pierdes no podrás volver a acceder con ella ni recuperar tu cuenta."
     },
     "homeNavigator": {
-      "ProfileCreate": "",
+      "Group": "",
+      "ProfileCreate": "Crear perfil",
       "ProfileConnect": "",
       "ProfileLoad": "",
       "Landing": "",
+      "Contacts": "Contactos",
       "Conversation": "Conversación",
       "Reply": "Responder",
+      "Repost": "Citar nota",
       "Note": "Nota",
       "Profile": "Perfil",
       "About": "About",
+      "Config": "Configuración",
       "Send": "Send",
       "Relays": "Relays",
-      "ProfileConfig": "My profile"
+      "ProfileConfig": "Mi perfil",
+      "markAllRead": "Marcar todo como leído"
     },
     "conversationPage": {
       "typeMessage": "Escribir mensaje",
@@ -38,7 +43,8 @@
       "home": "Acceder",
       "searchingProfile": "Buscando tu perfil",
       "foundProfile": "Perfil encontrado",
-      "foundContacts": "{{contactsCount}} contactos encontrados"
+      "foundContacts": "{{contactsCount}} contactos encontrados",
+      "storing": "Evento {{lastEventId}} guardado en base de datos."
     },
     "sendPage": {
       "isContact": "Siguiendo",
@@ -46,43 +52,93 @@
       "contentWarning": "Contenido sensible",
       "send": "Enviar"
     },
+    "groupsFeed": {
+      "delete": "Salir del grupo",
+      "updateTitle": "Actualizar grupo",
+      "newGroupName": "Nombre",
+      "newGroupDescription": "Descripción",
+      "newGroupPicture": "Imagen",
+      "groupUpdate": "Actualizar grupo",
+      "newGroupCreate": "Crear grupo",
+      "createTitle": "Crear grupo",
+      "groupId": "Id del grupo",
+      "addTitle": "Agregar grupo existente",
+      "add": "Agregar grupo"
+    },
+    "uploadImage": {
+      "notifications": {
+        "imageUploaded": "Tu archivo se ha subido.\nConsidera donar al servicio:\n{{uri}}",
+        "imageUploadErro": "Se ha producido un error al subir la imagen."
+      },
+      "uploadImageWarningTitle": "Importante",
+      "uploadImageWarning": "Tu imagen se subirá a un servicio público de almacenamiento y será visible para cualquiera.",
+      "uploadImage": "Subir imagen ahora",
+      "cancel": "Cancelar",
+      "poweredBy": "Servido por {{uri}}"
+    },
+    "groupPage": {
+      "typeMessage": "Escribir mensaje"
+    },
     "menuItems": {
       "relays": "Relays",
+      "contacts": "Contactos",
       "notConnected": "No conectado",
       "connectedRelays": "{{number}} conectados",
       "following": "{{following}} siguiendo",
       "followers": "{{followers}} seguidores",
       "configuration": "Configuración",
       "about": "Sobre Nostros",
+      "reportBug": "Reportar un bug",
       "logout": "Salir"
     },
+    "configPage": {
+      "showPublicImages": "Mostrar imágenes en feed global",
+      "showSensitive": "Mostrar notas sensibles",
+      "satoshi": "Símbolo de satoshi",
+      "imageHostingService": "Servicio de subida de imágenes",
+      "random": "Aleatorio",
+      "language": "Idioma",
+      "relayColoruring": "Coloreado de relays"
+    },
     "noteCard": {
-      "answering": "Responder a {{username}}",
-      "seeParent": "See note",
-      "contentWarning": "Sensitive content"
+      "answering": "Responder a {{pubkey}}",
+      "reposting": "Reposted {{pubkey}}",
+      "seeParent": "Ver nota",
+      "userBlocked": "Usuario bloqueado",
+      "contentWarning": "Contenido sensible",
+      "recommendation": "Recomendación de relay",
+      "addRelay": "Agregar relay",
+      "reposted": "Reposteado"
     },
     "lnPayment": {
       "monto": "Cantidad (sats.)",
-      "comment": "Commentario (opcional)",
-      "generateInvoice": "Generar invoice",
+      "comment": "Comentario (opcional)",
+      "generateInvoice": "Generar factura",
       "cancel": "Cancelar",
       "copy": "Copiar",
       "open": "Abrir wallet"
     },
     "notificationsFeed": {
       "emptyTitle": "No tienes notificationes.",
-      "emptyDescription": "Escribe una nota para tener respuestas y reacciónes.",
+      "emptyDescription": "Escribe una nota para tener respuestas y reacciones.",
       "emptyButton": "Escribe una nota"
     },
     "profileCreatePage": {
       "notifications": {
-        "copied": "Clave privada copiada.\n\nGuardala en un lugar seguro."
+        "copied": "Clave privada copiada. Guárdala en un lugar seguro.",
+        "wrongWords": "Las palabras no coinciden."
       },
-      "snackbarDescription": "Importante. Guardala tu clave en un lugar seguro, si la pierdes, no será posible acceder a tu perfil.",
-      "snackbarAction": "Copy private key",
+      "skip": "Skip",
+      "confirmTitle": "Type the words in the right order.",
+      "snackbarDescription": "Importante. Guarda tu clave en un lugar seguro, si la pierdes, no será posible acceder a tu perfil.",
+      "snackbarAction": "Copiar clave privada",
       "warningTitle": "Importante",
       "warningDescription": "Guarda tu clave privada en un lugar seguro, si la pierdes, no podrás acceder a tu perfil ni recuperarlo.",
       "warningAction": "Copiar clave",
+      "continue": "Continue",
+      "mnemonicTitle": "Estas palabras o tu clave privada son la única forma de recuperar tu perfil.",
+      "introTitle": "Tu dispositivo generará 12 palabras y una clave privada.",
+      "wordsNoted": "He guardado mis palabras y/o mi clave privada",
       "accessButton": "Acceder",
       "label": "Clave privada",
       "copied": "Clave copiada",
@@ -94,41 +150,99 @@
       "isPublic": "Acceder con clave pública",
       "accessButton": "Acceder",
       "privateKey": "Clave privada",
-      "publicKey": "Clave pública"
+      "publicKey": "Clave pública",
+      "loginMethod": "Acceder con",
+      "mnemonic": "Mnemónico"
     },
-    "contactsFeed": {
+    "contactsPage": {
       "notifications": {
         "keyCopied": "Clave pública copiada.",
         "contactAdded": "Perfil seguido.",
         "addContactError": "Se ha producido un error al publicar tus cambios.",
-        "contactRemoved": "Perfil dejado de seguir."
+        "contactRemoved": "Has dejado de seguir a un perfil",
+        "contactUnblocked": "Perfil desbloqueado."
       },
+      "emptyTitleBlocked": "No tienes perfiles bloqueado",
+      "emptyDescriptionBlocked": "Siempre puede bloquear a alguien en su vista de perfil.",
       "emptyTitleFollowing": "No sigues a nadie",
-      "emptyDescriptionFollowing": "Sigue otros perfiles para ver aquí contenido.",
+      "emptyDescriptionFollowing": "Sigue otros perfiles para ver contenido aquí.",
       "emptyButtonFollowing": "Pegar clave pública",
       "emptyTitleFollower": "No tienes seguidores",
-      "emptyDescriptionFollower": "Comparte tu clave público para que lo demás puedan empezar a seguirte.",
+      "emptyDescriptionFollower": "Comparte tu clave pública para que los demás puedan empezar a seguirte.",
       "emptyButtonFollower": "Copiar clave pública",
       "cancel": "Cancelar",
       "addContact": "Añadir contacto",
-      "addContactDescription": "Pega la clave pública de quien desees añadir.",
+      "addContactDescription": "Pega la clave pública o NIP-05 de quien desees añadir.",
       "addContactTitle": "Añadir contacto",
       "followers": "Seguidores ({{count}})",
       "following": "Siguiendo ({{count}})",
+      "blocked": "Bloqueados ({{count}})",
+      "unblock": "Desbloquear",
       "stopFollowing": "Dejar de seguir",
       "follow": "Seguir"
     },
     "aboutPage": {
+      "telegram": "Telegram",
       "gitHub": "GitHub",
       "nostr": "nostr",
-      "nips": "NIPs"
+      "nips": "NIPs",
+      "version": "Version"
     },
     "homeFeed": {
       "emptyTitle": "No sigues a nadie",
-      "emptyDescription": "Sigue otros perfiles para ver aquí contenido.",
-      "emptyButton": "Ir a contactos"
+      "emptyDescription": "Sigue otros perfiles para ver contenido aquí.",
+      "emptyButton": "Ir a contactos",
+      "globalFeed": "Feed global",
+      "newMessage": "{{newNotesCount}} nota nueva. Desliza para recargar.",
+      "newMessages": "{{newNotesCount}} notas nuevas. Desliza para refrescar.",
+      "myFeed": "Mi feed"
+    },
+    "relayCard": {
+      "pushDone": "Completado",
+      "pushHistoricTitle": "Subir histórico",
+      "pushHistoricDescription": "Nostros almacena en su propia base de datos todos los datos recibidos de los relays. Con esta opción puedes enviar a cualquier relay todos los datos que Nostros ha asociado a tu perfil.",
+      "pushHistoricAlertTitle": "Importante",
+      "pushHistoricAlert": "Los relays públicos tienen fuertes políticas anti-spam y esta acción podría bloquear tu clave. Asegúrate de que puedes enviar grandes cantidades de datos a este relay.\n\nRecomendamos utilizar esta función sólo para relays privados como Umbrel Nostr Relay.",
+      "pushConsent": "Estoy enviando mis eventos a un relay privado",
+      "pushingEvent": "Evento {{eventId}} subido",
+      "pushRelay": "Subir histórico",
+      "cancel": "Cancelar",
+      "moreInfo": "Más información",
+      "lessInfo": "Menos información",
+      "globalFeed": "Feed Global",
+      "active": "Activo",
+      "copy": "Copiar",
+      "remove": "Borrar",
+      "share": "Compartir",
+      "pubkey": "Clave pública",
+      "contact": "Contacto",
+      "supportedNips": "NIPs soportadas",
+      "software": "Sowftware",
+      "version": "Versión",
+      "description": "Descripción",
+      "obtainingInfo": "Obteniendo información del relay",
+      "notifications": {
+        "active": "Relay activado.",
+        "desactive": "Relay desactivado.",
+        "globalFeedActive": "Feed global activado.",
+        "globalFeedActiveUnactive": "Feed Global desactivado.",
+        "pubkeyCopied": "Clave pública copiada.",
+        "contactCopied": "Contactp copiado.",
+        "urlCopied": "URL copiada."
+      }
     },
     "relaysPage": {
+      "resilienceTitle": "Resilience (experimental)",
+      "resilienceDescription": "The Nostr protocol provides a good number of tools to build a decentralized network, but unlike other decentralized protocols such as Bitcoin, it is not inherently bound to its use. To achieve the goal of a decentralized network, clients (e.g., Nostros) and relays (content servers) should actively cooperate. The Nostros resilience mode seeks first to raise awareness of this among users, and second to test new patterns and methods to improve the resilience of the network.\nA working implementation for this will soon be applied in Nostros.",
+      "resilienceCategories": "Resilience exposure",
+      "resilienceCategoriesDescription": "An initial approach that Nostros is testing is to randomly calculate (based on received contact events) which relays are most balanced. This tries to avoid both relays with too many events (centralization) and relays with almost no events (battery discharge).\n\nThe goal is to create a list of 5 relays that cover all contacts. However, if this is not possible, Nostros will search among other relays and warn the user about it.",
+      "centralized": "Centralizado",
+      "small": "Pequeño",
+      "contacts": "Nº contactos",
+      "resilienceMode": "Resiliencia (experimental)",
+      "relayName": "Dirección",
+      "globalFeed": "Feed global",
+      "active": "Activo",
       "labelAdd": "Dirección de relay",
       "cancel": "Cancelar",
       "add": "Añadir",
@@ -137,7 +251,10 @@
       "notifications": {
         "add": "Relay conectado",
         "remove": "Relay borrado",
-        "badFormat": "La URL del relay no tiene el formato adecuado."
+        "active": "Relay activado.",
+        "desactive": "Relay desactivado.",
+        "badFormat": "La URL del relay no tiene el formato adecuado.",
+        "alreadyExists": "El relay ya existe."
       }
     },
     "profileConfigPage": {
@@ -147,7 +264,7 @@
         "profilePublished": "Perfil publicado.",
         "lud06Published": "LUD-06 publicado.\n\n{{lud06}}",
         "nip05Published": "NIP-05 publicado.\n\n{{nip05}}",
-        "picturePublished": "Picture publicado.",
+        "picturePublished": "Imagen publicada.",
         "connectionError": "Error de conexión"
       },
       "publishLud06": "Publicar",
@@ -160,7 +277,7 @@
       "nip05Title": "NIP-05",
       "directoryCancell": "Cancelar",
       "directoryContinue": "Continuar",
-      "directoryDescription": "Nostr Directory es una base de datos de claves públicas de nostr asociadas a una cuenta de Twitter. Encuentra a las personas que sigues en Twitter en nostr y añade tu clave pública para que tus seguidores te encuentren si lo deseas.\n\n\nAl verificar tu cuenta de Twitter se añadirá un distintivo en tu perfil.\n\n\nSi continuas tendrás que llevar a cabo el proceso de verificación fuera de la aplicación.",
+      "directoryDescription": "Nostr Directory es una base de datos de claves públicas de nostr asociadas a cuentas oficiales de usuarios en otras plataformas. Encuentra a las personas que ya sigues en otras plataformas en nostr y añade tu clave pública para que tus seguidores te encuentren.\n\nSi continuas tendrás que llevar a cabo el proceso de verificación fuera de la aplicación.",
       "directoryTitle": "Nostr Directory",
       "publishPicture": "Publicar",
       "pictureUrl": "URL de imagen",
@@ -180,25 +297,57 @@
       "notifications": {
         "contactAdded": "Siguiendo",
         "contactRemoved": "Dejando de seguir ",
-        "npubCopied": "Clave pública copiada."
+        "npubCopied": "Clave pública copiada.",
+        "active": "Relay activado.",
+        "desactive": "Relay desactivado."
       },
       "invoice": "Propina",
       "message": "Mensaje",
+      "isFollower": "te sigue",
       "follow": "Seguir",
       "unfollow": "Siguiendo",
+      "copyNPub": "Copiar clave",
+      "relaysDescription": "Estos son los relays de {{username}}, activa aquellos a los que quieras estar conectado."
+    },
+    "homePage": {
+      "clipboardTitle": "Se ha detectado una clave Nostr",
+      "goToEvent": "Abrir",
+      "cancel": "Cancelar"
+    },
+    "language": {
+      "en": "English",
+      "es": "Español",
+      "fr": "Français",
+      "ru": "Русский",
+      "de": "Deutsch",
+      "zhCn": "简体中文"
+    },
+    "profileShare": {
+      "notifications": {
+        "npubCopied": "Clave pública copiada.",
+        "nip05Copied": "NIP-05 copiada."
+      },
+      "copyNip05": "Copiar NIP-05",
       "copyNPub": "Copiar clave"
+    },
+    "textContent": {
+      "invoice": "Factura de Lightning Network"
     },
     "profileCard": {
       "notifications": {
         "contactAdded": "Siguiendo",
         "contactRemoved": "Dejando de seguir",
-        "npubCopied": "Clave pública copiada."
+        "userUnblocked": "Perfil desbloqueado",
+        "userBlocked": "Perfil bloqueado"
       },
       "invoice": "Propina",
       "message": "Mensaje",
       "follow": "Seguir",
+      "block": "Bloquear",
+      "share": "Share",
+      "unblock": "Desbloquear",
       "unfollow": "Siguiendo",
-      "copyNPub": "Copiar clave"
+      "relaysTitle": "Relays"
     },
     "conversationsFeed": {
       "openMessage": "Comenzar conversación",

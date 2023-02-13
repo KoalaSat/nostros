@@ -1,80 +1,87 @@
 import React, { useContext, useEffect, useState } from 'react'
-import { RelayPoolContext } from '../../Contexts/RelayPoolContext'
-import { EventKind } from '../../lib/nostr/Events'
+import { RelayPoolContext, WebsocketEvent } from '../../Contexts/RelayPoolContext'
+import { Kind } from 'nostr-tools'
 import { AppContext } from '../../Contexts/AppContext'
 import { UserContext } from '../../Contexts/UserContext'
 import { getUsers, User } from '../../Functions/DatabaseFunctions/Users'
 import { useTranslation } from 'react-i18next'
-import moment from 'moment'
-import { StyleSheet, View } from 'react-native'
+import getUnixTime from 'date-fns/getUnixTime'
+import { DeviceEventEmitter, StyleSheet, View } from 'react-native'
 import Logo from '../../Components/Logo'
-import { Button, Text, useTheme } from 'react-native-paper'
+import { ActivityIndicator, Button, Text, useTheme } from 'react-native-paper'
 import { navigate } from '../../lib/Navigation'
 import { useFocusEffect } from '@react-navigation/native'
+import { formatId } from '../../Functions/RelayFunctions/Users'
 
 export const ProfileLoadPage: React.FC = () => {
   const theme = useTheme()
   const { database } = useContext(AppContext)
-  const { relayPool, lastEventId, relayPoolReady } = useContext(RelayPoolContext)
-  const { publicKey, reloadUser, user, setUserState } = useContext(UserContext)
+  const { relayPool, relayPoolReady } = useContext(RelayPoolContext)
+  const { publicKey, reloadUser, setUserState, name } = useContext(UserContext)
   const { t } = useTranslation('common')
   const [profileFound, setProfileFound] = useState<boolean>(false)
   const [contactsCount, setContactsCount] = useState<number>(0)
+  const [lastEventId, setLastEventId] = useState<string>('')
 
   useFocusEffect(
     React.useCallback(() => {
-      if (publicKey && relayPoolReady) loadMeta()
-
-      return () => relayPool?.unsubscribe(['profile-load-meta-pets', 'profile-load-notes'])
+      DeviceEventEmitter.addListener('WebsocketEvent', (event: WebsocketEvent) =>
+        setLastEventId(event.eventId),
+      )
+      setTimeout(() => loadMeta(), 1000)
+      return () =>
+        relayPool?.unsubscribe([
+          'profile-load-meta',
+          'profile-load-notes',
+          'profile-load-meta-pets',
+        ])
     }, []),
   )
 
   useEffect(() => {
-    loadPets()
-    reloadUser()
-  }, [lastEventId])
+    if (!name) reloadUser()
+  }, [lastEventId, publicKey, relayPoolReady])
 
   useEffect(() => {
-    if (publicKey && relayPoolReady) loadMeta()
-  }, [publicKey, relayPoolReady])
+    if (name) setProfileFound(true)
+  }, [name])
 
   useEffect(() => {
-    if (user) {
-      setProfileFound(true)
-      loadPets()
-    }
-  }, [user])
+    if (profileFound) loadPets()
+  }, [profileFound, publicKey, relayPoolReady])
+
+  useEffect(() => {
+    setTimeout(loadMeta, 1000)
+  }, [profileFound, publicKey, relayPoolReady])
 
   const loadMeta: () => void = () => {
-    if (publicKey) {
-      relayPool?.subscribe('profile-load-meta-pets', [
+    if (publicKey && relayPoolReady) {
+      relayPool?.subscribe('profile-load-meta', [
         {
-          kinds: [EventKind.petNames],
+          kinds: [Kind.Contacts, Kind.Metadata],
           authors: [publicKey],
         },
-        {
-          kinds: [EventKind.petNames],
-          '#p': [publicKey],
-        },
       ])
+    } else {
+      setTimeout(() => loadMeta(), 1000)
     }
   }
 
   const loadPets: () => void = () => {
-    if (database && publicKey) {
+    if (database && publicKey && relayPoolReady) {
       getUsers(database, {}).then((results) => {
-        if (results && results.length > 0) {
-          setContactsCount(results.length)
+        if (results.length > 0) {
+          setContactsCount(results.filter((user) => user.contact).length)
           const authors = [...results.map((user: User) => user.id), publicKey]
           relayPool?.subscribe('profile-load-notes', [
             {
-              kinds: [EventKind.textNote],
+              kinds: [Kind.Metadata],
               authors,
-              since: moment().unix() - 86400,
             },
             {
-              kinds: [EventKind.meta],
+              kinds: [Kind.Text],
               authors,
+              since: getUnixTime(new Date()) - 43200,
             },
           ])
         }
@@ -88,12 +95,22 @@ export const ProfileLoadPage: React.FC = () => {
         <View style={styles.logo}>
           <Logo onlyIcon size='medium' />
         </View>
-        <Text variant='titleMedium' style={styles.center}>
-          {profileFound ? t('profileLoadPage.foundProfile') : t('profileLoadPage.searchingProfile')}
-        </Text>
+        <View style={styles.loadingProfile}>
+          {!profileFound && <ActivityIndicator animating={true} style={styles.activityIndicator} />}
+          <Text variant='titleMedium' style={styles.center}>
+            {profileFound
+              ? t('profileLoadPage.foundProfile')
+              : t('profileLoadPage.searchingProfile')}
+          </Text>
+        </View>
         <Text variant='titleMedium' style={styles.center}>
           {t('profileLoadPage.foundContacts', { contactsCount })}
         </Text>
+        {lastEventId && (
+          <Text variant='titleMedium' style={styles.center}>
+            {t('profileLoadPage.storing', { lastEventId: formatId(lastEventId) })}
+          </Text>
+        )}
         <Button mode='contained' onPress={() => setUserState('ready')}>
           {t('profileLoadPage.home')}
         </Button>
@@ -105,6 +122,7 @@ export const ProfileLoadPage: React.FC = () => {
             style={styles.warningAction}
             mode='text'
             onPress={() => {
+              reloadUser()
               navigate('Relays')
             }}
           >
@@ -151,6 +169,14 @@ const styles = StyleSheet.create({
   warningActionOuterLayout: {
     flexDirection: 'row',
     justifyContent: 'flex-end',
+  },
+  loadingProfile: {
+    justifyContent: 'center',
+    alignContent: 'center',
+    flexDirection: 'row',
+  },
+  activityIndicator: {
+    paddingRight: 16,
   },
 })
 

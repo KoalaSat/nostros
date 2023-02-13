@@ -14,15 +14,26 @@ import ProfileCard from '../../Components/ProfileCard'
 import NotePage from '../NotePage'
 import SendPage from '../SendPage'
 import ConversationPage from '../ConversationPage'
+import ConfigPage from '../ConfigPage'
+import { RelayPoolContext } from '../../Contexts/RelayPoolContext'
+import { AppContext } from '../../Contexts/AppContext'
+import RelayCard from '../../Components/RelayCard'
+import { updateAllRead } from '../../Functions/DatabaseFunctions/DirectMessages'
+import { getUnixTime } from 'date-fns'
+import ContactsPage from '../ContactsPage'
+import GroupPage from '../GroupPage'
+import GroupHeaderIcon from '../../Components/GroupHeaderIcon'
 
 export const HomeNavigator: React.FC = () => {
   const theme = useTheme()
   const { t } = useTranslation('common')
+  const { displayRelayDrawer, setDisplayrelayDrawer } = React.useContext(RelayPoolContext)
+  const { displayUserDrawer, setDisplayUserDrawer, setRefreshBottomBarAt, database } =
+    React.useContext(AppContext)
   const bottomSheetRef = React.useRef<RBSheet>(null)
-  const [bottomSheetPage, setBottomSheetPage] = React.useState<string>('keys')
   const bottomSheetProfileRef = React.useRef<RBSheet>(null)
+  const bottomSheetRelayRef = React.useRef<RBSheet>(null)
   const Stack = React.useMemo(() => createStackNavigator(), [])
-  const [showProfile, setShowProfile] = React.useState<string>()
   const cardStyleInterpolator = React.useMemo(
     () =>
       Platform.OS === 'android'
@@ -34,34 +45,33 @@ export const HomeNavigator: React.FC = () => {
     return {
       container: {
         backgroundColor: theme.colors.background,
-        padding: 16,
+        paddingTop: 16,
+        paddingRight: 16,
+        paddingBottom: 32,
+        paddingLeft: 16,
         borderTopRightRadius: 28,
         borderTopLeftRadius: 28,
+        height: 'auto',
       },
     }
   }, [])
 
   const onPressQuestion: (pageName: string) => void = (pageName) => {
     bottomSheetRef.current?.open()
-    setBottomSheetPage(pageName === 'Relays' ? 'relays' : 'keys')
   }
 
-  const BottomSheetRelays = React.useMemo(
-    () => (
-      <View>
-        <Text variant='headlineSmall'>{t('drawers.relaysTitle')}</Text>
-        <Text variant='bodyMedium'>{t('drawers.relaysDescription')}</Text>
-      </View>
-    ),
-    [],
-  )
-
-  const BottomSheets = {
-    relays: {
-      component: BottomSheetRelays,
-      height: 700,
-    },
+  const onPressCheckAll: () => void = () => {
+    if (database) updateAllRead(database)
+    setRefreshBottomBarAt(getUnixTime(new Date()))
   }
+
+  React.useEffect(() => {
+    if (displayRelayDrawer) bottomSheetRelayRef.current?.open()
+  }, [displayRelayDrawer])
+
+  React.useEffect(() => {
+    if (displayUserDrawer) bottomSheetProfileRef.current?.open()
+  }, [displayUserDrawer])
 
   return (
     <>
@@ -70,7 +80,12 @@ export const HomeNavigator: React.FC = () => {
           return {
             detachPreviousScreen: !navigation.isFocused(),
             cardStyleInterpolator,
-            header: ({ navigation, route, options, back }) => {
+            header: (headerData) => {
+              const { navigation, route, back } = headerData
+              const routes = navigation.getState().routes
+              const routeState = routes[0]?.state
+              const history = routeState?.history ?? []
+              const historyKey = history[0]?.key
               return (
                 <Appbar.Header>
                   {back ? (
@@ -92,8 +107,7 @@ export const HomeNavigator: React.FC = () => {
                       icon='dots-vertical'
                       onPress={() => {
                         const params = route?.params as { pubKey: string }
-                        setShowProfile(params?.pubKey ?? '')
-                        bottomSheetProfileRef.current?.open()
+                        setDisplayUserDrawer(params?.pubKey ?? '')
                       }}
                     />
                   )}
@@ -103,6 +117,12 @@ export const HomeNavigator: React.FC = () => {
                       isLeading
                       onPress={() => onPressQuestion(route.name)}
                     />
+                  )}
+                  {['Landing'].includes(route.name) && historyKey?.includes('messages-') && (
+                    <Appbar.Action icon='check-all' isLeading onPress={() => onPressCheckAll()} />
+                  )}
+                  {['Group'].includes(route.name) && (
+                    <GroupHeaderIcon groupId={route.params?.groupId} />
                   )}
                 </Appbar.Header>
               )
@@ -114,12 +134,16 @@ export const HomeNavigator: React.FC = () => {
           <Stack.Screen name='Landing' component={HomePage} />
           <Stack.Screen name='Note' component={NotePage} />
           <Stack.Screen name='Send' component={SendPage} />
+          <Stack.Screen name='Repost' component={SendPage} />
           <Stack.Screen name='Reply' component={SendPage} />
           <Stack.Screen name='Conversation' component={ConversationPage} />
+          <Stack.Screen name='Group' component={GroupPage} />
         </Stack.Group>
         <Stack.Group>
+          <Stack.Screen name='Contacts' component={ContactsPage} />
           <Stack.Screen name='Relays' component={RelaysPage} />
           <Stack.Screen name='About' component={AboutPage} />
+          <Stack.Screen name='Config' component={ConfigPage} />
           <Stack.Screen name='ProfileConfig' component={ProfileConfigPage} />
           <Stack.Screen name='Profile' component={ProfilePage} />
         </Stack.Group>
@@ -127,18 +151,24 @@ export const HomeNavigator: React.FC = () => {
       <RBSheet
         ref={bottomSheetProfileRef}
         closeOnDragDown={true}
-        height={280}
         customStyles={bottomSheetStyles}
+        onClose={() => setDisplayUserDrawer(undefined)}
       >
-        <ProfileCard userPubKey={showProfile ?? ''} bottomSheetRef={bottomSheetProfileRef} />
+        <ProfileCard bottomSheetRef={bottomSheetProfileRef} />
       </RBSheet>
       <RBSheet
-        ref={bottomSheetRef}
+        ref={bottomSheetRelayRef}
         closeOnDragDown={true}
-        height={BottomSheets[bottomSheetPage]?.height}
         customStyles={bottomSheetStyles}
+        onClose={() => setDisplayrelayDrawer(undefined)}
       >
-        {BottomSheets[bottomSheetPage]?.component}
+        <RelayCard url={displayRelayDrawer} bottomSheetRef={bottomSheetRelayRef} />
+      </RBSheet>
+      <RBSheet ref={bottomSheetRef} closeOnDragDown={true} customStyles={bottomSheetStyles}>
+        <View>
+          <Text variant='headlineSmall'>{t('drawers.relaysTitle')}</Text>
+          <Text variant='bodyMedium'>{t('drawers.relaysDescription')}</Text>
+        </View>
       </RBSheet>
     </>
   )

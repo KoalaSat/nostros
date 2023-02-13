@@ -1,24 +1,25 @@
 import React, { useContext, useEffect, useState } from 'react'
 import {
-  Clipboard,
   Dimensions,
   FlatList,
   ListRenderItem,
-  ScrollView,
+  NativeScrollEvent,
+  NativeSyntheticEvent,
   StyleSheet,
   View,
 } from 'react-native'
+import Clipboard from '@react-native-clipboard/clipboard'
 import { AppContext } from '../../Contexts/AppContext'
 import { RelayPoolContext } from '../../Contexts/RelayPoolContext'
-import { EventKind } from '../../lib/nostr/Events'
+import { Kind } from 'nostr-tools'
 import {
   DirectMessage,
   getGroupedDirectMessages,
+  getUserLastDirectMessages,
 } from '../../Functions/DatabaseFunctions/DirectMessages'
 import { getUsers, User } from '../../Functions/DatabaseFunctions/Users'
 import { getOtherPubKey } from '../../Functions/RelayFunctions/DirectMessages'
-import { NostrosAvatar } from '../../Components/NostrosAvatar'
-import { formatPubKey, username } from '../../Functions/RelayFunctions/Users'
+import { username } from '../../Functions/RelayFunctions/Users'
 import {
   AnimatedFAB,
   Badge,
@@ -32,17 +33,20 @@ import {
 } from 'react-native-paper'
 import { UserContext } from '../../Contexts/UserContext'
 import { navigate } from '../../lib/Navigation'
-import moment from 'moment'
 import RBSheet from 'react-native-raw-bottom-sheet'
 import { useTranslation } from 'react-i18next'
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'
 import { useFocusEffect } from '@react-navigation/native'
-import { getNpub } from '../../lib/nostr/Nip19'
+import ProfileData from '../../Components/ProfileData'
+import { fromUnixTime, formatDistance } from 'date-fns'
+import { handleInfinityScroll } from '../../Functions/NativeFunctions'
 
 export const ConversationsFeed: React.FC = () => {
+  const initialPageSize = 14
   const theme = useTheme()
   const { t } = useTranslation('common')
-  const { database } = useContext(AppContext)
+  const { database, refreshBottomBarAt } = useContext(AppContext)
+  const [pageSize, setPageSize] = useState<number>(initialPageSize)
   const { publicKey, privateKey } = useContext(UserContext)
   const { relayPool, lastEventId } = useContext(RelayPoolContext)
   const [directMessages, settDirectMessages] = useState<DirectMessage[]>([])
@@ -56,24 +60,29 @@ export const ConversationsFeed: React.FC = () => {
     React.useCallback(() => {
       loadDirectMessages(true)
 
-      return () => relayPool?.unsubscribe(['directmessages-meta', 'directmessages'])
+      return () =>
+        relayPool?.unsubscribe([
+          'directmessages-meta',
+          'directmessages-user',
+          'directmessages-others',
+        ])
     }, []),
   )
 
   useEffect(() => {
     loadDirectMessages(false)
-  }, [lastEventId])
+  }, [lastEventId, refreshBottomBarAt])
 
   const loadDirectMessages: (subscribe: boolean) => void = (subscribe) => {
     if (database && publicKey) {
-      getGroupedDirectMessages(database, {}).then((results) => {
+      getGroupedDirectMessages(database, { limit: pageSize }).then((results) => {
         if (results && results.length > 0) {
           settDirectMessages(results)
           const otherUsers = results.map((message) => getOtherPubKey(message, publicKey))
           getUsers(database, { includeIds: otherUsers }).then(setUsers)
           relayPool?.subscribe('directmessages-meta', [
             {
-              kinds: [EventKind.meta],
+              kinds: [Kind.Metadata],
               authors: otherUsers,
             },
           ])
@@ -88,19 +97,23 @@ export const ConversationsFeed: React.FC = () => {
   }
 
   const subscribeDirectMessages: (lastCreateAt?: number) => void = async (lastCreateAt) => {
-    if (publicKey) {
-      relayPool?.subscribe('directmessages', [
-        {
-          kinds: [EventKind.directMessage],
-          authors: [publicKey],
-          since: lastCreateAt ?? 0,
-        },
-        {
-          kinds: [EventKind.directMessage],
-          '#p': [publicKey],
-          since: lastCreateAt ?? 0,
-        },
-      ])
+    if (publicKey && database) {
+      getUserLastDirectMessages(database, publicKey).then((result) => {
+        relayPool?.subscribe('directmessages-user', [
+          {
+            kinds: [Kind.EncryptedDirectMessage],
+            authors: [publicKey],
+            since: result?.created_at ?? 0,
+          },
+        ])
+        relayPool?.subscribe('directmessages-others', [
+          {
+            kinds: [Kind.EncryptedDirectMessage],
+            '#p': [publicKey],
+            since: result?.created_at ?? 0,
+          },
+        ])
+      })
     }
   }
 
@@ -122,21 +135,21 @@ export const ConversationsFeed: React.FC = () => {
         }
       >
         <View key={user.id} style={styles.contactRow}>
-          <View style={styles.contactUser}>
-            <NostrosAvatar
-              name={user.name}
-              pubKey={getNpub(user.id)}
-              src={user.picture}
-              lud06={user.lnurl}
-              size={40}
+          <View style={styles.profileData}>
+            <ProfileData
+              username={user?.name}
+              publicKey={user.id}
+              validNip05={user?.valid_nip05}
+              nip05={user?.nip05}
+              lud06={user?.lnurl}
+              picture={user?.picture}
             />
-            <View style={styles.contactName}>
-              <Text variant='titleSmall'>{userMame}</Text>
-            </View>
           </View>
           <View style={styles.contactInfo}>
-            <View style={styles.contactName}>
-              <Text>{moment.unix(item.created_at).format('L HH:mm')}</Text>
+            <View style={styles.contactDate}>
+              <Text>
+                {formatDistance(fromUnixTime(item.created_at), new Date(), { addSuffix: true })}
+              </Text>
               {item.pubkey !== publicKey && !item.read && <Badge size={16}></Badge>}
             </View>
           </View>
@@ -155,12 +168,22 @@ export const ConversationsFeed: React.FC = () => {
     return {
       container: {
         backgroundColor: theme.colors.background,
-        padding: 16,
+        paddingTop: 16,
+        paddingRight: 16,
+        paddingBottom: 32,
+        paddingLeft: 16,
         borderTopRightRadius: 28,
         borderTopLeftRadius: 28,
+        height: 'auto',
       },
     }
   }, [])
+
+  const onScroll: (event: NativeSyntheticEvent<NativeScrollEvent>) => void = (event) => {
+    if (handleInfinityScroll(event)) {
+      setPageSize(pageSize + initialPageSize)
+    }
+  }
 
   const createOptions = React.useMemo(() => {
     return [
@@ -169,24 +192,36 @@ export const ConversationsFeed: React.FC = () => {
         title: t('conversationsFeed.newMessageContact'),
         left: () => (
           <List.Icon
-            icon={() => <MaterialCommunityIcons name='account-multiple-plus-outline' size={25} />}
+            icon={() => (
+              <MaterialCommunityIcons
+                name='account-multiple-plus-outline'
+                size={25}
+                color={theme.colors.onPrimaryContainer}
+              />
+            )}
           />
         ),
         onPress: async () => bottomSheetUserListRef.current?.open(),
         disabled: users?.length === 0,
-        style: users?.length === 0 ? { color: theme.colors.outline } : {}
+        style: users?.length === 0 ? { color: theme.colors.outline } : {},
       },
       {
         key: 2,
         title: t('conversationsFeed.addPubKey'),
         left: () => (
           <List.Icon
-            icon={() => <MaterialCommunityIcons name='account-multiple-plus-outline' size={25} />}
+            icon={() => (
+              <MaterialCommunityIcons
+                name='account-multiple-plus-outline'
+                size={25}
+                color={theme.colors.onPrimaryContainer}
+              />
+            )}
           />
         ),
         onPress: async () => bottomSheetPubKeyRef.current?.open(),
         disabled: false,
-        style: {}
+        style: {},
       },
     ]
   }, [])
@@ -200,19 +235,14 @@ export const ConversationsFeed: React.FC = () => {
       }}
     >
       <View key={item.id} style={styles.contactRow}>
-        <View style={styles.contactUser}>
-          <NostrosAvatar
-            name={item.name}
-            pubKey={getNpub(item.id)}
-            src={item.picture}
-            lud06={item.lnurl}
-            size={40}
-          />
-          <View style={styles.contactName}>
-            <Text variant='titleSmall'>{formatPubKey(item.id)}</Text>
-            {item.name && <Text variant='titleSmall'>{username(item)}</Text>}
-          </View>
-        </View>
+        <ProfileData
+          username={item?.name}
+          publicKey={item.id}
+          validNip05={item?.valid_nip05}
+          nip05={item?.nip05}
+          lud06={item?.lnurl}
+          picture={item?.picture}
+        />
       </View>
     </TouchableRipple>
   )
@@ -220,17 +250,22 @@ export const ConversationsFeed: React.FC = () => {
   return (
     <View style={styles.container}>
       {directMessages.length > 0 ? (
-        <ScrollView horizontal={false}>
-          <FlatList
-            style={styles.list}
-            data={directMessages}
-            renderItem={renderConversationItem}
-            ItemSeparatorComponent={Divider}
-          />
-        </ScrollView>
+        <FlatList
+          style={styles.list}
+          data={directMessages}
+          renderItem={renderConversationItem}
+          ItemSeparatorComponent={Divider}
+          horizontal={false}
+          onScroll={onScroll}
+        />
       ) : (
         <View style={styles.blank}>
-          <MaterialCommunityIcons name='message-outline' size={64} style={styles.center} />
+          <MaterialCommunityIcons
+            name='message-outline'
+            size={64}
+            style={styles.center}
+            color={theme.colors.onPrimaryContainer}
+          />
           <Text variant='headlineSmall' style={styles.center}>
             {t('conversationsFeed.emptyTitle')}
           </Text>
@@ -243,7 +278,7 @@ export const ConversationsFeed: React.FC = () => {
         </View>
       )}
       <AnimatedFAB
-        style={[styles.fab, { top: Dimensions.get('window').height - 200 }]}
+        style={[styles.fab, { top: Dimensions.get('window').height - 216 }]}
         icon='pencil-outline'
         label='Label'
         onPress={() => bottomSheetCreateRef.current?.open()}
@@ -251,51 +286,39 @@ export const ConversationsFeed: React.FC = () => {
         iconMode='static'
         extended={false}
       />
-      <RBSheet
-        ref={bottomSheetCreateRef}
-        closeOnDragDown={true}
-        height={190}
-        customStyles={bottomSheetStyles}
-      >
-        <ScrollView horizontal={false}>
-          <FlatList
-            data={createOptions}
-            renderItem={({ item }) => {
-              return (
-                <List.Item
-                  key={item.key}
-                  title={item.title}
-                  onPress={item.onPress}
-                  left={item.left}
-                  disabled={item.disabled}
-                  titleStyle={item.style}
-                />
-              )
-            }}
-            ItemSeparatorComponent={Divider}
-          />
-        </ScrollView>
+      <RBSheet ref={bottomSheetCreateRef} closeOnDragDown={true} customStyles={bottomSheetStyles}>
+        <FlatList
+          data={createOptions}
+          renderItem={({ item }) => {
+            return (
+              <List.Item
+                key={item.key}
+                title={item.title}
+                onPress={item.onPress}
+                left={item.left}
+                disabled={item.disabled}
+                titleStyle={item.style}
+              />
+            )
+          }}
+          ItemSeparatorComponent={Divider}
+          horizontal={false}
+        />
       </RBSheet>
-      <RBSheet
-        ref={bottomSheetUserListRef}
-        closeOnDragDown={true}
-        height={620}
-        customStyles={bottomSheetStyles}
-      >
-        <ScrollView horizontal={false}>
-          <FlatList data={users} renderItem={renderUserItem} ItemSeparatorComponent={Divider} />
-        </ScrollView>
+      <RBSheet ref={bottomSheetUserListRef} closeOnDragDown={true} customStyles={bottomSheetStyles}>
+        <FlatList
+          data={users}
+          renderItem={renderUserItem}
+          ItemSeparatorComponent={Divider}
+          horizontal={false}
+        />
       </RBSheet>
-      <RBSheet
-        ref={bottomSheetPubKeyRef}
-        closeOnDragDown={true}
-        height={220}
-        customStyles={bottomSheetStyles}
-      >
+      <RBSheet ref={bottomSheetPubKeyRef} closeOnDragDown={true} customStyles={bottomSheetStyles}>
         <View>
           <Text variant='titleLarge'>{t('conversationsFeed.openMessageTitle')}</Text>
           <Text variant='bodyMedium'>{t('conversationsFeed.openMessageDescription')}</Text>
           <TextInput
+            style={styles.input}
             mode='outlined'
             label={t('conversationsFeed.openMessageLabel') ?? ''}
             onChangeText={setSendPubKeyInput}
@@ -328,15 +351,15 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
   },
+  profileData: {
+    flex: 1,
+  },
   contactRow: {
-    paddingLeft: 16,
-    paddingRight: 16,
-    paddingTop: 16,
+    padding: 16,
     flexDirection: 'row',
     justifyContent: 'space-between',
-    width: '100%',
   },
-  contactName: {
+  contactDate: {
     paddingLeft: 16,
   },
   contactUser: {
@@ -354,6 +377,10 @@ const styles = StyleSheet.create({
     right: 16,
     position: 'absolute',
   },
+  input: {
+    marginTop: 16,
+    marginBottom: 16,
+  },
   center: {
     alignContent: 'center',
     textAlign: 'center',
@@ -361,7 +388,7 @@ const styles = StyleSheet.create({
   blank: {
     justifyContent: 'space-between',
     height: 220,
-    marginTop: 91,
+    marginTop: 139,
     paddingLeft: 16,
     paddingRight: 16,
   },

@@ -9,9 +9,16 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.UUID;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class Event {
     private final int created_at;
@@ -32,9 +39,15 @@ public class Event {
         tags = data.getJSONArray("tags");
     }
 
-    public void save(SQLiteDatabase database, String userPubKey) {
+    public void save(SQLiteDatabase database, String userPubKey, String relayUrl) {
         if (isValid()) {
             try {
+                ContentValues relayValues = new ContentValues();
+                relayValues.put("note_id", id);
+                relayValues.put("pubkey", pubkey);
+                relayValues.put("relay_url", relayUrl);
+                database.replace("nostros_notes_relays", null, relayValues);
+
                 if (kind.equals("0")) {
                     saveUserMeta(database);
                 } else if (kind.equals("1") || kind.equals("2")) {
@@ -49,6 +62,16 @@ public class Event {
                     saveDirectMessage(database);
                 } else if (kind.equals("7")) {
                     saveReaction(database);
+                } else if (kind.equals("40")) {
+                    saveGroup(database);
+                } else if (kind.equals("41")) {
+                    updateGroup(database);
+                } else if (kind.equals("42")) {
+                    saveGroupMessage(database);
+                } else if (kind.equals("43")) {
+                    hideGroupMessage(database);
+                } else if (kind.equals("44")) {
+                    blockUser(database);
                 }
             } catch (JSONException e) {
                 e.printStackTrace();
@@ -57,7 +80,7 @@ public class Event {
     }
 
     protected boolean isValid() {
-        return !id.isEmpty() && !sig.isEmpty();
+        return !id.isEmpty() && !sig.isEmpty() && created_at <= System.currentTimeMillis() / 1000L;
     }
 
     protected String getMainEventId() {
@@ -111,6 +134,24 @@ public class Event {
         return userMentioned;
     }
 
+    protected String getRepostId() {
+        String match = null;
+        Matcher m = Pattern.compile("#\\[(\\d+)\\]").matcher(content);
+        while (m.find()) {
+            int position = Integer.parseInt(m.group(1));
+            try {
+                JSONArray tag = tags.getJSONArray(position);
+                String tagKind = tag.getString(0);
+                if (tagKind.equals("e")) {
+                    match = tag.getString(1);
+                }
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+        return match;
+    }
+
     protected JSONArray filterTags(String kind) {
         JSONArray filtered = new JSONArray();
 
@@ -129,10 +170,33 @@ public class Event {
         return filtered;
     }
 
+    protected boolean validateNip05(String nip05) {
+        String[] parts = nip05.split("@");
+        if (parts.length < 2) return false;
+
+        String name = parts[0];
+        String domain = parts[1];
+
+        if (!name.matches("^[a-z0-9-_]+$")) return false;
+
+        try {
+            String url = "https://" + domain + "/.well-known/nostr.json?name=" + name;
+            JSONObject response = getJSONObjectFromURL(url);
+            JSONObject names = response.getJSONObject("names");
+            String key = names.getString(name);
+
+            return key.equals(pubkey);
+        } catch (IOException | JSONException e) {
+            e.printStackTrace();
+        }
+
+        return false;
+    }
+
     protected void saveNote(SQLiteDatabase database, String userPubKey) {
         ContentValues values = new ContentValues();
         values.put("id", id);
-        values.put("content", content.replace("'", "''"));
+        values.put("content", content);
         values.put("created_at", created_at);
         values.put("kind", kind);
         values.put("pubkey", pubkey);
@@ -141,7 +205,123 @@ public class Event {
         values.put("main_event_id", getMainEventId());
         values.put("reply_event_id", getReplyEventId());
         values.put("user_mentioned", getUserMentioned(userPubKey));
+        values.put("repost_id", getRepostId());
         database.replace("nostros_notes", null, values);
+    }
+
+    protected void blockUser(SQLiteDatabase database) throws JSONException {
+        JSONArray pTags = filterTags("p");
+        String groupId = pTags.getJSONArray(0).getString(1);
+        String query = "SELECT id FROM nostros_users WHERE id = ?";
+        @SuppressLint("Recycle") Cursor cursor = database.rawQuery(query, new String[] {groupId});
+
+        if (cursor.getCount() == 0) {
+            ContentValues values = new ContentValues();
+            values.put("muted_groups", 1);
+            String whereClause = "id = ?";
+            String[] whereArgs = new String[] {
+                    groupId
+            };
+            database.update("nostros_users", values, whereClause, whereArgs);
+        }
+    }
+
+    protected void hideGroupMessage(SQLiteDatabase database) throws JSONException {
+        JSONArray eTags = filterTags("e");
+        String groupId = eTags.getJSONArray(0).getString(1);
+        String query = "SELECT id FROM nostros_group_messages WHERE id = ?";
+        @SuppressLint("Recycle") Cursor cursor = database.rawQuery(query, new String[] {groupId});
+
+        if (cursor.getCount() == 0) {
+            ContentValues values = new ContentValues();
+            values.put("hidden", 1);
+            String whereClause = "id = ?";
+            String[] whereArgs = new String[] {
+                    groupId
+            };
+            database.update("nostros_group_messages", values, whereClause, whereArgs);
+        }
+    }
+
+    protected void saveGroup(SQLiteDatabase database) throws JSONException {
+        JSONObject groupContent = new JSONObject(content);
+        String query = "SELECT created_at, pubkey FROM nostros_group_meta WHERE id = ?";
+        @SuppressLint("Recycle") Cursor cursor = database.rawQuery(query, new String[] {id});
+
+        ContentValues values = new ContentValues();
+        values.put("content", content);
+        values.put("kind", kind);
+        values.put("pubkey", pubkey);
+        values.put("sig", sig);
+        values.put("tags", tags.toString());
+
+        if (cursor.getCount() == 0) {
+            values.put("name", groupContent.optString("name"));
+            values.put("about", groupContent.optString("about"));
+            values.put("picture", groupContent.optString("picture"));
+            values.put("id", id);
+            values.put("created_at", created_at);
+            database.insert("nostros_group_meta", null, values);
+        } else if (cursor.moveToFirst()) {
+            if (created_at > cursor.getInt(0)) {
+                values.put("name", groupContent.optString("name"));
+                values.put("about", groupContent.optString("about"));
+                values.put("picture", groupContent.optString("picture"));
+                values.put("created_at", created_at);
+            }
+            String whereClause = "id = ?";
+            String[] whereArgs = new String[] {
+                    id
+            };
+            database.update("nostros_group_meta", values, whereClause, whereArgs);
+        }
+    }
+
+    protected void updateGroup(SQLiteDatabase database) throws JSONException {
+        JSONObject groupContent = new JSONObject(content);
+        JSONArray eTags = filterTags("e");
+        String groupId = eTags.getJSONArray(0).getString(1);
+        String query = "SELECT created_at, pubkey FROM nostros_group_meta WHERE id = ?";
+        @SuppressLint("Recycle") Cursor cursor = database.rawQuery(query, new String[] {groupId});
+
+        ContentValues values = new ContentValues();
+        values.put("name", groupContent.optString("name"));
+        values.put("about", groupContent.optString("about"));
+        values.put("picture", groupContent.optString("picture"));
+        values.put("created_at", created_at);
+
+        if (cursor.getCount() == 0) {
+            values.put("id", groupId);
+            values.put("content", content);
+            values.put("kind", kind);
+            values.put("pubkey", pubkey);
+            values.put("sig", sig);
+            values.put("tags", tags.toString());
+            database.insert("nostros_group_meta", null, values);
+        } else if (cursor.moveToFirst() && created_at > cursor.getInt(0)) {
+            String whereClause = "id = ?";
+            String[] whereArgs = new String[] {
+                    groupId
+            };
+            database.update("nostros_group_meta", values, whereClause, whereArgs);
+        }
+    }
+
+    protected void saveGroupMessage(SQLiteDatabase database) throws JSONException {
+        JSONArray eTags = filterTags("e");
+        String groupId = eTags.getJSONArray(0).getString(1);
+
+        ContentValues values = new ContentValues();
+        values.put("id", id);
+        values.put("content", content);
+        values.put("created_at", created_at);
+        values.put("kind", kind);
+        values.put("pubkey", pubkey);
+        values.put("sig", sig);
+        values.put("tags", tags.toString());
+        values.put("group_id", groupId);
+
+        database.insert("nostros_group_messages", null, values);
     }
 
     protected void saveDirectMessage(SQLiteDatabase database) throws JSONException {
@@ -154,7 +334,7 @@ public class Event {
 
         ContentValues values = new ContentValues();
         values.put("id", id);
-        values.put("content", content.replace("'", "''"));
+        values.put("content", content);
         values.put("created_at", created_at);
         values.put("kind", kind);
         values.put("pubkey", pubkey);
@@ -162,11 +342,7 @@ public class Event {
         values.put("tags", tags.toString());
         values.put("conversation_id", conversationId);
 
-        String query = "SELECT read FROM nostros_direct_messages WHERE id = ?";
-        @SuppressLint("Recycle") Cursor cursor = database.rawQuery(query, new String[] {id});
-        if (cursor.getCount() == 0) {
-            database.insert("nostros_direct_messages", null, values);
-        }
+        database.insert("nostros_direct_messages", null, values);
     }
 
     protected void saveReaction(SQLiteDatabase database) throws JSONException {
@@ -184,7 +360,7 @@ public class Event {
 
         ContentValues values = new ContentValues();
         values.put("id", id);
-        values.put("content", content.replace("'", "''"));
+        values.put("content", content);
         values.put("created_at", created_at);
         values.put("kind", kind);
         values.put("pubkey", pubkey);
@@ -194,30 +370,37 @@ public class Event {
         values.put("reacted_event_id", reacted_event_id);
         values.put("reacted_user_id", reacted_user_id);
 
-        String query = "SELECT id FROM nostros_reactions WHERE id = ?";
-        @SuppressLint("Recycle") Cursor cursor = database.rawQuery(query, new String[] {id});
-        if (cursor.getCount() == 0) {
-            database.insert("nostros_reactions", null, values);
-        }
+        database.insert("nostros_reactions", null, values);
     }
 
     protected void saveUserMeta(SQLiteDatabase database) throws JSONException {
         JSONObject userContent = new JSONObject(content);
-        String query = "SELECT created_at FROM nostros_users WHERE id = ?";
+        String query = "SELECT created_at, valid_nip05, nip05 FROM nostros_users WHERE id = ?";
         @SuppressLint("Recycle") Cursor cursor = database.rawQuery(query, new String[] {pubkey});
+
+        String nip05 = userContent.optString("nip05");
+        String lud = userContent.optString("lud06");
+        if (lud.isEmpty()) {
+            lud = userContent.optString("lud16");
+        }
 
         ContentValues values = new ContentValues();
         values.put("name", userContent.optString("name"));
         values.put("picture", userContent.optString("picture"));
         values.put("about", userContent.optString("about"));
-        values.put("lnurl", userContent.optString("lud06"));
-        values.put("nip05", userContent.optString("nip05"));
+        values.put("lnurl", lud);
+        values.put("nip05", nip05);
         values.put("main_relay", userContent.optString("main_relay"));
         values.put("created_at", created_at);
         if (cursor.getCount() == 0) {
             values.put("id", pubkey);
+            values.put("valid_nip05", validateNip05(nip05) ? 1 : 0);
+            values.put("blocked", 0);
             database.insert("nostros_users", null, values);
-        } else if (cursor.moveToFirst() && created_at > cursor.getInt(0)) {
+        } else if (cursor.moveToFirst() && (cursor.isNull(0) || created_at > cursor.getInt(0))) {
+            if (cursor.getInt(1) == 0 || !cursor.getString(2).equals(nip05)) {
+                values.put("valid_nip05", validateNip05(nip05) ? 1 : 0);
+            }
             String whereClause = "id = ?";
             String[] whereArgs = new String[] {
                     this.pubkey
@@ -227,23 +410,27 @@ public class Event {
     }
 
     protected void savePets(SQLiteDatabase database) throws JSONException {
-            for (int i = 0; i < tags.length(); ++i) {
-                JSONArray tag = tags.getJSONArray(i);
-                String petId = tag.getString(1);
-                String name = "";
-                if (tag.length() >= 4) {
-                    name = tag.getString(3);
-                }
-                String query = "SELECT * FROM nostros_users WHERE id = ?";
-                Cursor cursor = database.rawQuery(query, new String[] {petId});
-                if (cursor.getCount() == 0) {
-                    ContentValues values = new ContentValues();
-                    values.put("id", petId);
-                    values.put("name", name);
-                    values.put("contact", true);
-                    database.insert("nostros_users", null, values);
-                }
+        for (int i = 0; i < tags.length(); ++i) {
+            JSONArray tag = tags.getJSONArray(i);
+            String petId = tag.getString(1);
+            String relay = tag.getString(2);
+            String name = "";
+            if (tag.length() >= 4) {
+                name = tag.getString(3);
             }
+            String query = "SELECT * FROM nostros_users WHERE id = ?";
+            Cursor cursor = database.rawQuery(query, new String[] {petId});
+            if (cursor.getCount() == 0) {
+                ContentValues values = new ContentValues();
+                values.put("id", petId);
+                values.put("name", name);
+                values.put("contact", true);
+                values.put("blocked", 0);
+                values.put("main_relay", relay);
+                values.put("pet_at", created_at);
+                database.insert("nostros_users", null, values);
+            }
+        }
     }
 
     protected void saveFollower(SQLiteDatabase database, String userPubKey) throws JSONException {
@@ -258,6 +445,7 @@ public class Event {
                 if (cursor.getCount() == 0) {
                     values.put("id", pubkey);
                     values.put("follower", true);
+                    values.put("follower_at", created_at);
                     database.insert("nostros_users", null, values);
                 } else {
                     String whereClause = "id = ?";
@@ -265,9 +453,44 @@ public class Event {
                             this.pubkey
                     };
                     values.put("follower", true);
+                    values.put("follower_at", created_at);
                     database.update("nostros_users", values, whereClause, whereArgs);
                 }
             }
         }
+    }
+
+    protected static JSONObject getJSONObjectFromURL(String urlString) throws JSONException, IOException {
+        HttpURLConnection urlConnection = null;
+
+        URL url = new URL(urlString);
+
+        urlConnection = (HttpURLConnection) url.openConnection();
+
+        urlConnection.setRequestMethod("GET");
+        urlConnection.setReadTimeout(10000 /* milliseconds */);
+        urlConnection.setConnectTimeout(15000 /* milliseconds */);
+
+        urlConnection.setDoOutput(true);
+
+        urlConnection.connect();
+
+        BufferedReader br=new BufferedReader(new InputStreamReader(url.openStream()));
+
+        String jsonString;
+
+        StringBuilder sb = new StringBuilder();
+        String line;
+        while ((line = br.readLine()) != null) {
+            sb.append(line+"\n");
+        }
+        br.close();
+
+        jsonString = sb.toString();
+
+        System.out.println("JSON: " + jsonString);
+        urlConnection.disconnect();
+
+        return new JSONObject(jsonString);
     }
 }

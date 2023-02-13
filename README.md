@@ -4,30 +4,46 @@
 [![Apache 2 license](https://img.shields.io/badge/license-Apache%202-blue)](https://github.com/KoalaSat/nostros/blob/main/LICENSE)
 [![Telegram](https://img.shields.io/badge/chat-telegram-brightgreen)](https://t.me/+zhvZAE9L0X40ZjI0)
 
-![image](https://user-images.githubusercontent.com/4659020/213938631-df6399dd-e37c-41e9-a02e-ba4705751153.png)
+<center><a href="https://apt.izzysoft.de/fdroid/index/apk/com.nostros" target="_blank" rel="noopener noreferrer"><img src="https://gitlab.com/IzzyOnDroid/repo/-/raw/master/assets/IzzyOnDroid.png" width="170"></a></center>
 
-Wellcome to the Nostros project, a NOSTR mobile client.
+![Frame 360](https://user-images.githubusercontent.com/4659020/218563725-08732841-56f6-4444-b0bf-f01230b47ece.png)
 
 # Getting Started
 
-What is Nostr: https://github.com/nostr-protocol/nostr
+What is Nostr: https://www.nostr.how
 
 Local setup: https://github.com/KoalaSat/nostros/blob/main/SETUP.md
 
-# Some Features to Work On
+Nostros chat
 
-### Home
+```
+8d37308d97356600f67a28039d598a52b8c4fa1b73ef6f2e7b7d40197c3afa56
+```
 
-- [ ] Public Room
-- [ ] Other Rooms
+# Features
 
-### Profile
-
-- [ ] Verify NIP-05 https://github.com/nostr-protocol/nips/blob/master/05.md
-
-### Note
-
-- [ ] Deletion https://github.com/nostr-protocol/nips/blob/master/09.md
+- [x] Send public notes and replies
+- [x] Profile edition
+- [x] Reposts
+- [x] Reactions (likes & dislikes)
+- [x] Encrypted direct messsages
+- [x] Notifications feed
+- [x] NIP-05 validation
+- [x] Lightning Network invoice generation for profiles and notes
+- [x] Sensitive content flag
+- [x] Multirelay management
+- [x] Bech-32 keys
+- [x] Public Feed
+- [x] Block users and content
+- [X] Channels
+- [x] Deep Links
+- [ ] Search
+- [x] Mnemonic login
+- [x] Upload images to hosting services
+- [x] Push all data to a relay
+- [x] Global feed filters and blocked users
+- [x] Relay colouring
+- [x] Push data to Umbrel relay
 
 # Kudos
 

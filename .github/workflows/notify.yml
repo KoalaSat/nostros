@@ -13,3 +13,21 @@ jobs:
           token: ${{ secrets.TELEGRAM_BOT_TOKEN }}
           channel: ${{ secrets.CHANGELOG_CHANNEL_ID }}
           changelog: ${{ github.event.release.body }}
+      - name: 'Post to Nostr'
+        run: |
+          go install github.com/fiatjaf/noscl@latest
+          ~/go/bin/noscl setprivate '${{ secrets.NOSTROS_PRIVATE_KEY }}'
+          ~/go/bin/noscl relay add "wss://brb.io"
+          ~/go/bin/noscl relay add "wss://damus.io"
+          ~/go/bin/noscl relay add "wss://nostr-pub.wellorder.net"
+          ~/go/bin/noscl relay add "wss://nostr.swiss-enigma.ch"
+          ~/go/bin/noscl relay add "wss://nostr.onsats.org"
+          ~/go/bin/noscl relay add "wss://nostr-pub.semisol.dev"
+          ~/go/bin/noscl relay add "wss://nostr.openchain.fr"
+          ~/go/bin/noscl relay add "wss://relay.nostr.info"
+          ~/go/bin/noscl relay add "wss://nostr.oxtr.dev"
+          ~/go/bin/noscl relay add "wss://nostr.ono.re"
+          ~/go/bin/noscl relay add "wss://relay.grunch.dev"
+          ~/go/bin/noscl relay add "wss://nostr.developer.li"
+          ~/go/bin/noscl publish '${{ github.event.release.body }}'
+          ~/go/bin/noscl publish ${{ github.event.release.body }}

@@ -2,6 +2,8 @@
   package="com.nostros">
 
     <uses-permission android:name="android.permission.INTERNET" />
+    <!-- required for react-native-share base64 sharing -->
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
 
     <application
       android:name=".MainApplication"
@@ -17,6 +19,12 @@
         android:launchMode="singleTask"
         android:windowSoftInputMode="adjustResize"
         android:exported="true">
+        <intent-filter android:label="">
+          <action android:name="android.intent.action.VIEW" />
+          <category android:name="android.intent.category.DEFAULT" />
+          <category android:name="android.intent.category.BROWSABLE" />
+          <data android:scheme="nostr" />
+        </intent-filter>
         <intent-filter>
             <action android:name="android.intent.action.MAIN" />
             <category android:name="android.intent.category.LAUNCHER" />

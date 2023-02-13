@@ -13,10 +13,26 @@ import java.io.IOException;
 public class Relay {
     private Websocket webSocket;
     public String url;
+    public int active;
+    public int globalFeed;
 
-    public Relay(String serverUrl, DatabaseModule database, ReactApplicationContext reactContext) throws IOException {
+    public Relay(String serverUrl, int isActive, int showGlobalFeed, DatabaseModule database, ReactApplicationContext reactContext) throws IOException {
         webSocket = new Websocket(serverUrl, database, reactContext);
         url = serverUrl;
+        active = isActive;
+        globalFeed = showGlobalFeed;
+    }
+
+    public int active() {
+        return active;
+    }
+
+    public void setActive(int active) {
+        this.active = active;
+    }
+
+    public void setGlobalFeed(int globalFeed) {
+        this.globalFeed = globalFeed;
     }
 
     public void send(String message) {
@@ -34,6 +50,8 @@ public class Relay {
     public void save(SQLiteDatabase database) {
         ContentValues values = new ContentValues();
         values.put("url", url);
+        values.put("active", active);
+        values.put("global_feed", globalFeed);
         database.replace("nostros_relays", null, values);
     }
 

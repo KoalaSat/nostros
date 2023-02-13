@@ -31,19 +31,23 @@ public class Websocket {
     }
 
     public void send(String message) {
-        Log.d("Websocket", "SEND URL:" + url + " __ " + message);
-        if (!webSocket.isOpen()) {
-            try {
-                this.connect(pubKey);
-            } catch (IOException e) {
-                e.printStackTrace();
+        if (webSocket != null) {
+            Log.d("Websocket", "SEND URL:" + url + " __ " + message);
+            if (!webSocket.isOpen()) {
+                try {
+                    this.connect(pubKey);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
             }
+            webSocket.sendText(message);
         }
-        webSocket.sendText(message);
     }
 
     public void disconnect() {
-        webSocket.disconnect();
+        if (webSocket != null) {
+            webSocket.disconnect();
+        }
     }
 
     public void connect(String userPubKey) throws IOException {
@@ -61,7 +65,7 @@ public class Websocket {
                 String messageType = jsonArray.get(0).toString();
                 if (messageType.equals("EVENT")) {
                     JSONObject data = jsonArray.getJSONObject(2);
-                    database.saveEvent(data, userPubKey);
+                    database.saveEvent(data, userPubKey, url);
                     reactNativeEvent(data.getString("id"));
                 } else if (messageType.equals("OK")) {
                     reactNativeConfirmation(jsonArray.get(1).toString());

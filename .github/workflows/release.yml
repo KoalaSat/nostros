@@ -20,28 +20,60 @@ jobs:
         uses: softprops/action-gh-release@v1
         with:
           body: |
-            **New Release [${{ github.ref_name }}]**
+            **New Nostros Release [${{ github.ref_name }}]**
 
-            https://github.com/KoalaSat/nostros/releases/${{ github.ref_name }}
+            **What's Changed**
 
             **Changelog**
 
+            https://github.com/KoalaSat/nostros/releases/${{ github.ref_name }}
+
             **Download**
 
-            https://github.com/KoalaSat/nostros/releases/download/${{ github.ref_name }}/nostros-${{ github.ref_name }}.apk
+            https://github.com/KoalaSat/nostros/releases/download/${{ github.ref_name }}/nostros-${{ github.ref_name }}-universal.apk
       # Upload APK artifact asset
-      - name: 'Download APK Artifact'
+      - name: 'Download universal APK Artifact'
         uses: actions/download-artifact@v3
         with:
-          name: nostros-${{ github.ref_name }}.apk
+          name: nostros-${{ github.ref_name }}-universal.apk
           path: .
-      - name: 'Upload APK Asset'
-        id: upload-release-asset
+      - name: 'Download arm64-v8a APK Artifact'
+        uses: actions/download-artifact@v3
+        with:
+          name: nostros-${{ github.ref_name }}-arm64-v8a.apk
+          path: .
+      - name: 'Download armeabi-v7a APK Artifact'
+        uses: actions/download-artifact@v3
+        with:
+          name: nostros-${{ github.ref_name }}-armeabi-v7a.apk
+          path: .
+      - name: 'Upload universal APK Asset'
+        id: upload-universal-release-asset
         uses: actions/upload-release-asset@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create-release.outputs.upload_url }}
-          asset_path: app-release.apk
-          asset_name: nostros-${{ github.ref_name }}.apk
+          asset_path: app-universal-release.apk
+          asset_name: nostros-${{ github.ref_name }}-universal.apk
+          asset_content_type: application/apk
+      - name: 'Upload arm64-v8a APK Asset'
+        id: upload-arm64-v8a-release-asset
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create-release.outputs.upload_url }}
+          asset_path: app-arm64-v8a-release.apk
+          asset_name: nostros-${{ github.ref_name }}-arm64-v8a.apk
+          asset_content_type: application/apk
+      - name: 'Upload armeabi-v7a APK Asset'
+        id: upload-armeabi-v7a-release-asset
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create-release.outputs.upload_url }}
+          asset_path: app-armeabi-v7a-release.apk
+          asset_name: nostros-${{ github.ref_name }}-armeabi-v7a.apk
           asset_content_type: application/apk

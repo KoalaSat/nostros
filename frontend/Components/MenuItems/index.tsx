@@ -1,10 +1,9 @@
 import * as React from 'react'
-import { StyleSheet, View } from 'react-native'
+import { Linking, StyleSheet, View } from 'react-native'
 import { DrawerContentScrollView } from '@react-navigation/drawer'
 import {
   Button,
   Card,
-  Chip,
   Drawer,
   IconButton,
   Text,
@@ -17,13 +16,13 @@ import { RelayPoolContext } from '../../Contexts/RelayPoolContext'
 import { UserContext } from '../../Contexts/UserContext'
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'
 import { navigate } from '../../lib/Navigation'
-import NostrosAvatar from '../NostrosAvatar'
-import { formatPubKey, username } from '../../Functions/RelayFunctions/Users'
+import { usernamePubKey } from '../../Functions/RelayFunctions/Users'
+import ProfileData from '../ProfileData'
 
 export const MenuItems: React.FC = () => {
   const [drawerItemIndex, setDrawerItemIndex] = React.useState<number>(-1)
   const { relays } = React.useContext(RelayPoolContext)
-  const { nPub, publicKey, privateKey, user, contactsCount, followersCount, logout } =
+  const { nPub, publicKey, privateKey, logout, name, picture, validNip05, lnurl, nip05 } =
     React.useContext(UserContext)
   const { t } = useTranslation('common')
   const theme = useTheme()
@@ -36,10 +35,14 @@ export const MenuItems: React.FC = () => {
     setDrawerItemIndex(index)
     if (key === 'relays') {
       navigate('Relays')
-    } else if (key === 'config') {
-      navigate('Feed', { page: 'Config' })
+    } else if (key === 'configProfile') {
+      navigate('Feed', { page: 'ProfileConfig' })
     } else if (key === 'about') {
       navigate('About')
+    } else if (key === 'config') {
+      navigate('Config')
+    } else if (key === 'contacts') {
+      navigate('Contacts')
     }
   }
 
@@ -62,22 +65,21 @@ export const MenuItems: React.FC = () => {
           <Card style={styles.cardContainer}>
             <Card.Content style={styles.cardContent}>
               <TouchableRipple
-                onPress={() => navigate('Profile', { pubKey: publicKey, title: username(user) })}
+                onPress={() =>
+                  navigate('Profile', {
+                    pubKey: publicKey,
+                    title: usernamePubKey(name, publicKey),
+                  })
+                }
               >
-                <View style={styles.cardContent}>
-                  <View style={styles.cardAvatar}>
-                    <NostrosAvatar
-                      name={user?.name}
-                      pubKey={nPub ?? ''}
-                      src={user?.picture}
-                      lud06={user?.lnurl}
-                    />
-                  </View>
-                  <View>
-                    <Text variant='titleMedium'>{user?.name}</Text>
-                    <Text>{formatPubKey(publicKey ?? '')}</Text>
-                  </View>
-                </View>
+                <ProfileData
+                  username={name}
+                  publicKey={publicKey}
+                  validNip05={validNip05}
+                  nip05={nip05}
+                  lud06={lnurl}
+                  picture={picture}
+                />
               </TouchableRipple>
               <View style={styles.cardEdit}>
                 {privateKey && (
@@ -89,53 +91,56 @@ export const MenuItems: React.FC = () => {
                 )}
               </View>
             </Card.Content>
-            <Card.Content style={styles.cardActions}>
-              <Chip
-                compact={true}
-                style={styles.cardActionsChip}
-                onPress={() => console.log('Pressed')}
-              >
-                {t('menuItems.following', { following: contactsCount })}
-              </Chip>
-              <Chip
-                compact={true}
-                style={styles.cardActionsChip}
-                onPress={() => console.log('Pressed')}
-              >
-                {t('menuItems.followers', { followers: followersCount })}
-              </Chip>
-            </Card.Content>
           </Card>
         )}
-        {publicKey && (
-          <Drawer.Section>
-            <Drawer.Item
-              label={t('menuItems.relays')}
-              icon={() => <MaterialCommunityIcons name='chart-timeline-variant' size={25} />}
-              key='relays'
-              active={drawerItemIndex === 0}
-              onPress={() => onPressItem('relays', 0)}
-              onTouchEnd={() => setDrawerItemIndex(-1)}
-              right={() =>
-                relays.length < 1 ? (
-                  <Text style={{ color: theme.colors.error }}>{t('menuItems.notConnected')}</Text>
-                ) : (
-                  <Text style={{ color: theme.colors.inversePrimary }}>
-                    {t('menuItems.connectedRelays', { number: relays.length })}
-                  </Text>
-                )
-              }
-            />
-            {/* <Drawer.Item
-              label={t('menuItems.configuration')}
-              icon='cog-outline'
-              key='config'
-              active={drawerItemIndex === 1}
-              onPress={() => onPressItem('config', 1)}
-              onTouchEnd={() => setDrawerItemIndex(-1)}
-            /> */}
-          </Drawer.Section>
-        )}
+        <Drawer.Section>
+          {publicKey && (
+            <>
+              <Drawer.Item
+                label={t('menuItems.relays')}
+                icon={() => (
+                  <MaterialCommunityIcons
+                    name='chart-timeline-variant'
+                    size={25}
+                    color={theme.colors.onPrimaryContainer}
+                  />
+                )}
+                key='relays'
+                active={drawerItemIndex === 0}
+                onPress={() => onPressItem('relays', 0)}
+                onTouchEnd={() => setDrawerItemIndex(-1)}
+                right={() =>
+                  relays.length < 1 ? (
+                    <Text style={{ color: theme.colors.error }}>{t('menuItems.notConnected')}</Text>
+                  ) : (
+                    <Text style={{ color: theme.colors.inversePrimary }}>
+                      {t('menuItems.connectedRelays', {
+                        number: relays.filter((relay) => relay.active).length,
+                      })}
+                    </Text>
+                  )
+                }
+              />
+
+              <Drawer.Item
+                label={t('menuItems.contacts')}
+                icon='contacts-outline'
+                key='contacts'
+                active={drawerItemIndex === 1}
+                onPress={() => onPressItem('contacts', 1)}
+                onTouchEnd={() => setDrawerItemIndex(-1)}
+              />
+            </>
+          )}
+          <Drawer.Item
+            label={t('menuItems.configuration')}
+            icon='cog'
+            key='configuration'
+            active={drawerItemIndex === 1}
+            onPress={() => onPressItem('config', 1)}
+            onTouchEnd={() => setDrawerItemIndex(-1)}
+          />
+        </Drawer.Section>
         <Drawer.Section showDivider={false}>
           <Drawer.Item
             label={t('menuItems.about')}
@@ -144,6 +149,17 @@ export const MenuItems: React.FC = () => {
             active={drawerItemIndex === 2}
             onPress={() => onPressItem('about', 2)}
             onTouchEnd={() => setDrawerItemIndex(-1)}
+          />
+        </Drawer.Section>
+        <Drawer.Section showDivider={false}>
+          <Drawer.Item
+            label={t('menuItems.reportBug')}
+            icon='bug-outline'
+            key='bug'
+            active={drawerItemIndex === 2}
+            onPress={async () =>
+              await Linking.openURL('https://github.com/KoalaSat/nostros/issues/new/choose')
+            }
           />
         </Drawer.Section>
       </DrawerContentScrollView>
@@ -157,7 +173,18 @@ export const MenuItems: React.FC = () => {
           ]}
           showDivider={false}
         >
-          <Button mode='outlined' onPress={onPressLogout}>
+          <Button
+            mode='outlined'
+            onPress={onPressLogout}
+            textColor={theme.colors.onSurface}
+            icon={() => (
+              <MaterialCommunityIcons
+                name='logout'
+                size={20}
+                style={{ color: theme.colors.onSurface }}
+              />
+            )}
+          >
             {t('menuItems.logout')}
           </Button>
         </Drawer.Section>
@@ -201,6 +228,13 @@ const styles = StyleSheet.create({
     marginBottom: 0,
     borderBottomRightRadius: 28,
     padding: 24,
+  },
+  username: {
+    flexDirection: 'row',
+  },
+  verifyIcon: {
+    paddingTop: 6,
+    paddingLeft: 5,
   },
 })
 
