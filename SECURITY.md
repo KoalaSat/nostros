@@ -2,20 +2,10 @@
 
 ## Supported Versions
 
-Use this section to tell people about which versions of your project are
-currently being supported with security updates.
-
-| Version | Supported          |
-| ------- | ------------------ |
-| 5.1.x   | :white_check_mark: |
-| 5.0.x   | :x:                |
-| 4.0.x   | :white_check_mark: |
-| < 4.0   | :x:                |
+Nostros does not support different versions. To keep up to date with security updates please use the latest version.
 
 ## Reporting a Vulnerability
 
-Use this section to tell people how to report a vulnerability.
+Please use this form to report an existing vulnetability https://github.com/KoalaSat/nostros/security/advisories/new
 
-Tell them where to go, how often they can expect to get an update on a
-reported vulnerability, what to expect if the vulnerability is accepted or
-declined, etc.
+Usually you might expect an answer the following 24h and (if possible) fixed for the following release.
