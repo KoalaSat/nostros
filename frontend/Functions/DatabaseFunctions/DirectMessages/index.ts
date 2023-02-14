@@ -89,19 +89,11 @@ export const getGroupedDirectMessages: (
 export const getDirectMessages: (
   db: QuickSQLiteConnection,
   conversationId: string,
-  publicKey: string,
-  otherPubKey: string,
   options: {
     order?: 'DESC' | 'ASC'
     limit?: number
   },
-) => Promise<DirectMessage[]> = async (
-  db,
-  conversationId,
-  publicKey,
-  otherPubKey,
-  { order = 'DESC', limit },
-) => {
+) => Promise<DirectMessage[]> = async (db, conversationId, { order = 'DESC', limit }) => {
   let notesQuery = `
     SELECT
       *
@@ -119,4 +111,29 @@ export const getDirectMessages: (
   const notes: DirectMessage[] = items.map((object) => databaseToEntity(object))
 
   return notes
+}
+
+export const getUserLastDirectMessages: (
+  db: QuickSQLiteConnection,
+  userId: string,
+) => Promise<DirectMessage | null> = async (db, userId) => {
+  const messageQuery = `
+    SELECT
+      *
+    FROM
+      nostros_direct_messages
+    WHERE pubkey = ?
+    ORDER BY created_at DESC
+    LIMIT 1
+  `
+
+  const resultSet = await db.execute(messageQuery, [userId])
+  const items: object[] = getItems(resultSet)
+  if (items.length) {
+    const notes: DirectMessage = databaseToEntity(items[0])
+
+    return notes
+  } else {
+    return null
+  }
 }

@@ -35,6 +35,8 @@ export const dropTables: (db: QuickSQLiteConnection) => Promise<BatchQueryResult
     ['DELETE FROM nostros_reactions;', [[]]],
     ['DELETE FROM nostros_notes_relays;', [[]]],
     ['DELETE FROM nostros_direct_messages;', [[]]],
+    ['DELETE FROM nostros_group_meta;', [[]]],
+    ['DELETE FROM nostros_group_messages;', [[]]],
   ]
   return db.executeBatch(dropQueries)
 }

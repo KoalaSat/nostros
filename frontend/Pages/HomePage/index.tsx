@@ -121,7 +121,7 @@ export const HomePage: React.FC = () => {
             borderTopWidth: 0,
             height: 54,
           },
-          tabBarInactiveBackgroundColor: '#001C37',
+          tabBarInactiveBackgroundColor: theme.colors.elevation.level2,
           tabBarActiveBackgroundColor: theme.colors.secondaryContainer,
           tabBarButton: (props) => <TouchableRipple {...props} />,
         }}

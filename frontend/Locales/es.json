@@ -13,6 +13,7 @@
       "privateKeysSnackbarDescription": "Guarda tu clave privada en un lugar seguro, si la pierdes no podrás volver a acceder con ella ni recuperar tu cuenta."
     },
     "homeNavigator": {
+      "Group": "",
       "ProfileCreate": "Crear perfil",
       "ProfileConnect": "",
       "ProfileLoad": "",
@@ -50,6 +51,19 @@
       "isNotContact": "Sin seguir",
       "contentWarning": "Contenido sensible",
       "send": "Enviar"
+    },
+    "groupsFeed": {
+      "delete": "Salir del grupo",
+      "updateTitle": "Actualizar grupo",
+      "newGroupName": "Nombre",
+      "newGroupDescription": "Descripción",
+      "newGroupPicture": "Imagen",
+      "groupUpdate": "Actualizar grupo",
+      "newGroupCreate": "Crear grupo",
+      "createTitle": "Crear grupo",
+      "groupId": "Id del grupo",
+      "addTitle": "Agregar grupo existente",
+      "add": "Agregar grupo"
     },
     "uploadImage": {
       "notifications": {
@@ -185,6 +199,14 @@
     },
     "relayCard": {
       "pushDone": "Completado",
+      "pushHistoricTitle": "Subir histórico",
+      "pushHistoricDescription": "Nostros almacena en su propia base de datos todos los datos recibidos de los relays. Con esta opción puedes enviar a cualquier relay todos los datos que Nostros ha asociado a tu perfil.",
+      "pushHistoricAlertTitle": "Importante",
+      "pushHistoricAlert": "Los relays públicos tienen fuertes políticas anti-spam y esta acción podría bloquear tu clave. Asegúrate de que puedes enviar grandes cantidades de datos a este relay.\n\nRecomendamos utilizar esta función sólo para relays privados como Umbrel Nostr Relay.",
+      "pushConsent": "Estoy enviando mis eventos a un relay privado",
+      "pushingEvent": "Evento {{eventId}} subido",
+      "pushRelay": "Subir histórico",
+      "cancel": "Cancelar",
       "moreInfo": "Más información",
       "lessInfo": "Menos información",
       "globalFeed": "Feed Global",

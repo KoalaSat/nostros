@@ -15,6 +15,7 @@ import { Kind } from 'nostr-tools'
 import {
   DirectMessage,
   getGroupedDirectMessages,
+  getUserLastDirectMessages,
 } from '../../Functions/DatabaseFunctions/DirectMessages'
 import { getUsers, User } from '../../Functions/DatabaseFunctions/Users'
 import { getOtherPubKey } from '../../Functions/RelayFunctions/DirectMessages'
@@ -96,21 +97,23 @@ export const ConversationsFeed: React.FC = () => {
   }
 
   const subscribeDirectMessages: (lastCreateAt?: number) => void = async (lastCreateAt) => {
-    if (publicKey) {
-      relayPool?.subscribe('directmessages-user', [
-        {
-          kinds: [Kind.EncryptedDirectMessage],
-          authors: [publicKey],
-          since: lastCreateAt ?? 0,
-        },
-      ])
-      relayPool?.subscribe('directmessages-others', [
-        {
-          kinds: [Kind.EncryptedDirectMessage],
-          '#p': [publicKey],
-          since: lastCreateAt ?? 0,
-        },
-      ])
+    if (publicKey && database) {
+      getUserLastDirectMessages(database, publicKey).then((result) => {
+        relayPool?.subscribe('directmessages-user', [
+          {
+            kinds: [Kind.EncryptedDirectMessage],
+            authors: [publicKey],
+            since: result?.created_at ?? 0,
+          },
+        ])
+        relayPool?.subscribe('directmessages-others', [
+          {
+            kinds: [Kind.EncryptedDirectMessage],
+            '#p': [publicKey],
+            since: result?.created_at ?? 0,
+          },
+        ])
+      })
     }
   }
 
@@ -132,14 +135,16 @@ export const ConversationsFeed: React.FC = () => {
         }
       >
         <View key={user.id} style={styles.contactRow}>
-          <ProfileData
-            username={user?.name}
-            publicKey={user.id}
-            validNip05={user?.valid_nip05}
-            nip05={user?.nip05}
-            lud06={user?.lnurl}
-            picture={user?.picture}
-          />
+          <View style={styles.profileData}>
+            <ProfileData
+              username={user?.name}
+              publicKey={user.id}
+              validNip05={user?.valid_nip05}
+              nip05={user?.nip05}
+              lud06={user?.lnurl}
+              picture={user?.picture}
+            />
+          </View>
           <View style={styles.contactInfo}>
             <View style={styles.contactDate}>
               <Text>
@@ -346,11 +351,13 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
   },
+  profileData: {
+    flex: 1,
+  },
   contactRow: {
     padding: 16,
     flexDirection: 'row',
     justifyContent: 'space-between',
-    width: '100%',
   },
   contactDate: {
     paddingLeft: 16,

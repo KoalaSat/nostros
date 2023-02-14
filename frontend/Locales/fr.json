@@ -13,6 +13,7 @@
       "privateKeysSnackbarDescription": "Conservez votre clé privée dans un endroit sûr. Si vous la perdez, vous ne pourrez plus avoir accès ni récupérer votre compte."
     },
     "homeNavigator": {
+      "Group": "",
       "ProfileCreate": "Create profile",
       "ProfileConnect": "",
       "ProfileLoad": "",
@@ -29,6 +30,19 @@
       "Relays": "Relais",
       "ProfileConfig": "Mon profil",
       "markAllRead": "Mark all as read"
+    },
+    "groupsFeed": {
+      "delete": "Leave group",
+      "updateTitle": "Update group",
+      "newGroupName": "Name",
+      "newGroupDescription": "Description",
+      "newGroupPicture": "Picture",
+      "groupUpdate": "Update group",
+      "newGroupCreate": "Create group",
+      "createTitle": "Create group",
+      "groupId": "Group id",
+      "addTitle": "Add existing group",
+      "add": "Add group"
     },
     "conversationPage": {
       "typeMessage": "Écrire un message",
