@@ -11,7 +11,7 @@ import { AppContext } from '../../Contexts/AppContext'
 import { RelayPoolContext } from '../../Contexts/RelayPoolContext'
 import { Event } from '../../lib/nostr/Events'
 import { useTranslation } from 'react-i18next'
-import { username, usernamePubKey } from '../../Functions/RelayFunctions/Users'
+import { formatPubKey, username, usernamePubKey } from '../../Functions/RelayFunctions/Users'
 import { getUnixTime, formatDistance, fromUnixTime } from 'date-fns'
 import TextContent from '../../Components/TextContent'
 import {
@@ -31,6 +31,9 @@ import NostrosAvatar from '../../Components/NostrosAvatar'
 import UploadImage from '../../Components/UploadImage'
 import { getGroupMessages, GroupMessage } from '../../Functions/DatabaseFunctions/Groups'
 import { RelayFilters } from '../../lib/nostr/RelayPool/intex'
+import { getUsers, User } from '../../Functions/DatabaseFunctions/Users'
+import ProfileData from '../../Components/ProfileData'
+import { ScrollView } from 'react-native-gesture-handler'
 
 interface GroupPageProps {
   route: { params: { groupId: string } }
@@ -48,6 +51,8 @@ export const GroupPage: React.FC<GroupPageProps> = ({ route }) => {
   const [input, setInput] = useState<string>('')
   const [startUpload, setStartUpload] = useState<boolean>(false)
   const [uploadingFile, setUploadingFile] = useState<boolean>(false)
+  const [userSuggestions, setUserSuggestions] = useState<User[]>([])
+  const [userMentions, setUserMentions] = useState<User[]>([])
 
   const { t } = useTranslation('common')
 
@@ -115,14 +120,59 @@ export const GroupPage: React.FC<GroupPageProps> = ({ route }) => {
     }
   }
 
+  const mentionText: (user: User) => string = (user) => {
+    return `@${user.name ?? formatPubKey(user.id)}`
+  }
+
+  const addUserMention: (user: User) => void = (user) => {
+    setUserMentions((prev) => {
+      prev.push(user)
+      return prev
+    })
+    setInput((prev) => {
+      const splitText = prev.split('@')
+      splitText.pop()
+      return `${splitText.join('@')}${mentionText(user)} `
+    })
+    setUserSuggestions([])
+  }
+
+  const renderContactItem: (item: User, index: number) => JSX.Element = (item, index) => (
+    <TouchableRipple onPress={() => addUserMention(item)}>
+      <View key={index} style={styles.contactRow}>
+        <ProfileData
+          username={item?.name}
+          publicKey={item?.id}
+          validNip05={item?.valid_nip05}
+          nip05={item?.nip05}
+          lud06={item?.lnurl}
+          picture={item?.picture}
+        />
+      </View>
+    </TouchableRipple>
+  )
+
   const send: () => void = () => {
     if (input !== '' && publicKey && privateKey && route.params.groupId) {
+      let rawContent = input
+      const tags: string[][] = [['e', route.params.groupId, '']]
+
+      if (userMentions.length > 0) {
+        userMentions.forEach((user) => {
+          const userText = mentionText(user)
+          if (rawContent.includes(userText)) {
+            rawContent = rawContent.replace(userText, `#[${tags.length}]`)
+            tags.push(['p', user.id, ''])
+          }
+        })
+      }
+
       const event: Event = {
-        content: input,
+        content: rawContent,
         created_at: getUnixTime(new Date()),
         kind: Kind.ChannelMessage,
         pubkey: publicKey,
-        tags: [['e', route.params.groupId, '']],
+        tags,
       }
       relayPool?.sendEvent(event)
       const groupMessage = event as GroupMessage
@@ -131,6 +181,18 @@ export const GroupPage: React.FC<GroupPageProps> = ({ route }) => {
       setSendingMessages((prev) => [...prev, groupMessage])
       setInput('')
     }
+  }
+
+  const onChangeText: (text: string) => void = (text) => {
+    const match = text.match(/.*@(.*)$/)
+    if (database && match && match?.length > 0) {
+      getUsers(database, { name: match[1] }).then((results) => {
+        if (results) setUserSuggestions(results.filter((item) => item.id !== publicKey))
+      })
+    } else {
+      setUserSuggestions([])
+    }
+    setInput(text)
   }
 
   const renderGroupMessageItem: ListRenderItem<GroupMessage> = ({ index, item }) => {
@@ -196,7 +258,11 @@ export const GroupPage: React.FC<GroupPageProps> = ({ route }) => {
                 </Text>
               </View>
             </View>
-            <TextContent content={item.content} event={item} />
+            <TextContent
+              content={item.content}
+              event={item}
+              onPressUser={(user) => setDisplayUserDrawer(user.id)}
+            />
           </Card.Content>
         </Card>
         {publicKey === item.pubkey && (
@@ -235,6 +301,15 @@ export const GroupPage: React.FC<GroupPageProps> = ({ route }) => {
           )
         }
       />
+      {userSuggestions.length > 0 ? (
+        <View style={[styles.contactsList, { backgroundColor: theme.colors.background }]}>
+          <ScrollView>
+            {userSuggestions.map((user, index) => renderContactItem(user, index))}
+          </ScrollView>
+        </View>
+      ) : (
+        <></>
+      )}
       <View
         style={[
           styles.input,
@@ -248,7 +323,7 @@ export const GroupPage: React.FC<GroupPageProps> = ({ route }) => {
           multiline
           label={t('groupPage.typeMessage') ?? ''}
           value={input}
-          onChangeText={setInput}
+          onChangeText={onChangeText}
           left={
             <TextInput.Icon
               icon={() => (
@@ -303,6 +378,14 @@ const styles = StyleSheet.create({
   cardContentDate: {
     flexDirection: 'row',
   },
+  contactRow: {
+    paddingLeft: 16,
+    paddingRight: 16,
+    paddingTop: 16,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    width: '100%',
+  },
   container: {
     paddingLeft: 16,
     paddingBottom: 16,
@@ -324,6 +407,10 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     paddingRight: 5,
     paddingTop: 3,
+  },
+  contactsList: {
+    bottom: 1,
+    maxHeight: 200,
   },
   pictureSpaceLeft: {
     justifyContent: 'flex-end',

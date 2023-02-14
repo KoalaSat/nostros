@@ -115,11 +115,11 @@ export const TextContent: React.FC<TextContentProps> = ({
     matches,
   ) => {
     const mentionIndex: number = parseInt(matches[1])
-
     if (userNames[mentionIndex]) {
       return userNames[mentionIndex]
     } else if (event) {
       const tag = event.tags[mentionIndex]
+
       if (tag) {
         const kind = tag[0]
         const pudKey = tag[1]
@@ -153,42 +153,6 @@ export const TextContent: React.FC<TextContentProps> = ({
     })
     return matchingString
   }
-
-  const parsedText = React.useMemo(
-    () => (
-      <ParsedText
-        style={[styles.text, { color: theme.colors.onSurfaceVariant }]}
-        parse={[
-          { type: 'url', style: styles.url, onPress: handleUrlPress, renderText: renderUrlText },
-          { type: 'email', style: styles.email, onPress: handleUrlPress },
-          event
-            ? {
-                pattern: /#\[(\d+)\]/,
-                style: styles.mention,
-                onPress: handleMentionPress,
-                renderText: renderMentionText,
-              }
-            : {
-                pattern: /#\[(\d+)\]/,
-              },
-          { pattern: /#(\w+)/, style: styles.hashTag },
-          { pattern: /(lnbc)\S+/, style: styles.nip19, renderText: renderLnurl },
-          { pattern: /(nevent1)\S+/, style: styles.nip19, onPress: handleNip05NotePress },
-          {
-            pattern: /(npub1|nprofile1)\S+/,
-            style: styles.nip19,
-            onPress: handleNip05ProfilePress,
-          },
-        ]}
-        childrenProps={{ allowFontScaling: false }}
-        onLongPress={() => Clipboard.setString(text)}
-        numberOfLines={numberOfLines}
-      >
-        {text}
-      </ParsedText>
-    ),
-    [loadedUsers],
-  )
 
   const preview = React.useMemo(() => {
     if (!showPreview) return <></>
@@ -275,7 +239,37 @@ export const TextContent: React.FC<TextContentProps> = ({
 
   return (
     <View style={styles.container}>
-      {parsedText}
+      <ParsedText
+        style={[styles.text, { color: theme.colors.onSurfaceVariant }]}
+        parse={[
+          { type: 'url', style: styles.url, onPress: handleUrlPress, renderText: renderUrlText },
+          { type: 'email', style: styles.email, onPress: handleUrlPress },
+          event
+            ? {
+                pattern: /#\[(\d+)\]/,
+                style: styles.mention,
+                onPress: handleMentionPress,
+                renderText: renderMentionText,
+              }
+            : {
+                pattern: /#\[(\d+)\]/,
+                style: styles.mention,
+              },
+          { pattern: /#(\w+)/, style: styles.hashTag },
+          { pattern: /(lnbc)\S+/, style: styles.nip19, renderText: renderLnurl },
+          { pattern: /(nevent1)\S+/, style: styles.nip19, onPress: handleNip05NotePress },
+          {
+            pattern: /(npub1|nprofile1)\S+/,
+            style: styles.nip19,
+            onPress: handleNip05ProfilePress,
+          },
+        ]}
+        childrenProps={{ allowFontScaling: false }}
+        onLongPress={() => Clipboard.setString(text)}
+        numberOfLines={numberOfLines}
+      >
+        {text}
+      </ParsedText>
       {preview}
     </View>
   )
