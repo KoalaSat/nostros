@@ -16,7 +16,7 @@
       "Group": "",
       "ProfileCreate": "创建用户",
       "ProfileConnect": "",
-      "Contacts": "Contacts",
+      "Contacts": "联系人",
       "ProfileLoad": "",
       "Landing": "",
       "Conversation": "会话",
@@ -31,17 +31,17 @@
       "ProfileConfig": "简介设置"
     },
     "groupsFeed": {
-      "delete": "Leave group",
-      "updateTitle": "Update group",
-      "newGroupName": "Name",
-      "newGroupDescription": "Description",
-      "newGroupPicture": "Picture",
-      "groupUpdate": "Update group",
-      "newGroupCreate": "Create group",
-      "createTitle": "Create group",
-      "groupId": "Group id",
-      "addTitle": "Add existing group",
-      "add": "Add group"
+      "delete": "退出群组",
+      "updateTitle": "更新群组",
+      "newGroupName": "群组名称",
+      "newGroupDescription": "群组简介",
+      "newGroupPicture": "头像",
+      "groupUpdate": "更新群组",
+      "newGroupCreate": "创建群组",
+      "createTitle": "创建群组",
+      "groupId": "群组 id",
+      "addTitle": "添加已有的群组",
+      "add": "添加群组"
     },
     "conversationPage": {
       "typeMessage": "输入信息",
@@ -69,8 +69,8 @@
         "imageUploaded": "您的图片已上传\n请赞助我们的服务：",
         "imageUploadErro": "上传图片出现错误"
       },
-      "uploadImageWarningTitle": "Important",
-      "uploadImageWarning": "Your image will be uploaded to a public hosting service and will be visible for anyone.",
+      "uploadImageWarningTitle": "注意",
+      "uploadImageWarning": "您的图片将上传到公共托管服务，任何人都可以看到",
       "uploadImage": "上传图片",
       "cancel": "取消",
       "poweredBy": "由{{uri}}提供支持"
@@ -79,7 +79,7 @@
       "typeMessage": "输入信息"
     },
     "menuItems": {
-      "contacts": "Contacts",
+      "contacts": "联系人",
       "relays": "中继",
       "notConnected": "未连接",
       "connectedRelays": "已连接 {{number}} 个中继",
@@ -87,8 +87,8 @@
       "followers": "{{followers}} 关注者",
       "configuration": "设置",
       "about": "关于",
-      "reportBug": "Report a bug",
-      "logout": "登出"
+      "reportBug": "反馈问题",
+      "logout": "退出"
     },
     "configPage": {
       "showPublicImages": "在发现页显示图片",
@@ -130,14 +130,14 @@
       "skip": "跳过",
       "confirmTitle": "请按正确的顺序输入助记词",
       "warningTitle": "注意",
-      "warningDescription": "请妥善保管您的私钥。如果遗失，您将无法登入或恢复您的账号。",
+      "warningDescription": "请妥善保管您的私钥。如果遗失，您将无法登录或恢复您的账号。",
       "warningAction": "复制私钥",
       "continue": "继续",
       "mnemonicTitle": "这些助记词或私钥是恢复您帐户的唯一方法。",
-      "mnemonicDescription": "请将它们写下来并保存在安全的地方。如果丢失了它们，您将无法再次登入您的账号",
+      "mnemonicDescription": "请将它们写下来并保存在安全的地方。如果丢失了它们，您将无法再次登录您的账号",
       "introTitle": "您的设备将生成 12 组助记词和您的私钥。",
       "wordsNoted": "我已保存我的助记词和私钥",
-      "accessButton": "登入",
+      "accessButton": "登录",
       "label": "私钥",
       "copied": "已复制私钥",
       "description": "请妥善保管您的私钥"
@@ -146,10 +146,10 @@
       "createButton": "创建密钥",
       "notKeys": "没有密钥？",
       "isPublic": "用公钥登录",
-      "accessButton": "登入",
+      "accessButton": "登录",
       "privateKey": "您的私钥",
       "publicKey": "您的公钥",
-      "loginMethod": "登入",
+      "loginMethod": "登录",
       "mnemonic": "助记词"
     },
     "contactsPage": {
@@ -226,8 +226,8 @@
       "recommended": "推荐的中继",
       "myList": "我的中继",
       "notifications": {
-        "globalFeedActive": "发现页已开启",
-        "globalFeedActiveUnactive": "发现页已禁用",
+        "globalFeedActive": "已为发现页开启",
+        "globalFeedActiveUnactive": "已为发现页禁用",
         "add": "中继已添加",
         "remove": "中继已移除",
         "active": "中继已启用",
@@ -242,7 +242,7 @@
       "lessInfo": "收起",
       "globalFeed": "发现页",
       "copy": "复制",
-      "remove": "Delete",
+      "remove": "移除",
       "active": "激活",
       "share": "分享",
       "pubkey": "公钥",
@@ -255,8 +255,8 @@
       "notifications": {
         "active": "中继已启用",
         "desactive": "中继已停用",
-        "globalFeedActive": "发现页已开启",
-        "globalFeedActiveUnactive": "发现页已禁用",
+        "globalFeedActive": "已为发现页开启",
+        "globalFeedActiveUnactive": "已为发现页禁用",
         "pubkeyCopied": "已复制私钥",
         "contactCopied": "已复制联系人",
         "urlCopied": "已复制链接"
