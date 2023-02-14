@@ -6,7 +6,7 @@
 
 <center><a href="https://apt.izzysoft.de/fdroid/index/apk/com.nostros" target="_blank" rel="noopener noreferrer"><img src="https://gitlab.com/IzzyOnDroid/repo/-/raw/master/assets/IzzyOnDroid.png" width="170"></a></center>
 
-![Frame 360](https://user-images.githubusercontent.com/4659020/218563725-08732841-56f6-4444-b0bf-f01230b47ece.png)
+![image](https://user-images.githubusercontent.com/4659020/218828666-bc52d827-df86-4d62-998a-2f3eb751065e.png)
 
 # Getting Started
 
@@ -43,7 +43,7 @@ Nostros chat
 - [x] Push all data to a relay
 - [x] Global feed filters and blocked users
 - [x] Relay colouring
-- [x] Push data to Umbrel relay
+- [x] Push events to private relay
 
 # Kudos
 
