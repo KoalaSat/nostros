@@ -67,7 +67,7 @@ public class Event {
                 } else if (kind.equals("41")) {
                     updateGroup(database);
                 } else if (kind.equals("42")) {
-                    saveGroupMessage(database);
+                    saveGroupMessage(database, userPubKey);
                 } else if (kind.equals("43")) {
                     hideGroupMessage(database);
                 } else if (kind.equals("44")) {
@@ -117,14 +117,14 @@ public class Event {
         return replyEventId;
     }
 
-    protected Boolean getUserMentioned(String userPubKey) {
+    protected int getUserMentioned(String userPubKey) {
         JSONArray pTags = filterTags("p");
-        Boolean userMentioned = false;
+        int userMentioned = 0;
         try {
             for (int i = 0; i < pTags.length(); ++i) {
                 JSONArray tag = pTags.getJSONArray(i);
                 if (tag.getString(1).equals(userPubKey)) {
-                    userMentioned = true;
+                    userMentioned = 1;
                 }
             }
         } catch (JSONException e) {
@@ -281,7 +281,7 @@ public class Event {
         JSONObject groupContent = new JSONObject(content);
         JSONArray eTags = filterTags("e");
         String groupId = eTags.getJSONArray(0).getString(1);
-        String query = "SELECT created_at, pubkey FROM nostros_group_meta WHERE id = ?";
+        String query = "SELECT created_at, deleted FROM nostros_group_meta WHERE id = ?";
         @SuppressLint("Recycle") Cursor cursor = database.rawQuery(query, new String[] {groupId});
 
         ContentValues values = new ContentValues();
@@ -297,6 +297,7 @@ public class Event {
             values.put("pubkey", pubkey);
             values.put("sig", sig);
             values.put("tags", tags.toString());
+            values.put("deleted", 0);
             database.insert("nostros_group_meta", null, values);
         } else if (cursor.moveToFirst() && created_at > cursor.getInt(0)) {
             String whereClause = "id = ?";
@@ -307,9 +308,11 @@ public class Event {
         }
     }
 
-    protected void saveGroupMessage(SQLiteDatabase database) throws JSONException {
+    protected void saveGroupMessage(SQLiteDatabase database, String userPubKey) throws JSONException {
         JSONArray eTags = filterTags("e");
         String groupId = eTags.getJSONArray(0).getString(1);
+        String query = "SELECT created_at FROM nostros_group_messages WHERE id = ?";
+        @SuppressLint("Recycle") Cursor cursor = database.rawQuery(query, new String[] {id});
 
         ContentValues values = new ContentValues();
         values.put("id", id);
@@ -320,11 +323,17 @@ public class Event {
         values.put("sig", sig);
         values.put("tags", tags.toString());
         values.put("group_id", groupId);
+        values.put("user_mentioned", getUserMentioned(userPubKey));
+        if (cursor.getCount() == 0) {
+            values.put("read", 0);
+        }
 
         database.insert("nostros_group_messages", null, values);
     }
 
     protected void saveDirectMessage(SQLiteDatabase database) throws JSONException {
+        String query = "SELECT created_at FROM nostros_direct_messages WHERE id = ?";
+        @SuppressLint("Recycle") Cursor cursor = database.rawQuery(query, new String[] {id});
         JSONArray tag = tags.getJSONArray(0);
         ArrayList<String> identifiers = new ArrayList<>();
         identifiers.add(pubkey);
@@ -341,6 +350,9 @@ public class Event {
         values.put("sig", sig);
         values.put("tags", tags.toString());
         values.put("conversation_id", conversationId);
+        if (cursor.getCount() == 0) {
+            values.put("read", 0);
+        }
 
         database.insert("nostros_direct_messages", null, values);
     }
@@ -413,7 +425,6 @@ public class Event {
         for (int i = 0; i < tags.length(); ++i) {
             JSONArray tag = tags.getJSONArray(i);
             String petId = tag.getString(1);
-            String relay = tag.getString(2);
             String name = "";
             if (tag.length() >= 4) {
                 name = tag.getString(3);
@@ -426,7 +437,6 @@ public class Event {
                 values.put("name", name);
                 values.put("contact", true);
                 values.put("blocked", 0);
-                values.put("main_relay", relay);
                 values.put("pet_at", created_at);
                 database.insert("nostros_users", null, values);
             }

@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState } from 'react'
-import { StyleSheet, View } from 'react-native'
+import { ScrollView, StyleSheet, View } from 'react-native'
 import { AppContext } from '../../Contexts/AppContext'
 import { Event } from '../../lib/nostr/Events'
 import { useTranslation } from 'react-i18next'
@@ -175,37 +175,40 @@ export const SendPage: React.FC<SendPageProps> = ({ route }) => {
       <View style={styles.actions}>
         {userSuggestions.length > 0 ? (
           <View style={[styles.contactsList, { backgroundColor: theme.colors.background }]}>
-            {userSuggestions.map((user, index) => renderContactItem(user, index))}
+            <ScrollView>
+              {userSuggestions.map((user, index) => renderContactItem(user, index))}
+            </ScrollView>
           </View>
         ) : (
-          <View style={{ backgroundColor: theme.colors.elevation.level1 }}>
-            <View style={styles.contentWarning}>
-              <View style={styles.switchWrapper}>
-                <Switch value={contentWarning} onValueChange={setContentWarning} />
-                <Text>{t('sendPage.contentWarning')}</Text>
-              </View>
-              <IconButton
-                icon='image-outline'
-                size={25}
-                style={styles.imageButton}
-                onPress={() => setStartUpload(true)}
-                disabled={uploadingFile}
-              />
-            </View>
-            <View style={styles.send}>
-              <Button
-                mode='contained'
-                onPress={onPressSend}
-                disabled={
-                  isSending || (route.params?.type !== 'repost' && (!content || content === ''))
-                }
-                loading={isSending || uploadingFile}
-              >
-                {t('sendPage.send')}
-              </Button>
-            </View>
-          </View>
+          <></>
         )}
+        <View style={{ backgroundColor: theme.colors.elevation.level1 }}>
+          <View style={styles.contentWarning}>
+            <View style={styles.switchWrapper}>
+              <Switch value={contentWarning} onValueChange={setContentWarning} />
+              <Text>{t('sendPage.contentWarning')}</Text>
+            </View>
+            <IconButton
+              icon='image-outline'
+              size={25}
+              style={styles.imageButton}
+              onPress={() => setStartUpload(true)}
+              disabled={uploadingFile}
+            />
+          </View>
+          <View style={styles.send}>
+            <Button
+              mode='contained'
+              onPress={onPressSend}
+              disabled={
+                isSending || (route.params?.type !== 'repost' && (!content || content === ''))
+              }
+              loading={isSending || uploadingFile}
+            >
+              {t('sendPage.send')}
+            </Button>
+          </View>
+        </View>
       </View>
       <UploadImage
         startUpload={startUpload}
@@ -246,8 +249,6 @@ const styles = StyleSheet.create({
     paddingRight: 16,
   },
   actions: {
-    height: 100,
-    flexDirection: 'column-reverse',
     zIndex: 999,
   },
   contactsList: {

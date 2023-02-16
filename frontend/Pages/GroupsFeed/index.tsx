@@ -3,6 +3,7 @@ import { Clipboard, Dimensions, FlatList, StyleSheet, View } from 'react-native'
 import { useTranslation } from 'react-i18next'
 import {
   AnimatedFAB,
+  Badge,
   Button,
   Divider,
   List,
@@ -22,8 +23,15 @@ import { RelayPoolContext } from '../../Contexts/RelayPoolContext'
 import { getUnixTime } from 'date-fns'
 import { useFocusEffect } from '@react-navigation/native'
 import { AppContext } from '../../Contexts/AppContext'
-import { addGroup, getGroups, Group } from '../../Functions/DatabaseFunctions/Groups'
-import { formatId, username } from '../../Functions/RelayFunctions/Users'
+import {
+  activateGroup,
+  addGroup,
+  getGroupMessagesCount,
+  getGroupMessagesMentionsCount,
+  getGroups,
+  Group,
+} from '../../Functions/DatabaseFunctions/Groups'
+import { formatId } from '../../Functions/RelayFunctions/Users'
 import NostrosAvatar from '../../Components/NostrosAvatar'
 import { navigate } from '../../lib/Navigation'
 import { FlashList, ListRenderItem } from '@shopify/flash-list'
@@ -48,6 +56,8 @@ export const GroupsFeed: React.FC = () => {
   const [startUpload, setStartUpload] = useState<boolean>(false)
   const [uploadingFile, setUploadingFile] = useState<boolean>(false)
   const [showNotification, setShowNotification] = useState<string>()
+  const [newMessages, setNewMessage] = useState<Record<string, number>>({})
+  const [newMentions, setNewMentions] = useState<Record<string, number>>({})
 
   useFocusEffect(
     React.useCallback(() => {
@@ -83,6 +93,23 @@ export const GroupsFeed: React.FC = () => {
         relayPool?.subscribe('groups-user', filters)
         if (results.length > 0) {
           setGroups(results)
+          results.forEach((group) => {
+            if (group.id) {
+              getGroupMessagesMentionsCount(database, group.id).then((count) => {
+                if (count > 0)
+                  setNewMentions((prev) => {
+                    if (group.id) prev[group.id] = count
+                    return prev
+                  })
+              })
+              getGroupMessagesCount(database, group.id).then((count) => {
+                setNewMessage((prev) => {
+                  if (group.id) prev[group.id] = count
+                  return prev
+                })
+              })
+            }
+          })
           relayPool?.subscribe('groups-others', [
             {
               kinds: [Kind.ChannelCreation],
@@ -111,9 +138,11 @@ export const GroupsFeed: React.FC = () => {
       const key = getNip19Key(searchGroup)
       if (key) {
         addGroup(database, searchGroup, '', '').then(() => loadGroups())
+        activateGroup(database, searchGroup)
       }
     } else {
       addGroup(database, searchGroup, '', '').then(() => loadGroups())
+      activateGroup(database, searchGroup)
     }
     setSearchGroup(undefined)
     bottomSheetSearchRef.current?.close()
@@ -153,10 +182,14 @@ export const GroupsFeed: React.FC = () => {
           <View style={styles.groupData}>
             <NostrosAvatar src={item.picture} name={item.name} pubKey={item.pubkey} />
             <View style={styles.groupDescription}>
-              <Text>
+              <Text lineBreakMode='tail' numberOfLines={1}>
                 {item.name && item.name?.length > 25 ? `${item.name?.slice(0, 25)}...` : item.name}
               </Text>
-              <Text style={{ color: theme.colors.onSurfaceVariant }}>
+              <Text
+                style={{ color: theme.colors.onSurfaceVariant }}
+                lineBreakMode='tail'
+                numberOfLines={1}
+              >
                 {item.about && item.about?.length > 25
                   ? `${item.about?.slice(0, 25)}...`
                   : item.about}
@@ -164,19 +197,11 @@ export const GroupsFeed: React.FC = () => {
             </View>
           </View>
           <View>
-            <View style={styles.username}>
-              <Text>{username({ name: item.user_name, id: item.pubkey })}</Text>
-              {item.valid_nip05 ? (
-                <MaterialCommunityIcons
-                  name='check-decagram-outline'
-                  color={theme.colors.onPrimaryContainer}
-                  style={styles.verifyIcon}
-                />
-              ) : (
-                <></>
-              )}
-            </View>
             <Text style={{ color: theme.colors.onSurfaceVariant }}>{formatId(item.id)}</Text>
+            <View style={styles.groupBadges}>
+              {item.id && newMentions[item.id] > 0 && <Badge>@</Badge>}
+              {item.id && newMessages[item.id] > 0 && <Badge>{newMessages[item.id]}</Badge>}
+            </View>
           </View>
         </View>
       </TouchableRipple>
@@ -245,6 +270,7 @@ export const GroupsFeed: React.FC = () => {
         renderItem={renderGroupItem}
         ItemSeparatorComponent={Divider}
         horizontal={false}
+        estimatedItemSize={76}
       />
       <AnimatedFAB
         style={[styles.fab, { top: Dimensions.get('window').height - 216 }]}
@@ -423,9 +449,18 @@ const styles = StyleSheet.create({
   username: {
     flexDirection: 'row',
   },
+  groupBadges: {
+    flexDirection: 'row',
+    justifyContent: 'flex-end',
+  },
   center: {
     alignContent: 'center',
     textAlign: 'center',
+  },
+  notificationBadge: {
+    position: 'absolute',
+    left: 25,
+    top: 0,
   },
 })
 

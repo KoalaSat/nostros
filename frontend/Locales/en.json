@@ -312,10 +312,15 @@
       "relaysDescription": "These are {{username}}'s relays, activate the ones you want to be connected."
     },
     "groupPage": {
-      "typeMessage": "Type message"
+      "typeMessage": "Type message",
+      "replyText": "Message"
+    },
+    "groupHeaderIcon": {
+      "delete": "Leave group",
+      "share": "Share group",
+      "edit": "Edit group"
     },
     "groupsFeed": {
-      "delete": "Leave group",
       "updateTitle": "Update group",
       "newGroupName": "Name",
       "newGroupDescription": "Description",
@@ -325,7 +330,8 @@
       "createTitle": "Create group",
       "groupId": "Group id",
       "addTitle": "Add existing group",
-      "add": "Add group"
+      "add": "Add group",
+      "delete": "Delete group"
     },
     "homePage": {
       "clipboardTitle": "Nostr key detected",

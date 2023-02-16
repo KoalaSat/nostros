@@ -37,7 +37,7 @@ export const UploadImage: React.FC<UploadImageProps> = ({
   }, [startUpload])
 
   const getImage: () => void = () => {
-    launchImageLibrary({ selectionLimit: 1, mediaType: 'photo' }, async (result) => {
+    launchImageLibrary({ selectionLimit: 1, mediaType: 'mixed' }, async (result) => {
       const assets = result?.assets
       if (assets && assets.length > 0) {
         const file = assets[0]

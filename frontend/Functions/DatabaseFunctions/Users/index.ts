@@ -131,7 +131,7 @@ export const getUsers: (
   }
 
   if (name) {
-    filters.push(`name LIKE '%${name}%'`)
+    filters.push(`name LIKE '${name}%'`)
   }
 
   if (includeIds && includeIds.length > 0) {

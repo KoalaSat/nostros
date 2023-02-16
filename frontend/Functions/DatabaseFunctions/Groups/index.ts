@@ -45,11 +45,10 @@ export const updateAllRead: (db: QuickSQLiteConnection) => Promise<QueryResult |
 export const getGroups: (db: QuickSQLiteConnection) => Promise<Group[]> = async (db) => {
   const groupsQuery = `
     SELECT
-      nostros_group_meta.*, nostros_users.name as user_name, nostros_users.valid_nip05
+      *
     FROM
       nostros_group_meta
-    LEFT JOIN
-      nostros_users ON nostros_users.id = nostros_group_meta.pubkey
+    WHERE (deleted = NULL OR deleted = 0)
   `
   const resultSet = await db.execute(groupsQuery)
   const items: object[] = getItems(resultSet)
@@ -95,8 +94,9 @@ export const getGroupMessages: (
   options: {
     order?: 'DESC' | 'ASC'
     limit?: number
+    ids?: string[]
   },
-) => Promise<GroupMessage[]> = async (db, groupId, { order = 'DESC', limit }) => {
+) => Promise<GroupMessage[]> = async (db, groupId, { order = 'DESC', limit, ids }) => {
   let notesQuery = `
     SELECT
       nostros_group_messages.*, nostros_users.name, nostros_users.picture, nostros_users.valid_nip05
@@ -105,6 +105,13 @@ export const getGroupMessages: (
     LEFT JOIN
       nostros_users ON nostros_users.id = nostros_group_messages.pubkey
     WHERE group_id = "${groupId}"
+  `
+
+  if (ids) {
+    notesQuery += `AND ids IN ('${ids.join("', '")}')`
+  }
+
+  notesQuery += `
     AND (nostros_users.muted_groups IS NULL OR nostros_users.muted_groups < 1)
     ORDER BY created_at ${order} 
   `
@@ -135,14 +142,77 @@ export const deleteGroup: (
   db: QuickSQLiteConnection,
   groupId: string,
 ) => Promise<QueryResult> = async (db, groupId) => {
-  const deleteMessagesQuery = `
-    DELETE FROM nostros_group_messages 
-    WHERE group_id = ?
+  const userQuery = `UPDATE nostros_group_meta SET deleted = 1 WHERE id = ?;`
+  return db.execute(userQuery, [groupId])
+}
+
+export const activateGroup: (
+  db: QuickSQLiteConnection,
+  groupId: string,
+) => Promise<QueryResult> = async (db, groupId) => {
+  const userQuery = `UPDATE nostros_group_meta SET deleted = 0 WHERE id = ?;`
+  return db.execute(userQuery, [groupId])
+}
+
+export const updateGroupRead: (
+  db: QuickSQLiteConnection,
+  groupId: string,
+) => Promise<QueryResult | null> = async (db, groupId) => {
+  const userQuery = `UPDATE nostros_group_messages SET read = ? WHERE group_id = ?`
+  return db.execute(userQuery, [1, groupId])
+}
+
+export const getUserGroupMessagesCount: (
+  db: QuickSQLiteConnection,
+  publicKey: string,
+) => Promise<number> = async (db, publicKey) => {
+  const repliesQuery = `
+    SELECT
+      COUNT(*)
+    FROM nostros_group_messages
+    WHERE (user_mentioned != NULL AND user_mentioned = 1)
+    AND (read = NULL OR read = 0)
   `
-  await db.execute(deleteMessagesQuery, [groupId])
-  const deleteQuery = `
-    DELETE FROM nostros_group_meta
-    WHERE id = ?
+
+  const resultSet = db.execute(repliesQuery)
+  const item: { 'COUNT(*)': number } = resultSet?.rows?.item(0)
+
+  return item['COUNT(*)'] ?? 0
+}
+
+export const getGroupMessagesCount: (
+  db: QuickSQLiteConnection,
+  groupId: string,
+) => Promise<number> = async (db, groupId) => {
+  const repliesQuery = `
+    SELECT
+      COUNT(*)
+    FROM nostros_group_messages
+    WHERE (read = NULL OR read = 0)
+    AND group_id = '${groupId}'
   `
-  return db.execute(deleteQuery, [groupId])
+
+  const resultSet = db.execute(repliesQuery)
+  const item: { 'COUNT(*)': number } = resultSet?.rows?.item(0)
+
+  return item['COUNT(*)'] ?? 0
+}
+
+export const getGroupMessagesMentionsCount: (
+  db: QuickSQLiteConnection,
+  groupId: string,
+) => Promise<number> = async (db, groupId) => {
+  const repliesQuery = `
+    SELECT
+      COUNT(*)
+    FROM nostros_group_messages
+    WHERE (read = NULL OR read = 0)
+    AND user_mentioned = 1 
+    AND group_id = '${groupId}'
+  `
+
+  const resultSet = db.execute(repliesQuery)
+  const item: { 'COUNT(*)': number } = resultSet?.rows?.item(0)
+
+  return item['COUNT(*)'] ?? 0
 }

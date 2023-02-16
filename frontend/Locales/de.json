@@ -11,7 +11,7 @@
       "privateKeyDescription": "Behandele den privaten Schlüssel wie ein Passwort",
       "privateKeysSnackbarTitle": "Wichtig!",
       "privateKeysSnackbarDescription": "Verwahre den privaten Schlüssel an einem sicheren Ort. Geht der Schlüssel verloren, kann er nicht wiederhergestellt werden. Das Konto kann nie wieder benutzt werden."
-       },
+    },
     "homeNavigator": {
       "Group": "",
       "ProfileCreate": "Profil anlegen",
@@ -62,9 +62,6 @@
       "uploadImage": "Bild hochladen",
       "cancel": "Abbrechen",
       "poweredBy": "poweredBy {{uri}}"
-    },
-    "groupPage": {
-      "typeMessage": "Nachricht schreiben"
     },
     "menuItems": {
       "relays": "Relays",
@@ -175,7 +172,7 @@
       "nips": "NIPs",
       "version": "Version"
     },
- 	"reactionsFeed": {
+    "reactionsFeed": {
       "emptyTitle": "Du hast noch keine Reaktionen",
       "emptyDescription": "Hier siehst du Notizen, auf die du reagiert hast."
     },
@@ -215,17 +212,17 @@
       "recommended": "Empfohlen",
       "myList": "Meine Relays",
       "notifications": {
-      "globalFeedActive": "Globaler Feed aktiv.",
-      "globalFeedActiveUnactive": "Global Feed daktiviert.",
-      "add": "Relay verbinden",
-      "remove": "Relay entfernen",
-      "active": "Relay aktivieren.",
-      "desactive": "Relay deaktivieren.",
-      "badFormat": "Die URL des Relays hat kein gültiges Format.",
-      "alreadyExists": "Relay existiert bereits"
+        "globalFeedActive": "Globaler Feed aktiv.",
+        "globalFeedActiveUnactive": "Global Feed daktiviert.",
+        "add": "Relay verbinden",
+        "remove": "Relay entfernen",
+        "active": "Relay aktivieren.",
+        "desactive": "Relay deaktivieren.",
+        "badFormat": "Die URL des Relays hat kein gültiges Format.",
+        "alreadyExists": "Relay existiert bereits"
       }
     },
-  
+
     "relayCard": {
       "pushDone": "Fertig",
       "pushHistoricTitle": "Alle meine Daten hochladen",
@@ -260,7 +257,7 @@
         "urlCopied": "URL kopiert."
       }
     },
-    
+
     "profileConfigPage": {
       "notifications": {
         "nsecCopied": "Privater Schlüssel kopiert.",
@@ -297,9 +294,9 @@
       "name": "Name",
       "about": "Über mich"
     },
- 	 "textContent": {
+    "textContent": {
       "invoice": "Lightning Invoice"
-       },
+    },
     "profilePage": {
       "notifications": {
         "contactAdded": "Kontakt hinzugefügt",
@@ -315,9 +312,14 @@
       "unfollow": "Nicht mehr folgen",
       "copyNPub": "Schlüssel kopieren",
       "relaysDescription": "Dies sind {{username}}'s Relays, aktiviere diejenigen, zu denen du verbunden werden möchtest."
- },
+    },
     "groupPage": {
       "typeMessage": "Nachricht schreiben"
+    },
+    "groupHeaderIcon": {
+      "delete": "Leave group",
+      "share": "Share group",
+      "edit": "Edit group"
     },
     "groupsFeed": {
       "delete": "Gruppe verlassen",
