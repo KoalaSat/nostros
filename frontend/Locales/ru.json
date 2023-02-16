@@ -344,7 +344,10 @@
       "unblock": "Desbloquear",
       "unfollow": "Following",
       "share": "Share",
-      "relaysTitle": "Relays"
+      "relaysTitle": "Relays",
+      "blocked": "Blocked",
+      "mute": "Mute",
+      "muted": "Muted"
     },
     "conversationsFeed": {
       "openMessage": "Start conversation",

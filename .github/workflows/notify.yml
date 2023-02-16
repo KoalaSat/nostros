@@ -29,5 +29,4 @@ jobs:
           ~/go/bin/noscl relay add "wss://nostr.ono.re"
           ~/go/bin/noscl relay add "wss://relay.grunch.dev"
           ~/go/bin/noscl relay add "wss://nostr.developer.li"
-          ~/go/bin/noscl publish '${{ github.event.release.body }}'
-          ~/go/bin/noscl publish ${{ github.event.release.body }}
+          ~/go/bin/noscl publish "${{ github.event.release.body }}"

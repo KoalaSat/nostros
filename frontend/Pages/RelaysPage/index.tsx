@@ -2,7 +2,7 @@ import React, { useContext, useState } from 'react'
 import { FlatList, ListRenderItem, ScrollView, StyleSheet, View } from 'react-native'
 import { useTranslation } from 'react-i18next'
 import { RelayPoolContext } from '../../Contexts/RelayPoolContext'
-import { getRelays, Relay } from '../../Functions/DatabaseFunctions/Relays'
+import { Relay } from '../../Functions/DatabaseFunctions/Relays'
 import { REGEX_SOCKET_LINK } from '../../Constants/Relay'
 import {
   List,
@@ -20,48 +20,38 @@ import RBSheet from 'react-native-raw-bottom-sheet'
 import { relayToColor } from '../../Functions/NativeFunctions'
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'
 import { useFocusEffect } from '@react-navigation/native'
-import { AppContext } from '../../Contexts/AppContext'
-
-export const defaultRelays = [
-  'wss://brb.io',
-  'wss://damus.io',
-  'wss://nostr-pub.wellorder.net',
-  'wss://nostr.swiss-enigma.ch',
-  'wss://nostr.onsats.org',
-  'wss://nostr-pub.semisol.dev',
-  'wss://nostr.openchain.fr',
-  'wss://relay.nostr.info',
-  'wss://nostr.oxtr.dev',
-  'wss://nostr.ono.re',
-  'wss://relay.grunch.dev',
-  'wss://nostr.developer.li',
-]
+import { UserContext } from '../../Contexts/UserContext'
 
 export const RelaysPage: React.FC = () => {
   const defaultRelayInput = React.useMemo(() => 'wss://', [])
-  const { updateRelayItem, addRelayItem, relayPool, setDisplayrelayDrawer } =
+  const { updateRelayItem, addRelayItem, relayPool, setDisplayrelayDrawer, relays } =
     useContext(RelayPoolContext)
-  const { database } = useContext(AppContext)
+  const { publicKey } = useContext(UserContext)
   const { t } = useTranslation('common')
   const theme = useTheme()
   const bottomSheetAddRef = React.useRef<RBSheet>(null)
   const bottomSheetResilenseRef = React.useRef<RBSheet>(null)
-  const [relays, setRelays] = React.useState<Relay[]>([])
   const [addRelayInput, setAddRelayInput] = useState<string>(defaultRelayInput)
   const [showNotification, setShowNotification] = useState<string>()
 
   useFocusEffect(
     React.useCallback(() => {
       relayPool?.unsubscribeAll()
-      updateRelays()
+      if (publicKey) {
+        relayPool?.subscribe('relays', [
+          {
+            kinds: [1002],
+            authors: [publicKey],
+            limit: 1,
+          },
+        ])
+      }
 
-      return () => {}
+      return () => relayPool?.unsubscribe(['relays'])
     }, []),
   )
 
-  const updateRelays: () => void = () => {
-    if (database) getRelays(database).then(setRelays)
-  }
+  React.useEffect(() => {}, [relays])
 
   const addRelay: (url: string) => void = (url) => {
     if (!relayList.find((relay) => relay.url === url)) {
@@ -70,7 +60,6 @@ export const RelaysPage: React.FC = () => {
         active: 1,
         global_feed: 1,
       }).then(() => {
-        updateRelays()
         setShowNotification('add')
       })
     }
@@ -79,7 +68,6 @@ export const RelaysPage: React.FC = () => {
   const activeRelay: (relay: Relay) => void = (relay) => {
     relay.active = 1
     updateRelayItem(relay).then(() => {
-      updateRelays()
       setShowNotification('active')
     })
   }
@@ -88,7 +76,6 @@ export const RelaysPage: React.FC = () => {
     relay.active = 0
     relay.global_feed = 0
     updateRelayItem(relay).then(() => {
-      updateRelays()
       setShowNotification('desactive')
     })
   }
@@ -97,7 +84,6 @@ export const RelaysPage: React.FC = () => {
     relay.active = 1
     relay.global_feed = 1
     updateRelayItem(relay).then(() => {
-      updateRelays()
       setShowNotification('globalFeedActive')
     })
   }
@@ -105,7 +91,6 @@ export const RelaysPage: React.FC = () => {
   const desactiveGlobalFeedRelay: (relay: Relay) => void = (relay) => {
     relay.global_feed = 0
     updateRelayItem(relay).then(() => {
-      updateRelays()
       setShowNotification('globalFeedActiveUnactive')
     })
   }
@@ -144,8 +129,6 @@ export const RelaysPage: React.FC = () => {
     if (a.url < b.url) return -1
     return 0
   })
-
-  const myRelays = relayList.filter((relay) => !defaultRelays.includes(relay.url))
 
   const renderItem: ListRenderItem<Relay> = ({ item, index }) => {
     return (
@@ -200,7 +183,7 @@ export const RelaysPage: React.FC = () => {
         right={() => (
           <>
             {type === 'centralized' && (
-              <Text style={[styles.smallRelay, { color: theme.colors.errorContainer }]}>
+              <Text style={[styles.smallRelay, { color: theme.colors.error }]}>
                 {relayPool?.resilientAssignation.centralizedRelays[item] &&
                   t('relaysPage.centralized')}
               </Text>
@@ -258,33 +241,9 @@ export const RelaysPage: React.FC = () => {
           data={Object.keys(relayPool?.resilientAssignation.smallRelays ?? {})}
           renderItem={(data) => renderResilienceItem(data.item, data.index, 'small')}
         />
-        {myRelays.length > 0 && (
-          <>
-            <View style={styles.titleWrapper}>
-              <Text style={styles.title} variant='titleMedium'>
-                {t('relaysPage.myList')}
-              </Text>
-              <Divider />
-            </View>
-            <List.Item
-              title={t('relaysPage.relayName')}
-              right={() => (
-                <>
-                  <Text style={styles.listHeader}>{t('relaysPage.globalFeed')}</Text>
-                  <Text style={styles.listHeader}>{t('relaysPage.active')}</Text>
-                </>
-              )}
-            />
-            <FlatList
-              showsVerticalScrollIndicator={false}
-              data={myRelays}
-              renderItem={renderItem}
-            />
-          </>
-        )}
         <View style={styles.titleWrapper}>
           <Text style={styles.title} variant='titleMedium'>
-            {t('relaysPage.recommended')}
+            {t('relaysPage.myList')}
           </Text>
           <Divider />
         </View>
@@ -297,17 +256,7 @@ export const RelaysPage: React.FC = () => {
             </>
           )}
         />
-        <FlatList
-          showsVerticalScrollIndicator={false}
-          data={defaultRelays.map(
-            (url) =>
-              relays.find((relay) => relay.url === url && relay.active && relay.active > 0) ?? {
-                url,
-              },
-          )}
-          renderItem={renderItem}
-          style={styles.list}
-        />
+        <FlatList showsVerticalScrollIndicator={false} data={relays} renderItem={renderItem} />
       </ScrollView>
       <AnimatedFAB
         style={styles.fab}

@@ -58,7 +58,7 @@ export const ProfileLoadPage: React.FC = () => {
     if (publicKey && relayPoolReady) {
       relayPool?.subscribe('profile-load-meta', [
         {
-          kinds: [Kind.Contacts, Kind.Metadata],
+          kinds: [Kind.Contacts, Kind.Metadata, Kind.ChannelCreation, Kind.ChannelMetadata, 1002],
           authors: [publicKey],
         },
       ])

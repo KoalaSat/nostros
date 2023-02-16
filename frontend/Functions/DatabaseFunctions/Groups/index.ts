@@ -146,6 +146,13 @@ export const deleteGroup: (
   return db.execute(userQuery, [groupId])
 }
 
+export const updateAllDirectMessagesRead: (
+  db: QuickSQLiteConnection,
+) => Promise<QueryResult | null> = async (db) => {
+  const userQuery = `UPDATE nostros_group_messages SET read = ?`
+  return db.execute(userQuery, [1])
+}
+
 export const activateGroup: (
   db: QuickSQLiteConnection,
   groupId: string,

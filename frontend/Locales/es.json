@@ -352,7 +352,10 @@
       "share": "Share",
       "unblock": "Desbloquear",
       "unfollow": "Siguiendo",
-      "relaysTitle": "Relays"
+      "relaysTitle": "Relays",
+      "blocked": "Bloqueado",
+      "mute": "Silenciar",
+      "muted": "Silenciado"
     },
     "conversationsFeed": {
       "openMessage": "Comenzar conversación",

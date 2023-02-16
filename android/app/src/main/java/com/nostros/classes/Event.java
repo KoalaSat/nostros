@@ -71,7 +71,9 @@ public class Event {
                 } else if (kind.equals("43")) {
                     hideGroupMessage(database);
                 } else if (kind.equals("44")) {
-                    blockUser(database);
+                    muteUser(database);
+                } else if (kind.equals("1002")) {
+                    saveRelays(database);
                 }
             } catch (JSONException e) {
                 e.printStackTrace();
@@ -209,13 +211,14 @@ public class Event {
         database.replace("nostros_notes", null, values);
     }
 
-    protected void blockUser(SQLiteDatabase database) throws JSONException {
+    protected void muteUser(SQLiteDatabase database) throws JSONException {
         JSONArray pTags = filterTags("p");
         String groupId = pTags.getJSONArray(0).getString(1);
         String query = "SELECT id FROM nostros_users WHERE id = ?";
         @SuppressLint("Recycle") Cursor cursor = database.rawQuery(query, new String[] {groupId});
 
         if (cursor.getCount() == 0) {
+        } else {
             ContentValues values = new ContentValues();
             values.put("muted_groups", 1);
             String whereClause = "id = ?";
@@ -409,7 +412,7 @@ public class Event {
             values.put("valid_nip05", validateNip05(nip05) ? 1 : 0);
             values.put("blocked", 0);
             database.insert("nostros_users", null, values);
-        } else if (cursor.moveToFirst() && (cursor.isNull(0) || created_at > cursor.getInt(0))) {
+        } else if (cursor.moveToFirst() && created_at > cursor.getInt(0)) {
             if (cursor.getInt(1) == 0 || !cursor.getString(2).equals(nip05)) {
                 values.put("valid_nip05", validateNip05(nip05) ? 1 : 0);
             }
@@ -422,23 +425,71 @@ public class Event {
     }
 
     protected void savePets(SQLiteDatabase database) throws JSONException {
+        String queryLast = "SELECT pet_at FROM nostros_users ORDER BY pet_at DESC LIMIT 1";
+        Cursor cursorLast = database.rawQuery(queryLast, new String[] {});
+        if (cursorLast.moveToFirst() && created_at > cursorLast.getInt(0)) {
+            ContentValues valuesIntial = new ContentValues();
+            valuesIntial.put("contact", 0);
+            String whereClauseInitial = "id = ?";
+            database.update("nostros_users", valuesIntial, whereClauseInitial, new String[]{});
+
+            for (int i = 0; i < tags.length(); ++i) {
+                JSONArray tag = tags.getJSONArray(i);
+                String petId = tag.getString(1);
+                String name = "";
+                if (tag.length() >= 4) {
+                    name = tag.getString(3);
+                }
+                String query = "SELECT * FROM nostros_users WHERE id = ?";
+                Cursor cursor = database.rawQuery(query, new String[] {petId});
+                ContentValues values = new ContentValues();
+                values.put("pet_at", created_at);
+                values.put("contact", 1);
+                values.put("name", name);
+                values.put("blocked", 0);
+
+                if (cursor.getCount() == 0) {
+                    values.put("id", petId);
+                    database.insert("nostros_users", null, values);
+                } else {
+                    String whereClause = "id = ?";
+                    String[] whereArgs = new String[] {
+                            petId
+                    };
+                    database.update("nostros_users", values, whereClause, whereArgs);
+                }
+            }
+        }
+    }
+
+    protected void saveRelays(SQLiteDatabase database) throws JSONException {
         for (int i = 0; i < tags.length(); ++i) {
             JSONArray tag = tags.getJSONArray(i);
-            String petId = tag.getString(1);
-            String name = "";
-            if (tag.length() >= 4) {
-                name = tag.getString(3);
+            String url = tag.getString(1);
+            String mode = "";
+            if (tag.length() > 1) {
+                mode = tag.getString(2);
             }
-            String query = "SELECT * FROM nostros_users WHERE id = ?";
-            Cursor cursor = database.rawQuery(query, new String[] {petId});
+
+            String query = "SELECT updated_at FROM nostros_relays WHERE url = ?";
+            Cursor cursor = database.rawQuery(query, new String[] {url});
+
+            ContentValues values = new ContentValues();
+            values.put("url", url);
+            values.put("mode", mode);
+
             if (cursor.getCount() == 0) {
-                ContentValues values = new ContentValues();
-                values.put("id", petId);
-                values.put("name", name);
-                values.put("contact", true);
-                values.put("blocked", 0);
-                values.put("pet_at", created_at);
-                database.insert("nostros_users", null, values);
+                values.put("active", 0);
+                values.put("global_feed", 0);
+                values.put("manual", 1);
+                database.insert("nostros_relays", null, values);
+            } else if (cursor.moveToFirst() && created_at > cursor.getInt(0)) {
+                values.put("updated_at", created_at);
+                String whereClause = "url = ?";
+                String[] whereArgs = new String[] {
+                        url
+                };
+                database.update("nostros_relays", values, whereClause, whereArgs);
             }
         }
     }

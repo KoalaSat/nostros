@@ -313,7 +313,8 @@
     },
     "groupPage": {
       "typeMessage": "Type message",
-      "replyText": "Message"
+      "replyText": "Message",
+      "admin": "ADMIN"
     },
     "groupHeaderIcon": {
       "delete": "Leave group",
@@ -368,7 +369,15 @@
       "block": "Block",
       "unblock": "Unblock",
       "share": "Share",
-      "relaysTitle": "Relays"
+      "relaysTitle": "Relays",
+      "blocked": "Blocked",
+      "mute": "Mute",
+      "muted": "Muted",
+      "muteUser": "Mute {{username}} on chats",
+      "muteWarningTitle": "Important",
+      "muteWarning": "This action will hide the messages of this user on all chats and cannot be undone.",
+      "muteForever": "Mute {{username}} forever",
+      "cancel": "Cancel"
     },
     "conversationsFeed": {
       "openMessage": "Start conversation",

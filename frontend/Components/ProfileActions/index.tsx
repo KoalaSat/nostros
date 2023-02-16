@@ -1,7 +1,7 @@
 import { t } from 'i18next'
 import * as React from 'react'
 import { StyleSheet, View, ListRenderItem, Switch, FlatList } from 'react-native'
-import { IconButton, List, Snackbar, Text, useTheme } from 'react-native-paper'
+import { Button, IconButton, List, Snackbar, Text, useTheme } from 'react-native-paper'
 import { AppContext } from '../../Contexts/AppContext'
 import { RelayPoolContext } from '../../Contexts/RelayPoolContext'
 import { UserContext } from '../../Contexts/UserContext'
@@ -10,6 +10,7 @@ import {
   getUser,
   updateUserBlock,
   updateUserContact,
+  updateUserMutesGroups,
   User,
 } from '../../Functions/DatabaseFunctions/Users'
 import { populatePets, username } from '../../Functions/RelayFunctions/Users'
@@ -22,6 +23,8 @@ import { relayToColor } from '../../Functions/NativeFunctions'
 import { Relay } from '../../Functions/DatabaseFunctions/Relays'
 import ProfileShare from '../ProfileShare'
 import { ScrollView } from 'react-native-gesture-handler'
+import { Kind } from 'nostr-tools'
+import { getUnixTime } from 'date-fns'
 
 interface ProfileActionsProps {
   user: User
@@ -40,10 +43,12 @@ export const ProfileActions: React.FC<ProfileActionsProps> = ({
   const { relayPool, updateRelayItem } = React.useContext(RelayPoolContext)
   const [isContact, setIsContact] = React.useState<boolean>()
   const [isBlocked, setIsBlocked] = React.useState<boolean>()
+  const [isMuted, setIsMuted] = React.useState<boolean>()
   const [showNotification, setShowNotification] = React.useState<undefined | string>()
   const [showNotificationRelay, setShowNotificationRelay] = React.useState<undefined | string>()
   const bottomSheetRelaysRef = React.useRef<RBSheet>(null)
   const bottomSheetShareRef = React.useRef<RBSheet>(null)
+  const bottomSheetMuteRef = React.useRef<RBSheet>(null)
   const [userRelays, setUserRelays] = React.useState<NoteRelay[]>([])
   const [openLn, setOpenLn] = React.useState<boolean>(false)
 
@@ -51,6 +56,27 @@ export const ProfileActions: React.FC<ProfileActionsProps> = ({
     loadUser()
     loadRelays()
   }, [])
+
+  const muteUser: () => void = () => {
+    if (publicKey && relayPool && database && user.id) {
+      relayPool
+        ?.sendEvent({
+          content: '',
+          created_at: getUnixTime(new Date()),
+          kind: Kind.ChannelMuteUser,
+          pubkey: publicKey,
+          tags: [['p', user.id]],
+        })
+        .then(() => {
+          if (database) {
+            updateUserMutesGroups(database, user.id, true).then(() => {
+              setIsMuted(true)
+              bottomSheetMuteRef.current?.close()
+            })
+          }
+        })
+    }
+  }
 
   const loadRelays: () => void = () => {
     if (database) {
@@ -69,6 +95,7 @@ export const ProfileActions: React.FC<ProfileActionsProps> = ({
           setUser(result)
           setIsContact(result.contact)
           setIsBlocked(result.blocked !== undefined && result.blocked > 0)
+          setIsMuted(result.muted_groups !== undefined && result.muted_groups > 0)
         } else if (user.id === publicKey) {
           setUser({
             id: publicKey,
@@ -203,12 +230,13 @@ export const ProfileActions: React.FC<ProfileActionsProps> = ({
       <View style={styles.mainLayout}>
         <View style={styles.actionButton}>
           <IconButton
-            icon={user?.blocked && user?.blocked > 0 ? 'account-cancel' : 'account-cancel-outline'}
+            icon='account-cancel-outline'
+            iconColor={isBlocked ? theme.colors.error : theme.colors.onSecondaryContainer}
             size={28}
             onPress={onChangeBlockUser}
           />
-          <Text>
-            {t(user?.blocked && user?.blocked > 0 ? 'profileCard.unblock' : 'profileCard.block')}
+          <Text style={isBlocked ? { color: theme.colors.error } : {}}>
+            {t(isBlocked ? 'profileCard.blocked' : 'profileCard.block')}
           </Text>
         </View>
         <View style={styles.actionButton}>
@@ -226,6 +254,20 @@ export const ProfileActions: React.FC<ProfileActionsProps> = ({
             onPress={() => bottomSheetRelaysRef.current?.open()}
           />
           <Text>{t('profileCard.relaysTitle')}</Text>
+        </View>
+      </View>
+      <View style={styles.mainLayout}>
+        <View style={styles.actionButton}>
+          <IconButton
+            icon={isMuted ? 'volume-off' : 'volume-high'}
+            iconColor={isMuted ? theme.colors.error : theme.colors.onSecondaryContainer}
+            size={28}
+            onPress={() => !isMuted && bottomSheetMuteRef.current?.open()}
+            disabled={user.id === publicKey}
+          />
+          <Text style={isMuted ? { color: theme.colors.error } : {}}>
+            {t(isMuted ? 'profileCard.muted' : 'profileCard.mute')}
+          </Text>
         </View>
       </View>
       <RBSheet ref={bottomSheetRelaysRef} closeOnDragDown={true} customStyles={bottomSheetStyles}>
@@ -264,6 +306,30 @@ export const ProfileActions: React.FC<ProfileActionsProps> = ({
       </RBSheet>
       <RBSheet ref={bottomSheetShareRef} closeOnDragDown={true} customStyles={bottomSheetStyles}>
         <ProfileShare user={user} />
+      </RBSheet>
+      <RBSheet ref={bottomSheetMuteRef} closeOnDragDown={true} customStyles={bottomSheetStyles}>
+        <View style={styles.muteContainer}>
+          <Text variant='titleLarge'>
+            {t('profileCard.muteUser', { username: username(user) })}
+          </Text>
+          <View style={[styles.warning, { backgroundColor: '#683D00' }]}>
+            <Text variant='titleSmall' style={[styles.warningTitle, { color: '#FFDCBB' }]}>
+              {t('profileCard.muteWarningTitle')}
+            </Text>
+            <Text style={{ color: '#FFDCBB' }}>{t('profileCard.muteWarning')}</Text>
+          </View>
+          <Button style={styles.buttonSpacer} mode='contained' onPress={muteUser}>
+            {t('profileCard.muteForever', { username: username(user) })}
+          </Button>
+          <Button
+            mode='outlined'
+            onPress={() => {
+              bottomSheetMuteRef.current?.close()
+            }}
+          >
+            {t('profileCard.cancel')}
+          </Button>
+        </View>
       </RBSheet>
       <LnPayment setOpen={setOpenLn} open={openLn} user={user} />
       {showNotification && (
@@ -306,6 +372,22 @@ const styles = StyleSheet.create({
     paddingRight: 5,
     paddingLeft: 16,
     textAlign: 'center',
+  },
+  warning: {
+    borderRadius: 4,
+    padding: 16,
+    marginTop: 16,
+    marginBottom: 16,
+  },
+  warningTitle: {
+    marginBottom: 8,
+  },
+  buttonSpacer: {
+    marginTop: 16,
+    marginBottom: 16,
+  },
+  muteContainer: {
+    paddingRight: 16,
   },
 })
 

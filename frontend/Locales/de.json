@@ -370,7 +370,10 @@
       "share": "Teilen",
       "unblock": "Erlauben",
       "unfollow": "Abo entfernen",
-      "relaysTitle": "Relays"
+      "relaysTitle": "Relays",
+      "blocked": "Blocked",
+      "mute": "Mute",
+      "muted": "Muted"
     },
     "conversationsFeed": {
       "openMessage": "Unterhaltung beginnen",

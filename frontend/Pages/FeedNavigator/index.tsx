@@ -18,7 +18,7 @@ import ConfigPage from '../ConfigPage'
 import { RelayPoolContext } from '../../Contexts/RelayPoolContext'
 import { AppContext } from '../../Contexts/AppContext'
 import RelayCard from '../../Components/RelayCard'
-import { updateAllRead } from '../../Functions/DatabaseFunctions/DirectMessages'
+import { updateAllDirectMessagesRead } from '../../Functions/DatabaseFunctions/DirectMessages'
 import { getUnixTime } from 'date-fns'
 import ContactsPage from '../ContactsPage'
 import GroupPage from '../GroupPage'
@@ -60,8 +60,13 @@ export const HomeNavigator: React.FC = () => {
     bottomSheetRef.current?.open()
   }
 
-  const onPressCheckAll: () => void = () => {
-    if (database) updateAllRead(database)
+  const onMesssagesPressCheckAll: () => void = () => {
+    if (database) updateAllDirectMessagesRead(database)
+    setRefreshBottomBarAt(getUnixTime(new Date()))
+  }
+
+  const onGroupsPressCheckAll: () => void = () => {
+    if (database) updateAllDirectMessagesRead(database)
     setRefreshBottomBarAt(getUnixTime(new Date()))
   }
 
@@ -119,7 +124,18 @@ export const HomeNavigator: React.FC = () => {
                     />
                   )}
                   {['Landing'].includes(route.name) && historyKey?.includes('messages-') && (
-                    <Appbar.Action icon='check-all' isLeading onPress={() => onPressCheckAll()} />
+                    <Appbar.Action
+                      icon='check-all'
+                      isLeading
+                      onPress={() => onMesssagesPressCheckAll()}
+                    />
+                  )}
+                  {['Landing'].includes(route.name) && historyKey?.includes('groups-') && (
+                    <Appbar.Action
+                      icon='check-all'
+                      isLeading
+                      onPress={() => onGroupsPressCheckAll()}
+                    />
                   )}
                   {['Group'].includes(route.name) && (
                     <GroupHeaderIcon groupId={route.params?.groupId} />

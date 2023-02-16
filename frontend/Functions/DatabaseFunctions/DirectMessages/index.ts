@@ -37,9 +37,9 @@ export const updateConversationRead: (
   return db.execute(userQuery, [1, conversationId])
 }
 
-export const updateAllRead: (db: QuickSQLiteConnection) => Promise<QueryResult | null> = async (
-  db,
-) => {
+export const updateAllDirectMessagesRead: (
+  db: QuickSQLiteConnection,
+) => Promise<QueryResult | null> = async (db) => {
   const userQuery = `UPDATE nostros_direct_messages SET read = ?`
   return db.execute(userQuery, [1])
 }

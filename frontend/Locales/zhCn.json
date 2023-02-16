@@ -350,7 +350,10 @@
       "share": "分享",
       "copyNip05": "复制 NIP-05",
       "copyNPub": "复制公钥",
-      "relaysTitle": "中继"
+      "relaysTitle": "中继",
+      "blocked": "Blocked",
+      "mute": "Mute",
+      "muted": "Muted"
     },
     "conversationsFeed": {
       "openMessage": "发送私信",

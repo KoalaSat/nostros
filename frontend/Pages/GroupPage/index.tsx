@@ -32,7 +32,9 @@ import { handleInfinityScroll } from '../../Functions/NativeFunctions'
 import NostrosAvatar from '../../Components/NostrosAvatar'
 import UploadImage from '../../Components/UploadImage'
 import {
+  getGroup,
   getGroupMessages,
+  Group,
   GroupMessage,
   updateGroupRead,
 } from '../../Functions/DatabaseFunctions/Groups'
@@ -53,6 +55,7 @@ export const GroupPage: React.FC<GroupPageProps> = ({ route }) => {
   const { relayPool, lastEventId } = useContext(RelayPoolContext)
   const { publicKey, privateKey, name, picture, validNip05 } = useContext(UserContext)
   const [pageSize, setPageSize] = useState<number>(initialPageSize)
+  const [group, setGroup] = useState<Group>()
   const [groupMessages, setGroupMessages] = useState<GroupMessage[]>([])
   const [sendingMessages, setSendingMessages] = useState<GroupMessage[]>([])
   const [reply, setReply] = useState<GroupMessage>()
@@ -82,6 +85,7 @@ export const GroupPage: React.FC<GroupPageProps> = ({ route }) => {
 
   const loadGroupMessages: (subscribe: boolean) => void = (subscribe) => {
     if (database && publicKey && route.params.groupId) {
+      getGroup(database, route.params.groupId).then(setGroup)
       updateGroupRead(database, route.params.groupId)
       getGroupMessages(database, route.params.groupId, {
         order: 'DESC',
@@ -294,6 +298,11 @@ export const GroupPage: React.FC<GroupPageProps> = ({ route }) => {
               )}
             </View>
             <View style={styles.cardContentDate}>
+              {item.pubkey === group?.pubkey && (
+                <View style={[styles.warning, { backgroundColor: '#683D00' }]}>
+                  <Text style={{ color: '#FFDCBB' }}>{t('groupPage.admin')}</Text>
+                </View>
+              )}
               {message?.pending && (
                 <View style={styles.cardContentPending}>
                   <MaterialCommunityIcons
@@ -588,6 +597,12 @@ const styles = StyleSheet.create({
     width: 50,
     flex: 1,
     paddingLeft: 16,
+  },
+  warning: {
+    borderRadius: 4,
+    paddingLeft: 5,
+    paddingRight: 5,
+    marginRight: 5,
   },
   input: {
     flexDirection: 'column-reverse',
