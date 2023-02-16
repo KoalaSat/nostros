@@ -96,11 +96,10 @@ export const GroupsFeed: React.FC = () => {
           results.forEach((group) => {
             if (group.id) {
               getGroupMessagesMentionsCount(database, group.id).then((count) => {
-                if (count > 0)
-                  setNewMentions((prev) => {
-                    if (group.id) prev[group.id] = count
-                    return prev
-                  })
+                setNewMentions((prev) => {
+                  if (group.id) prev[group.id] = count
+                  return prev
+                })
               })
               getGroupMessagesCount(database, group.id).then((count) => {
                 setNewMessage((prev) => {

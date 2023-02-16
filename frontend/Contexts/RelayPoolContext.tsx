@@ -6,6 +6,8 @@ import debounce from 'lodash.debounce'
 import { getActiveRelays, getRelays, Relay } from '../Functions/DatabaseFunctions/Relays'
 import { UserContext } from './UserContext'
 import { randomInt } from '../Functions/NativeFunctions'
+import { getUnixTime } from 'date-fns'
+import { Event } from '../../lib/nostr/Events'
 
 export interface RelayPoolContextProps {
   relayPoolReady: boolean
@@ -54,6 +56,19 @@ export const RelayPoolContextProvider = ({
   const [relays, setRelays] = React.useState<Relay[]>([])
   const [displayRelayDrawer, setDisplayrelayDrawer] = React.useState<string>()
 
+  const sendRelays: (relayList: Relay[]) => void = (relayList) => {
+    if (publicKey && relayList.length > 0) {
+      const event: Event = {
+        content: '',
+        created_at: getUnixTime(new Date()),
+        kind: 1002,
+        pubkey: publicKey,
+        tags: relayList.map((relay) => ['r', relay.url, relay.mode ?? '']),
+      }
+      relayPool?.sendEvent(event)
+    }
+  }
+
   const changeEventIdHandler: (event: WebsocketEvent) => void = (event) => {
     setLastEventId(event.eventId)
   }
@@ -92,15 +107,15 @@ export const RelayPoolContextProvider = ({
     }
   }
 
-  const loadRelays: () => Promise<void> = async () => {
-    return await new Promise<void>((resolve, _reject) => {
+  const loadRelays: () => Promise<Relay[]> = async () => {
+    return await new Promise<Relay[]>((resolve, _reject) => {
       if (database) {
         getRelays(database).then((results) => {
           setRelays(results)
-          resolve()
+          resolve(results)
         })
       } else {
-        resolve()
+        resolve([])
       }
     })
   }
@@ -118,7 +133,7 @@ export const RelayPoolContextProvider = ({
     return await new Promise((resolve, _reject) => {
       if (relayPool && database && publicKey) {
         relayPool.update(relay.url, relay.active ?? 1, relay.global_feed ?? 1, () => {
-          loadRelays().then(resolve)
+          loadRelays().then(() => resolve())
         })
       }
     })
@@ -129,7 +144,10 @@ export const RelayPoolContextProvider = ({
     return await new Promise((resolve, _reject) => {
       if (relayPool && database && publicKey) {
         relayPool.add(relay.url, () => {
-          loadRelays().then(resolve)
+          loadRelays().then((results) => {
+            sendRelays(results)
+            resolve()
+          })
         })
       }
     })
@@ -140,7 +158,10 @@ export const RelayPoolContextProvider = ({
     return await new Promise((resolve, _reject) => {
       if (relayPool && database && publicKey) {
         relayPool.remove(relay.url, () => {
-          loadRelays().then(resolve)
+          loadRelays().then((results) => {
+            sendRelays(results)
+            resolve()
+          })
         })
       }
     })

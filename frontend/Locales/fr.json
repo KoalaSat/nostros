@@ -336,7 +336,10 @@
       "block": "Bloquer",
       "unblock": "Débloquer",
       "unfollow": "Abonné",
-      "relaysTitle": "Relays"
+      "relaysTitle": "Relays",
+      "blocked": "Blocked",
+      "mute": "Mute",
+      "muted": "Muted"
     },
     "conversationsFeed": {
       "openMessage": "Commencer la conversation",

@@ -14,6 +14,7 @@ export interface User {
   created_at?: number
   valid_nip05?: boolean
   blocked?: number
+  muted_groups?: number
 }
 
 const databaseToEntity: (object: object) => User = (object) => {
@@ -40,6 +41,17 @@ export const updateUserBlock: (
 
   await addUser(userId, db)
   return db.execute(userQuery, [blocked ? 1 : 0, userId])
+}
+
+export const updateUserMutesGroups: (
+  db: QuickSQLiteConnection,
+  userId: string,
+  muted: boolean,
+) => Promise<QueryResult | null> = async (db, userId, muted) => {
+  const userQuery = `UPDATE nostros_users SET muted_groups = ? WHERE id = ?`
+
+  await addUser(userId, db)
+  return db.execute(userQuery, [muted ? 1 : 0, userId])
 }
 
 export const getUser: (pubkey: string, db: QuickSQLiteConnection) => Promise<User | null> = async (

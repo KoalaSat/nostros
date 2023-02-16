@@ -173,6 +173,10 @@ public class DatabaseModule {
             database.execSQL("ALTER TABLE nostros_group_messages ADD COLUMN read INT DEFAULT 0;");
             database.execSQL("ALTER TABLE nostros_group_messages ADD COLUMN user_mentioned INT DEFAULT 0;");
         } catch (SQLException e) { }
+        try {
+            database.execSQL("ALTER TABLE updated_at ADD COLUMN mode INT DEFAULT 0;");
+            database.execSQL("ALTER TABLE nostros_relays ADD COLUMN mode TEXT;");
+        } catch (SQLException e) { }
     }
 
     public void saveEvent(JSONObject data, String userPubKey, String relayUrl) throws JSONException {
