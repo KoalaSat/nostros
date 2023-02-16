@@ -168,6 +168,11 @@ public class DatabaseModule {
             database.execSQL("CREATE INDEX nostros_group_messages_group_id_index ON nostros_group_messages(group_id, created_at);");
             database.execSQL("ALTER TABLE nostros_users ADD COLUMN muted_groups INT DEFAULT 0;");
         } catch (SQLException e) { }
+        try {
+            database.execSQL("ALTER TABLE nostros_group_meta ADD COLUMN deleted INT DEFAULT 0;");
+            database.execSQL("ALTER TABLE nostros_group_messages ADD COLUMN read INT DEFAULT 0;");
+            database.execSQL("ALTER TABLE nostros_group_messages ADD COLUMN user_mentioned INT DEFAULT 0;");
+        } catch (SQLException e) { }
     }
 
     public void saveEvent(JSONObject data, String userPubKey, String relayUrl) throws JSONException {

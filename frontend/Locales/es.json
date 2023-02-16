@@ -52,6 +52,11 @@
       "contentWarning": "Contenido sensible",
       "send": "Enviar"
     },
+    "groupHeaderIcon": {
+      "delete": "Salir del grupo",
+      "share": "Compartir grupo",
+      "edit": "Editar grupo"
+    },
     "groupsFeed": {
       "delete": "Salir del grupo",
       "updateTitle": "Actualizar grupo",

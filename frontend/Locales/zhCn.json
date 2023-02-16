@@ -30,6 +30,11 @@
       "Relays": "中继",
       "ProfileConfig": "简介设置"
     },
+    "groupHeaderIcon": {
+      "delete": "Leave group",
+      "share": "Share group",
+      "edit": "Edit group"
+    },
     "groupsFeed": {
       "delete": "退出群组",
       "updateTitle": "更新群组",

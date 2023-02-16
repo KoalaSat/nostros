@@ -31,6 +31,11 @@
       "ProfileConfig": "Мой профиль",
       "markAllRead": "Mark all as read"
     },
+    "groupHeaderIcon": {
+      "delete": "Leave group",
+      "share": "Share group",
+      "edit": "Edit group"
+    },
     "groupsFeed": {
       "delete": "Leave group",
       "updateTitle": "Update group",

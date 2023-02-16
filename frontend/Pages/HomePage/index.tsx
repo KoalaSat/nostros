@@ -20,6 +20,7 @@ import {
   getGroupedDirectMessages,
 } from '../../Functions/DatabaseFunctions/DirectMessages'
 import GroupsFeed from '../GroupsFeed'
+import { getUserGroupMessagesCount } from '../../Functions/DatabaseFunctions/Groups'
 
 export const HomePage: React.FC = () => {
   const theme = useTheme()
@@ -31,6 +32,7 @@ export const HomePage: React.FC = () => {
   const { relayPool, lastEventId } = useContext(RelayPoolContext)
   const [newNotifications, setNewNotifications] = useState<number>(0)
   const [newdirectMessages, setNewdirectMessages] = useState<number>(0)
+  const [newGroupMessages, setNewGroupMessages] = useState<number>(0)
   const bottomSheetClipboardRef = React.useRef<RBSheet>(null)
 
   useEffect(() => {
@@ -42,6 +44,7 @@ export const HomePage: React.FC = () => {
   useEffect(() => {
     if (publicKey && database) {
       getNotificationsCount(database, publicKey, notificationSeenAt).then(setNewNotifications)
+      getUserGroupMessagesCount(database, publicKey).then(setNewGroupMessages)
       getDirectMessagesCount(database, publicKey).then(setNewdirectMessages)
     }
   }, [lastEventId, notificationSeenAt, refreshBottomBarAt])
@@ -51,6 +54,11 @@ export const HomePage: React.FC = () => {
       getMentionNotes(database, publicKey, 1).then((mentionResults) => {
         getGroupedDirectMessages(database, { limit: 1 }).then((directMessageResults) => {
           relayPool?.subscribe('notification-icon', [
+            {
+              kinds: [Kind.ChannelMessage],
+              '#e': [publicKey],
+              limit: 20,
+            },
             {
               kinds: [Kind.EncryptedDirectMessage],
               '#p': [publicKey],
@@ -149,11 +157,16 @@ export const HomePage: React.FC = () => {
               component={GroupsFeed}
               options={{
                 tabBarIcon: ({ focused, size }) => (
-                  <MaterialCommunityIcons
-                    name={focused ? 'account-group' : 'account-group-outline'}
-                    size={size}
-                    color={theme.colors.onPrimaryContainer}
-                  />
+                  <>
+                    <MaterialCommunityIcons
+                      name={focused ? 'account-group' : 'account-group-outline'}
+                      size={size}
+                      color={theme.colors.onPrimaryContainer}
+                    />
+                    {newGroupMessages > 0 && (
+                      <Badge style={styles.notificationBadge}>{newGroupMessages}</Badge>
+                    )}
+                  </>
                 ),
               }}
             />
@@ -199,7 +212,6 @@ export const HomePage: React.FC = () => {
           }}
         />
       </Tab.Navigator>
-
       <RBSheet
         ref={bottomSheetClipboardRef}
         closeOnDragDown={true}
