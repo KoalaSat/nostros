@@ -8,7 +8,7 @@ import {
 } from 'react-native'
 import { AppContext } from '../../Contexts/AppContext'
 import SInfo from 'react-native-sensitive-info'
-import { getLastReply, getMentionNotes, Note } from '../../Functions/DatabaseFunctions/Notes'
+import { getMentionNotes, Note } from '../../Functions/DatabaseFunctions/Notes'
 import NoteCard from '../../Components/NoteCard'
 import { RelayPoolContext } from '../../Contexts/RelayPoolContext'
 import { Kind } from 'nostr-tools'
@@ -19,7 +19,6 @@ import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityI
 import { useTranslation } from 'react-i18next'
 import { navigate } from '../../lib/Navigation'
 import { useFocusEffect } from '@react-navigation/native'
-import { getLastReaction } from '../../Functions/DatabaseFunctions/Reactions'
 import { getUnixTime } from 'date-fns'
 import { Config } from '../../Functions/DatabaseFunctions/Config'
 import { FlashList, ListRenderItem } from '@shopify/flash-list'
@@ -46,7 +45,6 @@ export const NotificationsFeed: React.FC = () => {
           'notification-feed',
           'notification-replies',
           'notification-reactions',
-          'notification-meta',
         ])
         updateLastSeen()
       }
@@ -106,23 +104,15 @@ export const NotificationsFeed: React.FC = () => {
         if (notes.length > 0) {
           const notedIds = notes.map((note) => note.id ?? '')
           const authors = notes.map((note) => note.pubkey ?? '')
-          const lastReaction = await getLastReaction(database, { eventIds: notedIds })
-          const lastReply = await getLastReply(database, { eventIds: notedIds })
 
-          relayPool?.subscribe('notification-meta', [
+          relayPool?.subscribe('notification-reactions', [
             {
               kinds: [Kind.Metadata],
               authors,
             },
             {
-              kinds: [Kind.Reaction],
+              kinds: [Kind.Text, Kind.Reaction, 9735],
               '#e': notedIds,
-              since: lastReaction?.created_at ?? 0,
-            },
-            {
-              kinds: [Kind.Text],
-              '#e': notedIds,
-              since: lastReply?.created_at ?? 0,
             },
           ])
         }

@@ -90,7 +90,7 @@ export const NotePage: React.FC<NotePageProps> = ({ route }) => {
       ])
       relayPool?.subscribe(`notepage-replies-${route.params.noteId.substring(0, 8)}`, [
         {
-          kinds: [Kind.Reaction, Kind.Text, Kind.RecommendRelay],
+          kinds: [Kind.Reaction, Kind.Text, Kind.RecommendRelay, 9735],
           '#e': [route.params.noteId],
         },
       ])

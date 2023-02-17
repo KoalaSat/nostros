@@ -15,6 +15,7 @@ export interface User {
   valid_nip05?: boolean
   blocked?: number
   muted_groups?: number
+  zap_pubkey?: string
 }
 
 const databaseToEntity: (object: object) => User = (object) => {

@@ -8,7 +8,7 @@ import {
   View,
 } from 'react-native'
 import { AppContext } from '../../Contexts/AppContext'
-import { getLastReply, getMainNotes, Note } from '../../Functions/DatabaseFunctions/Notes'
+import { getMainNotes, Note } from '../../Functions/DatabaseFunctions/Notes'
 import { handleInfinityScroll } from '../../Functions/NativeFunctions'
 import { UserContext } from '../../Contexts/UserContext'
 import { RelayPoolContext } from '../../Contexts/RelayPoolContext'
@@ -18,7 +18,6 @@ import { ActivityIndicator, Button, Text } from 'react-native-paper'
 import NoteCard from '../../Components/NoteCard'
 import { useTheme } from '@react-navigation/native'
 import { FlashList, ListRenderItem } from '@shopify/flash-list'
-import { getLastReaction } from '../../Functions/DatabaseFunctions/Reactions'
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'
 import { useTranslation } from 'react-i18next'
 
@@ -41,7 +40,6 @@ export const MyFeed: React.FC<MyFeedProps> = ({ navigation }) => {
   const unsubscribe: () => void = () => {
     relayPool?.unsubscribe([
       'homepage-contacts-main',
-      'homepage-contacts-meta',
       'homepage-contacts-replies',
       'homepage-contacts-reactions',
       'homepage-contacts-repost',
@@ -104,32 +102,16 @@ export const MyFeed: React.FC<MyFeedProps> = ({ navigation }) => {
         setNotes(notes)
         if (notes.length > 0) {
           const noteIds = notes.map((note) => note.id ?? '')
-          relayPool?.subscribe('homepage-contacts-meta', [
-            {
-              kinds: [Kind.Metadata],
-              authors: notes.map((note) => note.pubkey ?? ''),
-            },
-          ])
+          const authors = notes.map((note) => note.pubkey ?? '')
 
-          const lastReaction = await getLastReaction(database, {
-            eventIds: notes.map((note) => note.id ?? ''),
-          })
           relayPool?.subscribe('homepage-contacts-reactions', [
             {
-              kinds: [Kind.Reaction],
-              '#e': noteIds,
-              since: lastReaction?.created_at ?? 0,
+              kinds: [Kind.Metadata],
+              authors,
             },
-          ])
-
-          const lastReply = await getLastReply(database, {
-            eventIds: notes.map((note) => note.id ?? ''),
-          })
-          relayPool?.subscribe('homepage-contacts-replies', [
             {
-              kinds: [Kind.Text],
+              kinds: [Kind.Reaction, Kind.Text, 9735],
               '#e': noteIds,
-              since: lastReply?.created_at ?? 0,
             },
           ])
           const repostIds = notes

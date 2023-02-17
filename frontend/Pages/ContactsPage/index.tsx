@@ -85,7 +85,7 @@ export const ContactsPage: React.FC = () => {
             relayPool?.subscribe('contacts-meta', [
               {
                 kinds: [Kind.Metadata],
-                authors: results.map((user) => user.id),
+                authors: followers.map((user) => user.id),
               },
             ])
           }

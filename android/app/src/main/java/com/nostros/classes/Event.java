@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.util.Log;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -74,6 +75,8 @@ public class Event {
                     muteUser(database);
                 } else if (kind.equals("1002")) {
                     saveRelays(database);
+                } else if (kind.equals("9735")) {
+                    saveZap(database);
                 }
             } catch (JSONException e) {
                 e.printStackTrace();
@@ -193,6 +196,31 @@ public class Event {
         }
 
         return false;
+    }
+
+    protected String getZapPubkey(String lnurl) {
+        String[] parts = lnurl.split("@");
+        if (parts.length < 2) return "";
+
+        String name = parts[0];
+        String domain = parts[1];
+
+        if (!name.matches("^[a-z0-9-_]+$")) return "";
+
+        try {
+            String url = "https://" + domain + "/.well-known/lnurlp/" + name;
+            JSONObject response = getJSONObjectFromURL(url);
+            Boolean allowsNostr = response.getBoolean("allowsNostr");
+            if (allowsNostr) {
+                String nostrPubkey = response.getString("nostrPubkey");
+                Log.d("zap_pubkey nostrPubkey", nostrPubkey);
+                return nostrPubkey;
+            }
+        } catch (IOException | JSONException e) {
+            e.printStackTrace();
+        }
+
+        return "";
     }
 
     protected void saveNote(SQLiteDatabase database, String userPubKey) {
@@ -390,7 +418,7 @@ public class Event {
 
     protected void saveUserMeta(SQLiteDatabase database) throws JSONException {
         JSONObject userContent = new JSONObject(content);
-        String query = "SELECT created_at, valid_nip05, nip05 FROM nostros_users WHERE id = ?";
+        String query = "SELECT created_at, valid_nip05, nip05, zap_pubkey FROM nostros_users WHERE id = ?";
         @SuppressLint("Recycle") Cursor cursor = database.rawQuery(query, new String[] {pubkey});
 
         String nip05 = userContent.optString("nip05");
@@ -410,18 +438,63 @@ public class Event {
         if (cursor.getCount() == 0) {
             values.put("id", pubkey);
             values.put("valid_nip05", validateNip05(nip05) ? 1 : 0);
+            values.put("zap_pubkey", getZapPubkey(lud));
             values.put("blocked", 0);
             database.insert("nostros_users", null, values);
-        } else if (cursor.moveToFirst() && created_at > cursor.getInt(0)) {
-            if (cursor.getInt(1) == 0 || !cursor.getString(2).equals(nip05)) {
-                values.put("valid_nip05", validateNip05(nip05) ? 1 : 0);
-            }
+        } else if (cursor.moveToFirst()){
             String whereClause = "id = ?";
-            String[] whereArgs = new String[] {
+            String[] whereArgs = new String[]{
                     this.pubkey
             };
-            database.update("nostros_users", values, whereClause, whereArgs);
+            if(created_at >= cursor.getInt(0)) {
+                if (cursor.isNull(1) || (!cursor.isNull(2) && !cursor.getString(2).equals(nip05))) {
+                    values.put("valid_nip05", validateNip05(nip05) ? 1 : 0);
+                }
+                Log.d("zap_pubkey", pubkey);
+                Log.d("zap_pubkey", lud);
+                if (cursor.isNull(3) || (!cursor.isNull(4) && !cursor.getString(4).equals(lud))) {
+                    values.put("zap_pubkey", getZapPubkey(lud));
+                }
+                database.update("nostros_users", values, whereClause, whereArgs);
+            }
         }
+    }
+
+    protected void saveZap(SQLiteDatabase database) throws JSONException {
+        JSONArray pTags = filterTags("p");
+        JSONArray eTags = filterTags("e");
+        JSONArray bolt11Tags = filterTags("bolt11");
+
+        String zapped_event_id = "";
+        String zapped_user_id = "";
+        int amount = 0;
+        if (bolt11Tags.length() > 0) {
+            String lnurl = bolt11Tags.getJSONArray(0).getString(1);
+            Matcher m = Pattern.compile("^lnbc(\\d*)n\\S*$").matcher(lnurl);
+            if (m.find()) {
+                amount = Integer.parseInt(m.group(1));
+            }
+        }
+        if (eTags.length() > 0) {
+            zapped_event_id = eTags.getJSONArray(eTags.length() - 1).getString(1);
+        }
+        if (pTags.length() > 0) {
+            zapped_user_id = pTags.getJSONArray(pTags.length() - 1).getString(1);
+        }
+
+        ContentValues values = new ContentValues();
+        values.put("id", id);
+        values.put("content", content);
+        values.put("created_at", created_at);
+        values.put("kind", kind);
+        values.put("pubkey", pubkey);
+        values.put("sig", sig);
+        values.put("tags", tags.toString());
+        values.put("amount", amount);
+        values.put("zapped_user_id", zapped_user_id);
+        values.put("zapped_event_id", zapped_event_id);
+
+        database.insert("nostros_zaps", null, values);
     }
 
     protected void savePets(SQLiteDatabase database) throws JSONException {
