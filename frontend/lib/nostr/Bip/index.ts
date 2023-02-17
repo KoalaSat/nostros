@@ -19,7 +19,7 @@ export const generateRandomKey: () => Promise<string> = async () => {
 export const generateRandomMnemonic: () => Promise<Record<number, string>> = async () => {
   const result: Record<number, string> = {}
   for (let index = 0; index < 12; index++) {
-    const random = await generateSecureRandom(4)
+    const random = await generateSecureRandom(12)
     const totalRandom = random.reduce((sum, current) => sum + current, 0)
     const position = totalRandom % wordlist.length
     result[index + 1] = wordlist[position]
