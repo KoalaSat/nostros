@@ -31,9 +31,9 @@
       "ProfileConfig": "简介设置"
     },
     "groupHeaderIcon": {
-      "delete": "Leave group",
-      "share": "Share group",
-      "edit": "Edit group"
+      "delete": "退出",
+      "share": "分享",
+      "edit": "编辑"
     },
     "groupsFeed": {
       "delete": "退出群组",
@@ -87,7 +87,7 @@
       "contacts": "联系人",
       "relays": "中继",
       "notConnected": "未连接",
-      "connectedRelays": "已连接 {{number}} 个中继",
+      "connectedRelays": "已连接 {{number}}",
       "following": "{{following}} 正在关注",
       "followers": "{{followers}} 关注者",
       "configuration": "设置",
@@ -248,7 +248,7 @@
       "globalFeed": "发现页",
       "copy": "复制",
       "remove": "移除",
-      "active": "激活",
+      "active": "启用",
       "share": "分享",
       "pubkey": "公钥",
       "contact": "联系人",
@@ -351,9 +351,9 @@
       "copyNip05": "复制 NIP-05",
       "copyNPub": "复制公钥",
       "relaysTitle": "中继",
-      "blocked": "Blocked",
-      "mute": "Mute",
-      "muted": "Muted"
+      "blocked": "已屏蔽",
+      "mute": "静音",
+      "muted": "已静音"
     },
     "conversationsFeed": {
       "openMessage": "发送私信",
