@@ -247,6 +247,9 @@ android {
 dependencies {
     implementation fileTree(dir: "libs", include: ["*.jar"])
 
+// //    https://stackoverflow.com/questions/56639529/duplicate-class-com-google-common-util-concurrent-listenablefuture-found-in-modu
+//     implementation 'com.google.guava:listenablefuture:9999.0-empty-to-avoid-conflict-with-guava'
+
     //noinspection GradleDynamicVersion
     implementation "com.facebook.react:react-native:+"  // From node_modules
 
@@ -258,6 +261,8 @@ dependencies {
     implementation 'com.facebook.fresco:webpsupport:2.6.0'
 
     implementation 'com.facebook.fresco:animated-gif:2.6.0'
+    
+    // implementation 'com.github.Samourai-Wallet:ExtLibJ:0.0.11'
 
     debugImplementation("com.facebook.flipper:flipper:${FLIPPER_VERSION}") {
         exclude group:'com.facebook.fbjni'

@@ -122,7 +122,9 @@
       "cancel": "Отменить",
       "npub": "Публичный ключ",
       "copy": "Скопировать",
-      "open": "Открыть кошелек"
+      "open": "Открыть кошелек",
+      "anonTip": "Anonymous tip",
+      "zap": "Zap"
     },
     "notificationsFeed": {
       "emptyTitle": "У Вас нет новых уведомлений",
@@ -259,7 +261,7 @@
         "nsecCopied": "Приватный ключ скопирован",
         "npubCopied": "Публичный ключ скопирован",
         "profilePublished": "Profile published.",
-        "lud06Published": "LUD-06 published.\n\n{{lud06}}",
+        "lud06Published": "LUDs published.",
         "nip05Published": "NIP-05 published.\n\n{{nip05}}",
         "picturePublished": "Picture published.",
         "connectionError": "Ошибка с подключением",
@@ -267,9 +269,10 @@
         "desactive": "Relay desactivated."
       },
       "publishLud06": "Опубликовть",
-      "lud06Label": "LNURL / Lightning Address",
+      "lud06Label": "LNURL",
+      "lud16Label": "Lightning Address",
       "lud06Description": "Link your identity with a LNURL or Lightning Address.",
-      "lud06Title": "LUD-06",
+      "lud06Title": "Zaps",
       "publishNip05": "Publish",
       "nip05Link": "Подробнее.",
       "nip05Description": "Link your identity with a domain.",
@@ -287,7 +290,7 @@
       "npub": "Публичный ключ",
       "copyNPub": "Скопировать",
       "directory": "Directory",
-      "lud06": "LUD-06",
+      "lud06": "Zaps",
       "nip05": "NIP-05",
       "name": "Name",
       "about": "Описание"

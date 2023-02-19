@@ -141,7 +141,8 @@ export const ConversationsFeed: React.FC = () => {
               publicKey={user.id}
               validNip05={user?.valid_nip05}
               nip05={user?.nip05}
-              lud06={user?.lnurl}
+              lnurl={user?.lnurl}
+              lnAddress={user?.ln_address}
               picture={user?.picture}
             />
           </View>
@@ -240,7 +241,8 @@ export const ConversationsFeed: React.FC = () => {
           publicKey={item.id}
           validNip05={item?.valid_nip05}
           nip05={item?.nip05}
-          lud06={item?.lnurl}
+          lnurl={item?.lnurl}
+          lnAddress={item?.ln_address}
           picture={item?.picture}
         />
       </View>

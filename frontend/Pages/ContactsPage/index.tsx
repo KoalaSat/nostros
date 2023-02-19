@@ -85,7 +85,7 @@ export const ContactsPage: React.FC = () => {
             relayPool?.subscribe('contacts-meta', [
               {
                 kinds: [Kind.Metadata],
-                authors: results.map((user) => user.id),
+                authors: following.map((user) => user.id),
               },
             ])
           }
@@ -196,7 +196,8 @@ export const ContactsPage: React.FC = () => {
               publicKey={getNpub(item.id)}
               validNip05={item?.valid_nip05}
               nip05={item?.nip05}
-              lud06={item?.lnurl}
+              lnurl={item?.lnurl}
+              lnAddress={item?.ln_address}
               picture={item?.picture}
             />
           </View>
@@ -225,7 +226,8 @@ export const ContactsPage: React.FC = () => {
               publicKey={getNpub(item.id)}
               validNip05={item?.valid_nip05}
               nip05={item?.nip05}
-              lud06={item?.lnurl}
+              lnurl={item?.lnurl}
+              lnAddress={item?.ln_address}
               picture={item?.picture}
             />
           </View>

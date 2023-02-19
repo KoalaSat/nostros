@@ -121,7 +121,9 @@
       "generateInvoice": "Generar factura",
       "cancel": "Cancelar",
       "copy": "Copiar",
-      "open": "Abrir wallet"
+      "open": "Abrir wallet",
+      "anonTip": "Propina anónima",
+      "zap": "Zap"
     },
     "notificationsFeed": {
       "emptyTitle": "No tienes notificationes.",
@@ -267,15 +269,16 @@
         "nsecCopied": "Clave secreta copiada.",
         "npubCopied": "Clave pública copiada.",
         "profilePublished": "Perfil publicado.",
-        "lud06Published": "LUD-06 publicado.\n\n{{lud06}}",
+        "lud06Published": "LUDs publicados.",
         "nip05Published": "NIP-05 publicado.\n\n{{nip05}}",
         "picturePublished": "Imagen publicada.",
         "connectionError": "Error de conexión"
       },
       "publishLud06": "Publicar",
-      "lud06Label": "LNURL / Lightning Address",
+      "lud06Label": "LNURL",
+      "lud16Label": "Lightning Address",
       "lud06Description": "Vincula tu perfil a LNURL or Lightning Address.",
-      "lud06Title": "LUD-06",
+      "lud06Title": "Zaps",
       "publishNip05": "Publicar",
       "nip05Link": "Saber más.",
       "nip05Description": "Vincula tu perfil con un dominio.",
@@ -293,7 +296,7 @@
       "npub": "Clave pública",
       "copyNPub": "Copiar",
       "directory": "Directory",
-      "lud06": "LUD-06",
+      "lud06": "Zaps",
       "nip05": "NIP-05",
       "name": "Nombre",
       "about": "Descripción"

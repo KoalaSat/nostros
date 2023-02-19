@@ -61,7 +61,8 @@ export const ProfileCard: React.FC<ProfileCardProps> = ({ bottomSheetRef, showIm
                 publicKey={user?.id ?? displayUserDrawer}
                 validNip05={user?.valid_nip05}
                 nip05={user?.nip05}
-                lud06={user?.lnurl}
+                lnurl={user?.lnurl}
+                lnAddress={user?.ln_address}
                 picture={showImages ? user?.picture : undefined}
               />
             </View>

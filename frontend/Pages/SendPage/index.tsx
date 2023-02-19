@@ -137,7 +137,8 @@ export const SendPage: React.FC<SendPageProps> = ({ route }) => {
           publicKey={item?.id}
           validNip05={item?.valid_nip05}
           nip05={item?.nip05}
-          lud06={item?.lnurl}
+          lnurl={item?.lnurl}
+          lnAddress={item?.ln_address}
           picture={item?.picture}
         />
       </View>

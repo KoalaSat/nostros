@@ -113,6 +113,7 @@ export const UploadImage: React.FC<UploadImageProps> = ({
           mode='contained'
           onPress={uploadImage}
           loading={uploadingFile}
+          disabled={uploadingFile}
         >
           {t('uploadImage.uploadImage')}
         </Button>

@@ -36,10 +36,11 @@ import { REGEX_SOCKET_LINK } from '../../Constants/Relay'
 import { navigate, push } from '../../lib/Navigation'
 import { Kind } from 'nostr-tools'
 import ProfileData from '../ProfileData'
-import { relayToColor } from '../../Functions/NativeFunctions'
+import { formatBigNumber, relayToColor } from '../../Functions/NativeFunctions'
 import { SvgXml } from 'react-native-svg'
 import { reactionIcon } from '../../Constants/Theme'
 import LnPayment from '../LnPayment'
+import { getZapsAmount } from '../../Functions/DatabaseFunctions/Zaps'
 
 interface NoteCardProps {
   note?: Note
@@ -75,6 +76,7 @@ export const NoteCard: React.FC<NoteCardProps> = ({
   const [userDownvoted, setUserDownvoted] = useState<boolean>(false)
   const [repliesCount, setRepliesCount] = React.useState<number>(0)
   const [repostCount, serRepostCount] = React.useState<number>(0)
+  const [zapsAmount, setZapsAmount] = React.useState<number>()
   const [relays, setRelays] = React.useState<NoteRelay[]>([])
   const [hide, setHide] = useState<boolean>(isContentWarning(note))
   const [userReposted, setUserReposted] = useState<boolean>()
@@ -102,6 +104,9 @@ export const NoteCard: React.FC<NoteCardProps> = ({
         getRepliesCount(database, note.id).then(setRepliesCount)
         getRepostCount(database, note.id).then(serRepostCount)
         isUserReposted(database, note.id, publicKey).then(setUserReposted)
+        if (note.zap_pubkey?.length > 0) {
+          getZapsAmount(database, note.id).then(setZapsAmount)
+        }
       }
       getNoteRelays(database, note.id).then(setRelays)
     }
@@ -372,7 +377,8 @@ export const NoteCard: React.FC<NoteCardProps> = ({
             publicKey={note.pubkey}
             validNip05={note?.valid_nip05}
             nip05={note?.nip05}
-            lud06={note?.lnurl}
+            lnurl={note?.lnurl}
+            lnAddress={note?.ln_address}
             picture={showAvatarImage ? note?.picture : undefined}
             timestamp={note?.created_at}
           />
@@ -415,20 +421,18 @@ export const NoteCard: React.FC<NoteCardProps> = ({
               {showActionCount && reactionsCount()}
             </Button>
           </Surface>
-          {note.lnurl && (
-            <>
-              <Button
-                style={styles.action}
-                icon={() => (
-                  <MaterialCommunityIcons name='lightning-bolt' size={24} color={'#F5D112'} />
-                )}
-                onPress={() => setOpenLn(true)}
-              >
-                {''}
-              </Button>
-              {openLn && <LnPayment open={openLn} setOpen={setOpenLn} note={note} />}
-            </>
+          {(note?.lnurl || note?.ln_address) && (
+            <Button
+              style={styles.action}
+              icon={() => (
+                <MaterialCommunityIcons name='lightning-bolt' size={24} color={'#F5D112'} />
+              )}
+              onPress={() => setOpenLn(true)}
+            >
+              {note.zap_pubkey?.length > 0 ? formatBigNumber(zapsAmount) : ''}
+            </Button>
           )}
+          {openLn && <LnPayment open={openLn} setOpen={setOpenLn} note={note} />}
         </Card.Content>
       )}
       <Card.Content style={styles.relayList}>

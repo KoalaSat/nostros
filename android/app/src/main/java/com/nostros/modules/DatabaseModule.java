@@ -174,8 +174,27 @@ public class DatabaseModule {
             database.execSQL("ALTER TABLE nostros_group_messages ADD COLUMN user_mentioned INT DEFAULT 0;");
         } catch (SQLException e) { }
         try {
-            database.execSQL("ALTER TABLE updated_at ADD COLUMN mode INT DEFAULT 0;");
+            database.execSQL("ALTER TABLE nostros_relays ADD COLUMN updated_at INT DEFAULT 0;");
             database.execSQL("ALTER TABLE nostros_relays ADD COLUMN mode TEXT;");
+        } catch (SQLException e) { }
+        try {
+            database.execSQL("ALTER TABLE nostros_users ADD COLUMN ln_address TEXT;");
+            database.execSQL("UPDATE nostros_users SET ln_address=lnurl;");
+            database.execSQL("ALTER TABLE nostros_users ADD COLUMN zap_pubkey TEXT;");
+            database.execSQL("CREATE TABLE IF NOT EXISTS nostros_zaps(\n" +
+                    "          id TEXT PRIMARY KEY NOT NULL, \n" +
+                    "          content TEXT NOT NULL,\n" +
+                    "          created_at INT NOT NULL,\n" +
+                    "          kind INT NOT NULL,\n" +
+                    "          pubkey TEXT NOT NULL,\n" +
+                    "          sig TEXT NOT NULL,\n" +
+                    "          tags TEXT NOT NULL,\n" +
+                    "          amount FLOAT NOT NULL,\n" +
+                    "          zapped_user_id TEXT NOT NULL,\n" +
+                    "          zapper_user_id TEXT NOT NULL,\n" +
+                    "          zapped_event_id TEXT\n" +
+                    "        );");
+            database.execSQL("CREATE INDEX nostros_nostros_zaps_zapped_event_id_index ON nostros_zaps(zapped_event_id);");
         } catch (SQLException e) { }
     }
 
