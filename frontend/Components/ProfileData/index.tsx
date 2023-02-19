@@ -33,8 +33,7 @@ export const ProfileData: React.FC<ProfileCardProps> = ({
   const theme = useTheme()
   const nPub = React.useMemo(() => (publicKey ? getNpub(publicKey) : ''), [publicKey])
   const date = React.useMemo(
-    () =>
-      timestamp ? formatDistance(fromUnixTime(timestamp), new Date(), { addSuffix: true }) : null,
+    () => (timestamp ? formatDistance(fromUnixTime(timestamp), new Date()) : null),
     [timestamp],
   )
 

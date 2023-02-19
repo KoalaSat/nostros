@@ -46,16 +46,20 @@ interface NoteCardProps {
   note?: Note
   showAvatarImage?: boolean
   showAnswerData?: boolean
+  showRelayColors?: boolean
   showAction?: boolean
   showActionCount?: boolean
   showPreview?: boolean
   showRepostPreview?: boolean
   numberOfLines?: number
+  copyOnPress?: boolean
   mode?: 'elevated' | 'outlined' | 'contained'
 }
 
 export const NoteCard: React.FC<NoteCardProps> = ({
   note,
+  copyOnPress = true,
+  showRelayColors = true,
   showAvatarImage = true,
   showAnswerData = true,
   showAction = true,
@@ -177,44 +181,40 @@ export const NoteCard: React.FC<NoteCardProps> = ({
               onPressUser={(user) => setDisplayUserDrawer(user.id)}
               showPreview={showPreview}
               numberOfLines={numberOfLines}
+              copyOnPress={copyOnPress}
             />
           )}
           {note?.repost_id && (
-            <>
+            <TouchableRipple onPress={() => navigate('Note', { noteId: note.repost_id })}>
               {repost && showRepostPreview ? (
                 <NoteCard
                   note={repost}
-                  showActionCount={false}
                   showPreview={showPreview}
                   showRepostPreview={false}
+                  showAction={false}
+                  showRelayColors={false}
+                  copyOnPress={false}
                 />
               ) : (
-                <TouchableRipple
+                <Chip
+                  icon={() => (
+                    <MaterialCommunityIcons
+                      name='cached'
+                      size={16}
+                      color={theme.colors.onTertiaryContainer}
+                    />
+                  )}
                   style={{
-                    marginTop: note.content.length > 5 ? 16 : -16,
+                    backgroundColor: theme.colors.secondaryContainer,
+                    color: theme.colors.onTertiaryContainer,
                   }}
-                  onPress={() => navigate('Note', { noteId: note.repost_id })}
                 >
-                  <Chip
-                    icon={() => (
-                      <MaterialCommunityIcons
-                        name='cached'
-                        size={16}
-                        color={theme.colors.onTertiaryContainer}
-                      />
-                    )}
-                    style={{
-                      backgroundColor: theme.colors.secondaryContainer,
-                      color: theme.colors.onTertiaryContainer,
-                    }}
-                  >
-                    <Text style={{ color: theme.colors.onTertiaryContainer }}>
-                      {t('noteCard.reposted')}
-                    </Text>
-                  </Chip>
-                </TouchableRipple>
+                  <Text style={{ color: theme.colors.onTertiaryContainer }}>
+                    {t('noteCard.reposted')}
+                  </Text>
+                </Chip>
               )}
-            </>
+            </TouchableRipple>
           )}
         </Card.Content>
       </>
@@ -437,6 +437,7 @@ export const NoteCard: React.FC<NoteCardProps> = ({
       )}
       <Card.Content style={styles.relayList}>
         {relayColouring &&
+          showRelayColors &&
           relays.map((relay, index) => (
             <TouchableNativeFeedback
               onPress={() => setDisplayrelayDrawer(relay.relay_url)}

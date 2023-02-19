@@ -255,7 +255,12 @@ export const RelaysPage: React.FC = () => {
             </>
           )}
         />
-        <FlatList showsVerticalScrollIndicator={false} data={relays} renderItem={renderItem} />
+        <FlatList
+          showsVerticalScrollIndicator={false}
+          data={relays}
+          renderItem={renderItem}
+          style={styles.relayList}
+        />
       </ScrollView>
       <AnimatedFAB
         style={styles.fab}
@@ -347,6 +352,7 @@ const styles = StyleSheet.create({
   snackbar: {
     margin: 16,
     bottom: 70,
+    width: '100%',
   },
   relayColor: {
     paddingTop: 9,
@@ -359,8 +365,11 @@ const styles = StyleSheet.create({
     paddingLeft: 16,
     textAlign: 'center',
   },
+  relayList: {
+    paddingBottom: 80,
+  },
   fab: {
-    bottom: 65,
+    bottom: 16,
     right: 16,
     position: 'absolute',
   },

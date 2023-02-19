@@ -233,7 +233,8 @@
         "globalFeedActiveUnactive": "Flux global désactivé.",
         "pubkeyCopied": "Clé publique copiée.",
         "contactCopied": "Contact copié.",
-        "urlCopied": "URL copié."
+        "urlCopied": "URL copié.",
+        "pushCompleted": "All your data has been pushed."
       }
     },
     "relaysPage": {

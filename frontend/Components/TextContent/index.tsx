@@ -22,6 +22,7 @@ interface TextContentProps {
   showPreview?: boolean
   onPressUser?: (user: User) => void
   numberOfLines?: number
+  copyOnPress?: boolean
 }
 
 export const TextContent: React.FC<TextContentProps> = ({
@@ -30,6 +31,7 @@ export const TextContent: React.FC<TextContentProps> = ({
   showPreview = true,
   onPressUser = () => {},
   numberOfLines,
+  copyOnPress = true,
 }) => {
   const theme = useTheme()
   const { t } = useTranslation('common')
@@ -265,7 +267,7 @@ export const TextContent: React.FC<TextContentProps> = ({
           },
         ]}
         childrenProps={{ allowFontScaling: false }}
-        onLongPress={() => Clipboard.setString(text)}
+        onLongPress={copyOnPress ? () => Clipboard.setString(text) : undefined}
         numberOfLines={numberOfLines}
       >
         {text}

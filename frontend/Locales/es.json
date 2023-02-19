@@ -235,7 +235,8 @@
         "globalFeedActiveUnactive": "Feed Global desactivado.",
         "pubkeyCopied": "Clave pública copiada.",
         "contactCopied": "Contactp copiado.",
-        "urlCopied": "URL copiada."
+        "urlCopied": "URL copiada.",
+        "pushCompleted": "Todos tus datos se han subido."
       }
     },
     "relaysPage": {

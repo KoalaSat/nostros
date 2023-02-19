@@ -222,6 +222,7 @@ const styles = StyleSheet.create({
   snackbar: {
     margin: 16,
     bottom: 70,
+    width: '100%',
   },
   profilePicture: {
     width: '80%',

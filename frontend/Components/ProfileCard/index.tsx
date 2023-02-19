@@ -108,6 +108,7 @@ const styles = StyleSheet.create({
   },
   snackbar: {
     marginBottom: 85,
+    width: '100%',
   },
   usernameData: {
     paddingLeft: 16,

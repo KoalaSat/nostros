@@ -71,6 +71,8 @@ export const GroupsFeed: React.FC = () => {
     loadGroups()
   }, [lastEventId, lastConfirmationtId])
 
+  useEffect(() => {}, [newMessages, newMentions])
+
   const pastePicture: () => void = () => {
     Clipboard.getString().then((value) => {
       setNewGroupPicture(value ?? '')
@@ -272,7 +274,7 @@ export const GroupsFeed: React.FC = () => {
         estimatedItemSize={76}
       />
       <AnimatedFAB
-        style={[styles.fab, { top: Dimensions.get('window').height - 216 }]}
+        style={[styles.fab, { top: Dimensions.get('window').height - 191 }]}
         icon='plus'
         label='Label'
         onPress={() => bottomSheetFabActionRef.current?.open()}
@@ -433,6 +435,7 @@ const styles = StyleSheet.create({
   snackbar: {
     marginLeft: 16,
     bottom: 16,
+    width: '100%',
   },
   containerAvatar: {
     marginTop: 10,

@@ -266,7 +266,8 @@
         "globalFeedActiveUnactive": "已为发现页禁用",
         "pubkeyCopied": "已复制私钥",
         "contactCopied": "已复制联系人",
-        "urlCopied": "已复制链接"
+        "urlCopied": "已复制链接",
+        "pushCompleted": "All your data has been pushed."
       }
     },
     "profileConfigPage": {

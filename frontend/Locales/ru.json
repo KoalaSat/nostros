@@ -227,7 +227,8 @@
         "globalFeedActiveUnactive": "Global feed disabled",
         "pubkeyCopied": "Публичный ключ скопирован",
         "contactCopied": "Контакт скопирован",
-        "urlCopied": "URL скопирован"
+        "urlCopied": "URL скопирован",
+        "pushCompleted": "All your data has been pushed."
       }
     },
     "relaysPage": {
