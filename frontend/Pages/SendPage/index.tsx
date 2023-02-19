@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState } from 'react'
-import { ScrollView, StyleSheet, View } from 'react-native'
+import { Dimensions, ScrollView, StyleSheet, View } from 'react-native'
 import { AppContext } from '../../Contexts/AppContext'
 import { Event } from '../../lib/nostr/Events'
 import { useTranslation } from 'react-i18next'
@@ -147,7 +147,7 @@ export const SendPage: React.FC<SendPageProps> = ({ route }) => {
 
   return (
     <>
-      <View style={[styles.textInputContainer, { paddingBottom: note ? 230 : 10 }]}>
+      <View style={[styles.textInputContainer]}>
         {note && (
           <View style={styles.noteCard}>
             <NoteCard
@@ -165,7 +165,9 @@ export const SendPage: React.FC<SendPageProps> = ({ route }) => {
             ref={(ref) => ref?.focus()}
             mode='outlined'
             multiline
-            numberOfLines={30}
+            numberOfLines={
+              note ? Dimensions.get('window').height / 35 : Dimensions.get('window').height / 25
+            }
             outlineStyle={{ borderColor: 'transparent' }}
             value={content}
             onChangeText={onChangeText}
@@ -255,7 +257,8 @@ const styles = StyleSheet.create({
   },
   contactsList: {
     bottom: 0,
-    height: 200,
+    maxHeight: 180,
+    paddingBottom: 16,
   },
   contactRow: {
     paddingLeft: 16,
