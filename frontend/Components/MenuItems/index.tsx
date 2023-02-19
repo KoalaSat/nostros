@@ -22,8 +22,18 @@ import ProfileData from '../ProfileData'
 export const MenuItems: React.FC = () => {
   const [drawerItemIndex, setDrawerItemIndex] = React.useState<number>(-1)
   const { relays } = React.useContext(RelayPoolContext)
-  const { nPub, publicKey, privateKey, logout, name, picture, validNip05, lnurl, nip05 } =
-    React.useContext(UserContext)
+  const {
+    nPub,
+    publicKey,
+    privateKey,
+    logout,
+    name,
+    picture,
+    validNip05,
+    lnurl,
+    lnAddress,
+    nip05,
+  } = React.useContext(UserContext)
   const { t } = useTranslation('common')
   const theme = useTheme()
 
@@ -83,7 +93,8 @@ export const MenuItems: React.FC = () => {
                   publicKey={publicKey}
                   validNip05={validNip05}
                   nip05={nip05}
-                  lud06={lnurl}
+                  lnurl={lnurl}
+                  lnAddress={lnAddress}
                   picture={picture}
                 />
               </TouchableRipple>

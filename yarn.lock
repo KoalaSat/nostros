@@ -7278,11 +7278,6 @@ react-native-svg@^13.7.0:
     css-select "^5.1.0"
     css-tree "^1.1.3"
 
-react-native-swipe-gestures@^1.0.5:
-  version "1.0.5"
-  resolved "https://registry.yarnpkg.com/react-native-swipe-gestures/-/react-native-swipe-gestures-1.0.5.tgz#a172cb0f3e7478ccd681fd36b8bfbcdd098bde7c"
-  integrity sha512-Ns7Bn9H/Tyw278+5SQx9oAblDZ7JixyzeOczcBK8dipQk2pD7Djkcfnf1nB/8RErAmMLL9iXgW0QHqiII8AhKw==
-
 react-native-tab-view@^3.3.4:
   version "3.3.4"
   resolved "https://registry.yarnpkg.com/react-native-tab-view/-/react-native-tab-view-3.3.4.tgz#856d4527f3bbf05e2649302ec80abe9f2f004666"

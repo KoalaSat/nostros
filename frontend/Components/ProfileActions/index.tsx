@@ -221,7 +221,9 @@ export const ProfileActions: React.FC<ProfileActionsProps> = ({
             icon='lightning-bolt'
             size={28}
             onPress={() => setOpenLn(true)}
-            disabled={!user?.lnurl}
+            disabled={
+              !user.lnurl && user.lnurl !== '' && !user?.ln_address && user.ln_address !== ''
+            }
             iconColor='#F5D112'
           />
           <Text>{t('profileCard.invoice')}</Text>

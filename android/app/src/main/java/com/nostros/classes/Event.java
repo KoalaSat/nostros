@@ -6,9 +6,12 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 
+import org.apache.commons.lang3.tuple.Pair;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import com.samourai.wallet.segwit.bech32.Bech32;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -198,26 +201,46 @@ public class Event {
         return false;
     }
 
-    protected String getZapPubkey(String lnurl) {
-        String[] parts = lnurl.split("@");
-        if (parts.length < 2) return "";
+    protected String getZapPubkey(String lnurl, String ln_address) {
+        Log.d("zap_pubkey lnurl", lnurl);
+        Log.d("zap_pubkey ln_address", ln_address);
 
-        String name = parts[0];
-        String domain = parts[1];
+        String pointer = ln_address;
+        if (pointer.isEmpty() || pointer.equals("")) {
+            pointer = lnurl;
+        }
+        Log.d("zap_pubkey pointer", pointer);
 
-        if (!name.matches("^[a-z0-9-_]+$")) return "";
+        if (pointer.isEmpty() || pointer.equals("")) {
+            return "";
+        }
 
-        try {
-            String url = "https://" + domain + "/.well-known/lnurlp/" + name;
-            JSONObject response = getJSONObjectFromURL(url);
-            Boolean allowsNostr = response.getBoolean("allowsNostr");
-            if (allowsNostr) {
-                String nostrPubkey = response.getString("nostrPubkey");
-                Log.d("zap_pubkey nostrPubkey", nostrPubkey);
-                return nostrPubkey;
+        String[] parts = pointer.split("@");
+        if (parts.length == 2) {
+            String name = parts[0];
+            String domain = parts[1];
+
+            if (!name.matches("^[a-z0-9-_]+$")) return "";
+
+            try {
+                String url = "https://" + domain + "/.well-known/lnurlp/" + name;
+                JSONObject response = getJSONObjectFromURL(url);
+                Boolean allowsNostr = response.getBoolean("allowsNostr");
+                if (allowsNostr) {
+                    String nostrPubkey = response.getString("nostrPubkey");
+                    Log.d("zap_pubkey nostrPubkey", nostrPubkey);
+                    return nostrPubkey;
+                }
+            } catch (IOException | JSONException e) {
+                e.printStackTrace();
             }
-        } catch (IOException | JSONException e) {
-            e.printStackTrace();
+        } else {
+            try {
+                Pair<String, byte[]> words = Bech32.bech32Decode(pointer);
+                Log.d("zap_pubkey Bech32", String.valueOf(words.getValue()));
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
 
         return "";
@@ -389,31 +412,36 @@ public class Event {
     }
 
     protected void saveReaction(SQLiteDatabase database) throws JSONException {
-        JSONArray pTags = filterTags("p");
-        JSONArray eTags = filterTags("e");
+        String query = "SELECT created_at FROM nostros_reactions WHERE id = ?";
+        @SuppressLint("Recycle") Cursor cursor = database.rawQuery(query, new String[] {id});
 
-        String reacted_event_id = "";
-        String reacted_user_id = "";
-        if (eTags.length() > 0) {
-            reacted_event_id = eTags.getJSONArray(eTags.length() - 1).getString(1);
+        if (cursor.getCount() == 0) {
+            JSONArray pTags = filterTags("p");
+            JSONArray eTags = filterTags("e");
+
+            String reacted_event_id = "";
+            String reacted_user_id = "";
+            if (eTags.length() > 0) {
+                reacted_event_id = eTags.getJSONArray(eTags.length() - 1).getString(1);
+            }
+            if (pTags.length() > 0) {
+                reacted_user_id = pTags.getJSONArray(pTags.length() - 1).getString(1);
+            }
+
+            ContentValues values = new ContentValues();
+            values.put("id", id);
+            values.put("content", content);
+            values.put("created_at", created_at);
+            values.put("kind", kind);
+            values.put("pubkey", pubkey);
+            values.put("sig", sig);
+            values.put("tags", tags.toString());
+            values.put("positive", !content.equals("-"));
+            values.put("reacted_event_id", reacted_event_id);
+            values.put("reacted_user_id", reacted_user_id);
+
+            database.insert("nostros_reactions", null, values);
         }
-        if (pTags.length() > 0) {
-            reacted_user_id = pTags.getJSONArray(pTags.length() - 1).getString(1);
-        }
-
-        ContentValues values = new ContentValues();
-        values.put("id", id);
-        values.put("content", content);
-        values.put("created_at", created_at);
-        values.put("kind", kind);
-        values.put("pubkey", pubkey);
-        values.put("sig", sig);
-        values.put("tags", tags.toString());
-        values.put("positive", !content.equals("-"));
-        values.put("reacted_event_id", reacted_event_id);
-        values.put("reacted_user_id", reacted_user_id);
-
-        database.insert("nostros_reactions", null, values);
     }
 
     protected void saveUserMeta(SQLiteDatabase database) throws JSONException {
@@ -422,23 +450,23 @@ public class Event {
         @SuppressLint("Recycle") Cursor cursor = database.rawQuery(query, new String[] {pubkey});
 
         String nip05 = userContent.optString("nip05");
-        String lud = userContent.optString("lud06");
-        if (lud.isEmpty()) {
-            lud = userContent.optString("lud16");
-        }
+        String lnurl = userContent.optString("lud06");
+        String ln_address = userContent.optString("lud16");
 
         ContentValues values = new ContentValues();
         values.put("name", userContent.optString("name"));
         values.put("picture", userContent.optString("picture"));
         values.put("about", userContent.optString("about"));
-        values.put("lnurl", lud);
+        values.put("lnurl", lnurl);
+        values.put("ln_address", ln_address);
         values.put("nip05", nip05);
         values.put("main_relay", userContent.optString("main_relay"));
         values.put("created_at", created_at);
         if (cursor.getCount() == 0) {
+            values.put("valid_nip05", validateNip05(nip05) ? 1 : 0);
+            values.put("zap_pubkey", getZapPubkey(lnurl, ln_address));
             values.put("id", pubkey);
             values.put("valid_nip05", validateNip05(nip05) ? 1 : 0);
-            values.put("zap_pubkey", getZapPubkey(lud));
             values.put("blocked", 0);
             database.insert("nostros_users", null, values);
         } else if (cursor.moveToFirst()){
@@ -446,55 +474,69 @@ public class Event {
             String[] whereArgs = new String[]{
                     this.pubkey
             };
-            if(created_at >= cursor.getInt(0)) {
-                if (cursor.isNull(1) || (!cursor.isNull(2) && !cursor.getString(2).equals(nip05))) {
-                    values.put("valid_nip05", validateNip05(nip05) ? 1 : 0);
-                }
-                Log.d("zap_pubkey", pubkey);
-                Log.d("zap_pubkey", lud);
-                if (cursor.isNull(3) || (!cursor.isNull(4) && !cursor.getString(4).equals(lud))) {
-                    values.put("zap_pubkey", getZapPubkey(lud));
-                }
+            if (created_at >= cursor.getInt(0) ||
+                    cursor.isNull(1) ||
+                    cursor.getInt(1) == 0) {
+                values.put("valid_nip05", validateNip05(nip05) ? 1 : 0);
+                database.update("nostros_users", values, whereClause, whereArgs);
+            }
+            if (created_at >= cursor.getInt(0) ||
+                    cursor.isNull(3) ||
+                    cursor.getString(3).equals("")) {
+                values.put("zap_pubkey", getZapPubkey(lnurl, ln_address));
                 database.update("nostros_users", values, whereClause, whereArgs);
             }
         }
     }
 
     protected void saveZap(SQLiteDatabase database) throws JSONException {
-        JSONArray pTags = filterTags("p");
-        JSONArray eTags = filterTags("e");
-        JSONArray bolt11Tags = filterTags("bolt11");
+        String query = "SELECT created_at FROM nostros_zaps WHERE id = ?";
+        @SuppressLint("Recycle") Cursor cursor = database.rawQuery(query, new String[] {id});
 
-        String zapped_event_id = "";
-        String zapped_user_id = "";
-        int amount = 0;
-        if (bolt11Tags.length() > 0) {
-            String lnurl = bolt11Tags.getJSONArray(0).getString(1);
-            Matcher m = Pattern.compile("^lnbc(\\d*)n\\S*$").matcher(lnurl);
-            if (m.find()) {
-                amount = Integer.parseInt(m.group(1));
+        if (cursor.getCount() == 0) {
+            JSONArray pTags = filterTags("p");
+            JSONArray eTags = filterTags("e");
+            JSONArray bolt11Tags = filterTags("bolt11");
+            JSONArray descriptionTags = filterTags("description");
+
+            String zapped_event_id = "";
+            String zapped_user_id = "";
+            String zapper_user_id = "";
+            double amount = 0;
+            if (descriptionTags.length() > 0) {
+                JSONArray tag = descriptionTags.getJSONArray(0);
+                Log.d("zap_pubkey descriptionT", String.valueOf(tag));
+                JSONObject description = new JSONObject(tag.getString(1));
+                Log.d("zap_pubkey description", String.valueOf(description));
+                zapper_user_id = description.getString("pubkey");
+                Log.d("zap_pubkey zapper_user", zapper_user_id);
             }
-        }
-        if (eTags.length() > 0) {
-            zapped_event_id = eTags.getJSONArray(eTags.length() - 1).getString(1);
-        }
-        if (pTags.length() > 0) {
-            zapped_user_id = pTags.getJSONArray(pTags.length() - 1).getString(1);
-        }
+            if (bolt11Tags.length() > 0) {
+                String lnbc = bolt11Tags.getJSONArray(0).getString(1);
+                amount = getLnAmount(lnbc);
+            }
+            if (eTags.length() > 0) {
+                zapped_event_id = eTags.getJSONArray(eTags.length() - 1).getString(1);
+            }
+            if (pTags.length() > 0) {
+                zapped_user_id = pTags.getJSONArray(pTags.length() - 1).getString(1);
+            }
 
-        ContentValues values = new ContentValues();
-        values.put("id", id);
-        values.put("content", content);
-        values.put("created_at", created_at);
-        values.put("kind", kind);
-        values.put("pubkey", pubkey);
-        values.put("sig", sig);
-        values.put("tags", tags.toString());
-        values.put("amount", amount);
-        values.put("zapped_user_id", zapped_user_id);
-        values.put("zapped_event_id", zapped_event_id);
+            ContentValues values = new ContentValues();
+            values.put("id", id);
+            values.put("content", content);
+            values.put("created_at", created_at);
+            values.put("kind", kind);
+            values.put("pubkey", pubkey);
+            values.put("sig", sig);
+            values.put("tags", tags.toString());
+            values.put("amount", amount);
+            values.put("zapped_user_id", zapped_user_id);
+            values.put("zapped_event_id", zapped_event_id);
+            values.put("zapper_user_id", zapper_user_id);
 
-        database.insert("nostros_zaps", null, values);
+            database.insert("nostros_zaps", null, values);
+        }
     }
 
     protected void savePets(SQLiteDatabase database) throws JSONException {
@@ -626,5 +668,25 @@ public class Event {
         urlConnection.disconnect();
 
         return new JSONObject(jsonString);
+    }
+
+    protected static double getLnAmount(String lnbc) {
+        double amount = 0.0;
+        Matcher mili = Pattern.compile("^lnbc(\\d*)m\\S*$").matcher(lnbc);
+        Matcher micro = Pattern.compile("^lnbc(\\d*)u\\S*$").matcher(lnbc);
+        Matcher nano = Pattern.compile("^lnbc(\\d*)n\\S*$").matcher(lnbc);
+        Matcher pico = Pattern.compile("^lnbc(\\d*)p\\S*$").matcher(lnbc);
+
+        if (mili.find()) {
+            amount = 100000 * Integer.parseInt(mili.group(1));
+        } else if (micro.find()) {
+            amount = 100 * Integer.parseInt(micro.group(1));
+        } else if (nano.find()) {
+            amount = 0.1 * Integer.parseInt(nano.group(1));
+        } else if (pico.find()) {
+            amount = 0.0001 * Integer.parseInt(pico.group(1));
+        }
+
+        return amount;
     }
 }

@@ -98,7 +98,7 @@ export const ProfilePage: React.FC<ProfilePageProps> = ({ route }) => {
           if (results.length > 0) {
             relayPool?.subscribe(`profile-answers${route.params.pubKey.substring(0, 8)}`, [
               {
-                kinds: [Kind.Reaction, Kind.Text, Kind.RecommendRelay],
+                kinds: [Kind.Reaction, Kind.Text, Kind.RecommendRelay, 9735],
                 '#e': results.map((note) => note.id ?? ''),
               },
             ])
@@ -111,7 +111,11 @@ export const ProfilePage: React.FC<ProfilePageProps> = ({ route }) => {
   const subscribeProfile: () => Promise<void> = async () => {
     relayPool?.subscribe(`profile-user${route.params.pubKey.substring(0, 8)}`, [
       {
-        kinds: [Kind.Metadata, Kind.Contacts],
+        kinds: [Kind.Metadata],
+        authors: [route.params.pubKey],
+      },
+      {
+        kinds: [Kind.Contacts],
         authors: [route.params.pubKey],
       },
     ])
@@ -150,15 +154,20 @@ export const ProfilePage: React.FC<ProfilePageProps> = ({ route }) => {
       >
         <Surface style={styles.container} elevation={1}>
           <View style={styles.profileData}>
-            <ProfileData
-              username={user?.name}
-              publicKey={route.params.pubKey}
-              validNip05={user?.valid_nip05}
-              nip05={user?.nip05}
-              lud06={user?.lnurl}
-              picture={user?.picture}
-            />
-            <Text>{user?.follower && user.follower > 0 ? t('profilePage.isFollower') : ''}</Text>
+            <View style={styles.profilePicture}>
+              <ProfileData
+                username={user?.name}
+                publicKey={route.params.pubKey}
+                validNip05={user?.valid_nip05}
+                nip05={user?.nip05}
+                lnurl={user?.lnurl}
+                lnAddress={user?.ln_address}
+                picture={user?.picture}
+              />
+            </View>
+            <View>
+              <Text>{user?.follower && user.follower > 0 ? t('profilePage.isFollower') : ''}</Text>
+            </View>
           </View>
           <View>
             <Text>{user?.about}</Text>
@@ -213,6 +222,9 @@ const styles = StyleSheet.create({
   snackbar: {
     margin: 16,
     bottom: 70,
+  },
+  profilePicture: {
+    width: '80%',
   },
   list: {
     padding: 16,

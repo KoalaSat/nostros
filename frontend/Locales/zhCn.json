@@ -120,7 +120,9 @@
       "cancel": "取消",
       "npub": "公钥",
       "copy": "复制",
-      "open": "打开钱包"
+      "open": "打开钱包",
+      "anonTip": "Anonymous tip",
+      "zap": "Zap"
     },
     "notificationsFeed": {
       "emptyTitle": "还没有新通知",
@@ -272,7 +274,7 @@
         "nsecCopied": "已复制私钥",
         "npubCopied": "已复制公钥",
         "profilePublished": "简介已发布",
-        "lud06Published": "LUD-06 已发布 \n\n{{lud06}}",
+        "lud06Published": "LUDs 已发布",
         "nip05Published": "NIP-05 已发布 \n\n{{nip05}}",
         "picturePublished": "头像已发布",
         "connectionError": "连接错误",
@@ -280,9 +282,10 @@
         "desactive": "中继已停用"
       },
       "publishLud06": "发布",
-      "lud06Label": "LNURL / Lightning 地址",
+      "lud06Label": "LNURL",
+      "lud16Label": "Lightning 地址",
       "lud06Description": "链接您的身份到 LNURL 或 Lightning 地址",
-      "lud06Title": "LUD-06",
+      "lud06Title": "Zaps",
       "publishNip05": "发布",
       "nip05Link": "了解更多",
       "nip05Description": "链接接到域名",
@@ -300,7 +303,7 @@
       "npub": "公钥",
       "copyNPub": "复制",
       "directory": "目录",
-      "lud06": "LUD-06",
+      "lud06": "Zaps",
       "nip05": "NIP-05",
       "name": "用户名",
       "about": "简介"

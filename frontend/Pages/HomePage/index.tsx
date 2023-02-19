@@ -57,22 +57,25 @@ export const HomePage: React.FC = () => {
             {
               kinds: [Kind.ChannelMessage],
               '#e': [publicKey],
-              limit: 20,
+              limit: 30,
             },
             {
               kinds: [Kind.EncryptedDirectMessage],
               '#p': [publicKey],
               since: directMessageResults[0]?.created_at ?? 0,
+              limit: 30,
             },
             {
               kinds: [Kind.Text],
               '#p': [publicKey],
               since: mentionResults[0]?.created_at ?? 0,
+              limit: 30,
             },
             {
               kinds: [Kind.Text],
               '#e': [publicKey],
               since: mentionResults[0]?.created_at ?? 0,
+              limit: 30,
             },
           ])
         })

@@ -10,8 +10,9 @@ import { getNpub } from '../../lib/nostr/Nip19'
 interface ProfileCardProps {
   username?: string
   publicKey?: string
-  lud06?: string
-  validNip05?: boolean
+  lnurl?: string
+  lnAddress?: string
+  validNip05?: number
   nip05?: string
   picture?: string
   avatarSize?: number
@@ -21,7 +22,8 @@ interface ProfileCardProps {
 export const ProfileData: React.FC<ProfileCardProps> = ({
   username,
   publicKey,
-  lud06,
+  lnurl,
+  lnAddress,
   validNip05,
   nip05,
   picture,
@@ -35,6 +37,7 @@ export const ProfileData: React.FC<ProfileCardProps> = ({
       timestamp ? formatDistance(fromUnixTime(timestamp), new Date(), { addSuffix: true }) : null,
     [timestamp],
   )
+
   return (
     <View style={styles.container}>
       <View style={styles.left}>
@@ -42,7 +45,8 @@ export const ProfileData: React.FC<ProfileCardProps> = ({
           name={username}
           pubKey={nPub}
           src={picture}
-          lud06={lud06}
+          lnurl={lnurl}
+          lnAddress={lnAddress}
           size={avatarSize}
         />
         <View style={[styles.contactData, { height: avatarSize }]}>

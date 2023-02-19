@@ -10,6 +10,7 @@ export interface User {
   contact?: boolean
   follower?: number
   lnurl?: string
+  ln_address?: string
   nip05?: string
   created_at?: number
   valid_nip05?: boolean

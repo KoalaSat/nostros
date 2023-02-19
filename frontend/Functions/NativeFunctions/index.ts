@@ -81,10 +81,12 @@ export const validNip21: (string: string | undefined) => boolean = (string) => {
   }
 }
 
-export const formatBigNumber: (num: number) => string = (num) => {
-  if (num > 1_000_000) {
+export const formatBigNumber: (num: number | undefined) => string = (num) => {
+  if (num === undefined) return ''
+
+  if (num >= 1_000_000) {
     return `${(num / 1_000_000).toFixed(1)}M`
-  } else if (num > 1_000) {
+  } else if (num >= 1_000) {
     return `${(num / 1_000).toFixed(1)}K`
   } else {
     return num.toString()

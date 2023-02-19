@@ -85,8 +85,8 @@ export const GroupPage: React.FC<GroupPageProps> = ({ route }) => {
 
   const loadGroupMessages: (subscribe: boolean) => void = (subscribe) => {
     if (database && publicKey && route.params.groupId) {
-      getGroup(database, route.params.groupId).then(setGroup)
       updateGroupRead(database, route.params.groupId)
+      getGroup(database, route.params.groupId).then(setGroup)
       getGroupMessages(database, route.params.groupId, {
         order: 'DESC',
         limit: pageSize,
@@ -175,7 +175,8 @@ export const GroupPage: React.FC<GroupPageProps> = ({ route }) => {
           publicKey={item?.id}
           validNip05={item?.valid_nip05}
           nip05={item?.nip05}
-          lud06={item?.lnurl}
+          lnurl={item?.lnurl}
+          lnAddress={item?.ln_address}
           picture={item?.picture}
         />
       </View>

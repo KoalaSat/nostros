@@ -32,6 +32,8 @@ export interface UserContextProps {
   nip05?: string
   setNip05: (value: string) => void
   validNip05?: boolean
+  setLnAddress: (value: string) => void
+  lnAddress?: string
 }
 
 export interface UserContextProviderProps {
@@ -49,6 +51,7 @@ export const initialUserContext: UserContextProps = {
   setPicture: () => {},
   setAbout: () => {},
   setLnurl: () => {},
+  setLnAddress: () => {},
   setNip05: () => {},
 }
 
@@ -64,6 +67,7 @@ export const UserContextProvider = ({ children }: UserContextProviderProps): JSX
   const [picture, setPicture] = useState<string>()
   const [about, setAbout] = useState<string>()
   const [lnurl, setLnurl] = useState<string>()
+  const [lnAddress, setLnAddress] = useState<string>()
   const [nip05, setNip05] = useState<string>()
   const [validNip05, setValidNip05] = useState<boolean>()
 
@@ -75,6 +79,7 @@ export const UserContextProvider = ({ children }: UserContextProviderProps): JSX
           setPicture(result.picture)
           setAbout(result.about)
           setLnurl(result.lnurl)
+          setLnAddress(result.ln_address)
           setNip05(result.nip05)
           setValidNip05(result.valid_nip05)
         }
@@ -93,6 +98,7 @@ export const UserContextProvider = ({ children }: UserContextProviderProps): JSX
       setPicture(undefined)
       setAbout(undefined)
       setLnurl(undefined)
+      setLnAddress(undefined)
       setNip05(undefined)
       setValidNip05(undefined)
       dropTables(database).then(() => {
@@ -181,6 +187,8 @@ export const UserContextProvider = ({ children }: UserContextProviderProps): JSX
         nip05,
         setNip05,
         validNip05,
+        lnAddress,
+        setLnAddress,
       }}
     >
       {children}

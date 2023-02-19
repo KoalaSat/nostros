@@ -42,7 +42,6 @@ export const RelaysPage: React.FC = () => {
           {
             kinds: [1002],
             authors: [publicKey],
-            limit: 1,
           },
         ])
       }
