@@ -1,6 +1,6 @@
 import { t } from 'i18next'
 import * as React from 'react'
-import { StyleSheet, View } from 'react-native'
+import { Dimensions, StyleSheet, View } from 'react-native'
 import Clipboard from '@react-native-clipboard/clipboard'
 import { IconButton, Snackbar, Text, TouchableRipple } from 'react-native-paper'
 import { User } from '../../Functions/DatabaseFunctions/Users'
@@ -37,7 +37,7 @@ export const ProfileShare: React.FC<ProfileShareProps> = ({ user }) => {
           <QRCode
             quietZone={8}
             value={`nostr:${nPub}`}
-            size={350}
+            size={Dimensions.get('window').width - 64}
             logoBorderRadius={50}
             logoSize={100}
             logo={{ uri: user?.picture }}
@@ -88,6 +88,7 @@ export const ProfileShare: React.FC<ProfileShareProps> = ({ user }) => {
 const styles = StyleSheet.create({
   snackbar: {
     marginBottom: 85,
+    width: '100%',
   },
   mainLayout: {
     flexDirection: 'row',

@@ -255,7 +255,8 @@
         "globalFeedActiveUnactive": "Global feed disabled.",
         "pubkeyCopied": "Public key copied.",
         "contactCopied": "Contact copied.",
-        "urlCopied": "URL copied."
+        "urlCopied": "URL copied.",
+        "pushCompleted": "All your data has been pushed."
       }
     },
     "profileConfigPage": {
@@ -316,8 +317,7 @@
     },
     "groupPage": {
       "typeMessage": "Type message",
-      "replyText": "Message",
-      "admin": "ADMIN"
+      "replyText": "Message"
     },
     "groupHeaderIcon": {
       "delete": "Leave group",

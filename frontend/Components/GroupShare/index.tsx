@@ -75,6 +75,7 @@ export const GroupShare: React.FC<GroupShareProps> = ({ group }) => {
 const styles = StyleSheet.create({
   snackbar: {
     marginBottom: 85,
+    width: '100%',
   },
   mainLayout: {
     flexDirection: 'row',

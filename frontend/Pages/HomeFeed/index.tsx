@@ -134,7 +134,7 @@ export const HomeFeed: React.FC<HomeFeedProps> = ({ navigation }) => {
       <View style={styles.feed}>{renderScene[tabKey]}</View>
       {privateKey && (
         <AnimatedFAB
-          style={[styles.fab, { top: Dimensions.get('window').height - 216 }]}
+          style={[styles.fab, { top: Dimensions.get('window').height - 191 }]}
           icon='pencil-outline'
           label='Label'
           onPress={() => navigate('Send')}

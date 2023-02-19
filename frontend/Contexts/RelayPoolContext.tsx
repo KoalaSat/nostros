@@ -21,6 +21,7 @@ export interface RelayPoolContextProps {
   addRelayItem: (relay: Relay) => Promise<void>
   removeRelayItem: (relay: Relay) => Promise<void>
   updateRelayItem: (relay: Relay) => Promise<void>
+  sendRelays: (relays: Relay[], url?: string) => Promise<void>
 }
 
 export interface WebsocketEvent {
@@ -40,6 +41,7 @@ export const initialRelayPoolContext: RelayPoolContextProps = {
   updateRelayItem: async () => await new Promise(() => {}),
   relays: [],
   setDisplayrelayDrawer: () => {},
+  sendRelays: () => {},
 }
 
 export const RelayPoolContextProvider = ({
@@ -56,7 +58,7 @@ export const RelayPoolContextProvider = ({
   const [relays, setRelays] = React.useState<Relay[]>([])
   const [displayRelayDrawer, setDisplayrelayDrawer] = React.useState<string>()
 
-  const sendRelays: (relayList: Relay[]) => void = (relayList) => {
+  const sendRelays: (relayList: Relay[], url?: string) => void = (relayList, url) => {
     if (publicKey && relayList.length > 0) {
       const event: Event = {
         content: '',
@@ -65,7 +67,7 @@ export const RelayPoolContextProvider = ({
         pubkey: publicKey,
         tags: relayList.map((relay) => ['r', relay.url, relay.mode ?? '']),
       }
-      relayPool?.sendEvent(event)
+      url ? relayPool?.sendEvent(event, url) : relayPool?.sendEvent(event)
     }
   }
 
@@ -200,6 +202,7 @@ export const RelayPoolContextProvider = ({
         addRelayItem,
         removeRelayItem,
         updateRelayItem,
+        sendRelays,
       }}
     >
       {children}

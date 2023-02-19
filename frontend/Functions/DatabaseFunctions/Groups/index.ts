@@ -223,3 +223,33 @@ export const getGroupMessagesMentionsCount: (
 
   return item['COUNT(*)'] ?? 0
 }
+
+export const getRawUserGroupMessages: (
+  db: QuickSQLiteConnection,
+  pubKey: string,
+) => Promise<Event[]> = async (db, pubKey) => {
+  const notesQuery = `SELECT * FROM nostros_group_messages
+    WHERE pubkey = ? 
+    ORDER BY created_at DESC 
+  `
+  const resultSet = await db.execute(notesQuery, [pubKey])
+  const items: object[] = getItems(resultSet)
+  const groupMessages: Event[] = items.map((object) => databaseToGroupMessage(object))
+
+  return groupMessages
+}
+
+export const getRawUserGroups: (
+  db: QuickSQLiteConnection,
+  pubKey: string,
+) => Promise<Event[]> = async (db, pubKey) => {
+  const notesQuery = `SELECT * FROM nostros_groups
+    WHERE pubkey = ? 
+    ORDER BY created_at DESC 
+  `
+  const resultSet = await db.execute(notesQuery, [pubKey])
+  const items: object[] = getItems(resultSet)
+  const groups: Event[] = items.map((object) => databaseToGroup(object))
+
+  return groups
+}

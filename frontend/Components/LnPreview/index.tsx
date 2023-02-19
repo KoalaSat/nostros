@@ -9,12 +9,16 @@ import { AppContext } from '../../Contexts/AppContext'
 import { decode, PaymentRequestObject, TagsObject } from 'bolt11'
 
 interface LnPreviewProps {
-  setOpen: (open: boolean) => void
+  setOpen?: (open: boolean) => void
   invoice?: string
   setInvoice: (invoice: string | undefined) => void
 }
 
-export const LnPreview: React.FC<LnPreviewProps> = ({ invoice, setInvoice, setOpen }) => {
+export const LnPreview: React.FC<LnPreviewProps> = ({
+  invoice,
+  setInvoice,
+  setOpen = () => {},
+}) => {
   const theme = useTheme()
   const { t } = useTranslation('common')
   const { getSatoshiSymbol } = React.useContext(AppContext)

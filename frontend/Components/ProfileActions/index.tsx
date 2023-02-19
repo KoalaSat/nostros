@@ -272,7 +272,12 @@ export const ProfileActions: React.FC<ProfileActionsProps> = ({
           </Text>
         </View>
       </View>
-      <RBSheet ref={bottomSheetRelaysRef} closeOnDragDown={true} customStyles={bottomSheetStyles}>
+      <RBSheet
+        ref={bottomSheetRelaysRef}
+        closeOnDragDown={true}
+        customStyles={bottomSheetStyles}
+        dragFromTopOnly={true}
+      >
         <View>
           <Text variant='titleLarge'>{t('profileCard.relaysTitle')}</Text>
           <Text variant='bodyMedium'>
@@ -286,13 +291,11 @@ export const ProfileActions: React.FC<ProfileActionsProps> = ({
               </>
             )}
           />
-          <ScrollView>
-            <FlatList
-              showsVerticalScrollIndicator={false}
-              data={userRelays}
-              renderItem={renderRelayItem}
-            />
-          </ScrollView>
+          <View style={styles.relaysList}>
+            <ScrollView>
+              <FlatList data={userRelays} renderItem={renderRelayItem} />
+            </ScrollView>
+          </View>
         </View>
         {showNotificationRelay && (
           <Snackbar
@@ -390,6 +393,9 @@ const styles = StyleSheet.create({
   },
   muteContainer: {
     paddingRight: 16,
+  },
+  relaysList: {
+    maxHeight: '90%',
   },
 })
 

@@ -148,9 +148,7 @@ export const ConversationsFeed: React.FC = () => {
           </View>
           <View style={styles.contactInfo}>
             <View style={styles.contactDate}>
-              <Text>
-                {formatDistance(fromUnixTime(item.created_at), new Date(), { addSuffix: true })}
-              </Text>
+              <Text>{formatDistance(fromUnixTime(item.created_at), new Date())}</Text>
               {item.pubkey !== publicKey && !item.read && <Badge size={16}></Badge>}
             </View>
           </View>
@@ -280,7 +278,7 @@ export const ConversationsFeed: React.FC = () => {
         </View>
       )}
       <AnimatedFAB
-        style={[styles.fab, { top: Dimensions.get('window').height - 216 }]}
+        style={[styles.fab, { top: Dimensions.get('window').height - 191 }]}
         icon='pencil-outline'
         label='Label'
         onPress={() => bottomSheetCreateRef.current?.open()}

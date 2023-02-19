@@ -256,7 +256,8 @@
         "globalFeedActiveUnactive": "Globaler Feed inaktiv.",
         "pubkeyCopied": "Öffentlichen Schlüssel kopiert.",
         "contactCopied": "Kontakt kopiert.",
-        "urlCopied": "URL kopiert."
+        "urlCopied": "URL kopiert.",
+        "pushCompleted": "All your data has been pushed."
       }
     },
 

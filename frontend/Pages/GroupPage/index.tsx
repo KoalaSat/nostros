@@ -32,9 +32,7 @@ import { handleInfinityScroll } from '../../Functions/NativeFunctions'
 import NostrosAvatar from '../../Components/NostrosAvatar'
 import UploadImage from '../../Components/UploadImage'
 import {
-  getGroup,
   getGroupMessages,
-  Group,
   GroupMessage,
   updateGroupRead,
 } from '../../Functions/DatabaseFunctions/Groups'
@@ -55,7 +53,6 @@ export const GroupPage: React.FC<GroupPageProps> = ({ route }) => {
   const { relayPool, lastEventId } = useContext(RelayPoolContext)
   const { publicKey, privateKey, name, picture, validNip05 } = useContext(UserContext)
   const [pageSize, setPageSize] = useState<number>(initialPageSize)
-  const [group, setGroup] = useState<Group>()
   const [groupMessages, setGroupMessages] = useState<GroupMessage[]>([])
   const [sendingMessages, setSendingMessages] = useState<GroupMessage[]>([])
   const [reply, setReply] = useState<GroupMessage>()
@@ -86,7 +83,6 @@ export const GroupPage: React.FC<GroupPageProps> = ({ route }) => {
   const loadGroupMessages: (subscribe: boolean) => void = (subscribe) => {
     if (database && publicKey && route.params.groupId) {
       updateGroupRead(database, route.params.groupId)
-      getGroup(database, route.params.groupId).then(setGroup)
       getGroupMessages(database, route.params.groupId, {
         order: 'DESC',
         limit: pageSize,
@@ -299,11 +295,6 @@ export const GroupPage: React.FC<GroupPageProps> = ({ route }) => {
               )}
             </View>
             <View style={styles.cardContentDate}>
-              {item.pubkey === group?.pubkey && (
-                <View style={[styles.warning, { backgroundColor: '#683D00' }]}>
-                  <Text style={{ color: '#FFDCBB' }}>{t('groupPage.admin')}</Text>
-                </View>
-              )}
               {message?.pending && (
                 <View style={styles.cardContentPending}>
                   <MaterialCommunityIcons
@@ -315,7 +306,7 @@ export const GroupPage: React.FC<GroupPageProps> = ({ route }) => {
               )}
               <Text>
                 {message?.created_at &&
-                  formatDistance(fromUnixTime(message.created_at), new Date(), { addSuffix: true })}
+                  formatDistance(fromUnixTime(message.created_at), new Date())}
               </Text>
             </View>
           </View>
@@ -617,6 +608,7 @@ const styles = StyleSheet.create({
   snackbar: {
     margin: 16,
     bottom: 70,
+    width: '100%',
   },
   verifyIcon: {
     paddingTop: 4,

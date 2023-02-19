@@ -291,6 +291,7 @@ export const ContactsPage: React.FC = () => {
         ItemSeparatorComponent={Divider}
         ListEmptyComponent={ListEmptyComponentFollowing}
         horizontal={false}
+        style={styles.list}
       />
     </View>
   )
@@ -365,6 +366,7 @@ export const ContactsPage: React.FC = () => {
         ItemSeparatorComponent={Divider}
         ListEmptyComponent={ListEmptyComponentBlocked}
         horizontal={false}
+        style={styles.list}
       />
     </View>
   )
@@ -531,6 +533,7 @@ const styles = StyleSheet.create({
   snackbar: {
     margin: 16,
     marginBottom: 95,
+    width: '100%',
   },
   contactRow: {
     padding: 16,
@@ -548,7 +551,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
   },
   fab: {
-    bottom: 65,
+    bottom: 16,
     right: 16,
     position: 'absolute',
   },

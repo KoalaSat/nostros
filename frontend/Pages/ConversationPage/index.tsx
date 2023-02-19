@@ -247,8 +247,7 @@ export const ConversationPage: React.FC<ConversationPageProps> = ({ route }) => 
               </View>
             )}
             <Text>
-              {message?.created_at &&
-                formatDistance(fromUnixTime(message.created_at), new Date(), { addSuffix: true })}
+              {message?.created_at && formatDistance(fromUnixTime(message.created_at), new Date())}
             </Text>
           </View>
         </View>
@@ -542,6 +541,7 @@ const styles = StyleSheet.create({
   snackbar: {
     margin: 16,
     bottom: 70,
+    width: '100%',
   },
   verifyIcon: {
     paddingTop: 4,
