@@ -202,14 +202,10 @@ public class Event {
     }
 
     protected String getZapPubkey(String lnurl, String ln_address) {
-        Log.d("zap_pubkey lnurl", lnurl);
-        Log.d("zap_pubkey ln_address", ln_address);
-
         String pointer = ln_address;
         if (pointer.isEmpty() || pointer.equals("")) {
             pointer = lnurl;
         }
-        Log.d("zap_pubkey pointer", pointer);
 
         if (pointer.isEmpty() || pointer.equals("")) {
             return "";
@@ -228,7 +224,6 @@ public class Event {
                 Boolean allowsNostr = response.getBoolean("allowsNostr");
                 if (allowsNostr) {
                     String nostrPubkey = response.getString("nostrPubkey");
-                    Log.d("zap_pubkey nostrPubkey", nostrPubkey);
                     return nostrPubkey;
                 }
             } catch (IOException | JSONException e) {
@@ -237,7 +232,6 @@ public class Event {
         } else {
             try {
                 Pair<String, byte[]> words = Bech32.bech32Decode(pointer);
-                Log.d("zap_pubkey Bech32", String.valueOf(words.getValue()));
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -505,11 +499,8 @@ public class Event {
             double amount = 0;
             if (descriptionTags.length() > 0) {
                 JSONArray tag = descriptionTags.getJSONArray(0);
-                Log.d("zap_pubkey descriptionT", String.valueOf(tag));
                 JSONObject description = new JSONObject(tag.getString(1));
-                Log.d("zap_pubkey description", String.valueOf(description));
                 zapper_user_id = description.getString("pubkey");
-                Log.d("zap_pubkey zapper_user", zapper_user_id);
             }
             if (bolt11Tags.length() > 0) {
                 String lnbc = bolt11Tags.getJSONArray(0).getString(1);
