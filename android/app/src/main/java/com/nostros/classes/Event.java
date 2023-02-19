@@ -4,14 +4,12 @@ import android.annotation.SuppressLint;
 import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.util.Log;
 
-import org.apache.commons.lang3.tuple.Pair;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import com.samourai.wallet.segwit.bech32.Bech32;
+//import com.samourai.wallet.segwit.bech32.Bech32;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -230,11 +228,11 @@ public class Event {
                 e.printStackTrace();
             }
         } else {
-            try {
-                Pair<String, byte[]> words = Bech32.bech32Decode(pointer);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
+//            try {
+//                Pair<String, byte[]> words = Bech32.bech32Decode(pointer);
+//            } catch (Exception e) {
+//                e.printStackTrace();
+//            }
         }
 
         return "";
