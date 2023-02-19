@@ -31,9 +31,9 @@
       "ProfileConfig": "简介设置"
     },
     "groupHeaderIcon": {
-      "delete": "Leave group",
-      "share": "Share group",
-      "edit": "Edit group"
+      "delete": "退出",
+      "share": "分享",
+      "edit": "编辑"
     },
     "groupsFeed": {
       "delete": "退出群组",
@@ -87,7 +87,7 @@
       "contacts": "联系人",
       "relays": "中继",
       "notConnected": "未连接",
-      "connectedRelays": "已连接 {{number}} 个中继",
+      "connectedRelays": "已连接 {{number}}",
       "following": "{{following}} 正在关注",
       "followers": "{{followers}} 关注者",
       "configuration": "设置",
@@ -220,7 +220,7 @@
       "resilienceCategoriesDescription": "Nostros 正在测试的第一个方法是随机计算（基于收到的联系人的事件）什么是最有弹性的中继。它试图避免有太多事件的中继（集中化）和几乎没有事件的中继（电池耗尽）。 \n\n它的目标是生成一个 5 个中继的列表，并覆盖所有联系人。但如果这不可能，它将向用户发出警告并在其他中继中继续尝试。 \n\n请注意，被称为 “集中式” 或“小型” 的中继并不意味着它们与网络相连，而只是与您的数据相连。",
       "centralized": "集中式",
       "small": "小型",
-      "contacts": "# 联系人",
+      "contacts": "分配的联系人",
       "resilienceMode": "弹性模式 (试验性)",
       "relayName": "中继地址",
       "globalFeed": "发现页",
@@ -250,7 +250,7 @@
       "globalFeed": "发现页",
       "copy": "复制",
       "remove": "移除",
-      "active": "激活",
+      "active": "启用",
       "share": "分享",
       "pubkey": "公钥",
       "contact": "联系人",
@@ -354,9 +354,9 @@
       "copyNip05": "复制 NIP-05",
       "copyNPub": "复制公钥",
       "relaysTitle": "中继",
-      "blocked": "Blocked",
-      "mute": "Mute",
-      "muted": "Muted"
+      "blocked": "已屏蔽",
+      "mute": "静音",
+      "muted": "已静音"
     },
     "conversationsFeed": {
       "openMessage": "发送私信",
