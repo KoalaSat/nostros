@@ -458,26 +458,16 @@ public class Event {
             values.put("valid_nip05", validateNip05(nip05) ? 1 : 0);
             values.put("zap_pubkey", getZapPubkey(lnurl, ln_address));
             values.put("id", pubkey);
-            values.put("valid_nip05", validateNip05(nip05) ? 1 : 0);
             values.put("blocked", 0);
             database.insert("nostros_users", null, values);
-        } else if (cursor.moveToFirst()){
+        } else if (cursor.moveToFirst() && created_at > cursor.getInt(0)){
             String whereClause = "id = ?";
             String[] whereArgs = new String[]{
                     this.pubkey
             };
-            if (created_at >= cursor.getInt(0) ||
-                    cursor.isNull(1) ||
-                    cursor.getInt(1) == 0) {
-                values.put("valid_nip05", validateNip05(nip05) ? 1 : 0);
-                database.update("nostros_users", values, whereClause, whereArgs);
-            }
-            if (created_at >= cursor.getInt(0) ||
-                    cursor.isNull(3) ||
-                    cursor.getString(3).equals("")) {
-                values.put("zap_pubkey", getZapPubkey(lnurl, ln_address));
-                database.update("nostros_users", values, whereClause, whereArgs);
-            }
+            values.put("zap_pubkey", getZapPubkey(lnurl, ln_address));
+            values.put("valid_nip05", validateNip05(nip05) ? 1 : 0);
+            database.update("nostros_users", values, whereClause, whereArgs);
         }
     }
 

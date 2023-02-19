@@ -245,15 +245,17 @@ export const LnPayment: React.FC<LnPaymentProps> = ({ open, setOpen, note, user 
           >
             {t('lnPayment.anonTip')}
           </Button>
-          <Button
-            style={styles.spacer}
-            mode='contained'
-            disabled={loading || monto === ''}
-            onPress={() => generateInvoice(true)}
-            loading={loading && isZap}
-          >
-            {t('lnPayment.zap')}
-          </Button>
+          {zapPubkey && (
+            <Button
+              style={styles.spacer}
+              mode='contained'
+              disabled={loading || monto === ''}
+              onPress={() => generateInvoice(true)}
+              loading={loading && isZap}
+            >
+              {t('lnPayment.zap')}
+            </Button>
+          )}
           <Button mode='outlined' onPress={() => setOpen(false)}>
             {t('lnPayment.cancel')}
           </Button>

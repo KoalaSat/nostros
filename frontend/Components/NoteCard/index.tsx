@@ -421,17 +421,20 @@ export const NoteCard: React.FC<NoteCardProps> = ({
               {showActionCount && reactionsCount()}
             </Button>
           </Surface>
-          {(note?.lnurl || note?.ln_address) && (
-            <Button
-              style={styles.action}
-              icon={() => (
-                <MaterialCommunityIcons name='lightning-bolt' size={24} color={'#F5D112'} />
-              )}
-              onPress={() => setOpenLn(true)}
-            >
-              {note.zap_pubkey?.length > 0 ? formatBigNumber(zapsAmount) : ''}
-            </Button>
-          )}
+          <Button
+            style={styles.action}
+            disabled={!note?.lnurl && !note?.ln_address}
+            icon={() => (
+              <MaterialCommunityIcons
+                name='lightning-bolt'
+                size={24}
+                color={!note?.lnurl && !note?.ln_address ? undefined : '#F5D112'}
+              />
+            )}
+            onPress={() => setOpenLn(true)}
+          >
+            {note.zap_pubkey?.length > 0 ? formatBigNumber(zapsAmount) : ''}
+          </Button>
           {openLn && <LnPayment open={openLn} setOpen={setOpenLn} note={note} />}
         </Card.Content>
       )}
