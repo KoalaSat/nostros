@@ -13,7 +13,7 @@ import { RelayPoolContext } from '../../Contexts/RelayPoolContext'
 import { Event } from '../../lib/nostr/Events'
 import { useTranslation } from 'react-i18next'
 import { formatPubKey, username, usernamePubKey } from '../../Functions/RelayFunctions/Users'
-import { getUnixTime, formatDistance, fromUnixTime } from 'date-fns'
+import { getUnixTime } from 'date-fns'
 import TextContent from '../../Components/TextContent'
 import {
   Card,
@@ -28,7 +28,7 @@ import { UserContext } from '../../Contexts/UserContext'
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'
 import { useFocusEffect } from '@react-navigation/native'
 import { Kind } from 'nostr-tools'
-import { handleInfinityScroll } from '../../Functions/NativeFunctions'
+import { formatDate, handleInfinityScroll } from '../../Functions/NativeFunctions'
 import NostrosAvatar from '../../Components/NostrosAvatar'
 import UploadImage from '../../Components/UploadImage'
 import {
@@ -304,10 +304,7 @@ export const GroupPage: React.FC<GroupPageProps> = ({ route }) => {
                   />
                 </View>
               )}
-              <Text>
-                {message?.created_at &&
-                  formatDistance(fromUnixTime(message.created_at), new Date())}
-              </Text>
+              <Text>{formatDate(message?.created_at)}</Text>
             </View>
           </View>
           {message ? (
@@ -367,9 +364,8 @@ export const GroupPage: React.FC<GroupPageProps> = ({ route }) => {
                   <Card
                     style={[
                       styles.card,
-                      // FIXME: can't find this color
                       {
-                        backgroundColor: '#001C37',
+                        backgroundColor: theme.colors.elevation.level2,
                       },
                     ]}
                   >
@@ -429,7 +425,7 @@ export const GroupPage: React.FC<GroupPageProps> = ({ route }) => {
         <></>
       )}
       {reply ? (
-        <View style={[styles.reply, { backgroundColor: theme.colors.backdrop }]}>
+        <View style={[styles.reply, { backgroundColor: theme.colors.elevation.level2 }]}>
           <MaterialCommunityIcons
             name='reply'
             size={25}
@@ -502,6 +498,7 @@ export const GroupPage: React.FC<GroupPageProps> = ({ route }) => {
           setInput((prev) => `${prev} ${imageUri}`)
           setStartUpload(false)
         }}
+        onError={() => setStartUpload(false)}
         uploadingFile={uploadingFile}
         setUploadingFile={setUploadingFile}
       />
@@ -542,6 +539,7 @@ const styles = StyleSheet.create({
     scaleY: -1,
     paddingLeft: 16,
     paddingRight: 16,
+    paddingBottom: 3,
   },
   cardContentDate: {
     flexDirection: 'row',

@@ -103,7 +103,16 @@
       "imageHostingService": "Servicio de subida de imágenes",
       "random": "Aleatorio",
       "language": "Idioma",
-      "relayColoruring": "Coloreado de relays"
+      "relayColoruring": "Coloreado de relays",
+      "app": "Aplicación",
+      "feed": "Feed",
+      "zaps": "Zaps",
+      "disabled": "Desabilitado",
+      "longPressZap": "Mantener pulsado para Zap",
+      "longPressZapDescription": "Define una cantidad por defecto para generar facturas LN tras mantener pulsado el botón de Zap.",
+      "defaultZapAmount": "Cantidad por defecto",
+      "update": "Actualizar",
+      "disable": "Desabilitar"
     },
     "noteCard": {
       "answering": "Responder a {{pubkey}}",

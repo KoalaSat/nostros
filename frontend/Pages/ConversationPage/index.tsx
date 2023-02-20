@@ -20,7 +20,7 @@ import {
 import { getUser, User } from '../../Functions/DatabaseFunctions/Users'
 import { useTranslation } from 'react-i18next'
 import { username, usernamePubKey, usersToTags } from '../../Functions/RelayFunctions/Users'
-import { getUnixTime, formatDistance, fromUnixTime } from 'date-fns'
+import { getUnixTime } from 'date-fns'
 import TextContent from '../../Components/TextContent'
 import { encrypt, decrypt } from '../../lib/nostr/Nip04'
 import {
@@ -36,7 +36,7 @@ import { UserContext } from '../../Contexts/UserContext'
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'
 import { useFocusEffect } from '@react-navigation/native'
 import { Kind } from 'nostr-tools'
-import { handleInfinityScroll } from '../../Functions/NativeFunctions'
+import { formatDate, handleInfinityScroll } from '../../Functions/NativeFunctions'
 import NostrosAvatar from '../../Components/NostrosAvatar'
 import UploadImage from '../../Components/UploadImage'
 import { Swipeable } from 'react-native-gesture-handler'
@@ -246,9 +246,7 @@ export const ConversationPage: React.FC<ConversationPageProps> = ({ route }) => 
                 />
               </View>
             )}
-            <Text>
-              {message?.created_at && formatDistance(fromUnixTime(message.created_at), new Date())}
-            </Text>
+            <Text>{formatDate(message?.created_at)}</Text>
           </View>
         </View>
         {message ? (
@@ -319,9 +317,8 @@ export const ConversationPage: React.FC<ConversationPageProps> = ({ route }) => 
                   <Card
                     style={[
                       styles.card,
-                      // FIXME: can't find this color
                       {
-                        backgroundColor: '#001C37',
+                        backgroundColor: theme.colors.elevation.level2,
                       },
                     ]}
                   >
@@ -456,6 +453,7 @@ export const ConversationPage: React.FC<ConversationPageProps> = ({ route }) => 
           setInput((prev) => `${prev} ${imageUri}`)
           setStartUpload(false)
         }}
+        onError={() => setStartUpload(false)}
         uploadingFile={uploadingFile}
         setUploadingFile={setUploadingFile}
       />

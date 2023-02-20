@@ -16,11 +16,8 @@ import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityI
 import { RelayPoolContext } from '../../Contexts/RelayPoolContext'
 import { Kind } from 'nostr-tools'
 import { getUnixTime } from 'date-fns'
-import { Event, signEvent } from '../../lib/nostr/Events'
-import { getRelays, Relay } from '../../Functions/DatabaseFunctions/Relays'
 import { UserContext } from '../../Contexts/UserContext'
-import { requestInvoiceWithServiceParams, requestPayServiceParams } from 'lnurl-pay'
-import axios from 'axios'
+import { lightningInvoice } from '../../Functions/ServicesFunctions/ZapInvoice'
 
 interface LnPaymentProps {
   open: boolean
@@ -86,57 +83,26 @@ export const LnPayment: React.FC<LnPaymentProps> = ({ open, setOpen, note, user 
     setIsZap(zap)
     const lud = lnAddress && lnAddress !== '' ? lnAddress : lnurl
 
-    if (lud && lud !== '' && monto !== '') {
+    if (lud && lud !== '' && monto !== '' && database && privateKey && publicKey && userId) {
       setLoading(true)
 
-      const tokens: number = parseInt(monto, 10) ?? 0
-      let nostr: string
-
-      if (zap && database && privateKey && publicKey && zapPubkey && userId) {
-        const relays: Relay[] = await getRelays(database)
-        const tags = [
-          ['p', userId],
-          ['amount', (tokens * 1000).toString()],
-          ['relays', ...relays.map((relay) => relay.url)],
-        ]
-        if (note?.id) tags.push(['e', note.id])
-
-        const event: Event = {
-          content: comment,
-          created_at: getUnixTime(new Date()),
-          kind: 9734,
-          pubkey: publicKey,
-          tags,
-        }
-        const signedEvent = await signEvent(event, privateKey)
-        nostr = JSON.stringify(signedEvent)
-      }
-
-      const serviceParams = await requestPayServiceParams({ lnUrlOrAddress: lud })
-
-      requestInvoiceWithServiceParams({
-        params: serviceParams,
-        lnUrlOrAddress: lud,
-        tokens,
+      lightningInvoice(
+        database,
+        lud,
+        parseInt(monto, 10),
+        privateKey,
+        publicKey,
+        userId,
+        zap,
+        zapPubkey,
         comment,
-        fetchGet: async ({ url, params }) => {
-          if (params && nostr && serviceParams.rawData.allowsNostr) {
-            params.nostr = nostr
-          }
-          const response = await axios.get(url, {
-            params,
-          })
-          console.log(response)
-          return response.data
-        },
-      })
-        .then((action) => {
-          if (action.hasValidAmount && action.invoice) {
-            setInvoice(action.invoice)
-          }
+        note?.id,
+      )
+        .then((invoice) => {
+          if (invoice) setInvoice(invoice)
           setLoading(false)
         })
-        .catch((e) => {
+        .catch(() => {
           setLoading(false)
         })
     }

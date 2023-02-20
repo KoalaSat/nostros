@@ -102,7 +102,16 @@
       "imageHostingService": "图片托管服务",
       "random": "随机",
       "language": "语言",
-      "relayColoruring": "颜色标示中继状态"
+      "relayColoruring": "颜色标示中继状态",
+      "app": "App",
+      "feed": "Feed",
+      "zaps": "Zaps",
+      "disabled": "Disabled",
+      "longPressZap": "Long press Zaps",
+      "longPressZapDescription": "Define a default amount to automatically generate invoices after a long press on the Zap button.",
+      "defaultZapAmount": "Defaul Zap amount",
+      "update": "Update",
+      "disable": "Disable"
     },
     "noteCard": {
       "answering": "回复 {{pubkey}}",

@@ -1,3 +1,5 @@
+import { endOfYesterday, format, formatDistanceToNow, fromUnixTime, isBefore } from 'date-fns'
+
 export const handleInfinityScroll: (event: any) => boolean = (event) => {
   const mHeight = event.nativeEvent.layoutMeasurement.height
   const cSize = event.nativeEvent.contentSize.height
@@ -78,6 +80,17 @@ export const validNip21: (string: string | undefined) => boolean = (string) => {
     return regexp.test(string)
   } else {
     return false
+  }
+}
+
+export const formatDate: (unix: number | undefined) => string = (unix) => {
+  if (!unix) return ''
+
+  const date = fromUnixTime(unix)
+  if (isBefore(date, endOfYesterday())) {
+    return formatDistanceToNow(fromUnixTime(unix), { addSuffix: true })
+  } else {
+    return format(date, 'HH:mm')
   }
 }
 

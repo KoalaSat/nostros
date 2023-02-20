@@ -41,6 +41,9 @@ import { SvgXml } from 'react-native-svg'
 import { reactionIcon } from '../../Constants/Theme'
 import LnPayment from '../LnPayment'
 import { getZapsAmount } from '../../Functions/DatabaseFunctions/Zaps'
+import { lightningInvoice } from '../../Functions/ServicesFunctions/ZapInvoice'
+import LnPreview from '../LnPreview'
+import { getNpub } from '../../lib/nostr/Nip19'
 
 interface NoteCardProps {
   note?: Note
@@ -72,7 +75,8 @@ export const NoteCard: React.FC<NoteCardProps> = ({
   const theme = useTheme()
   const { publicKey, privateKey } = React.useContext(UserContext)
   const { relayPool, lastEventId, setDisplayrelayDrawer } = useContext(RelayPoolContext)
-  const { database, showSensitive, setDisplayUserDrawer, relayColouring } = useContext(AppContext)
+  const { database, showSensitive, setDisplayUserDrawer, relayColouring, longPressZap } =
+    useContext(AppContext)
   const [relayAdded, setRelayAdded] = useState<boolean>(false)
   const [positiveReactions, setPositiveReactions] = useState<number>(0)
   const [negativeReactions, setNegativeReactions] = useState<number>(0)
@@ -87,6 +91,8 @@ export const NoteCard: React.FC<NoteCardProps> = ({
   const [repost, setRepost] = useState<Note>()
   const [openLn, setOpenLn] = React.useState<boolean>(false)
   const [showReactions, setShowReactions] = React.useState<boolean>(false)
+  const [loadingZap, setLoadingZap] = React.useState<boolean>(false)
+  const [zapInvoice, setZapInvoice] = React.useState<string>()
 
   useEffect(() => {
     if (database && publicKey && note?.id) {
@@ -340,6 +346,33 @@ export const NoteCard: React.FC<NoteCardProps> = ({
     </Card>
   )
 
+  const generateZapInvoice: () => void = () => {
+    const lud = note?.ln_address && note?.ln_address !== '' ? note?.ln_address : note?.lnurl
+
+    if (lud && lud !== '' && longPressZap && database && privateKey && publicKey && note?.pubkey) {
+      setLoadingZap(true)
+      lightningInvoice(
+        database,
+        lud,
+        longPressZap,
+        privateKey,
+        publicKey,
+        note?.pubkey,
+        true,
+        note?.zap_pubkey,
+        `Nostr: ${formatPubKey(getNpub(note?.id))}`,
+        note?.id,
+      )
+        .then((invoice) => {
+          if (invoice) setZapInvoice(invoice)
+          setLoadingZap(false)
+        })
+        .catch(() => {
+          setLoadingZap(false)
+        })
+    }
+  }
+
   const reactionsCount: () => number = () => {
     if (userDownvoted) return negativeReactions
     if (userUpvoted) return positiveReactions
@@ -432,10 +465,13 @@ export const NoteCard: React.FC<NoteCardProps> = ({
               />
             )}
             onPress={() => setOpenLn(true)}
+            onLongPress={longPressZap ? generateZapInvoice : undefined}
+            loading={loadingZap}
           >
             {note.zap_pubkey?.length > 0 ? formatBigNumber(zapsAmount) : ''}
           </Button>
           {openLn && <LnPayment open={openLn} setOpen={setOpenLn} note={note} />}
+          {zapInvoice && <LnPreview invoice={zapInvoice} setInvoice={setZapInvoice} />}
         </Card.Content>
       )}
       <Card.Content style={styles.relayList}>
