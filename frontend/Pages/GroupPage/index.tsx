@@ -364,7 +364,6 @@ export const GroupPage: React.FC<GroupPageProps> = ({ route }) => {
                   <Card
                     style={[
                       styles.card,
-                      // FIXME: can't find this color
                       {
                         backgroundColor: theme.colors.elevation.level2,
                       },

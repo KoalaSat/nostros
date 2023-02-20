@@ -317,9 +317,8 @@ export const ConversationPage: React.FC<ConversationPageProps> = ({ route }) => 
                   <Card
                     style={[
                       styles.card,
-                      // FIXME: can't find this color
                       {
-                        backgroundColor: '#001C37',
+                        backgroundColor: theme.colors.elevation.level2,
                       },
                     ]}
                   >
