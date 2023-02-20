@@ -110,7 +110,16 @@
       "satoshi": "Symbole de satoshi",
       "imageHostingService": "Service d'hébergement d'images",
       "language": "Langue",
-      "relayColoruring": "Relay coloruring"
+      "relayColoruring": "Relay coloruring",
+      "app": "App",
+      "feed": "Feed",
+      "zaps": "Zaps",
+      "disabled": "Disabled",
+      "longPressZap": "Long press Zaps",
+      "longPressZapDescription": "Define a default amount to automatically generate invoices after a long press on the Zap button.",
+      "defaultZapAmount": "Defaul Zap amount",
+      "update": "Update",
+      "disable": "Disable"
     },
     "noteCard": {
       "answering": "Répondre à {{pubkey}}",

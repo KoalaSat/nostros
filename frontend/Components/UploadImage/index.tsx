@@ -13,6 +13,7 @@ interface UploadImageProps {
   setImageUri: (uri: string) => void
   uploadingFile: boolean
   setUploadingFile: (uploading: boolean) => void
+  onError: () => void
 }
 
 export const UploadImage: React.FC<UploadImageProps> = ({
@@ -21,6 +22,7 @@ export const UploadImage: React.FC<UploadImageProps> = ({
   setImageUri,
   uploadingFile,
   setUploadingFile,
+  onError,
 }) => {
   const { getImageHostingService } = useContext(AppContext)
   const theme = useTheme()
@@ -46,10 +48,12 @@ export const UploadImage: React.FC<UploadImageProps> = ({
           setUploadingFile(false)
           bottomSheetImageRef.current?.open()
         } else {
+          onError()
           setUploadingFile(false)
           setShowNotification('imageUploadErro')
         }
       } else {
+        onError()
         setUploadingFile(false)
         setShowNotification('imageUploadErro')
       }
@@ -72,6 +76,7 @@ export const UploadImage: React.FC<UploadImageProps> = ({
           bottomSheetImageRef.current?.close()
           setUploadingFile(false)
           setShowNotification('imageUploadErro')
+          onError()
         })
     }
   }
@@ -122,6 +127,7 @@ export const UploadImage: React.FC<UploadImageProps> = ({
           onPress={() => {
             bottomSheetImageRef.current?.close()
             setImageUpload(undefined)
+            onError()
           }}
         >
           {t('uploadImage.cancel')}

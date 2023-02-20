@@ -82,7 +82,16 @@
       "imageHostingService": "Bilder Hosting Service",
       "random": "zufällig",
       "language": "Sprache",
-      "relayColoruring": "Relays farblich darstellen"
+      "relayColoruring": "Relays farblich darstellen",
+      "app": "App",
+      "feed": "Feed",
+      "zaps": "Zaps",
+      "disabled": "Disabled",
+      "longPressZap": "Long press Zaps",
+      "longPressZapDescription": "Define a default amount to automatically generate invoices after a long press on the Zap button.",
+      "defaultZapAmount": "Defaul Zap amount",
+      "update": "Update",
+      "disable": "Disable"
     },
     "noteCard": {
       "answering": "{{pubkey}} antworten",

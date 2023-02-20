@@ -219,6 +219,7 @@ export const SendPage: React.FC<SendPageProps> = ({ route }) => {
           setContent((prev) => `${prev}\n\n${imageUri}`)
           setStartUpload(false)
         }}
+        onError={() => setStartUpload(false)}
         uploadingFile={uploadingFile}
         setUploadingFile={setUploadingFile}
       />

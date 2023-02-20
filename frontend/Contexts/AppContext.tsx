@@ -37,6 +37,8 @@ export interface AppContextProps {
   setDisplayUserDrawer: (displayUserDrawer: string | undefined) => void
   refreshBottomBarAt?: number
   setRefreshBottomBarAt: (refreshBottomBarAt: number) => void
+  longPressZap?: number | undefined
+  setLongPressZap: (longPressZap: number | undefined) => void
   pushedTab?: string
   setPushedTab: (pushedTab: string) => void
 }
@@ -76,6 +78,8 @@ export const initialAppContext: AppContextProps = {
   getSatoshiSymbol: () => <></>,
   setClipboardNip21: () => {},
   setDisplayUserDrawer: () => {},
+  longPressZap: undefined,
+  setLongPressZap: () => {},
 }
 
 export const AppContextProvider = ({ children }: AppContextProviderProps): JSX.Element => {
@@ -92,6 +96,7 @@ export const AppContextProvider = ({ children }: AppContextProviderProps): JSX.E
   const [imageHostingService, setImageHostingService] = React.useState<string>(
     initialAppContext.imageHostingService,
   )
+  const [longPressZap, setLongPressZap] = React.useState<number>()
   const [notificationSeenAt, setNotificationSeenAt] = React.useState<number>(0)
   const [refreshBottomBarAt, setRefreshBottomBarAt] = React.useState<number>(0)
   const [satoshi, setSatoshi] = React.useState<'kebab' | 'sats'>(initialAppContext.satoshi)
@@ -148,6 +153,7 @@ export const AppContextProvider = ({ children }: AppContextProviderProps): JSX.E
           config.image_hosting_service ?? initialAppContext.imageHostingService,
         )
         setLanguage(config.language ?? initialAppContext.language)
+        setLongPressZap(config.long_press_zap ?? initialAppContext.longPressZap)
       } else {
         const config: Config = {
           show_public_images: initialAppContext.showPublicImages,
@@ -158,6 +164,7 @@ export const AppContextProvider = ({ children }: AppContextProviderProps): JSX.E
           last_pets_at: 0,
           language: initialAppContext.language,
           relay_coloruring: initialAppContext.relayColouring,
+          long_press_zap: initialAppContext.longPressZap,
         }
         SInfo.setItem('config', JSON.stringify(config), {})
       }
@@ -229,6 +236,8 @@ export const AppContextProvider = ({ children }: AppContextProviderProps): JSX.E
         setRefreshBottomBarAt,
         pushedTab,
         setPushedTab,
+        longPressZap,
+        setLongPressZap,
       }}
     >
       {children}

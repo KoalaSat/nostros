@@ -177,7 +177,7 @@ export const getUserGroupMessagesCount: (
     SELECT
       COUNT(*)
     FROM nostros_group_messages
-    WHERE (user_mentioned != NULL AND user_mentioned = 1)
+    WHERE user_mentioned = 1
     AND (read = NULL OR read = 0)
   `
 
