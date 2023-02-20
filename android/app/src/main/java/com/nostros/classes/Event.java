@@ -204,7 +204,6 @@ public class Event {
         if (pointer.isEmpty() || pointer.equals("")) {
             pointer = lnurl;
         }
-
         if (pointer.isEmpty() || pointer.equals("")) {
             return "";
         }
@@ -214,7 +213,7 @@ public class Event {
             String name = parts[0];
             String domain = parts[1];
 
-            if (!name.matches("^[a-z0-9-_]+$")) return "";
+            if (!name.matches("^[a-zA-Z0-9-_]+$")) return "";
 
             try {
                 String url = "https://" + domain + "/.well-known/lnurlp/" + name;
