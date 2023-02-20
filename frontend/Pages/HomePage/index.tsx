@@ -88,11 +88,13 @@ export const HomePage: React.FC = () => {
   const goToEvent: () => void = () => {
     if (clipboardNip21) {
       const key = decode(clipboardNip21.replace('nostr:', ''))
-      if (key) {
+      if (key?.data) {
         if (key.type === 'nevent') {
           navigate('Note', { noteId: key.data })
-        } else if (key.type === 'nprofile' || key.type === 'npub') {
+        } else if (key.type === 'npub') {
           navigate('Profile', { pubKey: key.data })
+        } else if (key.type === 'nprofile' && key.data.pubkey) {
+          navigate('Profile', { pubKey: key.data.pubkey })
         }
       }
     }

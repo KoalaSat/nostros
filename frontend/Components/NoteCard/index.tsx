@@ -349,15 +349,7 @@ export const NoteCard: React.FC<NoteCardProps> = ({
   const generateZapInvoice: () => void = () => {
     const lud = note?.ln_address && note?.ln_address !== '' ? note?.ln_address : note?.lnurl
 
-    if (
-      lud &&
-      lud !== '' &&
-      longPressZap &&
-      database &&
-      privateKey &&
-      publicKey &&
-      note?.pubkey
-    ) {
+    if (lud && lud !== '' && longPressZap && database && privateKey && publicKey && note?.pubkey) {
       setLoadingZap(true)
       lightningInvoice(
         database,
@@ -473,9 +465,7 @@ export const NoteCard: React.FC<NoteCardProps> = ({
               />
             )}
             onPress={() => setOpenLn(true)}
-            onLongPress={
-              longPressZap ? generateZapInvoice : undefined
-            }
+            onLongPress={longPressZap ? generateZapInvoice : undefined}
             loading={loadingZap}
           >
             {note.zap_pubkey?.length > 0 ? formatBigNumber(zapsAmount) : ''}

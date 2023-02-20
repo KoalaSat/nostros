@@ -22,6 +22,7 @@ import { handleInfinityScroll } from '../../Functions/NativeFunctions'
 import { useFocusEffect } from '@react-navigation/native'
 import ProfileData from '../../Components/ProfileData'
 import ProfileActions from '../../Components/ProfileActions'
+import TextContent from '../../Components/TextContent'
 
 interface ProfilePageProps {
   route: { params: { pubKey: string } }
@@ -170,7 +171,7 @@ export const ProfilePage: React.FC<ProfilePageProps> = ({ route }) => {
             </View>
           </View>
           <View>
-            <Text>{user?.about}</Text>
+            <TextContent content={user?.about} showPreview={false} numberOfLines={10} />
           </View>
           <Divider style={styles.divider} />
           <View style={styles.profileActions}>

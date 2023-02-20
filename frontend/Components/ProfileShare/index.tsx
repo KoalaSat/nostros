@@ -6,18 +6,31 @@ import { IconButton, Snackbar, Text, TouchableRipple } from 'react-native-paper'
 import { User } from '../../Functions/DatabaseFunctions/Users'
 import Share from 'react-native-share'
 import RBSheet from 'react-native-raw-bottom-sheet'
-import { getNpub } from '../../lib/nostr/Nip19'
+import { getNprofile } from '../../lib/nostr/Nip19'
 import QRCode from 'react-native-qrcode-svg'
+import { useContext } from 'react'
+import { AppContext } from '../../Contexts/AppContext'
+import { getUserRelays } from '../../Functions/DatabaseFunctions/NotesRelays'
 
 interface ProfileShareProps {
   user: User
 }
 
 export const ProfileShare: React.FC<ProfileShareProps> = ({ user }) => {
+  const { database } = useContext(AppContext)
   const bottomSheetShareRef = React.useRef<RBSheet>(null)
   const [qrCode, setQrCode] = React.useState<any>()
   const [showNotification, setShowNotification] = React.useState<undefined | string>()
-  const nPub = React.useMemo(() => getNpub(user.id), [user])
+  const [nProfile, setNProfile] = React.useState<string>()
+
+  React.useEffect(() => {
+    if (database && user.id) {
+      getUserRelays(database, user.id).then((results) => {
+        const urls = results.map((relay) => relay.relay_url)
+        setNProfile(getNprofile(user.id, urls))
+      })
+    }
+  }, [user])
 
   return (
     <View style={styles.mainLayout}>
@@ -36,7 +49,7 @@ export const ProfileShare: React.FC<ProfileShareProps> = ({ user }) => {
         >
           <QRCode
             quietZone={8}
-            value={`nostr:${nPub}`}
+            value={`nostr:${nProfile}`}
             size={Dimensions.get('window').width - 64}
             logoBorderRadius={50}
             logoSize={100}
@@ -51,7 +64,7 @@ export const ProfileShare: React.FC<ProfileShareProps> = ({ user }) => {
           size={28}
           onPress={() => {
             setShowNotification('npubCopied')
-            Clipboard.setString(nPub ?? '')
+            Clipboard.setString(nProfile ?? '')
             bottomSheetShareRef.current?.close()
           }}
         />
