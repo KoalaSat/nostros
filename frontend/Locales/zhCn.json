@@ -116,11 +116,11 @@
     "noteActions": {
       "copy": "复制",
       "share": "分享",
-      "view": "View"
+      "view": "查看"
     },
     "noteCard": {
       "notifications": {
-        "zapServerError": "There was an error on the server while trying to request for the invoice."
+        "zapServerError": "尝试请求收据时服务器出现错误。"
       },
       "answering": "回复 {{pubkey}}",
       "reposting": "已转发 {{pubkey}}",
