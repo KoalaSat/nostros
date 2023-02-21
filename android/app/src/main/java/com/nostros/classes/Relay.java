@@ -52,14 +52,17 @@ public class Relay {
         values.put("url", url);
         values.put("active", active);
         values.put("global_feed", globalFeed);
+        values.put("deleted_at", 0);
         database.replace("nostros_relays", null, values);
     }
 
-    public void destroy(SQLiteDatabase database) {
+    public void delete(SQLiteDatabase database) {
         String whereClause = "url = ?";
         String[] whereArgs = new String[] {
                 url
         };
-        database.delete ("nostros_relays", whereClause, whereArgs);
+        ContentValues values = new ContentValues();
+        values.put("deleted_at", System.currentTimeMillis() / 1000L);
+        database.update ("nostros_relays", values, whereClause, whereArgs);
     }
 }

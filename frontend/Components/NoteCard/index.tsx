@@ -15,8 +15,7 @@ import { t } from 'i18next'
 import { isContentWarning } from '../../Functions/RelayFunctions/Events'
 import { Event } from '../../lib/nostr/Events'
 import { getUnixTime } from 'date-fns'
-import { populateRelay } from '../../Functions/RelayFunctions'
-import { searchRelays } from '../../Functions/DatabaseFunctions/Relays'
+import { Relay, searchRelays } from '../../Functions/DatabaseFunctions/Relays'
 import TextContent from '../../Components/TextContent'
 import { formatPubKey } from '../../Functions/RelayFunctions/Users'
 import { getReactions } from '../../Functions/DatabaseFunctions/Reactions'
@@ -30,6 +29,7 @@ import {
   TouchableRipple,
   Chip,
   Surface,
+  IconButton,
 } from 'react-native-paper'
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'
 import { REGEX_SOCKET_LINK } from '../../Constants/Relay'
@@ -74,9 +74,16 @@ export const NoteCard: React.FC<NoteCardProps> = ({
 }) => {
   const theme = useTheme()
   const { publicKey, privateKey } = React.useContext(UserContext)
-  const { relayPool, lastEventId, setDisplayrelayDrawer } = useContext(RelayPoolContext)
-  const { database, showSensitive, setDisplayUserDrawer, relayColouring, longPressZap } =
-    useContext(AppContext)
+  const { relayPool, lastEventId, addRelayItem } =
+    useContext(RelayPoolContext)
+  const {
+    database,
+    showSensitive,
+    setDisplayUserDrawer,
+    setDisplayNoteDrawer,
+    relayColouring,
+    longPressZap,
+  } = useContext(AppContext)
   const [relayAdded, setRelayAdded] = useState<boolean>(false)
   const [positiveReactions, setPositiveReactions] = useState<number>(0)
   const [negativeReactions, setNegativeReactions] = useState<number>(0)
@@ -228,15 +235,8 @@ export const NoteCard: React.FC<NoteCardProps> = ({
   }
 
   const recommendServer: () => JSX.Element = () => {
-    const relayName = note?.content
-
-    const addRelayItem: () => void = () => {
-      if (relayPool && database && publicKey && note) {
-        relayPool.add(note.content, () => {
-          populateRelay(relayPool, database, publicKey)
-          setRelayAdded(true)
-        })
-      }
+    const relay: Relay = {
+      url: note?.content ?? '',
     }
 
     return (
@@ -244,7 +244,7 @@ export const NoteCard: React.FC<NoteCardProps> = ({
         <Card>
           <Card.Title
             title={t('noteCard.recommendation')}
-            subtitle={relayName}
+            subtitle={relay.url}
             left={(props) => (
               <Avatar.Icon
                 {...props}
@@ -257,7 +257,7 @@ export const NoteCard: React.FC<NoteCardProps> = ({
           />
           {!relayAdded && note && REGEX_SOCKET_LINK.test(note.content) && (
             <Card.Content style={[styles.bottomActions, { borderColor: theme.colors.onSecondary }]}>
-              <Button mode='contained' onPress={addRelayItem}>
+              <Button mode='contained' onPress={async () => await addRelayItem(relay)}>
                 {t('noteCard.addRelay')}
               </Button>
             </Card.Content>
@@ -404,18 +404,27 @@ export const NoteCard: React.FC<NoteCardProps> = ({
   return note ? (
     <Card mode={mode}>
       <Card.Content style={styles.title}>
-        <TouchableRipple onPress={() => setDisplayUserDrawer(note.pubkey)}>
-          <ProfileData
-            username={note?.name}
-            publicKey={note.pubkey}
-            validNip05={note?.valid_nip05}
-            nip05={note?.nip05}
-            lnurl={note?.lnurl}
-            lnAddress={note?.ln_address}
-            picture={showAvatarImage ? note?.picture : undefined}
-            timestamp={note?.created_at}
+        <View>
+          <TouchableRipple onPress={() => setDisplayUserDrawer(note.pubkey)}>
+            <ProfileData
+              username={note?.name}
+              publicKey={note.pubkey}
+              validNip05={note?.valid_nip05}
+              nip05={note?.nip05}
+              lnurl={note?.lnurl}
+              lnAddress={note?.ln_address}
+              picture={showAvatarImage ? note?.picture : undefined}
+              timestamp={note?.created_at}
+            />
+          </TouchableRipple>
+        </View>
+        <View style={styles.noteOptionsIcon}>
+          <IconButton
+            icon='dots-vertical'
+            size={28}
+            onPress={() => setDisplayNoteDrawer(note.id)}
           />
-        </TouchableRipple>
+        </View>
       </Card.Content>
       {getNoteContent()}
       {showAction && (
@@ -478,14 +487,11 @@ export const NoteCard: React.FC<NoteCardProps> = ({
         {relayColouring &&
           showRelayColors &&
           relays.map((relay, index) => (
-            <TouchableNativeFeedback
-              onPress={() => setDisplayrelayDrawer(relay.relay_url)}
-              key={relay.relay_url}
-            >
+            <TouchableNativeFeedback key={relay.relay_url}>
               <View
                 style={[
                   styles.relay,
-                  { backgroundColor: relayToColor(relay.relay_url) },
+                  { borderBottomColor: relayToColor(relay.relay_url) },
                   index === 0 ? { borderBottomLeftRadius: 50 } : {},
                   index === relays.length - 1 ? { borderBottomRightRadius: 50 } : {},
                 ]}
@@ -502,7 +508,7 @@ export const NoteCard: React.FC<NoteCardProps> = ({
 const styles = StyleSheet.create({
   relayList: {
     flexDirection: 'row',
-    marginTop: 8,
+    bottom: 2,
     marginBottom: -16,
     marginLeft: -16,
     marginRight: -16,
@@ -510,6 +516,7 @@ const styles = StyleSheet.create({
   relay: {
     flex: 1,
     height: 10,
+    borderBottomWidth: 2,
   },
   titleUsername: {
     fontWeight: 'bold',
@@ -529,6 +536,7 @@ const styles = StyleSheet.create({
   },
   title: {
     flexDirection: 'row',
+    justifyContent: 'space-between',
     paddingBottom: 16,
   },
   userBlockedWrapper: {
@@ -579,6 +587,16 @@ const styles = StyleSheet.create({
   verifyIcon: {
     paddingTop: 4,
     paddingLeft: 5,
+  },
+  snackbar: {
+    marginBottom: 50,
+    marginLeft: 0,
+    width: '100%',
+  },
+  noteOptionsIcon: {
+    marginBottom: -16,
+    marginRight: -16,
+    marginTop: -8,
   },
 })
 
