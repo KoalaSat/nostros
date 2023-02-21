@@ -35,12 +35,12 @@ export function getNprofile(key: string, relays: string[]): string {
   return key
 }
 
-export function getNevent(key: string | undefined): string {
+export function getNevent(key: string | undefined, relays: string[]): string {
   if (!key) return ''
   if (isPublicKey(key)) return key
 
   try {
-    return neventEncode({ id: key, relays: [] })
+    return neventEncode({ id: key, relays })
   } catch {
     console.log('Error encoding')
   }

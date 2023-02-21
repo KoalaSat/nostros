@@ -114,7 +114,15 @@
       "update": "Actualizar",
       "disable": "Desabilitar"
     },
+    "noteActions": {
+      "copy": "Copiar",
+      "share": "Compartir",
+      "view": "Ver"
+    },
     "noteCard": {
+      "notifications": {
+        "zapServerError": "Ha ocurrido un error en el servidor mientras se intentaba obtener la factura."
+      },
       "answering": "Responder a {{pubkey}}",
       "reposting": "Reposted {{pubkey}}",
       "seeParent": "Ver nota",

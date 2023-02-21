@@ -113,7 +113,15 @@
       "update": "更新",
       "disable": "停用"
     },
+    "noteActions": {
+      "copy": "复制",
+      "share": "分享",
+      "view": "View"
+    },
     "noteCard": {
+      "notifications": {
+        "zapServerError": "There was an error on the server while trying to request for the invoice."
+      },
       "answering": "回复 {{pubkey}}",
       "reposting": "已转发 {{pubkey}}",
       "userBlocked": "用户已屏蔽",

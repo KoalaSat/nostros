@@ -31,7 +31,7 @@ export const searchRelays: (
   relayUrl: string,
   db: QuickSQLiteConnection,
 ) => Promise<Relay[]> = async (relayUrl, db) => {
-  const searchQuery = `SELECT * FROM nostros_relays WHERE url = '${relayUrl}';`
+  const searchQuery = `SELECT * FROM nostros_relays WHERE url = '${relayUrl}' AND deleted_at = 0;`
   const results = await db.execute(searchQuery)
   const items: object[] = getItems(results)
   const relays: Relay[] = items.map((object) => databaseToEntity(object))
@@ -39,7 +39,7 @@ export const searchRelays: (
 }
 
 export const getRelays: (db: QuickSQLiteConnection) => Promise<Relay[]> = async (db) => {
-  const notesQuery = 'SELECT * FROM nostros_relays;'
+  const notesQuery = 'SELECT * FROM nostros_relays WHERE deleted_at = 0;'
   const resultSet = await db.execute(notesQuery)
   const items: object[] = getItems(resultSet)
   const relays: Relay[] = items.map((object) => databaseToEntity(object))
@@ -47,7 +47,7 @@ export const getRelays: (db: QuickSQLiteConnection) => Promise<Relay[]> = async 
 }
 
 export const getActiveRelays: (db: QuickSQLiteConnection) => Promise<Relay[]> = async (db) => {
-  const notesQuery = 'SELECT * FROM nostros_relays WHERE active = 1;'
+  const notesQuery = 'SELECT * FROM nostros_relays WHERE active = 1 AND deleted_at = 0;'
   const resultSet = await db.execute(notesQuery)
   const items: object[] = getItems(resultSet)
   const relays: Relay[] = items.map((object) => databaseToEntity(object))
@@ -58,21 +58,11 @@ export const getRelay: (db: QuickSQLiteConnection, url: string) => Promise<Relay
   db,
   url,
 ) => {
-  const notesQuery = 'SELECT * FROM nostros_relays WHERE url = ?;'
+  const notesQuery = 'SELECT * FROM nostros_relays WHERE url = ? AND deleted_at = 0;'
   const resultSet = await db.execute(notesQuery, [url])
   const items: object[] = getItems(resultSet)
   const relays: Relay[] = items.map((object) => databaseToEntity(object))
   return relays[0]
-}
-
-export const createRelay: (db: QuickSQLiteConnection, url: string) => Promise<QueryResult> = async (
-  db,
-  url,
-) => {
-  const query = `
-    INSERT OR IGNORE INTO nostros_relays (url) VALUES (?)
-  `
-  return db.execute(query, [url])
 }
 
 export const createResilientRelay: (
