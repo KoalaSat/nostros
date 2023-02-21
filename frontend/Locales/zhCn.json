@@ -96,7 +96,7 @@
       "logout": "退出"
     },
     "configPage": {
-      "showPublicImages": "在发现页显示图片",
+      "showPublicImages": "显示发现页图片",
       "showSensitive": "显示敏感的 Notes",
       "satoshi": "聪符号",
       "imageHostingService": "图片托管服务",
@@ -104,14 +104,14 @@
       "language": "语言",
       "relayColoruring": "颜色标示中继状态",
       "app": "App",
-      "feed": "Feed",
+      "feed": "信息流",
       "zaps": "Zaps",
-      "disabled": "Disabled",
-      "longPressZap": "Long press Zaps",
-      "longPressZapDescription": "Define a default amount to automatically generate invoices after a long press on the Zap button.",
-      "defaultZapAmount": "Defaul Zap amount",
-      "update": "Update",
-      "disable": "Disable"
+      "disabled": "停用",
+      "longPressZap": "长按 Zaps",
+      "longPressZapDescription": "设置长按 Zap 按钮后自动生成账单的默认金额",
+      "defaultZapAmount": "默认 Zap 金额",
+      "update": "更新",
+      "disable": "停用"
     },
     "noteCard": {
       "answering": "回复 {{pubkey}}",
@@ -130,7 +130,7 @@
       "npub": "公钥",
       "copy": "复制",
       "open": "打开钱包",
-      "anonTip": "Anonymous tip",
+      "anonTip": "匿名赞赏",
       "zap": "Zap"
     },
     "notificationsFeed": {
@@ -243,7 +243,7 @@
       "myList": "我的中继",
       "notifications": {
         "globalFeedActive": "已为发现页开启",
-        "globalFeedActiveUnactive": "已为发现页禁用",
+        "globalFeedActiveUnactive": "已为发现页停用",
         "add": "中继已添加",
         "remove": "中继已移除",
         "active": "中继已启用",
@@ -276,7 +276,7 @@
         "pubkeyCopied": "已复制私钥",
         "contactCopied": "已复制联系人",
         "urlCopied": "已复制链接",
-        "pushCompleted": "All your data has been pushed."
+        "pushCompleted": "您的所有数据都已推送"
       }
     },
     "profileConfigPage": {
@@ -285,7 +285,7 @@
         "npubCopied": "已复制公钥",
         "profilePublished": "简介已发布",
         "lud06Published": "LUDs 已发布",
-        "nip05Published": "NIP-05 已发布 \n\n{{nip05}}",
+        "nip05Published": "NIP-05 已发布\n\n{{nip05}}",
         "picturePublished": "头像已发布",
         "connectionError": "连接错误",
         "active": "中继已启用",
@@ -331,7 +331,7 @@
       "unfollow": "关注中",
       "copyNPub": "复制公钥",
       "relaysTitle": "中继",
-      "relaysDescription": "以下是{{username}}的中继，您可以激活想要连接的中继"
+      "relaysDescription": "以下是{{username}}的中继，您可以启用想要连接的中继"
     },
     "homePage": {
       "clipboardTitle": "检测到 Nostr 公钥",
