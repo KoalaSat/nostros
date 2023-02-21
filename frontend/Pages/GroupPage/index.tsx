@@ -329,8 +329,8 @@ export const GroupPage: React.FC<GroupPageProps> = ({ route }) => {
         friction={2}
         overshootRight={false}
         onSwipeableOpen={() => {
-          setReply(item)
           row[index].close()
+          setReply(item)
         }}
       >
         <View style={styles.messageRow} key={index}>

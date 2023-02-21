@@ -19,14 +19,14 @@ interface NoteActionsProps {
 export const NoteActions: React.FC<NoteActionsProps> = ({ bottomSheetRef }) => {
   const theme = useTheme()
   const { database, displayNoteDrawer, relayColouring } = React.useContext(AppContext)
-  const { setDisplayrelayDrawer } = React.useContext(RelayPoolContext)
+  const { setDisplayrelayDrawer, lastEventId } = React.useContext(RelayPoolContext)
   const [note, setNote] = React.useState<Note>()
   const [relays, setRelays] = React.useState<NoteRelay[]>([])
   const bottomSheetShareRef = React.useRef<RBSheet>(null)
 
   React.useEffect(() => {
     loadNote()
-  }, [displayNoteDrawer])
+  }, [displayNoteDrawer, lastEventId])
 
   const loadNote: () => void = () => {
     if (database && displayNoteDrawer) {
@@ -92,7 +92,10 @@ export const NoteActions: React.FC<NoteActionsProps> = ({ bottomSheetRef }) => {
       <View style={styles.relayList}>
         {relayColouring &&
           relays.map((relay, index) => (
-            <TouchableNativeFeedback onPress={() => setDisplayrelayDrawer(relay.relay_url)} key={relay.relay_url}>
+            <TouchableNativeFeedback
+              onPress={() => setDisplayrelayDrawer(relay.relay_url)}
+              key={relay.relay_url}
+            >
               <View
                 style={[
                   styles.relay,
@@ -137,7 +140,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     marginTop: 16,
-    marginBottom: 16
+    marginBottom: 16,
   },
   actionButton: {
     alignItems: 'center',

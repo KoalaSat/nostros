@@ -44,6 +44,7 @@ Nostros chat
 - [x] Global feed filters and blocked users
 - [x] Relay colouring
 - [x] Push events to private relay
+- [x] Zaps
 
 # Kudos
 

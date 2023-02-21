@@ -243,7 +243,7 @@ export const AppContextProvider = ({ children }: AppContextProviderProps): JSX.E
         longPressZap,
         setLongPressZap,
         displayNoteDrawer,
-        setDisplayNoteDrawer
+        setDisplayNoteDrawer,
       }}
     >
       {children}

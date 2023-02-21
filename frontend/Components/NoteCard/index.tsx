@@ -55,13 +55,11 @@ interface NoteCardProps {
   showPreview?: boolean
   showRepostPreview?: boolean
   numberOfLines?: number
-  copyOnPress?: boolean
   mode?: 'elevated' | 'outlined' | 'contained'
 }
 
 export const NoteCard: React.FC<NoteCardProps> = ({
   note,
-  copyOnPress = true,
   showRelayColors = true,
   showAvatarImage = true,
   showAnswerData = true,
@@ -74,8 +72,7 @@ export const NoteCard: React.FC<NoteCardProps> = ({
 }) => {
   const theme = useTheme()
   const { publicKey, privateKey } = React.useContext(UserContext)
-  const { relayPool, lastEventId, addRelayItem } =
-    useContext(RelayPoolContext)
+  const { relayPool, lastEventId, addRelayItem } = useContext(RelayPoolContext)
   const {
     database,
     showSensitive,
@@ -194,7 +191,6 @@ export const NoteCard: React.FC<NoteCardProps> = ({
               onPressUser={(user) => setDisplayUserDrawer(user.id)}
               showPreview={showPreview}
               numberOfLines={numberOfLines}
-              copyOnPress={copyOnPress}
             />
           )}
           {note?.repost_id && (
@@ -206,7 +202,6 @@ export const NoteCard: React.FC<NoteCardProps> = ({
                   showRepostPreview={false}
                   showAction={false}
                   showRelayColors={false}
-                  copyOnPress={false}
                 />
               ) : (
                 <Chip

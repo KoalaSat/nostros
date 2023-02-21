@@ -1,6 +1,6 @@
 import { t } from 'i18next'
 import * as React from 'react'
-import { StyleSheet, View } from 'react-native'
+import { Dimensions, StyleSheet, View } from 'react-native'
 import Clipboard from '@react-native-clipboard/clipboard'
 import { IconButton, Snackbar, Text, TouchableRipple } from 'react-native-paper'
 import Share from 'react-native-share'
@@ -49,7 +49,7 @@ export const GroupShare: React.FC<GroupShareProps> = ({ group }) => {
           <QRCode
             quietZone={8}
             value={`nostr:${nEvent}`}
-            size={350}
+            size={Dimensions.get('window').width - 64}
             logoBorderRadius={50}
             logoSize={100}
             logo={{ uri: group?.picture }}
