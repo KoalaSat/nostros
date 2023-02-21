@@ -93,7 +93,15 @@
       "update": "Update",
       "disable": "Disable"
     },
+    "noteActions": {
+      "copy": "Kopieren",
+      "share": "Teilen",
+      "view": "View"
+    },
     "noteCard": {
+      "notifications": {
+        "zapServerError": "There was an error on the server while trying to request for the invoice."
+      },
       "answering": "{{pubkey}} antworten",
       "reposting": "{{pubkey}} reposten",
       "seeParent": "Notiz ansehen",
@@ -233,7 +241,6 @@
         "alreadyExists": "Relay existiert bereits"
       }
     },
-
     "relayCard": {
       "pushDone": "Fertig",
       "pushHistoricTitle": "Alle meine Daten hochladen",
@@ -269,7 +276,6 @@
         "pushCompleted": "All your data has been pushed."
       }
     },
-
     "profileConfigPage": {
       "notifications": {
         "nsecCopied": "Privater Schlüssel kopiert.",
@@ -368,7 +374,6 @@
       "copyNip05": "NIP-05 kopieren",
       "copyNPub": "Schlüssel kopieren"
     },
-
     "profileCard": {
       "notifications": {
         "contactAdded": "Aboniert",

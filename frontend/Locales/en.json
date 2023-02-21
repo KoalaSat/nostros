@@ -93,7 +93,15 @@
       "update": "Update",
       "disable": "Disable"
     },
+    "noteActions": {
+      "copy": "Copy",
+      "share": "Share",
+      "view": "View"
+    },
     "noteCard": {
+      "notifications": {
+        "zapServerError": "There was an error on the server while trying to request for the invoice."
+      },
       "answering": "Answer to {{pubkey}}",
       "reposting": "Reposted {{pubkey}}",
       "userBlocked": "User blocked",
