@@ -87,21 +87,21 @@
       "app": "App",
       "feed": "Feed",
       "zaps": "Zaps",
-      "disabled": "Disabled",
-      "longPressZap": "Long press Zaps",
-      "longPressZapDescription": "Define a default amount to automatically generate invoices after a long press on the Zap button.",
-      "defaultZapAmount": "Defaul Zap amount",
-      "update": "Update",
-      "disable": "Disable"
+      "disabled": "deaktiviert",
+      "longPressZap": "Zaps lange drücken",
+      "longPressZapDescription": "Lege den voreingestellten Betrag fest, mit der Invoices erstellt werden sollen, wenn Zaps lange gedrückt wird.",
+      "defaultZapAmount": "Standard Zap Betrag",
+      "update": "Aktualisieren",
+      "disable": "Deaktivieren"
     },
     "noteActions": {
       "copy": "Kopieren",
       "share": "Teilen",
-      "view": "View"
+      "view": "Ansehen"
     },
     "noteCard": {
       "notifications": {
-        "zapServerError": "There was an error on the server while trying to request for the invoice."
+        "zapServerError": "Beim Anfragen des Invoice hat es einen Fehler vom Server gegeben."
       },
       "answering": "{{pubkey}} antworten",
       "reposting": "{{pubkey}} reposten",
@@ -119,7 +119,7 @@
       "cancel": "Abbrechen",
       "copy": "Kopieren",
       "open": "Öffne Wallet",
-      "anonTip": "Anonymous tip",
+      "anonTip": "Anonymer Tip",
       "zap": "Zap"
     },
     "notificationsFeed": {
@@ -249,7 +249,7 @@
       "pushHistoricAlertTitle": "Wichtig!",
       "pushHistoricAlert": "Öffentliche Relays haben strenge Anti-Spam Regeln, diese Aktion kann dein Profil sperren oder verbannen. Stelle zuvor sicher, das du große Datenmengen auf diesen Relay schieben darfst.\n\nWir empfehlen, dieses Feature ausschlisslich für private Relays zu benutzen, wie z.B. Umbrel's Nostr Relay.",
       "pushConsent": "Ich schiebe meine Daten auf einen privaten Relay",
-      "pushingEvent": "Event {{eventId}} pushed",
+      "pushingEvent": "Event {{eventId}} hochgeladen",
       "pushRelay": "Alle meine Daten hochladen",
       "cancel": "Abbrechen",
       "moreInfo": "Mehr Infos",
@@ -274,7 +274,7 @@
         "pubkeyCopied": "Öffentlichen Schlüssel kopiert.",
         "contactCopied": "Kontakt kopiert.",
         "urlCopied": "URL kopiert.",
-        "pushCompleted": "All your data has been pushed."
+        "pushCompleted": "Alle deine Daten wurden hochgeladen"
       }
     },
     "profileConfigPage": {
@@ -325,7 +325,7 @@
         "active": "Relay aktiviert.",
         "desactive": "Relay deaktiviert."
       },
-      "invoice": "Zap",
+      "invoice": "Tip",
       "message": "Nachricht",
       "follow": "Folgen",
       "isFollower": "folgt dir",
@@ -335,14 +335,14 @@
     },
     "groupPage": {
       "typeMessage": "Nachricht schreiben"
+  	  "replyText": "Nachricht"
     },
     "groupHeaderIcon": {
-      "delete": "Leave group",
-      "share": "Share group",
-      "edit": "Edit group"
+      "delete": "Gruppe verlassen",
+      "share": "Gruppe teilen",
+      "edit": "Gruppe editieren"
     },
     "groupsFeed": {
-      "delete": "Gruppe verlassen",
       "updateTitle": "Gruppe aktualisieren",
       "newGroupName": "Name",
       "newGroupDescription": "Beschreibung",
@@ -352,7 +352,8 @@
       "createTitle": "Gruppe erstellen",
       "groupId": "Gruppen ID",
       "addTitle": "Bestehende Gruppe hinzufügen",
-      "add": "Gruppe hinzufügen"
+      "add": "Gruppe hinzufügen",
+      "delete": "Gruppe löschen"
     },
     "homePage": {
       "clipboardTitle": "Nostr Schlüssel entdeckt",
@@ -382,7 +383,7 @@
         "userUnblocked": "Profil entblockt",
         "userBlocked": "Profile geblockt"
       },
-      "invoice": "Zap",
+      "invoice": "Tip",
       "message": "Nachricht",
       "follow": "Folgen",
       "block": "Blockieren",
@@ -390,9 +391,14 @@
       "unblock": "Erlauben",
       "unfollow": "Abo entfernen",
       "relaysTitle": "Relays",
-      "blocked": "Blocked",
-      "mute": "Mute",
-      "muted": "Muted"
+      "blocked": "Blockiert",
+      "mute": "Stumm",
+      "muted": "Stumm",
+      "muteUser": "{{username}} in Chats stumm schalten",
+      "muteWarningTitle": "Wichtig",
+      "muteWarning": "Diese Aktion wird Nachrichten dieses Benutzers in allen Chats unwiderruflich verstecken und kann nicht rückgängig gemacht werden.",
+      "muteForever": "{{username}} für immer stumm schalten",
+      "cancel": "Abbrechen"
     },
     "conversationsFeed": {
       "openMessage": "Unterhaltung beginnen",
