@@ -55,14 +55,15 @@ export const ProfileConnectPage: React.FC = () => {
           setPrivateKey(key)
         }
         navigate('ProfileLoad')
-      } else if (loginMethod === 'mnemonic') {
-        const words = []
-        for (let index = 1; index <= 12; index++) {
-          words.push(mnemonicWords[index])
-        }
-        setPrivateKey(privateKeyFromSeedWords(words.join(' ')))
-        navigate('ProfileLoad')
       }
+    } else if (loginMethod === 'mnemonic') {
+      const words = []
+      for (let index = 1; index <= 12; index++) {
+        words.push(mnemonicWords[index].trim())
+      }
+      setPrivateKey(privateKeyFromSeedWords(words.join(' ')))
+      setMnemonicWords({})
+      navigate('ProfileLoad')
     }
   }
 

@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState } from 'react'
-import { StyleSheet, View } from 'react-native'
+import { Dimensions, ScrollView, StyleSheet, View } from 'react-native'
 import { AppContext } from '../../Contexts/AppContext'
 import { Event } from '../../lib/nostr/Events'
 import { useTranslation } from 'react-i18next'
@@ -137,7 +137,8 @@ export const SendPage: React.FC<SendPageProps> = ({ route }) => {
           publicKey={item?.id}
           validNip05={item?.valid_nip05}
           nip05={item?.nip05}
-          lud06={item?.lnurl}
+          lnurl={item?.lnurl}
+          lnAddress={item?.ln_address}
           picture={item?.picture}
         />
       </View>
@@ -146,7 +147,7 @@ export const SendPage: React.FC<SendPageProps> = ({ route }) => {
 
   return (
     <>
-      <View style={[styles.textInputContainer, { paddingBottom: note ? 230 : 10 }]}>
+      <View style={[styles.textInputContainer]}>
         {note && (
           <View style={styles.noteCard}>
             <NoteCard
@@ -164,48 +165,55 @@ export const SendPage: React.FC<SendPageProps> = ({ route }) => {
             ref={(ref) => ref?.focus()}
             mode='outlined'
             multiline
-            numberOfLines={30}
+            numberOfLines={
+              note ? Dimensions.get('window').height / 35 : Dimensions.get('window').height / 25
+            }
             outlineStyle={{ borderColor: 'transparent' }}
             value={content}
             onChangeText={onChangeText}
             scrollEnabled
+            // cursorColor={theme.colors.inverseOnSurface}
+            // selectionColor={theme.colors.inverseOnSurface}
           />
         </View>
       </View>
       <View style={styles.actions}>
         {userSuggestions.length > 0 ? (
           <View style={[styles.contactsList, { backgroundColor: theme.colors.background }]}>
-            {userSuggestions.map((user, index) => renderContactItem(user, index))}
+            <ScrollView>
+              {userSuggestions.map((user, index) => renderContactItem(user, index))}
+            </ScrollView>
           </View>
         ) : (
-          <View style={{ backgroundColor: theme.colors.elevation.level1 }}>
-            <View style={styles.contentWarning}>
-              <View style={styles.switchWrapper}>
-                <Switch value={contentWarning} onValueChange={setContentWarning} />
-                <Text>{t('sendPage.contentWarning')}</Text>
-              </View>
-              <IconButton
-                icon='image-outline'
-                size={25}
-                style={styles.imageButton}
-                onPress={() => setStartUpload(true)}
-                disabled={uploadingFile}
-              />
-            </View>
-            <View style={styles.send}>
-              <Button
-                mode='contained'
-                onPress={onPressSend}
-                disabled={
-                  isSending || (route.params?.type !== 'repost' && (!content || content === ''))
-                }
-                loading={isSending || uploadingFile}
-              >
-                {t('sendPage.send')}
-              </Button>
-            </View>
-          </View>
+          <></>
         )}
+        <View style={{ backgroundColor: theme.colors.elevation.level1 }}>
+          <View style={styles.contentWarning}>
+            <View style={styles.switchWrapper}>
+              <Switch value={contentWarning} onValueChange={setContentWarning} />
+              <Text>{t('sendPage.contentWarning')}</Text>
+            </View>
+            <IconButton
+              icon='image-outline'
+              size={25}
+              style={styles.imageButton}
+              onPress={() => setStartUpload(true)}
+              disabled={uploadingFile}
+            />
+          </View>
+          <View style={styles.send}>
+            <Button
+              mode='contained'
+              onPress={onPressSend}
+              disabled={
+                isSending || (route.params?.type !== 'repost' && (!content || content === ''))
+              }
+              loading={isSending || uploadingFile}
+            >
+              {t('sendPage.send')}
+            </Button>
+          </View>
+        </View>
       </View>
       <UploadImage
         startUpload={startUpload}
@@ -213,6 +221,7 @@ export const SendPage: React.FC<SendPageProps> = ({ route }) => {
           setContent((prev) => `${prev}\n\n${imageUri}`)
           setStartUpload(false)
         }}
+        onError={() => setStartUpload(false)}
         uploadingFile={uploadingFile}
         setUploadingFile={setUploadingFile}
       />
@@ -229,6 +238,7 @@ const styles = StyleSheet.create({
   snackbar: {
     margin: 16,
     bottom: 100,
+    width: '100%',
   },
   textInputContainer: {
     flex: 1,
@@ -246,13 +256,12 @@ const styles = StyleSheet.create({
     paddingRight: 16,
   },
   actions: {
-    height: 100,
-    flexDirection: 'column-reverse',
     zIndex: 999,
   },
   contactsList: {
     bottom: 0,
-    height: 200,
+    maxHeight: 180,
+    paddingBottom: 16,
   },
   contactRow: {
     paddingLeft: 16,

@@ -90,7 +90,7 @@ export const NotePage: React.FC<NotePageProps> = ({ route }) => {
       ])
       relayPool?.subscribe(`notepage-replies-${route.params.noteId.substring(0, 8)}`, [
         {
-          kinds: [Kind.Reaction, Kind.Text, Kind.RecommendRelay],
+          kinds: [Kind.Reaction, Kind.Text, Kind.RecommendRelay, 9735],
           '#e': [route.params.noteId],
         },
       ])
@@ -129,7 +129,7 @@ export const NotePage: React.FC<NotePageProps> = ({ route }) => {
       </ScrollView>
       {privateKey && (
         <AnimatedFAB
-          style={[styles.fabSend, { top: Dimensions.get('window').height - 160 }]}
+          style={[styles.fabSend, { top: Dimensions.get('window').height - 136 }]}
           icon='message-plus-outline'
           label='Label'
           onPress={() => {
@@ -141,7 +141,7 @@ export const NotePage: React.FC<NotePageProps> = ({ route }) => {
         />
       )}
       <AnimatedFAB
-        style={[styles.fabHome, { top: Dimensions.get('window').height - 230 }]}
+        style={[styles.fabHome, { top: Dimensions.get('window').height - 211 }]}
         icon='home-outline'
         label='Label'
         onPress={() => {
@@ -156,7 +156,7 @@ export const NotePage: React.FC<NotePageProps> = ({ route }) => {
     <View>
       <SkeletonNote />
       <AnimatedFAB
-        style={[styles.fabHome, { top: Dimensions.get('window').height - 230 }]}
+        style={[styles.fabHome, { top: Dimensions.get('window').height - 211 }]}
         icon='home-outline'
         label='Label'
         onPress={() => {

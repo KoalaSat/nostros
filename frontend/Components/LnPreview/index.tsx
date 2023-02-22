@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import QRCode from 'react-native-qrcode-svg'
-import { Linking, StyleSheet, View } from 'react-native'
+import { Dimensions, Linking, StyleSheet, View } from 'react-native'
 import Clipboard from '@react-native-clipboard/clipboard'
 import { useTranslation } from 'react-i18next'
 import RBSheet from 'react-native-raw-bottom-sheet'
@@ -9,11 +9,16 @@ import { AppContext } from '../../Contexts/AppContext'
 import { decode, PaymentRequestObject, TagsObject } from 'bolt11'
 
 interface LnPreviewProps {
+  setOpen?: (open: boolean) => void
   invoice?: string
   setInvoice: (invoice: string | undefined) => void
 }
 
-export const LnPreview: React.FC<LnPreviewProps> = ({ invoice, setInvoice }) => {
+export const LnPreview: React.FC<LnPreviewProps> = ({
+  invoice,
+  setInvoice,
+  setOpen = () => {},
+}) => {
   const theme = useTheme()
   const { t } = useTranslation('common')
   const { getSatoshiSymbol } = React.useContext(AppContext)
@@ -63,12 +68,15 @@ export const LnPreview: React.FC<LnPreviewProps> = ({ invoice, setInvoice }) => 
       closeOnDragDown={true}
       // height={630}
       customStyles={rbSheetQrCustomStyles}
-      onClose={() => setInvoice(undefined)}
+      onClose={() => {
+        setInvoice(undefined)
+        setOpen(false)
+      }}
     >
       <Card style={styles.qrContainer}>
         <Card.Content>
           <View style={styles.qr}>
-            <QRCode value={invoice} size={300} quietZone={8} />
+            <QRCode value={invoice} quietZone={8} size={Dimensions.get('window').width - 64} />
           </View>
           <View style={styles.qrText}>
             <Text>{decodedLnUrl?.satoshis} </Text>

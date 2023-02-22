@@ -1,7 +1,7 @@
 import * as React from 'react'
 import { useTranslation } from 'react-i18next'
-import { FlatList, StyleSheet, Text } from 'react-native'
-import { Divider, List, Switch, useTheme } from 'react-native-paper'
+import { FlatList, StyleSheet } from 'react-native'
+import { Button, Divider, List, Switch, Text, TextInput, useTheme } from 'react-native-paper'
 import SInfo from 'react-native-sensitive-info'
 import RBSheet from 'react-native-raw-bottom-sheet'
 import { AppContext } from '../../Contexts/AppContext'
@@ -16,6 +16,7 @@ export interface Config {
   image_hosting_service: string
   language: string
   relay_coloruring: boolean
+  long_press_zap: number | undefined
 }
 
 export const ConfigPage: React.FC = () => {
@@ -35,10 +36,14 @@ export const ConfigPage: React.FC = () => {
     setLanguage,
     relayColouring,
     setRelayColouring,
+    longPressZap,
+    setLongPressZap,
   } = React.useContext(AppContext)
   const bottomSheetSatoshiRef = React.useRef<RBSheet>(null)
   const bottomSheetImageHostingRef = React.useRef<RBSheet>(null)
   const bottomSheetLanguageRef = React.useRef<RBSheet>(null)
+  const bottomSheetLongPressZapRef = React.useRef<RBSheet>(null)
+  const [zapAmount, setZapAmount] = React.useState<string | undefined>(longPressZap?.toString())
 
   React.useEffect(() => {}, [showPublicImages, showSensitive, satoshi])
 
@@ -126,6 +131,25 @@ export const ConfigPage: React.FC = () => {
 
   return (
     <>
+      <List.Item title={t('configPage.app')} />
+      <Divider />
+      <List.Item
+        title={t('configPage.language')}
+        onPress={() => bottomSheetLanguageRef.current?.open()}
+        right={() => <Text>{t(`language.${language}`)}</Text>}
+      />
+      <List.Item
+        title={t('configPage.imageHostingService')}
+        onPress={() => bottomSheetImageHostingRef.current?.open()}
+        right={() => (
+          <Text style={{ color: theme.colors.onSurfaceVariant }}>
+            {imageHostingServices[imageHostingService]?.uri ??
+              t(`configPage.${imageHostingService}`)}
+          </Text>
+        )}
+      />
+      <List.Item title={t('configPage.feed')} />
+      <Divider />
       <List.Item
         title={t('configPage.showPublicImages')}
         right={() => (
@@ -174,23 +198,19 @@ export const ConfigPage: React.FC = () => {
           />
         )}
       />
-      <List.Item
-        title={t('configPage.language')}
-        onPress={() => bottomSheetLanguageRef.current?.open()}
-        right={() => <Text>{t(`language.${language}`)}</Text>}
-      />
+      <List.Item title={t('configPage.zaps')} />
+      <Divider />
       <List.Item
         title={t('configPage.satoshi')}
         onPress={() => bottomSheetSatoshiRef.current?.open()}
         right={() => getSatoshiSymbol(25)}
       />
       <List.Item
-        title={t('configPage.imageHostingService')}
-        onPress={() => bottomSheetImageHostingRef.current?.open()}
+        title={t('configPage.longPressZap')}
+        onPress={() => bottomSheetLongPressZapRef.current?.open()}
         right={() => (
           <Text style={{ color: theme.colors.onSurfaceVariant }}>
-            {imageHostingServices[imageHostingService]?.uri ??
-              t(`configPage.${imageHostingService}`)}
+            {longPressZap ?? t('configPage.disabled')}
           </Text>
         )}
       />
@@ -225,6 +245,56 @@ export const ConfigPage: React.FC = () => {
           ItemSeparatorComponent={Divider}
         />
       </RBSheet>
+      <RBSheet
+        ref={bottomSheetLongPressZapRef}
+        closeOnDragDown={true}
+        customStyles={bottomSheetStyles}
+      >
+        <Text variant='titleLarge'>{t('configPage.longPressZap')}</Text>
+        <Text style={styles.input} variant='bodyMedium'>
+          {t('configPage.longPressZapDescription')}
+        </Text>
+        <TextInput
+          style={styles.input}
+          mode='outlined'
+          label={t('configPage.defaultZapAmount') ?? ''}
+          onChangeText={setZapAmount}
+          value={zapAmount}
+        />
+        <Button
+          mode='contained'
+          style={styles.input}
+          onPress={() => {
+            if (zapAmount) {
+              SInfo.getItem('config', {}).then((result) => {
+                const config: Config = JSON.parse(result)
+                config.long_press_zap = parseInt(zapAmount, 10)
+                SInfo.setItem('config', JSON.stringify(config), {})
+                setLongPressZap(parseInt(zapAmount, 10))
+              })
+            }
+            bottomSheetLongPressZapRef.current?.close()
+          }}
+        >
+          {t('configPage.update')}
+        </Button>
+        <Button
+          mode='outlined'
+          style={styles.input}
+          onPress={() => {
+            SInfo.getItem('config', {}).then((result) => {
+              const config: Config = JSON.parse(result)
+              config.long_press_zap = undefined
+              SInfo.setItem('config', JSON.stringify(config), {})
+              setLongPressZap(undefined)
+              setZapAmount(undefined)
+            })
+            bottomSheetLongPressZapRef.current?.close()
+          }}
+        >
+          {t('configPage.disable')}
+        </Button>
+      </RBSheet>
     </>
   )
 }
@@ -233,6 +303,9 @@ const styles = StyleSheet.create({
   satoshi: {
     fontFamily: 'Satoshi-Symbol',
     fontSize: 25,
+  },
+  input: {
+    marginTop: 16,
   },
 })
 

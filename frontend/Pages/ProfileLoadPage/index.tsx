@@ -30,11 +30,7 @@ export const ProfileLoadPage: React.FC = () => {
       )
       setTimeout(() => loadMeta(), 1000)
       return () =>
-        relayPool?.unsubscribe([
-          'profile-load-meta',
-          'profile-load-notes',
-          'profile-load-meta-pets',
-        ])
+        relayPool?.unsubscribe(['profile-load-meta', 'profile-load-notes', 'profile-load-others'])
     }, []),
   )
 
@@ -58,7 +54,13 @@ export const ProfileLoadPage: React.FC = () => {
     if (publicKey && relayPoolReady) {
       relayPool?.subscribe('profile-load-meta', [
         {
-          kinds: [Kind.Contacts, Kind.Metadata],
+          kinds: [Kind.Metadata, Kind.Contacts],
+          authors: [publicKey],
+        },
+      ])
+      relayPool?.subscribe('profile-load-others', [
+        {
+          kinds: [Kind.ChannelCreation, Kind.ChannelMetadata, 1002],
           authors: [publicKey],
         },
       ])

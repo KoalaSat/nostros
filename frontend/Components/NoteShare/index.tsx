@@ -3,34 +3,33 @@ import * as React from 'react'
 import { Dimensions, StyleSheet, View } from 'react-native'
 import Clipboard from '@react-native-clipboard/clipboard'
 import { IconButton, Snackbar, Text, TouchableRipple } from 'react-native-paper'
-import { User } from '../../Functions/DatabaseFunctions/Users'
 import Share from 'react-native-share'
 import RBSheet from 'react-native-raw-bottom-sheet'
-import { getNprofile } from '../../lib/nostr/Nip19'
 import QRCode from 'react-native-qrcode-svg'
 import { useContext } from 'react'
 import { AppContext } from '../../Contexts/AppContext'
-import { getUserRelays } from '../../Functions/DatabaseFunctions/NotesRelays'
+import { getNoteRelays, Note } from '../../Functions/DatabaseFunctions/Notes'
+import { getNevent } from '../../lib/nostr/Nip19'
 
-interface ProfileShareProps {
-  user: User
+interface NoteShareProps {
+  note: Note
 }
 
-export const ProfileShare: React.FC<ProfileShareProps> = ({ user }) => {
+export const NoteShare: React.FC<NoteShareProps> = ({ note }) => {
   const { database } = useContext(AppContext)
   const bottomSheetShareRef = React.useRef<RBSheet>(null)
   const [qrCode, setQrCode] = React.useState<any>()
   const [showNotification, setShowNotification] = React.useState<undefined | string>()
-  const [nProfile, setNProfile] = React.useState<string>()
+  const [nEvent, setNevent] = React.useState<undefined | string>()
 
   React.useEffect(() => {
-    if (database && user.id) {
-      getUserRelays(database, user.id).then((results) => {
-        const urls = results.map((relay) => relay.relay_url)
-        setNProfile(getNprofile(user.id, urls))
+    if (database && note.id) {
+      getNoteRelays(database, note.id).then((results) => {
+        const urls = results.map((item) => item.relay_url)
+        setNevent(getNevent(note.id, [...new Set(urls)]))
       })
     }
-  }, [user])
+  }, [note, database])
 
   return (
     <View style={styles.mainLayout}>
@@ -41,7 +40,7 @@ export const ProfileShare: React.FC<ProfileShareProps> = ({ user }) => {
               qrCode.toDataURL((base64: string) => {
                 Share.open({
                   url: `data:image/png;base64,${base64}`,
-                  filename: user?.id ?? 'nostrosshare',
+                  filename: note?.id ?? 'nostrosshare',
                 })
               })
             }
@@ -49,11 +48,11 @@ export const ProfileShare: React.FC<ProfileShareProps> = ({ user }) => {
         >
           <QRCode
             quietZone={8}
-            value={`nostr:${nProfile}`}
+            value={`nostr:${nEvent}`}
             size={Dimensions.get('window').width - 64}
             logoBorderRadius={50}
             logoSize={100}
-            logo={{ uri: user?.picture }}
+            logo={{ uri: note?.picture }}
             getRef={setQrCode}
           />
         </TouchableRipple>
@@ -64,24 +63,11 @@ export const ProfileShare: React.FC<ProfileShareProps> = ({ user }) => {
           size={28}
           onPress={() => {
             setShowNotification('npubCopied')
-            Clipboard.setString(nProfile ?? '')
+            Clipboard.setString(nEvent ?? '')
             bottomSheetShareRef.current?.close()
           }}
         />
         <Text>{t('profileShare.copyNPub')}</Text>
-      </View>
-      <View style={styles.shareActionButton}>
-        <IconButton
-          icon='check-decagram-outline'
-          size={28}
-          onPress={() => {
-            setShowNotification('nip05Copied')
-            Clipboard.setString(user?.nip05 ?? '')
-            bottomSheetShareRef.current?.close()
-          }}
-          disabled={!user.nip05}
-        />
-        <Text>{t('profileShare.copyNip05')}</Text>
       </View>
       {showNotification && (
         <Snackbar
@@ -117,9 +103,9 @@ const styles = StyleSheet.create({
   shareActionButton: {
     justifyContent: 'center',
     alignItems: 'center',
-    flexBasis: '50%',
+    flexBasis: '100%',
     marginBottom: 4,
   },
 })
 
-export default ProfileShare
+export default NoteShare

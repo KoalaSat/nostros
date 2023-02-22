@@ -85,7 +85,7 @@ export const ContactsPage: React.FC = () => {
             relayPool?.subscribe('contacts-meta', [
               {
                 kinds: [Kind.Metadata],
-                authors: results.map((user) => user.id),
+                authors: following.map((user) => user.id),
               },
             ])
           }
@@ -196,7 +196,8 @@ export const ContactsPage: React.FC = () => {
               publicKey={getNpub(item.id)}
               validNip05={item?.valid_nip05}
               nip05={item?.nip05}
-              lud06={item?.lnurl}
+              lnurl={item?.lnurl}
+              lnAddress={item?.ln_address}
               picture={item?.picture}
             />
           </View>
@@ -225,7 +226,8 @@ export const ContactsPage: React.FC = () => {
               publicKey={getNpub(item.id)}
               validNip05={item?.valid_nip05}
               nip05={item?.nip05}
-              lud06={item?.lnurl}
+              lnurl={item?.lnurl}
+              lnAddress={item?.ln_address}
               picture={item?.picture}
             />
           </View>
@@ -289,6 +291,7 @@ export const ContactsPage: React.FC = () => {
         ItemSeparatorComponent={Divider}
         ListEmptyComponent={ListEmptyComponentFollowing}
         horizontal={false}
+        style={styles.list}
       />
     </View>
   )
@@ -363,6 +366,7 @@ export const ContactsPage: React.FC = () => {
         ItemSeparatorComponent={Divider}
         ListEmptyComponent={ListEmptyComponentBlocked}
         horizontal={false}
+        style={styles.list}
       />
     </View>
   )
@@ -529,6 +533,7 @@ const styles = StyleSheet.create({
   snackbar: {
     margin: 16,
     marginBottom: 95,
+    width: '100%',
   },
   contactRow: {
     padding: 16,
@@ -546,7 +551,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
   },
   fab: {
-    bottom: 65,
+    bottom: 16,
     right: 16,
     position: 'absolute',
   },

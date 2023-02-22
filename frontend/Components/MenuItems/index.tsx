@@ -22,10 +22,26 @@ import ProfileData from '../ProfileData'
 export const MenuItems: React.FC = () => {
   const [drawerItemIndex, setDrawerItemIndex] = React.useState<number>(-1)
   const { relays } = React.useContext(RelayPoolContext)
-  const { nPub, publicKey, privateKey, logout, name, picture, validNip05, lnurl, nip05 } =
-    React.useContext(UserContext)
+  const {
+    nPub,
+    publicKey,
+    privateKey,
+    logout,
+    name,
+    picture,
+    validNip05,
+    lnurl,
+    lnAddress,
+    nip05,
+  } = React.useContext(UserContext)
   const { t } = useTranslation('common')
   const theme = useTheme()
+
+  const [activerelays, setActiveRelays] = React.useState<number>(0)
+
+  React.useEffect(() => {
+    setActiveRelays(relays.filter((relay) => relay.active).length)
+  }, [relays])
 
   const onPressLogout: () => void = () => {
     logout()
@@ -77,7 +93,8 @@ export const MenuItems: React.FC = () => {
                   publicKey={publicKey}
                   validNip05={validNip05}
                   nip05={nip05}
-                  lud06={lnurl}
+                  lnurl={lnurl}
+                  lnAddress={lnAddress}
                   picture={picture}
                 />
               </TouchableRipple>
@@ -110,12 +127,12 @@ export const MenuItems: React.FC = () => {
                 onPress={() => onPressItem('relays', 0)}
                 onTouchEnd={() => setDrawerItemIndex(-1)}
                 right={() =>
-                  relays.length < 1 ? (
+                  activerelays < 1 ? (
                     <Text style={{ color: theme.colors.error }}>{t('menuItems.notConnected')}</Text>
                   ) : (
-                    <Text style={{ color: theme.colors.inversePrimary }}>
+                    <Text style={{ color: '#7ADC70' }}>
                       {t('menuItems.connectedRelays', {
-                        number: relays.filter((relay) => relay.active).length,
+                        number: activerelays,
                       })}
                     </Text>
                   )

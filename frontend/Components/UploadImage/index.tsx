@@ -13,6 +13,7 @@ interface UploadImageProps {
   setImageUri: (uri: string) => void
   uploadingFile: boolean
   setUploadingFile: (uploading: boolean) => void
+  onError: () => void
 }
 
 export const UploadImage: React.FC<UploadImageProps> = ({
@@ -21,6 +22,7 @@ export const UploadImage: React.FC<UploadImageProps> = ({
   setImageUri,
   uploadingFile,
   setUploadingFile,
+  onError,
 }) => {
   const { getImageHostingService } = useContext(AppContext)
   const theme = useTheme()
@@ -37,7 +39,7 @@ export const UploadImage: React.FC<UploadImageProps> = ({
   }, [startUpload])
 
   const getImage: () => void = () => {
-    launchImageLibrary({ selectionLimit: 1, mediaType: 'photo' }, async (result) => {
+    launchImageLibrary({ selectionLimit: 1, mediaType: 'mixed' }, async (result) => {
       const assets = result?.assets
       if (assets && assets.length > 0) {
         const file = assets[0]
@@ -46,10 +48,12 @@ export const UploadImage: React.FC<UploadImageProps> = ({
           setUploadingFile(false)
           bottomSheetImageRef.current?.open()
         } else {
+          onError()
           setUploadingFile(false)
           setShowNotification('imageUploadErro')
         }
       } else {
+        onError()
         setUploadingFile(false)
         setShowNotification('imageUploadErro')
       }
@@ -72,6 +76,7 @@ export const UploadImage: React.FC<UploadImageProps> = ({
           bottomSheetImageRef.current?.close()
           setUploadingFile(false)
           setShowNotification('imageUploadErro')
+          onError()
         })
     }
   }
@@ -113,6 +118,7 @@ export const UploadImage: React.FC<UploadImageProps> = ({
           mode='contained'
           onPress={uploadImage}
           loading={uploadingFile}
+          disabled={uploadingFile}
         >
           {t('uploadImage.uploadImage')}
         </Button>
@@ -121,6 +127,7 @@ export const UploadImage: React.FC<UploadImageProps> = ({
           onPress={() => {
             bottomSheetImageRef.current?.close()
             setImageUpload(undefined)
+            onError()
           }}
         >
           {t('uploadImage.cancel')}
@@ -155,6 +162,7 @@ const styles = StyleSheet.create({
   snackbar: {
     margin: 16,
     bottom: 100,
+    width: '100%',
   },
   warning: {
     borderRadius: 4,

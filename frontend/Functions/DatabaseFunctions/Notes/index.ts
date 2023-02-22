@@ -6,10 +6,12 @@ export interface Note extends Event {
   name: string
   picture: string
   lnurl: string
+  ln_address: string
   reply_event_id: string
   user_created_at: number
   nip05: string
-  valid_nip05: boolean
+  valid_nip05: number
+  zap_pubkey: string
   repost_id: string
   blocked: number
 }
@@ -41,7 +43,9 @@ export const getMainNotes: (
 ) => Promise<Note[]> = async (db, pubKey, limit, contants, filters) => {
   let notesQuery = `
     SELECT
-      nostros_notes.*, nostros_users.nip05, nostros_users.blocked, nostros_users.valid_nip05, nostros_users.lnurl, nostros_users.name, nostros_users.picture, nostros_users.contact, nostros_users.created_at as user_created_at FROM nostros_notes
+      nostros_notes.*, nostros_users.zap_pubkey, nostros_users.nip05, nostros_users.blocked, nostros_users.valid_nip05, 
+      nostros_users.ln_address, nostros_users.lnurl, nostros_users.name, nostros_users.picture, nostros_users.contact, 
+      nostros_users.created_at as user_created_at FROM nostros_notes
     LEFT JOIN
       nostros_users ON nostros_users.id = nostros_notes.pubkey
     WHERE 
@@ -111,7 +115,9 @@ export const getMentionNotes: (
 ) => Promise<Note[]> = async (db, pubKey, limit) => {
   const notesQuery = `
     SELECT
-      nostros_notes.*, nostros_users.nip05, nostros_users.valid_nip05, nostros_users.lnurl, nostros_users.name, nostros_users.picture, nostros_users.contact, nostros_users.created_at as user_created_at FROM nostros_notes
+      nostros_notes.*, nostros_users.zap_pubkey, nostros_users.nip05, nostros_users.valid_nip05, nostros_users.lnurl, 
+      nostros_users.ln_address, nostros_users.name, nostros_users.picture, nostros_users.contact, 
+      nostros_users.created_at as user_created_at FROM nostros_notes
     LEFT JOIN
       nostros_users ON nostros_users.id = nostros_notes.pubkey
     WHERE (nostros_notes.reply_event_id IN (
@@ -136,7 +142,9 @@ export const getReactedNotes: (
 ) => Promise<Note[]> = async (db, pubKey, limit) => {
   const notesQuery = `
     SELECT
-      nostros_notes.*, nostros_users.nip05, nostros_users.valid_nip05, nostros_users.lnurl, nostros_users.name, nostros_users.picture, nostros_users.contact, nostros_users.created_at as user_created_at FROM nostros_notes
+      nostros_notes.*, nostros_users.zap_pubkey, nostros_users.nip05, nostros_users.valid_nip05, nostros_users.lnurl, 
+      nostros_users.ln_address, nostros_users.name, nostros_users.picture, nostros_users.contact, 
+      nostros_users.created_at as user_created_at FROM nostros_notes
     LEFT JOIN
       nostros_users ON nostros_users.id = nostros_notes.pubkey
     WHERE nostros_notes.id IN (
@@ -160,7 +168,9 @@ export const getRepostedNotes: (
 ) => Promise<Note[]> = async (db, pubKey, limit) => {
   const notesQuery = `
     SELECT
-      nostros_notes.*, nostros_users.nip05, nostros_users.valid_nip05, nostros_users.lnurl, nostros_users.name, nostros_users.picture, nostros_users.contact, nostros_users.created_at as user_created_at FROM nostros_notes
+      nostros_notes.*, nostros_users.zap_pubkey, nostros_users.nip05, nostros_users.valid_nip05, nostros_users.lnurl, 
+      nostros_users.ln_address, nostros_users.name, nostros_users.picture, nostros_users.contact, 
+      nostros_users.created_at as user_created_at FROM nostros_notes
     LEFT JOIN
       nostros_users ON nostros_users.id = nostros_notes.pubkey
     WHERE nostros_notes.repost_id IS NOT NULL AND
@@ -297,7 +307,9 @@ export const getNotes: (
 ) => Promise<Note[]> = async (db, { filters = {}, limit, contacts, includeIds }) => {
   let notesQuery = `
     SELECT
-      nostros_notes.*, nostros_users.nip05, nostros_users.valid_nip05, nostros_users.lnurl, nostros_users.name, nostros_users.picture, nostros_users.contact, nostros_users.created_at as user_created_at FROM nostros_notes
+      nostros_notes.*, nostros_users.zap_pubkey, nostros_users.nip05, nostros_users.valid_nip05, 
+      nostros_users.ln_address, nostros_users.lnurl, nostros_users.name, nostros_users.picture, 
+      nostros_users.contact, nostros_users.created_at as user_created_at FROM nostros_notes
     LEFT JOIN
       nostros_users ON nostros_users.id = nostros_notes.pubkey
   `

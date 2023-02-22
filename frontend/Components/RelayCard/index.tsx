@@ -30,6 +30,7 @@ import { Event } from '../../lib/nostr/Events'
 import { getUnixTime } from 'date-fns'
 import { Kind } from 'nostr-tools'
 import { usersToTags } from '../../Functions/RelayFunctions/Users'
+import { getRawUserGroupMessages, getRawUserGroups } from '../../Functions/DatabaseFunctions/Groups'
 
 interface RelayCardProps {
   url?: string
@@ -39,7 +40,8 @@ interface RelayCardProps {
 export const RelayCard: React.FC<RelayCardProps> = ({ url, bottomSheetRef }) => {
   const theme = useTheme()
   const { publicKey } = React.useContext(UserContext)
-  const { updateRelayItem, relayPool, removeRelayItem } = React.useContext(RelayPoolContext)
+  const { updateRelayItem, relayPool, removeRelayItem, sendRelays } =
+    React.useContext(RelayPoolContext)
   const { database } = React.useContext(AppContext)
   const [relay, setRelay] = React.useState<Relay>()
   const [uri, setUri] = React.useState<string>()
@@ -55,15 +57,18 @@ export const RelayCard: React.FC<RelayCardProps> = ({ url, bottomSheetRef }) => 
 
   React.useEffect(() => {
     loadRelay()
-  }, [])
+  }, [url])
 
   React.useEffect(() => {
     if (pushUserHistoric && url && database && publicKey && relayPool) {
+      bottomSheetPushRelayRef.current?.forceUpdate()
       getRawUserNotes(database, publicKey).then((resultNotes) => {
         resultNotes.forEach((note) => {
           note.content = note.content.replace("''", "'")
           relayPool.sendEvent(note, url)
         })
+        setPushDone(true)
+        setShowNotification('pushCompleted')
       })
       getRawUserReactions(database, publicKey).then((resultReactions) => {
         resultReactions.forEach((reaction) => {
@@ -87,8 +92,18 @@ export const RelayCard: React.FC<RelayCardProps> = ({ url, bottomSheetRef }) => 
           }
           relayPool?.sendEvent(event, url)
         }
-        setPushDone(true)
       })
+      getRawUserGroupMessages(database, publicKey).then((resultGroupMessages) => {
+        resultGroupMessages.forEach((groupMessage) => {
+          relayPool.sendEvent(groupMessage, url)
+        })
+      })
+      getRawUserGroups(database, publicKey).then((resultGroups) => {
+        resultGroups.forEach((group) => {
+          relayPool.sendEvent(group, url)
+        })
+      })
+      sendRelays(url)
     }
   }, [pushUserHistoric])
 
@@ -118,9 +133,8 @@ export const RelayCard: React.FC<RelayCardProps> = ({ url, bottomSheetRef }) => 
 
   const removeRelay: () => void = () => {
     if (relay) {
-      removeRelayItem(relay).then(() => {
-        bottomSheetRef.current?.close()
-      })
+      removeRelayItem(relay)
+      bottomSheetRef.current?.close()
     }
   }
 
@@ -337,8 +351,13 @@ export const RelayCard: React.FC<RelayCardProps> = ({ url, bottomSheetRef }) => 
       <RBSheet
         ref={bottomSheetPushRelayRef}
         closeOnPressMask={!pushUserHistoric || pushDone}
+        closeOnDragDown={true}
         customStyles={bottomSheetStyles}
-        onClose={() => {}}
+        onClose={() => {
+          setPushDone(false)
+          setPushUserHistoric(false)
+          setCheckedPush('unchecked')
+        }}
       >
         <Text variant='titleLarge'>{t('relayCard.pushHistoricTitle')}</Text>
         <Text>{t('relayCard.pushHistoricDescription')}</Text>
@@ -362,11 +381,7 @@ export const RelayCard: React.FC<RelayCardProps> = ({ url, bottomSheetRef }) => 
           disabled={pushUserHistoric || checkedPush !== 'checked'}
           loading={pushUserHistoric && !pushDone}
         >
-          {pushDone
-            ? t('relayCard.pushDone')
-            : pushUserHistoric
-            ? t('relayCard.pushingEvent')
-            : t('relayCard.pushHistoricTitle')}
+          {pushDone ? t('relayCard.pushDone') : t('relayCard.pushHistoricTitle')}
         </Button>
         <Button
           mode='outlined'
@@ -377,6 +392,17 @@ export const RelayCard: React.FC<RelayCardProps> = ({ url, bottomSheetRef }) => 
         >
           {t('relayCard.cancel')}
         </Button>
+        {showNotification && (
+          <Snackbar
+            style={styles.snackbar}
+            visible={showNotification !== undefined}
+            duration={Snackbar.DURATION_SHORT}
+            onIconPress={() => setShowNotification(undefined)}
+            onDismiss={() => setShowNotification(undefined)}
+          >
+            {t(`relayCard.notifications.${showNotification}`)}
+          </Snackbar>
+        )}
       </RBSheet>
     </View>
   ) : (
@@ -408,6 +434,7 @@ const styles = StyleSheet.create({
   },
   snackbar: {
     marginBottom: 85,
+    width: '100%',
   },
   moreInfo: {
     paddingTop: 16,

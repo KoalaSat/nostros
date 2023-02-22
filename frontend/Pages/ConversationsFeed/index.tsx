@@ -38,8 +38,7 @@ import { useTranslation } from 'react-i18next'
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'
 import { useFocusEffect } from '@react-navigation/native'
 import ProfileData from '../../Components/ProfileData'
-import { fromUnixTime, formatDistance } from 'date-fns'
-import { handleInfinityScroll } from '../../Functions/NativeFunctions'
+import { formatDate, handleInfinityScroll } from '../../Functions/NativeFunctions'
 
 export const ConversationsFeed: React.FC = () => {
   const initialPageSize = 14
@@ -141,15 +140,14 @@ export const ConversationsFeed: React.FC = () => {
               publicKey={user.id}
               validNip05={user?.valid_nip05}
               nip05={user?.nip05}
-              lud06={user?.lnurl}
+              lnurl={user?.lnurl}
+              lnAddress={user?.ln_address}
               picture={user?.picture}
             />
           </View>
           <View style={styles.contactInfo}>
             <View style={styles.contactDate}>
-              <Text>
-                {formatDistance(fromUnixTime(item.created_at), new Date(), { addSuffix: true })}
-              </Text>
+              <Text>{formatDate(item?.created_at)}</Text>
               {item.pubkey !== publicKey && !item.read && <Badge size={16}></Badge>}
             </View>
           </View>
@@ -240,7 +238,8 @@ export const ConversationsFeed: React.FC = () => {
           publicKey={item.id}
           validNip05={item?.valid_nip05}
           nip05={item?.nip05}
-          lud06={item?.lnurl}
+          lnurl={item?.lnurl}
+          lnAddress={item?.ln_address}
           picture={item?.picture}
         />
       </View>
@@ -278,7 +277,7 @@ export const ConversationsFeed: React.FC = () => {
         </View>
       )}
       <AnimatedFAB
-        style={[styles.fab, { top: Dimensions.get('window').height - 216 }]}
+        style={[styles.fab, { top: Dimensions.get('window').height - 191 }]}
         icon='pencil-outline'
         label='Label'
         onPress={() => bottomSheetCreateRef.current?.open()}

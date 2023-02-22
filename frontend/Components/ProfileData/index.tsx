@@ -4,14 +4,15 @@ import { Text, useTheme } from 'react-native-paper'
 import { getNip05Domain, usernamePubKey } from '../../Functions/RelayFunctions/Users'
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'
 import NostrosAvatar from '../NostrosAvatar'
-import { fromUnixTime, formatDistance } from 'date-fns'
 import { getNpub } from '../../lib/nostr/Nip19'
+import { formatDate } from '../../Functions/NativeFunctions'
 
 interface ProfileCardProps {
   username?: string
   publicKey?: string
-  lud06?: string
-  validNip05?: boolean
+  lnurl?: string
+  lnAddress?: string
+  validNip05?: number
   nip05?: string
   picture?: string
   avatarSize?: number
@@ -21,7 +22,8 @@ interface ProfileCardProps {
 export const ProfileData: React.FC<ProfileCardProps> = ({
   username,
   publicKey,
-  lud06,
+  lnurl,
+  lnAddress,
   validNip05,
   nip05,
   picture,
@@ -30,11 +32,8 @@ export const ProfileData: React.FC<ProfileCardProps> = ({
 }) => {
   const theme = useTheme()
   const nPub = React.useMemo(() => (publicKey ? getNpub(publicKey) : ''), [publicKey])
-  const date = React.useMemo(
-    () =>
-      timestamp ? formatDistance(fromUnixTime(timestamp), new Date(), { addSuffix: true }) : null,
-    [timestamp],
-  )
+  const date = React.useMemo(() => formatDate(timestamp), [timestamp])
+
   return (
     <View style={styles.container}>
       <View style={styles.left}>
@@ -42,7 +41,8 @@ export const ProfileData: React.FC<ProfileCardProps> = ({
           name={username}
           pubKey={nPub}
           src={picture}
-          lud06={lud06}
+          lnurl={lnurl}
+          lnAddress={lnAddress}
           size={avatarSize}
         />
         <View style={[styles.contactData, { height: avatarSize }]}>
@@ -60,12 +60,9 @@ export const ProfileData: React.FC<ProfileCardProps> = ({
               <></>
             )}
           </View>
-          <Text numberOfLines={1}>{validNip05 ? getNip05Domain(nip05) : ''}</Text>
-        </View>
-      </View>
-      <View style={styles.right}>
-        <View style={styles.date}>
-          <Text numberOfLines={1}>{date ?? ''}</Text>
+          <Text numberOfLines={1}>
+            {timestamp ? date : validNip05 ? getNip05Domain(nip05) : ''}
+          </Text>
         </View>
       </View>
     </View>
@@ -73,14 +70,8 @@ export const ProfileData: React.FC<ProfileCardProps> = ({
 }
 
 const styles = StyleSheet.create({
-  right: {
-    flexDirection: 'row',
-    width: '50%',
-    justifyContent: 'flex-end',
-  },
   left: {
     flexDirection: 'row',
-    width: '50%',
   },
   container: {
     flexDirection: 'row',

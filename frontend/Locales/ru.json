@@ -31,6 +31,11 @@
       "ProfileConfig": "Мой профиль",
       "markAllRead": "Mark all as read"
     },
+    "groupHeaderIcon": {
+      "delete": "Leave group",
+      "share": "Share group",
+      "edit": "Edit group"
+    },
     "groupsFeed": {
       "delete": "Leave group",
       "updateTitle": "Update group",
@@ -98,9 +103,26 @@
       "satoshi": "Satoshi symbol",
       "random": "Random",
       "language": "Язык",
-      "relayColoruring": "Relay coloruring"
+      "relayColoruring": "Relay coloruring",
+      "app": "App",
+      "feed": "Feed",
+      "zaps": "Zaps",
+      "disabled": "Disabled",
+      "longPressZap": "Long press Zaps",
+      "longPressZapDescription": "Define a default amount to automatically generate invoices after a long press on the Zap button.",
+      "defaultZapAmount": "Defaul Zap amount",
+      "update": "Update",
+      "disable": "Disable"
+    },
+    "noteActions": {
+      "copy": "Скопировать",
+      "share": "Поделиться",
+      "view": "View"
     },
     "noteCard": {
+      "notifications": {
+        "zapServerError": "There was an error on the server while trying to request for the invoice."
+      },
       "answering": "Ответить {{pubkey}}",
       "reposting": "Reposted {{pubkey}}",
       "seeParent": "See note",
@@ -117,7 +139,9 @@
       "cancel": "Отменить",
       "npub": "Публичный ключ",
       "copy": "Скопировать",
-      "open": "Открыть кошелек"
+      "open": "Открыть кошелек",
+      "anonTip": "Anonymous tip",
+      "zap": "Zap"
     },
     "notificationsFeed": {
       "emptyTitle": "У Вас нет новых уведомлений",
@@ -220,7 +244,8 @@
         "globalFeedActiveUnactive": "Global feed disabled",
         "pubkeyCopied": "Публичный ключ скопирован",
         "contactCopied": "Контакт скопирован",
-        "urlCopied": "URL скопирован"
+        "urlCopied": "URL скопирован",
+        "pushCompleted": "All your data has been pushed."
       }
     },
     "relaysPage": {
@@ -254,7 +279,7 @@
         "nsecCopied": "Приватный ключ скопирован",
         "npubCopied": "Публичный ключ скопирован",
         "profilePublished": "Profile published.",
-        "lud06Published": "LUD-06 published.\n\n{{lud06}}",
+        "lud06Published": "LUDs published.",
         "nip05Published": "NIP-05 published.\n\n{{nip05}}",
         "picturePublished": "Picture published.",
         "connectionError": "Ошибка с подключением",
@@ -262,9 +287,10 @@
         "desactive": "Relay desactivated."
       },
       "publishLud06": "Опубликовть",
-      "lud06Label": "LNURL / Lightning Address",
+      "lud06Label": "LNURL",
+      "lud16Label": "Lightning Address",
       "lud06Description": "Link your identity with a LNURL or Lightning Address.",
-      "lud06Title": "LUD-06",
+      "lud06Title": "Zaps",
       "publishNip05": "Publish",
       "nip05Link": "Подробнее.",
       "nip05Description": "Link your identity with a domain.",
@@ -282,7 +308,7 @@
       "npub": "Публичный ключ",
       "copyNPub": "Скопировать",
       "directory": "Directory",
-      "lud06": "LUD-06",
+      "lud06": "Zaps",
       "nip05": "NIP-05",
       "name": "Name",
       "about": "Описание"
@@ -339,7 +365,10 @@
       "unblock": "Desbloquear",
       "unfollow": "Following",
       "share": "Share",
-      "relaysTitle": "Relays"
+      "relaysTitle": "Relays",
+      "blocked": "Blocked",
+      "mute": "Mute",
+      "muted": "Muted"
     },
     "conversationsFeed": {
       "openMessage": "Start conversation",

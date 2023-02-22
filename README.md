@@ -35,7 +35,7 @@ Nostros chat
 - [x] Bech-32 keys
 - [x] Public Feed
 - [x] Block users and content
-- [X] Channels
+- [x] Channels
 - [x] Deep Links
 - [ ] Search
 - [x] Mnemonic login
@@ -44,6 +44,7 @@ Nostros chat
 - [x] Global feed filters and blocked users
 - [x] Relay colouring
 - [x] Push events to private relay
+- [x] Zaps
 
 # Kudos
 

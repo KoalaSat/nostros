@@ -10,7 +10,8 @@ interface NostrosAvatarProps {
   src?: string
   name?: string
   size?: number
-  lud06?: string
+  lnurl?: string
+  lnAddress?: string
 }
 
 export const NostrosAvatar: React.FC<NostrosAvatarProps> = ({
@@ -18,11 +19,13 @@ export const NostrosAvatar: React.FC<NostrosAvatarProps> = ({
   name,
   pubKey,
   size = 40,
-  lud06,
+  lnurl,
+  lnAddress,
 }) => {
   const theme = useTheme()
   const displayName = name && name !== '' ? name : formatPubKey(pubKey) ?? ''
-  const hasLud06 = lud06 && lud06 !== ''
+  // eslint-disable-next-line @typescript-eslint/prefer-nullish-coalescing
+  const hasLud06 = (lnurl && lnurl !== '') || (lnAddress && lnAddress !== '')
   const lud06IconSize = size / 2.85
 
   return (

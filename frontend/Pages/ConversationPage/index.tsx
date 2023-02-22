@@ -1,6 +1,7 @@
 import React, { useContext, useEffect, useMemo, useRef, useState } from 'react'
 import {
   FlatList,
+  Animated,
   ListRenderItem,
   NativeScrollEvent,
   NativeSyntheticEvent,
@@ -19,17 +20,27 @@ import {
 import { getUser, User } from '../../Functions/DatabaseFunctions/Users'
 import { useTranslation } from 'react-i18next'
 import { username, usernamePubKey, usersToTags } from '../../Functions/RelayFunctions/Users'
-import { getUnixTime, formatDistance, fromUnixTime } from 'date-fns'
+import { getUnixTime } from 'date-fns'
 import TextContent from '../../Components/TextContent'
 import { encrypt, decrypt } from '../../lib/nostr/Nip04'
-import { Card, useTheme, TextInput, Snackbar, TouchableRipple, Text } from 'react-native-paper'
+import {
+  Card,
+  useTheme,
+  TextInput,
+  Snackbar,
+  TouchableRipple,
+  Text,
+  IconButton,
+} from 'react-native-paper'
 import { UserContext } from '../../Contexts/UserContext'
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'
 import { useFocusEffect } from '@react-navigation/native'
 import { Kind } from 'nostr-tools'
-import { handleInfinityScroll } from '../../Functions/NativeFunctions'
+import { formatDate, handleInfinityScroll } from '../../Functions/NativeFunctions'
 import NostrosAvatar from '../../Components/NostrosAvatar'
 import UploadImage from '../../Components/UploadImage'
+import { Swipeable } from 'react-native-gesture-handler'
+import { getETags } from '../../Functions/RelayFunctions/Events'
 
 interface ConversationPageProps {
   route: { params: { pubKey: string; conversationId: string } }
@@ -47,6 +58,7 @@ export const ConversationPage: React.FC<ConversationPageProps> = ({ route }) => 
   const [decryptedMessages, setDecryptedMessages] = useState<Record<string, string>>({})
   const [directMessages, setDirectMessages] = useState<DirectMessage[]>([])
   const [sendingMessages, setSendingMessages] = useState<DirectMessage[]>([])
+  const [reply, setReply] = useState<DirectMessage>()
   const [otherUser, setOtherUser] = useState<User>({ id: otherPubKey })
   const [input, setInput] = useState<string>('')
   const [showNotification, setShowNotification] = useState<string>()
@@ -60,7 +72,11 @@ export const ConversationPage: React.FC<ConversationPageProps> = ({ route }) => 
       loadDirectMessages(true)
       subscribeDirectMessages()
 
-      return () => relayPool?.unsubscribe([`conversation${route.params.pubKey}`])
+      return () =>
+        relayPool?.unsubscribe([
+          `conversation${route.params.pubKey}`,
+          `conversation-replies${route.params.pubKey.substring(0, 8)}`,
+        ])
     }, []),
   )
 
@@ -100,6 +116,18 @@ export const ConversationPage: React.FC<ConversationPageProps> = ({ route }) => 
           )
           const lastCreateAt = pageSize <= results.length ? results[0].created_at : 0
           if (subscribe) subscribeDirectMessages(lastCreateAt)
+
+          const repliesIds = results
+            .filter((item) => getETags(item).length > 1)
+            .map((message) => message.id ?? '')
+          if (repliesIds && repliesIds.length > 0) {
+            relayPool?.subscribe(`conversation-replies${route.params.pubKey.substring(0, 8)}`, [
+              {
+                kinds: [Kind.ChannelMessage],
+                ids: repliesIds,
+              },
+            ])
+          }
         } else if (subscribe) {
           subscribeDirectMessages()
         }
@@ -128,12 +156,19 @@ export const ConversationPage: React.FC<ConversationPageProps> = ({ route }) => 
 
   const send: () => void = () => {
     if (input !== '' && otherPubKey && publicKey && privateKey) {
+      const tags: string[][] = usersToTags([otherUser])
+
+      if (reply?.id) {
+        const eTags = getETags(reply)
+        tags.push(['e', reply.id, '', eTags.length > 0 ? 'reply' : 'root'])
+      }
+
       const event: Event = {
         content: input,
         created_at: getUnixTime(new Date()),
         kind: Kind.EncryptedDirectMessage,
         pubkey: publicKey,
-        tags: usersToTags([otherUser]),
+        tags,
       }
       encrypt(privateKey, otherPubKey, input)
         .then((encryptedcontent) => {
@@ -155,86 +190,164 @@ export const ConversationPage: React.FC<ConversationPageProps> = ({ route }) => 
       directMessage.valid_nip05 = validNip05 ?? false
       setSendingMessages((prev) => [...prev, directMessage])
       setInput('')
+      setReply(undefined)
     }
   }
+
+  const swipeActions: (
+    progressAnimatedValue: Animated.AnimatedInterpolation<number>,
+    dragAnimatedValue: Animated.AnimatedInterpolation<number>,
+  ) => JSX.Element = (_progress, dragX) => {
+    const scale = dragX.interpolate({
+      inputRange: [-100, 0],
+      outputRange: [2.3, 0],
+    })
+    return (
+      <View style={{ width: 100, scaleY: -1 }}>
+        <Animated.View
+          style={{
+            marginLeft: 60,
+            marginTop: 40,
+            transform: [{ scale }],
+          }}
+        >
+          <MaterialCommunityIcons name='reply' color={theme.colors.onPrimaryContainer} />
+        </Animated.View>
+      </View>
+    )
+  }
+
+  const messageContent: (message?: DirectMessage | undefined, messageId?: string) => JSX.Element = (
+    message,
+    messageId,
+  ) => {
+    return (
+      <>
+        <View style={styles.cardContentInfo}>
+          <View style={styles.cardContentName}>
+            <Text>{displayName(message, messageId)}</Text>
+            {message?.valid_nip05 ? (
+              <MaterialCommunityIcons
+                name='check-decagram-outline'
+                color={theme.colors.onPrimaryContainer}
+                style={styles.verifyIcon}
+              />
+            ) : (
+              <></>
+            )}
+          </View>
+          <View style={styles.cardContentDate}>
+            {message?.pending && (
+              <View style={styles.cardContentPending}>
+                <MaterialCommunityIcons
+                  name='clock-outline'
+                  size={14}
+                  color={theme.colors.onPrimaryContainer}
+                />
+              </View>
+            )}
+            <Text>{formatDate(message?.created_at)}</Text>
+          </View>
+        </View>
+        {message ? (
+          <TextContent
+            content={message?.content}
+            event={message}
+            onPressUser={(user) => setDisplayUserDrawer(user.id)}
+          />
+        ) : (
+          <Text>{t('groupPage.replyText')}</Text>
+        )}
+      </>
+    )
+  }
+
+  const row: Swipeable[] = []
 
   const renderDirectMessageItem: ListRenderItem<DirectMessage> = ({ index, item }) => {
     if (!publicKey || !privateKey || !otherUser) return <></>
 
-    const displayName =
-      item.pubkey === publicKey ? usernamePubKey(name, publicKey) : username(otherUser)
+    const eTags = getETags(item)
     const showAvatar = directMessages[index - 1]?.pubkey !== item.pubkey
-    const nip05 = item.pubkey === publicKey ? validNip05 : otherUser.valid_nip05
+    const isReply = eTags.length > 0
+    const repliedMessageId = eTags.length > 0 ? eTags[eTags.length - 1][1] : undefined
+    const repliedMessage = directMessages.find((message) => message.id === repliedMessageId)
 
     return (
-      <View style={styles.messageRow}>
-        {publicKey !== item.pubkey && (
-          <View style={styles.pictureSpaceLeft}>
-            {showAvatar && (
-              <TouchableRipple onPress={() => setDisplayUserDrawer(otherPubKey)}>
-                <NostrosAvatar
-                  name={otherUser.name}
-                  pubKey={otherPubKey}
-                  src={otherUser.picture}
-                  size={40}
-                />
-              </TouchableRipple>
-            )}
-          </View>
-        )}
-        <Card
-          style={[
-            styles.card,
-            // FIXME: can't find this color
-            {
-              backgroundColor:
-                publicKey === item.pubkey ? theme.colors.tertiaryContainer : '#001C37',
-            },
-          ]}
-        >
-          <Card.Content>
-            <View style={styles.cardContentInfo}>
-              <View style={styles.cardContentName}>
-                <Text>{displayName}</Text>
-                {nip05 ? (
-                  <MaterialCommunityIcons
-                    name='check-decagram-outline'
-                    color={theme.colors.onPrimaryContainer}
-                    style={styles.verifyIcon}
+      <Swipeable
+        ref={(ref) => {
+          if (ref) row[index] = ref
+        }}
+        renderRightActions={swipeActions}
+        friction={2}
+        overshootRight={false}
+        onSwipeableOpen={() => {
+          setReply(item)
+          row[index].close()
+        }}
+      >
+        <View style={styles.messageRow}>
+          {publicKey !== item.pubkey && (
+            <View style={styles.pictureSpaceLeft}>
+              {showAvatar && (
+                <TouchableRipple onPress={() => setDisplayUserDrawer(otherPubKey)}>
+                  <NostrosAvatar
+                    name={otherUser.name}
+                    pubKey={otherPubKey}
+                    src={otherUser.picture}
+                    size={40}
                   />
-                ) : (
-                  <></>
-                )}
-              </View>
-              <View style={styles.cardContentDate}>
-                {item.pending && (
-                  <View style={styles.cardContentPending}>
-                    <MaterialCommunityIcons
-                      name='clock-outline'
-                      size={14}
-                      color={theme.colors.onPrimaryContainer}
-                    />
-                  </View>
-                )}
-                <Text>
-                  {formatDistance(fromUnixTime(item.created_at), new Date(), { addSuffix: true })}
-                </Text>
-              </View>
+                </TouchableRipple>
+              )}
             </View>
-            <TextContent content={item.content} />
-          </Card.Content>
-        </Card>
-        {publicKey === item.pubkey && (
-          <View style={styles.pictureSpaceRight}>
-            {showAvatar && (
-              <TouchableRipple onPress={() => setDisplayUserDrawer(publicKey)}>
-                <NostrosAvatar name={name} pubKey={publicKey} src={picture} size={40} />
-              </TouchableRipple>
-            )}
-          </View>
-        )}
-      </View>
+          )}
+          <Card
+            style={[
+              styles.card,
+              // FIXME: can't find this color
+              {
+                backgroundColor:
+                  publicKey === item.pubkey ? theme.colors.tertiaryContainer : '#001C37',
+              },
+            ]}
+          >
+            <Card.Content>
+              {isReply && (
+                <View style={styles.cardContentReply}>
+                  <Card
+                    style={[
+                      styles.card,
+                      {
+                        backgroundColor: theme.colors.elevation.level2,
+                      },
+                    ]}
+                  >
+                    <Card.Content>{messageContent(repliedMessage, repliedMessageId)}</Card.Content>
+                  </Card>
+                </View>
+              )}
+              {messageContent(item)}
+            </Card.Content>
+          </Card>
+          {publicKey === item.pubkey && (
+            <View style={styles.pictureSpaceRight}>
+              {showAvatar && (
+                <TouchableRipple onPress={() => setDisplayUserDrawer(publicKey)}>
+                  <NostrosAvatar name={name} pubKey={publicKey} src={picture} size={40} />
+                </TouchableRipple>
+              )}
+            </View>
+          )}
+        </View>
+      </Swipeable>
     )
+  }
+
+  const displayName: (message?: DirectMessage, messageId?: string) => string = (
+    message,
+    messageId,
+  ) => {
+    return message?.pubkey === publicKey ? usernamePubKey(name, publicKey) : username(otherUser)
   }
 
   const onScroll: (event: NativeSyntheticEvent<NativeScrollEvent>) => void = (event) => {
@@ -254,6 +367,34 @@ export const ConversationPage: React.FC<ConversationPageProps> = ({ route }) => 
         estimatedItemSize={100}
         onScroll={onScroll}
       />
+      {reply ? (
+        <View style={[styles.reply, { backgroundColor: theme.colors.backdrop }]}>
+          <MaterialCommunityIcons
+            name='reply'
+            size={25}
+            color={theme.colors.onPrimaryContainer}
+            style={styles.replyIcon}
+          />
+          <View style={styles.replyText}>
+            <Text style={styles.replyName}>{displayName(reply)}</Text>
+            <TextContent
+              content={reply.content}
+              event={reply}
+              onPressUser={(user) => setDisplayUserDrawer(user.id)}
+              showPreview={false}
+              numberOfLines={3}
+            />
+          </View>
+          <IconButton
+            style={styles.replyCloseIcon}
+            icon='close-circle-outline'
+            size={25}
+            onPress={() => setReply(undefined)}
+          />
+        </View>
+      ) : (
+        <></>
+      )}
       <View
         style={[
           styles.input,
@@ -312,6 +453,7 @@ export const ConversationPage: React.FC<ConversationPageProps> = ({ route }) => 
           setInput((prev) => `${prev} ${imageUri}`)
           setStartUpload(false)
         }}
+        onError={() => setStartUpload(false)}
         uploadingFile={uploadingFile}
         setUploadingFile={setUploadingFile}
       />
@@ -323,6 +465,26 @@ const styles = StyleSheet.create({
   list: {
     scaleY: -1,
   },
+  replyText: {
+    width: '80%',
+    paddingLeft: 16,
+  },
+  replyName: {
+    fontWeight: 'bold',
+  },
+  reply: {
+    padding: 16,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+  },
+  replyIcon: {
+    marginTop: 8,
+    marginBottom: -16,
+  },
+  replyCloseIcon: {
+    marginTop: 0,
+    marginBottom: -16,
+  },
   scrollView: {
     paddingBottom: 16,
   },
@@ -330,14 +492,14 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     scaleY: -1,
+    paddingLeft: 16,
+    paddingRight: 16,
   },
   cardContentDate: {
     flexDirection: 'row',
   },
   container: {
-    paddingLeft: 16,
     paddingBottom: 16,
-    paddingRight: 16,
     justifyContent: 'space-between',
     flex: 1,
   },
@@ -371,10 +533,13 @@ const styles = StyleSheet.create({
   input: {
     flexDirection: 'column-reverse',
     marginTop: 16,
+    paddingLeft: 16,
+    paddingRight: 16,
   },
   snackbar: {
     margin: 16,
     bottom: 70,
+    width: '100%',
   },
   verifyIcon: {
     paddingTop: 4,
@@ -382,6 +547,10 @@ const styles = StyleSheet.create({
   },
   cardContentName: {
     flexDirection: 'row',
+  },
+  cardContentReply: {
+    marginTop: -16,
+    marginBottom: 16,
   },
 })
 

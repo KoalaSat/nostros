@@ -30,6 +30,11 @@
       "Relays": "中继",
       "ProfileConfig": "简介设置"
     },
+    "groupHeaderIcon": {
+      "delete": "退出",
+      "share": "分享",
+      "edit": "编辑"
+    },
     "groupsFeed": {
       "delete": "退出群组",
       "updateTitle": "更新群组",
@@ -82,7 +87,7 @@
       "contacts": "联系人",
       "relays": "中继",
       "notConnected": "未连接",
-      "connectedRelays": "已连接 {{number}} 个中继",
+      "connectedRelays": "已连接 {{number}}",
       "following": "{{following}} 正在关注",
       "followers": "{{followers}} 关注者",
       "configuration": "设置",
@@ -91,15 +96,32 @@
       "logout": "退出"
     },
     "configPage": {
-      "showPublicImages": "在发现页显示图片",
+      "showPublicImages": "显示发现页图片",
       "showSensitive": "显示敏感的 Notes",
       "satoshi": "聪符号",
       "imageHostingService": "图片托管服务",
       "random": "随机",
       "language": "语言",
-      "relayColoruring": "颜色标示中继状态"
+      "relayColoruring": "颜色标示中继状态",
+      "app": "App",
+      "feed": "信息流",
+      "zaps": "Zaps",
+      "disabled": "停用",
+      "longPressZap": "长按 Zaps",
+      "longPressZapDescription": "设置长按 Zap 按钮后自动生成账单的默认金额",
+      "defaultZapAmount": "默认 Zap 金额",
+      "update": "更新",
+      "disable": "停用"
+    },
+    "noteActions": {
+      "copy": "复制",
+      "share": "分享",
+      "view": "查看"
     },
     "noteCard": {
+      "notifications": {
+        "zapServerError": "尝试请求收据时服务器出现错误。"
+      },
       "answering": "回复 {{pubkey}}",
       "reposting": "已转发 {{pubkey}}",
       "userBlocked": "用户已屏蔽",
@@ -115,7 +137,9 @@
       "cancel": "取消",
       "npub": "公钥",
       "copy": "复制",
-      "open": "打开钱包"
+      "open": "打开钱包",
+      "anonTip": "匿名赞赏",
+      "zap": "Zap"
     },
     "notificationsFeed": {
       "emptyTitle": "还没有新通知",
@@ -213,7 +237,7 @@
       "resilienceCategoriesDescription": "Nostros 正在测试的第一个方法是随机计算（基于收到的联系人的事件）什么是最有弹性的中继。它试图避免有太多事件的中继（集中化）和几乎没有事件的中继（电池耗尽）。 \n\n它的目标是生成一个 5 个中继的列表，并覆盖所有联系人。但如果这不可能，它将向用户发出警告并在其他中继中继续尝试。 \n\n请注意，被称为 “集中式” 或“小型” 的中继并不意味着它们与网络相连，而只是与您的数据相连。",
       "centralized": "集中式",
       "small": "小型",
-      "contacts": "# 联系人",
+      "contacts": "分配的联系人",
       "resilienceMode": "弹性模式 (试验性)",
       "relayName": "中继地址",
       "globalFeed": "发现页",
@@ -227,7 +251,7 @@
       "myList": "我的中继",
       "notifications": {
         "globalFeedActive": "已为发现页开启",
-        "globalFeedActiveUnactive": "已为发现页禁用",
+        "globalFeedActiveUnactive": "已为发现页停用",
         "add": "中继已添加",
         "remove": "中继已移除",
         "active": "中继已启用",
@@ -243,7 +267,7 @@
       "globalFeed": "发现页",
       "copy": "复制",
       "remove": "移除",
-      "active": "激活",
+      "active": "启用",
       "share": "分享",
       "pubkey": "公钥",
       "contact": "联系人",
@@ -259,7 +283,8 @@
         "globalFeedActiveUnactive": "已为发现页禁用",
         "pubkeyCopied": "已复制私钥",
         "contactCopied": "已复制联系人",
-        "urlCopied": "已复制链接"
+        "urlCopied": "已复制链接",
+        "pushCompleted": "您的所有数据都已推送"
       }
     },
     "profileConfigPage": {
@@ -267,17 +292,18 @@
         "nsecCopied": "已复制私钥",
         "npubCopied": "已复制公钥",
         "profilePublished": "简介已发布",
-        "lud06Published": "LUD-06 已发布 \n\n{{lud06}}",
-        "nip05Published": "NIP-05 已发布 \n\n{{nip05}}",
+        "lud06Published": "LUDs 已发布",
+        "nip05Published": "NIP-05 已发布\n\n{{nip05}}",
         "picturePublished": "头像已发布",
         "connectionError": "连接错误",
         "active": "中继已启用",
         "desactive": "中继已停用"
       },
       "publishLud06": "发布",
-      "lud06Label": "LNURL / Lightning 地址",
+      "lud06Label": "LNURL",
+      "lud16Label": "Lightning 地址",
       "lud06Description": "链接您的身份到 LNURL 或 Lightning 地址",
-      "lud06Title": "LUD-06",
+      "lud06Title": "Zaps",
       "publishNip05": "发布",
       "nip05Link": "了解更多",
       "nip05Description": "链接接到域名",
@@ -295,7 +321,7 @@
       "npub": "公钥",
       "copyNPub": "复制",
       "directory": "目录",
-      "lud06": "LUD-06",
+      "lud06": "Zaps",
       "nip05": "NIP-05",
       "name": "用户名",
       "about": "简介"
@@ -313,7 +339,7 @@
       "unfollow": "关注中",
       "copyNPub": "复制公钥",
       "relaysTitle": "中继",
-      "relaysDescription": "以下是{{username}}的中继，您可以激活想要连接的中继"
+      "relaysDescription": "以下是{{username}}的中继，您可以启用想要连接的中继"
     },
     "homePage": {
       "clipboardTitle": "检测到 Nostr 公钥",
@@ -345,7 +371,10 @@
       "share": "分享",
       "copyNip05": "复制 NIP-05",
       "copyNPub": "复制公钥",
-      "relaysTitle": "中继"
+      "relaysTitle": "中继",
+      "blocked": "已屏蔽",
+      "mute": "静音",
+      "muted": "已静音"
     },
     "conversationsFeed": {
       "openMessage": "发送私信",

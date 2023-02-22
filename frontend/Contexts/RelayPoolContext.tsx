@@ -6,6 +6,8 @@ import debounce from 'lodash.debounce'
 import { getActiveRelays, getRelays, Relay } from '../Functions/DatabaseFunctions/Relays'
 import { UserContext } from './UserContext'
 import { randomInt } from '../Functions/NativeFunctions'
+import { getUnixTime } from 'date-fns'
+import { Event } from '../lib/nostr/Events'
 
 export interface RelayPoolContextProps {
   relayPoolReady: boolean
@@ -19,6 +21,7 @@ export interface RelayPoolContextProps {
   addRelayItem: (relay: Relay) => Promise<void>
   removeRelayItem: (relay: Relay) => Promise<void>
   updateRelayItem: (relay: Relay) => Promise<void>
+  sendRelays: (url?: string) => Promise<void>
 }
 
 export interface WebsocketEvent {
@@ -33,11 +36,12 @@ export interface RelayPoolContextProviderProps {
 export const initialRelayPoolContext: RelayPoolContextProps = {
   relayPoolReady: true,
   setRelayPool: () => {},
-  addRelayItem: async () => await new Promise(() => {}),
-  removeRelayItem: async () => await new Promise(() => {}),
-  updateRelayItem: async () => await new Promise(() => {}),
+  addRelayItem: async () => {},
+  removeRelayItem: async () => {},
+  updateRelayItem: async () => {},
   relays: [],
   setDisplayrelayDrawer: () => {},
+  sendRelays: async () => {},
 }
 
 export const RelayPoolContextProvider = ({
@@ -54,6 +58,23 @@ export const RelayPoolContextProvider = ({
   const [relays, setRelays] = React.useState<Relay[]>([])
   const [displayRelayDrawer, setDisplayrelayDrawer] = React.useState<string>()
 
+  const sendRelays: (url?: string) => Promise<void> = async (url) => {
+    if (publicKey && database) {
+      getActiveRelays(database).then((results) => {
+        if (publicKey && results.length > 0) {
+          const event: Event = {
+            content: '',
+            created_at: getUnixTime(new Date()),
+            kind: 1002,
+            pubkey: publicKey,
+            tags: results.map((relay) => ['r', relay.url, relay.mode ?? '']),
+          }
+          url ? relayPool?.sendEvent(event, url) : relayPool?.sendEvent(event)
+        }
+      })
+    }
+  }
+
   const changeEventIdHandler: (event: WebsocketEvent) => void = (event) => {
     setLastEventId(event.eventId)
   }
@@ -62,11 +83,11 @@ export const RelayPoolContextProvider = ({
   }
 
   const debouncedEventIdHandler = useMemo(
-    () => debounce(changeEventIdHandler, 1000),
+    () => debounce(changeEventIdHandler, 250),
     [setLastEventId],
   )
   const debouncedConfirmationHandler = useMemo(
-    () => debounce(changeConfirmationIdHandler, 500),
+    () => debounce(changeConfirmationIdHandler, 250),
     [setLastConfirmationId],
   )
 
@@ -92,15 +113,15 @@ export const RelayPoolContextProvider = ({
     }
   }
 
-  const loadRelays: () => Promise<void> = async () => {
-    return await new Promise<void>((resolve, _reject) => {
+  const loadRelays: () => Promise<Relay[]> = async () => {
+    return await new Promise<Relay[]>((resolve, _reject) => {
       if (database) {
         getRelays(database).then((results) => {
           setRelays(results)
-          resolve()
+          resolve(results)
         })
       } else {
-        resolve()
+        resolve([])
       }
     })
   }
@@ -118,7 +139,7 @@ export const RelayPoolContextProvider = ({
     return await new Promise((resolve, _reject) => {
       if (relayPool && database && publicKey) {
         relayPool.update(relay.url, relay.active ?? 1, relay.global_feed ?? 1, () => {
-          loadRelays().then(resolve)
+          loadRelays().then(() => resolve())
         })
       }
     })
@@ -129,7 +150,10 @@ export const RelayPoolContextProvider = ({
     return await new Promise((resolve, _reject) => {
       if (relayPool && database && publicKey) {
         relayPool.add(relay.url, () => {
-          loadRelays().then(resolve)
+          loadRelays().then(() => {
+            sendRelays()
+            resolve()
+          })
         })
       }
     })
@@ -140,7 +164,10 @@ export const RelayPoolContextProvider = ({
     return await new Promise((resolve, _reject) => {
       if (relayPool && database && publicKey) {
         relayPool.remove(relay.url, () => {
-          loadRelays().then(resolve)
+          loadRelays().then(() => {
+            sendRelays()
+            resolve()
+          })
         })
       }
     })
@@ -179,6 +206,7 @@ export const RelayPoolContextProvider = ({
         addRelayItem,
         removeRelayItem,
         updateRelayItem,
+        sendRelays,
       }}
     >
       {children}

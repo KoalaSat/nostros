@@ -31,6 +31,11 @@
       "ProfileConfig": "Mon profil",
       "markAllRead": "Mark all as read"
     },
+    "groupHeaderIcon": {
+      "delete": "Leave group",
+      "share": "Share group",
+      "edit": "Edit group"
+    },
     "groupsFeed": {
       "delete": "Leave group",
       "updateTitle": "Update group",
@@ -105,9 +110,26 @@
       "satoshi": "Symbole de satoshi",
       "imageHostingService": "Service d'hébergement d'images",
       "language": "Langue",
-      "relayColoruring": "Relay coloruring"
+      "relayColoruring": "Relay coloruring",
+      "app": "App",
+      "feed": "Feed",
+      "zaps": "Zaps",
+      "disabled": "Disabled",
+      "longPressZap": "Long press Zaps",
+      "longPressZapDescription": "Define a default amount to automatically generate invoices after a long press on the Zap button.",
+      "defaultZapAmount": "Defaul Zap amount",
+      "update": "Update",
+      "disable": "Disable"
+    },
+    "noteActions": {
+      "copy": "Copier",
+      "share": "Partager",
+      "view": "View"
     },
     "noteCard": {
+      "notifications": {
+        "zapServerError": "There was an error on the server while trying to request for the invoice."
+      },
       "answering": "Répondre à {{pubkey}}",
       "reposting": "Republié {{pubkey}}",
       "seeParent": "Voir la note",
@@ -121,7 +143,9 @@
       "generateInvoice": "Générer une facture",
       "cancel": "Annuler",
       "copy": "Copier",
-      "open": "Ouvrir le wallet"
+      "open": "Ouvrir le wallet",
+      "anonTip": "Anonymous tip",
+      "zap": "Zap"
     },
     "notificationsFeed": {
       "emptyTitle": "Vous n'avez pas de notification.",
@@ -226,7 +250,8 @@
         "globalFeedActiveUnactive": "Flux global désactivé.",
         "pubkeyCopied": "Clé publique copiée.",
         "contactCopied": "Contact copié.",
-        "urlCopied": "URL copié."
+        "urlCopied": "URL copié.",
+        "pushCompleted": "All your data has been pushed."
       }
     },
     "relaysPage": {
@@ -260,15 +285,16 @@
         "nsecCopied": "Clé privée copiée",
         "npubCopied": "Clé publique copiée",
         "profilePublished": "Votre profil a été publié",
-        "lud06Published": "LUD-06 publié.\n\n{{lud06}}",
+        "lud06Published": "LUDs publié.",
         "nip05Published": "NIP-05 publié.\n\n{{nip05}}",
         "picturePublished": "Image publiée.",
         "connectionError": "Erreur de connexion"
       },
       "publishLud06": "Publier",
-      "lud06Label": "LNURL / Adresse Lightning",
+      "lud06Label": "LNURL",
+      "lud16Label": "Adresse Lightning",
       "lud06Description": "Associez votre profil à LNURL ou à l'adresse Lightning.",
-      "lud06Title": "LUD-06",
+      "lud06Title": "Zaps",
       "publishNip05": "Publier",
       "nip05Link": "En savoir plus.",
       "nip05Description": "Associez votre profil à un domaine.",
@@ -286,7 +312,7 @@
       "npub": "Clé publique",
       "copyNPub": "Copier",
       "directory": "Directory",
-      "lud06": "LUD-06",
+      "lud06": "Zaps",
       "nip05": "NIP-05",
       "name": "Nom",
       "about": "Description"
@@ -331,7 +357,10 @@
       "block": "Bloquer",
       "unblock": "Débloquer",
       "unfollow": "Abonné",
-      "relaysTitle": "Relays"
+      "relaysTitle": "Relays",
+      "blocked": "Blocked",
+      "mute": "Mute",
+      "muted": "Muted"
     },
     "conversationsFeed": {
       "openMessage": "Commencer la conversation",

@@ -45,6 +45,8 @@ export const ProfileConfigPage: React.FC = () => {
     setAbout,
     lnurl,
     setLnurl,
+    lnAddress,
+    setLnAddress,
     nip05,
     setNip05,
     reloadUser,
@@ -72,8 +74,8 @@ export const ProfileConfigPage: React.FC = () => {
   )
 
   useEffect(() => {
+    reloadUser()
     if (isPublishingProfile) {
-      reloadUser()
       setIsPublishingProfile(undefined)
       setShowNotification(isPublishingProfile)
       bottomSheetPictureRef.current?.close()
@@ -91,6 +93,7 @@ export const ProfileConfigPage: React.FC = () => {
               name,
               about,
               lud06: lnurl,
+              lud16: lnAddress,
               nip05,
               picture,
             }),
@@ -149,6 +152,12 @@ export const ProfileConfigPage: React.FC = () => {
     })
   }
 
+  const pasteLud16: () => void = () => {
+    Clipboard.getString().then((value) => {
+      setLnAddress(value ?? '')
+    })
+  }
+
   return (
     <View style={styles.container}>
       <ScrollView horizontal={false} showsVerticalScrollIndicator={false}>
@@ -164,7 +173,8 @@ export const ProfileConfigPage: React.FC = () => {
                       name={name}
                       pubKey={nPub ?? ''}
                       src={picture}
-                      lud06={lnurl}
+                      lnurl={lnurl}
+                      lnAddress={lnAddress}
                       size={100}
                     />
                   )}
@@ -400,9 +410,23 @@ export const ProfileConfigPage: React.FC = () => {
               />
             }
           />
+          <TextInput
+            style={styles.spacer}
+            mode='outlined'
+            multiline
+            label={t('profileConfigPage.lud16Label') ?? ''}
+            onChangeText={setLnAddress}
+            value={lnAddress}
+            right={
+              <TextInput.Icon
+                icon='content-paste'
+                onPress={pasteLud16}
+                forceTextInputFocus={false}
+              />
+            }
+          />
           <Button
             mode='contained'
-            disabled={!lnurl || lnurl === ''}
             onPress={() => onPublishUser('lud06Published')}
             loading={isPublishingProfile !== undefined}
           >
@@ -418,7 +442,11 @@ export const ProfileConfigPage: React.FC = () => {
           onIconPress={() => setShowNotification(undefined)}
           onDismiss={() => setShowNotification(undefined)}
         >
-          {t(`profileConfigPage.notifications.${showNotification}`, { nip05, lud06: lnurl })}
+          {t(`profileConfigPage.notifications.${showNotification}`, {
+            nip05,
+            lud06: lnurl,
+            lud16: lnAddress,
+          })}
         </Snackbar>
       )}
       <UploadImage

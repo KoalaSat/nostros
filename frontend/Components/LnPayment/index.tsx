@@ -1,15 +1,23 @@
 import React, { useEffect, useMemo, useState } from 'react'
-import { requestInvoice } from 'lnurl-pay'
 import { User } from '../../Functions/DatabaseFunctions/Users'
-import { StyleSheet, View } from 'react-native'
+import { ListRenderItem, StyleSheet, View } from 'react-native'
 import { useTranslation } from 'react-i18next'
 import RBSheet from 'react-native-raw-bottom-sheet'
-import { Button, Text, TextInput, useTheme } from 'react-native-paper'
+import { Button, Divider, Text, TextInput, TouchableRipple, useTheme } from 'react-native-paper'
 import { AppContext } from '../../Contexts/AppContext'
 import LnPreview from '../LnPreview'
 import { Note } from '../../Functions/DatabaseFunctions/Notes'
 import { getNpub } from '../../lib/nostr/Nip19'
 import { formatPubKey } from '../../Functions/RelayFunctions/Users'
+import { getZaps, Zap } from '../../Functions/DatabaseFunctions/Zaps'
+import { FlatList, ScrollView } from 'react-native-gesture-handler'
+import ProfileData from '../ProfileData'
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'
+import { RelayPoolContext } from '../../Contexts/RelayPoolContext'
+import { Kind } from 'nostr-tools'
+import { getUnixTime } from 'date-fns'
+import { UserContext } from '../../Contexts/UserContext'
+import { lightningInvoice } from '../../Functions/ServicesFunctions/ZapInvoice'
 
 interface LnPaymentProps {
   open: boolean
@@ -21,18 +29,37 @@ interface LnPaymentProps {
 export const LnPayment: React.FC<LnPaymentProps> = ({ open, setOpen, note, user }) => {
   const theme = useTheme()
   const { t } = useTranslation('common')
-  const { getSatoshiSymbol } = React.useContext(AppContext)
+  const { getSatoshiSymbol, database, setDisplayUserDrawer } = React.useContext(AppContext)
+  const { relayPool, lastEventId } = React.useContext(RelayPoolContext)
+  const { publicKey, privateKey } = React.useContext(UserContext)
   const bottomSheetLnPaymentRef = React.useRef<RBSheet>(null)
   const [monto, setMonto] = useState<string>('')
   const defaultComment = note?.id ? `Nostr: ${formatPubKey(getNpub(note?.id))}` : ''
   const [comment, setComment] = useState<string>(defaultComment)
   const [invoice, setInvoice] = useState<string>()
   const [loading, setLoading] = useState<boolean>(false)
+  const [isZap, setIsZap] = useState<boolean>(false)
+  const [zapsUpdated, setZapsUpdated] = useState<number>(0)
+  const [zaps, setZaps] = useState<Zap[]>([])
   const lnurl = useMemo(() => user?.lnurl ?? note?.lnurl, [open])
+  const lnAddress = useMemo(() => user?.ln_address ?? note?.ln_address, [open])
+  const userId = user?.id ?? note?.pubkey
+  const zapPubkey = user?.zap_pubkey ?? note?.zap_pubkey
 
   useEffect(() => {
     setMonto('')
     if (open) {
+      if (database && note?.id) {
+        getZaps(database, note?.id).then((results) => {
+          relayPool?.subscribe('zappers-meta', [
+            {
+              kinds: [Kind.Metadata],
+              authors: results.filter((zap) => !zap.name).map((zap) => zap.zapper_user_id),
+            },
+          ])
+          setZaps(results)
+        })
+      }
       bottomSheetLnPaymentRef.current?.open()
     } else {
       bottomSheetLnPaymentRef.current?.close()
@@ -40,27 +67,76 @@ export const LnPayment: React.FC<LnPaymentProps> = ({ open, setOpen, note, user 
   }, [open])
 
   useEffect(() => {
-    setComment(defaultComment)
-  }, [note, open])
-
-  const generateInvoice: () => void = async () => {
-    if (lnurl && monto !== '') {
-      setLoading(true)
-      requestInvoice({
-        lnUrlOrAddress: lnurl,
-        tokens: parseInt(monto, 10) ?? 0,
-        comment,
+    if (database && note?.id) {
+      getZaps(database, note?.id).then((results) => {
+        setZaps(results)
+        setZapsUpdated(getUnixTime(new Date()))
       })
-        .then((action) => {
-          if (action.hasValidAmount && action.invoice) {
-            setInvoice(action.invoice)
-          }
+    }
+  }, [lastEventId])
+
+  useEffect(() => {
+    bottomSheetLnPaymentRef.current?.forceUpdate()
+  }, [zapsUpdated])
+
+  const generateInvoice: (zap: boolean) => void = async (zap) => {
+    setIsZap(zap)
+    const lud = lnAddress && lnAddress !== '' ? lnAddress : lnurl
+
+    if (lud && lud !== '' && monto !== '' && database && privateKey && publicKey && userId) {
+      setLoading(true)
+
+      lightningInvoice(
+        database,
+        lud,
+        parseInt(monto, 10),
+        privateKey,
+        publicKey,
+        userId,
+        zap,
+        zapPubkey,
+        comment,
+        note?.id,
+      )
+        .then((invoice) => {
+          if (invoice) setInvoice(invoice)
           setLoading(false)
         })
-        .catch((e) => {
+        .catch(() => {
           setLoading(false)
         })
     }
+  }
+
+  const renderZapperItem: ListRenderItem<Zap> = ({ item }) => {
+    return (
+      <TouchableRipple onPress={() => setDisplayUserDrawer(item.user_id)}>
+        <View key={item.id} style={styles.zapperRow}>
+          <View style={styles.zapperData}>
+            <ProfileData
+              username={item?.name}
+              publicKey={getNpub(item.id)}
+              validNip05={item?.valid_nip05}
+              nip05={item?.nip05}
+              lnurl={item?.lnurl}
+              lnAddress={item?.ln_address}
+              picture={item?.picture}
+            />
+          </View>
+          <View style={styles.zapperAmount}>
+            <MaterialCommunityIcons
+              style={styles.zapperAmountIcon}
+              name='lightning-bolt'
+              size={15}
+              color={'#F5D112'}
+            />
+            <Text>
+              {item.amount} {getSatoshiSymbol(15)}
+            </Text>
+          </View>
+        </View>
+      </TouchableRipple>
+    )
   }
 
   const rbSheetCustomStyles = React.useMemo(() => {
@@ -78,15 +154,28 @@ export const LnPayment: React.FC<LnPaymentProps> = ({ open, setOpen, note, user 
     }
   }, [])
 
-  return lnurl ? (
+  return (
     <>
       <RBSheet
         ref={bottomSheetLnPaymentRef}
         closeOnDragDown={true}
         customStyles={rbSheetCustomStyles}
-        onClose={() => setOpen(false)}
+        onClose={() => {
+          relayPool?.unsubscribe(['zappers-meta'])
+          setOpen(false)
+        }}
       >
         <View style={styles.drawerBottom}>
+          {zaps.length > 0 && (
+            <View style={styles.zappers}>
+              <View style={styles.zappersList}>
+                <ScrollView>
+                  <FlatList data={zaps} renderItem={renderZapperItem} />
+                </ScrollView>
+              </View>
+              <Divider />
+            </View>
+          )}
           <View style={[styles.montoSelection, styles.spacer]}>
             <Button style={styles.montoButton} mode='outlined' onPress={() => setMonto('1000')}>
               <Text>1k {getSatoshiSymbol(15)}</Text>
@@ -117,20 +206,29 @@ export const LnPayment: React.FC<LnPaymentProps> = ({ open, setOpen, note, user 
             style={styles.spacer}
             mode='contained'
             disabled={loading || monto === ''}
-            onPress={() => generateInvoice()}
-            loading={loading}
+            onPress={() => generateInvoice(false)}
+            loading={loading && !isZap}
           >
-            {t('lnPayment.generateInvoice')}
+            {t('lnPayment.anonTip')}
           </Button>
+          {zapPubkey && (
+            <Button
+              style={styles.spacer}
+              mode='contained'
+              disabled={loading || monto === ''}
+              onPress={() => generateInvoice(true)}
+              loading={loading && isZap}
+            >
+              {t('lnPayment.zap')}
+            </Button>
+          )}
           <Button mode='outlined' onPress={() => setOpen(false)}>
             {t('lnPayment.cancel')}
           </Button>
         </View>
       </RBSheet>
-      <LnPreview invoice={invoice} setInvoice={setInvoice} />
+      <LnPreview invoice={invoice} setInvoice={setInvoice} setOpen={setOpen} />
     </>
-  ) : (
-    <></>
   )
 }
 
@@ -154,6 +252,13 @@ const styles = StyleSheet.create({
     fontFamily: 'Satoshi-Symbol',
     fontSize: 20,
   },
+  zappersList: {
+    maxHeight: 200,
+    marginBottom: 16,
+  },
+  zappers: {
+    marginBottom: 16,
+  },
   montoSelection: {
     flexDirection: 'row',
   },
@@ -173,6 +278,20 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     padding: 16,
+  },
+  zapperRow: {
+    padding: 16,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+  },
+  zapperData: {
+    flex: 1,
+  },
+  zapperAmount: {
+    flexDirection: 'row',
+  },
+  zapperAmountIcon: {
+    paddingTop: 3,
   },
 })
 

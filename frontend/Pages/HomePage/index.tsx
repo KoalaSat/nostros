@@ -20,6 +20,7 @@ import {
   getGroupedDirectMessages,
 } from '../../Functions/DatabaseFunctions/DirectMessages'
 import GroupsFeed from '../GroupsFeed'
+import { getUserGroupMessagesCount } from '../../Functions/DatabaseFunctions/Groups'
 
 export const HomePage: React.FC = () => {
   const theme = useTheme()
@@ -31,6 +32,7 @@ export const HomePage: React.FC = () => {
   const { relayPool, lastEventId } = useContext(RelayPoolContext)
   const [newNotifications, setNewNotifications] = useState<number>(0)
   const [newdirectMessages, setNewdirectMessages] = useState<number>(0)
+  const [newGroupMessages, setNewGroupMessages] = useState<number>(0)
   const bottomSheetClipboardRef = React.useRef<RBSheet>(null)
 
   useEffect(() => {
@@ -42,6 +44,7 @@ export const HomePage: React.FC = () => {
   useEffect(() => {
     if (publicKey && database) {
       getNotificationsCount(database, publicKey, notificationSeenAt).then(setNewNotifications)
+      getUserGroupMessagesCount(database, publicKey).then(setNewGroupMessages)
       getDirectMessagesCount(database, publicKey).then(setNewdirectMessages)
     }
   }, [lastEventId, notificationSeenAt, refreshBottomBarAt])
@@ -52,19 +55,27 @@ export const HomePage: React.FC = () => {
         getGroupedDirectMessages(database, { limit: 1 }).then((directMessageResults) => {
           relayPool?.subscribe('notification-icon', [
             {
+              kinds: [Kind.ChannelMessage],
+              '#e': [publicKey],
+              limit: 30,
+            },
+            {
               kinds: [Kind.EncryptedDirectMessage],
               '#p': [publicKey],
               since: directMessageResults[0]?.created_at ?? 0,
+              limit: 30,
             },
             {
               kinds: [Kind.Text],
               '#p': [publicKey],
               since: mentionResults[0]?.created_at ?? 0,
+              limit: 30,
             },
             {
               kinds: [Kind.Text],
               '#e': [publicKey],
               since: mentionResults[0]?.created_at ?? 0,
+              limit: 30,
             },
           ])
         })
@@ -77,11 +88,13 @@ export const HomePage: React.FC = () => {
   const goToEvent: () => void = () => {
     if (clipboardNip21) {
       const key = decode(clipboardNip21.replace('nostr:', ''))
-      if (key) {
+      if (key?.data) {
         if (key.type === 'nevent') {
           navigate('Note', { noteId: key.data })
-        } else if (key.type === 'nprofile' || key.type === 'npub') {
+        } else if (key.type === 'npub') {
           navigate('Profile', { pubKey: key.data })
+        } else if (key.type === 'nprofile' && key.data.pubkey) {
+          navigate('Profile', { pubKey: key.data.pubkey })
         }
       }
     }
@@ -149,11 +162,16 @@ export const HomePage: React.FC = () => {
               component={GroupsFeed}
               options={{
                 tabBarIcon: ({ focused, size }) => (
-                  <MaterialCommunityIcons
-                    name={focused ? 'account-group' : 'account-group-outline'}
-                    size={size}
-                    color={theme.colors.onPrimaryContainer}
-                  />
+                  <>
+                    <MaterialCommunityIcons
+                      name={focused ? 'account-group' : 'account-group-outline'}
+                      size={size}
+                      color={theme.colors.onPrimaryContainer}
+                    />
+                    {newGroupMessages > 0 && (
+                      <Badge style={styles.notificationBadge}>{newGroupMessages}</Badge>
+                    )}
+                  </>
                 ),
               }}
             />
@@ -199,7 +217,6 @@ export const HomePage: React.FC = () => {
           }}
         />
       </Tab.Navigator>
-
       <RBSheet
         ref={bottomSheetClipboardRef}
         closeOnDragDown={true}

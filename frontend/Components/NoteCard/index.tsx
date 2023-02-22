@@ -15,8 +15,7 @@ import { t } from 'i18next'
 import { isContentWarning } from '../../Functions/RelayFunctions/Events'
 import { Event } from '../../lib/nostr/Events'
 import { getUnixTime } from 'date-fns'
-import { populateRelay } from '../../Functions/RelayFunctions'
-import { searchRelays } from '../../Functions/DatabaseFunctions/Relays'
+import { Relay, searchRelays } from '../../Functions/DatabaseFunctions/Relays'
 import TextContent from '../../Components/TextContent'
 import { formatPubKey } from '../../Functions/RelayFunctions/Users'
 import { getReactions } from '../../Functions/DatabaseFunctions/Reactions'
@@ -30,21 +29,27 @@ import {
   TouchableRipple,
   Chip,
   Surface,
+  IconButton,
 } from 'react-native-paper'
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'
 import { REGEX_SOCKET_LINK } from '../../Constants/Relay'
 import { navigate, push } from '../../lib/Navigation'
 import { Kind } from 'nostr-tools'
 import ProfileData from '../ProfileData'
-import { relayToColor } from '../../Functions/NativeFunctions'
+import { formatBigNumber, relayToColor } from '../../Functions/NativeFunctions'
 import { SvgXml } from 'react-native-svg'
 import { reactionIcon } from '../../Constants/Theme'
 import LnPayment from '../LnPayment'
+import { getZapsAmount } from '../../Functions/DatabaseFunctions/Zaps'
+import { lightningInvoice } from '../../Functions/ServicesFunctions/ZapInvoice'
+import LnPreview from '../LnPreview'
+import { getNpub } from '../../lib/nostr/Nip19'
 
 interface NoteCardProps {
   note?: Note
   showAvatarImage?: boolean
   showAnswerData?: boolean
+  showRelayColors?: boolean
   showAction?: boolean
   showActionCount?: boolean
   showPreview?: boolean
@@ -55,6 +60,7 @@ interface NoteCardProps {
 
 export const NoteCard: React.FC<NoteCardProps> = ({
   note,
+  showRelayColors = true,
   showAvatarImage = true,
   showAnswerData = true,
   showAction = true,
@@ -66,8 +72,15 @@ export const NoteCard: React.FC<NoteCardProps> = ({
 }) => {
   const theme = useTheme()
   const { publicKey, privateKey } = React.useContext(UserContext)
-  const { relayPool, lastEventId, setDisplayrelayDrawer } = useContext(RelayPoolContext)
-  const { database, showSensitive, setDisplayUserDrawer, relayColouring } = useContext(AppContext)
+  const { relayPool, lastEventId, addRelayItem } = useContext(RelayPoolContext)
+  const {
+    database,
+    showSensitive,
+    setDisplayUserDrawer,
+    setDisplayNoteDrawer,
+    relayColouring,
+    longPressZap,
+  } = useContext(AppContext)
   const [relayAdded, setRelayAdded] = useState<boolean>(false)
   const [positiveReactions, setPositiveReactions] = useState<number>(0)
   const [negativeReactions, setNegativeReactions] = useState<number>(0)
@@ -75,12 +88,15 @@ export const NoteCard: React.FC<NoteCardProps> = ({
   const [userDownvoted, setUserDownvoted] = useState<boolean>(false)
   const [repliesCount, setRepliesCount] = React.useState<number>(0)
   const [repostCount, serRepostCount] = React.useState<number>(0)
+  const [zapsAmount, setZapsAmount] = React.useState<number>()
   const [relays, setRelays] = React.useState<NoteRelay[]>([])
   const [hide, setHide] = useState<boolean>(isContentWarning(note))
   const [userReposted, setUserReposted] = useState<boolean>()
   const [repost, setRepost] = useState<Note>()
   const [openLn, setOpenLn] = React.useState<boolean>(false)
   const [showReactions, setShowReactions] = React.useState<boolean>(false)
+  const [loadingZap, setLoadingZap] = React.useState<boolean>(false)
+  const [zapInvoice, setZapInvoice] = React.useState<string>()
 
   useEffect(() => {
     if (database && publicKey && note?.id) {
@@ -102,6 +118,9 @@ export const NoteCard: React.FC<NoteCardProps> = ({
         getRepliesCount(database, note.id).then(setRepliesCount)
         getRepostCount(database, note.id).then(serRepostCount)
         isUserReposted(database, note.id, publicKey).then(setUserReposted)
+        if (note.zap_pubkey?.length > 0) {
+          getZapsAmount(database, note.id).then(setZapsAmount)
+        }
       }
       getNoteRelays(database, note.id).then(setRelays)
     }
@@ -175,41 +194,35 @@ export const NoteCard: React.FC<NoteCardProps> = ({
             />
           )}
           {note?.repost_id && (
-            <>
+            <TouchableRipple onPress={() => navigate('Note', { noteId: note.repost_id })}>
               {repost && showRepostPreview ? (
                 <NoteCard
                   note={repost}
-                  showActionCount={false}
                   showPreview={showPreview}
                   showRepostPreview={false}
+                  showAction={false}
+                  showRelayColors={false}
                 />
               ) : (
-                <TouchableRipple
+                <Chip
+                  icon={() => (
+                    <MaterialCommunityIcons
+                      name='cached'
+                      size={16}
+                      color={theme.colors.onTertiaryContainer}
+                    />
+                  )}
                   style={{
-                    marginTop: note.content.length > 5 ? 16 : -16,
+                    backgroundColor: theme.colors.secondaryContainer,
+                    color: theme.colors.onTertiaryContainer,
                   }}
-                  onPress={() => navigate('Note', { noteId: note.repost_id })}
                 >
-                  <Chip
-                    icon={() => (
-                      <MaterialCommunityIcons
-                        name='cached'
-                        size={16}
-                        color={theme.colors.onTertiaryContainer}
-                      />
-                    )}
-                    style={{
-                      backgroundColor: theme.colors.secondaryContainer,
-                      color: theme.colors.onTertiaryContainer,
-                    }}
-                  >
-                    <Text style={{ color: theme.colors.onTertiaryContainer }}>
-                      {t('noteCard.reposted')}
-                    </Text>
-                  </Chip>
-                </TouchableRipple>
+                  <Text style={{ color: theme.colors.onTertiaryContainer }}>
+                    {t('noteCard.reposted')}
+                  </Text>
+                </Chip>
               )}
-            </>
+            </TouchableRipple>
           )}
         </Card.Content>
       </>
@@ -217,15 +230,8 @@ export const NoteCard: React.FC<NoteCardProps> = ({
   }
 
   const recommendServer: () => JSX.Element = () => {
-    const relayName = note?.content
-
-    const addRelayItem: () => void = () => {
-      if (relayPool && database && publicKey && note) {
-        relayPool.add(note.content, () => {
-          populateRelay(relayPool, database, publicKey)
-          setRelayAdded(true)
-        })
-      }
+    const relay: Relay = {
+      url: note?.content ?? '',
     }
 
     return (
@@ -233,7 +239,7 @@ export const NoteCard: React.FC<NoteCardProps> = ({
         <Card>
           <Card.Title
             title={t('noteCard.recommendation')}
-            subtitle={relayName}
+            subtitle={relay.url}
             left={(props) => (
               <Avatar.Icon
                 {...props}
@@ -246,7 +252,7 @@ export const NoteCard: React.FC<NoteCardProps> = ({
           />
           {!relayAdded && note && REGEX_SOCKET_LINK.test(note.content) && (
             <Card.Content style={[styles.bottomActions, { borderColor: theme.colors.onSecondary }]}>
-              <Button mode='contained' onPress={addRelayItem}>
+              <Button mode='contained' onPress={async () => await addRelayItem(relay)}>
                 {t('noteCard.addRelay')}
               </Button>
             </Card.Content>
@@ -335,6 +341,33 @@ export const NoteCard: React.FC<NoteCardProps> = ({
     </Card>
   )
 
+  const generateZapInvoice: () => void = () => {
+    const lud = note?.ln_address && note?.ln_address !== '' ? note?.ln_address : note?.lnurl
+
+    if (lud && lud !== '' && longPressZap && database && privateKey && publicKey && note?.pubkey) {
+      setLoadingZap(true)
+      lightningInvoice(
+        database,
+        lud,
+        longPressZap,
+        privateKey,
+        publicKey,
+        note?.pubkey,
+        true,
+        note?.zap_pubkey,
+        `Nostr: ${formatPubKey(getNpub(note?.id))}`,
+        note?.id,
+      )
+        .then((invoice) => {
+          if (invoice) setZapInvoice(invoice)
+          setLoadingZap(false)
+        })
+        .catch(() => {
+          setLoadingZap(false)
+        })
+    }
+  }
+
   const reactionsCount: () => number = () => {
     if (userDownvoted) return negativeReactions
     if (userUpvoted) return positiveReactions
@@ -366,17 +399,27 @@ export const NoteCard: React.FC<NoteCardProps> = ({
   return note ? (
     <Card mode={mode}>
       <Card.Content style={styles.title}>
-        <TouchableRipple onPress={() => setDisplayUserDrawer(note.pubkey)}>
-          <ProfileData
-            username={note?.name}
-            publicKey={note.pubkey}
-            validNip05={note?.valid_nip05}
-            nip05={note?.nip05}
-            lud06={note?.lnurl}
-            picture={showAvatarImage ? note?.picture : undefined}
-            timestamp={note?.created_at}
+        <View>
+          <TouchableRipple onPress={() => setDisplayUserDrawer(note.pubkey)}>
+            <ProfileData
+              username={note?.name}
+              publicKey={note.pubkey}
+              validNip05={note?.valid_nip05}
+              nip05={note?.nip05}
+              lnurl={note?.lnurl}
+              lnAddress={note?.ln_address}
+              picture={showAvatarImage ? note?.picture : undefined}
+              timestamp={note?.created_at}
+            />
+          </TouchableRipple>
+        </View>
+        <View style={styles.noteOptionsIcon}>
+          <IconButton
+            icon='dots-vertical'
+            size={28}
+            onPress={() => setDisplayNoteDrawer(note.id)}
           />
-        </TouchableRipple>
+        </View>
       </Card.Content>
       {getNoteContent()}
       {showAction && (
@@ -415,33 +458,35 @@ export const NoteCard: React.FC<NoteCardProps> = ({
               {showActionCount && reactionsCount()}
             </Button>
           </Surface>
-          {note.lnurl && (
-            <>
-              <Button
-                style={styles.action}
-                icon={() => (
-                  <MaterialCommunityIcons name='lightning-bolt' size={24} color={'#F5D112'} />
-                )}
-                onPress={() => setOpenLn(true)}
-              >
-                {''}
-              </Button>
-              {openLn && <LnPayment open={openLn} setOpen={setOpenLn} note={note} />}
-            </>
-          )}
+          <Button
+            style={styles.action}
+            disabled={!note?.lnurl && !note?.ln_address}
+            icon={() => (
+              <MaterialCommunityIcons
+                name='lightning-bolt'
+                size={24}
+                color={!note?.lnurl && !note?.ln_address ? undefined : '#F5D112'}
+              />
+            )}
+            onPress={() => setOpenLn(true)}
+            onLongPress={longPressZap ? generateZapInvoice : undefined}
+            loading={loadingZap}
+          >
+            {note.zap_pubkey?.length > 0 ? formatBigNumber(zapsAmount) : ''}
+          </Button>
+          {openLn && <LnPayment open={openLn} setOpen={setOpenLn} note={note} />}
+          {zapInvoice && <LnPreview invoice={zapInvoice} setInvoice={setZapInvoice} />}
         </Card.Content>
       )}
       <Card.Content style={styles.relayList}>
         {relayColouring &&
+          showRelayColors &&
           relays.map((relay, index) => (
-            <TouchableNativeFeedback
-              onPress={() => setDisplayrelayDrawer(relay.relay_url)}
-              key={relay.relay_url}
-            >
+            <TouchableNativeFeedback key={relay.relay_url}>
               <View
                 style={[
                   styles.relay,
-                  { backgroundColor: relayToColor(relay.relay_url) },
+                  { borderBottomColor: relayToColor(relay.relay_url) },
                   index === 0 ? { borderBottomLeftRadius: 50 } : {},
                   index === relays.length - 1 ? { borderBottomRightRadius: 50 } : {},
                 ]}
@@ -458,7 +503,7 @@ export const NoteCard: React.FC<NoteCardProps> = ({
 const styles = StyleSheet.create({
   relayList: {
     flexDirection: 'row',
-    marginTop: 8,
+    bottom: 2,
     marginBottom: -16,
     marginLeft: -16,
     marginRight: -16,
@@ -466,6 +511,7 @@ const styles = StyleSheet.create({
   relay: {
     flex: 1,
     height: 10,
+    borderBottomWidth: 2,
   },
   titleUsername: {
     fontWeight: 'bold',
@@ -485,6 +531,7 @@ const styles = StyleSheet.create({
   },
   title: {
     flexDirection: 'row',
+    justifyContent: 'space-between',
     paddingBottom: 16,
   },
   userBlockedWrapper: {
@@ -535,6 +582,16 @@ const styles = StyleSheet.create({
   verifyIcon: {
     paddingTop: 4,
     paddingLeft: 5,
+  },
+  snackbar: {
+    marginBottom: 50,
+    marginLeft: 0,
+    width: '100%',
+  },
+  noteOptionsIcon: {
+    marginBottom: -16,
+    marginRight: -16,
+    marginTop: -8,
   },
 })
 

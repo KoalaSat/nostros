@@ -4,6 +4,8 @@ import RBSheet from 'react-native-raw-bottom-sheet'
 import {
   Avatar as PaperAvatar,
   Button,
+  Divider,
+  IconButton,
   Text,
   TextInput,
   TouchableRipple,
@@ -22,6 +24,9 @@ import { Kind } from 'nostr-tools'
 import { RelayPoolContext } from '../../Contexts/RelayPoolContext'
 import { Event } from '../../lib/nostr/Events'
 import { goBack } from '../../lib/Navigation'
+import { getUser, User } from '../../Functions/DatabaseFunctions/Users'
+import ProfileData from '../ProfileData'
+import GroupShare from '../GroupShare'
 
 interface GroupHeaderIconProps {
   groupId: string
@@ -34,6 +39,7 @@ export const GroupHeaderIcon: React.FC<GroupHeaderIconProps> = ({ groupId }) => 
   const { relayPool, lastEventId } = useContext(RelayPoolContext)
   const theme = useTheme()
   const [group, setGroup] = useState<Group>()
+  const [user, setUser] = useState<User>()
   const [newGroupName, setNewGroupName] = useState<string>()
   const [newGroupDescription, setNewGroupDescription] = useState<string>()
   const [newGroupPicture, setNewGroupPicture] = useState<string>()
@@ -41,10 +47,14 @@ export const GroupHeaderIcon: React.FC<GroupHeaderIconProps> = ({ groupId }) => 
   const [uploadingFile, setUploadingFile] = useState<boolean>(false)
   const bottomSheetActionsGroupRef = React.useRef<RBSheet>(null)
   const bottomSheetEditGroupRef = React.useRef<RBSheet>(null)
+  const bottomSheetShareGroupRef = React.useRef<RBSheet>(null)
 
   useEffect(() => {
     if (database && groupId) {
       getGroup(database, groupId).then((result) => {
+        getUser(result.pubkey, database).then((user) => {
+          if (user) setUser(user)
+        })
         setGroup(result)
         setNewGroupName(result.name)
         setNewGroupDescription(result.about)
@@ -62,8 +72,8 @@ export const GroupHeaderIcon: React.FC<GroupHeaderIconProps> = ({ groupId }) => 
   const onDeleteGroup: () => void = () => {
     if (database && group?.id) {
       deleteGroup(database, group?.id)
-      goBack()
       bottomSheetActionsGroupRef.current?.close()
+      goBack()
     }
   }
 
@@ -102,13 +112,7 @@ export const GroupHeaderIcon: React.FC<GroupHeaderIconProps> = ({ groupId }) => 
 
   return (
     <View style={styles.container}>
-      <TouchableRipple
-        onPress={() =>
-          group?.pubkey === publicKey
-            ? bottomSheetEditGroupRef.current?.open()
-            : bottomSheetActionsGroupRef.current?.open()
-        }
-      >
+      <TouchableRipple onPress={() => bottomSheetActionsGroupRef.current?.open()}>
         {validImageUrl(group?.picture) ? (
           <FastImage
             style={[
@@ -135,10 +139,81 @@ export const GroupHeaderIcon: React.FC<GroupHeaderIconProps> = ({ groupId }) => 
         customStyles={bottomSheetStyles}
       >
         <View>
-          <Button mode='contained' onPress={onDeleteGroup}>
-            {t('groupsFeed.delete')}
-          </Button>
+          <View style={styles.cardUser}>
+            <View>
+              <View style={styles.cardUserMain}>
+                <ProfileData
+                  username={group?.name}
+                  publicKey={group?.id}
+                  picture={group?.picture}
+                />
+              </View>
+              {group?.about && (
+                <View style={styles.cardGroupAbout}>
+                  <Text>{group?.about}</Text>
+                </View>
+              )}
+            </View>
+          </View>
+          <Divider />
+          <View style={styles.cardUser}>
+            <View>
+              <View style={styles.cardUserMain}>
+                <ProfileData
+                  username={user?.name}
+                  publicKey={user?.id}
+                  validNip05={user?.valid_nip05}
+                  nip05={user?.nip05}
+                  lnurl={user?.lnurl}
+                  lnAddress={user?.ln_address}
+                  picture={user?.picture}
+                />
+              </View>
+            </View>
+            <View style={styles.arrow}>
+              <MaterialCommunityIcons
+                name='menu-right'
+                size={25}
+                color={theme.colors.onPrimaryContainer}
+              />
+            </View>
+          </View>
+          <Divider />
+          <View style={styles.mainLayout}>
+            <View style={styles.actionButton}>
+              <IconButton icon='account-multiple-minus-outline' size={28} onPress={onDeleteGroup} />
+              <Text>{t('groupHeaderIcon.delete')}</Text>
+            </View>
+            {group?.pubkey === publicKey && (
+              <View style={styles.actionButton}>
+                <IconButton
+                  icon='pencil'
+                  size={28}
+                  onPress={() => {
+                    bottomSheetEditGroupRef.current?.open()
+                    bottomSheetActionsGroupRef.current?.close()
+                  }}
+                />
+                <Text>{t('groupHeaderIcon.edit')}</Text>
+              </View>
+            )}
+            <View style={styles.actionButton}>
+              <IconButton
+                icon='share-variant-outline'
+                size={28}
+                onPress={() => bottomSheetShareGroupRef.current?.open()}
+              />
+              <Text>{t('groupHeaderIcon.share')}</Text>
+            </View>
+          </View>
         </View>
+      </RBSheet>
+      <RBSheet
+        ref={bottomSheetShareGroupRef}
+        closeOnDragDown={true}
+        customStyles={bottomSheetStyles}
+      >
+        {group && <GroupShare group={group} />}
       </RBSheet>
       <RBSheet
         ref={bottomSheetEditGroupRef}
@@ -192,13 +267,13 @@ export const GroupHeaderIcon: React.FC<GroupHeaderIconProps> = ({ groupId }) => 
           />
           <Button
             mode='contained'
+            style={styles.input}
             disabled={!newGroupName}
             onPress={() => updateGroup()}
-            style={styles.input}
           >
             {t('groupsFeed.groupUpdate')}
           </Button>
-          <Button mode='outlined' onPress={onDeleteGroup}>
+          <Button mode='outlined' style={styles.input} onPress={onDeleteGroup}>
             {t('groupsFeed.delete')}
           </Button>
           <UploadImage
@@ -221,7 +296,29 @@ const styles = StyleSheet.create({
     paddingRight: 8,
   },
   input: {
-    marginBottom: 16,
+    marginTop: 16,
+  },
+  cardGroupAbout: {
+    marginTop: 16,
+  },
+  cardUser: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    padding: 16,
+  },
+  cardUserMain: {
+    flexDirection: 'row',
+  },
+  arrow: {
+    alignContent: 'center',
+    justifyContent: 'center',
+  },
+  mainLayout: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+  },
+  actionButton: {
+    alignItems: 'center',
   },
 })
 

@@ -11,7 +11,7 @@
       "privateKeyDescription": "Behandele den privaten Schlüssel wie ein Passwort",
       "privateKeysSnackbarTitle": "Wichtig!",
       "privateKeysSnackbarDescription": "Verwahre den privaten Schlüssel an einem sicheren Ort. Geht der Schlüssel verloren, kann er nicht wiederhergestellt werden. Das Konto kann nie wieder benutzt werden."
-       },
+    },
     "homeNavigator": {
       "Group": "",
       "ProfileCreate": "Profil anlegen",
@@ -63,9 +63,6 @@
       "cancel": "Abbrechen",
       "poweredBy": "poweredBy {{uri}}"
     },
-    "groupPage": {
-      "typeMessage": "Nachricht schreiben"
-    },
     "menuItems": {
       "relays": "Relays",
       "contacts": "Kontakte",
@@ -86,9 +83,26 @@
       "imageHostingService": "Bilder Hosting Service",
       "random": "zufällig",
       "language": "Sprache",
-      "relayColoruring": "Relays farblich darstellen"
+      "relayColoruring": "Relays farblich darstellen",
+      "app": "App",
+      "feed": "Feed",
+      "zaps": "Zaps",
+      "disabled": "Disabled",
+      "longPressZap": "Long press Zaps",
+      "longPressZapDescription": "Define a default amount to automatically generate invoices after a long press on the Zap button.",
+      "defaultZapAmount": "Defaul Zap amount",
+      "update": "Update",
+      "disable": "Disable"
+    },
+    "noteActions": {
+      "copy": "Kopieren",
+      "share": "Teilen",
+      "view": "View"
     },
     "noteCard": {
+      "notifications": {
+        "zapServerError": "There was an error on the server while trying to request for the invoice."
+      },
       "answering": "{{pubkey}} antworten",
       "reposting": "{{pubkey}} reposten",
       "seeParent": "Notiz ansehen",
@@ -104,7 +118,9 @@
       "generateInvoice": "Invoice generieren",
       "cancel": "Abbrechen",
       "copy": "Kopieren",
-      "open": "Öffne Wallet"
+      "open": "Öffne Wallet",
+      "anonTip": "Anonymous tip",
+      "zap": "Zap"
     },
     "notificationsFeed": {
       "emptyTitle": "Keine Benachrichtigung.",
@@ -176,7 +192,7 @@
       "nips": "NIPs",
       "version": "Version"
     },
- 	"reactionsFeed": {
+    "reactionsFeed": {
       "emptyTitle": "Du hast noch keine Reaktionen",
       "emptyDescription": "Hier siehst du Notizen, auf die du reagiert hast."
     },
@@ -216,17 +232,16 @@
       "recommended": "Empfohlen",
       "myList": "Meine Relays",
       "notifications": {
-      "globalFeedActive": "Globaler Feed aktiv.",
-      "globalFeedActiveUnactive": "Global Feed daktiviert.",
-      "add": "Relay verbinden",
-      "remove": "Relay entfernen",
-      "active": "Relay aktivieren.",
-      "desactive": "Relay deaktivieren.",
-      "badFormat": "Die URL des Relays hat kein gültiges Format.",
-      "alreadyExists": "Relay existiert bereits"
+        "globalFeedActive": "Globaler Feed aktiv.",
+        "globalFeedActiveUnactive": "Global Feed daktiviert.",
+        "add": "Relay verbinden",
+        "remove": "Relay entfernen",
+        "active": "Relay aktivieren.",
+        "desactive": "Relay deaktivieren.",
+        "badFormat": "Die URL des Relays hat kein gültiges Format.",
+        "alreadyExists": "Relay existiert bereits"
       }
     },
-  
     "relayCard": {
       "pushDone": "Fertig",
       "pushHistoricTitle": "Alle meine Daten hochladen",
@@ -258,24 +273,25 @@
         "globalFeedActiveUnactive": "Globaler Feed inaktiv.",
         "pubkeyCopied": "Öffentlichen Schlüssel kopiert.",
         "contactCopied": "Kontakt kopiert.",
-        "urlCopied": "URL kopiert."
+        "urlCopied": "URL kopiert.",
+        "pushCompleted": "All your data has been pushed."
       }
     },
-    
     "profileConfigPage": {
       "notifications": {
         "nsecCopied": "Privater Schlüssel kopiert.",
         "npubCopied": "Öffentlicher Schlüssel kopiert.",
         "profilePublished": "Profil veröffentlicht.",
-        "lud06Published": "LUD-06 veröffentlicht.\n\n{{lud06}}",
+        "lud06Published": "LUDs veröffentlicht.",
         "nip05Published": "NIP-05 veröffentlicht.\n\n{{nip05}}",
         "picturePublished": "Bild veröffentlicht.",
         "connectionError": "Verbindungsfehler"
       },
       "publishLud06": "Veröffentlicht",
-      "lud06Label": "LNURL / Lightning Addresse",
+      "lud06Label": "LNURL",
+      "lud16Label": "Lightning Addresse",
       "lud06Description": "Profil verknüpfen mit LNURL oder Lightning Addresse.",
-      "lud06Title": "LUD-06",
+      "lud06Title": "Zaps",
       "publishNip05": "Veröffentlichen",
       "nip05Link": "Mehr erfahren",
       "nip05Description": "Profil mit Domain verbinden.",
@@ -293,14 +309,14 @@
       "npub": "Öffentlicher Schlüssel",
       "copyNPub": "Kopieren",
       "directory": "Verzeichnis",
-      "lud06": "LUD-06",
+      "lud06": "Zaps",
       "nip05": "NIP-05",
       "name": "Name",
       "about": "Über mich"
     },
- 	 "textContent": {
+    "textContent": {
       "invoice": "Lightning Invoice"
-       },
+    },
     "profilePage": {
       "notifications": {
         "contactAdded": "Kontakt hinzugefügt",
@@ -316,9 +332,14 @@
       "unfollow": "Nicht mehr folgen",
       "copyNPub": "Schlüssel kopieren",
       "relaysDescription": "Dies sind {{username}}'s Relays, aktiviere diejenigen, zu denen du verbunden werden möchtest."
- },
+    },
     "groupPage": {
       "typeMessage": "Nachricht schreiben"
+    },
+    "groupHeaderIcon": {
+      "delete": "Leave group",
+      "share": "Share group",
+      "edit": "Edit group"
     },
     "groupsFeed": {
       "delete": "Gruppe verlassen",
@@ -354,7 +375,6 @@
       "copyNip05": "NIP-05 kopieren",
       "copyNPub": "Schlüssel kopieren"
     },
-
     "profileCard": {
       "notifications": {
         "contactAdded": "Aboniert",
@@ -369,7 +389,10 @@
       "share": "Teilen",
       "unblock": "Erlauben",
       "unfollow": "Abo entfernen",
-      "relaysTitle": "Relays"
+      "relaysTitle": "Relays",
+      "blocked": "Blocked",
+      "mute": "Mute",
+      "muted": "Muted"
     },
     "conversationsFeed": {
       "openMessage": "Unterhaltung beginnen",
