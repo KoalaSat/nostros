@@ -334,7 +334,7 @@
       "relaysDescription": "Dies sind {{username}}'s Relays, aktiviere diejenigen, zu denen du verbunden werden möchtest."
     },
     "groupPage": {
-      "typeMessage": "Nachricht schreiben"
+      "typeMessage": "Nachricht schreiben",
   	  "replyText": "Nachricht"
     },
     "groupHeaderIcon": {
