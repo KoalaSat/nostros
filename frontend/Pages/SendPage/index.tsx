@@ -6,24 +6,18 @@ import { useTranslation } from 'react-i18next'
 import { RelayPoolContext } from '../../Contexts/RelayPoolContext'
 import getUnixTime from 'date-fns/getUnixTime'
 import { Note } from '../../Functions/DatabaseFunctions/Notes'
-import { getETags, getTaggedPubKeys } from '../../Functions/RelayFunctions/Events'
+import { getETags } from '../../Functions/RelayFunctions/Events'
 import { getUsers, User } from '../../Functions/DatabaseFunctions/Users'
 import { formatPubKey } from '../../Functions/RelayFunctions/Users'
-import {
-  Button,
-  IconButton,
-  Switch,
-  Text,
-  TextInput,
-  TouchableRipple,
-  useTheme,
-} from 'react-native-paper'
+import { Button, IconButton, Switch, Text, TextInput, useTheme } from 'react-native-paper'
 import { UserContext } from '../../Contexts/UserContext'
 import { goBack } from '../../lib/Navigation'
 import { Kind } from 'nostr-tools'
 import ProfileData from '../../Components/ProfileData'
 import NoteCard from '../../Components/NoteCard'
 import UploadImage from '../../Components/UploadImage'
+import { useFocusEffect } from '@react-navigation/native'
+import { TouchableWithoutFeedback } from 'react-native-gesture-handler'
 
 interface SendPageProps {
   route: { params: { note: Note; type?: 'reply' | 'repost' } | undefined }
@@ -38,6 +32,7 @@ export const SendPage: React.FC<SendPageProps> = ({ route }) => {
   // state
   const [content, setContent] = useState<string>('')
   const [contentWarning, setContentWarning] = useState<boolean>(false)
+  const [users, setUsers] = useState<User[]>([])
   const [userSuggestions, setUserSuggestions] = useState<User[]>([])
   const [userMentions, setUserMentions] = useState<User[]>([])
   const [isSending, setIsSending] = useState<boolean>(false)
@@ -45,26 +40,23 @@ export const SendPage: React.FC<SendPageProps> = ({ route }) => {
   const [startUpload, setStartUpload] = useState<boolean>(false)
   const note = React.useMemo(() => route.params?.note, [])
 
+  useFocusEffect(
+    React.useCallback(() => {
+      if (database) getUsers(database, {}).then(setUsers)
+
+      return () => {}
+    }, []),
+  )
+
   useEffect(() => {
     if (isSending) goBack()
   }, [lastConfirmationtId])
 
   const onChangeText: (text: string) => void = (text) => {
     const match = text.match(/.*@(.*)$/)
-    const note: Note | undefined = route.params?.note
-    if (database && match && match?.length > 0) {
-      if (match[1] === '' && note) {
-        const taggedPubKeys = getTaggedPubKeys(note)
-        getUsers(database, {
-          includeIds: [...taggedPubKeys, note.pubkey],
-        }).then((results) => {
-          if (results) setUserSuggestions(results.filter((item) => item.id !== publicKey))
-        })
-      } else {
-        getUsers(database, { name: match[1] }).then((results) => {
-          if (results) setUserSuggestions(results.filter((item) => item.id !== publicKey))
-        })
-      }
+    if (database && match && match[1] !== '') {
+      const search = match[1].toLocaleLowerCase()
+      setUserSuggestions(users.filter((item) => item.name?.toLocaleLowerCase()?.includes(search)))
     } else {
       setUserSuggestions([])
     }
@@ -130,7 +122,7 @@ export const SendPage: React.FC<SendPageProps> = ({ route }) => {
   }
 
   const renderContactItem: (item: User, index: number) => JSX.Element = (item, index) => (
-    <TouchableRipple onPress={() => addUserMention(item)}>
+    <TouchableWithoutFeedback onPress={() => addUserMention(item)}>
       <View key={index} style={styles.contactRow}>
         <ProfileData
           username={item?.name}
@@ -142,12 +134,17 @@ export const SendPage: React.FC<SendPageProps> = ({ route }) => {
           picture={item?.picture}
         />
       </View>
-    </TouchableRipple>
+    </TouchableWithoutFeedback>
   )
 
   return (
     <>
-      <View style={[styles.textInputContainer]}>
+      <ScrollView
+        style={[styles.textInputContainer]}
+        keyboardShouldPersistTaps='handled'
+        scrollEnabled={false}
+        showsVerticalScrollIndicator={false}
+      >
         {note && (
           <View style={styles.noteCard}>
             <NoteCard
@@ -176,8 +173,8 @@ export const SendPage: React.FC<SendPageProps> = ({ route }) => {
             // selectionColor={theme.colors.inverseOnSurface}
           />
         </View>
-      </View>
-      <View style={styles.actions}>
+      </ScrollView>
+      <View>
         {userSuggestions.length > 0 ? (
           <View style={[styles.contactsList, { backgroundColor: theme.colors.background }]}>
             <ScrollView>
@@ -240,9 +237,7 @@ const styles = StyleSheet.create({
     bottom: 100,
     width: '100%',
   },
-  textInputContainer: {
-    flex: 1,
-  },
+  textInputContainer: {},
   textInput: {
     paddingBottom: 0,
   },
@@ -254,9 +249,6 @@ const styles = StyleSheet.create({
     flexDirection: 'column-reverse',
     paddingLeft: 16,
     paddingRight: 16,
-  },
-  actions: {
-    zIndex: 999,
   },
   contactsList: {
     bottom: 0,
