@@ -61,9 +61,7 @@ export const ProfileData: React.FC<ProfileCardProps> = ({
             )}
           </View>
           <Text numberOfLines={1}>
-            {timestamp ? 
-              date
-              : validNip05 ? getNip05Domain(nip05) : ''}
+            {timestamp ? date : validNip05 ? getNip05Domain(nip05) : ''}
           </Text>
         </View>
       </View>

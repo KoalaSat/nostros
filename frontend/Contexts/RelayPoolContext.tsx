@@ -83,11 +83,11 @@ export const RelayPoolContextProvider = ({
   }
 
   const debouncedEventIdHandler = useMemo(
-    () => debounce(changeEventIdHandler, 1000),
+    () => debounce(changeEventIdHandler, 250),
     [setLastEventId],
   )
   const debouncedConfirmationHandler = useMemo(
-    () => debounce(changeConfirmationIdHandler, 500),
+    () => debounce(changeConfirmationIdHandler, 250),
     [setLastConfirmationId],
   )
 

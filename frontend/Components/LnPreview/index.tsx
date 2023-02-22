@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import QRCode from 'react-native-qrcode-svg'
-import { Linking, StyleSheet, View } from 'react-native'
+import { Dimensions, Linking, StyleSheet, View } from 'react-native'
 import Clipboard from '@react-native-clipboard/clipboard'
 import { useTranslation } from 'react-i18next'
 import RBSheet from 'react-native-raw-bottom-sheet'
@@ -76,7 +76,7 @@ export const LnPreview: React.FC<LnPreviewProps> = ({
       <Card style={styles.qrContainer}>
         <Card.Content>
           <View style={styles.qr}>
-            <QRCode value={invoice} size={300} quietZone={8} />
+            <QRCode value={invoice} quietZone={8} size={Dimensions.get('window').width - 64} />
           </View>
           <View style={styles.qrText}>
             <Text>{decodedLnUrl?.satoshis} </Text>

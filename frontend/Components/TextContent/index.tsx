@@ -10,7 +10,6 @@ import { Avatar, Card, Text, useTheme } from 'react-native-paper'
 import { getNip19Key, getNpub } from '../../lib/nostr/Nip19'
 import { navigate } from '../../lib/Navigation'
 import { validBlueBirdUrl, validImageUrl, validMediaUrl } from '../../Functions/NativeFunctions'
-import Clipboard from '@react-native-clipboard/clipboard'
 import FastImage from 'react-native-fast-image'
 import { useTranslation } from 'react-i18next'
 import { decode, PaymentRequestObject, TagsObject } from 'bolt11'
@@ -22,7 +21,6 @@ interface TextContentProps {
   showPreview?: boolean
   onPressUser?: (user: User) => void
   numberOfLines?: number
-  copyOnPress?: boolean
 }
 
 export const TextContent: React.FC<TextContentProps> = ({
@@ -31,7 +29,6 @@ export const TextContent: React.FC<TextContentProps> = ({
   showPreview = true,
   onPressUser = () => {},
   numberOfLines,
-  copyOnPress = true,
 }) => {
   const theme = useTheme()
   const { t } = useTranslation('common')
@@ -267,8 +264,8 @@ export const TextContent: React.FC<TextContentProps> = ({
           },
         ]}
         childrenProps={{ allowFontScaling: false }}
-        onLongPress={copyOnPress ? () => Clipboard.setString(text) : undefined}
         numberOfLines={numberOfLines}
+        selectable
       >
         {text}
       </ParsedText>
