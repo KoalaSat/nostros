@@ -46,10 +46,11 @@ export const HomePage: React.FC = () => {
       getNotificationsCount(database, publicKey, notificationSeenAt).then(setNewNotifications)
       getUserGroupMessagesCount(database, publicKey).then(setNewGroupMessages)
       getDirectMessagesCount(database, publicKey).then(setNewdirectMessages)
+      subscribe()
     }
   }, [lastEventId, notificationSeenAt, refreshBottomBarAt])
 
-  useEffect(() => {
+  const subscribe: () => void = () => {
     if (publicKey && database) {
       getMentionNotes(database, publicKey, 1).then((mentionResults) => {
         getGroupedDirectMessages(database, { limit: 1 }).then((directMessageResults) => {
@@ -81,7 +82,7 @@ export const HomePage: React.FC = () => {
         })
       })
     }
-  }, [publicKey])
+  }
 
   React.useEffect(() => {}, [language])
 

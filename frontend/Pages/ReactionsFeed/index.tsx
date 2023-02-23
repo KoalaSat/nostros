@@ -35,17 +35,7 @@ export const ReactionsFeed: React.FC<ReactionsFeedProps> = ({ navigation }) => {
   const [refreshing, setRefreshing] = useState(false)
   const flashListRef = React.useRef<FlashList<Note>>(null)
 
-  const unsubscribe: () => void = () => {
-    relayPool?.unsubscribe([
-      'homepage-contacts-main',
-      'homepage-contacts-replies',
-      'homepage-contacts-reactions',
-      'homepage-contacts-repost',
-    ])
-  }
-
   useEffect(() => {
-    unsubscribe()
     subscribeNotes()
     loadNotes()
   }, [])

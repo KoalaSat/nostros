@@ -37,15 +37,6 @@ export const MyFeed: React.FC<MyFeedProps> = ({ navigation }) => {
   const [refreshing, setRefreshing] = useState(false)
   const flashListRef = React.useRef<FlashList<Note>>(null)
 
-  const unsubscribe: () => void = () => {
-    relayPool?.unsubscribe([
-      'homepage-contacts-main',
-      'homepage-contacts-replies',
-      'homepage-contacts-reactions',
-      'homepage-contacts-repost',
-    ])
-  }
-
   useEffect(() => {
     if (pushedTab) {
       flashListRef.current?.scrollToIndex({ animated: true, index: 0 })
@@ -53,7 +44,6 @@ export const MyFeed: React.FC<MyFeedProps> = ({ navigation }) => {
   }, [pushedTab])
 
   useEffect(() => {
-    unsubscribe()
     subscribeNotes()
     loadNotes()
   }, [])
@@ -72,7 +62,6 @@ export const MyFeed: React.FC<MyFeedProps> = ({ navigation }) => {
 
   const onRefresh = useCallback(() => {
     setRefreshing(true)
-    unsubscribe()
     subscribeNotes()
   }, [])
 
@@ -103,20 +92,23 @@ export const MyFeed: React.FC<MyFeedProps> = ({ navigation }) => {
         if (notes.length > 0) {
           const noteIds = notes.map((note) => note.id ?? '')
           const authors = notes.map((note) => note.pubkey ?? '')
+          const repostIds = notes
+            .filter((note) => note.repost_id)
+            .map((note) => note.repost_id ?? '')
 
-          relayPool?.subscribe('homepage-contacts-reactions', [
-            {
-              kinds: [Kind.Metadata],
-              authors,
-            },
+          const reactionFilters: RelayFilters[] = [
             {
               kinds: [Kind.Reaction, Kind.Text, 9735],
               '#e': noteIds,
             },
-          ])
-          const repostIds = notes
-            .filter((note) => note.repost_id)
-            .map((note) => note.repost_id ?? '')
+          ]
+          if (authors.length > 0) {
+            reactionFilters.push({
+              kinds: [Kind.Metadata],
+              authors,
+            })
+          }
+          relayPool?.subscribe('homepage-contacts-reactions',reactionFilters )
           if (repostIds.length > 0) {
             relayPool?.subscribe('homepage-contacts-repost', [
               {
