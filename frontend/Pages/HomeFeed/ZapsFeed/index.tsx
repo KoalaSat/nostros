@@ -1,5 +1,4 @@
 import React, { useCallback, useContext, useState, useEffect } from 'react'
-import { getUsers, User } from '../../Functions/DatabaseFunctions/Users'
 import {
   NativeScrollEvent,
   NativeSyntheticEvent,
@@ -7,44 +6,44 @@ import {
   StyleSheet,
   View,
 } from 'react-native'
-import { AppContext } from '../../Contexts/AppContext'
-import { getMainNotes, Note } from '../../Functions/DatabaseFunctions/Notes'
-import { handleInfinityScroll } from '../../Functions/NativeFunctions'
-import { UserContext } from '../../Contexts/UserContext'
-import { RelayPoolContext } from '../../Contexts/RelayPoolContext'
+import { AppContext } from '../../../Contexts/AppContext'
+import { getNotes, Note } from '../../../Functions/DatabaseFunctions/Notes'
+import { handleInfinityScroll } from '../../../Functions/NativeFunctions'
+import { UserContext } from '../../../Contexts/UserContext'
+import { RelayPoolContext } from '../../../Contexts/RelayPoolContext'
 import { Kind } from 'nostr-tools'
-import { RelayFilters } from '../../lib/nostr/RelayPool/intex'
+import { RelayFilters } from '../../../lib/nostr/RelayPool/intex'
 import { ActivityIndicator, Button, Text } from 'react-native-paper'
-import NoteCard from '../../Components/NoteCard'
+import NoteCard from '../../../Components/NoteCard'
 import { useTheme } from '@react-navigation/native'
 import { FlashList, ListRenderItem } from '@shopify/flash-list'
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'
 import { useTranslation } from 'react-i18next'
+import { getMostZapedNotesContacts } from '../../../Functions/DatabaseFunctions/Zaps'
+import { getUnixTime } from 'date-fns'
 
-interface MyFeedProps {
+interface ZapsFeedProps {
   navigation: any
+  updateLastLoad: () => void
+  pageSize: number
+  setPageSize: (pageSize: number) => void
 }
 
-export const MyFeed: React.FC<MyFeedProps> = ({ navigation }) => {
+export const ZapsFeed: React.FC<ZapsFeedProps> = ({
+  navigation,
+  updateLastLoad,
+  pageSize,
+  setPageSize,
+}) => {
   const theme = useTheme()
   const { t } = useTranslation('common')
   const { database, pushedTab } = useContext(AppContext)
   const { publicKey } = useContext(UserContext)
   const { lastEventId, relayPool, lastConfirmationtId } = useContext(RelayPoolContext)
   const initialPageSize = 10
-  const [notes, setNotes] = useState<Note[]>([])
-  const [pageSize, setPageSize] = useState<number>(initialPageSize)
+  const [notes, setNotes] = useState<Note[]>()
   const [refreshing, setRefreshing] = useState(false)
   const flashListRef = React.useRef<FlashList<Note>>(null)
-
-  const unsubscribe: () => void = () => {
-    relayPool?.unsubscribe([
-      'homepage-contacts-main',
-      'homepage-contacts-replies',
-      'homepage-contacts-reactions',
-      'homepage-contacts-repost',
-    ])
-  }
 
   useEffect(() => {
     if (pushedTab) {
@@ -53,27 +52,14 @@ export const MyFeed: React.FC<MyFeedProps> = ({ navigation }) => {
   }, [pushedTab])
 
   useEffect(() => {
-    unsubscribe()
-    subscribeNotes()
-    loadNotes()
-  }, [])
-
-  useEffect(() => {
     if (relayPool && publicKey) {
       loadNotes()
     }
-  }, [lastEventId, lastConfirmationtId])
-
-  useEffect(() => {
-    if (pageSize > initialPageSize) {
-      subscribeNotes(true)
-    }
-  }, [pageSize])
+  }, [lastEventId, lastConfirmationtId, relayPool, publicKey])
 
   const onRefresh = useCallback(() => {
     setRefreshing(true)
-    unsubscribe()
-    subscribeNotes()
+    updateLastLoad()
   }, [])
 
   const onScroll: (event: NativeSyntheticEvent<NativeScrollEvent>) => void = (event) => {
@@ -82,49 +68,59 @@ export const MyFeed: React.FC<MyFeedProps> = ({ navigation }) => {
     }
   }
 
-  const subscribeNotes: (past?: boolean) => void = async (past) => {
-    if (!database || !publicKey) return
-    const users: User[] = await getUsers(database, { contacts: true, order: 'created_at DESC' })
-    const authors: string[] = [...users.map((user) => user.id), publicKey]
-
-    const message: RelayFilters = {
-      kinds: [Kind.Text, Kind.RecommendRelay],
-      authors,
-      limit: pageSize,
-    }
-    relayPool?.subscribe('homepage-contacts-main', [message])
-    setRefreshing(false)
-  }
-
   const loadNotes: () => void = async () => {
     if (database && publicKey) {
-      getMainNotes(database, publicKey, pageSize, true).then(async (notes) => {
-        setNotes(notes)
-        if (notes.length > 0) {
-          const noteIds = notes.map((note) => note.id ?? '')
-          const authors = notes.map((note) => note.pubkey ?? '')
-
-          relayPool?.subscribe('homepage-contacts-reactions', [
+      getMostZapedNotesContacts(database, getUnixTime(new Date()) - 86400).then((zaps) => {
+        const zappedEventIds = zaps
+          .map((zap) => zap.zapped_event_id)
+          .filter((id) => id !== '')
+          .slice(0, pageSize)
+        if (zaps.length > 0) {
+          relayPool?.subscribe('homepage-zapped-notes', [
             {
-              kinds: [Kind.Metadata],
-              authors,
-            },
-            {
-              kinds: [Kind.Reaction, Kind.Text, 9735],
-              '#e': noteIds,
+              kinds: [Kind.Text, Kind.RecommendRelay],
+              ids: zappedEventIds,
             },
           ])
-          const repostIds = notes
-            .filter((note) => note.repost_id)
-            .map((note) => note.repost_id ?? '')
-          if (repostIds.length > 0) {
-            relayPool?.subscribe('homepage-contacts-repost', [
-              {
-                kinds: [Kind.Text],
-                ids: repostIds,
-              },
-            ])
-          }
+          getNotes(database, { filters: { id: zappedEventIds } }).then((notes) => {
+            setNotes(
+              zappedEventIds
+                .map((zappedEventId) => {
+                  return notes.find((note) => note && note.id === zappedEventId) as Note
+                })
+                .filter((note) => note !== undefined),
+            )
+            setRefreshing(false)
+            if (notes.length > 0) {
+              const noteIds = notes.map((note) => note.id ?? '')
+              const authors = notes.map((note) => note.pubkey ?? '')
+              const repostIds = notes
+                .filter((note) => note.repost_id)
+                .map((note) => note.repost_id ?? '')
+
+              const reactionFilters: RelayFilters[] = [
+                {
+                  kinds: [Kind.Reaction, Kind.Text, 9735],
+                  '#e': noteIds,
+                },
+              ]
+              if (authors.length > 0) {
+                reactionFilters.push({
+                  kinds: [Kind.Metadata],
+                  authors,
+                })
+              }
+              relayPool?.subscribe('homepage-contacts-reactions', reactionFilters)
+              if (repostIds.length > 0) {
+                relayPool?.subscribe('homepage-contacts-reposts', [
+                  {
+                    kinds: [Kind.Text],
+                    ids: repostIds,
+                  },
+                ])
+              }
+            }
+          })
         }
       })
     }
@@ -164,17 +160,16 @@ export const MyFeed: React.FC<MyFeedProps> = ({ navigation }) => {
   return (
     <View style={styles.list}>
       <FlashList
-        estimatedItemSize={200}
         showsVerticalScrollIndicator={false}
         data={notes}
         renderItem={renderItem}
         refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
         onScroll={onScroll}
         refreshing={refreshing}
-        ListEmptyComponent={ListEmptyComponent}
+        ListEmptyComponent={notes ? ListEmptyComponent : <></>}
         horizontal={false}
         ListFooterComponent={
-          notes.length > 0 ? <ActivityIndicator style={styles.loading} animating={true} /> : <></>
+          notes && notes.length > 0 ? <ActivityIndicator style={styles.loading} animating={true} /> : <></>
         }
         ref={flashListRef}
       />
@@ -206,4 +201,4 @@ const styles = StyleSheet.create({
   },
 })
 
-export default MyFeed
+export default ZapsFeed

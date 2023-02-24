@@ -46,17 +46,18 @@ export const HomePage: React.FC = () => {
       getNotificationsCount(database, publicKey, notificationSeenAt).then(setNewNotifications)
       getUserGroupMessagesCount(database, publicKey).then(setNewGroupMessages)
       getDirectMessagesCount(database, publicKey).then(setNewdirectMessages)
+      subscribe()
     }
   }, [lastEventId, notificationSeenAt, refreshBottomBarAt])
 
-  useEffect(() => {
+  const subscribe: () => void = () => {
     if (publicKey && database) {
       getMentionNotes(database, publicKey, 1).then((mentionResults) => {
         getGroupedDirectMessages(database, { limit: 1 }).then((directMessageResults) => {
           relayPool?.subscribe('notification-icon', [
             {
               kinds: [Kind.ChannelMessage],
-              '#e': [publicKey],
+              '#p': [publicKey],
               limit: 30,
             },
             {
@@ -81,7 +82,7 @@ export const HomePage: React.FC = () => {
         })
       })
     }
-  }, [publicKey])
+  }
 
   React.useEffect(() => {}, [language])
 
@@ -90,7 +91,7 @@ export const HomePage: React.FC = () => {
       const key = decode(clipboardNip21.replace('nostr:', ''))
       if (key?.data) {
         if (key.type === 'nevent') {
-          navigate('Note', { noteId: key.data })
+          navigate('Note', { noteId: key.data.id })
         } else if (key.type === 'npub') {
           navigate('Profile', { pubKey: key.data })
         } else if (key.type === 'nprofile' && key.data.pubkey) {

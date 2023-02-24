@@ -265,7 +265,6 @@ export const TextContent: React.FC<TextContentProps> = ({
         ]}
         childrenProps={{ allowFontScaling: false }}
         numberOfLines={numberOfLines}
-        selectable
       >
         {text}
       </ParsedText>

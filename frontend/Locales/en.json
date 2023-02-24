@@ -199,15 +199,20 @@
       "emptyTitle": "You still didn't reposted",
       "emptyDescription": "See here the notes you reposted."
     },
-    "homeFeed": {
-      "emptyTitle": "You are not following anyone",
-      "emptyDescription": "Follow other profiles to see content.",
-      "emptyButton": "Go to contacts",
+    "tabs": {
       "globalFeed": "Global feed",
       "myFeed": "My feed",
       "reactions": "Reactions",
       "mentions": "Mentions",
       "reposts": "Reposts",
+      "zaps": "Most zapped",
+      "notes": "Notes",
+      "replies": "Replies"
+    },
+    "homeFeed": {
+      "emptyTitle": "You are not following anyone",
+      "emptyDescription": "Follow other profiles to see content.",
+      "emptyButton": "Go to contacts",
       "newMessage": "{{newNotesCount}} new note. Pull to refresh.",
       "newMessages": "{{newNotesCount}} new notes. Pull to refresh."
     },

@@ -183,7 +183,7 @@ public class Event {
         String name = parts[0];
         String domain = parts[1];
 
-        if (!name.matches("^[a-zA-Z0-9-_]+$")) return false;
+        if (name.length() == 0) return false;
 
         try {
             String url = "https://" + domain + "/.well-known/nostr.json?name=" + name;
@@ -213,7 +213,7 @@ public class Event {
             String name = parts[0];
             String domain = parts[1];
 
-            if (!name.matches("^[a-zA-Z0-9-_]+$")) return "";
+            if (name.length() == 0) return "";
 
             try {
                 String url = "https://" + domain + "/.well-known/lnurlp/" + name;
@@ -354,52 +354,56 @@ public class Event {
     }
 
     protected void saveGroupMessage(SQLiteDatabase database, String userPubKey) throws JSONException {
-        JSONArray eTags = filterTags("e");
-        String groupId = eTags.getJSONArray(0).getString(1);
         String query = "SELECT created_at FROM nostros_group_messages WHERE id = ?";
         @SuppressLint("Recycle") Cursor cursor = database.rawQuery(query, new String[] {id});
 
-        ContentValues values = new ContentValues();
-        values.put("id", id);
-        values.put("content", content);
-        values.put("created_at", created_at);
-        values.put("kind", kind);
-        values.put("pubkey", pubkey);
-        values.put("sig", sig);
-        values.put("tags", tags.toString());
-        values.put("group_id", groupId);
-        values.put("user_mentioned", getUserMentioned(userPubKey));
         if (cursor.getCount() == 0) {
-            values.put("read", 0);
-        }
+            JSONArray eTags = filterTags("e");
+            String groupId = eTags.getJSONArray(0).getString(1);
 
-        database.insert("nostros_group_messages", null, values);
+            ContentValues values = new ContentValues();
+            values.put("id", id);
+            values.put("content", content);
+            values.put("created_at", created_at);
+            values.put("kind", kind);
+            values.put("pubkey", pubkey);
+            values.put("sig", sig);
+            values.put("tags", tags.toString());
+            values.put("group_id", groupId);
+            values.put("user_mentioned", getUserMentioned(userPubKey));
+            if (cursor.getCount() == 0) {
+                values.put("read", 0);
+            }
+
+            database.insert("nostros_group_messages", null, values);
+        }
     }
 
     protected void saveDirectMessage(SQLiteDatabase database) throws JSONException {
         String query = "SELECT created_at FROM nostros_direct_messages WHERE id = ?";
         @SuppressLint("Recycle") Cursor cursor = database.rawQuery(query, new String[] {id});
-        JSONArray tag = tags.getJSONArray(0);
-        ArrayList<String> identifiers = new ArrayList<>();
-        identifiers.add(pubkey);
-        identifiers.add(tag.getString(1));
-        Collections.sort(identifiers);
-        String conversationId = UUID.nameUUIDFromBytes(identifiers.toString().getBytes()).toString();
 
-        ContentValues values = new ContentValues();
-        values.put("id", id);
-        values.put("content", content);
-        values.put("created_at", created_at);
-        values.put("kind", kind);
-        values.put("pubkey", pubkey);
-        values.put("sig", sig);
-        values.put("tags", tags.toString());
-        values.put("conversation_id", conversationId);
         if (cursor.getCount() == 0) {
-            values.put("read", 0);
-        }
+            JSONArray tag = tags.getJSONArray(0);
+            ArrayList<String> identifiers = new ArrayList<>();
+            identifiers.add(pubkey);
+            identifiers.add(tag.getString(1));
+            Collections.sort(identifiers);
+            String conversationId = UUID.nameUUIDFromBytes(identifiers.toString().getBytes()).toString();
 
-        database.insert("nostros_direct_messages", null, values);
+            ContentValues values = new ContentValues();
+            values.put("id", id);
+            values.put("content", content);
+            values.put("created_at", created_at);
+            values.put("kind", kind);
+            values.put("pubkey", pubkey);
+            values.put("sig", sig);
+            values.put("tags", tags.toString());
+            values.put("conversation_id", conversationId);
+            values.put("read", 0);
+
+            database.insert("nostros_direct_messages", null, values);
+        }
     }
 
     protected void saveReaction(SQLiteDatabase database) throws JSONException {

@@ -218,15 +218,20 @@
       "emptyTitle": "您还没有转发任何 Notes",
       "emptyDescription": "查看您您转发过的 Notes"
     },
-    "homeFeed": {
-      "emptyTitle": "您还没有关注任何人",
-      "emptyDescription": "关注其他人以查看内容",
-      "emptyButton": "查看联系人",
+    "tabs": {
       "globalFeed": "发现",
       "myFeed": "关注中",
       "reactions": "回应",
       "mentions": "提及",
       "reposts": "转发",
+      "zaps": "Most zapped",
+      "notes": "Notes",
+      "replies": "Replies"
+    },
+    "homeFeed": {
+      "emptyTitle": "您还没有关注任何人",
+      "emptyDescription": "关注其他人以查看内容",
+      "emptyButton": "查看联系人",
       "newMessage": "有{{newNotesCount}}条新的 Notes，下拉刷新",
       "newMessages": "有{{newNotesCount}}条新的 Notes，下拉刷新"
     },

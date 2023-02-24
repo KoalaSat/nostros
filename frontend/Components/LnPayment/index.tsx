@@ -50,7 +50,7 @@ export const LnPayment: React.FC<LnPaymentProps> = ({ open, setOpen, note, user 
     setMonto('')
     if (open) {
       if (database && note?.id) {
-        getZaps(database, note?.id).then((results) => {
+        getZaps(database, { eventId: note?.id }).then((results) => {
           relayPool?.subscribe('zappers-meta', [
             {
               kinds: [Kind.Metadata],
@@ -68,7 +68,7 @@ export const LnPayment: React.FC<LnPaymentProps> = ({ open, setOpen, note, user 
 
   useEffect(() => {
     if (database && note?.id) {
-      getZaps(database, note?.id).then((results) => {
+      getZaps(database, { eventId: note?.id }).then((results) => {
         setZaps(results)
         setZapsUpdated(getUnixTime(new Date()))
       })

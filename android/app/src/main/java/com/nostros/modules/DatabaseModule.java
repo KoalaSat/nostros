@@ -1,6 +1,7 @@
 package com.nostros.modules;
 
 import android.annotation.SuppressLint;
+import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
@@ -83,20 +84,6 @@ public class DatabaseModule {
                 "        );");
         } catch (SQLException e) { }
         try {
-            database.execSQL("CREATE INDEX nostros_notes_pubkey_index ON nostros_notes(pubkey); ");
-            database.execSQL("CREATE INDEX nostros_notes_main_event_id_index ON nostros_notes(main_event_id); ");
-            database.execSQL("CREATE INDEX nostros_notes_reply_event_id_index ON nostros_notes(reply_event_id); ");
-            database.execSQL("CREATE INDEX nostros_notes_kind_index ON nostros_notes(kind); ");
-
-            database.execSQL("CREATE INDEX nostros_direct_messages_pubkey_index ON nostros_direct_messages(pubkey); ");
-            database.execSQL("CREATE INDEX nostros_direct_messages_conversation_id_index ON nostros_direct_messages(conversation_id); ");
-
-            database.execSQL("CREATE INDEX nostros_reactions_pubkey_index ON nostros_reactions(pubkey); ");
-            database.execSQL("CREATE INDEX nostros_reactions_reacted_event_id_index ON nostros_reactions(reacted_event_id); ");
-
-            database.execSQL("CREATE INDEX nostros_users_contact_index ON nostros_users(contact); ");
-        } catch (SQLException e) { }
-        try {
             database.execSQL("ALTER TABLE nostros_users ADD COLUMN nip05 TEXT;");
             database.execSQL("ALTER TABLE nostros_users ADD COLUMN valid_nip05 INT DEFAULT 0;");
         } catch (SQLException e) { }
@@ -105,20 +92,6 @@ public class DatabaseModule {
             database.execSQL("ALTER TABLE nostros_relays ADD COLUMN active INT DEFAULT 1;");
         } catch (SQLException e) { }
         try {
-            database.execSQL("CREATE INDEX nostros_notes_repost_id_created_at_index ON nostros_notes(repost_id, pubkey, created_at); ");
-            database.execSQL("CREATE INDEX nostros_notes_main_index ON nostros_notes(pubkey, main_event_id, created_at);");
-            database.execSQL("CREATE INDEX nostros_notes_notifications_index ON nostros_notes(pubkey, user_mentioned, reply_event_id, created_at); ");
-            database.execSQL("CREATE INDEX nostros_notes_repost_id_index ON nostros_notes(pubkey, repost_id); ");
-            database.execSQL("CREATE INDEX nostros_notes_reply_event_id_count_index ON nostros_notes(created_at, reply_event_id); ");
-
-            database.execSQL("CREATE INDEX nostros_direct_messages_created_at_index ON nostros_direct_messages(created_at); ");
-            database.execSQL("CREATE INDEX nostros_direct_messages_created_at_conversation_id_index ON nostros_direct_messages(created_at, conversation_id); ");
-
-            database.execSQL("CREATE INDEX nostros_reactions_created_at_reacted_event_id_index ON nostros_reactions(created_at, reacted_event_id); ");
-
-            database.execSQL("CREATE INDEX nostros_users_contact_follower_index ON nostros_users(contact, follower); ");
-            database.execSQL("CREATE INDEX nostros_users_id_name_index ON nostros_users(id, name); ");
-
             database.execSQL("DROP TABLE IF EXISTS nostros_config;");
             database.execSQL("ALTER TABLE nostros_users ADD COLUMN blocked INT DEFAULT 0;");
         } catch (SQLException e) { }
@@ -129,8 +102,6 @@ public class DatabaseModule {
                     "          relay_url INT NOT NULL,\n" +
                     "          PRIMARY KEY (note_id, relay_url)\n" +
                     "        );");
-            database.execSQL("CREATE INDEX nostros_notes_relays_note_id_index ON nostros_notes_relays(note_id);");
-            database.execSQL("CREATE INDEX nostros_notes_relays_pubkey_index ON nostros_notes_relays(pubkey);");
         } catch (SQLException e) { }
         try {
             database.execSQL("ALTER TABLE nostros_users ADD COLUMN pet_at INT;");
@@ -165,7 +136,6 @@ public class DatabaseModule {
                     "          group_id TEXT NOT NULL,\n" +
                     "          hidden INT DEFAULT 0\n" +
                     "        );");
-            database.execSQL("CREATE INDEX nostros_group_messages_group_id_index ON nostros_group_messages(group_id, created_at);");
             database.execSQL("ALTER TABLE nostros_users ADD COLUMN muted_groups INT DEFAULT 0;");
         } catch (SQLException e) { }
         try {
@@ -199,6 +169,45 @@ public class DatabaseModule {
         try {
             database.execSQL("ALTER TABLE nostros_relays ADD COLUMN deleted_at INT DEFAULT 0;");
         } catch (SQLException e) { }
+        try {
+            database.execSQL("DROP INDEX nostros_notes_notifications_index;");
+        } catch (SQLException e) { }
+        try {
+
+            database.execSQL("CREATE INDEX nostros_users_names_index ON nostros_users(id, name); ");
+            database.execSQL("CREATE INDEX nostros_users_contacts_index ON nostros_users(id, contact); ");
+            database.execSQL("CREATE INDEX nostros_users_blocked_index ON nostros_users(id, blocked); ");
+            database.execSQL("CREATE INDEX nostros_users_muted_index ON nostros_users(id, muted_groups); ");
+            database.execSQL("CREATE INDEX nostros_users_contact_index ON nostros_users(contact); ");
+
+            database.execSQL("CREATE INDEX nostros_notes_home_index ON nostros_notes(pubkey, created_at, main_event_id, repost_id); ");
+            database.execSQL("CREATE INDEX nostros_notes_notifications_index ON nostros_notes(pubkey, user_mentioned, reply_event_id, created_at); ");
+            database.execSQL("CREATE INDEX nostros_notes_reply_index ON nostros_notes(reply_event_id); ");
+            database.execSQL("CREATE INDEX nostros_notes_list_index ON nostros_notes(pubkey, created_at); ");
+            database.execSQL("CREATE INDEX nostros_notes_repost_count_index ON nostros_notes(pubkey, repost_id, created_at); ");
+
+            database.execSQL("CREATE INDEX nostros_group_messages_mentions_index ON nostros_group_messages(group_id, pubkey, created_at);");
+            database.execSQL("CREATE INDEX nostros_group_messages_group_index ON nostros_group_messages(group_id, created_at);");
+            database.execSQL("CREATE INDEX nostros_group_messages_feed_index ON nostros_group_messages(user_mentioned, read, group_id);");
+
+            database.execSQL("CREATE INDEX nostros_notes_relays_notes_index ON nostros_notes_relays(note_id, relay_url);");
+            database.execSQL("CREATE INDEX nostros_notes_relays_users_index ON nostros_notes_relays(pubkey, relay_url);");
+
+            database.execSQL("CREATE INDEX nostros_direct_messages_feed_index ON nostros_direct_messages(pubkey, created_at); ");
+            database.execSQL("CREATE INDEX nostros_direct_messages_notification_index ON nostros_direct_messages(pubkey, read); ");
+            database.execSQL("CREATE INDEX nostros_direct_messages_conversation_index ON nostros_direct_messages(created_at, conversation_id); ");
+
+            // Previous
+            database.execSQL("CREATE INDEX nostros_users_contact_follower_index ON nostros_users(contact, follower); ");
+            database.execSQL("CREATE INDEX nostros_reactions_created_at_reacted_event_id_index ON nostros_reactions(created_at, reacted_event_id); ");
+            database.execSQL("CREATE INDEX nostros_notes_pubkey_index ON nostros_notes(pubkey); ");
+            database.execSQL("CREATE INDEX nostros_notes_main_event_id_index ON nostros_notes(main_event_id); ");
+            database.execSQL("CREATE INDEX nostros_direct_messages_pubkey_index ON nostros_direct_messages(pubkey); ");
+            database.execSQL("CREATE INDEX nostros_direct_messages_conversation_id_index ON nostros_direct_messages(conversation_id); ");
+            database.execSQL("CREATE INDEX nostros_reactions_reacted_event_id_index ON nostros_reactions(reacted_event_id); ");
+            database.execSQL("CREATE INDEX nostros_users_contact_index ON nostros_users(contact); ");
+            database.execSQL("CREATE INDEX nostros_reactions_pubkey_index ON nostros_reactions(pubkey); ");
+        } catch (SQLException e) { }
     }
 
     public void saveEvent(JSONObject data, String userPubKey, String relayUrl) throws JSONException {
@@ -210,8 +219,14 @@ public class DatabaseModule {
         relay.save(database);
     }
 
-    public void deleteRelay(Relay relay) {
-        relay.delete(database);
+    public void deleteRelay(String relayUrl) {
+        String whereClause = "url = ?";
+        String[] whereArgs = new String[] {
+                relayUrl
+        };
+        ContentValues values = new ContentValues();
+        values.put("deleted_at", System.currentTimeMillis() / 1000L);
+        database.update ("nostros_relays", values, whereClause, whereArgs);
     }
 
     public List<Relay> getRelays(ReactApplicationContext reactContext) {

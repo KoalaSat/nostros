@@ -120,6 +120,10 @@ export const GroupsFeed: React.FC = () => {
               kinds: [Kind.ChannelMetadata],
               '#e': results.map((group) => group.id ?? ''),
             },
+            {
+              kinds: [Kind.ChannelMessage],
+              '#e': results.map((group) => group.id ?? '')
+            },
           ])
         }
       })

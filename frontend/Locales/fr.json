@@ -218,14 +218,21 @@
       "nips": "NIPs",
       "version": "Version"
     },
+    "tabs": {
+      "myFeed": "Mon flux",
+      "globalFeed": "Flux global",
+      "reactions": "Reactions",
+      "mentions": "Mentions",
+      "reposts": "Reposts",
+      "zaps": "Most zapped",
+      "notes": "Notes",
+      "replies": "Replies"
+    },
     "homeFeed": {
       "emptyTitle": "Vous ne suivez personne",
       "emptyDescription": "Suivez les autres profils pour voir le contenu ici.",
-      "emptyButton": "Accéder aux contacts",
-      "globalFeed": "Flux global",
       "newMessage": "{{newNotesCount}} nouvelle note. Balayez pour recharger.",
-      "newMessages": "{{newNotesCount}} nouvelles notes. Balayez pour recharger.",
-      "myFeed": "Mon flux"
+      "newMessages": "{{newNotesCount}} nouvelles notes. Balayez pour recharger."
     },
     "relayCard": {
       "pushDone": "Completed",

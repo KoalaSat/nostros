@@ -48,12 +48,12 @@ export const NotePage: React.FC<NotePageProps> = ({ route }) => {
 
   const loadNote: () => void = async () => {
     if (database && publicKey) {
-      const events = await getNotes(database, { filters: { id: route.params.noteId } })
+      const events = await getNotes(database, { filters: { id: [route.params.noteId] } })
       if (events.length > 0) {
         const event = events[0]
         setNote(event)
 
-        const notes = await getNotes(database, { filters: { reply_event_id: route.params.noteId } })
+        const notes = await getNotes(database, { filters: { reply_event_id: [route.params.noteId] } })
         const rootReplies = getDirectReplies(event, notes)
         const filters: RelayFilters[] = [
           {
@@ -117,7 +117,6 @@ export const NotePage: React.FC<NotePageProps> = ({ route }) => {
         <NoteCard note={note} />
         <View style={[styles.list, { borderColor: theme.colors.onSecondary }]}>
           <FlashList
-            estimatedItemSize={200}
             showsVerticalScrollIndicator={false}
             data={replies}
             renderItem={renderItem}

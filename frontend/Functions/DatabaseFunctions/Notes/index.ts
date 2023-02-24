@@ -36,11 +36,11 @@ export const getMainNotes: (
   db: QuickSQLiteConnection,
   pubKey: string,
   limit: number,
-  contants: boolean,
   filters?: {
+    contants?: boolean,
     until?: number
   },
-) => Promise<Note[]> = async (db, pubKey, limit, contants, filters) => {
+) => Promise<Note[]> = async (db, pubKey, limit, filters) => {
   let notesQuery = `
     SELECT
       nostros_notes.*, nostros_users.zap_pubkey, nostros_users.nip05, nostros_users.blocked, nostros_users.valid_nip05, 
@@ -51,13 +51,50 @@ export const getMainNotes: (
     WHERE 
   `
 
-  if (contants)
+  if (filters?.contants) {
     notesQuery += `(nostros_users.contact = 1 OR nostros_notes.pubkey = '${pubKey}') AND `
+  } else {
+    notesQuery += `nostros_notes.pubkey = '${pubKey}' AND `
+  }
 
   if (filters?.until) notesQuery += `nostros_notes.created_at <= ${filters?.until} AND `
 
   notesQuery += `
     (nostros_notes.main_event_id IS NULL OR nostros_notes.repost_id IS NOT NULL)
+    ORDER BY created_at DESC
+    LIMIT ${limit}
+  `
+
+  const resultSet = await db.execute(notesQuery)
+  const items: object[] = getItems(resultSet)
+  const notes: Note[] = items.map((object) => databaseToEntity(object))
+
+  return notes
+}
+export const getReplyNotes: (
+  db: QuickSQLiteConnection,
+  pubKey: string,
+  limit: number,
+  filters?: {
+    until?: number
+  },
+) => Promise<Note[]> = async (db, pubKey, limit, filters) => {
+  let notesQuery = `
+    SELECT
+      nostros_notes.*, nostros_users.zap_pubkey, nostros_users.nip05, nostros_users.blocked, nostros_users.valid_nip05, 
+      nostros_users.ln_address, nostros_users.lnurl, nostros_users.name, nostros_users.picture, nostros_users.contact, 
+      nostros_users.created_at as user_created_at FROM nostros_notes
+    LEFT JOIN
+      nostros_users ON nostros_users.id = nostros_notes.pubkey
+    WHERE 
+      nostros_notes.pubkey = '${pubKey}' AND 
+  `
+
+  if (filters?.until) notesQuery += `nostros_notes.created_at <= ${filters?.until} AND `
+
+  notesQuery += `
+    nostros_notes.main_event_id IS NOT NULL AND
+    nostros_notes.repost_id IS NULL
     ORDER BY created_at DESC
     LIMIT ${limit}
   `
@@ -299,7 +336,7 @@ export const getRawUserNotes: (
 export const getNotes: (
   db: QuickSQLiteConnection,
   options: {
-    filters?: Record<string, string>
+    filters?: Record<string, string[]>
     limit?: number
     contacts?: boolean
     includeIds?: string[]
@@ -319,7 +356,7 @@ export const getNotes: (
     if (Object.keys(filters).length > 0) {
       notesQuery += 'WHERE '
       keys.forEach((column, index) => {
-        notesQuery += `nostros_notes.${column} = '${filters[column]}' `
+        notesQuery += `nostros_notes.${column} IN ('${filters[column].join("', '")}') `
         if (index < keys.length - 1) notesQuery += 'AND '
       })
     }

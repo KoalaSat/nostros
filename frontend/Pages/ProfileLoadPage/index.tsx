@@ -29,6 +29,8 @@ export const ProfileLoadPage: React.FC = () => {
         setLastEventId(event.eventId),
       )
       setTimeout(() => loadMeta(), 1000)
+      reloadUser()
+      if (profileFound) loadPets()
       return () =>
         relayPool?.unsubscribe(['profile-load-meta', 'profile-load-notes', 'profile-load-others'])
     }, []),

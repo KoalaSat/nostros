@@ -7,46 +7,44 @@ import {
   StyleSheet,
   View,
 } from 'react-native'
-import { AppContext } from '../../Contexts/AppContext'
-import { getMainNotes, getMainNotesCount, Note } from '../../Functions/DatabaseFunctions/Notes'
-import { handleInfinityScroll } from '../../Functions/NativeFunctions'
-import { UserContext } from '../../Contexts/UserContext'
-import { RelayPoolContext } from '../../Contexts/RelayPoolContext'
+import { AppContext } from '../../../Contexts/AppContext'
+import { getMainNotes, getMainNotesCount, Note } from '../../../Functions/DatabaseFunctions/Notes'
+import { handleInfinityScroll } from '../../../Functions/NativeFunctions'
+import { UserContext } from '../../../Contexts/UserContext'
+import { RelayPoolContext } from '../../../Contexts/RelayPoolContext'
 import { Kind } from 'nostr-tools'
-import { RelayFilters } from '../../lib/nostr/RelayPool/intex'
+import { RelayFilters } from '../../../lib/nostr/RelayPool/intex'
 import { Chip, Button, Text } from 'react-native-paper'
-import NoteCard from '../../Components/NoteCard'
+import NoteCard from '../../../Components/NoteCard'
 import { useTheme } from '@react-navigation/native'
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'
 import { t } from 'i18next'
 import { FlashList, ListRenderItem } from '@shopify/flash-list'
-import { getUnixTime } from 'date-fns'
 
 interface GlobalFeedProps {
   navigation: any
+  updateLastLoad: () => void
+  lastLoadAt: number
+  pageSize: number
+  setPageSize: (pageSize: number) => void
 }
 
-export const GlobalFeed: React.FC<GlobalFeedProps> = ({ navigation }) => {
+export const GlobalFeed: React.FC<GlobalFeedProps> = ({
+  navigation,
+  updateLastLoad,
+  lastLoadAt,
+  pageSize,
+  setPageSize,
+}) => {
+  const initialPageSize = 10
   const theme = useTheme()
   const { database, showPublicImages, pushedTab } = useContext(AppContext)
   const { publicKey } = useContext(UserContext)
   const { lastEventId, relayPool, lastConfirmationtId } = useContext(RelayPoolContext)
-  const initialPageSize = 10
   const [notes, setNotes] = useState<Note[]>([])
-  const [lastLoadAt, setLastLoadAt] = useState<number>(0)
   const [newNotesCount, setNewNotesCount] = useState<number>(0)
-  const [pageSize, setPageSize] = useState<number>(initialPageSize)
   const [refreshing, setRefreshing] = useState(false)
   const flashListRef = React.useRef<FlashList<Note>>(null)
-
-  const unsubscribe: () => void = () => {
-    relayPool?.unsubscribe(['homepage-global-main', 'homepage-global-meta-repost'])
-  }
-
-  useEffect(() => {
-    unsubscribe()
-    subscribeNotes()
-  }, [])
 
   useEffect(() => {
     if (pushedTab) {
@@ -58,41 +56,14 @@ export const GlobalFeed: React.FC<GlobalFeedProps> = ({ navigation }) => {
     if (relayPool && publicKey) {
       loadNotes()
     }
-  }, [lastEventId, lastConfirmationtId, lastLoadAt])
-
-  useEffect(() => {
-    if (pageSize > initialPageSize) {
-      subscribeNotes(true)
-    }
-  }, [pageSize])
-
-  const updateLastLoad: () => void = () => {
-    setLastLoadAt(getUnixTime(new Date()) - 5)
-  }
+  }, [lastEventId, lastConfirmationtId, lastLoadAt, relayPool, publicKey])
 
   const onRefresh = useCallback(() => {
     setRefreshing(true)
-    updateLastLoad()
     setNewNotesCount(0)
-    unsubscribe()
-    subscribeNotes()
+    updateLastLoad()
     flashListRef.current?.scrollToIndex({ animated: true, index: 0 })
   }, [])
-
-  const subscribeNotes: (past?: boolean) => void = async (past) => {
-    if (!database || !publicKey) return
-
-    const message: RelayFilters = {
-      kinds: [Kind.Text, Kind.RecommendRelay],
-      limit: pageSize,
-    }
-
-    if (past) message.until = lastLoadAt
-
-    relayPool?.subscribe('homepage-global-main', [message])
-    setRefreshing(false)
-    updateLastLoad()
-  }
 
   const onScroll: (event: NativeSyntheticEvent<NativeScrollEvent>) => void = (event) => {
     if (handleInfinityScroll(event)) {
@@ -105,7 +76,7 @@ export const GlobalFeed: React.FC<GlobalFeedProps> = ({ navigation }) => {
       if (lastLoadAt > 0) {
         getMainNotesCount(database, lastLoadAt).then(setNewNotesCount)
       }
-      getMainNotes(database, publicKey, pageSize, false, {
+      getMainNotes(database, publicKey, pageSize, {
         until: lastLoadAt,
       }).then((results) => {
         setRefreshing(false)
@@ -121,7 +92,7 @@ export const GlobalFeed: React.FC<GlobalFeedProps> = ({ navigation }) => {
                 ids: repostIds,
               },
             ]
-            relayPool?.subscribe('homepage-global-meta-repost', message)
+            relayPool?.subscribe('homepage-global-reposts', message)
           }
         }
       })
@@ -168,7 +139,6 @@ export const GlobalFeed: React.FC<GlobalFeedProps> = ({ navigation }) => {
     <View>
       <View style={styles.list}>
         <FlashList
-          estimatedItemSize={200}
           showsVerticalScrollIndicator={false}
           data={notes}
           renderItem={renderItem}
