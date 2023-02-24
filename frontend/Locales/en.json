@@ -89,11 +89,19 @@
       "disabled": "Disabled",
       "longPressZap": "Long press Zaps",
       "longPressZapDescription": "Define a default amount to automatically generate invoices after a long press on the Zap button.",
-      "defaultZapAmount": "Defaul Zap amount",
+      "defaultZapAmount": "Default Zap amount",
       "update": "Update",
       "disable": "Disable"
     },
+    "noteActions": {
+      "copy": "Copy",
+      "share": "Share",
+      "view": "View"
+    },
     "noteCard": {
+      "notifications": {
+        "zapServerError": "There was an error on the server while trying to request the invoice."
+      },
       "answering": "Answer to {{pubkey}}",
       "reposting": "Reposted {{pubkey}}",
       "userBlocked": "User blocked",
@@ -127,7 +135,7 @@
       "skip": "Skip",
       "confirmTitle": "Type the words in the right order.",
       "warningTitle": "Important",
-      "warningDescription": "Store your key in a safe place. If lose it, you won't be able to access or recover your profile.",
+      "warningDescription": "Store your key in a safe place. If you lose it, you won't be able to access or recover your profile.",
       "warningAction": "Copy private key",
       "continue": "Continue",
       "mnemonicTitle": "These words or your private key are the only way to recover your account.",

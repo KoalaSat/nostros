@@ -40,7 +40,7 @@ interface RelayCardProps {
 export const RelayCard: React.FC<RelayCardProps> = ({ url, bottomSheetRef }) => {
   const theme = useTheme()
   const { publicKey } = React.useContext(UserContext)
-  const { updateRelayItem, relayPool, removeRelayItem, sendRelays, relays } =
+  const { updateRelayItem, relayPool, removeRelayItem, sendRelays } =
     React.useContext(RelayPoolContext)
   const { database } = React.useContext(AppContext)
   const [relay, setRelay] = React.useState<Relay>()
@@ -57,7 +57,7 @@ export const RelayCard: React.FC<RelayCardProps> = ({ url, bottomSheetRef }) => 
 
   React.useEffect(() => {
     loadRelay()
-  }, [])
+  }, [url])
 
   React.useEffect(() => {
     if (pushUserHistoric && url && database && publicKey && relayPool) {
@@ -103,7 +103,7 @@ export const RelayCard: React.FC<RelayCardProps> = ({ url, bottomSheetRef }) => 
           relayPool.sendEvent(group, url)
         })
       })
-      sendRelays(relays, url)
+      sendRelays(url)
     }
   }, [pushUserHistoric])
 
@@ -133,9 +133,8 @@ export const RelayCard: React.FC<RelayCardProps> = ({ url, bottomSheetRef }) => 
 
   const removeRelay: () => void = () => {
     if (relay) {
-      removeRelayItem(relay).then(() => {
-        bottomSheetRef.current?.close()
-      })
+      removeRelayItem(relay)
+      bottomSheetRef.current?.close()
     }
   }
 

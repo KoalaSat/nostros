@@ -60,12 +60,9 @@ export const ProfileData: React.FC<ProfileCardProps> = ({
               <></>
             )}
           </View>
-          <Text numberOfLines={1}>{validNip05 ? getNip05Domain(nip05) : ''}</Text>
-        </View>
-      </View>
-      <View style={styles.right}>
-        <View style={styles.date}>
-          <Text numberOfLines={1}>{date ?? ''}</Text>
+          <Text numberOfLines={1}>
+            {timestamp ? date : validNip05 ? getNip05Domain(nip05) : ''}
+          </Text>
         </View>
       </View>
     </View>
@@ -73,14 +70,8 @@ export const ProfileData: React.FC<ProfileCardProps> = ({
 }
 
 const styles = StyleSheet.create({
-  right: {
-    flexDirection: 'row',
-    width: '50%',
-    justifyContent: 'flex-end',
-  },
   left: {
     flexDirection: 'row',
-    width: '50%',
   },
   container: {
     flexDirection: 'row',

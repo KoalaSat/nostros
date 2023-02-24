@@ -114,7 +114,15 @@
       "update": "Update",
       "disable": "Disable"
     },
+    "noteActions": {
+      "copy": "Скопировать",
+      "share": "Поделиться",
+      "view": "View"
+    },
     "noteCard": {
+      "notifications": {
+        "zapServerError": "There was an error on the server while trying to request for the invoice."
+      },
       "answering": "Ответить {{pubkey}}",
       "reposting": "Reposted {{pubkey}}",
       "seeParent": "See note",

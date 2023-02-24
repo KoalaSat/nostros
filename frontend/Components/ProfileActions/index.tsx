@@ -277,6 +277,7 @@ export const ProfileActions: React.FC<ProfileActionsProps> = ({
         closeOnDragDown={true}
         customStyles={bottomSheetStyles}
         dragFromTopOnly={true}
+        onClose={() => onActionDone()}
       >
         <View>
           <Text variant='titleLarge'>{t('profileCard.relaysTitle')}</Text>
@@ -309,10 +310,20 @@ export const ProfileActions: React.FC<ProfileActionsProps> = ({
           </Snackbar>
         )}
       </RBSheet>
-      <RBSheet ref={bottomSheetShareRef} closeOnDragDown={true} customStyles={bottomSheetStyles}>
+      <RBSheet
+        ref={bottomSheetShareRef}
+        closeOnDragDown={true}
+        customStyles={bottomSheetStyles}
+        onClose={() => onActionDone()}
+      >
         <ProfileShare user={user} />
       </RBSheet>
-      <RBSheet ref={bottomSheetMuteRef} closeOnDragDown={true} customStyles={bottomSheetStyles}>
+      <RBSheet
+        ref={bottomSheetMuteRef}
+        closeOnDragDown={true}
+        customStyles={bottomSheetStyles}
+        onClose={() => onActionDone()}
+      >
         <View style={styles.muteContainer}>
           <Text variant='titleLarge'>
             {t('profileCard.muteUser', { username: username(user) })}

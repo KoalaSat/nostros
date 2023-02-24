@@ -183,7 +183,7 @@ public class Event {
         String name = parts[0];
         String domain = parts[1];
 
-        if (!name.matches("^[a-z0-9-_]+$")) return false;
+        if (!name.matches("^[a-zA-Z0-9-_]+$")) return false;
 
         try {
             String url = "https://" + domain + "/.well-known/nostr.json?name=" + name;
@@ -575,6 +575,7 @@ public class Event {
                 values.put("active", 0);
                 values.put("global_feed", 0);
                 values.put("manual", 1);
+                values.put("deleted_at", 0);
                 database.insert("nostros_relays", null, values);
             } else if (cursor.moveToFirst() && created_at > cursor.getInt(0)) {
                 values.put("updated_at", created_at);

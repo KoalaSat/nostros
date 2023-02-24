@@ -55,7 +55,7 @@ public class RelayPoolModule extends ReactContextBaseJavaModule {
             if(url.equals(relay.url)){
                 relay.disconnect();
                 iterator.remove();
-                database.destroyRelay(relay);
+                database.deleteRelay(relay);
             }
         }
 
