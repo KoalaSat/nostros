@@ -1,137 +1,120 @@
-import React, { useContext } from 'react'
-import { Dimensions, ScrollView, StyleSheet, View } from 'react-native'
+import React, { useContext, useEffect, useState } from 'react'
+import { Dimensions, StyleSheet, View } from 'react-native'
 import { UserContext } from '../../Contexts/UserContext'
 import { RelayPoolContext } from '../../Contexts/RelayPoolContext'
-import { AnimatedFAB, Text, TouchableRipple } from 'react-native-paper'
-import { useFocusEffect, useTheme } from '@react-navigation/native'
+import { AnimatedFAB } from 'react-native-paper'
+import { useFocusEffect } from '@react-navigation/native'
 import { navigate } from '../../lib/Navigation'
-import { t } from 'i18next'
-import GlobalFeed from '../GlobalFeed'
-import MyFeed from '../MyFeed'
-import ReactionsFeed from '../ReactionsFeed'
-import RepostsFeed from '../RepostsFeed'
+import GlobalFeed from './GlobalFeed'
+import MyFeed from './MyFeed'
+import { getUnixTime } from 'date-fns'
+import { RelayFilters } from '../../lib/nostr/RelayPool/intex'
+import { Kind } from 'nostr-tools'
+import { AppContext } from '../../Contexts/AppContext'
+import { getUsers, User } from '../../Functions/DatabaseFunctions/Users'
+import Tabs from '../../Components/Tabs'
+import ZapsFeed from './ZapsFeed'
 
 interface HomeFeedProps {
   navigation: any
 }
 
 export const HomeFeed: React.FC<HomeFeedProps> = ({ navigation }) => {
-  const theme = useTheme()
-  const { privateKey } = useContext(UserContext)
+  const initialPageSize = 10
+  const { database } = useContext(AppContext)
+  const { publicKey, privateKey } = useContext(UserContext)
   const { relayPool } = useContext(RelayPoolContext)
-  const [tabKey, setTabKey] = React.useState('myFeed')
+  const [activeTab, setActiveTab] = React.useState('myFeed')
+  const [lastLoadAt, setLastLoadAt] = useState<number>(0)
+  const [pageSize, setPageSize] = useState<number>(initialPageSize)
 
   useFocusEffect(
     React.useCallback(() => {
+      subscribeNotes()
+      subscribeGlobal()
+      updateLastLoad()
+
       return () =>
         relayPool?.unsubscribe([
           'homepage-global-main',
-          'homepage-contacts-main',
-          'homepage-reactions',
-          'homepage-contacts-meta',
-          'homepage-replies',
+          'homepage-global-reposts',
+          'homepage-myfeed-main',
+          'homepage-myfeed-reactions',
+          'homepage-myfeed-reposts',
+          'homepage-zapped-notes',
         ])
     }, []),
   )
 
+  useEffect(() => {
+    if (pageSize > initialPageSize) {
+      subscribeGlobal(true)
+      subscribeNotes(true)
+      updateLastLoad()
+    }
+  }, [pageSize, lastLoadAt])
+
+  const updateLastLoad: () => void = () => {
+    setLastLoadAt(getUnixTime(new Date()) - 5)
+  }
+
+  const subscribeGlobal: (past?: boolean) => void = (past) => {
+    const message: RelayFilters = {
+      kinds: [Kind.Text, Kind.RecommendRelay],
+      limit: pageSize,
+    }
+
+    if (past) message.until = lastLoadAt
+
+    relayPool?.subscribe('homepage-global-main', [message])
+  }
+
+  const subscribeNotes: (past?: boolean) => void = async (past) => {
+    if (!database || !publicKey) return
+    const users: User[] = await getUsers(database, { contacts: true, order: 'created_at DESC' })
+    const authors: string[] = [...users.map((user) => user.id), publicKey]
+
+    const message: RelayFilters = {
+      kinds: [Kind.Text, Kind.RecommendRelay],
+      authors,
+      limit: pageSize,
+    }
+    if (past) message.until = lastLoadAt
+    relayPool?.subscribe('homepage-myfeed-main', [message])
+  }
+
   const renderScene: Record<string, JSX.Element> = {
-    globalFeed: <GlobalFeed navigation={navigation} />,
-    myFeed: <MyFeed navigation={navigation} />,
-    reactions: <ReactionsFeed navigation={navigation} />,
-    reposts: <RepostsFeed navigation={navigation} />,
+    globalFeed: (
+      <GlobalFeed
+        navigation={navigation}
+        updateLastLoad={updateLastLoad}
+        lastLoadAt={lastLoadAt}
+        pageSize={pageSize}
+        setPageSize={setPageSize}
+      />
+    ),
+    myFeed: (
+      <MyFeed
+        navigation={navigation}
+        updateLastLoad={updateLastLoad}
+        pageSize={pageSize}
+        setPageSize={setPageSize}
+      />
+    ),
+    zaps: (
+      <ZapsFeed
+        navigation={navigation}
+        updateLastLoad={updateLastLoad}
+        pageSize={pageSize}
+        setPageSize={setPageSize}
+      />
+    ),
   }
 
   return (
     <View>
-      <View style={styles.tabsNavigator}>
-        <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-          <View
-            style={[
-              styles.tab,
-              {
-                borderBottomColor:
-                  tabKey === 'globalFeed' ? theme.colors.primary : theme.colors.border,
-                borderBottomWidth: tabKey === 'globalFeed' ? 3 : 1,
-              },
-            ]}
-          >
-            <TouchableRipple
-              style={styles.textWrapper}
-              onPress={() => {
-                relayPool?.unsubscribe([
-                  'homepage-contacts-main',
-                  'homepage-reactions',
-                  'homepage-contacts-meta',
-                  'homepage-replies',
-                ])
-                setTabKey('globalFeed')
-              }}
-            >
-              <Text style={styles.tabText}>{t('homeFeed.globalFeed')}</Text>
-            </TouchableRipple>
-          </View>
-          <View
-            style={[
-              styles.tab,
-              {
-                borderBottomColor: tabKey === 'myFeed' ? theme.colors.primary : theme.colors.border,
-                borderBottomWidth: tabKey === 'myFeed' ? 3 : 1,
-              },
-            ]}
-          >
-            <TouchableRipple
-              style={styles.textWrapper}
-              onPress={() => {
-                relayPool?.unsubscribe(['homepage-global-main'])
-                setTabKey('myFeed')
-              }}
-            >
-              <Text style={styles.tabText}>{t('homeFeed.myFeed')}</Text>
-            </TouchableRipple>
-          </View>
-          <View
-            style={[
-              styles.tab,
-              {
-                borderBottomColor:
-                  tabKey === 'reactions' ? theme.colors.primary : theme.colors.border,
-                borderBottomWidth: tabKey === 'reactions' ? 3 : 1,
-              },
-            ]}
-          >
-            <TouchableRipple
-              style={styles.textWrapper}
-              onPress={() => {
-                relayPool?.unsubscribe(['homepage-global-main'])
-                setTabKey('reactions')
-              }}
-            >
-              <Text style={styles.tabText}>{t('homeFeed.reactions')}</Text>
-            </TouchableRipple>
-          </View>
-          <View
-            style={[
-              styles.tab,
-              {
-                borderBottomColor:
-                  tabKey === 'reposts' ? theme.colors.primary : theme.colors.border,
-                borderBottomWidth: tabKey === 'reposts' ? 3 : 1,
-              },
-            ]}
-          >
-            <TouchableRipple
-              style={styles.textWrapper}
-              onPress={() => {
-                relayPool?.unsubscribe(['homepage-global-main'])
-                setTabKey('reposts')
-              }}
-            >
-              <Text style={styles.tabText}>{t('homeFeed.reposts')}</Text>
-            </TouchableRipple>
-          </View>
-        </ScrollView>
-      </View>
-      <View style={styles.feed}>{renderScene[tabKey]}</View>
+      <Tabs tabs={['globalFeed', 'myFeed', 'zaps']} activeTab={activeTab} setActiveTab={setActiveTab} />
+      <View style={styles.feed}>{renderScene[activeTab]}</View>
       {privateKey && (
         <AnimatedFAB
           style={[styles.fab, { top: Dimensions.get('window').height - 191 }]}

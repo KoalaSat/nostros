@@ -55,14 +55,4 @@ public class Relay {
         values.put("deleted_at", 0);
         database.replace("nostros_relays", null, values);
     }
-
-    public void delete(SQLiteDatabase database) {
-        String whereClause = "url = ?";
-        String[] whereArgs = new String[] {
-                url
-        };
-        ContentValues values = new ContentValues();
-        values.put("deleted_at", System.currentTimeMillis() / 1000L);
-        database.update ("nostros_relays", values, whereClause, whereArgs);
-    }
 }

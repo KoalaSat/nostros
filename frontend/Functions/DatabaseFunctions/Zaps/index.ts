@@ -1,3 +1,4 @@
+import { getUnixTime } from 'date-fns'
 import { QuickSQLiteConnection } from 'react-native-quick-sqlite'
 import { getItems } from '..'
 import { Event } from '../../../lib/nostr/Events'
@@ -38,11 +39,58 @@ export const getZapsAmount: (
   return item['SUM(amount)'] ?? 0
 }
 
-export const getZaps: (db: QuickSQLiteConnection, eventId: string) => Promise<Zap[]> = async (
+export const getMostZapedNotes: (
+  db: QuickSQLiteConnection,
+  publicKey: string,
+  limit: number,
+  since: number
+) => Promise<Zap[]> = async (db, publicKey, limit, since) => {
+  const zapsQuery = `
+    SELECT 
+      SUM(amount) as total, *
+    FROM
+      nostros_zaps
+    WHERE zapped_user_id = '${publicKey}'
+    AND created_at > ${since}
+    GROUP BY zapped_event_id
+    ORDER BY total DESC
+    LIMIT ${limit}
+  `
+  const resultSet = await db.execute(zapsQuery)
+  const items: object[] = getItems(resultSet)
+  const zaps: Zap[] = items.map((object) => databaseToEntity(object))
+
+  return zaps
+}
+
+export const getMostZapedNotesContacts: (
+  db: QuickSQLiteConnection,
+  since: number
+) => Promise<Zap[]> = async (db, since) => {
+  const zapsQuery = `
+    SELECT 
+      SUM(amount) as total, nostros_zaps.*
+    FROM
+      nostros_zaps
+    LEFT JOIN
+      nostros_users ON nostros_users.id = nostros_zaps.zapped_user_id
+    WHERE nostros_zaps.created_at > ${since}
+    AND nostros_users.contact = 1
+    GROUP BY nostros_zaps.zapped_event_id
+    ORDER BY total DESC
+  `
+  const resultSet = await db.execute(zapsQuery)
+  const items: object[] = getItems(resultSet)
+  const zaps: Zap[] = items.map((object) => databaseToEntity(object))
+
+  return zaps
+}
+
+export const getZaps: (db: QuickSQLiteConnection, filters: { eventId?: string, zapperId?: string, limit?: number }) => Promise<Zap[]> = async (
   db,
-  eventId,
+  filters,
 ) => {
-  const groupsQuery = `
+  let groupsQuery = `
     SELECT
       nostros_zaps.*, nostros_users.name, nostros_users.id as user_id, nostros_users.picture, nostros_users.valid_nip05, 
       nostros_users.nip05, nostros_users.lnurl, nostros_users.ln_address
@@ -50,11 +98,28 @@ export const getZaps: (db: QuickSQLiteConnection, eventId: string) => Promise<Za
       nostros_zaps
     LEFT JOIN
       nostros_users ON nostros_users.id = nostros_zaps.zapper_user_id
-    WHERE zapped_event_id = "${eventId}"
   `
+  
+  if (filters.eventId) {
+    groupsQuery += `
+      WHERE zapped_event_id = "${filters.eventId}"
+    `
+  }
+  
+  if (filters.zapperId) {
+    groupsQuery += `
+      WHERE zapped_user_id = "${filters.zapperId}"
+    `
+  }
+
+  if (filters.limit) {
+    groupsQuery += `
+      LIMIT ${filters.limit}
+    `
+  }
   const resultSet = await db.execute(groupsQuery)
   const items: object[] = getItems(resultSet)
-  const notes: Zap[] = items.map((object) => databaseToEntity(object))
+  const zaps: Zap[] = items.map((object) => databaseToEntity(object))
 
-  return notes
+  return zaps
 }

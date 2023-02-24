@@ -30,7 +30,7 @@ export const NoteActions: React.FC<NoteActionsProps> = ({ bottomSheetRef }) => {
 
   const loadNote: () => void = () => {
     if (database && displayNoteDrawer) {
-      getNotes(database, { filters: { id: displayNoteDrawer } }).then((results) => {
+      getNotes(database, { filters: { id: [displayNoteDrawer] } }).then((results) => {
         if (results.length > 0) {
           setNote(results[0])
         }

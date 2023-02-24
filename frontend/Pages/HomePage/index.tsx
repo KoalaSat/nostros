@@ -57,7 +57,7 @@ export const HomePage: React.FC = () => {
           relayPool?.subscribe('notification-icon', [
             {
               kinds: [Kind.ChannelMessage],
-              '#e': [publicKey],
+              '#p': [publicKey],
               limit: 30,
             },
             {
@@ -91,7 +91,7 @@ export const HomePage: React.FC = () => {
       const key = decode(clipboardNip21.replace('nostr:', ''))
       if (key?.data) {
         if (key.type === 'nevent') {
-          navigate('Note', { noteId: key.data })
+          navigate('Note', { noteId: key.data.id })
         } else if (key.type === 'npub') {
           navigate('Profile', { pubKey: key.data })
         } else if (key.type === 'nprofile' && key.data.pubkey) {

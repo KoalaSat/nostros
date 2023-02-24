@@ -7,22 +7,22 @@ import {
   StyleSheet,
   View,
 } from 'react-native'
-import { Surface, Text, ActivityIndicator, Snackbar, Divider } from 'react-native-paper'
-import { FlashList, ListRenderItem } from '@shopify/flash-list'
+import { Surface, Text, Snackbar } from 'react-native-paper'
 import { AppContext } from '../../Contexts/AppContext'
 import { UserContext } from '../../Contexts/UserContext'
 import { RelayPoolContext } from '../../Contexts/RelayPoolContext'
-import { getNotes, Note } from '../../Functions/DatabaseFunctions/Notes'
 import { getUser, User } from '../../Functions/DatabaseFunctions/Users'
 import { Kind } from 'nostr-tools'
 import { useTranslation } from 'react-i18next'
-import { RelayFilters } from '../../lib/nostr/RelayPool/intex'
-import NoteCard from '../../Components/NoteCard'
 import { handleInfinityScroll } from '../../Functions/NativeFunctions'
 import { useFocusEffect } from '@react-navigation/native'
 import ProfileData from '../../Components/ProfileData'
-import ProfileActions from '../../Components/ProfileActions'
 import TextContent from '../../Components/TextContent'
+import Tabs from '../../Components/Tabs'
+import NotesFeed from './NotesFeed'
+import RepliesFeed from './RepliesFeed'
+import ZapsFeed from './ZapsFeed'
+import { getUnixTime } from 'date-fns'
 
 interface ProfilePageProps {
   route: { params: { pubKey: string } }
@@ -33,47 +33,47 @@ export const ProfilePage: React.FC<ProfilePageProps> = ({ route }) => {
   const { publicKey } = useContext(UserContext)
   const { lastEventId, relayPool } = useContext(RelayPoolContext)
   const { t } = useTranslation('common')
-  const initialPageSize = 10
+  const initialPageSize = 20
   const [showNotification, setShowNotification] = useState<undefined | string>()
-  const [notes, setNotes] = useState<Note[]>()
   const [user, setUser] = useState<User>()
   const [pageSize, setPageSize] = useState<number>(initialPageSize)
-  const [refreshing, setRefreshing] = useState(false)
-  const [firstLoad, setFirstLoad] = useState(true)
+  const [refreshing, setRefreshing] = useState<boolean>(false)
+  const [firstLoad, setFirstLoad] = useState<boolean>(true)
+  const [activeTab, setActiveTab] = React.useState('notes')
 
   useFocusEffect(
     React.useCallback(() => {
       subscribeProfile()
-      subscribeNotes()
       loadUser()
-      loadNotes()
       setFirstLoad(false)
 
       return () =>
         relayPool?.unsubscribe([
-          `profile${route.params.pubKey}`,
-          `profile-user${route.params.pubKey}`,
-          `profile-answers${route.params.pubKey}`,
+          `profile-user${route.params.pubKey.substring(0, 8)}`,
+          `profile-zaps${route.params.pubKey.substring(0, 8)}`,
+          `profile-zap-notes${route.params.pubKey.substring(0, 8)}`,
+          `profile-replies-answers${route.params.pubKey.substring(0, 8)}`,
+          `profile-notes-answers${route.params.pubKey.substring(0, 8)}`,
         ])
     }, []),
   )
 
   useEffect(() => {
-    if (!firstLoad) {
-      if (pageSize > initialPageSize) {
-        subscribeNotes(true)
-      }
-      loadUser()
-      loadNotes()
+    if (!firstLoad && pageSize > initialPageSize) {
+      subscribeProfile()
     }
-  }, [pageSize, lastEventId])
+  }, [pageSize])
+
+  useEffect(() => {
+    if (!firstLoad) {
+      loadUser()
+    }
+  }, [pageSize, lastEventId, activeTab])
 
   const onRefresh = useCallback(() => {
     setRefreshing(true)
     loadUser()
-    loadNotes()
     subscribeProfile()
-    subscribeNotes()
   }, [])
 
   const loadUser: () => void = () => {
@@ -90,25 +90,6 @@ export const ProfilePage: React.FC<ProfilePageProps> = ({ route }) => {
     }
   }
 
-  const loadNotes: (past?: boolean) => void = () => {
-    if (database) {
-      getNotes(database, { filters: { pubkey: route.params.pubKey }, limit: pageSize }).then(
-        (results) => {
-          setNotes(results)
-          setRefreshing(false)
-          if (results.length > 0) {
-            relayPool?.subscribe(`profile-answers${route.params.pubKey.substring(0, 8)}`, [
-              {
-                kinds: [Kind.Reaction, Kind.Text, Kind.RecommendRelay, 9735],
-                '#e': results.map((note) => note.id ?? ''),
-              },
-            ])
-          }
-        },
-      )
-    }
-  }
-
   const subscribeProfile: () => Promise<void> = async () => {
     relayPool?.subscribe(`profile-user${route.params.pubKey.substring(0, 8)}`, [
       {
@@ -119,18 +100,17 @@ export const ProfilePage: React.FC<ProfilePageProps> = ({ route }) => {
         kinds: [Kind.Contacts],
         authors: [route.params.pubKey],
       },
+      {
+        kinds: [Kind.Text, Kind.RecommendRelay],
+        authors: [route.params.pubKey],
+        limit: pageSize,
+      },
+      {
+        kinds: [9735],
+        "#p": [route.params.pubKey],
+        since: getUnixTime(new Date()) - 604800
+      },
     ])
-  }
-
-  const subscribeNotes: (past?: boolean) => void = (past) => {
-    if (!database) return
-
-    const message: RelayFilters = {
-      kinds: [Kind.Text, Kind.RecommendRelay],
-      authors: [route.params.pubKey],
-      limit: pageSize,
-    }
-    relayPool?.subscribe(`profile${route.params.pubKey.substring(0, 8)}`, [message])
   }
 
   const onScroll: (event: NativeSyntheticEvent<NativeScrollEvent>) => void = (event) => {
@@ -139,11 +119,32 @@ export const ProfilePage: React.FC<ProfilePageProps> = ({ route }) => {
     }
   }
 
-  const renderItem: ListRenderItem<Note> = ({ item }) => (
-    <View style={styles.noteCard} key={item.id}>
-      <NoteCard note={item} />
-    </View>
-  )
+  const renderScene: Record<string, JSX.Element> = {
+    notes: (
+      <NotesFeed
+        publicKey={route.params.pubKey}
+        pageSize={pageSize}
+        setRefreshing={setRefreshing}
+        refreshing={refreshing}
+      />
+    ),
+    replies: (
+      <RepliesFeed
+        publicKey={route.params.pubKey}
+        pageSize={pageSize}
+        setRefreshing={setRefreshing}
+        refreshing={refreshing}
+      />
+    ),
+    zaps: (
+      <ZapsFeed
+        publicKey={route.params.pubKey}
+        pageSize={pageSize}
+        setRefreshing={setRefreshing}
+        refreshing={refreshing}
+      />
+    ),
+  }
 
   return (
     <View>
@@ -173,30 +174,17 @@ export const ProfilePage: React.FC<ProfilePageProps> = ({ route }) => {
           <View>
             <TextContent content={user?.about} showPreview={false} numberOfLines={10} />
           </View>
-          <Divider style={styles.divider} />
+          {/* <Divider style={styles.divider} />
           <View style={styles.profileActions}>
             {user && <ProfileActions user={user} setUser={setUser} />}
-          </View>
+          </View> */}
         </Surface>
-        <View style={styles.list}>
-          <FlashList
-            estimatedItemSize={200}
-            showsVerticalScrollIndicator={false}
-            data={notes}
-            renderItem={renderItem}
-            refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
-            onScroll={onScroll}
-            refreshing={refreshing}
-            horizontal={false}
-            ListFooterComponent={
-              notes && notes.length > 0 ? (
-                <ActivityIndicator style={styles.loading} animating={true} />
-              ) : (
-                <></>
-              )
-            }
-          />
-        </View>
+        <Tabs
+          tabs={['notes', 'replies', 'zaps']}
+          activeTab={activeTab}
+          setActiveTab={setActiveTab}
+        />
+        <View style={styles.list}>{renderScene[activeTab]}</View>
       </ScrollView>
       {showNotification && (
         <Snackbar

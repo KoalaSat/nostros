@@ -183,7 +183,7 @@ public class Event {
         String name = parts[0];
         String domain = parts[1];
 
-        if (!name.matches("^[a-zA-Z0-9-_]+$")) return false;
+        if (name.length() == 0) return false;
 
         try {
             String url = "https://" + domain + "/.well-known/nostr.json?name=" + name;
@@ -213,7 +213,7 @@ public class Event {
             String name = parts[0];
             String domain = parts[1];
 
-            if (!name.matches("^[a-zA-Z0-9-_]+$")) return "";
+            if (name.length() == 0) return "";
 
             try {
                 String url = "https://" + domain + "/.well-known/lnurlp/" + name;

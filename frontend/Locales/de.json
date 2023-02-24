@@ -199,15 +199,20 @@
       "emptyTitle": "Du hast noch nichts repostet",
       "emptyDescription": "Hier sind Notizen, du du repostet hast"
     },
-    "homeFeed": {
-      "emptyTitle": "Du folgst niemandem",
-      "emptyDescription": "Folge anderen um hier etwas zu sehen",
-      "emptyButton": "Kontakte",
+    "tabs": {
       "globalFeed": "Globaler Feed",
       "myFeed": "Mein Feed",
       "reactions": "Reaktionen",
       "mentions": "Erwähnungen",
       "reposts": "Reposts",
+      "zaps": "Most zapped",
+      "notes": "Notes",
+      "replies": "Replies"
+    },
+    "homeFeed": {
+      "emptyTitle": "Du folgst niemandem",
+      "emptyDescription": "Folge anderen um hier etwas zu sehen",
+      "emptyButton": "Kontakte",
       "newMessage": "{{newNotesCount}} neue Nachricht. Zum Aktualisieren tippen.",
       "newMessages": "{{newNotesCount}} neue Nachrichten. Zum Aktualisieren tippen."
     },

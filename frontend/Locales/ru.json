@@ -212,14 +212,22 @@
       "nips": "NIPs",
       "version": "Version"
     },
+    "tabs": {
+      "myFeed": "My feed",
+      "globalFeed": "Global feed",
+      "reactions": "Reactions",
+      "mentions": "Mentions",
+      "reposts": "Reposts",
+      "zaps": "Most zapped",
+      "notes": "Notes",
+      "replies": "Replies"
+    },
     "homeFeed": {
       "emptyTitle": "Вы ни на кого не подписаны",
       "emptyDescription": "Подпишитесь на другие профили, что бы увидеть, чем они делятся",
       "emptyButton": "Посмотреть контакты",
-      "globalFeed": "Global feed",
       "newMessage": "{{newNotesCount}} nota nueva. Desliza para recargar.",
-      "newMessages": "{{newNotesCount}} notas nuevas. Desliza para refrescar.",
-      "myFeed": "My feed"
+      "newMessages": "{{newNotesCount}} notas nuevas. Desliza para refrescar."
     },
     "relayCard": {
       "pushDone": "Completed",

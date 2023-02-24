@@ -8,7 +8,7 @@ import {
   Note,
   NoteRelay,
 } from '../../Functions/DatabaseFunctions/Notes'
-import { StyleSheet, TouchableNativeFeedback, View } from 'react-native'
+import { StyleSheet, View } from 'react-native'
 import { RelayPoolContext } from '../../Contexts/RelayPoolContext'
 import { AppContext } from '../../Contexts/AppContext'
 import { t } from 'i18next'
@@ -134,7 +134,7 @@ export const NoteCard: React.FC<NoteCardProps> = ({
         })
       }
       if (showRepostPreview && note.repost_id) {
-        getNotes(database, { filters: { id: note.repost_id } }).then((events) => {
+        getNotes(database, { filters: { id: [note.repost_id] } }).then((events) => {
           if (events.length > 0) {
             setRepost(events[0])
           }
@@ -482,16 +482,15 @@ export const NoteCard: React.FC<NoteCardProps> = ({
         {relayColouring &&
           showRelayColors &&
           relays.map((relay, index) => (
-            <TouchableNativeFeedback key={relay.relay_url}>
-              <View
-                style={[
-                  styles.relay,
-                  { borderBottomColor: relayToColor(relay.relay_url) },
-                  index === 0 ? { borderBottomLeftRadius: 50 } : {},
-                  index === relays.length - 1 ? { borderBottomRightRadius: 50 } : {},
-                ]}
-              />
-            </TouchableNativeFeedback>
+            <View
+              key={relay.relay_url}
+              style={[
+                styles.relay,
+                { borderBottomColor: relayToColor(relay.relay_url) },
+                index === 0 ? { borderBottomLeftRadius: 50 } : {},
+                index === relays.length - 1 ? { borderBottomRightRadius: 50 } : {},
+              ]}
+            />
           ))}
       </Card.Content>
     </Card>

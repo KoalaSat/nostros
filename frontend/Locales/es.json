@@ -212,14 +212,22 @@
       "nips": "NIPs",
       "version": "Version"
     },
+    "tabs": {
+      "myFeed": "Mi feed",
+      "globalFeed": "Feed global",
+      "reactions": "Reacciones",
+      "mentions": "Menciones",
+      "reposts": "Reposteados",
+      "zaps": "Más zappeados",
+      "notes": "Notas",
+      "replies": "Respuestas"
+    },
     "homeFeed": {
       "emptyTitle": "No sigues a nadie",
       "emptyDescription": "Sigue otros perfiles para ver contenido aquí.",
       "emptyButton": "Ir a contactos",
-      "globalFeed": "Feed global",
       "newMessage": "{{newNotesCount}} nota nueva. Desliza para recargar.",
-      "newMessages": "{{newNotesCount}} notas nuevas. Desliza para refrescar.",
-      "myFeed": "Mi feed"
+      "newMessages": "{{newNotesCount}} notas nuevas. Desliza para refrescar."
     },
     "relayCard": {
       "pushDone": "Completado",

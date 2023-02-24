@@ -167,7 +167,6 @@ export const NotificationsFeed: React.FC = () => {
   return (
     <View style={styles.container}>
       <FlashList
-        estimatedItemSize={200}
         showsVerticalScrollIndicator={false}
         data={notes}
         renderItem={renderItem}

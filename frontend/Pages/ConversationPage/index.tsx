@@ -364,7 +364,6 @@ export const ConversationPage: React.FC<ConversationPageProps> = ({ route }) => 
         renderItem={renderDirectMessageItem}
         horizontal={false}
         ref={scrollViewRef}
-        estimatedItemSize={100}
         onScroll={onScroll}
       />
       {reply ? (
