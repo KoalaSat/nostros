@@ -122,7 +122,7 @@ export const GroupsFeed: React.FC = () => {
             },
             {
               kinds: [Kind.ChannelMessage],
-              '#e': results.map((group) => group.id ?? '')
+              '#e': results.map((group) => group.id ?? ''),
             },
           ])
         }

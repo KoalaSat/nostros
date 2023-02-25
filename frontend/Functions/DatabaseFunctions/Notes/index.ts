@@ -34,13 +34,13 @@ const noteRelayDatabaseToEntity: (object: any) => NoteRelay = (object = {}) => {
 
 export const getMainNotes: (
   db: QuickSQLiteConnection,
-  pubKey: string,
   limit: number,
   filters?: {
-    contants?: boolean,
+    contants?: boolean
     until?: number
+    pubKey?: string
   },
-) => Promise<Note[]> = async (db, pubKey, limit, filters) => {
+) => Promise<Note[]> = async (db, limit, filters) => {
   let notesQuery = `
     SELECT
       nostros_notes.*, nostros_users.zap_pubkey, nostros_users.nip05, nostros_users.blocked, nostros_users.valid_nip05, 
@@ -51,10 +51,10 @@ export const getMainNotes: (
     WHERE 
   `
 
-  if (filters?.contants) {
-    notesQuery += `(nostros_users.contact = 1 OR nostros_notes.pubkey = '${pubKey}') AND `
-  } else {
-    notesQuery += `nostros_notes.pubkey = '${pubKey}' AND `
+  if (filters?.contants && filters?.pubKey) {
+    notesQuery += `(nostros_users.contact = 1 OR nostros_notes.pubkey = '${filters?.pubKey}') AND `
+  } else if (filters?.pubKey) {
+    notesQuery += `nostros_notes.pubkey = '${filters?.pubKey}' AND `
   }
 
   if (filters?.until) notesQuery += `nostros_notes.created_at <= ${filters?.until} AND `
@@ -64,7 +64,6 @@ export const getMainNotes: (
     ORDER BY created_at DESC
     LIMIT ${limit}
   `
-
   const resultSet = await db.execute(notesQuery)
   const items: object[] = getItems(resultSet)
   const notes: Note[] = items.map((object) => databaseToEntity(object))

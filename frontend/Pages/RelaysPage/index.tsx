@@ -24,8 +24,15 @@ import { UserContext } from '../../Contexts/UserContext'
 
 export const RelaysPage: React.FC = () => {
   const defaultRelayInput = React.useMemo(() => 'wss://', [])
-  const { updateRelayItem, addRelayItem, relayPool, setDisplayrelayDrawer, relays } =
-    useContext(RelayPoolContext)
+  const {
+    updateRelayItem,
+    addRelayItem,
+    relayPool,
+    setDisplayrelayDrawer,
+    relays,
+    lastEventId,
+    loadRelays,
+  } = useContext(RelayPoolContext)
   const { publicKey } = useContext(UserContext)
   const { t } = useTranslation('common')
   const theme = useTheme()
@@ -51,6 +58,10 @@ export const RelaysPage: React.FC = () => {
   )
 
   React.useEffect(() => {}, [relays])
+
+  React.useEffect(() => {
+    loadRelays()
+  }, [lastEventId])
 
   const addRelay: (url: string) => void = (url) => {
     if (!relayList.find((relay) => relay.url === url)) {

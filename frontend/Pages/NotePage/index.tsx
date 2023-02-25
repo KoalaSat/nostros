@@ -53,7 +53,9 @@ export const NotePage: React.FC<NotePageProps> = ({ route }) => {
         const event = events[0]
         setNote(event)
 
-        const notes = await getNotes(database, { filters: { reply_event_id: [route.params.noteId] } })
+        const notes = await getNotes(database, {
+          filters: { reply_event_id: [route.params.noteId] },
+        })
         const rootReplies = getDirectReplies(event, notes)
         const filters: RelayFilters[] = [
           {

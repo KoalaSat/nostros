@@ -22,6 +22,7 @@ export interface RelayPoolContextProps {
   removeRelayItem: (relay: Relay) => Promise<void>
   updateRelayItem: (relay: Relay) => Promise<void>
   sendRelays: (url?: string) => Promise<void>
+  loadRelays: () => Promise<Relay[]>
 }
 
 export interface WebsocketEvent {
@@ -42,6 +43,7 @@ export const initialRelayPoolContext: RelayPoolContextProps = {
   relays: [],
   setDisplayrelayDrawer: () => {},
   sendRelays: async () => {},
+  loadRelays: async () => [],
 }
 
 export const RelayPoolContextProvider = ({
@@ -207,6 +209,7 @@ export const RelayPoolContextProvider = ({
         removeRelayItem,
         updateRelayItem,
         sendRelays,
+        loadRelays,
       }}
     >
       {children}

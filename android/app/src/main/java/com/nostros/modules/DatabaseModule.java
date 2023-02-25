@@ -164,7 +164,6 @@ public class DatabaseModule {
                     "          zapper_user_id TEXT NOT NULL,\n" +
                     "          zapped_event_id TEXT\n" +
                     "        );");
-            database.execSQL("CREATE INDEX nostros_nostros_zaps_zapped_event_id_index ON nostros_zaps(zapped_event_id);");
         } catch (SQLException e) { }
         try {
             database.execSQL("ALTER TABLE nostros_relays ADD COLUMN deleted_at INT DEFAULT 0;");
@@ -173,6 +172,9 @@ public class DatabaseModule {
             database.execSQL("DROP INDEX nostros_notes_notifications_index;");
         } catch (SQLException e) { }
         try {
+            database.execSQL("CREATE INDEX nostros_zaps_list_index ON nostros_zaps(zapper_user_id);");
+            database.execSQL("CREATE INDEX nostros_zaps_user_index ON nostros_zaps(zapper_user_id, zapped_event_id);");
+            database.execSQL("CREATE INDEX nostros_zaps_most_zapped_index ON nostros_zaps(zapped_user_id, created_at, contact);");
 
             database.execSQL("CREATE INDEX nostros_users_names_index ON nostros_users(id, name); ");
             database.execSQL("CREATE INDEX nostros_users_contacts_index ON nostros_users(id, contact); ");
@@ -207,6 +209,7 @@ public class DatabaseModule {
             database.execSQL("CREATE INDEX nostros_reactions_reacted_event_id_index ON nostros_reactions(reacted_event_id); ");
             database.execSQL("CREATE INDEX nostros_users_contact_index ON nostros_users(contact); ");
             database.execSQL("CREATE INDEX nostros_reactions_pubkey_index ON nostros_reactions(pubkey); ");
+            database.execSQL("CREATE INDEX nostros_nostros_zaps_zapped_event_id_index ON nostros_zaps(zapped_event_id);");
         } catch (SQLException e) { }
     }
 

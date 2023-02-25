@@ -27,6 +27,7 @@ interface GlobalFeedProps {
   lastLoadAt: number
   pageSize: number
   setPageSize: (pageSize: number) => void
+  activeTab: string
 }
 
 export const GlobalFeed: React.FC<GlobalFeedProps> = ({
@@ -35,6 +36,7 @@ export const GlobalFeed: React.FC<GlobalFeedProps> = ({
   lastLoadAt,
   pageSize,
   setPageSize,
+  activeTab,
 }) => {
   const initialPageSize = 10
   const theme = useTheme()
@@ -53,10 +55,29 @@ export const GlobalFeed: React.FC<GlobalFeedProps> = ({
   }, [pushedTab])
 
   useEffect(() => {
-    if (relayPool && publicKey) {
+    if (relayPool && publicKey && activeTab === 'globalFeed') {
+      subscribeGlobal()
       loadNotes()
     }
-  }, [lastEventId, lastConfirmationtId, lastLoadAt, relayPool, publicKey])
+  }, [lastEventId, lastConfirmationtId, lastLoadAt, relayPool, publicKey, activeTab])
+
+  useEffect(() => {
+    if (pageSize > initialPageSize) {
+      subscribeGlobal(true)
+      loadNotes()
+    }
+  }, [pageSize])
+
+  const subscribeGlobal: (past?: boolean) => void = (past) => {
+    const message: RelayFilters = {
+      kinds: [Kind.Text, Kind.RecommendRelay],
+      limit: pageSize,
+    }
+
+    if (past) message.until = lastLoadAt
+
+    relayPool?.subscribe('homepage-global-main', [message])
+  }
 
   const onRefresh = useCallback(() => {
     setRefreshing(true)
@@ -76,7 +97,7 @@ export const GlobalFeed: React.FC<GlobalFeedProps> = ({
       if (lastLoadAt > 0) {
         getMainNotesCount(database, lastLoadAt).then(setNewNotesCount)
       }
-      getMainNotes(database, publicKey, pageSize, {
+      getMainNotes(database, pageSize, {
         until: lastLoadAt,
       }).then((results) => {
         setRefreshing(false)

@@ -1,4 +1,3 @@
-import { getUnixTime } from 'date-fns'
 import { QuickSQLiteConnection } from 'react-native-quick-sqlite'
 import { getItems } from '..'
 import { Event } from '../../../lib/nostr/Events'
@@ -43,7 +42,7 @@ export const getMostZapedNotes: (
   db: QuickSQLiteConnection,
   publicKey: string,
   limit: number,
-  since: number
+  since: number,
 ) => Promise<Zap[]> = async (db, publicKey, limit, since) => {
   const zapsQuery = `
     SELECT 
@@ -65,7 +64,7 @@ export const getMostZapedNotes: (
 
 export const getMostZapedNotesContacts: (
   db: QuickSQLiteConnection,
-  since: number
+  since: number,
 ) => Promise<Zap[]> = async (db, since) => {
   const zapsQuery = `
     SELECT 
@@ -86,10 +85,10 @@ export const getMostZapedNotesContacts: (
   return zaps
 }
 
-export const getZaps: (db: QuickSQLiteConnection, filters: { eventId?: string, zapperId?: string, limit?: number }) => Promise<Zap[]> = async (
-  db,
-  filters,
-) => {
+export const getZaps: (
+  db: QuickSQLiteConnection,
+  filters: { eventId?: string; zapperId?: string; limit?: number },
+) => Promise<Zap[]> = async (db, filters) => {
   let groupsQuery = `
     SELECT
       nostros_zaps.*, nostros_users.name, nostros_users.id as user_id, nostros_users.picture, nostros_users.valid_nip05, 
@@ -99,13 +98,13 @@ export const getZaps: (db: QuickSQLiteConnection, filters: { eventId?: string, z
     LEFT JOIN
       nostros_users ON nostros_users.id = nostros_zaps.zapper_user_id
   `
-  
+
   if (filters.eventId) {
     groupsQuery += `
       WHERE zapped_event_id = "${filters.eventId}"
     `
   }
-  
+
   if (filters.zapperId) {
     groupsQuery += `
       WHERE zapped_user_id = "${filters.zapperId}"

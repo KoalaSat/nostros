@@ -21,12 +21,14 @@ import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityI
 import { useTranslation } from 'react-i18next'
 import { getMostZapedNotesContacts } from '../../../Functions/DatabaseFunctions/Zaps'
 import { getUnixTime } from 'date-fns'
+import { getUsers, User } from '../../../Functions/DatabaseFunctions/Users'
 
 interface ZapsFeedProps {
   navigation: any
   updateLastLoad: () => void
   pageSize: number
   setPageSize: (pageSize: number) => void
+  activeTab: string
 }
 
 export const ZapsFeed: React.FC<ZapsFeedProps> = ({
@@ -34,6 +36,7 @@ export const ZapsFeed: React.FC<ZapsFeedProps> = ({
   updateLastLoad,
   pageSize,
   setPageSize,
+  activeTab,
 }) => {
   const theme = useTheme()
   const { t } = useTranslation('common')
@@ -52,10 +55,32 @@ export const ZapsFeed: React.FC<ZapsFeedProps> = ({
   }, [pushedTab])
 
   useEffect(() => {
-    if (relayPool && publicKey) {
+    if (relayPool && publicKey && activeTab === 'zaps') {
+      subscribe()
       loadNotes()
     }
-  }, [lastEventId, lastConfirmationtId, relayPool, publicKey])
+  }, [lastEventId, lastConfirmationtId, relayPool, publicKey, activeTab])
+
+  useEffect(() => {
+    if (pageSize > initialPageSize) {
+      subscribe()
+      loadNotes()
+    }
+  }, [pageSize])
+
+  const subscribe: () => Promise<void> = async () => {
+    if (database && publicKey) {
+      const users: User[] = await getUsers(database, { contacts: true, order: 'created_at DESC' })
+      const contacts: string[] = [...users.map((user) => user.id), publicKey]
+      relayPool?.subscribe(`profile-zaps${publicKey}`, [
+        {
+          kinds: [9735],
+          '#p': contacts,
+          since: getUnixTime(new Date()) - 604800,
+        },
+      ])
+    }
+  }
 
   const onRefresh = useCallback(() => {
     setRefreshing(true)
@@ -110,9 +135,9 @@ export const ZapsFeed: React.FC<ZapsFeedProps> = ({
                   authors,
                 })
               }
-              relayPool?.subscribe('homepage-contacts-reactions', reactionFilters)
+              relayPool?.subscribe('homepage-zapped-reactions', reactionFilters)
               if (repostIds.length > 0) {
-                relayPool?.subscribe('homepage-contacts-reposts', [
+                relayPool?.subscribe('homepage-zapped-reposts', [
                   {
                     kinds: [Kind.Text],
                     ids: repostIds,
@@ -169,7 +194,11 @@ export const ZapsFeed: React.FC<ZapsFeedProps> = ({
         ListEmptyComponent={notes ? ListEmptyComponent : <></>}
         horizontal={false}
         ListFooterComponent={
-          notes && notes.length > 0 ? <ActivityIndicator style={styles.loading} animating={true} /> : <></>
+          notes && notes.length > 0 ? (
+            <ActivityIndicator style={styles.loading} animating={true} />
+          ) : (
+            <></>
+          )
         }
         ref={flashListRef}
       />

@@ -27,18 +27,10 @@ const databaseToGroupMessage: (object: any) => GroupMessage = (object = {}) => {
   return object as GroupMessage
 }
 
-export const updateConversationRead: (
-  conversationId: string,
+export const updateAllGroupMessagesRead: (
   db: QuickSQLiteConnection,
-) => Promise<QueryResult | null> = async (conversationId, db) => {
-  const userQuery = `UPDATE nostros_direct_messages SET read = ? WHERE conversation_id = ?`
-  return db.execute(userQuery, [1, conversationId])
-}
-
-export const updateAllRead: (db: QuickSQLiteConnection) => Promise<QueryResult | null> = async (
-  db,
-) => {
-  const userQuery = `UPDATE nostros_direct_messages SET read = ?`
+) => Promise<QueryResult | null> = async (db) => {
+  const userQuery = `UPDATE nostros_group_messages SET read = ?`
   return db.execute(userQuery, [1])
 }
 
