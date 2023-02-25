@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.util.Log;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -78,6 +79,8 @@ public class Event {
                     saveRelays(database);
                 } else if (kind.equals("9735")) {
                     saveZap(database);
+                } else if (kind.equals("10001")) {
+                    saveListPin(database);
                 }
             } catch (JSONException e) {
                 e.printStackTrace();
@@ -251,6 +254,29 @@ public class Event {
         values.put("user_mentioned", getUserMentioned(userPubKey));
         values.put("repost_id", getRepostId());
         database.replace("nostros_notes", null, values);
+    }
+
+    protected void saveListPin(SQLiteDatabase database) {
+        String query = "SELECT created_at FROM nostros_lists WHERE pubkey = ? AND kind = ?";
+        @SuppressLint("Recycle") Cursor cursor = database.rawQuery(query, new String[] {pubkey, kind});
+
+        ContentValues values = new ContentValues();
+        values.put("id", id);
+        values.put("content", content);
+        values.put("created_at", created_at);
+        values.put("kind", kind);
+        values.put("pubkey", pubkey);
+        values.put("sig", sig);
+        values.put("tags", tags.toString());
+        if (cursor.getCount() == 0) {
+            database.insert("nostros_lists", null, values);
+        } else if (cursor.moveToFirst()) {
+            if (created_at > cursor.getInt(0)) {
+                String whereClause = "pubkey = ? AND kind = ?";
+                String[] whereArgs = new String[]{pubkey, kind};
+                database.update("nostros_lists", values, whereClause, whereArgs);
+            }
+        }
     }
 
     protected void muteUser(SQLiteDatabase database) throws JSONException {

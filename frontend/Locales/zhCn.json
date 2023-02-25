@@ -12,8 +12,13 @@
       "privateKeysSnackbarTitle": "注意",
       "privateKeysSnackbarDescription": "请妥善保管您的私钥。如果遗失，您将无法访问或恢复您的账号。"
     },
+    "qrReaderPage": {
+      "emptyTitle": "Permissions not granted",
+      "emptyDescription": "Grant camera permissions to Nostros to start scanning QR codes"
+    },
     "homeNavigator": {
       "Group": "",
+      "QrReader": "",
       "ProfileCreate": "创建用户",
       "ProfileConnect": "",
       "Contacts": "联系人",
@@ -116,7 +121,9 @@
     "noteActions": {
       "copy": "复制",
       "share": "分享",
-      "view": "查看"
+      "view": "查看",
+      "bookmarked": "Bookmarked",
+      "bookmark": "Bookmark"
     },
     "noteCard": {
       "notifications": {
@@ -226,7 +233,8 @@
       "reposts": "转发",
       "zaps": "Most zapped",
       "notes": "Notes",
-      "replies": "Replies"
+      "replies": "Replies",
+      "bookmarks": "Bookmarks"
     },
     "homeFeed": {
       "emptyTitle": "您还没有关注任何人",

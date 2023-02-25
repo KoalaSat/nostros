@@ -211,6 +211,18 @@ public class DatabaseModule {
             database.execSQL("CREATE INDEX nostros_reactions_pubkey_index ON nostros_reactions(pubkey); ");
             database.execSQL("CREATE INDEX nostros_nostros_zaps_zapped_event_id_index ON nostros_zaps(zapped_event_id);");
         } catch (SQLException e) { }
+        try {
+            database.execSQL("CREATE TABLE IF NOT EXISTS nostros_lists(\n" +
+                    "          id TEXT PRIMARY KEY NOT NULL, \n" +
+                    "          content TEXT NOT NULL,\n" +
+                    "          created_at INT NOT NULL,\n" +
+                    "          kind INT NOT NULL,\n" +
+                    "          pubkey TEXT NOT NULL,\n" +
+                    "          sig TEXT NOT NULL,\n" +
+                    "          tags TEXT NOT NULL\n" +
+                    "          );");
+            database.execSQL("CREATE INDEX nostros_nostros_list_index ON nostros_lists(kind, pubkey);");
+        } catch (SQLException e) { }
     }
 
     public void saveEvent(JSONObject data, String userPubKey, String relayUrl) throws JSONException {

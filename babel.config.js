@@ -1,4 +1,12 @@
 module.exports = {
   presets: ['module:metro-react-native-babel-preset'],
-  plugins: ['react-native-reanimated/plugin', 'react-native-paper/babel'],
+  plugins: [
+    [
+      'react-native-reanimated/plugin',
+      {
+        globals: ['__scanCodes'],
+      },
+    ],
+    'react-native-paper/babel',
+  ],
 }

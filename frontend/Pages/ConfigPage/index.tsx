@@ -260,6 +260,7 @@ export const ConfigPage: React.FC = () => {
           label={t('configPage.defaultZapAmount') ?? ''}
           onChangeText={setZapAmount}
           value={zapAmount}
+          keyboardType='numeric'
         />
         <Button
           mode='contained'
