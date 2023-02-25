@@ -158,6 +158,13 @@ export const ProfileConnectPage: React.FC = () => {
                   forceTextInputFocus={false}
                 />
               }
+              left={
+                <TextInput.Icon
+                  icon='qrcode'
+                  onPress={() => navigate('QrReader')}
+                  forceTextInputFocus={false}
+                />
+              }
             />
           )}
           <Button

@@ -18,6 +18,7 @@
       "Group": "",
       "ProfileLoad": "",
       "Landing": "",
+      "QrReader": "",
       "Contacts": "Contacts",
       "Conversation": "Conversation",
       "Repost": "Repost note",
@@ -45,6 +46,10 @@
       "foundProfile": "Profile found",
       "foundContacts": "{{contactsCount}} contacts found",
       "storing": "Event {{lastEventId}} stored on database."
+    },
+    "qrReaderPage": {
+      "emptyTitle": "Permissions not granted",
+      "emptyDescription": "Grant camera permissions to Nostros to start scanning QR codes"
     },
     "sendPage": {
       "isContact": "Following",

@@ -11,6 +11,7 @@ import ProfileCreatePage from '../../Pages/ProfileCreatePage'
 import { DrawerNavigationProp } from '@react-navigation/drawer'
 import RelaysPage from '../RelaysPage'
 import ConfigPage from '../ConfigPage'
+import QrReaderPage from '../QrReaderPage'
 
 export const HomeNavigator: React.FC = () => {
   const theme = useTheme()
@@ -109,6 +110,7 @@ export const HomeNavigator: React.FC = () => {
           <Stack.Screen name='About' component={AboutPage} />
           <Stack.Screen name='Relays' component={RelaysPage} />
           <Stack.Screen name='Config' component={ConfigPage} />
+          <Stack.Screen name='QrReader' component={QrReaderPage} />
         </Stack.Group>
       </Stack.Navigator>
       <RBSheet

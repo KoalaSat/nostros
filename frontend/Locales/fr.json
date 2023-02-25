@@ -12,8 +12,13 @@
       "privateKeysSnackbarTitle": "Très important.",
       "privateKeysSnackbarDescription": "Conservez votre clé privée dans un endroit sûr. Si vous la perdez, vous ne pourrez plus avoir accès ni récupérer votre compte."
     },
+    "qrReaderPage": {
+      "emptyTitle": "Permissions not granted",
+      "emptyDescription": "Grant camera permissions to Nostros to start scanning QR codes"
+    },
     "homeNavigator": {
       "Group": "",
+      "QrReader": "",
       "ProfileCreate": "Create profile",
       "ProfileConnect": "",
       "ProfileLoad": "",
