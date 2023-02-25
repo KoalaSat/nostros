@@ -42,13 +42,13 @@ export const HomePage: React.FC = () => {
   }, [clipboardNip21])
 
   useEffect(() => {
-    if (publicKey && database) {
+    if (publicKey && database && relayPool) {
       getNotificationsCount(database, publicKey, notificationSeenAt).then(setNewNotifications)
       getUserGroupMessagesCount(database, publicKey).then(setNewGroupMessages)
       getDirectMessagesCount(database, publicKey).then(setNewdirectMessages)
       subscribe()
     }
-  }, [lastEventId, notificationSeenAt, refreshBottomBarAt])
+  }, [lastEventId, notificationSeenAt, refreshBottomBarAt, database, publicKey, relayPool])
 
   const subscribe: () => void = () => {
     if (publicKey && database) {

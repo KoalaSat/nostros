@@ -8,10 +8,7 @@ import { navigate } from '../../lib/Navigation'
 import GlobalFeed from './GlobalFeed'
 import MyFeed from './MyFeed'
 import { getUnixTime } from 'date-fns'
-import { RelayFilters } from '../../lib/nostr/RelayPool/intex'
-import { Kind } from 'nostr-tools'
 import { AppContext } from '../../Contexts/AppContext'
-import { getUsers, User } from '../../Functions/DatabaseFunctions/Users'
 import Tabs from '../../Components/Tabs'
 import ZapsFeed from './ZapsFeed'
 
@@ -22,7 +19,7 @@ interface HomeFeedProps {
 export const HomeFeed: React.FC<HomeFeedProps> = ({ navigation }) => {
   const initialPageSize = 10
   const { database } = useContext(AppContext)
-  const { publicKey, privateKey } = useContext(UserContext)
+  const { privateKey } = useContext(UserContext)
   const { relayPool } = useContext(RelayPoolContext)
   const [activeTab, setActiveTab] = React.useState('myFeed')
   const [lastLoadAt, setLastLoadAt] = useState<number>(0)
@@ -30,57 +27,40 @@ export const HomeFeed: React.FC<HomeFeedProps> = ({ navigation }) => {
 
   useFocusEffect(
     React.useCallback(() => {
-      subscribeNotes()
-      subscribeGlobal()
       updateLastLoad()
 
-      return () =>
-        relayPool?.unsubscribe([
-          'homepage-global-main',
-          'homepage-global-reposts',
-          'homepage-myfeed-main',
-          'homepage-myfeed-reactions',
-          'homepage-myfeed-reposts',
-          'homepage-zapped-notes',
-        ])
+      return () => {}
     }, []),
   )
 
   useEffect(() => {
+    if (activeTab !== 'zaps') {
+      relayPool?.unsubscribe([
+        'homepage-zapped-notes',
+        'homepage-zapped-reactions',
+        'homepage-zapped-reposts',
+      ])
+    }
+    if (activeTab !== 'myFeed') {
+      relayPool?.unsubscribe([
+        'homepage-myfeed-main',
+        'homepage-contacts-reactions',
+        'homepage-contacts-reposts',
+      ])
+    }
+    if (activeTab !== 'globalFeed') {
+      relayPool?.unsubscribe(['homepage-global-main', 'homepage-global-reposts'])
+    }
+  }, [activeTab, database, relayPool])
+
+  useEffect(() => {
     if (pageSize > initialPageSize) {
-      subscribeGlobal(true)
-      subscribeNotes(true)
       updateLastLoad()
     }
   }, [pageSize, lastLoadAt])
 
   const updateLastLoad: () => void = () => {
     setLastLoadAt(getUnixTime(new Date()) - 5)
-  }
-
-  const subscribeGlobal: (past?: boolean) => void = (past) => {
-    const message: RelayFilters = {
-      kinds: [Kind.Text, Kind.RecommendRelay],
-      limit: pageSize,
-    }
-
-    if (past) message.until = lastLoadAt
-
-    relayPool?.subscribe('homepage-global-main', [message])
-  }
-
-  const subscribeNotes: (past?: boolean) => void = async (past) => {
-    if (!database || !publicKey) return
-    const users: User[] = await getUsers(database, { contacts: true, order: 'created_at DESC' })
-    const authors: string[] = [...users.map((user) => user.id), publicKey]
-
-    const message: RelayFilters = {
-      kinds: [Kind.Text, Kind.RecommendRelay],
-      authors,
-      limit: pageSize,
-    }
-    if (past) message.until = lastLoadAt
-    relayPool?.subscribe('homepage-myfeed-main', [message])
   }
 
   const renderScene: Record<string, JSX.Element> = {
@@ -91,6 +71,7 @@ export const HomeFeed: React.FC<HomeFeedProps> = ({ navigation }) => {
         lastLoadAt={lastLoadAt}
         pageSize={pageSize}
         setPageSize={setPageSize}
+        activeTab={activeTab}
       />
     ),
     myFeed: (
@@ -99,6 +80,7 @@ export const HomeFeed: React.FC<HomeFeedProps> = ({ navigation }) => {
         updateLastLoad={updateLastLoad}
         pageSize={pageSize}
         setPageSize={setPageSize}
+        activeTab={activeTab}
       />
     ),
     zaps: (
@@ -107,13 +89,18 @@ export const HomeFeed: React.FC<HomeFeedProps> = ({ navigation }) => {
         updateLastLoad={updateLastLoad}
         pageSize={pageSize}
         setPageSize={setPageSize}
+        activeTab={activeTab}
       />
     ),
   }
 
   return (
     <View>
-      <Tabs tabs={['globalFeed', 'myFeed', 'zaps']} activeTab={activeTab} setActiveTab={setActiveTab} />
+      <Tabs
+        tabs={['globalFeed', 'myFeed', 'zaps']}
+        setActiveTab={setActiveTab}
+        defaultTab='myFeed'
+      />
       <View style={styles.feed}>{renderScene[activeTab]}</View>
       {privateKey && (
         <AnimatedFAB

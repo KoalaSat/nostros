@@ -1,12 +1,5 @@
-import React, { useCallback, useContext, useEffect, useState } from 'react'
-import {
-  NativeScrollEvent,
-  NativeSyntheticEvent,
-  RefreshControl,
-  ScrollView,
-  StyleSheet,
-  View,
-} from 'react-native'
+import React, { useContext, useEffect, useState } from 'react'
+import { StyleSheet, View } from 'react-native'
 import { Surface, Text, Snackbar } from 'react-native-paper'
 import { AppContext } from '../../Contexts/AppContext'
 import { UserContext } from '../../Contexts/UserContext'
@@ -14,7 +7,6 @@ import { RelayPoolContext } from '../../Contexts/RelayPoolContext'
 import { getUser, User } from '../../Functions/DatabaseFunctions/Users'
 import { Kind } from 'nostr-tools'
 import { useTranslation } from 'react-i18next'
-import { handleInfinityScroll } from '../../Functions/NativeFunctions'
 import { useFocusEffect } from '@react-navigation/native'
 import ProfileData from '../../Components/ProfileData'
 import TextContent from '../../Components/TextContent'
@@ -22,7 +14,6 @@ import Tabs from '../../Components/Tabs'
 import NotesFeed from './NotesFeed'
 import RepliesFeed from './RepliesFeed'
 import ZapsFeed from './ZapsFeed'
-import { getUnixTime } from 'date-fns'
 
 interface ProfilePageProps {
   route: { params: { pubKey: string } }
@@ -33,10 +24,8 @@ export const ProfilePage: React.FC<ProfilePageProps> = ({ route }) => {
   const { publicKey } = useContext(UserContext)
   const { lastEventId, relayPool } = useContext(RelayPoolContext)
   const { t } = useTranslation('common')
-  const initialPageSize = 20
   const [showNotification, setShowNotification] = useState<undefined | string>()
   const [user, setUser] = useState<User>()
-  const [pageSize, setPageSize] = useState<number>(initialPageSize)
   const [refreshing, setRefreshing] = useState<boolean>(false)
   const [firstLoad, setFirstLoad] = useState<boolean>(true)
   const [activeTab, setActiveTab] = React.useState('notes')
@@ -47,34 +36,43 @@ export const ProfilePage: React.FC<ProfilePageProps> = ({ route }) => {
       loadUser()
       setFirstLoad(false)
 
-      return () =>
-        relayPool?.unsubscribe([
-          `profile-user${route.params.pubKey.substring(0, 8)}`,
-          `profile-zaps${route.params.pubKey.substring(0, 8)}`,
-          `profile-zap-notes${route.params.pubKey.substring(0, 8)}`,
-          `profile-replies-answers${route.params.pubKey.substring(0, 8)}`,
-          `profile-notes-answers${route.params.pubKey.substring(0, 8)}`,
-        ])
+      return () => relayPool?.unsubscribe([`profile-user${route.params.pubKey.substring(0, 8)}`])
     }, []),
   )
 
   useEffect(() => {
-    if (!firstLoad && pageSize > initialPageSize) {
-      subscribeProfile()
+    if (activeTab !== 'zaps') {
+      relayPool?.unsubscribe([
+        `profile-zaps${route.params.pubKey.substring(0, 8)}`,
+        `profile-zaps-notes${route.params.pubKey.substring(0, 8)}`,
+        `profile-zaps-answers${route.params.pubKey.substring(0, 8)}`,
+      ])
     }
-  }, [pageSize])
+    if (activeTab !== 'notes') {
+      relayPool?.unsubscribe([
+        `profile-notes-main${route.params.pubKey.substring(0, 8)}`,
+        `profile-notes-answers${route.params.pubKey.substring(0, 8)}`,
+      ])
+    }
+    if (activeTab !== 'replies') {
+      relayPool?.unsubscribe([
+        `profile-replies-main${route.params.pubKey.substring(0, 8)}`,
+        `profile-replies-answers${route.params.pubKey.substring(0, 8)}`,
+      ])
+    }
+  }, [activeTab, database, relayPool])
 
   useEffect(() => {
-    if (!firstLoad) {
+    if (!firstLoad && !user?.name) {
       loadUser()
     }
-  }, [pageSize, lastEventId, activeTab])
+  }, [lastEventId])
 
-  const onRefresh = useCallback(() => {
-    setRefreshing(true)
-    loadUser()
-    subscribeProfile()
-  }, [])
+  useEffect(() => {
+    if (refreshing) {
+      subscribeProfile()
+    }
+  }, [refreshing])
 
   const loadUser: () => void = () => {
     if (database) {
@@ -95,51 +93,37 @@ export const ProfilePage: React.FC<ProfilePageProps> = ({ route }) => {
       {
         kinds: [Kind.Metadata],
         authors: [route.params.pubKey],
+        limit: 1,
       },
       {
         kinds: [Kind.Contacts],
         authors: [route.params.pubKey],
-      },
-      {
-        kinds: [Kind.Text, Kind.RecommendRelay],
-        authors: [route.params.pubKey],
-        limit: pageSize,
-      },
-      {
-        kinds: [9735],
-        "#p": [route.params.pubKey],
-        since: getUnixTime(new Date()) - 604800
+        limit: 1,
       },
     ])
-  }
-
-  const onScroll: (event: NativeSyntheticEvent<NativeScrollEvent>) => void = (event) => {
-    if (handleInfinityScroll(event)) {
-      setPageSize(pageSize + initialPageSize)
-    }
   }
 
   const renderScene: Record<string, JSX.Element> = {
     notes: (
       <NotesFeed
+        activeTab={activeTab}
         publicKey={route.params.pubKey}
-        pageSize={pageSize}
         setRefreshing={setRefreshing}
         refreshing={refreshing}
       />
     ),
     replies: (
       <RepliesFeed
+        activeTab={activeTab}
         publicKey={route.params.pubKey}
-        pageSize={pageSize}
         setRefreshing={setRefreshing}
         refreshing={refreshing}
       />
     ),
     zaps: (
       <ZapsFeed
+        activeTab={activeTab}
         publicKey={route.params.pubKey}
-        pageSize={pageSize}
         setRefreshing={setRefreshing}
         refreshing={refreshing}
       />
@@ -148,44 +132,29 @@ export const ProfilePage: React.FC<ProfilePageProps> = ({ route }) => {
 
   return (
     <View>
-      <ScrollView
-        onScroll={onScroll}
-        horizontal={false}
-        showsVerticalScrollIndicator={false}
-        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
-      >
-        <Surface style={styles.container} elevation={1}>
-          <View style={styles.profileData}>
-            <View style={styles.profilePicture}>
-              <ProfileData
-                username={user?.name}
-                publicKey={route.params.pubKey}
-                validNip05={user?.valid_nip05}
-                nip05={user?.nip05}
-                lnurl={user?.lnurl}
-                lnAddress={user?.ln_address}
-                picture={user?.picture}
-              />
-            </View>
-            <View>
-              <Text>{user?.follower && user.follower > 0 ? t('profilePage.isFollower') : ''}</Text>
-            </View>
+      <Surface style={styles.container} elevation={1}>
+        <View style={styles.profileData}>
+          <View style={styles.profilePicture}>
+            <ProfileData
+              username={user?.name}
+              publicKey={route.params.pubKey}
+              validNip05={user?.valid_nip05}
+              nip05={user?.nip05}
+              lnurl={user?.lnurl}
+              lnAddress={user?.ln_address}
+              picture={user?.picture}
+            />
           </View>
           <View>
-            <TextContent content={user?.about} showPreview={false} numberOfLines={10} />
+            <Text>{user?.follower && user.follower > 0 ? t('profilePage.isFollower') : ''}</Text>
           </View>
-          {/* <Divider style={styles.divider} />
-          <View style={styles.profileActions}>
-            {user && <ProfileActions user={user} setUser={setUser} />}
-          </View> */}
-        </Surface>
-        <Tabs
-          tabs={['notes', 'replies', 'zaps']}
-          activeTab={activeTab}
-          setActiveTab={setActiveTab}
-        />
-        <View style={styles.list}>{renderScene[activeTab]}</View>
-      </ScrollView>
+        </View>
+        <View>
+          <TextContent content={user?.about} showPreview={false} numberOfLines={10} />
+        </View>
+      </Surface>
+      <Tabs tabs={['notes', 'replies', 'zaps']} setActiveTab={setActiveTab} />
+      <View style={styles.list}>{renderScene[activeTab]}</View>
       {showNotification && (
         <Snackbar
           style={styles.snackbar}
@@ -217,7 +186,8 @@ const styles = StyleSheet.create({
     width: '80%',
   },
   list: {
-    padding: 16,
+    paddingRight: 16,
+    paddingLeft: 16,
   },
   divider: {
     marginTop: 16,

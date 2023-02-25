@@ -19,15 +19,23 @@ import { useTheme } from '@react-navigation/native'
 import { FlashList, ListRenderItem } from '@shopify/flash-list'
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'
 import { useTranslation } from 'react-i18next'
+import { getContactsCount, getUsers, User } from '../../../Functions/DatabaseFunctions/Users'
 
 interface MyFeedProps {
   navigation: any
   updateLastLoad: () => void
   pageSize: number
   setPageSize: (pageSize: number) => void
+  activeTab: string
 }
 
-export const MyFeed: React.FC<MyFeedProps> = ({ navigation, updateLastLoad, pageSize, setPageSize }) => {
+export const MyFeed: React.FC<MyFeedProps> = ({
+  navigation,
+  updateLastLoad,
+  pageSize,
+  setPageSize,
+  activeTab,
+}) => {
   const theme = useTheme()
   const { t } = useTranslation('common')
   const { database, pushedTab } = useContext(AppContext)
@@ -35,7 +43,8 @@ export const MyFeed: React.FC<MyFeedProps> = ({ navigation, updateLastLoad, page
   const { lastEventId, relayPool, lastConfirmationtId } = useContext(RelayPoolContext)
   const initialPageSize = 10
   const [notes, setNotes] = useState<Note[]>([])
-  const [refreshing, setRefreshing] = useState(false)
+  const [refreshing, setRefreshing] = useState<boolean>(false)
+  const [contactsCount, setContactsCount] = useState<number>()
   const flashListRef = React.useRef<FlashList<Note>>(null)
 
   useEffect(() => {
@@ -45,10 +54,17 @@ export const MyFeed: React.FC<MyFeedProps> = ({ navigation, updateLastLoad, page
   }, [pushedTab])
 
   useEffect(() => {
-    if (relayPool && publicKey) {
+    if (relayPool && publicKey && database && activeTab === 'myFeed') {
+      if (!contactsCount) getContactsCount(database).then(setContactsCount)
       loadNotes()
     }
-  }, [lastEventId, lastConfirmationtId, relayPool, publicKey])
+  }, [lastEventId, lastConfirmationtId, relayPool, publicKey, database, activeTab])
+
+  useEffect(() => {
+    if (pageSize > initialPageSize) {
+      loadNotes()
+    }
+  }, [pageSize])
 
   const onRefresh = useCallback(() => {
     setRefreshing(true)
@@ -63,39 +79,54 @@ export const MyFeed: React.FC<MyFeedProps> = ({ navigation, updateLastLoad, page
 
   const loadNotes: () => void = async () => {
     if (database && publicKey) {
-      getMainNotes(database, publicKey, pageSize, { contants: true }).then(async (notes) => {
-        setNotes(notes)
-        setRefreshing(false)
-        if (notes.length > 0) {
-          const noteIds = notes.map((note) => note.id ?? '')
-          const authors = notes.map((note) => note.pubkey ?? '')
-          const repostIds = notes
-            .filter((note) => note.repost_id)
-            .map((note) => note.repost_id ?? '')
+      const users: User[] = await getUsers(database, { contacts: true, order: 'created_at DESC' })
+      const contacts: string[] = [...users.map((user) => user.id), publicKey]
+      getMainNotes(database, pageSize, { contants: true, pubKey: publicKey }).then(
+        async (results) => {
+          setNotes(results)
+          setRefreshing(false)
 
-          const reactionFilters: RelayFilters[] = [
-            {
-              kinds: [Kind.Reaction, Kind.Text, 9735],
-              '#e': noteIds,
-            },
-          ]
-          if (authors.length > 0) {
-            reactionFilters.push({
-              kinds: [Kind.Metadata],
-              authors,
-            })
+          const message: RelayFilters = {
+            kinds: [Kind.Text, Kind.RecommendRelay],
+            authors: contacts,
+            limit: pageSize,
           }
-          relayPool?.subscribe('homepage-contacts-reactions',reactionFilters )
-          if (repostIds.length > 0) {
-            relayPool?.subscribe('homepage-contacts-reposts', [
+          if (results.length === pageSize) {
+            message.since = results[pageSize - 1].created_at
+          }
+          relayPool?.subscribe('homepage-myfeed-main', [message])
+
+          if (results.length > 0) {
+            const noteIds = results.map((note) => note.id ?? '')
+            const authors = results.map((note) => note.pubkey ?? '')
+            const repostIds = results
+              .filter((note) => note.repost_id)
+              .map((note) => note.repost_id ?? '')
+
+            const reactionFilters: RelayFilters[] = [
               {
-                kinds: [Kind.Text],
-                ids: repostIds,
+                kinds: [Kind.Reaction, Kind.Text, 9735],
+                '#e': noteIds,
               },
-            ])
+            ]
+            if (authors.length > 0) {
+              reactionFilters.push({
+                kinds: [Kind.Metadata],
+                authors,
+              })
+            }
+            relayPool?.subscribe('homepage-contacts-reactions', reactionFilters)
+            if (repostIds.length > 0) {
+              relayPool?.subscribe('homepage-contacts-reposts', [
+                {
+                  kinds: [Kind.Text],
+                  ids: repostIds,
+                },
+              ])
+            }
           }
-        }
-      })
+        },
+      )
     }
   }
 
@@ -130,7 +161,9 @@ export const MyFeed: React.FC<MyFeedProps> = ({ navigation, updateLastLoad, page
     [],
   )
 
-  return (
+  return contactsCount === 0 ? (
+    ListEmptyComponent
+  ) : (
     <View style={styles.list}>
       <FlashList
         showsVerticalScrollIndicator={false}
@@ -139,11 +172,8 @@ export const MyFeed: React.FC<MyFeedProps> = ({ navigation, updateLastLoad, page
         refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
         onScroll={onScroll}
         refreshing={refreshing}
-        ListEmptyComponent={ListEmptyComponent}
         horizontal={false}
-        ListFooterComponent={
-          notes.length > 0 ? <ActivityIndicator style={styles.loading} animating={true} /> : <></>
-        }
+        ListFooterComponent={<ActivityIndicator style={styles.loading} animating={true} />}
         ref={flashListRef}
       />
     </View>

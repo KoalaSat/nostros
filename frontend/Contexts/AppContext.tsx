@@ -158,6 +158,7 @@ export const AppContextProvider = ({ children }: AppContextProviderProps): JSX.E
         )
         setLanguage(config.language ?? initialAppContext.language)
         setLongPressZap(config.long_press_zap ?? initialAppContext.longPressZap)
+        setRelayColouring(config.relay_coloruring ?? initialAppContext.relayColouring)
       } else {
         const config: Config = {
           show_public_images: initialAppContext.showPublicImages,

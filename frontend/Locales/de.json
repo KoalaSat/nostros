@@ -339,7 +339,7 @@
     },
     "groupPage": {
       "typeMessage": "Nachricht schreiben",
-  	  "replyText": "Nachricht"
+      "replyText": "Nachricht"
     },
     "groupHeaderIcon": {
       "delete": "Gruppe verlassen",

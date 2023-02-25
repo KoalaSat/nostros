@@ -24,6 +24,7 @@ import ContactsPage from '../ContactsPage'
 import GroupPage from '../GroupPage'
 import GroupHeaderIcon from '../../Components/GroupHeaderIcon'
 import NoteActions from '../../Components/NoteActions'
+import { updateAllGroupMessagesRead } from '../../Functions/DatabaseFunctions/Groups'
 
 export const HomeNavigator: React.FC = () => {
   const theme = useTheme()
@@ -74,7 +75,7 @@ export const HomeNavigator: React.FC = () => {
   }
 
   const onGroupsPressCheckAll: () => void = () => {
-    if (database) updateAllDirectMessagesRead(database)
+    if (database) updateAllGroupMessagesRead(database)
     setRefreshBottomBarAt(getUnixTime(new Date()))
   }
 

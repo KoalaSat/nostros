@@ -327,7 +327,6 @@ export const ContactsPage: React.FC = () => {
     <View style={styles.container}>
       <FlashList
         estimatedItemSize={71}
-        style={styles.list}
         data={followers.slice(0, pageSize)}
         renderItem={renderContactItem}
         ListEmptyComponent={ListEmptyComponentFollowers}

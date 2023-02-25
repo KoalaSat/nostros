@@ -5,38 +5,48 @@ import { Text, TouchableRipple, useTheme } from 'react-native-paper'
 
 interface TabsProps {
   tabs: string[]
-  activeTab: string
   setActiveTab: (activeTab: string) => void
+  defaultTab?: string
 }
 
-export const Tabs: React.FC<TabsProps> = ({ tabs, activeTab, setActiveTab }) => {
+export const Tabs: React.FC<TabsProps> = ({ tabs, setActiveTab, defaultTab }) => {
   const theme = useTheme()
   const { t } = useTranslation('common')
+
+  const [tab, setTab] = React.useState<string>(defaultTab ?? tabs[0])
+
+  React.useEffect(() => {
+    setActiveTab(tab)
+  }, [tab])
+
+  const tabElements = React.useMemo(() => {
+    return tabs.map((tabKey) => (
+      <View
+        key={tabKey}
+        style={[
+          styles.tab,
+          {
+            borderBottomColor: tabKey === tab ? theme.colors.primary : theme.colors.border,
+            borderBottomWidth: tabKey === tab ? 3 : 1,
+          },
+        ]}
+      >
+        <TouchableRipple
+          style={styles.textWrapper}
+          onPress={() => {
+            setTab(tabKey)
+          }}
+        >
+          <Text style={styles.tabText}>{t(`tabs.${tabKey}`)}</Text>
+        </TouchableRipple>
+      </View>
+    ))
+  }, [tab])
 
   return (
     <View style={styles.tabsNavigator}>
       <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-        {tabs.map((tabKey) => (
-          <View
-            key={tabKey}
-            style={[
-              styles.tab,
-              {
-                borderBottomColor: tabKey === activeTab ? theme.colors.primary : theme.colors.border,
-                borderBottomWidth: tabKey === activeTab ? 3 : 1,
-              },
-            ]}
-          >
-            <TouchableRipple
-              style={styles.textWrapper}
-              onPress={() => {
-                setActiveTab(tabKey)
-              }}
-            >
-              <Text style={styles.tabText}>{t(`tabs.${tabKey}`)}</Text>
-            </TouchableRipple>
-          </View>
-        ))}
+        {tabElements}
       </ScrollView>
     </View>
   )
