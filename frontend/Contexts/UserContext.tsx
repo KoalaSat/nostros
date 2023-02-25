@@ -9,6 +9,8 @@ import { navigate } from '../lib/Navigation'
 import { nsecEncode } from 'nostr-tools/nip19'
 import { getNpub } from '../lib/nostr/Nip19'
 import { addGroup, getGroups } from '../Functions/DatabaseFunctions/Groups'
+import { getList } from '../Functions/DatabaseFunctions/Lists'
+import { getETags } from '../Functions/RelayFunctions/Events'
 
 export interface UserContextProps {
   userState: 'loading' | 'access' | 'ready'
@@ -20,6 +22,8 @@ export interface UserContextProps {
   privateKey?: string
   setPrivateKey: (privateKey: string | undefined) => void
   reloadUser: () => void
+  reloadLists: () => void
+  bookmarks: string[]
   logout: () => void
   name?: string
   setName: (value: string) => void
@@ -46,6 +50,7 @@ export const initialUserContext: UserContextProps = {
   setPublicKey: () => {},
   setPrivateKey: () => {},
   reloadUser: () => {},
+  reloadLists: () => {},
   logout: () => {},
   setName: () => {},
   setPicture: () => {},
@@ -53,6 +58,7 @@ export const initialUserContext: UserContextProps = {
   setLnurl: () => {},
   setLnAddress: () => {},
   setNip05: () => {},
+  bookmarks: [],
 }
 
 export const UserContextProvider = ({ children }: UserContextProviderProps): JSX.Element => {
@@ -70,6 +76,7 @@ export const UserContextProvider = ({ children }: UserContextProviderProps): JSX
   const [lnAddress, setLnAddress] = useState<string>()
   const [nip05, setNip05] = useState<string>()
   const [validNip05, setValidNip05] = useState<boolean>()
+  const [bookmarks, setBookmarks] = useState<string[]>([])
 
   const reloadUser: () => void = () => {
     if (database && publicKey) {
@@ -82,6 +89,17 @@ export const UserContextProvider = ({ children }: UserContextProviderProps): JSX
           setLnAddress(result.ln_address)
           setNip05(result.nip05)
           setValidNip05(result.valid_nip05)
+        }
+      })
+    }
+  }
+
+  const reloadLists: () => void = () => {
+    if (database && publicKey) {
+      getList(database, 10001, publicKey).then((result) => {
+        if (result) {
+          const eTags = getETags(result)
+          setBookmarks(eTags.map((tag) => tag[1]))
         }
       })
     }
@@ -126,6 +144,7 @@ export const UserContextProvider = ({ children }: UserContextProviderProps): JSX
       SInfo.setItem('publicKey', publicKey, {})
       setNpub(getNpub(publicKey))
       reloadUser()
+      reloadLists()
     }
   }, [publicKey])
 
@@ -175,6 +194,8 @@ export const UserContextProvider = ({ children }: UserContextProviderProps): JSX
         privateKey,
         setPrivateKey,
         reloadUser,
+        reloadLists,
+        bookmarks,
         logout,
         name,
         setName,

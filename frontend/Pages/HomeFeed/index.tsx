@@ -11,6 +11,7 @@ import { getUnixTime } from 'date-fns'
 import { AppContext } from '../../Contexts/AppContext'
 import Tabs from '../../Components/Tabs'
 import ZapsFeed from './ZapsFeed'
+import BookmarksFeed from './BookmarksFeed'
 
 interface HomeFeedProps {
   navigation: any
@@ -92,12 +93,21 @@ export const HomeFeed: React.FC<HomeFeedProps> = ({ navigation }) => {
         activeTab={activeTab}
       />
     ),
+    bookmarks: (
+      <BookmarksFeed
+        navigation={navigation}
+        updateLastLoad={updateLastLoad}
+        pageSize={pageSize}
+        setPageSize={setPageSize}
+        activeTab={activeTab}
+      />
+    ),
   }
 
   return (
     <View>
       <Tabs
-        tabs={['globalFeed', 'myFeed', 'zaps']}
+        tabs={['globalFeed', 'myFeed', 'zaps', 'bookmarks']}
         setActiveTab={setActiveTab}
         defaultTab='myFeed'
       />

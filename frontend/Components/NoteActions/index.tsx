@@ -11,6 +11,8 @@ import { navigate } from '../../lib/Navigation'
 import { relayToColor } from '../../Functions/NativeFunctions'
 import { RelayPoolContext } from '../../Contexts/RelayPoolContext'
 import { formatId } from '../../Functions/RelayFunctions/Users'
+import { UserContext } from '../../Contexts/UserContext'
+import { updateBookmarkList } from '../../Functions/RelayFunctions/Lists'
 
 interface NoteActionsProps {
   bottomSheetRef: React.RefObject<RBSheet>
@@ -18,15 +20,36 @@ interface NoteActionsProps {
 
 export const NoteActions: React.FC<NoteActionsProps> = ({ bottomSheetRef }) => {
   const theme = useTheme()
+  const { reloadLists, bookmarks, publicKey } = React.useContext(UserContext)
   const { database, displayNoteDrawer, relayColouring } = React.useContext(AppContext)
-  const { setDisplayrelayDrawer, lastEventId } = React.useContext(RelayPoolContext)
+  const { relayPool, setDisplayrelayDrawer, lastEventId } = React.useContext(RelayPoolContext)
   const [note, setNote] = React.useState<Note>()
   const [relays, setRelays] = React.useState<NoteRelay[]>([])
+  const [bookmarked, setBookrmarked] = React.useState<boolean>(false)
   const bottomSheetShareRef = React.useRef<RBSheet>(null)
 
   React.useEffect(() => {
+    if (publicKey) {
+      relayPool?.unsubscribe(['lists-bookmarks'])
+      relayPool?.subscribe('lists-bookmarks', [
+        {
+          kinds: [10001],
+          authors: [publicKey],
+        },
+      ])
+    }
+  }, [])
+
+  React.useEffect(() => {
+    reloadLists()
     loadNote()
-  }, [displayNoteDrawer, lastEventId])
+  }, [displayNoteDrawer, lastEventId, bookmarked])
+
+  React.useEffect(() => {
+    if (note) {
+      setBookrmarked(bookmarks.find((id) => id === note.id) !== undefined)
+    }
+  }, [bookmarks, note])
 
   const loadNote: () => void = () => {
     if (database && displayNoteDrawer) {
@@ -36,6 +59,13 @@ export const NoteActions: React.FC<NoteActionsProps> = ({ bottomSheetRef }) => {
         }
       })
       getNoteRelays(database, displayNoteDrawer).then(setRelays)
+    }
+  }
+
+  const changeBookmark: () => void = () => {
+    if (relayPool && database && publicKey && note?.id) {
+      updateBookmarkList(relayPool, database, publicKey, note.id, bookmarked)
+      setBookrmarked(!bookmarked)
     }
   }
 
@@ -60,17 +90,6 @@ export const NoteActions: React.FC<NoteActionsProps> = ({ bottomSheetRef }) => {
       <View style={styles.mainLayout}>
         <View style={styles.actionButton}>
           <IconButton
-            icon='eye'
-            size={28}
-            onPress={() => {
-              bottomSheetRef.current?.close()
-              navigate('Note', { noteId: note?.id })
-            }}
-          />
-          <Text>{t('noteActions.view')}</Text>
-        </View>
-        <View style={styles.actionButton}>
-          <IconButton
             icon='content-copy'
             size={28}
             onPress={() => {
@@ -80,6 +99,27 @@ export const NoteActions: React.FC<NoteActionsProps> = ({ bottomSheetRef }) => {
           />
           <Text>{t('noteActions.copy')}</Text>
         </View>
+        <View style={styles.actionButton}>
+          <IconButton
+            icon={bookmarked ? 'bookmark-check' : 'bookmark-multiple-outline'}
+            size={28}
+            onPress={changeBookmark}
+          />
+          <Text>{t(bookmarked ? 'noteActions.bookmarked' : 'noteActions.bookmark')}</Text>
+        </View>
+        <View style={styles.actionButton}>
+          <IconButton
+            icon='eye'
+            size={28}
+            onPress={() => {
+              bottomSheetRef.current?.close()
+              navigate('Note', { noteId: note?.id })
+            }}
+          />
+          <Text>{t('noteActions.view')}</Text>
+        </View>
+      </View>
+      <View style={styles.mainLayout}>
         <View style={styles.actionButton}>
           <IconButton
             icon='share-variant-outline'

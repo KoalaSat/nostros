@@ -121,7 +121,9 @@
     "noteActions": {
       "copy": "复制",
       "share": "分享",
-      "view": "查看"
+      "view": "查看",
+      "bookmarked": "Bookmarked",
+      "bookmark": "Bookmark"
     },
     "noteCard": {
       "notifications": {
@@ -231,7 +233,8 @@
       "reposts": "转发",
       "zaps": "Most zapped",
       "notes": "Notes",
-      "replies": "Replies"
+      "replies": "Replies",
+      "bookmarks": "Bookmarks"
     },
     "homeFeed": {
       "emptyTitle": "您还没有关注任何人",

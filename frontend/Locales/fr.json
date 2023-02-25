@@ -129,7 +129,9 @@
     "noteActions": {
       "copy": "Copier",
       "share": "Partager",
-      "view": "View"
+      "view": "View",
+      "bookmarked": "Bookmarked",
+      "bookmark": "Bookmark"
     },
     "noteCard": {
       "notifications": {
@@ -231,7 +233,8 @@
       "reposts": "Reposts",
       "zaps": "Most zapped",
       "notes": "Notes",
-      "replies": "Replies"
+      "replies": "Replies",
+      "bookmarks": "Bookmarks"
     },
     "homeFeed": {
       "emptyTitle": "Vous ne suivez personne",

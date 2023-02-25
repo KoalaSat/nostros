@@ -1,5 +1,5 @@
 {
-  "name": "Nostros",
+  "name": "nostros",
   "version": "0.0.1",
   "private": true,
   "scripts": {
@@ -60,15 +60,13 @@
     "react-native-tab-view": "^3.3.4",
     "react-native-vector-icons": "^9.2.0",
     "react-native-version-number": "^0.3.6",
-    "react-native-vision-camera": "^2.15.4",
     "react-native-webp-format": "^1.1.2",
     "readable-stream": "^4.3.0",
     "safe-buffer": "^5.2.1",
     "sqlstring": "^2.3.3",
     "stream": "^0.0.2",
     "text-encoding-polyfill": "^0.6.7",
-    "uuid": "^9.0.0",
-    "vision-camera-code-scanner": "^0.2.0"
+    "uuid": "^9.0.0"
   },
   "devDependencies": {
     "@babel/core": "^7.20.2",

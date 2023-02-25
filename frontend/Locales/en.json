@@ -101,7 +101,9 @@
     "noteActions": {
       "copy": "Copy",
       "share": "Share",
-      "view": "View"
+      "view": "View",
+      "bookmarked": "Bookmarked",
+      "bookmark": "Bookmark"
     },
     "noteCard": {
       "notifications": {
@@ -212,7 +214,8 @@
       "reposts": "Reposts",
       "zaps": "Most zapped",
       "notes": "Notes",
-      "replies": "Replies"
+      "replies": "Replies",
+      "bookmarks": "Bookmarks"
     },
     "homeFeed": {
       "emptyTitle": "You are not following anyone",

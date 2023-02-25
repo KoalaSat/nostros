@@ -122,7 +122,9 @@
     "noteActions": {
       "copy": "Copiar",
       "share": "Compartir",
-      "view": "Ver"
+      "view": "Ver",
+      "bookmarked": "Marcado",
+      "bookmark": "Marcar"
     },
     "noteCard": {
       "notifications": {
@@ -225,7 +227,8 @@
       "reposts": "Reposteados",
       "zaps": "Más zappeados",
       "notes": "Notas",
-      "replies": "Respuestas"
+      "replies": "Respuestas",
+      "bookmarks": "Marcadores"
     },
     "homeFeed": {
       "emptyTitle": "No sigues a nadie",

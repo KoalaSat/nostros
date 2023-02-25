@@ -122,7 +122,9 @@
     "noteActions": {
       "copy": "Скопировать",
       "share": "Поделиться",
-      "view": "View"
+      "view": "View",
+      "bookmarked": "Bookmarked",
+      "bookmark": "Bookmark"
     },
     "noteCard": {
       "notifications": {
@@ -225,7 +227,8 @@
       "reposts": "Reposts",
       "zaps": "Most zapped",
       "notes": "Notes",
-      "replies": "Replies"
+      "replies": "Replies",
+      "bookmarks": "Bookmarks"
     },
     "homeFeed": {
       "emptyTitle": "Вы ни на кого не подписаны",
