@@ -14,7 +14,8 @@
     },
     "qrReaderPage": {
       "emptyTitle": "Permissions not granted",
-      "emptyDescription": "Grant camera permissions to Nostros to start scanning QR codes"
+      "emptyDescription": "Grant camera permissions to Nostros to start scanning QR codes",
+      "QRreader": "QR reader"
     },
     "homeNavigator": {
       "Group": "",

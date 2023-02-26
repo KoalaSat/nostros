@@ -32,11 +32,12 @@ import { useFocusEffect } from '@react-navigation/native'
 import ProfileData from '../../Components/ProfileData'
 import { handleInfinityScroll } from '../../Functions/NativeFunctions'
 import { queryProfile } from 'nostr-tools/nip05'
+import { navigate } from '../../lib/Navigation'
 
 export const ContactsPage: React.FC = () => {
   const { t } = useTranslation('common')
   const initialPageSize = 20
-  const { database, setDisplayUserDrawer } = useContext(AppContext)
+  const { database, setDisplayUserDrawer, qrReader, setQrReader } = useContext(AppContext)
   const { privateKey, publicKey, nPub } = React.useContext(UserContext)
   const { relayPool, lastEventId } = useContext(RelayPoolContext)
   const theme = useTheme()
@@ -60,6 +61,14 @@ export const ContactsPage: React.FC = () => {
       return () => relayPool?.unsubscribe(['followers', 'following', 'contacts-meta'])
     }, []),
   )
+
+  useEffect(() => {
+    if (qrReader) {
+      setContactInput(qrReader)
+      setQrReader(undefined)
+      onPressAddContact()
+    }
+  }, [qrReader])
 
   useEffect(() => {
     loadUsers()
@@ -132,7 +141,6 @@ export const ContactsPage: React.FC = () => {
             populatePets(relayPool, database, publicKey)
             loadUsers()
             setIsAddingContact(false)
-            bottomSheetAddContactRef.current?.close()
             setShowNotification('contactAdded')
           })
           .catch(() => {
@@ -291,7 +299,7 @@ export const ContactsPage: React.FC = () => {
         ItemSeparatorComponent={Divider}
         ListEmptyComponent={ListEmptyComponentFollowing}
         horizontal={false}
-        style={styles.list}
+        contentContainerStyle={styles.list}
       />
     </View>
   )
@@ -333,6 +341,7 @@ export const ContactsPage: React.FC = () => {
         onScroll={onScroll}
         ItemSeparatorComponent={Divider}
         showsVerticalScrollIndicator={false}
+        contentContainerStyle={styles.list}
       />
     </View>
   )
@@ -365,7 +374,7 @@ export const ContactsPage: React.FC = () => {
         ItemSeparatorComponent={Divider}
         ListEmptyComponent={ListEmptyComponentBlocked}
         horizontal={false}
-        style={styles.list}
+        contentContainerStyle={styles.list}
       />
     </View>
   )
@@ -453,6 +462,16 @@ export const ContactsPage: React.FC = () => {
               <TextInput.Icon
                 icon='content-paste'
                 onPress={pasteContact}
+                forceTextInputFocus={false}
+              />
+            }
+            left={
+              <TextInput.Icon
+                icon='qrcode'
+                onPress={() => {
+                  bottomSheetAddContactRef.current?.close()
+                  navigate('QrReader')
+                }}
                 forceTextInputFocus={false}
               />
             }

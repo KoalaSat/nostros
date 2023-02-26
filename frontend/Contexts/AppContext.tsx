@@ -43,6 +43,8 @@ export interface AppContextProps {
   setLongPressZap: (longPressZap: number | undefined) => void
   pushedTab?: string
   setPushedTab: (pushedTab: string) => void
+  qrReader?: string
+  setQrReader: (qrReader: string | undefined) => void
 }
 
 export interface AppContextProviderProps {
@@ -74,6 +76,7 @@ export const initialAppContext: AppContextProps = {
   checkClipboard: () => {},
   imageHostingService: 'random',
   setImageHostingService: () => {},
+  setQrReader: () => {},
   pushedTab: 'random',
   setPushedTab: () => {},
   getImageHostingService: () => '',
@@ -88,6 +91,7 @@ export const initialAppContext: AppContextProps = {
 export const AppContextProvider = ({ children }: AppContextProviderProps): JSX.Element => {
   const currentState = useRef(AppState.currentState)
   const [appState, setAppState] = useState(currentState.current)
+  const [qrReader, setQrReader] = useState<string>()
   const [showPublicImages, setShowPublicImages] = React.useState<boolean>(
     initialAppContext.showPublicImages,
   )
@@ -245,6 +249,8 @@ export const AppContextProvider = ({ children }: AppContextProviderProps): JSX.E
         setLongPressZap,
         displayNoteDrawer,
         setDisplayNoteDrawer,
+        qrReader,
+        setQrReader,
       }}
     >
       {children}
