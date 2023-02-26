@@ -470,7 +470,7 @@ export const ContactsPage: React.FC = () => {
                 icon='qrcode'
                 onPress={() => {
                   bottomSheetAddContactRef.current?.close()
-                  navigate('QrReader', { callback: 'Contacts' })
+                  navigate('QrReader')
                 }}
                 forceTextInputFocus={false}
               />

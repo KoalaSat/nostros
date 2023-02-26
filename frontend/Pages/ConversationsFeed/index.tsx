@@ -44,7 +44,7 @@ export const ConversationsFeed: React.FC = () => {
   const initialPageSize = 14
   const theme = useTheme()
   const { t } = useTranslation('common')
-  const { database, refreshBottomBarAt } = useContext(AppContext)
+  const { database, refreshBottomBarAt, qrReader, setQrReader } = useContext(AppContext)
   const [pageSize, setPageSize] = useState<number>(initialPageSize)
   const { publicKey, privateKey } = useContext(UserContext)
   const { relayPool, lastEventId } = useContext(RelayPoolContext)
@@ -71,6 +71,13 @@ export const ConversationsFeed: React.FC = () => {
   useEffect(() => {
     loadDirectMessages(false)
   }, [lastEventId, refreshBottomBarAt])
+
+  useEffect(() => {
+    if (qrReader) {
+      setQrReader(undefined)
+      navigate('Conversation', { pubKey: qrReader, title: qrReader })
+    }
+  }, [qrReader])
 
   const loadDirectMessages: (subscribe: boolean) => void = (subscribe) => {
     if (database && publicKey) {
@@ -326,6 +333,17 @@ export const ConversationsFeed: React.FC = () => {
               <TextInput.Icon
                 icon='content-paste'
                 onPress={pastePubKey}
+                forceTextInputFocus={false}
+              />
+            }
+            left={
+              <TextInput.Icon
+                icon='qrcode'
+                onPress={() => {
+                  bottomSheetCreateRef.current?.close()
+                  bottomSheetPubKeyRef.current?.close()
+                  navigate('QrReader')
+                }}
                 forceTextInputFocus={false}
               />
             }

@@ -177,7 +177,7 @@ export const ProfileConnectPage: React.FC<ProfileConnectPageProps> = ({ route })
               left={
                 <TextInput.Icon
                   icon='qrcode'
-                  onPress={() => navigate('QrReader', { callback: 'ProfileConnect' })}
+                  onPress={() => navigate('QrReader')}
                   forceTextInputFocus={false}
                 />
               }

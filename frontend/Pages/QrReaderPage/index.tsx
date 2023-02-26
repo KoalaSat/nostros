@@ -8,11 +8,7 @@ import { useTranslation } from 'react-i18next'
 import { goBack } from '../../lib/Navigation'
 import { AppContext } from '../../Contexts/AppContext'
 
-interface QrReaderPageProps {
-  route: { params: { callback: string } }
-}
-
-export const QrReaderPage: React.FC<QrReaderPageProps> = ({ route }) => {
+export const QrReaderPage: React.FC = () => {
   const theme = useTheme()
   const { t } = useTranslation('common')
   const { setQrReader } = React.useContext(AppContext)

@@ -42,7 +42,7 @@ import { getNip19Key } from '../../lib/nostr/Nip19'
 export const GroupsFeed: React.FC = () => {
   const { t } = useTranslation('common')
   const theme = useTheme()
-  const { database } = useContext(AppContext)
+  const { database, qrReader, setQrReader } = useContext(AppContext)
   const { publicKey } = useContext(UserContext)
   const { relayPool, lastEventId, lastConfirmationtId } = useContext(RelayPoolContext)
   const bottomSheetSearchRef = React.useRef<RBSheet>(null)
@@ -72,6 +72,14 @@ export const GroupsFeed: React.FC = () => {
   }, [lastEventId, lastConfirmationtId])
 
   useEffect(() => {}, [newMessages, newMentions])
+
+  useEffect(() => {
+    if (qrReader) {
+      setSearchGroup(qrReader)
+      setQrReader(undefined)
+      onAddGroup()
+    }
+  }, [qrReader])
 
   const pastePicture: () => void = () => {
     Clipboard.getString().then((value) => {
@@ -361,6 +369,17 @@ export const GroupsFeed: React.FC = () => {
               <TextInput.Icon
                 icon='content-paste'
                 onPress={pasteGroupId}
+                forceTextInputFocus={false}
+              />
+            }
+            left={
+              <TextInput.Icon
+                icon='qrcode'
+                onPress={() => {
+                  bottomSheetFabActionRef.current?.close()
+                  bottomSheetSearchRef.current?.close()
+                  navigate('QrReader')
+                }}
                 forceTextInputFocus={false}
               />
             }
