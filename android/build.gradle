@@ -6,6 +6,7 @@ buildscript {
         minSdkVersion = 21
         compileSdkVersion = 31
         targetSdkVersion = 29
+        // FIXME: https://github.com/rodgomesc/vision-camera-code-scanner/issues/112
         VisionCameraCodeScanner_targetSdkVersion = 31
         VisionCameraCodeScanner_compileSdkVersion = 31
 
