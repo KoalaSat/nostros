@@ -6,6 +6,8 @@ buildscript {
         minSdkVersion = 21
         compileSdkVersion = 31
         targetSdkVersion = 29
+        VisionCameraCodeScanner_targetSdkVersion = 31
+        VisionCameraCodeScanner_compileSdkVersion = 31
 
         if (System.properties['os.arch'] == "aarch64") {
             // For M1 Users we need to use the NDK 24 which added support for aarch64
