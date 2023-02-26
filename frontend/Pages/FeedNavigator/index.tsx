@@ -25,6 +25,7 @@ import GroupPage from '../GroupPage'
 import GroupHeaderIcon from '../../Components/GroupHeaderIcon'
 import NoteActions from '../../Components/NoteActions'
 import { updateAllGroupMessagesRead } from '../../Functions/DatabaseFunctions/Groups'
+import QrReaderPage from '../QrReaderPage'
 
 export const HomeNavigator: React.FC = () => {
   const theme = useTheme()
@@ -175,6 +176,7 @@ export const HomeNavigator: React.FC = () => {
           <Stack.Screen name='Config' component={ConfigPage} />
           <Stack.Screen name='ProfileConfig' component={ProfileConfigPage} />
           <Stack.Screen name='Profile' component={ProfilePage} />
+          <Stack.Screen name='QrReader' component={QrReaderPage} />
         </Stack.Group>
       </Stack.Navigator>
       <RBSheet

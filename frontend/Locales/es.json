@@ -14,7 +14,8 @@
     },
     "qrReaderPage": {
       "emptyTitle": "Permisos no concedidos",
-      "emptyDescription": "Concede permisos a Nostros para acceder a tu camara y empezar a escanear códigos QR"
+      "emptyDescription": "Concede permisos a Nostros para acceder a tu camara y empezar a escanear códigos QR",
+      "QRreader": "Lector QR"
     },
     "homeNavigator": {
       "Group": "",

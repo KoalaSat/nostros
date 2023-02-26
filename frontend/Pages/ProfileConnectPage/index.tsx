@@ -10,10 +10,16 @@ import { navigate } from '../../lib/Navigation'
 import { useFocusEffect } from '@react-navigation/native'
 import RBSheet from 'react-native-raw-bottom-sheet'
 import { privateKeyFromSeedWords } from 'nostr-tools/nip06'
+import { AppContext } from '../../Contexts/AppContext'
 
-export const ProfileConnectPage: React.FC = () => {
+interface ProfileConnectPageProps {
+  route: { params: { qr: string } }
+}
+
+export const ProfileConnectPage: React.FC<ProfileConnectPageProps> = ({ route }) => {
   const theme = useTheme()
   const { setPrivateKey, setPublicKey } = useContext(UserContext)
+  const { qrReader, setQrReader } = useContext(AppContext)
   const { t } = useTranslation('common')
   const bottomSheetLoginMethodRef = React.useRef<RBSheet>(null)
   const [isNip19, setIsNip19] = useState<boolean>(false)
@@ -33,6 +39,12 @@ export const ProfileConnectPage: React.FC = () => {
     }, []),
   )
 
+  useEffect(() => {
+    if (qrReader) {
+      setInputValue(qrReader)
+      setQrReader(undefined)
+    }
+  }, [qrReader])
   useEffect(() => checkKey(), [inputValue])
   useEffect(() => {}, [lastMnemonicInput])
 
@@ -40,7 +52,11 @@ export const ProfileConnectPage: React.FC = () => {
     if (inputValue && inputValue !== '') {
       const isBenchPrivate = isPrivateKey(inputValue)
       const isBenchPublic = isPublicKey(inputValue)
-      if (!isBenchPrivate && isBenchPublic) setLoginMethod('publicKey')
+      if (isBenchPrivate) {
+        setLoginMethod('privateKey')
+      } else if (isBenchPublic) {
+        setLoginMethod('publicKey')
+      }
       setIsNip19(isBenchPrivate || isBenchPublic)
     }
   }
@@ -158,13 +174,13 @@ export const ProfileConnectPage: React.FC = () => {
                   forceTextInputFocus={false}
                 />
               }
-              // left={
-              //   <TextInput.Icon
-              //     icon='qrcode'
-              //     onPress={() => navigate('QrReader')}
-              //     forceTextInputFocus={false}
-              //   />
-              // }
+              left={
+                <TextInput.Icon
+                  icon='qrcode'
+                  onPress={() => navigate('QrReader', { callback: 'ProfileConnect' })}
+                  forceTextInputFocus={false}
+                />
+              }
             />
           )}
           <Button
