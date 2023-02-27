@@ -13,9 +13,9 @@
       "privateKeysSnackbarDescription": "请妥善保管您的私钥。如果遗失，您将无法访问或恢复您的账号。"
     },
     "qrReaderPage": {
-      "emptyTitle": "Permissions not granted",
-      "emptyDescription": "Grant camera permissions to Nostros to start scanning QR codes",
-      "QRreader": "QR reader"
+      "emptyTitle": "未授予权限",
+      "emptyDescription": "请授予 Nostros 摄像头权限以开始扫描二维码",
+      "QRreader": "扫描二维码"
     },
     "homeNavigator": {
       "Group": "",
@@ -111,11 +111,11 @@
       "relayColoruring": "颜色标示中继状态",
       "app": "App",
       "feed": "信息流",
-      "zaps": "Zaps",
+      "zaps": "赞赏",
       "disabled": "停用",
-      "longPressZap": "长按 Zaps",
-      "longPressZapDescription": "设置长按 Zap 按钮后自动生成账单的默认金额",
-      "defaultZapAmount": "默认 Zap 金额",
+      "longPressZap": "长按赞赏",
+      "longPressZapDescription": "设置长按赞赏按钮后自动生成账单的默认金额",
+      "defaultZapAmount": "默认赞赏金额",
       "update": "更新",
       "disable": "停用"
     },
@@ -123,8 +123,8 @@
       "copy": "复制",
       "share": "分享",
       "view": "查看",
-      "bookmarked": "Bookmarked",
-      "bookmark": "Bookmark"
+      "bookmarked": "已收藏",
+      "bookmark": "收藏"
     },
     "noteCard": {
       "notifications": {
@@ -147,7 +147,7 @@
       "copy": "复制",
       "open": "打开钱包",
       "anonTip": "匿名赞赏",
-      "zap": "Zap"
+      "zap": "赞赏"
     },
     "notificationsFeed": {
       "emptyTitle": "还没有新通知",
@@ -232,10 +232,10 @@
       "reactions": "回应",
       "mentions": "提及",
       "reposts": "转发",
-      "zaps": "Most zapped",
+      "zaps": "最多赞赏",
       "notes": "Notes",
-      "replies": "Replies",
-      "bookmarks": "Bookmarks"
+      "replies": "回复",
+      "bookmarks": "收藏"
     },
     "homeFeed": {
       "emptyTitle": "您还没有关注任何人",
@@ -335,7 +335,7 @@
       "npub": "公钥",
       "copyNPub": "复制",
       "directory": "目录",
-      "lud06": "Zaps",
+      "lud06": "赞赏",
       "nip05": "NIP-05",
       "name": "用户名",
       "about": "简介"
