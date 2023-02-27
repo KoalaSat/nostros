@@ -20,6 +20,7 @@ import { FlashList, ListRenderItem } from '@shopify/flash-list'
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'
 import { useTranslation } from 'react-i18next'
 import { getContactsCount } from '../../../Functions/DatabaseFunctions/Users'
+import { ScrollView } from 'react-native-gesture-handler'
 
 interface BookmarksFeedProps {
   navigation: any
@@ -39,13 +40,18 @@ export const BookmarksFeed: React.FC<BookmarksFeedProps> = ({
   const theme = useTheme()
   const { t } = useTranslation('common')
   const { database, pushedTab } = useContext(AppContext)
-  const { publicKey, bookmarks } = useContext(UserContext)
+  const { publicKey, publicBookmarks, privateBookmarks, reloadLists } = useContext(UserContext)
   const { lastEventId, relayPool, lastConfirmationtId } = useContext(RelayPoolContext)
   const initialPageSize = 10
   const [notes, setNotes] = useState<Note[]>([])
   const [refreshing, setRefreshing] = useState<boolean>(false)
   const [contactsCount, setContactsCount] = useState<number>()
+  const [filter, setFilter] = useState<'private' | 'public'>('private')
   const flashListRef = React.useRef<FlashList<Note>>(null)
+
+  useEffect(() => {
+    reloadLists()
+  }, [])
 
   useEffect(() => {
     if (pushedTab) {
@@ -58,7 +64,17 @@ export const BookmarksFeed: React.FC<BookmarksFeedProps> = ({
       if (!contactsCount) getContactsCount(database).then(setContactsCount)
       loadNotes()
     }
-  }, [lastEventId, lastConfirmationtId, relayPool, publicKey, database, activeTab, bookmarks])
+  }, [
+    filter,
+    lastEventId,
+    lastConfirmationtId,
+    relayPool,
+    publicKey,
+    database,
+    activeTab,
+    publicBookmarks,
+    privateBookmarks,
+  ])
 
   useEffect(() => {
     if (pageSize > initialPageSize) {
@@ -84,8 +100,15 @@ export const BookmarksFeed: React.FC<BookmarksFeedProps> = ({
           kinds: [10001],
           authors: [publicKey],
         },
+        {
+          kinds: [Kind.Text],
+          authors: publicBookmarks,
+        },
       ])
-      getNotes(database, { filters: { id: bookmarks }, limit: pageSize }).then(async (results) => {
+      getNotes(database, {
+        filters: { id: filter === 'public' ? publicBookmarks : privateBookmarks },
+        limit: pageSize,
+      }).then(async (results) => {
         setNotes(results)
         setRefreshing(false)
 
@@ -134,47 +157,67 @@ export const BookmarksFeed: React.FC<BookmarksFeedProps> = ({
     () => (
       <View style={styles.blank}>
         <MaterialCommunityIcons
-          name='account-group-outline'
+          name='bookmark-multiple-outline'
           size={64}
           style={styles.center}
           color={theme.colors.onPrimaryContainer}
         />
         <Text variant='headlineSmall' style={styles.center}>
-          {t('homeFeed.emptyTitle')}
+          {filter === 'private'
+            ? t('homeFeed.bookmarkFeed.emptyTitlePrivate')
+            : t('homeFeed.bookmarkFeed.emptyTitlePublic')}
         </Text>
         <Text variant='bodyMedium' style={styles.center}>
-          {t('homeFeed.emptyDescription')}
+          {filter === 'private'
+            ? t('homeFeed.bookmarkFeed.emptyDescriptionPrivate')
+            : t('homeFeed.bookmarkFeed.emptyDescriptionPublic')}
         </Text>
-        <Button mode='contained' compact onPress={() => navigation.jumpTo('contacts')}>
-          {t('homeFeed.emptyButton')}
-        </Button>
       </View>
     ),
-    [],
+    [filter],
   )
 
-  return contactsCount === 0 ? (
-    ListEmptyComponent
-  ) : (
-    <View style={styles.list}>
-      <FlashList
-        showsVerticalScrollIndicator={false}
-        data={notes}
-        renderItem={renderItem}
-        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
-        onScroll={onScroll}
-        refreshing={refreshing}
-        horizontal={false}
-        ListFooterComponent={
-          bookmarks.length > pageSize ? (
-            <ActivityIndicator style={styles.loading} animating={true} />
-          ) : (
-            <></>
-          )
-        }
-        ref={flashListRef}
-      />
-    </View>
+  return (
+    <ScrollView showsVerticalScrollIndicator={false}>
+      <View style={styles.filters}>
+        <Button
+          mode={filter === 'private' ? 'contained-tonal' : 'outlined'}
+          style={styles.filterButton}
+          onPress={() => setFilter('private')}
+        >
+          {t('homeFeed.bookmarkFeed.private')}
+        </Button>
+        <Button
+          mode={filter === 'public' ? 'contained-tonal' : 'outlined'}
+          style={styles.filterButton}
+          onPress={() => setFilter('public')}
+        >
+          {t('homeFeed.bookmarkFeed.public')}
+        </Button>
+      </View>
+      {(filter === 'public' && publicBookmarks.length === 0) ||
+      (filter === 'private' && privateBookmarks.length === 0) ? (
+        ListEmptyComponent
+      ) : (
+        <FlashList
+          showsVerticalScrollIndicator={false}
+          data={notes}
+          renderItem={renderItem}
+          refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
+          onScroll={onScroll}
+          refreshing={refreshing}
+          horizontal={false}
+          ListFooterComponent={
+            publicBookmarks.length > pageSize ? (
+              <ActivityIndicator style={styles.loading} animating={true} />
+            ) : (
+              <></>
+            )
+          }
+          ref={flashListRef}
+        />
+      )}
+    </ScrollView>
   )
 }
 
@@ -184,6 +227,7 @@ const styles = StyleSheet.create({
   },
   list: {
     height: '100%',
+    marginBottom: 16,
   },
   noteCard: {
     marginTop: 16,
@@ -194,11 +238,18 @@ const styles = StyleSheet.create({
   },
   blank: {
     justifyContent: 'space-between',
-    height: 220,
+    height: 160,
     marginTop: 91,
   },
   activityIndicator: {
     padding: 16,
+  },
+  filters: {
+    flexDirection: 'row',
+    paddingTop: 16,
+  },
+  filterButton: {
+    marginRight: 16,
   },
 })
 

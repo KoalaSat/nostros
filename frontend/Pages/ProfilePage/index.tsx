@@ -14,6 +14,7 @@ import Tabs from '../../Components/Tabs'
 import NotesFeed from './NotesFeed'
 import RepliesFeed from './RepliesFeed'
 import ZapsFeed from './ZapsFeed'
+import BookmarksFeed from './BookmarksFeed'
 
 interface ProfilePageProps {
   route: { params: { pubKey: string } }
@@ -60,6 +61,12 @@ export const ProfilePage: React.FC<ProfilePageProps> = ({ route }) => {
         `profile-replies-answers${route.params.pubKey.substring(0, 8)}`,
       ])
     }
+    if (activeTab !== 'bookmarks') {
+      relayPool?.unsubscribe([
+        `profile-bookmarks${route.params.pubKey.substring(0, 8)}`,
+        `profile-bookmarks-answers${route.params.pubKey.substring(0, 8)}`,
+      ])
+    }
   }, [activeTab, database, relayPool])
 
   useEffect(() => {
@@ -100,6 +107,11 @@ export const ProfilePage: React.FC<ProfilePageProps> = ({ route }) => {
         authors: [route.params.pubKey],
         limit: 1,
       },
+      {
+        kinds: [10001],
+        authors: [route.params.pubKey],
+        limit: 1,
+      },
     ])
   }
 
@@ -122,6 +134,14 @@ export const ProfilePage: React.FC<ProfilePageProps> = ({ route }) => {
     ),
     zaps: (
       <ZapsFeed
+        activeTab={activeTab}
+        publicKey={route.params.pubKey}
+        setRefreshing={setRefreshing}
+        refreshing={refreshing}
+      />
+    ),
+    bookmarks: (
+      <BookmarksFeed
         activeTab={activeTab}
         publicKey={route.params.pubKey}
         setRefreshing={setRefreshing}
@@ -153,7 +173,7 @@ export const ProfilePage: React.FC<ProfilePageProps> = ({ route }) => {
           <TextContent content={user?.about} showPreview={false} numberOfLines={10} />
         </View>
       </Surface>
-      <Tabs tabs={['notes', 'replies', 'zaps']} setActiveTab={setActiveTab} />
+      <Tabs tabs={['notes', 'replies', 'zaps', 'bookmarks']} setActiveTab={setActiveTab} />
       <View style={styles.list}>{renderScene[activeTab]}</View>
       {showNotification && (
         <Snackbar

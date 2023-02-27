@@ -116,9 +116,7 @@ export const AppContextProvider = ({ children }: AppContextProviderProps): JSX.E
   const [pushedTab, setPushedTab] = useState<string>()
 
   useEffect(() => {
-    if (pushedTab) {
-      setPushedTab(undefined)
-    }
+    if (pushedTab) setPushedTab(undefined)
   }, [pushedTab])
 
   useEffect(() => {
