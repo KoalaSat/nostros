@@ -16,7 +16,7 @@
     "@react-navigation/bottom-tabs": "^6.5.3",
     "@react-navigation/drawer": "^6.5.7",
     "@react-navigation/native": "^6.1.2",
-    "@react-navigation/stack": "^6.3.11",
+    "@react-navigation/stack": "^6.3.16",
     "@scure/base": "^1.1.1",
     "@shopify/flash-list": "^1.4.1",
     "assert": "^2.0.0",
