@@ -13,9 +13,9 @@
       "privateKeysSnackbarDescription": "Verwahre den privaten Schlüssel an einem sicheren Ort. Geht der Schlüssel verloren, kann er nicht wiederhergestellt werden. Das Konto kann nie wieder benutzt werden."
     },
     "qrReaderPage": {
-      "emptyTitle": "Permissions not granted",
-      "emptyDescription": "Grant camera permissions to Nostros to start scanning QR codes",
-      "QRreader": "QR reader"
+      "emptyTitle": "Berechtigung nicht gewährt",
+      "emptyDescription": "Nostros Kamera Berechtigungen gewähren um QRCodes zu scannen",
+      "QRreader": "QR Leser"
     },
     "homeNavigator": {
       "Group": "",
@@ -100,13 +100,13 @@
       "disable": "Deaktivieren"
     },
     "noteActions": {
-      "publicBookmark": "Add to public bookmarks",
-      "privateBookmark": "Add to private bookmarks",
+      "publicBookmark": "Öffentlichen Lesezeichen hinzufügen",
+      "privateBookmark": "Privaten Lesezeichen hinzufügen",
       "copy": "Kopieren",
       "share": "Teilen",
       "view": "Ansehen",
-      "bookmarked": "Bookmarked",
-      "bookmark": "Bookmark"
+      "bookmarked": "LZ angelegt",
+      "bookmark": "Lesezeichen"
     },
     "noteCard": {
       "notifications": {
@@ -215,19 +215,19 @@
       "reactions": "Reaktionen",
       "mentions": "Erwähnungen",
       "reposts": "Reposts",
-      "zaps": "Most zapped",
-      "notes": "Notes",
-      "replies": "Replies",
-      "bookmarks": "Bookmarks"
+      "zaps": "Am meisten gezappt",
+      "notes": "Notizen",
+      "replies": "Antworten",
+      "bookmarks": "Lesezeichen"
     },
     "homeFeed": {
       "bookmarkFeed": {
-        "private": "Private",
-        "public": "Public",
-        "emptyTitlePrivate": "Private bookmarks",
-        "emptyDescriptionPrivate": "Only you will see this list",
-        "emptyTitlePublic": "Public bookmarks",
-        "emptyDescriptionPublic": "Everyone will see this list"
+        "private": "Privat",
+        "public": "Öffentlich",
+        "emptyTitlePrivate": "Private Lesezeichen",
+        "emptyDescriptionPrivate": "Liste nur für dich sichtbar",
+        "emptyTitlePublic": "Öffentliche Lesezeichen",
+        "emptyDescriptionPublic": "Jeder kann diese Liste einsehen"
       },
       "emptyTitle": "Du folgst niemandem",
       "emptyDescription": "Folge anderen um hier etwas zu sehen",
@@ -342,7 +342,7 @@
     },
     "profilePage": {
       "bookmarkFeed": {
-        "emptyTitle": "No bookmarks found"
+        "emptyTitle": "Keine Lesezeichen gefunden"
       },
       "notifications": {
         "contactAdded": "Kontakt hinzugefügt",
@@ -357,7 +357,7 @@
       "isFollower": "folgt dir",
       "unfollow": "Nicht mehr folgen",
       "copyNPub": "Schlüssel kopieren",
-      "relaysDescription": "Dies sind {{username}}'s Relays, aktiviere diejenigen, zu denen du verbunden werden möchtest."
+      "relaysDescription": "Dies sind Relays, wo mindestens ein Event von {{username}} gefunden wurde. Aktiviere diejenigen, zu denen du verbunden werden möchtest."
     },
     "groupPage": {
       "typeMessage": "Nachricht schreiben",
