@@ -100,7 +100,7 @@ export const RelayPoolContextProvider = ({
       const url = fallbackRelays[index]
       if (!randomrelays.includes(url)) {
         randomrelays.push(fallbackRelays[index])
-        await addRelayItem({ url }, false)
+        await addRelayItem({ url })
       }
     }
   }
@@ -147,16 +147,12 @@ export const RelayPoolContextProvider = ({
     })
   }
 
-  const addRelayItem: (relay: Relay, send?: boolean) => Promise<void> = async (
-    relay,
-    send = true,
-  ) => {
+  const addRelayItem: (relay: Relay) => Promise<void> = async (relay, send = true) => {
     setRelays((prev) => [...prev, relay])
     return await new Promise((resolve, _reject) => {
       if (relayPool && database && publicKey) {
         relayPool.add(relay.url, () => {
           loadRelays().then(() => {
-            if (send) sendRelays()
             resolve()
           })
         })
@@ -170,7 +166,6 @@ export const RelayPoolContextProvider = ({
       if (relayPool && database && publicKey) {
         relayPool.remove(relay.url, () => {
           loadRelays().then(() => {
-            sendRelays()
             resolve()
           })
         })

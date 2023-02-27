@@ -11,6 +11,7 @@ import { getNpub } from '../lib/nostr/Nip19'
 import { addGroup, getGroups } from '../Functions/DatabaseFunctions/Groups'
 import { getList } from '../Functions/DatabaseFunctions/Lists'
 import { getETags } from '../Functions/RelayFunctions/Events'
+import { decrypt } from '../lib/nostr/Nip04'
 
 export interface UserContextProps {
   userState: 'loading' | 'access' | 'ready'
@@ -23,7 +24,8 @@ export interface UserContextProps {
   setPrivateKey: (privateKey: string | undefined) => void
   reloadUser: () => void
   reloadLists: () => void
-  bookmarks: string[]
+  publicBookmarks: string[]
+  privateBookmarks: string[]
   logout: () => void
   name?: string
   setName: (value: string) => void
@@ -58,7 +60,8 @@ export const initialUserContext: UserContextProps = {
   setLnurl: () => {},
   setLnAddress: () => {},
   setNip05: () => {},
-  bookmarks: [],
+  publicBookmarks: [],
+  privateBookmarks: [],
 }
 
 export const UserContextProvider = ({ children }: UserContextProviderProps): JSX.Element => {
@@ -76,7 +79,8 @@ export const UserContextProvider = ({ children }: UserContextProviderProps): JSX
   const [lnAddress, setLnAddress] = useState<string>()
   const [nip05, setNip05] = useState<string>()
   const [validNip05, setValidNip05] = useState<boolean>()
-  const [bookmarks, setBookmarks] = useState<string[]>([])
+  const [publicBookmarks, setPublicBookmarks] = useState<string[]>([])
+  const [privateBookmarks, setPrivateBookmarks] = useState<string[]>([])
 
   const reloadUser: () => void = () => {
     if (database && publicKey) {
@@ -95,11 +99,14 @@ export const UserContextProvider = ({ children }: UserContextProviderProps): JSX
   }
 
   const reloadLists: () => void = () => {
-    if (database && publicKey) {
+    if (database && publicKey && privateKey) {
       getList(database, 10001, publicKey).then((result) => {
         if (result) {
           const eTags = getETags(result)
-          setBookmarks(eTags.map((tag) => tag[1]))
+          setPublicBookmarks(eTags.map((tag) => tag[1]))
+          const privateJson = decrypt(privateKey, publicKey, result.content ?? '')
+          const privateList: string[][] = JSON.parse(privateJson)
+          setPrivateBookmarks(privateList.map((tag) => tag[1]))
         }
       })
     }
@@ -195,7 +202,8 @@ export const UserContextProvider = ({ children }: UserContextProviderProps): JSX
         setPrivateKey,
         reloadUser,
         reloadLists,
-        bookmarks,
+        publicBookmarks,
+        privateBookmarks,
         logout,
         name,
         setName,

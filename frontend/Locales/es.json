@@ -121,6 +121,8 @@
       "disable": "Desabilitar"
     },
     "noteActions": {
+      "publicBookmark": "Agregar a marcadores publicos",
+      "privateBookmark": "Agregara a marcadores privados",
       "copy": "Copiar",
       "share": "Compartir",
       "view": "Ver",
@@ -232,6 +234,14 @@
       "bookmarks": "Marcadores"
     },
     "homeFeed": {
+      "bookmarkFeed": {
+        "private": "Privado",
+        "public": "Público",
+        "emptyTitlePrivate": "Marcadores privados",
+        "emptyDescriptionPrivate": "Solo tú ves esta lista",
+        "emptyTitlePublic": "Marcadores públicos",
+        "emptyDescriptionPublic": "Todos ven esta lista"
+      },
       "emptyTitle": "No sigues a nadie",
       "emptyDescription": "Sigue otros perfiles para ver contenido aquí.",
       "emptyButton": "Ir a contactos",
@@ -337,6 +347,9 @@
       "about": "Descripción"
     },
     "profilePage": {
+      "bookmarkFeed": {
+        "emptyTitle": "No se encontraron marcadores"
+      },
       "notifications": {
         "contactAdded": "Siguiendo",
         "contactRemoved": "Dejando de seguir ",

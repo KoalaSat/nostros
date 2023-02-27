@@ -121,6 +121,8 @@
       "disable": "Disable"
     },
     "noteActions": {
+      "publicBookmark": "Add to public bookmarks",
+      "privateBookmark": "Add to private bookmarks",
       "copy": "Скопировать",
       "share": "Поделиться",
       "view": "View",
@@ -232,6 +234,14 @@
       "bookmarks": "Bookmarks"
     },
     "homeFeed": {
+      "bookmarkFeed": {
+        "private": "Private",
+        "public": "Public",
+        "emptyTitlePrivate": "Private bookmarks",
+        "emptyDescriptionPrivate": "Only you will see this list",
+        "emptyTitlePublic": "Public bookmarks",
+        "emptyDescriptionPublic": "Everyone will see this list"
+      },
       "emptyTitle": "Вы ни на кого не подписаны",
       "emptyDescription": "Подпишитесь на другие профили, что бы увидеть, чем они делятся",
       "emptyButton": "Посмотреть контакты",
@@ -331,6 +341,9 @@
       "about": "Описание"
     },
     "profilePage": {
+      "bookmarkFeed": {
+        "emptyTitle": "No bookmarks found"
+      },
       "notifications": {
         "contactAdded": "Profile followed",
         "contactRemoved": "Profile unfollowed",

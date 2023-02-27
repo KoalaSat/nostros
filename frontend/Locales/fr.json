@@ -128,6 +128,8 @@
       "disable": "Disable"
     },
     "noteActions": {
+      "publicBookmark": "Add to public bookmarks",
+      "privateBookmark": "Add to private bookmarks",
       "copy": "Copier",
       "share": "Partager",
       "view": "View",
@@ -238,6 +240,14 @@
       "bookmarks": "Bookmarks"
     },
     "homeFeed": {
+      "bookmarkFeed": {
+        "private": "Private",
+        "public": "Public",
+        "emptyTitlePrivate": "Private bookmarks",
+        "emptyDescriptionPrivate": "Only you will see this list",
+        "emptyTitlePublic": "Public bookmarks",
+        "emptyDescriptionPublic": "Everyone will see this list"
+      },
       "emptyTitle": "Vous ne suivez personne",
       "emptyDescription": "Suivez les autres profils pour voir le contenu ici.",
       "newMessage": "{{newNotesCount}} nouvelle note. Balayez pour recharger.",
@@ -334,6 +344,9 @@
       "about": "Description"
     },
     "profilePage": {
+      "bookmarkFeed": {
+        "emptyTitle": "No bookmarks found"
+      },
       "notifications": {
         "contactAdded": "Abonné",
         "contactRemoved": "Vous ne suivez plus ce profil",

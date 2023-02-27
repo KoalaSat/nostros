@@ -120,6 +120,8 @@
       "disable": "停用"
     },
     "noteActions": {
+      "publicBookmark": "Add to public bookmarks",
+      "privateBookmark": "Add to private bookmarks",
       "copy": "复制",
       "share": "分享",
       "view": "查看",
@@ -238,6 +240,14 @@
       "bookmarks": "Bookmarks"
     },
     "homeFeed": {
+      "bookmarkFeed": {
+        "private": "Private",
+        "public": "Public",
+        "emptyTitlePrivate": "Private bookmarks",
+        "emptyDescriptionPrivate": "Only you will see this list",
+        "emptyTitlePublic": "Public bookmarks",
+        "emptyDescriptionPublic": "Everyone will see this list"
+      },
       "emptyTitle": "您还没有关注任何人",
       "emptyDescription": "关注其他人以查看内容",
       "emptyButton": "查看联系人",
@@ -341,6 +351,9 @@
       "about": "简介"
     },
     "profilePage": {
+      "bookmarkFeed": {
+        "emptyTitle": "No bookmarks found"
+      },
       "notifications": {
         "contactAdded": "已关注用户",
         "contactRemoved": "已取消关注",

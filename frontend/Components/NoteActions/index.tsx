@@ -1,7 +1,7 @@
 import { t } from 'i18next'
 import * as React from 'react'
-import { StyleSheet, TouchableNativeFeedback, View } from 'react-native'
-import { IconButton, Text, useTheme } from 'react-native-paper'
+import { FlatList, StyleSheet, TouchableNativeFeedback, View } from 'react-native'
+import { Divider, IconButton, List, Text, useTheme } from 'react-native-paper'
 import { AppContext } from '../../Contexts/AppContext'
 import RBSheet from 'react-native-raw-bottom-sheet'
 import { getNoteRelays, getNotes, Note, NoteRelay } from '../../Functions/DatabaseFunctions/Notes'
@@ -12,7 +12,7 @@ import { relayToColor } from '../../Functions/NativeFunctions'
 import { RelayPoolContext } from '../../Contexts/RelayPoolContext'
 import { formatId } from '../../Functions/RelayFunctions/Users'
 import { UserContext } from '../../Contexts/UserContext'
-import { updateBookmarkList } from '../../Functions/RelayFunctions/Lists'
+import { addBookmarkList, removeBookmarkList } from '../../Functions/RelayFunctions/Lists'
 
 interface NoteActionsProps {
   bottomSheetRef: React.RefObject<RBSheet>
@@ -20,13 +20,15 @@ interface NoteActionsProps {
 
 export const NoteActions: React.FC<NoteActionsProps> = ({ bottomSheetRef }) => {
   const theme = useTheme()
-  const { reloadLists, bookmarks, publicKey } = React.useContext(UserContext)
+  const { reloadLists, publicBookmarks, publicKey, privateKey, privateBookmarks } =
+    React.useContext(UserContext)
   const { database, displayNoteDrawer, relayColouring } = React.useContext(AppContext)
   const { relayPool, setDisplayrelayDrawer, lastEventId } = React.useContext(RelayPoolContext)
   const [note, setNote] = React.useState<Note>()
   const [relays, setRelays] = React.useState<NoteRelay[]>([])
-  const [bookmarked, setBookrmarked] = React.useState<boolean>(false)
+  const [bookmarked, setBookmarked] = React.useState<boolean>(false)
   const bottomSheetShareRef = React.useRef<RBSheet>(null)
+  const bottomBookmarkRef = React.useRef<RBSheet>(null)
 
   React.useEffect(() => {
     if (publicKey) {
@@ -47,9 +49,10 @@ export const NoteActions: React.FC<NoteActionsProps> = ({ bottomSheetRef }) => {
 
   React.useEffect(() => {
     if (note) {
-      setBookrmarked(bookmarks.find((id) => id === note.id) !== undefined)
+      const allBookmarks = [...publicBookmarks, ...privateBookmarks]
+      setBookmarked(allBookmarks.find((id) => id === note.id) !== undefined)
     }
-  }, [bookmarks, note])
+  }, [publicBookmarks, note])
 
   const loadNote: () => void = () => {
     if (database && displayNoteDrawer) {
@@ -62,10 +65,15 @@ export const NoteActions: React.FC<NoteActionsProps> = ({ bottomSheetRef }) => {
     }
   }
 
-  const changeBookmark: () => void = () => {
-    if (relayPool && database && publicKey && note?.id) {
-      updateBookmarkList(relayPool, database, publicKey, note.id, bookmarked)
-      setBookrmarked(!bookmarked)
+  const changeBookmark: (publicBookmark: boolean) => void = (publicBookmark) => {
+    if (relayPool && database && publicKey && privateKey && note?.id) {
+      if (bookmarked) {
+        removeBookmarkList(relayPool, database, privateKey, publicKey, note.id)
+      } else {
+        addBookmarkList(relayPool, database, privateKey, publicKey, note.id, publicBookmark)
+      }
+      setBookmarked(!bookmarked)
+      bottomBookmarkRef.current?.close()
     }
   }
 
@@ -103,7 +111,7 @@ export const NoteActions: React.FC<NoteActionsProps> = ({ bottomSheetRef }) => {
           <IconButton
             icon={bookmarked ? 'bookmark-check' : 'bookmark-multiple-outline'}
             size={28}
-            onPress={changeBookmark}
+            onPress={() => (bookmarked ? changeBookmark(true) : bottomBookmarkRef.current?.open())}
           />
           <Text>{t(bookmarked ? 'noteActions.bookmarked' : 'noteActions.bookmark')}</Text>
         </View>
@@ -150,14 +158,36 @@ export const NoteActions: React.FC<NoteActionsProps> = ({ bottomSheetRef }) => {
           ))}
       </View>
       {note && (
-        <RBSheet
-          ref={bottomSheetShareRef}
-          closeOnDragDown={true}
-          customStyles={bottomSheetStyles}
-          onClose={() => bottomSheetRef.current?.close()}
-        >
-          <NoteShare note={note} />
-        </RBSheet>
+        <>
+          <RBSheet
+            ref={bottomSheetShareRef}
+            closeOnDragDown={true}
+            customStyles={bottomSheetStyles}
+            onClose={() => bottomSheetRef.current?.close()}
+          >
+            <NoteShare note={note} />
+          </RBSheet>
+          <RBSheet ref={bottomBookmarkRef} closeOnDragDown={true} customStyles={bottomSheetStyles}>
+            <FlatList
+              data={[
+                {
+                  key: 'public',
+                  title: t('noteActions.publicBookmark'),
+                  onPress: () => changeBookmark(true),
+                },
+                {
+                  key: 'private',
+                  title: t('noteActions.privateBookmark'),
+                  onPress: () => changeBookmark(false),
+                },
+              ]}
+              renderItem={({ item }) => {
+                return <List.Item key={item.key} title={item.title} onPress={item.onPress} />
+              }}
+              ItemSeparatorComponent={Divider}
+            />
+          </RBSheet>
+        </>
       )}
     </View>
   )

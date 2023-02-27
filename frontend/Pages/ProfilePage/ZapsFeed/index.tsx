@@ -84,7 +84,7 @@ export const ZapsFeed: React.FC<ZapsFeedProps> = ({
                     },
                     {
                       kinds: [Kind.Metadata],
-                      ids: zappedEventIds,
+                      ids: results.map((note) => note.pubkey ?? ''),
                     },
                   ])
                 }

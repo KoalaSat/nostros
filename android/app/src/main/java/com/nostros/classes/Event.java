@@ -75,8 +75,6 @@ public class Event {
                     hideGroupMessage(database);
                 } else if (kind.equals("44")) {
                     muteUser(database);
-                } else if (kind.equals("1002")) {
-                    saveRelays(database);
                 } else if (kind.equals("9735")) {
                     saveZap(database);
                 } else if (kind.equals("10001")) {
