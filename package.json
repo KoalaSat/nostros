@@ -30,7 +30,7 @@
     "date-fns": "^2.29.3",
     "events": "^3.3.0",
     "i18next": "^22.4.9",
-    "lnurl-pay": "^2.1.1",
+    "lnurl-pay": "^2.2.0",
     "lodash.debounce": "^4.0.8",
     "nostr-tools": "^1.2.1",
     "react": "18.2.0",
