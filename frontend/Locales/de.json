@@ -357,7 +357,7 @@
       "isFollower": "folgt dir",
       "unfollow": "Nicht mehr folgen",
       "copyNPub": "Schlüssel kopieren",
-      "relaysDescription": "Dies sind Relays, wo mindestens ein Event von {{username}} gefunden wurde. Aktiviere diejenigen, zu denen du verbunden werden möchtest."
+      "relaysDescription": "Liste von Relays, auf denen mindestens ein Event von {{username}} gefunden wurde. Aktiviere diejenigen, zu denen du verbunden werden möchtest."
     },
     "groupPage": {
       "typeMessage": "Nachricht schreiben",
