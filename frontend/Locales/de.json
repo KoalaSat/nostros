@@ -94,14 +94,14 @@
       "zaps": "Zaps",
       "disabled": "deaktiviert",
       "longPressZap": "Zaps lange drücken",
-      "longPressZapDescription": "Lege den voreingestellten Betrag fest, mit der Invoices erstellt werden sollen, wenn Zaps lange gedrückt wird.",
+      "longPressZapDescription": "Lege den voreingestellten Betrag fest, mit dem Invoices erstellt werden sollen, wenn Zaps lange gedrückt wird.",
       "defaultZapAmount": "Standard Zap Betrag",
       "update": "Aktualisieren",
       "disable": "Deaktivieren"
     },
     "noteActions": {
-      "publicBookmark": "Öffentlichen Lesezeichen hinzufügen",
-      "privateBookmark": "Privaten Lesezeichen hinzufügen",
+      "publicBookmark": "Öffentliches Lesezeichen hinzufügen",
+      "privateBookmark": "Privates Lesezeichen hinzufügen",
       "copy": "Kopieren",
       "share": "Teilen",
       "view": "Ansehen",
@@ -112,7 +112,7 @@
     },
     "noteCard": {
       "notifications": {
-        "zapServerError": "Beim Anfragen des Invoice hat es einen Fehler vom Server gegeben."
+        "zapServerError": "Beim Anfragen der Invoice hat es einen Fehler vom Server gegeben."
       },
       "answering": "{{pubkey}} antworten",
       "reposting": "{{pubkey}} reposten",
@@ -145,7 +145,7 @@
       },
       "skip": "Überspringen",
       "confirmTitle": "Wörter in der richtigen Reihenfolge eingeben",
-      "snackbarDescription": "Wichtig. Verwahre den Schlüssel an einem sicheren Ort. Bei Verlust kann dieses Konto nie wieder benutzt werden!",
+      "snackbarDescription": "Wichtig. Verwahre den Schlüssel an einem sicheren Ort. Bei Verlust kann diese Identität nie wieder benutzt werden!",
       "snackbarAction": "Privaten Schlüssel kopieren",
       "warningTitle": "Wichtig!",
       "warningDescription": "Verwahre den Schlüssel an einem sicheren Ort. Bei Verlust kann dieses Konto nie wieder benutzt werden!",
