@@ -112,7 +112,7 @@ export const UserContextProvider = ({ children }: UserContextProviderProps): JSX
           setPrivateBookmarks(privateList.map((tag) => tag[1]))
         }
       })
-      getList(database, 30001, publicKey, 'muted').then((result) => {
+      getList(database, 30001, publicKey, 'mute').then((result) => {
         if (result) {
           const eTags = getETags(result)
           setMutedEvents(eTags.map((tag) => tag[1]))
