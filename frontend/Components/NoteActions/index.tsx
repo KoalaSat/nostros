@@ -92,9 +92,9 @@ export const NoteActions: React.FC<NoteActionsProps> = ({ bottomSheetRef }) => {
   const changeMute: () => void = () => {
     if (relayPool && database && publicKey && note?.id) {
       if (isMuted) {
-        removeList(relayPool, database, publicKey, note.id, 'muted')
+        removeList(relayPool, database, publicKey, note.id, 'mute')
       } else {
-        addList(relayPool, database, publicKey, note.id, 'muted')
+        addList(relayPool, database, publicKey, note.id, 'mute')
       }
       setIsMuted(!isMuted)
     }
