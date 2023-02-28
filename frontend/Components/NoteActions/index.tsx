@@ -12,7 +12,12 @@ import { relayToColor } from '../../Functions/NativeFunctions'
 import { RelayPoolContext } from '../../Contexts/RelayPoolContext'
 import { formatId } from '../../Functions/RelayFunctions/Users'
 import { UserContext } from '../../Contexts/UserContext'
-import { addBookmarkList, removeBookmarkList } from '../../Functions/RelayFunctions/Lists'
+import {
+  addBookmarkList,
+  addList,
+  removeBookmarkList,
+  removeList,
+} from '../../Functions/RelayFunctions/Lists'
 
 interface NoteActionsProps {
   bottomSheetRef: React.RefObject<RBSheet>
@@ -20,13 +25,14 @@ interface NoteActionsProps {
 
 export const NoteActions: React.FC<NoteActionsProps> = ({ bottomSheetRef }) => {
   const theme = useTheme()
-  const { reloadLists, publicBookmarks, publicKey, privateKey, privateBookmarks } =
+  const { reloadLists, publicBookmarks, publicKey, privateKey, privateBookmarks, mutedEvents } =
     React.useContext(UserContext)
   const { database, displayNoteDrawer, relayColouring } = React.useContext(AppContext)
   const { relayPool, setDisplayrelayDrawer, lastEventId } = React.useContext(RelayPoolContext)
   const [note, setNote] = React.useState<Note>()
   const [relays, setRelays] = React.useState<NoteRelay[]>([])
   const [bookmarked, setBookmarked] = React.useState<boolean>(false)
+  const [isMuted, setIsMuted] = React.useState<boolean>()
   const bottomSheetShareRef = React.useRef<RBSheet>(null)
   const bottomBookmarkRef = React.useRef<RBSheet>(null)
 
@@ -36,6 +42,11 @@ export const NoteActions: React.FC<NoteActionsProps> = ({ bottomSheetRef }) => {
       relayPool?.subscribe('lists-bookmarks', [
         {
           kinds: [10001],
+          authors: [publicKey],
+          limit: 1,
+        },
+        {
+          kinds: [30001],
           authors: [publicKey],
         },
       ])
@@ -51,8 +62,9 @@ export const NoteActions: React.FC<NoteActionsProps> = ({ bottomSheetRef }) => {
     if (note) {
       const allBookmarks = [...publicBookmarks, ...privateBookmarks]
       setBookmarked(allBookmarks.find((id) => id === note.id) !== undefined)
+      setIsMuted(mutedEvents.find((id) => id === note.id) !== undefined)
     }
-  }, [publicBookmarks, note])
+  }, [publicBookmarks, privateBookmarks, note])
 
   const loadNote: () => void = () => {
     if (database && displayNoteDrawer) {
@@ -73,6 +85,19 @@ export const NoteActions: React.FC<NoteActionsProps> = ({ bottomSheetRef }) => {
         addBookmarkList(relayPool, database, privateKey, publicKey, note.id, publicBookmark)
       }
       setBookmarked(!bookmarked)
+      bottomBookmarkRef.current?.close()
+    }
+  }
+
+  const changeMute: () => void = () => {
+    if (relayPool && database && publicKey && note?.id) {
+      console.log('changeMute')
+      if (isMuted) {
+        removeList(relayPool, database, publicKey, note.id, 'muted')
+      } else {
+        addList(relayPool, database, publicKey, note.id, 'muted')
+      }
+      setIsMuted(!isMuted)
       bottomBookmarkRef.current?.close()
     }
   }
@@ -109,12 +134,25 @@ export const NoteActions: React.FC<NoteActionsProps> = ({ bottomSheetRef }) => {
         </View>
         <View style={styles.actionButton}>
           <IconButton
+            icon={isMuted ? 'volume-off' : 'volume-high'}
+            iconColor={isMuted ? theme.colors.error : theme.colors.onSecondaryContainer}
+            size={28}
+            onPress={changeMute}
+          />
+          <Text style={isMuted ? { color: theme.colors.error } : {}}>
+            {t(isMuted ? 'noteActions.mutedThread' : 'noteActions.muteThread')}
+          </Text>
+        </View>
+        <View style={styles.actionButton}>
+          <IconButton
             icon={bookmarked ? 'bookmark-check' : 'bookmark-multiple-outline'}
             size={28}
             onPress={() => (bookmarked ? changeBookmark(true) : bottomBookmarkRef.current?.open())}
           />
           <Text>{t(bookmarked ? 'noteActions.bookmarked' : 'noteActions.bookmark')}</Text>
         </View>
+      </View>
+      <View style={styles.mainLayout}>
         <View style={styles.actionButton}>
           <IconButton
             icon='eye'
@@ -126,8 +164,6 @@ export const NoteActions: React.FC<NoteActionsProps> = ({ bottomSheetRef }) => {
           />
           <Text>{t('noteActions.view')}</Text>
         </View>
-      </View>
-      <View style={styles.mainLayout}>
         <View style={styles.actionButton}>
           <IconButton
             icon='share-variant-outline'

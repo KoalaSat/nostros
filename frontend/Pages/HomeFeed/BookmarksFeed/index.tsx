@@ -79,6 +79,7 @@ export const BookmarksFeed: React.FC<BookmarksFeedProps> = ({
   useEffect(() => {
     if (pageSize > initialPageSize) {
       loadNotes()
+      reloadLists()
     }
   }, [pageSize])
 
@@ -98,6 +99,11 @@ export const BookmarksFeed: React.FC<BookmarksFeedProps> = ({
       relayPool?.subscribe('homepage-bookmarks-main', [
         {
           kinds: [10001],
+          authors: [publicKey],
+          limit: 1,
+        },
+        {
+          kinds: [30001],
           authors: [publicKey],
         },
         {

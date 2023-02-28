@@ -106,7 +106,9 @@
       "share": "Teilen",
       "view": "Ansehen",
       "bookmarked": "Bookmarked",
-      "bookmark": "Bookmark"
+      "bookmark": "Bookmark",
+      "mutedThread": "Thread muted",
+      "muteThread": "Mute thread"
     },
     "noteCard": {
       "notifications": {

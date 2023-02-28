@@ -13,9 +13,13 @@ export const getList: (
   db: QuickSQLiteConnection,
   kind: number,
   pubKey: string,
-) => Promise<List> = async (db, kind, pubKey) => {
-  const notesQuery = 'SELECT * FROM nostros_lists WHERE kind = ? AND pubkey = ?;'
-  const resultSet = await db.execute(notesQuery, [kind, pubKey])
+  tag?: string,
+) => Promise<List> = async (db, kind, pubKey, tag) => {
+  let notesQuery = 'SELECT * FROM nostros_lists WHERE kind = ? AND pubkey = ?'
+  if (tag) {
+    notesQuery += ' AND list_tag = ?'
+  }
+  const resultSet = await db.execute(notesQuery, [kind, pubKey, tag])
   const items: object[] = getItems(resultSet)
   const relays: List[] = items.map((object) => databaseToEntity(object))
   return relays[0]

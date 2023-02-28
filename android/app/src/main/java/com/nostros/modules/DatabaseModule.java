@@ -223,6 +223,9 @@ public class DatabaseModule {
                     "          );");
             database.execSQL("CREATE INDEX nostros_nostros_list_index ON nostros_lists(kind, pubkey);");
         } catch (SQLException e) { }
+        try {
+            database.execSQL("ALTER TABLE nostros_lists ADD COLUMN list_tag TEXT;");
+        } catch (SQLException e) { }
     }
 
     public void saveEvent(JSONObject data, String userPubKey, String relayUrl) throws JSONException {

@@ -126,7 +126,9 @@
       "share": "分享",
       "view": "查看",
       "bookmarked": "已收藏",
-      "bookmark": "收藏"
+      "bookmark": "收藏",
+      "mutedThread": "Thread muted",
+      "muteThread": "Mute thread"
     },
     "noteCard": {
       "notifications": {

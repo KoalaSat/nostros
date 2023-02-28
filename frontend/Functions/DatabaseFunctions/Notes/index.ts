@@ -238,14 +238,14 @@ export const getRepliesCount: (
   return item['COUNT(*)'] ?? 0
 }
 
-export const getNotificationsCount: (
+export const getNotificationsIds: (
   db: QuickSQLiteConnection,
   pubKey: string,
   since: number,
-) => Promise<number> = async (db, pubKey, notificationSeenAt) => {
+) => Promise<string[]> = async (db, pubKey, notificationSeenAt) => {
   const repliesQuery = `
     SELECT
-      COUNT(*)
+      id
     FROM nostros_notes
     WHERE (nostros_notes.reply_event_id IN (
       SELECT nostros_notes.id FROM nostros_notes WHERE pubkey = '${pubKey}'
@@ -254,9 +254,10 @@ export const getNotificationsCount: (
     AND created_at > ${notificationSeenAt};
   `
   const resultSet = db.execute(repliesQuery)
-  const item: { 'COUNT(*)': number } = resultSet?.rows?.item(0)
+  const items: Note[] = getItems(resultSet) as Note[]
+  const ids: string[] = items.map((item) => item.id ?? '')
 
-  return item['COUNT(*)'] ?? 0
+  return ids
 }
 
 export const getRepostCount: (

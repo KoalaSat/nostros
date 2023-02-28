@@ -26,6 +26,7 @@ export interface UserContextProps {
   reloadLists: () => void
   publicBookmarks: string[]
   privateBookmarks: string[]
+  mutedEvents: string[]
   logout: () => void
   name?: string
   setName: (value: string) => void
@@ -62,6 +63,7 @@ export const initialUserContext: UserContextProps = {
   setNip05: () => {},
   publicBookmarks: [],
   privateBookmarks: [],
+  mutedEvents: [],
 }
 
 export const UserContextProvider = ({ children }: UserContextProviderProps): JSX.Element => {
@@ -81,6 +83,7 @@ export const UserContextProvider = ({ children }: UserContextProviderProps): JSX
   const [validNip05, setValidNip05] = useState<boolean>()
   const [publicBookmarks, setPublicBookmarks] = useState<string[]>([])
   const [privateBookmarks, setPrivateBookmarks] = useState<string[]>([])
+  const [mutedEvents, setMutedEvents] = useState<string[]>([])
 
   const reloadUser: () => void = () => {
     if (database && publicKey) {
@@ -107,6 +110,12 @@ export const UserContextProvider = ({ children }: UserContextProviderProps): JSX
           const privateJson = decrypt(privateKey, publicKey, result.content ?? '')
           const privateList: string[][] = JSON.parse(privateJson)
           setPrivateBookmarks(privateList.map((tag) => tag[1]))
+        }
+      })
+      getList(database, 30001, publicKey, 'muted').then((result) => {
+        if (result) {
+          const eTags = getETags(result)
+          setMutedEvents(eTags.map((tag) => tag[1]))
         }
       })
     }
@@ -204,6 +213,7 @@ export const UserContextProvider = ({ children }: UserContextProviderProps): JSX
         reloadLists,
         publicBookmarks,
         privateBookmarks,
+        mutedEvents,
         logout,
         name,
         setName,
