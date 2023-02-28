@@ -257,15 +257,14 @@ public class Event {
     }
 
     protected void saveList(SQLiteDatabase database) {
-        Log.d("LIST", id);
         String query = "SELECT created_at FROM nostros_lists WHERE pubkey = ? AND kind = ?";
         @SuppressLint("Recycle") Cursor cursor = database.rawQuery(query, new String[] {pubkey, kind});
 
-        JSONArray pTags = filterTags("d");
+        JSONArray dTags = filterTags("d");
         String listTag = "";
-        if (pTags.length() > 0) {
+        if (dTags.length() > 0) {
             try {
-                listTag = pTags.getJSONArray(0).getString(1);
+                listTag = dTags.getJSONArray(0).getString(1);
             } catch (JSONException e) { }
         }
 
@@ -279,13 +278,9 @@ public class Event {
         values.put("tags", tags.toString());
         values.put("list_tag", listTag);
         if (cursor.getCount() == 0) {
-            Log.d("cursor.getCount() == 0", String.valueOf(cursor.getCount()));
             database.insert("nostros_lists", null, values);
         } else if (cursor.moveToFirst()) {
-            Log.d("LIST created_at", String.valueOf(created_at));
-            Log.d("LIST cursor.getInt", String.valueOf(cursor.getInt(0)));
             if (created_at > cursor.getInt(0)) {
-                Log.d("LIST created_at >", String.valueOf(cursor.getInt(0)));
                 String whereClause = "pubkey = ? AND kind = ?";
                 String[] whereArgs = new String[]{pubkey, kind};
                 database.update("nostros_lists", values, whereClause, whereArgs);

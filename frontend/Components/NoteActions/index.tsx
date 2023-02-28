@@ -56,7 +56,7 @@ export const NoteActions: React.FC<NoteActionsProps> = ({ bottomSheetRef }) => {
   React.useEffect(() => {
     reloadLists()
     loadNote()
-  }, [displayNoteDrawer, lastEventId, bookmarked])
+  }, [displayNoteDrawer, lastEventId, bookmarked, isMuted])
 
   React.useEffect(() => {
     if (note) {
@@ -64,7 +64,7 @@ export const NoteActions: React.FC<NoteActionsProps> = ({ bottomSheetRef }) => {
       setBookmarked(allBookmarks.find((id) => id === note.id) !== undefined)
       setIsMuted(mutedEvents.find((id) => id === note.id) !== undefined)
     }
-  }, [publicBookmarks, privateBookmarks, note])
+  }, [publicBookmarks, privateBookmarks, note, mutedEvents])
 
   const loadNote: () => void = () => {
     if (database && displayNoteDrawer) {
@@ -91,14 +91,12 @@ export const NoteActions: React.FC<NoteActionsProps> = ({ bottomSheetRef }) => {
 
   const changeMute: () => void = () => {
     if (relayPool && database && publicKey && note?.id) {
-      console.log('changeMute')
       if (isMuted) {
         removeList(relayPool, database, publicKey, note.id, 'muted')
       } else {
         addList(relayPool, database, publicKey, note.id, 'muted')
       }
       setIsMuted(!isMuted)
-      bottomBookmarkRef.current?.close()
     }
   }
 
