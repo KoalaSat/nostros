@@ -106,7 +106,9 @@
       "share": "Teilen",
       "view": "Ansehen",
       "bookmarked": "LZ angelegt",
-      "bookmark": "Lesezeichen"
+      "bookmark": "Lesezeichen",
+      "mutedThread": "Thread stumm",
+      "muteThread": "Thread stumm schalten"
     },
     "noteCard": {
       "notifications": {
@@ -422,7 +424,7 @@
       "muted": "Stumm",
       "muteUser": "{{username}} in Chats stumm schalten",
       "muteWarningTitle": "Wichtig",
-      "muteWarning": "Diese Aktion wird Nachrichten dieses Benutzers in allen Chats unwiderruflich verstecken und kann nicht rückgängig gemacht werden.",
+      "muteWarning": "Diese Aktion wird Nachrichten dieses Benutzers in allen Chats unwiderruflich ausblenden und kann nicht rückgängig gemacht werden.",
       "muteForever": "{{username}} für immer stumm schalten",
       "cancel": "Abbrechen"
     },
