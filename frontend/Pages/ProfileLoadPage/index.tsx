@@ -62,8 +62,23 @@ export const ProfileLoadPage: React.FC = () => {
       ])
       relayPool?.subscribe('profile-load-others', [
         {
-          kinds: [Kind.ChannelCreation, Kind.ChannelMetadata, 1002, 10001],
+          kinds: [Kind.ChannelCreation, Kind.ChannelMetadata],
           authors: [publicKey],
+        },
+        {
+          kinds: [1002],
+          authors: [publicKey],
+          limit: 1,
+        },
+        {
+          kinds: [10001],
+          authors: [publicKey],
+          limit: 1,
+        },
+        {
+          kinds: [3001],
+          authors: [publicKey],
+          limit: 1,
         },
       ])
     } else {

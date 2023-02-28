@@ -127,7 +127,9 @@
       "share": "Compartir",
       "view": "Ver",
       "bookmarked": "Marcado",
-      "bookmark": "Marcar"
+      "bookmark": "Marcar",
+      "mutedThread": "Hilo silenciado",
+      "muteThread": "Silenciar hilo"
     },
     "noteCard": {
       "notifications": {

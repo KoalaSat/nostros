@@ -75,10 +75,12 @@ public class Event {
                     hideGroupMessage(database);
                 } else if (kind.equals("44")) {
                     muteUser(database);
+                } else if (kind.equals("1002")) {
+                    saveRelays(database);
                 } else if (kind.equals("9735")) {
                     saveZap(database);
-                } else if (kind.equals("10001")) {
-                    saveListPin(database);
+                } else if (kind.equals("10001") || kind.equals("30001")) {
+                    saveList(database);
                 }
             } catch (JSONException e) {
                 e.printStackTrace();
@@ -254,9 +256,17 @@ public class Event {
         database.replace("nostros_notes", null, values);
     }
 
-    protected void saveListPin(SQLiteDatabase database) {
+    protected void saveList(SQLiteDatabase database) {
         String query = "SELECT created_at FROM nostros_lists WHERE pubkey = ? AND kind = ?";
         @SuppressLint("Recycle") Cursor cursor = database.rawQuery(query, new String[] {pubkey, kind});
+
+        JSONArray dTags = filterTags("d");
+        String listTag = "";
+        if (dTags.length() > 0) {
+            try {
+                listTag = dTags.getJSONArray(0).getString(1);
+            } catch (JSONException e) { }
+        }
 
         ContentValues values = new ContentValues();
         values.put("id", id);
@@ -266,6 +276,7 @@ public class Event {
         values.put("pubkey", pubkey);
         values.put("sig", sig);
         values.put("tags", tags.toString());
+        values.put("list_tag", listTag);
         if (cursor.getCount() == 0) {
             database.insert("nostros_lists", null, values);
         } else if (cursor.moveToFirst()) {

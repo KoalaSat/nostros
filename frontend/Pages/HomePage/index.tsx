@@ -8,7 +8,7 @@ import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityI
 import { UserContext } from '../../Contexts/UserContext'
 import { RelayPoolContext } from '../../Contexts/RelayPoolContext'
 import { Kind } from 'nostr-tools'
-import { getMentionNotes, getNotificationsCount } from '../../Functions/DatabaseFunctions/Notes'
+import { getMentionNotes, getNotificationsIds } from '../../Functions/DatabaseFunctions/Notes'
 import { AppContext } from '../../Contexts/AppContext'
 import { StyleSheet } from 'react-native'
 import RBSheet from 'react-native-raw-bottom-sheet'
@@ -26,7 +26,7 @@ export const HomePage: React.FC = () => {
   const theme = useTheme()
   const { t } = useTranslation('common')
   const { language, setPushedTab } = React.useContext(AppContext)
-  const { privateKey, publicKey } = React.useContext(UserContext)
+  const { privateKey, publicKey, mutedEvents } = React.useContext(UserContext)
   const { database, notificationSeenAt, clipboardNip21, setClipboardNip21, refreshBottomBarAt } =
     useContext(AppContext)
   const { relayPool, lastEventId } = useContext(RelayPoolContext)
@@ -43,7 +43,13 @@ export const HomePage: React.FC = () => {
 
   useEffect(() => {
     if (publicKey && database && relayPool) {
-      getNotificationsCount(database, publicKey, notificationSeenAt).then(setNewNotifications)
+      getNotificationsIds(database, publicKey, notificationSeenAt).then((results) => {
+        const unmutedThreads = results.filter((id) => {
+          if (!id ?? id === '') return false
+          return !mutedEvents.includes(id)
+        })
+        setNewNotifications(unmutedThreads.length)
+      })
       getUserGroupMessagesCount(database, publicKey).then(setNewGroupMessages)
       getDirectMessagesCount(database, publicKey).then(setNewdirectMessages)
       subscribe()
