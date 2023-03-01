@@ -3,12 +3,8 @@ import { signEvent, validateEvent, Event } from '../Events'
 import RelayPoolModule from '../../Native/WebsocketModule'
 import { QuickSQLiteConnection } from 'react-native-quick-sqlite'
 import { median, randomInt } from '../../../Functions/NativeFunctions'
-import {
-  activateResilientRelays,
-  createResilientRelay,
-  desactivateResilientRelays,
-} from '../../../Functions/DatabaseFunctions/Relays'
 import { getNoteRelaysPresence } from '../../../Functions/DatabaseFunctions/NotesRelays'
+import DatabaseModule from '../../Native/DatabaseModule'
 
 export interface RelayFilters {
   ids?: string[]
@@ -119,7 +115,7 @@ class RelayPool {
   public readonly resilientMode: (db: QuickSQLiteConnection, publicKey: string) => void = async (
     db,
   ) => {
-    await desactivateResilientRelays(db)
+    await DatabaseModule.desactivateResilientRelays()
     // Get relays with contacts' pubkeys with at least one event found, randomly sorted
     const relaysPresence: Record<string, string[]> = await getNoteRelaysPresence(db)
     // Median of users per relay
@@ -195,8 +191,8 @@ class RelayPool {
     }
 
     // Stores in DB
-    resilientUrls.forEach(async (relayUrl) => await createResilientRelay(db, relayUrl))
-    activateResilientRelays(db, resilientUrls)
+    resilientUrls.forEach((url) => DatabaseModule.createResilientRelay(url))
+    resilientUrls.forEach((url) => DatabaseModule.activateResilientRelay(url))
   }
 
   public readonly add: (relayUrl: string, callback?: () => void) => void = async (

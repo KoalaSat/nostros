@@ -8,10 +8,11 @@ import { dropTables } from '../Functions/DatabaseFunctions'
 import { navigate } from '../lib/Navigation'
 import { nsecEncode } from 'nostr-tools/nip19'
 import { getNpub } from '../lib/nostr/Nip19'
-import { addGroup, getGroups } from '../Functions/DatabaseFunctions/Groups'
+import { getGroups } from '../Functions/DatabaseFunctions/Groups'
 import { getList } from '../Functions/DatabaseFunctions/Lists'
 import { getETags } from '../Functions/RelayFunctions/Events'
 import { decrypt } from '../lib/nostr/Nip04'
+import DatabaseModule from '../lib/Native/DatabaseModule'
 
 export interface UserContextProps {
   userState: 'loading' | 'access' | 'ready'
@@ -168,11 +169,11 @@ export const UserContextProvider = ({ children }: UserContextProviderProps): JSX
     if (userState === 'ready' && publicKey && relayPoolReady && database) {
       getGroups(database).then((results) => {
         if (results.length === 0) {
-          addGroup(
-            database,
+          DatabaseModule.addGroup(
             '8d37308d97356600f67a28039d598a52b8c4fa1b73ef6f2e7b7d40197c3afa56',
             'Nostros',
             '645681b9d067b1a362c4bee8ddff987d2466d49905c26cb8fec5e6fb73af5c84',
+            () => {},
           )
         }
       })

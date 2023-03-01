@@ -19,13 +19,13 @@ import java.io.IOException;
 
 public class Websocket {
     private WebSocket webSocket;
-    private DatabaseModule database;
+    private Database database;
     private String url;
     private String pubKey;
     private ReactApplicationContext context;
 
-    public Websocket(String serverUrl, DatabaseModule databaseModule, ReactApplicationContext reactContext) {
-        database = databaseModule;
+    public Websocket(String serverUrl, Database databaseEntity, ReactApplicationContext reactContext) {
+        database = databaseEntity;
         url = serverUrl;
         context = reactContext;
     }

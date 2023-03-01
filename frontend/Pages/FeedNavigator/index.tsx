@@ -18,14 +18,13 @@ import ConfigPage from '../ConfigPage'
 import { RelayPoolContext } from '../../Contexts/RelayPoolContext'
 import { AppContext } from '../../Contexts/AppContext'
 import RelayCard from '../../Components/RelayCard'
-import { updateAllDirectMessagesRead } from '../../Functions/DatabaseFunctions/DirectMessages'
 import { getUnixTime } from 'date-fns'
 import ContactsPage from '../ContactsPage'
 import GroupPage from '../GroupPage'
 import GroupHeaderIcon from '../../Components/GroupHeaderIcon'
 import NoteActions from '../../Components/NoteActions'
-import { updateAllGroupMessagesRead } from '../../Functions/DatabaseFunctions/Groups'
 import QrReaderPage from '../QrReaderPage'
+import DatabaseModule from '../../lib/Native/DatabaseModule'
 
 export const HomeNavigator: React.FC = () => {
   const theme = useTheme()
@@ -71,12 +70,12 @@ export const HomeNavigator: React.FC = () => {
   }
 
   const onMesssagesPressCheckAll: () => void = () => {
-    if (database) updateAllDirectMessagesRead(database)
+    if (database) DatabaseModule.updateAllDirectMessagesRead()
     setRefreshBottomBarAt(getUnixTime(new Date()))
   }
 
   const onGroupsPressCheckAll: () => void = () => {
-    if (database) updateAllGroupMessagesRead(database)
+    if (database) DatabaseModule.updateAllGroupMessagesRead()
     setRefreshBottomBarAt(getUnixTime(new Date()))
   }
 

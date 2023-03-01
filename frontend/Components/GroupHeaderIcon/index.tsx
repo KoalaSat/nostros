@@ -11,7 +11,7 @@ import {
   TouchableRipple,
   useTheme,
 } from 'react-native-paper'
-import { deleteGroup, getGroup, Group } from '../../Functions/DatabaseFunctions/Groups'
+import { getGroup, Group } from '../../Functions/DatabaseFunctions/Groups'
 import { AppContext } from '../../Contexts/AppContext'
 import { validImageUrl } from '../../Functions/NativeFunctions'
 import FastImage from 'react-native-fast-image'
@@ -27,6 +27,7 @@ import { goBack } from '../../lib/Navigation'
 import { getUser, User } from '../../Functions/DatabaseFunctions/Users'
 import ProfileData from '../ProfileData'
 import GroupShare from '../GroupShare'
+import DatabaseModule from '../../lib/Native/DatabaseModule'
 
 interface GroupHeaderIconProps {
   groupId: string
@@ -71,7 +72,7 @@ export const GroupHeaderIcon: React.FC<GroupHeaderIconProps> = ({ groupId }) => 
 
   const onDeleteGroup: () => void = () => {
     if (database && group?.id) {
-      deleteGroup(database, group?.id)
+      DatabaseModule.deleteGroup(group?.id)
       bottomSheetActionsGroupRef.current?.close()
       goBack()
     }

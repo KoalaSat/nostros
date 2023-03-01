@@ -1,4 +1,4 @@
-import { QueryResult, QuickSQLiteConnection } from 'react-native-quick-sqlite'
+import { QuickSQLiteConnection } from 'react-native-quick-sqlite'
 import { getItems } from '..'
 import { Event, evetDatabaseToEntity } from '../../../lib/nostr/Events'
 
@@ -27,21 +27,6 @@ export const getRawUserConversation: (
   const notes: Event[] = items.map((object) => evetDatabaseToEntity(object))
 
   return notes
-}
-
-export const updateConversationRead: (
-  conversationId: string,
-  db: QuickSQLiteConnection,
-) => Promise<QueryResult | null> = async (conversationId, db) => {
-  const userQuery = `UPDATE nostros_direct_messages SET read = ? WHERE conversation_id = ?`
-  return db.execute(userQuery, [1, conversationId])
-}
-
-export const updateAllDirectMessagesRead: (
-  db: QuickSQLiteConnection,
-) => Promise<QueryResult | null> = async (db) => {
-  const userQuery = `UPDATE nostros_direct_messages SET read = ?`
-  return db.execute(userQuery, [1])
 }
 
 export const getDirectMessagesCount: (

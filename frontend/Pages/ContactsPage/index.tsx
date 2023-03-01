@@ -5,13 +5,7 @@ import { AppContext } from '../../Contexts/AppContext'
 import { Kind } from 'nostr-tools'
 import { useTranslation } from 'react-i18next'
 import { FlashList, ListRenderItem } from '@shopify/flash-list'
-import {
-  getBlocked,
-  getFollowersAndFollowing,
-  updateUserBlock,
-  updateUserContact,
-  User,
-} from '../../Functions/DatabaseFunctions/Users'
+import { getBlocked, getFollowersAndFollowing, User } from '../../Functions/DatabaseFunctions/Users'
 import { RelayPoolContext } from '../../Contexts/RelayPoolContext'
 import { populatePets } from '../../Functions/RelayFunctions/Users'
 import { getNip19Key, getNpub } from '../../lib/nostr/Nip19'
@@ -33,6 +27,7 @@ import ProfileData from '../../Components/ProfileData'
 import { handleInfinityScroll } from '../../Functions/NativeFunctions'
 import { queryProfile } from 'nostr-tools/nip05'
 import { navigate } from '../../lib/Navigation'
+import DatabaseModule from '../../lib/Native/DatabaseModule'
 
 export const ContactsPage: React.FC = () => {
   const { t } = useTranslation('common')
@@ -136,17 +131,12 @@ export const ContactsPage: React.FC = () => {
       }
 
       if (hexKey) {
-        updateUserContact(hexKey, database, true)
-          .then(() => {
-            populatePets(relayPool, database, publicKey)
-            loadUsers()
-            setIsAddingContact(false)
-            setShowNotification('contactAdded')
-          })
-          .catch(() => {
-            setIsAddingContact(false)
-            setShowNotification('addContactError')
-          })
+        DatabaseModule.updateUserContact(hexKey, true, () => {
+          populatePets(relayPool, database, publicKey)
+          loadUsers()
+          setIsAddingContact(false)
+          setShowNotification('contactAdded')
+        })
       } else {
         setIsAddingContact(false)
         setShowNotification('addContactError')
@@ -162,7 +152,7 @@ export const ContactsPage: React.FC = () => {
 
   const removeContact: (user: User) => void = (user) => {
     if (relayPool && database && publicKey) {
-      updateUserContact(user.id, database, false).then(() => {
+      DatabaseModule.updateUserContact(user.id, false, () => {
         populatePets(relayPool, database, publicKey)
         setShowNotification('contactRemoved')
         loadUsers()
@@ -172,9 +162,9 @@ export const ContactsPage: React.FC = () => {
 
   const addContact: (user: User) => void = (user) => {
     if (relayPool && database && publicKey) {
-      updateUserContact(user.id, database, true).then(() => {
+      DatabaseModule.updateUserContact(user.id, true, () => {
         populatePets(relayPool, database, publicKey)
-        setShowNotification('contactAdded')
+        setShowNotification('contactRemoved')
         loadUsers()
       })
     }
@@ -182,7 +172,7 @@ export const ContactsPage: React.FC = () => {
 
   const unblock: (user: User) => void = (user) => {
     if (relayPool && database && publicKey) {
-      updateUserBlock(user.id, database, false).then(() => {
+      DatabaseModule.updateUserBlock(user.id, false, () => {
         setShowNotification('contactUnblocked')
         loadUsers()
       })
