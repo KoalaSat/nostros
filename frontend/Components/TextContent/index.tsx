@@ -1,7 +1,7 @@
 import React, { useContext, useEffect, useState } from 'react'
 import ParsedText from 'react-native-parsed-text'
 import { Event } from '../../lib/nostr/Events'
-import { Linking, StyleSheet, View } from 'react-native'
+import { Clipboard, Linking, StyleSheet, View } from 'react-native'
 import { AppContext } from '../../Contexts/AppContext'
 import { getUser, User } from '../../Functions/DatabaseFunctions/Users'
 import { formatPubKey } from '../../Functions/RelayFunctions/Users'
@@ -21,6 +21,7 @@ interface TextContentProps {
   showPreview?: boolean
   onPressUser?: (user: User) => void
   numberOfLines?: number
+  copyText?: boolean
 }
 
 export const TextContent: React.FC<TextContentProps> = ({
@@ -29,6 +30,7 @@ export const TextContent: React.FC<TextContentProps> = ({
   showPreview = true,
   onPressUser = () => {},
   numberOfLines,
+  copyText = false,
 }) => {
   const theme = useTheme()
   const { t } = useTranslation('common')
@@ -153,6 +155,10 @@ export const TextContent: React.FC<TextContentProps> = ({
     return matchingString
   }
 
+  const onLongPress: () => void = () => {
+    if (copyText) Clipboard.setString(text)
+  }
+
   const preview = React.useMemo(() => {
     if (!showPreview) return <></>
 
@@ -265,6 +271,7 @@ export const TextContent: React.FC<TextContentProps> = ({
         ]}
         childrenProps={{ allowFontScaling: false }}
         numberOfLines={numberOfLines}
+        onLongPress={onLongPress}
       >
         {text}
       </ParsedText>

@@ -1,5 +1,6 @@
 package com.nostros.modules;
 
+import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 
 import com.facebook.react.bridge.Callback;
@@ -7,6 +8,7 @@ import com.facebook.react.bridge.ReactApplicationContext;
 import com.facebook.react.bridge.ReactContext;
 import com.facebook.react.bridge.ReactContextBaseJavaModule;
 import com.facebook.react.bridge.ReactMethod;
+import com.nostros.classes.Database;
 import com.nostros.classes.Relay;
 
 import java.io.IOException;
@@ -16,11 +18,11 @@ import java.util.ListIterator;
 public class RelayPoolModule extends ReactContextBaseJavaModule {
     protected List<Relay> relays;
     private String userPubKey;
-    private DatabaseModule database;
+    private Database database;
     private ReactApplicationContext context;
 
-    public RelayPoolModule(ReactApplicationContext reactContext) {
-        database = new DatabaseModule(reactContext.getFilesDir().getAbsolutePath());
+    public RelayPoolModule(ReactApplicationContext reactContext, Database databaseEntity) {
+        database = databaseEntity;
         context = reactContext;
     }
 
@@ -72,7 +74,7 @@ public class RelayPoolModule extends ReactContextBaseJavaModule {
                 relay.connect(userPubKey);
                 relay.setActive(active);
                 relay.setGlobalFeed(globalFeed);
-                relay.save(database.database);
+                relay.save(database);
                 this.relays.set(index, relay);
                 relayExists = true;
             }

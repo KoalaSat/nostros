@@ -46,6 +46,7 @@ export const NotificationsFeed: React.FC = () => {
           'notification-feed',
           'notification-replies',
           'notification-reactions',
+          'notification-reposts',
         ])
         updateLastSeen()
       }
@@ -119,6 +120,9 @@ export const NotificationsFeed: React.FC = () => {
         if (notes.length > 0) {
           const notedIds = notes.map((note) => note.id ?? '')
           const authors = notes.map((note) => note.pubkey ?? '')
+          const repostIds = notes
+            .filter((note) => note.repost_id)
+            .map((note) => note.repost_id ?? '')
 
           relayPool?.subscribe('notification-reactions', [
             {
@@ -130,6 +134,14 @@ export const NotificationsFeed: React.FC = () => {
               '#e': notedIds,
             },
           ])
+          if (repostIds.length > 0) {
+            relayPool?.subscribe('notification-reposts', [
+              {
+                kinds: [Kind.Text],
+                ids: repostIds,
+              },
+            ])
+          }
         }
       })
     }

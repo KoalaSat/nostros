@@ -27,13 +27,6 @@ const databaseToGroupMessage: (object: any) => GroupMessage = (object = {}) => {
   return object as GroupMessage
 }
 
-export const updateAllGroupMessagesRead: (
-  db: QuickSQLiteConnection,
-) => Promise<QueryResult | null> = async (db) => {
-  const userQuery = `UPDATE nostros_group_messages SET read = ?`
-  return db.execute(userQuery, [1])
-}
-
 export const getGroups: (db: QuickSQLiteConnection) => Promise<Group[]> = async (db) => {
   const groupsQuery = `
     SELECT
@@ -128,37 +121,6 @@ export const deleteGroupMessages: (
   `
 
   return db.execute(deleteQuery, [pubkey])
-}
-
-export const deleteGroup: (
-  db: QuickSQLiteConnection,
-  groupId: string,
-) => Promise<QueryResult> = async (db, groupId) => {
-  const userQuery = `UPDATE nostros_group_meta SET deleted = 1 WHERE id = ?;`
-  return db.execute(userQuery, [groupId])
-}
-
-export const updateAllDirectMessagesRead: (
-  db: QuickSQLiteConnection,
-) => Promise<QueryResult | null> = async (db) => {
-  const userQuery = `UPDATE nostros_group_messages SET read = ?`
-  return db.execute(userQuery, [1])
-}
-
-export const activateGroup: (
-  db: QuickSQLiteConnection,
-  groupId: string,
-) => Promise<QueryResult> = async (db, groupId) => {
-  const userQuery = `UPDATE nostros_group_meta SET deleted = 0 WHERE id = ?;`
-  return db.execute(userQuery, [groupId])
-}
-
-export const updateGroupRead: (
-  db: QuickSQLiteConnection,
-  groupId: string,
-) => Promise<QueryResult | null> = async (db, groupId) => {
-  const userQuery = `UPDATE nostros_group_messages SET read = ? WHERE group_id = ?`
-  return db.execute(userQuery, [1, groupId])
 }
 
 export const getUserGroupMessagesCount: (

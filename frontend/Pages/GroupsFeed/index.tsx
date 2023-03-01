@@ -24,7 +24,6 @@ import { getUnixTime } from 'date-fns'
 import { useFocusEffect } from '@react-navigation/native'
 import { AppContext } from '../../Contexts/AppContext'
 import {
-  activateGroup,
   addGroup,
   getGroupMessagesCount,
   getGroupMessagesMentionsCount,
@@ -38,6 +37,7 @@ import { FlashList, ListRenderItem } from '@shopify/flash-list'
 import { RelayFilters } from '../../lib/nostr/RelayPool/intex'
 import { validNip21 } from '../../Functions/NativeFunctions'
 import { getNip19Key } from '../../lib/nostr/Nip19'
+import DatabaseModule from '../../lib/Native/DatabaseModule'
 
 export const GroupsFeed: React.FC = () => {
   const { t } = useTranslation('common')
@@ -151,11 +151,11 @@ export const GroupsFeed: React.FC = () => {
       const key = getNip19Key(searchGroup)
       if (key) {
         addGroup(database, searchGroup, '', '').then(() => loadGroups())
-        activateGroup(database, searchGroup)
+        DatabaseModule.activateGroup(searchGroup)
       }
     } else {
       addGroup(database, searchGroup, '', '').then(() => loadGroups())
-      activateGroup(database, searchGroup)
+      DatabaseModule.activateGroup(searchGroup)
     }
     setSearchGroup(undefined)
     bottomSheetSearchRef.current?.close()

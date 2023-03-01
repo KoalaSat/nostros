@@ -31,16 +31,13 @@ import { Kind } from 'nostr-tools'
 import { formatDate, handleInfinityScroll } from '../../Functions/NativeFunctions'
 import NostrosAvatar from '../../Components/NostrosAvatar'
 import UploadImage from '../../Components/UploadImage'
-import {
-  getGroupMessages,
-  GroupMessage,
-  updateGroupRead,
-} from '../../Functions/DatabaseFunctions/Groups'
+import { getGroupMessages, GroupMessage } from '../../Functions/DatabaseFunctions/Groups'
 import { RelayFilters } from '../../lib/nostr/RelayPool/intex'
 import { getUsers, User } from '../../Functions/DatabaseFunctions/Users'
 import ProfileData from '../../Components/ProfileData'
 import { ScrollView, Swipeable } from 'react-native-gesture-handler'
 import { getETags } from '../../Functions/RelayFunctions/Events'
+import DatabaseModule from '../../lib/Native/DatabaseModule'
 
 interface GroupPageProps {
   route: { params: { groupId: string } }
@@ -82,7 +79,7 @@ export const GroupPage: React.FC<GroupPageProps> = ({ route }) => {
 
   const loadGroupMessages: (subscribe: boolean) => void = (subscribe) => {
     if (database && publicKey && route.params.groupId) {
-      updateGroupRead(database, route.params.groupId)
+      DatabaseModule.updateGroupRead(route.params.groupId)
       getGroupMessages(database, route.params.groupId, {
         order: 'DESC',
         limit: pageSize,
@@ -312,6 +309,7 @@ export const GroupPage: React.FC<GroupPageProps> = ({ route }) => {
               content={message?.content}
               event={message}
               onPressUser={(user) => setDisplayUserDrawer(user.id)}
+              copyText
             />
           ) : (
             <Text>{t('groupPage.replyText')}</Text>

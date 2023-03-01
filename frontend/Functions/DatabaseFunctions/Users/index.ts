@@ -23,39 +23,6 @@ const databaseToEntity: (object: object) => User = (object) => {
   return object as User
 }
 
-export const updateUserContact: (
-  userId: string,
-  db: QuickSQLiteConnection,
-  contact: boolean,
-) => Promise<QueryResult | null> = async (userId, db, contact) => {
-  const userQuery = `UPDATE nostros_users SET contact = ? WHERE id = ?`
-
-  await addUser(userId, db)
-  return db.execute(userQuery, [contact ? 1 : 0, userId])
-}
-
-export const updateUserBlock: (
-  userId: string,
-  db: QuickSQLiteConnection,
-  blocked: boolean,
-) => Promise<QueryResult | null> = async (userId, db, blocked) => {
-  const userQuery = `UPDATE nostros_users SET blocked = ? WHERE id = ?`
-
-  await addUser(userId, db)
-  return db.execute(userQuery, [blocked ? 1 : 0, userId])
-}
-
-export const updateUserMutesGroups: (
-  db: QuickSQLiteConnection,
-  userId: string,
-  muted: boolean,
-) => Promise<QueryResult | null> = async (db, userId, muted) => {
-  const userQuery = `UPDATE nostros_users SET muted_groups = ? WHERE id = ?`
-
-  await addUser(userId, db)
-  return db.execute(userQuery, [muted ? 1 : 0, userId])
-}
-
 export const getUser: (pubkey: string, db: QuickSQLiteConnection) => Promise<User | null> = async (
   pubkey,
   db,

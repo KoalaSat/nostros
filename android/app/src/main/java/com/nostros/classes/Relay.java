@@ -16,7 +16,7 @@ public class Relay {
     public int active;
     public int globalFeed;
 
-    public Relay(String serverUrl, int isActive, int showGlobalFeed, DatabaseModule database, ReactApplicationContext reactContext) throws IOException {
+    public Relay(String serverUrl, int isActive, int showGlobalFeed, Database database, ReactApplicationContext reactContext) throws IOException {
         webSocket = new Websocket(serverUrl, database, reactContext);
         url = serverUrl;
         active = isActive;
@@ -47,12 +47,12 @@ public class Relay {
         webSocket.connect(userPubKey);
     }
 
-    public void save(SQLiteDatabase database) {
+    public void save(Database database) {
         ContentValues values = new ContentValues();
         values.put("url", url);
         values.put("active", active);
         values.put("global_feed", globalFeed);
         values.put("deleted_at", 0);
-        database.replace("nostros_relays", null, values);
+        database.instance.replace("nostros_relays", null, values);
     }
 }

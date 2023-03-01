@@ -13,7 +13,7 @@ interface UploadImageProps {
   setImageUri: (uri: string) => void
   uploadingFile: boolean
   setUploadingFile: (uploading: boolean) => void
-  onError: () => void
+  onError?: () => void
 }
 
 export const UploadImage: React.FC<UploadImageProps> = ({
@@ -22,7 +22,7 @@ export const UploadImage: React.FC<UploadImageProps> = ({
   setImageUri,
   uploadingFile,
   setUploadingFile,
-  onError,
+  onError = () => {},
 }) => {
   const { getImageHostingService } = useContext(AppContext)
   const theme = useTheme()
