@@ -12,6 +12,7 @@ import { getETags } from '../../../Functions/RelayFunctions/Events'
 import { getList } from '../../../Functions/DatabaseFunctions/Lists'
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'
 import { useTranslation } from 'react-i18next'
+import { RelayFilters } from '../../../lib/nostr/RelayPool/intex'
 
 interface BookmarksFeedProps {
   publicKey: string
@@ -50,10 +51,11 @@ export const BookmarksFeed: React.FC<BookmarksFeedProps> = ({
 
   const subscribe: () => Promise<void> = async () => {
     if (database) {
-      const filters = [
+      const filters: RelayFilters[] = [
         {
           kinds: [10001],
           authors: [publicKey],
+          limit: 1,
         },
       ]
       getList(database, 10001, publicKey).then((result) => {
