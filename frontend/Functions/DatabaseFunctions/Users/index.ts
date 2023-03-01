@@ -1,5 +1,5 @@
 import { getItems } from '..'
-import { QuickSQLiteConnection, QueryResult } from 'react-native-quick-sqlite'
+import { QuickSQLiteConnection } from 'react-native-quick-sqlite'
 
 export interface User {
   id: string
@@ -37,16 +37,6 @@ export const getUser: (pubkey: string, db: QuickSQLiteConnection) => Promise<Use
   } else {
     return null
   }
-}
-
-export const addUser: (pubKey: string, db: QuickSQLiteConnection) => Promise<QueryResult> = async (
-  pubKey,
-  db,
-) => {
-  const query = `
-    INSERT OR IGNORE INTO nostros_users (id) VALUES (?)
-  `
-  return db.execute(query, [pubKey])
 }
 
 export const getContactsCount: (db: QuickSQLiteConnection) => Promise<number> = async (db) => {

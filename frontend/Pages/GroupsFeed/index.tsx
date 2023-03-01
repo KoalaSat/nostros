@@ -24,7 +24,6 @@ import { getUnixTime } from 'date-fns'
 import { useFocusEffect } from '@react-navigation/native'
 import { AppContext } from '../../Contexts/AppContext'
 import {
-  addGroup,
   getGroupMessagesCount,
   getGroupMessagesMentionsCount,
   getGroups,
@@ -150,12 +149,16 @@ export const GroupsFeed: React.FC = () => {
     if (validNip21(searchGroup)) {
       const key = getNip19Key(searchGroup)
       if (key) {
-        addGroup(database, searchGroup, '', '').then(() => loadGroups())
-        DatabaseModule.activateGroup(searchGroup)
+        DatabaseModule.addGroup(searchGroup, '', '', () => {
+          DatabaseModule.activateGroup(searchGroup)
+          loadGroups()
+        })
       }
     } else {
-      addGroup(database, searchGroup, '', '').then(() => loadGroups())
-      DatabaseModule.activateGroup(searchGroup)
+      DatabaseModule.addGroup(searchGroup, '', '', () => {
+        DatabaseModule.activateGroup(searchGroup)
+        loadGroups()
+      })
     }
     setSearchGroup(undefined)
     bottomSheetSearchRef.current?.close()

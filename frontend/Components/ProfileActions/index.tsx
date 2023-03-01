@@ -5,7 +5,7 @@ import { Button, IconButton, List, Snackbar, Text, useTheme } from 'react-native
 import { AppContext } from '../../Contexts/AppContext'
 import { RelayPoolContext } from '../../Contexts/RelayPoolContext'
 import { UserContext } from '../../Contexts/UserContext'
-import { addUser, getUser, User } from '../../Functions/DatabaseFunctions/Users'
+import { getUser, User } from '../../Functions/DatabaseFunctions/Users'
 import { populatePets, username } from '../../Functions/RelayFunctions/Users'
 import LnPayment from '../LnPayment'
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'
@@ -101,7 +101,7 @@ export const ProfileActions: React.FC<ProfileActionsProps> = ({
 
   const onChangeBlockUser: () => void = () => {
     if (database && publicKey) {
-      addUser(user.id, database).then(() => {
+      DatabaseModule.addUser(user.id, () => {
         DatabaseModule.updateUserBlock(user.id, !isBlocked, () => {
           loadUser()
           setShowNotificationRelay(isBlocked ? 'userUnblocked' : 'userBlocked')

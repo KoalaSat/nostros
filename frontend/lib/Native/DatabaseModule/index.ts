@@ -10,7 +10,12 @@ interface DatabaseModuleInterface {
   updateAllGroupMessagesRead: () => void
   updateGroupRead: (groupId: string) => void
   deleteGroup: (groupId: string) => void
+  addGroup: (groupId: string, name: string, pubkey: string, callback: () => void) => void
   activateGroup: (groupId: string) => void
+  desactivateResilientRelays: () => void
+  activateResilientRelay: (url: string) => void
+  createResilientRelay: (url: string) => void
+  addUser: (id: string, callback: () => void) => void
 }
 
 export default DatabaseModule as DatabaseModuleInterface

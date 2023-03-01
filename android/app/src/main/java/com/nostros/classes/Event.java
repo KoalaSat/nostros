@@ -75,8 +75,6 @@ public class Event {
                     hideGroupMessage(database);
                 } else if (kind.equals("44")) {
                     muteUser(database);
-                } else if (kind.equals("1002")) {
-                    saveRelays(database);
                 } else if (kind.equals("9735")) {
                     saveZap(database);
                 } else if (kind.equals("10001") || kind.equals("30001")) {
@@ -590,39 +588,6 @@ public class Event {
                     };
                     database.update("nostros_users", values, whereClause, whereArgs);
                 }
-            }
-        }
-    }
-
-    protected void saveRelays(SQLiteDatabase database) throws JSONException {
-        for (int i = 0; i < tags.length(); ++i) {
-            JSONArray tag = tags.getJSONArray(i);
-            String url = tag.getString(1);
-            String mode = "";
-            if (tag.length() > 1) {
-                mode = tag.getString(2);
-            }
-
-            String query = "SELECT updated_at FROM nostros_relays WHERE url = ?";
-            Cursor cursor = database.rawQuery(query, new String[] {url});
-
-            ContentValues values = new ContentValues();
-            values.put("url", url);
-            values.put("mode", mode);
-
-            if (cursor.getCount() == 0) {
-                values.put("active", 0);
-                values.put("global_feed", 0);
-                values.put("manual", 1);
-                values.put("deleted_at", 0);
-                database.insert("nostros_relays", null, values);
-            } else if (cursor.moveToFirst() && created_at > cursor.getInt(0)) {
-                values.put("updated_at", created_at);
-                String whereClause = "url = ?";
-                String[] whereArgs = new String[] {
-                        url
-                };
-                database.update("nostros_relays", values, whereClause, whereArgs);
             }
         }
     }

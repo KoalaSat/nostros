@@ -98,6 +98,17 @@ public class DatabaseModule extends ReactContextBaseJavaModule {
     }
 
     @ReactMethod
+    public void addGroup(String groupId, String groupName, String pubkey, Callback callback) {
+        ContentValues values = new ContentValues();
+        values.put("id", groupId);
+        values.put("name", groupName);
+        values.put("created_at", 0);
+        values.put("pubkey", pubkey);
+        database.instance.insert("nostros_group_meta", null, values);
+        callback.invoke();
+    }
+
+    @ReactMethod
     public void updateGroupRead(String groupId) {
         String whereClause = "id = ?";
         String[] whereArgs = new String[] { groupId };
@@ -122,5 +133,40 @@ public class DatabaseModule extends ReactContextBaseJavaModule {
         ContentValues values = new ContentValues();
         values.put("deleted", 0);
         database.instance.update("nostros_group_meta", values, whereClause, whereArgs);
+    }
+
+    @ReactMethod
+    public void desactivateResilientRelays() {
+        String whereClause = "resilient = ?";
+        String[] whereArgs = new String[] { "1" };
+        ContentValues values = new ContentValues();
+        values.put("resilient", 0);
+        database.instance.update("nostros_relays", values, whereClause, whereArgs);
+    }
+
+    @ReactMethod
+    public void activateResilientRelay(String relayUrl) {
+        String whereClause = "url = ?";
+        String[] whereArgs = new String[] { relayUrl };
+        ContentValues values = new ContentValues();
+        values.put("resilient", 1);
+        database.instance.update("nostros_relays", values, whereClause, whereArgs);
+    }
+
+    @ReactMethod
+    public void createResilientRelay(String relayUrl) {
+        ContentValues values = new ContentValues();
+        values.put("url", relayUrl);
+        values.put("resilient", 1);
+        values.put("active", 1);
+        database.instance.insert("nostros_relays", null, values);
+    }
+
+    @ReactMethod
+    public void addUser(String userId, Callback callback) {
+        ContentValues values = new ContentValues();
+        values.put("id", userId);
+        database.instance.insert("nostros_users", null, values);
+        callback.invoke();
     }
 }
