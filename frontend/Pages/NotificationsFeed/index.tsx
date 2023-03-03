@@ -22,12 +22,13 @@ import { useFocusEffect } from '@react-navigation/native'
 import { getUnixTime } from 'date-fns'
 import { Config } from '../../Functions/DatabaseFunctions/Config'
 import { FlashList, ListRenderItem } from '@shopify/flash-list'
+import { getETags } from '../../Functions/RelayFunctions/Events'
 
 export const NotificationsFeed: React.FC = () => {
   const theme = useTheme()
   const { t } = useTranslation('common')
   const { database, setNotificationSeenAt, pushedTab } = useContext(AppContext)
-  const { publicKey } = useContext(UserContext)
+  const { publicKey, reloadLists, mutedEvents } = useContext(UserContext)
   const initialPageSize = 10
   const { lastEventId, relayPool } = useContext(RelayPoolContext)
   const [pageSize, setPageSize] = useState<number>(initialPageSize)
@@ -45,6 +46,7 @@ export const NotificationsFeed: React.FC = () => {
           'notification-feed',
           'notification-replies',
           'notification-reactions',
+          'notification-reposts',
         ])
         updateLastSeen()
       }
@@ -53,8 +55,13 @@ export const NotificationsFeed: React.FC = () => {
 
   useEffect(() => {
     loadNotes()
+    reloadLists()
     setRefreshing(false)
   }, [lastEventId])
+
+  useEffect(() => {
+    if (mutedEvents.length > 0) loadNotes()
+  }, [mutedEvents])
 
   useEffect(() => {
     if (pageSize > initialPageSize) {
@@ -93,17 +100,29 @@ export const NotificationsFeed: React.FC = () => {
         '#e': [publicKey],
         limit: pageSize,
       },
+      {
+        kinds: [30001],
+        authors: [publicKey],
+      },
     ])
   }
 
   const loadNotes: () => void = () => {
     if (database && publicKey) {
       getMentionNotes(database, publicKey, pageSize).then(async (notes) => {
-        setNotes(notes)
+        const unmutedThreads = notes.filter((note) => {
+          if (!note?.id) return false
+          const eTags = getETags(note)
+          return !eTags.some((tag) => mutedEvents.includes(tag[1]))
+        })
+        setNotes(unmutedThreads)
         setRefreshing(false)
         if (notes.length > 0) {
           const notedIds = notes.map((note) => note.id ?? '')
           const authors = notes.map((note) => note.pubkey ?? '')
+          const repostIds = notes
+            .filter((note) => note.repost_id)
+            .map((note) => note.repost_id ?? '')
 
           relayPool?.subscribe('notification-reactions', [
             {
@@ -115,6 +134,14 @@ export const NotificationsFeed: React.FC = () => {
               '#e': notedIds,
             },
           ])
+          if (repostIds.length > 0) {
+            relayPool?.subscribe('notification-reposts', [
+              {
+                kinds: [Kind.Text],
+                ids: repostIds,
+              },
+            ])
+          }
         }
       })
     }

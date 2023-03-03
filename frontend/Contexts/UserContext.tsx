@@ -8,10 +8,11 @@ import { dropTables } from '../Functions/DatabaseFunctions'
 import { navigate } from '../lib/Navigation'
 import { nsecEncode } from 'nostr-tools/nip19'
 import { getNpub } from '../lib/nostr/Nip19'
-import { addGroup, getGroups } from '../Functions/DatabaseFunctions/Groups'
+import { getGroups } from '../Functions/DatabaseFunctions/Groups'
 import { getList } from '../Functions/DatabaseFunctions/Lists'
 import { getETags } from '../Functions/RelayFunctions/Events'
 import { decrypt } from '../lib/nostr/Nip04'
+import DatabaseModule from '../lib/Native/DatabaseModule'
 
 export interface UserContextProps {
   userState: 'loading' | 'access' | 'ready'
@@ -26,6 +27,7 @@ export interface UserContextProps {
   reloadLists: () => void
   publicBookmarks: string[]
   privateBookmarks: string[]
+  mutedEvents: string[]
   logout: () => void
   name?: string
   setName: (value: string) => void
@@ -62,6 +64,7 @@ export const initialUserContext: UserContextProps = {
   setNip05: () => {},
   publicBookmarks: [],
   privateBookmarks: [],
+  mutedEvents: [],
 }
 
 export const UserContextProvider = ({ children }: UserContextProviderProps): JSX.Element => {
@@ -81,6 +84,7 @@ export const UserContextProvider = ({ children }: UserContextProviderProps): JSX
   const [validNip05, setValidNip05] = useState<boolean>()
   const [publicBookmarks, setPublicBookmarks] = useState<string[]>([])
   const [privateBookmarks, setPrivateBookmarks] = useState<string[]>([])
+  const [mutedEvents, setMutedEvents] = useState<string[]>([])
 
   const reloadUser: () => void = () => {
     if (database && publicKey) {
@@ -107,6 +111,12 @@ export const UserContextProvider = ({ children }: UserContextProviderProps): JSX
           const privateJson = decrypt(privateKey, publicKey, result.content ?? '')
           const privateList: string[][] = JSON.parse(privateJson)
           setPrivateBookmarks(privateList.map((tag) => tag[1]))
+        }
+      })
+      getList(database, 30001, publicKey, 'mute').then((result) => {
+        if (result) {
+          const eTags = getETags(result)
+          setMutedEvents(eTags.map((tag) => tag[1]))
         }
       })
     }
@@ -159,11 +169,11 @@ export const UserContextProvider = ({ children }: UserContextProviderProps): JSX
     if (userState === 'ready' && publicKey && relayPoolReady && database) {
       getGroups(database).then((results) => {
         if (results.length === 0) {
-          addGroup(
-            database,
+          DatabaseModule.addGroup(
             '8d37308d97356600f67a28039d598a52b8c4fa1b73ef6f2e7b7d40197c3afa56',
             'Nostros',
             '645681b9d067b1a362c4bee8ddff987d2466d49905c26cb8fec5e6fb73af5c84',
+            () => {},
           )
         }
       })
@@ -204,6 +214,7 @@ export const UserContextProvider = ({ children }: UserContextProviderProps): JSX
         reloadLists,
         publicBookmarks,
         privateBookmarks,
+        mutedEvents,
         logout,
         name,
         setName,

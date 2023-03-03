@@ -12,11 +12,7 @@ import {
 import { AppContext } from '../../Contexts/AppContext'
 import { RelayPoolContext } from '../../Contexts/RelayPoolContext'
 import { Event } from '../../lib/nostr/Events'
-import {
-  DirectMessage,
-  getDirectMessages,
-  updateConversationRead,
-} from '../../Functions/DatabaseFunctions/DirectMessages'
+import { DirectMessage, getDirectMessages } from '../../Functions/DatabaseFunctions/DirectMessages'
 import { getUser, User } from '../../Functions/DatabaseFunctions/Users'
 import { useTranslation } from 'react-i18next'
 import { username, usernamePubKey, usersToTags } from '../../Functions/RelayFunctions/Users'
@@ -41,6 +37,7 @@ import NostrosAvatar from '../../Components/NostrosAvatar'
 import UploadImage from '../../Components/UploadImage'
 import { Swipeable } from 'react-native-gesture-handler'
 import { getETags } from '../../Functions/RelayFunctions/Events'
+import DatabaseModule from '../../lib/Native/DatabaseModule'
 
 interface ConversationPageProps {
   route: { params: { pubKey: string; conversationId: string } }
@@ -87,7 +84,7 @@ export const ConversationPage: React.FC<ConversationPageProps> = ({ route }) => 
   const loadDirectMessages: (subscribe: boolean) => void = (subscribe) => {
     if (database && publicKey && privateKey) {
       const conversationId = route.params?.conversationId
-      updateConversationRead(conversationId, database)
+      DatabaseModule.updateConversationRead(conversationId)
       setRefreshBottomBarAt(getUnixTime(new Date()))
       getUser(otherPubKey, database).then((user) => {
         if (user) setOtherUser(user)
@@ -254,6 +251,7 @@ export const ConversationPage: React.FC<ConversationPageProps> = ({ route }) => 
             content={message?.content}
             event={message}
             onPressUser={(user) => setDisplayUserDrawer(user.id)}
+            copyText
           />
         ) : (
           <Text>{t('groupPage.replyText')}</Text>

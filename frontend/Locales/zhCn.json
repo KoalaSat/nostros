@@ -120,17 +120,19 @@
       "disable": "停用"
     },
     "noteActions": {
-      "publicBookmark": "Add to public bookmarks",
-      "privateBookmark": "Add to private bookmarks",
+      "publicBookmark": "添加到公开的收藏",
+      "privateBookmark": "添加到私有的收藏",
       "copy": "复制",
       "share": "分享",
       "view": "查看",
       "bookmarked": "已收藏",
-      "bookmark": "收藏"
+      "bookmark": "收藏",
+      "mutedThread": "Thread muted",
+      "muteThread": "Mute thread"
     },
     "noteCard": {
       "notifications": {
-        "zapServerError": "尝试请求收据时服务器出现错误。"
+        "zapServerError": "尝试请求账单时服务器出现错误。"
       },
       "answering": "回复 {{pubkey}}",
       "reposting": "已转发 {{pubkey}}",
@@ -241,12 +243,12 @@
     },
     "homeFeed": {
       "bookmarkFeed": {
-        "private": "Private",
-        "public": "Public",
-        "emptyTitlePrivate": "Private bookmarks",
-        "emptyDescriptionPrivate": "Only you will see this list",
-        "emptyTitlePublic": "Public bookmarks",
-        "emptyDescriptionPublic": "Everyone will see this list"
+        "private": "私有",
+        "public": "公开",
+        "emptyTitlePrivate": "私有收藏",
+        "emptyDescriptionPrivate": "只有您能看见这个列表",
+        "emptyTitlePublic": "公开收藏",
+        "emptyDescriptionPublic": "任何人都可以看见这个列表"
       },
       "emptyTitle": "您还没有关注任何人",
       "emptyDescription": "关注其他人以查看内容",
@@ -352,7 +354,7 @@
     },
     "profilePage": {
       "bookmarkFeed": {
-        "emptyTitle": "No bookmarks found"
+        "emptyTitle": "您还没有任何收藏"
       },
       "notifications": {
         "contactAdded": "已关注用户",

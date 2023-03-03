@@ -5,14 +5,7 @@ import { Button, IconButton, List, Snackbar, Text, useTheme } from 'react-native
 import { AppContext } from '../../Contexts/AppContext'
 import { RelayPoolContext } from '../../Contexts/RelayPoolContext'
 import { UserContext } from '../../Contexts/UserContext'
-import {
-  addUser,
-  getUser,
-  updateUserBlock,
-  updateUserContact,
-  updateUserMutesGroups,
-  User,
-} from '../../Functions/DatabaseFunctions/Users'
+import { getUser, User } from '../../Functions/DatabaseFunctions/Users'
 import { populatePets, username } from '../../Functions/RelayFunctions/Users'
 import LnPayment from '../LnPayment'
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'
@@ -25,6 +18,7 @@ import ProfileShare from '../ProfileShare'
 import { ScrollView } from 'react-native-gesture-handler'
 import { Kind } from 'nostr-tools'
 import { getUnixTime } from 'date-fns'
+import DatabaseModule from '../../lib/Native/DatabaseModule'
 
 interface ProfileActionsProps {
   user: User
@@ -69,7 +63,7 @@ export const ProfileActions: React.FC<ProfileActionsProps> = ({
         })
         .then(() => {
           if (database) {
-            updateUserMutesGroups(database, user.id, true).then(() => {
+            DatabaseModule.updateUserMutesGroups(user.id, true, () => {
               setIsMuted(true)
               bottomSheetMuteRef.current?.close()
             })
@@ -107,8 +101,8 @@ export const ProfileActions: React.FC<ProfileActionsProps> = ({
 
   const onChangeBlockUser: () => void = () => {
     if (database && publicKey) {
-      addUser(user.id, database).then(() => {
-        updateUserBlock(user.id, database, !isBlocked).then(() => {
+      DatabaseModule.addUser(user.id, () => {
+        DatabaseModule.updateUserBlock(user.id, !isBlocked, () => {
           loadUser()
           setShowNotificationRelay(isBlocked ? 'userUnblocked' : 'userBlocked')
         })
@@ -118,7 +112,7 @@ export const ProfileActions: React.FC<ProfileActionsProps> = ({
 
   const removeContact: () => void = () => {
     if (relayPool && database && publicKey) {
-      updateUserContact(user.id, database, false).then(() => {
+      DatabaseModule.updateUserContact(user.id, false, () => {
         populatePets(relayPool, database, publicKey)
         setIsContact(false)
         setShowNotification('contactRemoved')
@@ -128,7 +122,7 @@ export const ProfileActions: React.FC<ProfileActionsProps> = ({
 
   const addContact: () => void = () => {
     if (relayPool && database && publicKey) {
-      updateUserContact(user.id, database, true).then(() => {
+      DatabaseModule.updateUserContact(user.id, true, () => {
         populatePets(relayPool, database, publicKey)
         setIsContact(true)
         setShowNotification('contactAdded')

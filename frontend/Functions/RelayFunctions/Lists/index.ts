@@ -41,6 +41,29 @@ export const addBookmarkList: (
   }
   relayPool?.sendEvent(event)
 }
+export const addList: (
+  relayPool: RelayPool,
+  database: QuickSQLiteConnection,
+  publicKey: string,
+  eventId: string,
+  tag: string,
+) => void = async (relayPool, database, publicKey, eventId, tag) => {
+  if (!eventId || eventId === '') return
+
+  const result = await getList(database, 30001, publicKey, tag)
+  let tags: string[][] = result?.tags ?? [['d', tag]]
+  const content: string = result?.content ?? ''
+  tags = [...tags, ['e', eventId]]
+
+  const event: Event = {
+    content,
+    created_at: getUnixTime(new Date()),
+    kind: 30001,
+    pubkey: publicKey,
+    tags,
+  }
+  relayPool?.sendEvent(event)
+}
 
 export const removeBookmarkList: (
   relayPool: RelayPool,
@@ -65,6 +88,30 @@ export const removeBookmarkList: (
       content,
       created_at: getUnixTime(new Date()),
       kind: 10001,
+      pubkey: publicKey,
+      tags,
+    }
+    relayPool?.sendEvent(event)
+  }
+}
+
+export const removeList: (
+  relayPool: RelayPool,
+  database: QuickSQLiteConnection,
+  publicKey: string,
+  eventId: string,
+  tag: string,
+) => void = async (relayPool, database, publicKey, eventId, tag) => {
+  if (!eventId || eventId === '') return
+
+  const result = await getList(database, 30001, publicKey, tag)
+  if (result) {
+    const content: string = result?.content ?? ''
+    const tags = result.tags.filter((tag) => tag[1] !== eventId)
+    const event: Event = {
+      content,
+      created_at: getUnixTime(new Date()),
+      kind: 30001,
       pubkey: publicKey,
       tags,
     }

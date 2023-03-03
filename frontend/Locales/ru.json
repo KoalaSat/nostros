@@ -127,7 +127,9 @@
       "share": "Поделиться",
       "view": "View",
       "bookmarked": "Bookmarked",
-      "bookmark": "Bookmark"
+      "bookmark": "Bookmark",
+      "mutedThread": "Thread muted",
+      "muteThread": "Mute thread"
     },
     "noteCard": {
       "notifications": {

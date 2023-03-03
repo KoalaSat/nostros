@@ -77,8 +77,8 @@ public class Event {
                     muteUser(database);
                 } else if (kind.equals("9735")) {
                     saveZap(database);
-                } else if (kind.equals("10001")) {
-                    saveListPin(database);
+                } else if (kind.equals("10001") || kind.equals("30001")) {
+                    saveList(database);
                 }
             } catch (JSONException e) {
                 e.printStackTrace();
@@ -254,9 +254,17 @@ public class Event {
         database.replace("nostros_notes", null, values);
     }
 
-    protected void saveListPin(SQLiteDatabase database) {
+    protected void saveList(SQLiteDatabase database) {
         String query = "SELECT created_at FROM nostros_lists WHERE pubkey = ? AND kind = ?";
         @SuppressLint("Recycle") Cursor cursor = database.rawQuery(query, new String[] {pubkey, kind});
+
+        JSONArray dTags = filterTags("d");
+        String listTag = "";
+        if (dTags.length() > 0) {
+            try {
+                listTag = dTags.getJSONArray(0).getString(1);
+            } catch (JSONException e) { }
+        }
 
         ContentValues values = new ContentValues();
         values.put("id", id);
@@ -266,6 +274,7 @@ public class Event {
         values.put("pubkey", pubkey);
         values.put("sig", sig);
         values.put("tags", tags.toString());
+        values.put("list_tag", listTag);
         if (cursor.getCount() == 0) {
             database.insert("nostros_lists", null, values);
         } else if (cursor.moveToFirst()) {
@@ -579,39 +588,6 @@ public class Event {
                     };
                     database.update("nostros_users", values, whereClause, whereArgs);
                 }
-            }
-        }
-    }
-
-    protected void saveRelays(SQLiteDatabase database) throws JSONException {
-        for (int i = 0; i < tags.length(); ++i) {
-            JSONArray tag = tags.getJSONArray(i);
-            String url = tag.getString(1);
-            String mode = "";
-            if (tag.length() > 1) {
-                mode = tag.getString(2);
-            }
-
-            String query = "SELECT updated_at FROM nostros_relays WHERE url = ?";
-            Cursor cursor = database.rawQuery(query, new String[] {url});
-
-            ContentValues values = new ContentValues();
-            values.put("url", url);
-            values.put("mode", mode);
-
-            if (cursor.getCount() == 0) {
-                values.put("active", 0);
-                values.put("global_feed", 0);
-                values.put("manual", 1);
-                values.put("deleted_at", 0);
-                database.insert("nostros_relays", null, values);
-            } else if (cursor.moveToFirst() && created_at > cursor.getInt(0)) {
-                values.put("updated_at", created_at);
-                String whereClause = "url = ?";
-                String[] whereArgs = new String[] {
-                        url
-                };
-                database.update("nostros_relays", values, whereClause, whereArgs);
             }
         }
     }
