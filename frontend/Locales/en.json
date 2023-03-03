@@ -359,7 +359,7 @@
       "unfollow": "Following",
       "copyNPub": "Copy key",
       "isFollower": "follows you",
-      "relaysDescription": "These are {{username}}'s relays, activate the ones you want to be connected."
+      "relaysDescription": "List of relays, where at least one event from {{username}} was found. Activate the ones you want to be connected to."
     },
     "groupPage": {
       "typeMessage": "Type message",

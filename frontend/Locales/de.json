@@ -13,9 +13,9 @@
       "privateKeysSnackbarDescription": "Verwahre den privaten Schlüssel an einem sicheren Ort. Geht der Schlüssel verloren, kann er nicht wiederhergestellt werden. Das Konto kann nie wieder benutzt werden."
     },
     "qrReaderPage": {
-      "emptyTitle": "Permissions not granted",
-      "emptyDescription": "Grant camera permissions to Nostros to start scanning QR codes",
-      "QRreader": "QR reader"
+      "emptyTitle": "Berechtigung nicht gewährt",
+      "emptyDescription": "Nostros Kamera Berechtigungen gewähren um QRCodes zu scannen",
+      "QRreader": "QR Leser"
     },
     "homeNavigator": {
       "Group": "",
@@ -94,25 +94,25 @@
       "zaps": "Zaps",
       "disabled": "deaktiviert",
       "longPressZap": "Zaps lange drücken",
-      "longPressZapDescription": "Lege den voreingestellten Betrag fest, mit der Invoices erstellt werden sollen, wenn Zaps lange gedrückt wird.",
+      "longPressZapDescription": "Lege den voreingestellten Betrag fest, mit dem Invoices erstellt werden sollen, wenn Zaps lange gedrückt wird.",
       "defaultZapAmount": "Standard Zap Betrag",
       "update": "Aktualisieren",
       "disable": "Deaktivieren"
     },
     "noteActions": {
-      "publicBookmark": "Add to public bookmarks",
-      "privateBookmark": "Add to private bookmarks",
+      "publicBookmark": "Öffentliches Lesezeichen hinzufügen",
+      "privateBookmark": "Privates Lesezeichen hinzufügen",
       "copy": "Kopieren",
       "share": "Teilen",
       "view": "Ansehen",
-      "bookmarked": "Bookmarked",
-      "bookmark": "Bookmark",
-      "mutedThread": "Thread muted",
-      "muteThread": "Mute thread"
+      "bookmarked": "LZ angelegt",
+      "bookmark": "Lesezeichen",
+      "mutedThread": "Thread stumm",
+      "muteThread": "Thread stumm schalten"
     },
     "noteCard": {
       "notifications": {
-        "zapServerError": "Beim Anfragen des Invoice hat es einen Fehler vom Server gegeben."
+        "zapServerError": "Beim Anfragen der Invoice hat es einen Fehler vom Server gegeben."
       },
       "answering": "{{pubkey}} antworten",
       "reposting": "{{pubkey}} reposten",
@@ -145,7 +145,7 @@
       },
       "skip": "Überspringen",
       "confirmTitle": "Wörter in der richtigen Reihenfolge eingeben",
-      "snackbarDescription": "Wichtig. Verwahre den Schlüssel an einem sicheren Ort. Bei Verlust kann dieses Konto nie wieder benutzt werden!",
+      "snackbarDescription": "Wichtig. Verwahre den Schlüssel an einem sicheren Ort. Bei Verlust kann diese Identität nie wieder benutzt werden!",
       "snackbarAction": "Privaten Schlüssel kopieren",
       "warningTitle": "Wichtig!",
       "warningDescription": "Verwahre den Schlüssel an einem sicheren Ort. Bei Verlust kann dieses Konto nie wieder benutzt werden!",
@@ -217,19 +217,19 @@
       "reactions": "Reaktionen",
       "mentions": "Erwähnungen",
       "reposts": "Reposts",
-      "zaps": "Most zapped",
-      "notes": "Notes",
-      "replies": "Replies",
-      "bookmarks": "Bookmarks"
+      "zaps": "Am meisten gezappt",
+      "notes": "Notizen",
+      "replies": "Antworten",
+      "bookmarks": "Lesezeichen"
     },
     "homeFeed": {
       "bookmarkFeed": {
-        "private": "Private",
-        "public": "Public",
-        "emptyTitlePrivate": "Private bookmarks",
-        "emptyDescriptionPrivate": "Only you will see this list",
-        "emptyTitlePublic": "Public bookmarks",
-        "emptyDescriptionPublic": "Everyone will see this list"
+        "private": "Privat",
+        "public": "Öffentlich",
+        "emptyTitlePrivate": "Private Lesezeichen",
+        "emptyDescriptionPrivate": "Liste nur für dich sichtbar",
+        "emptyTitlePublic": "Öffentliche Lesezeichen",
+        "emptyDescriptionPublic": "Jeder kann diese Liste einsehen"
       },
       "emptyTitle": "Du folgst niemandem",
       "emptyDescription": "Folge anderen um hier etwas zu sehen",
@@ -344,7 +344,7 @@
     },
     "profilePage": {
       "bookmarkFeed": {
-        "emptyTitle": "No bookmarks found"
+        "emptyTitle": "Keine Lesezeichen gefunden"
       },
       "notifications": {
         "contactAdded": "Kontakt hinzugefügt",
@@ -359,7 +359,7 @@
       "isFollower": "folgt dir",
       "unfollow": "Nicht mehr folgen",
       "copyNPub": "Schlüssel kopieren",
-      "relaysDescription": "Dies sind {{username}}'s Relays, aktiviere diejenigen, zu denen du verbunden werden möchtest."
+      "relaysDescription": "Liste von Relays, auf denen mindestens ein Event von {{username}} gefunden wurde. Aktiviere diejenigen, zu denen du verbunden werden möchtest."
     },
     "groupPage": {
       "typeMessage": "Nachricht schreiben",
@@ -424,7 +424,7 @@
       "muted": "Stumm",
       "muteUser": "{{username}} in Chats stumm schalten",
       "muteWarningTitle": "Wichtig",
-      "muteWarning": "Diese Aktion wird Nachrichten dieses Benutzers in allen Chats unwiderruflich verstecken und kann nicht rückgängig gemacht werden.",
+      "muteWarning": "Diese Aktion wird Nachrichten dieses Benutzers in allen Chats unwiderruflich ausblenden und kann nicht rückgängig gemacht werden.",
       "muteForever": "{{username}} für immer stumm schalten",
       "cancel": "Abbrechen"
     },
