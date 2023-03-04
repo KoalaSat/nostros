@@ -19,6 +19,7 @@ import { ScrollView } from 'react-native-gesture-handler'
 import { Kind } from 'nostr-tools'
 import { getUnixTime } from 'date-fns'
 import DatabaseModule from '../../lib/Native/DatabaseModule'
+import { addMutedUsersList, removeMutedUsersList } from '../../Functions/RelayFunctions/Lists'
 
 interface ProfileActionsProps {
   user: User
@@ -33,11 +34,11 @@ export const ProfileActions: React.FC<ProfileActionsProps> = ({
 }) => {
   const theme = useTheme()
   const { database } = React.useContext(AppContext)
-  const { publicKey } = React.useContext(UserContext)
-  const { relayPool, updateRelayItem } = React.useContext(RelayPoolContext)
+  const { publicKey, privateKey, mutedUsers, reloadLists } = React.useContext(UserContext)
+  const { relayPool, updateRelayItem, lastEventId } = React.useContext(RelayPoolContext)
   const [isContact, setIsContact] = React.useState<boolean>()
-  const [isBlocked, setIsBlocked] = React.useState<boolean>()
   const [isMuted, setIsMuted] = React.useState<boolean>()
+  const [isGroupHidden, setIsGroupHidden] = React.useState<boolean>()
   const [showNotification, setShowNotification] = React.useState<undefined | string>()
   const [showNotificationRelay, setShowNotificationRelay] = React.useState<undefined | string>()
   const bottomSheetRelaysRef = React.useRef<RBSheet>(null)
@@ -49,9 +50,23 @@ export const ProfileActions: React.FC<ProfileActionsProps> = ({
   React.useEffect(() => {
     loadUser()
     loadRelays()
+    if (publicKey) {
+      relayPool?.subscribe('lists-muted-users', [
+        {
+          kinds: [10000],
+          authors: [publicKey],
+          limit: 1,
+        },
+      ])
+    }
   }, [])
 
-  const muteUser: () => void = () => {
+  React.useEffect(() => {
+    reloadLists()
+    loadUser()
+  }, [lastEventId, isMuted])
+
+  const hideGroupsUser: () => void = () => {
     if (publicKey && relayPool && database && user.id) {
       relayPool
         ?.sendEvent({
@@ -64,7 +79,7 @@ export const ProfileActions: React.FC<ProfileActionsProps> = ({
         .then(() => {
           if (database) {
             DatabaseModule.updateUserMutesGroups(user.id, true, () => {
-              setIsMuted(true)
+              setIsGroupHidden(true)
               bottomSheetMuteRef.current?.close()
             })
           }
@@ -88,8 +103,8 @@ export const ProfileActions: React.FC<ProfileActionsProps> = ({
         if (result) {
           setUser(result)
           setIsContact(result.contact)
-          setIsBlocked(result.blocked !== undefined && result.blocked > 0)
-          setIsMuted(result.muted_groups !== undefined && result.muted_groups > 0)
+          setIsMuted(mutedUsers.find((e) => e === user.id) !== undefined)
+          setIsGroupHidden(result.muted_groups !== undefined && result.muted_groups > 0)
         } else if (user.id === publicKey) {
           setUser({
             id: publicKey,
@@ -99,13 +114,19 @@ export const ProfileActions: React.FC<ProfileActionsProps> = ({
     }
   }
 
-  const onChangeBlockUser: () => void = () => {
-    if (database && publicKey) {
+  const onChangeMuteUser: () => void = () => {
+    if (database && publicKey && privateKey && relayPool) {
       DatabaseModule.addUser(user.id, () => {
-        DatabaseModule.updateUserBlock(user.id, !isBlocked, () => {
-          loadUser()
-          setShowNotificationRelay(isBlocked ? 'userUnblocked' : 'userBlocked')
-        })
+        if (isMuted) {
+          removeMutedUsersList(relayPool, database, publicKey, user.id)
+          DatabaseModule.updateUserBlock(user.id, false, () => {})
+        } else {
+          addMutedUsersList(relayPool, database, publicKey, user.id)
+        }
+        setIsMuted(!isMuted)
+        reloadLists()
+        loadUser()
+        setShowNotificationRelay(isMuted ? 'userUnmuted' : 'userMuted')
       })
     }
   }
@@ -226,13 +247,13 @@ export const ProfileActions: React.FC<ProfileActionsProps> = ({
       <View style={styles.mainLayout}>
         <View style={styles.actionButton}>
           <IconButton
-            icon='account-cancel-outline'
-            iconColor={isBlocked ? theme.colors.error : theme.colors.onSecondaryContainer}
+            icon={isMuted ? 'volume-off' : 'volume-high'}
+            iconColor={isMuted ? theme.colors.error : theme.colors.onSecondaryContainer}
             size={28}
-            onPress={onChangeBlockUser}
+            onPress={onChangeMuteUser}
           />
-          <Text style={isBlocked ? { color: theme.colors.error } : {}}>
-            {t(isBlocked ? 'profileCard.blocked' : 'profileCard.block')}
+          <Text style={isMuted ? { color: theme.colors.error } : {}}>
+            {t(isMuted ? 'profileCard.muted' : 'profileCard.mute')}
           </Text>
         </View>
         <View style={styles.actionButton}>
@@ -255,14 +276,14 @@ export const ProfileActions: React.FC<ProfileActionsProps> = ({
       <View style={styles.mainLayout}>
         <View style={styles.actionButton}>
           <IconButton
-            icon={isMuted ? 'volume-off' : 'volume-high'}
-            iconColor={isMuted ? theme.colors.error : theme.colors.onSecondaryContainer}
+            icon='account-cancel-outline'
+            iconColor={isGroupHidden ? theme.colors.error : theme.colors.onSecondaryContainer}
             size={28}
-            onPress={() => !isMuted && bottomSheetMuteRef.current?.open()}
+            onPress={() => !isGroupHidden && bottomSheetMuteRef.current?.open()}
             disabled={user.id === publicKey}
           />
-          <Text style={isMuted ? { color: theme.colors.error } : {}}>
-            {t(isMuted ? 'profileCard.muted' : 'profileCard.mute')}
+          <Text style={isGroupHidden ? { color: theme.colors.error } : {}}>
+            {t(isGroupHidden ? 'profileCard.hiddenChats' : 'profileCard.hideChats')}
           </Text>
         </View>
       </View>
@@ -320,16 +341,16 @@ export const ProfileActions: React.FC<ProfileActionsProps> = ({
       >
         <View style={styles.muteContainer}>
           <Text variant='titleLarge'>
-            {t('profileCard.muteUser', { username: username(user) })}
+            {t('profileCard.hideChats', { username: username(user) })}
           </Text>
           <View style={[styles.warning, { backgroundColor: '#683D00' }]}>
             <Text variant='titleSmall' style={[styles.warningTitle, { color: '#FFDCBB' }]}>
-              {t('profileCard.muteWarningTitle')}
+              {t('profileCard.hideWarningTitle')}
             </Text>
-            <Text style={{ color: '#FFDCBB' }}>{t('profileCard.muteWarning')}</Text>
+            <Text style={{ color: '#FFDCBB' }}>{t('profileCard.hideWarning')}</Text>
           </View>
-          <Button style={styles.buttonSpacer} mode='contained' onPress={muteUser}>
-            {t('profileCard.muteForever', { username: username(user) })}
+          <Button style={styles.buttonSpacer} mode='contained' onPress={hideGroupsUser}>
+            {t('profileCard.hideChatsForever', { username: username(user) })}
           </Button>
           <Button
             mode='outlined'

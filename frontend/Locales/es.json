@@ -139,6 +139,7 @@
       "reposting": "Reposted {{pubkey}}",
       "seeParent": "Ver nota",
       "userBlocked": "Usuario bloqueado",
+      "userMuted": "Usuario silenciado",
       "contentWarning": "Contenido sensible",
       "recommendation": "Recomendación de relay",
       "addRelay": "Agregar relay",
@@ -196,7 +197,8 @@
         "contactAdded": "Perfil seguido.",
         "addContactError": "Se ha producido un error al publicar tus cambios.",
         "contactRemoved": "Has dejado de seguir a un perfil",
-        "contactUnblocked": "Perfil desbloqueado."
+        "contactUnblocked": "Perfil desbloqueado.",
+        "contactUnmuted": "Perfil desilenciado."
       },
       "emptyTitleBlocked": "No tienes perfiles bloqueado",
       "emptyDescriptionBlocked": "Siempre puede bloquear a alguien en su vista de perfil.",
@@ -215,7 +217,9 @@
       "blocked": "Bloqueados ({{count}})",
       "unblock": "Desbloquear",
       "stopFollowing": "Dejar de seguir",
-      "follow": "Seguir"
+      "follow": "Seguir",
+      "muted": "Silenciados ({{count}})",
+      "unmute": "Desinlenciar"
     },
     "aboutPage": {
       "telegram": "Telegram",
@@ -408,7 +412,13 @@
       "relaysTitle": "Relays",
       "blocked": "Bloqueado",
       "mute": "Silenciar",
-      "muted": "Silenciado"
+      "muted": "Silenciado",
+      "hideChats": "Ocultar chats",
+      "muteUser": "Ocultar {{username}} en chats",
+      "hideWarningTitle": "Importante",
+      "hideWarning": "Esta acción ocultará todos los mensajes de este usuario en todos los chats, esta acción no se puede deshacer.",
+      "hideChatsForever": "Ocultar {{username}} en chats para siempre",
+      "cancel": "Cancelar"
     },
     "conversationsFeed": {
       "openMessage": "Comenzar conversación",

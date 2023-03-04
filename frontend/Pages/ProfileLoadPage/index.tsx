@@ -71,6 +71,11 @@ export const ProfileLoadPage: React.FC = () => {
           limit: 1,
         },
         {
+          kinds: [10000],
+          authors: [publicKey],
+          limit: 1,
+        },
+        {
           kinds: [10001],
           authors: [publicKey],
           limit: 1,

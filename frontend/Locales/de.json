@@ -118,6 +118,7 @@
       "reposting": "{{pubkey}} reposten",
       "seeParent": "Notiz ansehen",
       "userBlocked": "Benutzer blockiert",
+      "userMuted": "User muted",
       "contentWarning": "Sensibler Inhalt",
       "recommendation": "Relay Empfehlung",
       "addRelay": "Relay hinzufügen",
@@ -175,7 +176,8 @@
         "contactAdded": "Kontakt hinzugefügt",
         "addContactError": "Ein Fehler ist aufgetreten.",
         "contactRemoved": "Abo wurde entfernt",
-        "contactUnblocked": "Profil entsperrt."
+        "contactUnblocked": "Profil entsperrt.",
+        "contactUnmuted": "Profile unmuted."
       },
       "emptyTitleBlocked": "Du hast keine geblockten Profile",
       "emptyDescriptionBlocked": "In der Profil Ansicht kannst du jederzeit jemanden blocken",
@@ -194,7 +196,9 @@
       "blocked": "({{count}}) blockiert",
       "unblock": "entsperren",
       "stopFollowing": "Abo stoppen",
-      "follow": "Folgen"
+      "follow": "Folgen",
+      "muted": "Muted ({{count}})",
+      "unmute": "Unmute"
     },
     "aboutPage": {
       "telegram": "Telegram",
@@ -422,10 +426,11 @@
       "blocked": "Blockiert",
       "mute": "Stumm",
       "muted": "Stumm",
+      "hideChats": "Hide chats",
       "muteUser": "{{username}} in Chats stumm schalten",
-      "muteWarningTitle": "Wichtig",
-      "muteWarning": "Diese Aktion wird Nachrichten dieses Benutzers in allen Chats unwiderruflich ausblenden und kann nicht rückgängig gemacht werden.",
-      "muteForever": "{{username}} für immer stumm schalten",
+      "hideWarningTitle": "Wichtig",
+      "hideWarning": "Diese Aktion wird Nachrichten dieses Benutzers in allen Chats unwiderruflich ausblenden und kann nicht rückgängig gemacht werden.",
+      "hideChatsForever": "{{username}} für immer stumm schalten",
       "cancel": "Abbrechen"
     },
     "conversationsFeed": {

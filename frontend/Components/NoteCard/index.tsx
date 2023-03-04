@@ -71,7 +71,7 @@ export const NoteCard: React.FC<NoteCardProps> = ({
   mode = 'elevated',
 }) => {
   const theme = useTheme()
-  const { publicKey, privateKey } = React.useContext(UserContext)
+  const { publicKey, privateKey, mutedUsers } = React.useContext(UserContext)
   const { relayPool, lastEventId, addRelayItem } = useContext(RelayPoolContext)
   const {
     database,
@@ -96,6 +96,7 @@ export const NoteCard: React.FC<NoteCardProps> = ({
   const [openLn, setOpenLn] = React.useState<boolean>(false)
   const [showReactions, setShowReactions] = React.useState<boolean>(false)
   const [loadingZap, setLoadingZap] = React.useState<boolean>(false)
+  const [mutedUser, setMutedUser] = React.useState<boolean>(false)
   const [zapInvoice, setZapInvoice] = React.useState<string>()
 
   useEffect(() => {
@@ -123,6 +124,7 @@ export const NoteCard: React.FC<NoteCardProps> = ({
         }
       }
       getNoteRelays(database, note.id).then(setRelays)
+      setMutedUser(mutedUsers.find((e) => e === note.pubkey) !== undefined)
     }
   }, [lastEventId])
 
@@ -280,7 +282,7 @@ export const NoteCard: React.FC<NoteCardProps> = ({
             }}
           >
             <Text style={{ color: theme.colors.onTertiaryContainer }}>
-              {t('noteCard.userBlocked')}
+              {t('noteCard.userMuted')}
             </Text>
           </Chip>
         </View>
@@ -289,7 +291,7 @@ export const NoteCard: React.FC<NoteCardProps> = ({
   }
 
   const getNoteContent: () => JSX.Element | undefined = () => {
-    if (note?.blocked !== undefined && note.blocked > 0) {
+    if (mutedUser) {
       return blockedContent()
     } else if (note?.kind === Kind.Text) {
       return textNote()
@@ -422,7 +424,7 @@ export const NoteCard: React.FC<NoteCardProps> = ({
         </View>
       </Card.Content>
       {getNoteContent()}
-      {showAction && (
+      {!mutedUser && showAction && (
         <Card.Content style={[styles.bottomActions, { borderColor: theme.colors.onSecondary }]}>
           <Button
             style={styles.action}

@@ -98,6 +98,11 @@ export const BookmarksFeed: React.FC<BookmarksFeedProps> = ({
     if (database && publicKey) {
       relayPool?.subscribe('homepage-bookmarks-main', [
         {
+          kinds: [10000],
+          authors: [publicKey],
+          limit: 1,
+        },
+        {
           kinds: [10001],
           authors: [publicKey],
           limit: 1,
