@@ -31,6 +31,7 @@ import { getUnixTime } from 'date-fns'
 import { Kind } from 'nostr-tools'
 import { usersToTags } from '../../Functions/RelayFunctions/Users'
 import { getRawUserGroupMessages, getRawUserGroups } from '../../Functions/DatabaseFunctions/Groups'
+import { getRawLists } from '../../Functions/DatabaseFunctions/Lists'
 
 interface RelayCardProps {
   url?: string
@@ -101,6 +102,11 @@ export const RelayCard: React.FC<RelayCardProps> = ({ url, bottomSheetRef }) => 
       getRawUserGroups(database, publicKey).then((resultGroups) => {
         resultGroups.forEach((group) => {
           relayPool.sendEvent(group, url)
+        })
+      })
+      getRawLists(database, publicKey).then((lists) => {
+        lists.forEach((list) => {
+          relayPool.sendEvent(list, url)
         })
       })
       sendRelays(url)

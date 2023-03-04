@@ -1,5 +1,5 @@
 import React, { useContext, useState } from 'react'
-import { FlatList, ListRenderItem, ScrollView, StyleSheet, View } from 'react-native'
+import { Clipboard, FlatList, ListRenderItem, ScrollView, StyleSheet, View } from 'react-native'
 import { useTranslation } from 'react-i18next'
 import { RelayPoolContext } from '../../Contexts/RelayPoolContext'
 import { Relay } from '../../Functions/DatabaseFunctions/Relays'
@@ -215,6 +215,12 @@ export const RelaysPage: React.FC = () => {
     )
   }
 
+  const pasteUrl: () => void = () => {
+    Clipboard.getString().then((value) => {
+      setAddRelayInput(value ?? '')
+    })
+  }
+
   return (
     <View style={styles.container}>
       <ScrollView horizontal={false}>
@@ -313,6 +319,13 @@ export const RelaysPage: React.FC = () => {
               label={t('relaysPage.labelAdd') ?? ''}
               onChangeText={setAddRelayInput}
               value={addRelayInput}
+              right={
+                <TextInput.Icon
+                  icon='content-paste'
+                  onPress={pasteUrl}
+                  forceTextInputFocus={false}
+                />
+              }
             />
           </View>
           <View style={styles.bottomDrawerButton}>

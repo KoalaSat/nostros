@@ -170,15 +170,10 @@ public class Database {
             instance.execSQL("DROP INDEX nostros_notes_notifications_index;");
         } catch (SQLException e) { }
         try {
-            instance.execSQL("CREATE INDEX nostros_zaps_list_index ON nostros_zaps(zapper_user_id);");
-            instance.execSQL("CREATE INDEX nostros_zaps_user_index ON nostros_zaps(zapper_user_id, zapped_event_id);");
-            instance.execSQL("CREATE INDEX nostros_zaps_most_zapped_index ON nostros_zaps(zapped_user_id, created_at, contact);");
-
             instance.execSQL("CREATE INDEX nostros_users_names_index ON nostros_users(id, name); ");
             instance.execSQL("CREATE INDEX nostros_users_contacts_index ON nostros_users(id, contact); ");
             instance.execSQL("CREATE INDEX nostros_users_blocked_index ON nostros_users(id, blocked); ");
             instance.execSQL("CREATE INDEX nostros_users_muted_index ON nostros_users(id, muted_groups); ");
-            instance.execSQL("CREATE INDEX nostros_users_contact_index ON nostros_users(contact); ");
 
             instance.execSQL("CREATE INDEX nostros_notes_home_index ON nostros_notes(pubkey, created_at, main_event_id, repost_id); ");
             instance.execSQL("CREATE INDEX nostros_notes_notifications_index ON nostros_notes(pubkey, user_mentioned, reply_event_id, created_at); ");
@@ -197,6 +192,9 @@ public class Database {
             instance.execSQL("CREATE INDEX nostros_direct_messages_notification_index ON nostros_direct_messages(pubkey, read); ");
             instance.execSQL("CREATE INDEX nostros_direct_messages_conversation_index ON nostros_direct_messages(created_at, conversation_id); ");
 
+            instance.execSQL("CREATE INDEX nostros_zaps_list_index ON nostros_zaps(zapper_user_id);");
+            instance.execSQL("CREATE INDEX nostros_zaps_user_index ON nostros_zaps(zapper_user_id, zapped_event_id);");
+
             // Previous
             instance.execSQL("CREATE INDEX nostros_users_contact_follower_index ON nostros_users(contact, follower); ");
             instance.execSQL("CREATE INDEX nostros_reactions_created_at_reacted_event_id_index ON nostros_reactions(created_at, reacted_event_id); ");
@@ -205,9 +203,9 @@ public class Database {
             instance.execSQL("CREATE INDEX nostros_direct_messages_pubkey_index ON nostros_direct_messages(pubkey); ");
             instance.execSQL("CREATE INDEX nostros_direct_messages_conversation_id_index ON nostros_direct_messages(conversation_id); ");
             instance.execSQL("CREATE INDEX nostros_reactions_reacted_event_id_index ON nostros_reactions(reacted_event_id); ");
-            instance.execSQL("CREATE INDEX nostros_users_contact_index ON nostros_users(contact); ");
             instance.execSQL("CREATE INDEX nostros_reactions_pubkey_index ON nostros_reactions(pubkey); ");
             instance.execSQL("CREATE INDEX nostros_nostros_zaps_zapped_event_id_index ON nostros_zaps(zapped_event_id);");
+            instance.execSQL("CREATE INDEX nostros_users_contact_index ON nostros_users(contact); ");
         } catch (SQLException e) { }
         try {
             instance.execSQL("CREATE TABLE IF NOT EXISTS nostros_lists(\n" +

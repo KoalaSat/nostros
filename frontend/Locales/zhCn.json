@@ -137,6 +137,7 @@
       "answering": "回复 {{pubkey}}",
       "reposting": "已转发 {{pubkey}}",
       "userBlocked": "用户已屏蔽",
+      "userMuted": "User muted",
       "seeParent": "查看 Note",
       "contentWarning": "敏感内容",
       "recommendation": "推荐的中继",
@@ -194,7 +195,8 @@
         "contactAdded": "已关注",
         "addContactError": "发布更新时发生了错误",
         "contactRemoved": "已取消关注",
-        "contactUnblocked": "用户已屏蔽"
+        "contactUnblocked": "用户已屏蔽",
+        "contactUnmuted": "Profile unmuted."
       },
       "emptyTitleBlocked": "您还没有屏蔽任何人",
       "emptyDescriptionBlocked": "您可以随时在用户详情页屏蔽用户",
@@ -213,7 +215,9 @@
       "stopFollowing": "正在关注",
       "follow": "回关",
       "blocked": "已屏蔽 ({{count}})",
-      "unblock": "取消屏蔽"
+      "unblock": "取消屏蔽",
+      "muted": "Muted ({{count}})",
+      "unmute": "Unmute"
     },
     "aboutPage": {
       "telegram": "Telegram",
@@ -403,7 +407,13 @@
       "relaysTitle": "中继",
       "blocked": "已屏蔽",
       "mute": "静音",
-      "muted": "已静音"
+      "muted": "已静音",
+      "hideChats": "Hide chats",
+      "muteUser": "Mute {{username}} on chats",
+      "hideWarningTitle": "Important",
+      "hideWarning": "This action will hide the messages of this user on all chats and cannot be undone.",
+      "hideChatsForever": "Mute {{username}} forever",
+      "cancel": "Cancel"
     },
     "conversationsFeed": {
       "openMessage": "发送私信",

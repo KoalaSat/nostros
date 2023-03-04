@@ -5,7 +5,12 @@ import { AppContext } from '../../Contexts/AppContext'
 import { Kind } from 'nostr-tools'
 import { useTranslation } from 'react-i18next'
 import { FlashList, ListRenderItem } from '@shopify/flash-list'
-import { getBlocked, getFollowersAndFollowing, User } from '../../Functions/DatabaseFunctions/Users'
+import {
+  getBlocked,
+  getFollowersAndFollowing,
+  User,
+  getUsers,
+} from '../../Functions/DatabaseFunctions/Users'
 import { RelayPoolContext } from '../../Contexts/RelayPoolContext'
 import { populatePets } from '../../Functions/RelayFunctions/Users'
 import { getNip19Key, getNpub } from '../../lib/nostr/Nip19'
@@ -28,12 +33,13 @@ import { handleInfinityScroll } from '../../Functions/NativeFunctions'
 import { queryProfile } from 'nostr-tools/nip05'
 import { navigate } from '../../lib/Navigation'
 import DatabaseModule from '../../lib/Native/DatabaseModule'
+import { removeMutedUsersList } from '../../Functions/RelayFunctions/Lists'
 
 export const ContactsPage: React.FC = () => {
   const { t } = useTranslation('common')
   const initialPageSize = 20
   const { database, setDisplayUserDrawer, qrReader, setQrReader } = useContext(AppContext)
-  const { privateKey, publicKey, nPub } = React.useContext(UserContext)
+  const { privateKey, publicKey, nPub, mutedUsers, reloadLists } = React.useContext(UserContext)
   const { relayPool, lastEventId } = useContext(RelayPoolContext)
   const theme = useTheme()
   const [pageSize, setPageSize] = useState<number>(initialPageSize)
@@ -42,7 +48,7 @@ export const ContactsPage: React.FC = () => {
   // State
   const [followers, setFollowers] = useState<User[]>([])
   const [following, setFollowing] = useState<User[]>([])
-  const [blocked, setBlocked] = useState<User[]>([])
+  const [muted, setMuted] = useState<User[]>([])
   const [contactInput, setContactInput] = useState<string>()
   const [isAddingContact, setIsAddingContact] = useState<boolean>(false)
   const [showNotification, setShowNotification] = useState<undefined | string>()
@@ -53,7 +59,7 @@ export const ContactsPage: React.FC = () => {
       subscribeContacts()
       loadUsers()
 
-      return () => relayPool?.unsubscribe(['followers', 'following', 'contacts-meta'])
+      return () => relayPool?.unsubscribe(['followers', 'following', 'muted', 'contacts-meta'])
     }, []),
   )
 
@@ -66,14 +72,25 @@ export const ContactsPage: React.FC = () => {
   }, [qrReader])
 
   useEffect(() => {
+    reloadLists()
     loadUsers()
     subscribeContacts()
   }, [lastEventId])
 
+  useEffect(() => {
+    loadUsers()
+  }, [mutedUsers])
+
   const loadUsers: () => void = () => {
     if (database && publicKey) {
       getBlocked(database).then((results) => {
-        if (results) setBlocked(results)
+        if (mutedUsers.length > 0 || results.length > 0) {
+          getUsers(database, {
+            includeIds: [...mutedUsers, ...results.map((user) => user.id)],
+          }).then((results) => {
+            if (results) setMuted(results)
+          })
+        }
       })
       getFollowersAndFollowing(database).then((results) => {
         const followers: User[] = []
@@ -89,7 +106,9 @@ export const ContactsPage: React.FC = () => {
             relayPool?.subscribe('contacts-meta', [
               {
                 kinds: [Kind.Metadata],
-                authors: following.map((user) => user.id),
+                authors: following
+                  .filter((user) => !user.name || user.name === '')
+                  .map((user) => user.id),
               },
             ])
           }
@@ -112,6 +131,13 @@ export const ContactsPage: React.FC = () => {
         {
           kinds: [Kind.Contacts],
           '#p': [publicKey],
+        },
+      ])
+      relayPool?.subscribe('muted', [
+        {
+          kinds: [10000],
+          authors: [publicKey],
+          limit: 1,
         },
       ])
     }
@@ -170,11 +196,13 @@ export const ContactsPage: React.FC = () => {
     }
   }
 
-  const unblock: (user: User) => void = (user) => {
+  const unmute: (user: User) => void = (user) => {
     if (relayPool && database && publicKey) {
       DatabaseModule.updateUserBlock(user.id, false, () => {
-        setShowNotification('contactUnblocked')
+        removeMutedUsersList(relayPool, database, publicKey, user.id)
+        setShowNotification('contactUnmuted')
         loadUsers()
+        reloadLists()
       })
     }
   }
@@ -209,7 +237,7 @@ export const ContactsPage: React.FC = () => {
     )
   }
 
-  const renderBlockedItem: ListRenderItem<User> = ({ index, item }) => {
+  const renderMutedItem: ListRenderItem<User> = ({ index, item }) => {
     return (
       <TouchableRipple
         onPress={() => {
@@ -230,7 +258,7 @@ export const ContactsPage: React.FC = () => {
             />
           </View>
           <View style={styles.contactInfo}>
-            <Button onPress={() => unblock(item)}>{t('contactsPage.unblock')}</Button>
+            <Button onPress={() => unmute(item)}>{t('contactsPage.unmute')}</Button>
           </View>
         </View>
       </TouchableRipple>
@@ -353,13 +381,13 @@ export const ContactsPage: React.FC = () => {
     </View>
   )
 
-  const Blocked: JSX.Element = (
+  const Muted: JSX.Element = (
     <View style={styles.container}>
       <FlashList
         estimatedItemSize={71}
         showsVerticalScrollIndicator={false}
-        data={blocked.slice(0, pageSize)}
-        renderItem={renderBlockedItem}
+        data={muted.slice(0, pageSize)}
+        renderItem={renderMutedItem}
         onScroll={onScroll}
         ItemSeparatorComponent={Divider}
         ListEmptyComponent={ListEmptyComponentBlocked}
@@ -372,7 +400,7 @@ export const ContactsPage: React.FC = () => {
   const renderScene: Record<string, JSX.Element> = {
     following: Following,
     followers: Followers,
-    blocked: Blocked,
+    muted: Muted,
   }
 
   return (
@@ -409,15 +437,13 @@ export const ContactsPage: React.FC = () => {
         <View
           style={[
             styles.tab,
-            tabKey === 'blocked'
+            tabKey === 'muted'
               ? { ...styles.tabActive, borderBottomColor: theme.colors.primary }
               : {},
           ]}
         >
-          <TouchableRipple style={styles.textWrapper} onPress={() => setTabKey('blocked')}>
-            <Text style={styles.tabText}>
-              {t('contactsPage.blocked', { count: blocked.length })}
-            </Text>
+          <TouchableRipple style={styles.textWrapper} onPress={() => setTabKey('muted')}>
+            <Text style={styles.tabText}>{t('contactsPage.muted', { count: muted.length })}</Text>
           </TouchableRipple>
         </View>
       </View>

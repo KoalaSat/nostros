@@ -106,7 +106,9 @@ export const TextContent: React.FC<TextContentProps> = ({
       try {
         setDecodedLnUrl(decode(lnurl))
         setLnUrl(lnurl)
-      } catch {}
+      } catch (e) {
+        cons.log(e)
+      }
     }
     return ''
   }
@@ -116,6 +118,7 @@ export const TextContent: React.FC<TextContentProps> = ({
     matches,
   ) => {
     const mentionIndex: number = parseInt(matches[1])
+
     if (userNames[mentionIndex]) {
       return userNames[mentionIndex]
     } else if (event) {
@@ -240,7 +243,7 @@ export const TextContent: React.FC<TextContentProps> = ({
         {invoice && <LnPreview invoice={invoice} setInvoice={setInvoice} />}
       </View>
     )
-  }, [invoice, url, linkType])
+  }, [invoice, url, linkType, lnUrl])
 
   return (
     <View style={styles.container}>

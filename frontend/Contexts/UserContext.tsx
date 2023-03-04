@@ -28,6 +28,7 @@ export interface UserContextProps {
   publicBookmarks: string[]
   privateBookmarks: string[]
   mutedEvents: string[]
+  mutedUsers: string[]
   logout: () => void
   name?: string
   setName: (value: string) => void
@@ -65,6 +66,7 @@ export const initialUserContext: UserContextProps = {
   publicBookmarks: [],
   privateBookmarks: [],
   mutedEvents: [],
+  mutedUsers: [],
 }
 
 export const UserContextProvider = ({ children }: UserContextProviderProps): JSX.Element => {
@@ -85,6 +87,7 @@ export const UserContextProvider = ({ children }: UserContextProviderProps): JSX
   const [publicBookmarks, setPublicBookmarks] = useState<string[]>([])
   const [privateBookmarks, setPrivateBookmarks] = useState<string[]>([])
   const [mutedEvents, setMutedEvents] = useState<string[]>([])
+  const [mutedUsers, setMutedUsers] = useState<string[]>([])
 
   const reloadUser: () => void = () => {
     if (database && publicKey) {
@@ -104,6 +107,12 @@ export const UserContextProvider = ({ children }: UserContextProviderProps): JSX
 
   const reloadLists: () => void = () => {
     if (database && publicKey && privateKey) {
+      getList(database, 10000, publicKey).then((result) => {
+        if (result) {
+          const eTags = getETags(result)
+          setMutedUsers(eTags.map((tag) => tag[1]))
+        }
+      })
       getList(database, 10001, publicKey).then((result) => {
         if (result) {
           const eTags = getETags(result)
@@ -229,6 +238,7 @@ export const UserContextProvider = ({ children }: UserContextProviderProps): JSX
         validNip05,
         lnAddress,
         setLnAddress,
+        mutedUsers,
       }}
     >
       {children}

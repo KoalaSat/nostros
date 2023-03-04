@@ -26,15 +26,7 @@ export const HomeFeed: React.FC<HomeFeedProps> = ({ navigation }) => {
   const [lastLoadAt, setLastLoadAt] = useState<number>(0)
   const [pageSize, setPageSize] = useState<number>(initialPageSize)
 
-  useFocusEffect(
-    React.useCallback(() => {
-      updateLastLoad()
-
-      return () => {}
-    }, []),
-  )
-
-  useEffect(() => {
+  const unsubscribe: () => void = () => {
     if (activeTab !== 'zaps') {
       relayPool?.unsubscribe([
         'homepage-zapped-notes',
@@ -52,7 +44,17 @@ export const HomeFeed: React.FC<HomeFeedProps> = ({ navigation }) => {
     if (activeTab !== 'globalFeed') {
       relayPool?.unsubscribe(['homepage-global-main', 'homepage-global-reposts'])
     }
-  }, [activeTab, database, relayPool])
+  }
+
+  useFocusEffect(
+    React.useCallback(() => {
+      updateLastLoad()
+
+      return unsubscribe
+    }, []),
+  )
+
+  useEffect(unsubscribe, [activeTab, database, relayPool])
 
   useEffect(() => {
     if (pageSize > initialPageSize) {

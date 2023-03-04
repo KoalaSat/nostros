@@ -21,6 +21,22 @@ export const AboutPage: React.FC = () => {
     () => [
       {
         key: 1,
+        title: 'Nostros',
+        left: (
+          <List.Icon
+            icon={() => (
+              <MaterialCommunityIcons
+                name='web'
+                size={25}
+                color={theme.colors.onPrimaryContainer}
+              />
+            )}
+          />
+        ),
+        onPress: async () => await Linking.openURL('https://nostros.net'),
+      },
+      {
+        key: 2,
         title: t('aboutPage.gitHub'),
         left: (
           <List.Icon
@@ -36,7 +52,7 @@ export const AboutPage: React.FC = () => {
         onPress: async () => await Linking.openURL('https://github.com/KoalaSat/nostros'),
       },
       {
-        key: 2,
+        key: 3,
         title: t('aboutPage.telegram'),
         left: (
           <List.Icon
@@ -52,7 +68,7 @@ export const AboutPage: React.FC = () => {
         onPress: async () => await Linking.openURL('https://t.me/+zhvZAE9L0X40ZjI0'),
       },
       {
-        key: 3,
+        key: 4,
         title: t('aboutPage.nostr'),
         left: (
           <List.Icon
@@ -68,7 +84,7 @@ export const AboutPage: React.FC = () => {
         onPress: async () => await Linking.openURL('https://www.nostr.how'),
       },
       {
-        key: 4,
+        key: 5,
         title: t('aboutPage.nips'),
         left: (
           <List.Icon
@@ -85,7 +101,7 @@ export const AboutPage: React.FC = () => {
         onPress: async () => await Linking.openURL('https://github.com/nostr-protocol/nips'),
       },
       {
-        key: 5,
+        key: 6,
         title: t('aboutPage.version'),
         left: (
           <List.Icon

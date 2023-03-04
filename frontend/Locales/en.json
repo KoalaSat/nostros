@@ -117,6 +117,7 @@
       "answering": "Answer to {{pubkey}}",
       "reposting": "Reposted {{pubkey}}",
       "userBlocked": "User blocked",
+      "userMuted": "User muted",
       "seeParent": "See note",
       "contentWarning": "Sensitive content",
       "recommendation": "Relay recommendation",
@@ -175,7 +176,8 @@
         "contactAdded": "Profile followed.",
         "addContactError": "There was an error publishing your changes.",
         "contactRemoved": "Profile unfollowed.",
-        "contactUnblocked": "Profile unblocked."
+        "contactUnblocked": "Profile unblocked.",
+        "contactUnmuted": "Profile unmuted."
       },
       "emptyTitleFollowing": "You are not following anyone.",
       "emptyDescriptionFollowing": "Follow other profiles to see content.",
@@ -194,7 +196,9 @@
       "stopFollowing": "Stop Following",
       "follow": "Follow",
       "blocked": "Blocked ({{count}})",
-      "unblock": "Unblock"
+      "unblock": "Unblock",
+      "muted": "Muted ({{count}})",
+      "unmute": "Unmute"
     },
     "aboutPage": {
       "telegram": "Telegram",
@@ -422,10 +426,11 @@
       "blocked": "Blocked",
       "mute": "Mute",
       "muted": "Muted",
+      "hideChats": "Hide chats",
       "muteUser": "Mute {{username}} on chats",
-      "muteWarningTitle": "Important",
-      "muteWarning": "This action will hide the messages of this user on all chats and cannot be undone.",
-      "muteForever": "Mute {{username}} forever",
+      "hideWarningTitle": "Important",
+      "hideWarning": "This action will hide the messages of this user on all chats and cannot be undone.",
+      "hideChatsForever": "Mute {{username}} forever",
       "cancel": "Cancel"
     },
     "conversationsFeed": {

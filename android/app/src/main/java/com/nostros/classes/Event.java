@@ -77,7 +77,7 @@ public class Event {
                     muteUser(database);
                 } else if (kind.equals("9735")) {
                     saveZap(database);
-                } else if (kind.equals("10001") || kind.equals("30001")) {
+                } else if (kind.equals("10000") || kind.equals("10001") || kind.equals("30001")) {
                     saveList(database);
                 }
             } catch (JSONException e) {
@@ -239,19 +239,24 @@ public class Event {
     }
 
     protected void saveNote(SQLiteDatabase database, String userPubKey) {
-        ContentValues values = new ContentValues();
-        values.put("id", id);
-        values.put("content", content);
-        values.put("created_at", created_at);
-        values.put("kind", kind);
-        values.put("pubkey", pubkey);
-        values.put("sig", sig);
-        values.put("tags", tags.toString());
-        values.put("main_event_id", getMainEventId());
-        values.put("reply_event_id", getReplyEventId());
-        values.put("user_mentioned", getUserMentioned(userPubKey));
-        values.put("repost_id", getRepostId());
-        database.replace("nostros_notes", null, values);
+        String query = "SELECT id FROM nostros_notes WHERE id = ?";
+        @SuppressLint("Recycle") Cursor cursor = database.rawQuery(query, new String[] {id});
+
+        if (cursor.getCount() == 0) {
+            ContentValues values = new ContentValues();
+            values.put("id", id);
+            values.put("content", content);
+            values.put("created_at", created_at);
+            values.put("kind", kind);
+            values.put("pubkey", pubkey);
+            values.put("sig", sig);
+            values.put("tags", tags.toString());
+            values.put("main_event_id", getMainEventId());
+            values.put("reply_event_id", getReplyEventId());
+            values.put("user_mentioned", getUserMentioned(userPubKey));
+            values.put("repost_id", getRepostId());
+            database.replace("nostros_notes", null, values);
+        }
     }
 
     protected void saveList(SQLiteDatabase database) {

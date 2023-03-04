@@ -1,6 +1,6 @@
 import { QuickSQLiteConnection } from 'react-native-quick-sqlite'
 import { getItems } from '..'
-import { Event } from '../../../lib/nostr/Events'
+import { Event, evetDatabaseToEntity } from '../../../lib/nostr/Events'
 
 export interface List extends Event {}
 
@@ -23,4 +23,17 @@ export const getList: (
   const items: object[] = getItems(resultSet)
   const relays: List[] = items.map((object) => databaseToEntity(object))
   return relays[0]
+}
+
+export const getRawLists: (db: QuickSQLiteConnection, pubKey: string) => Promise<Event[]> = async (
+  db,
+  pubKey,
+) => {
+  const notesQuery = 'SELECT * FROM nostros_lists WHERE pubkey = ?'
+
+  const resultSet = await db.execute(notesQuery, [pubKey])
+  const items: object[] = getItems(resultSet)
+  const lists: Event[] = items.map((object) => evetDatabaseToEntity(object))
+
+  return lists
 }

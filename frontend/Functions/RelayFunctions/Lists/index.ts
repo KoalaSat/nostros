@@ -41,6 +41,30 @@ export const addBookmarkList: (
   }
   relayPool?.sendEvent(event)
 }
+
+export const addMutedUsersList: (
+  relayPool: RelayPool,
+  database: QuickSQLiteConnection,
+  publicKey: string,
+  userId: string,
+) => void = async (relayPool, database, publicKey, userId) => {
+  if (!userId || userId === '') return
+
+  const result = await getList(database, 10000, publicKey)
+  let tags: string[][] = result?.tags ?? []
+  const content: string = result?.content ?? ''
+  tags = [...tags, ['e', userId]]
+
+  const event: Event = {
+    content,
+    created_at: getUnixTime(new Date()),
+    kind: 10000,
+    pubkey: publicKey,
+    tags,
+  }
+  relayPool?.sendEvent(event)
+}
+
 export const addList: (
   relayPool: RelayPool,
   database: QuickSQLiteConnection,
@@ -93,6 +117,28 @@ export const removeBookmarkList: (
     }
     relayPool?.sendEvent(event)
   }
+}
+
+export const removeMutedUsersList: (
+  relayPool: RelayPool,
+  database: QuickSQLiteConnection,
+  publicKey: string,
+  userId: string,
+) => void = async (relayPool, database, publicKey, userId) => {
+  if (!userId || userId === '') return
+
+  const result = await getList(database, 10000, publicKey)
+
+  const content: string = result?.content ?? ''
+  const tags = result?.tags.filter((tag) => tag[1] !== userId) ?? []
+  const event: Event = {
+    content,
+    created_at: getUnixTime(new Date()),
+    kind: 10000,
+    pubkey: publicKey,
+    tags,
+  }
+  relayPool?.sendEvent(event)
 }
 
 export const removeList: (
