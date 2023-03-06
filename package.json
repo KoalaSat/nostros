@@ -35,7 +35,7 @@
     "nostr-tools": "^1.2.1",
     "react": "18.2.0",
     "react-content-loader": "^6.2.0",
-    "react-i18next": "^12.1.5",
+    "react-i18next": "^12.2.0",
     "react-native": "0.70.6",
     "react-native-action-button": "^2.8.5",
     "react-native-bidirectional-infinite-scroll": "^0.3.3",
