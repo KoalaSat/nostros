@@ -110,7 +110,7 @@ public class DatabaseModule extends ReactContextBaseJavaModule {
 
     @ReactMethod
     public void updateGroupRead(String groupId) {
-        String whereClause = "id = ?";
+        String whereClause = "group_id = ?";
         String[] whereArgs = new String[] { groupId };
         ContentValues values = new ContentValues();
         values.put("read", 1);

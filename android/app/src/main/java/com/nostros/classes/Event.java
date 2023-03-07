@@ -75,6 +75,8 @@ public class Event {
                     hideGroupMessage(database);
                 } else if (kind.equals("44")) {
                     muteUser(database);
+                } else if (kind.equals("10002")) {
+                    saveRelayMetadata(database);
                 } else if (kind.equals("9735")) {
                     saveZap(database);
                 } else if (kind.equals("10000") || kind.equals("10001") || kind.equals("30001")) {
@@ -256,6 +258,23 @@ public class Event {
             values.put("user_mentioned", getUserMentioned(userPubKey));
             values.put("repost_id", getRepostId());
             database.replace("nostros_notes", null, values);
+        }
+    }
+
+    protected void saveRelayMetadata(SQLiteDatabase database) {
+        String query = "SELECT id FROM nostros_relay_metadata WHERE id = ?";
+        @SuppressLint("Recycle") Cursor cursor = database.rawQuery(query, new String[] {id});
+
+        if (cursor.getCount() == 0) {
+            ContentValues values = new ContentValues();
+            values.put("id", id);
+            values.put("content", content);
+            values.put("created_at", created_at);
+            values.put("kind", kind);
+            values.put("pubkey", pubkey);
+            values.put("sig", sig);
+            values.put("tags", tags.toString());
+            database.replace("nostros_relay_metadata", null, values);
         }
     }
 

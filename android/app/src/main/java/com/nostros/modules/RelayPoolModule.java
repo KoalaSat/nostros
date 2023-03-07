@@ -64,6 +64,18 @@ public class RelayPoolModule extends ReactContextBaseJavaModule {
     }
 
     @ReactMethod
+    public void removeAll(Callback callback) {
+        ListIterator<Relay> iterator = relays.listIterator();
+        while(iterator.hasNext()){
+            Relay relay = iterator.next();
+            relay.disconnect();
+            iterator.remove();
+            database.deleteRelay(relay.url);
+        }
+        callback.invoke();
+    }
+
+    @ReactMethod
     public void update(String url, int active, int globalFeed, Callback callback) throws IOException {
         ListIterator<Relay> iterator = relays.listIterator();
         boolean relayExists = false;
