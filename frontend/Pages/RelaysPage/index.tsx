@@ -21,6 +21,8 @@ import { relayToColor } from '../../Functions/NativeFunctions'
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'
 import { useFocusEffect } from '@react-navigation/native'
 import { UserContext } from '../../Contexts/UserContext'
+import { Event } from '../../lib/nostr/Events'
+import { getUnixTime } from 'date-fns'
 
 export const RelaysPage: React.FC = () => {
   const defaultRelayInput = React.useMemo(() => 'wss://', [])
@@ -38,6 +40,7 @@ export const RelaysPage: React.FC = () => {
   const theme = useTheme()
   const bottomSheetAddRef = React.useRef<RBSheet>(null)
   const bottomSheetResilenseRef = React.useRef<RBSheet>(null)
+  const bottomSheetPushRef = React.useRef<RBSheet>(null)
   const [addRelayInput, setAddRelayInput] = useState<string>(defaultRelayInput)
   const [showNotification, setShowNotification] = useState<string>()
 
@@ -117,6 +120,22 @@ export const RelaysPage: React.FC = () => {
       setShowNotification('badFormat')
     }
     bottomSheetAddRef.current?.close()
+  }
+
+  const onPressPushRelay: () => void = () => {
+    if (publicKey) {
+      const activeRelays = relays.filter((relay) => relay?.active)
+      const tags: string[][] = activeRelays.map((relay) => ['r', relay.url ?? '', relay.mode ?? ''])
+      const event: Event = {
+        content: '',
+        created_at: getUnixTime(new Date()),
+        kind: 10002,
+        pubkey: publicKey,
+        tags,
+      }
+      relayPool?.sendEvent(event)
+    }
+    setShowNotification('listPushed')
   }
 
   const rbSheetCustomStyles = React.useMemo(() => {
@@ -280,7 +299,16 @@ export const RelaysPage: React.FC = () => {
         />
       </ScrollView>
       <AnimatedFAB
-        style={styles.fab}
+        style={styles.fabPush}
+        icon='upload-multiple'
+        label='push'
+        onPress={() => bottomSheetPushRef.current?.open()}
+        animateFrom='right'
+        iconMode='static'
+        extended={false}
+      />
+      <AnimatedFAB
+        style={styles.fabAdd}
         icon='plus'
         label='Add'
         onPress={() => bottomSheetAddRef.current?.open()}
@@ -299,6 +327,26 @@ export const RelaysPage: React.FC = () => {
           {t(`relaysPage.notifications.${showNotification}`)}
         </Snackbar>
       )}
+      <RBSheet ref={bottomSheetPushRef} closeOnDragDown={true} customStyles={rbSheetCustomStyles}>
+        <View style={styles.addRelay}>
+          <View style={styles.bottomDrawerButton}>
+            <Text variant='titleLarge'>{t('relaysPage.pushListTitle')}</Text>
+          </View>
+          <View style={styles.bottomDrawerButton}>
+            <Button mode='contained' onPress={onPressPushRelay}>
+              {t('relaysPage.pushList')}
+            </Button>
+          </View>
+          <Button
+            mode='outlined'
+            onPress={() => {
+              bottomSheetPushRef.current?.close()
+            }}
+          >
+            {t('relaysPage.cancel')}
+          </Button>
+        </View>
+      </RBSheet>
       <RBSheet
         ref={bottomSheetResilenseRef}
         closeOnDragDown={true}
@@ -390,9 +438,14 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
   relayList: {
-    paddingBottom: 80,
+    paddingBottom: 150,
   },
-  fab: {
+  fabPush: {
+    bottom: 85,
+    right: 16,
+    position: 'absolute',
+  },
+  fabAdd: {
     bottom: 16,
     right: 16,
     position: 'absolute',

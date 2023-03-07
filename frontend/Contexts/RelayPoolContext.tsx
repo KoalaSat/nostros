@@ -5,9 +5,9 @@ import { DeviceEventEmitter } from 'react-native'
 import debounce from 'lodash.debounce'
 import { getActiveRelays, getRelays, Relay } from '../Functions/DatabaseFunctions/Relays'
 import { UserContext } from './UserContext'
-import { randomInt } from '../Functions/NativeFunctions'
 import { getUnixTime } from 'date-fns'
 import { Event } from '../lib/nostr/Events'
+import { randomInt } from '../Functions/NativeFunctions'
 
 export interface RelayPoolContextProps {
   relayPoolReady: boolean
@@ -23,6 +23,7 @@ export interface RelayPoolContextProps {
   updateRelayItem: (relay: Relay) => Promise<void>
   sendRelays: (url?: string) => Promise<void>
   loadRelays: () => Promise<Relay[]>
+  createRandomRelays: () => Promise<void>
 }
 
 export interface WebsocketEvent {
@@ -44,6 +45,7 @@ export const initialRelayPoolContext: RelayPoolContextProps = {
   setDisplayrelayDrawer: () => {},
   sendRelays: async () => {},
   loadRelays: async () => [],
+  createRandomRelays: async () => {},
 }
 
 export const RelayPoolContextProvider = ({
@@ -92,18 +94,6 @@ export const RelayPoolContextProvider = ({
     () => debounce(changeConfirmationIdHandler, 250),
     [setLastConfirmationId],
   )
-
-  const createRandomRelays: () => Promise<void> = async () => {
-    const randomrelays: string[] = []
-    while (randomrelays.length < 5) {
-      const index = randomInt(0, fallbackRelays.length - 1)
-      const url = fallbackRelays[index]
-      if (!randomrelays.includes(url)) {
-        randomrelays.push(fallbackRelays[index])
-        await addRelayItem({ url })
-      }
-    }
-  }
 
   const loadRelayPool: () => void = async () => {
     if (database && publicKey) {
@@ -173,6 +163,18 @@ export const RelayPoolContextProvider = ({
     })
   }
 
+  const createRandomRelays: () => Promise<void> = async () => {
+    const randomrelays: string[] = []
+    while (randomrelays.length < 8) {
+      const index = randomInt(0, fallbackRelays.length - 1)
+      const url = fallbackRelays[index]
+      if (!randomrelays.includes(url)) {
+        randomrelays.push(url)
+      }
+    }
+    randomrelays.forEach(async (url) => await addRelayItem({ url }))
+  }
+
   useEffect(() => {
     if (publicKey && publicKey !== '') {
       DeviceEventEmitter.addListener('WebsocketEvent', debouncedEventIdHandler)
@@ -183,12 +185,7 @@ export const RelayPoolContextProvider = ({
 
   useEffect(() => {
     if (database && relayPool) {
-      getActiveRelays(database).then((results) => {
-        if (results.length < 1) {
-          createRandomRelays()
-        }
-        loadRelays().then(() => setRelayPoolReady(true))
-      })
+      loadRelays().then(() => setRelayPoolReady(true))
     }
   }, [relayPool])
 
@@ -208,6 +205,7 @@ export const RelayPoolContextProvider = ({
         updateRelayItem,
         sendRelays,
         loadRelays,
+        createRandomRelays,
       }}
     >
       {children}

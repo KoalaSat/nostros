@@ -44,6 +44,13 @@
       }
     },
     "profileLoadPage": {
+      "foundRelays": "Relays found",
+      "searchingContacts": "Searching for your contacts",
+      "retry": "Retry",
+      "connectedRelays": "Connected relays ",
+      "nextStep": "Next step",
+      "searchingRelays": "Searching for your relays",
+      "reconnectOther": "Reconnect to other relays",
       "relaysDescripion": "Verbinde dich zu einem anderen Relay falls deine Daten nicht gefunden werden.",
       "relays": "Deine Relays",
       "home": "Start",
@@ -242,6 +249,8 @@
       "newMessages": "{{newNotesCount}} neue Nachrichten. Zum Aktualisieren tippen."
     },
     "relaysPage": {
+      "pushListTitle": "Push relay list to the network",
+      "pushList": "Push list",
       "resilienceTitle": "Beständigkeit (experimental)",
       "resilienceDescription": "Das Nostr Protokoll stellt eine Reihe von Tools zur Verfügung, um ein dezentrales Netzwerk zu bauen, aber im Gegensatz zu anderen dezentralen Protokollen wie Bitcoin, ist es nicht von vornherein an seine Verwendung gebunden.\n\nUm das Ziel eines dezentralen Netzwerks zu erreichen, sollten Clients (z.B. Nostros) und Relays (Content-Server) aktiv zusammenarbeiten. Der Nostros-Resilienzmodus versucht erstens, dafür ein Gewahrsein bei den Nutzern zu wecken, und zweitens, neue Muster und Methoden zu erproben, um die Resilienz des Netzwerks zu verbessern.\n\nEine funktionierende Implementation hierfür wird bald in Nostros zur Anwendung kommen",
       "resilienceCategories": "Ausgewogenheitsfindung",
@@ -268,7 +277,8 @@
         "active": "Relay aktivieren.",
         "desactive": "Relay deaktivieren.",
         "badFormat": "Die URL des Relays hat kein gültiges Format.",
-        "alreadyExists": "Relay existiert bereits"
+        "alreadyExists": "Relay existiert bereits",
+        "listPushed": "Relay list pushed."
       }
     },
     "relayCard": {

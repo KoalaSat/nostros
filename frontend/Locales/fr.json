@@ -62,6 +62,13 @@
       }
     },
     "profileLoadPage": {
+      "foundRelays": "Relays found",
+      "searchingContacts": "Searching for your contacts",
+      "retry": "Retry",
+      "connectedRelays": "Connected relays ",
+      "nextStep": "Next step",
+      "searchingRelays": "Searching for your relays",
+      "reconnectOther": "Reconnect to other relays",
       "relaysDescripion": "Connectez-vous à d'autres relais si vous avez des problèmes pour trouver vos données.",
       "relays": "Voir relais",
       "home": "Accès",
@@ -287,6 +294,8 @@
       }
     },
     "relaysPage": {
+      "pushListTitle": "Push relay list to the network",
+      "pushList": "Push list",
       "resilienceTitle": "Resilience (experimental)",
       "resilienceDescription": "The Nostr protocol provides a good number of tools to build a decentralized network, but unlike other decentralized protocols such as Bitcoin, it is not inherently bound to its use. To achieve the goal of a decentralized network, clients (e.g., Nostros) and relays (content servers) should actively cooperate. The Nostros resilience mode seeks first to raise awareness of this among users, and second to test new patterns and methods to improve the resilience of the network.\nA working implementation for this will soon be applied in Nostros.",
       "resilienceCategories": "Resilience exposure",
@@ -309,7 +318,8 @@
         "active": "Relais activé.",
         "desactive": "Relais desactivé.",
         "badFormat": "L'URL du relais n'est pas correctement formaté.",
-        "alreadyExists": "Le relais existe déjà."
+        "alreadyExists": "Le relais existe déjà.",
+        "listPushed": "Relay list pushed."
       }
     },
     "profileConfigPage": {

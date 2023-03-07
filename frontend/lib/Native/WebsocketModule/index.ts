@@ -7,6 +7,7 @@ interface RelayPoolInterface {
   connect: (pubKey: string, callback: (eventId: string) => void) => void
   add: (url: string, callback: () => void) => void
   remove: (url: string, callback: () => void) => void
+  removeAll: (callback?: () => void) => void
   update: (relayUrl: string, active: number, globalfeed: number, callback?: () => void) => void
   onEventId: (callback: (eventId: string) => void) => void
 }

@@ -61,6 +61,13 @@
       }
     },
     "profileLoadPage": {
+      "foundRelays": "Relays found",
+      "searchingContacts": "Searching for your contacts",
+      "retry": "Retry",
+      "connectedRelays": "Connected relays ",
+      "nextStep": "Next step",
+      "searchingRelays": "Searching for your relays",
+      "reconnectOther": "Reconnect to other relays",
       "relaysDescripion": "若查看您的数据时遇到问题，可尝试连接其他中继重试",
       "relays": "查看中继",
       "home": "去首页",
@@ -261,6 +268,8 @@
       "newMessages": "有{{newNotesCount}}条新的 Notes，下拉刷新"
     },
     "relaysPage": {
+      "pushListTitle": "Push relay list to the network",
+      "pushList": "Push list",
       "resilienceTitle": "弹性模式 (试验性)",
       "resilienceDescription": "Nostr 协议提供了大量工具来构建去中心化网络，但与比特币等其他去中心化协议不同，它并不是默认使用的。 \n\n为了实现这样的目标，客户端和中继应该积极协作。 Nostros 弹性模式首先尝试将这些问题暴露给用户，其次开始尝试新的模式和方法来帮助提高网络的弹性。 \n\n该功能的实现将很快默认出现在 Nostros 上",
       "resilienceCategories": "弹性暴露",
@@ -287,7 +296,8 @@
         "active": "中继已启用",
         "desactive": "中继已停用",
         "badFormat": "中继地址格式不正确",
-        "alreadyExists": "中继已存在"
+        "alreadyExists": "中继已存在",
+        "listPushed": "Relay list pushed."
       }
     },
     "relayCard": {

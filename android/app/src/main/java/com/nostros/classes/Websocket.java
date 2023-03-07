@@ -16,6 +16,8 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.util.List;
+import java.util.Map;
 
 public class Websocket {
     private WebSocket webSocket;
@@ -75,6 +77,12 @@ public class Websocket {
             public void onDisconnected(WebSocket ws, WebSocketFrame serverCloseFrame,
                                        WebSocketFrame clientCloseFrame, boolean closedByServer) {
                 ws.connectAsynchronously();
+            }
+
+            @Override
+            public void onConnected(WebSocket websocket, Map<String, List<String>> headers) throws Exception
+            {
+                Log.d("Websocket", "CONNECTED URL:" + url);
             }
         });
         webSocket.connectAsynchronously();

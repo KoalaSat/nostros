@@ -50,6 +50,8 @@ export const TextContent: React.FC<TextContentProps> = ({
   const MEDIA_COVER = '../../../assets/images/placeholders/placeholder_media.png'
   const IMAGE_COVER = '../../../assets/images/placeholders/placeholder_image.png'
   const BLUEBIRD_COVER = '../../../assets/images/placeholders/placeholder_bluebird.png'
+  const MAGNET_COVER = '../../../assets/images/placeholders/placeholder_magnet.png'
+  const MAGNET_LINK = /(magnet:)\S+/
 
   useEffect(() => {
     if (!linkPreview && url) {
@@ -62,6 +64,9 @@ export const TextContent: React.FC<TextContentProps> = ({
       } else if (validBlueBirdUrl(url)) {
         setLinkPreview(url)
         setLinkType('blueBird')
+      } else if (MAGNET_LINK.test(url)) {
+        setLinkPreview(url)
+        setLinkType('magnet')
       }
     }
   }, [loadedUsers, url])
@@ -107,7 +112,7 @@ export const TextContent: React.FC<TextContentProps> = ({
         setDecodedLnUrl(decode(lnurl))
         setLnUrl(lnurl)
       } catch (e) {
-        cons.log(e)
+        console.log(e)
       }
     }
     return ''
@@ -173,6 +178,7 @@ export const TextContent: React.FC<TextContentProps> = ({
 
     const getDefaultCover: () => number = () => {
       if (!linkPreview) return require(DEFAULT_COVER)
+      if (linkType === 'magnet') return require(MAGNET_COVER)
       if (linkType === 'blueBird') return require(BLUEBIRD_COVER)
       if (linkType === 'audio') return require(MEDIA_COVER)
       if (linkType === 'video') return require(MEDIA_COVER)
@@ -248,9 +254,15 @@ export const TextContent: React.FC<TextContentProps> = ({
   return (
     <View style={styles.container}>
       <ParsedText
-        style={[styles.text, { color: theme.colors.onSurfaceVariant }]}
+        style={[{ color: theme.colors.onSurfaceVariant }]}
         parse={[
           { type: 'url', style: styles.url, onPress: handleUrlPress, renderText: renderUrlText },
+          {
+            pattern: MAGNET_LINK,
+            style: styles.url,
+            onPress: handleUrlPress,
+            renderText: renderUrlText,
+          },
           { type: 'email', style: styles.email, onPress: handleUrlPress },
           event
             ? {

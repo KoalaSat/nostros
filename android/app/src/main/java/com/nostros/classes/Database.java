@@ -222,6 +222,18 @@ public class Database {
         try {
             instance.execSQL("ALTER TABLE nostros_lists ADD COLUMN list_tag TEXT;");
         } catch (SQLException e) { }
+        try {
+            instance.execSQL("CREATE TABLE IF NOT EXISTS nostros_relay_metadata(\n" +
+                    "          id TEXT PRIMARY KEY NOT NULL, \n" +
+                    "          content TEXT NOT NULL,\n" +
+                    "          created_at INT NOT NULL,\n" +
+                    "          kind INT NOT NULL,\n" +
+                    "          pubkey TEXT NOT NULL,\n" +
+                    "          sig TEXT NOT NULL,\n" +
+                    "          tags TEXT NOT NULL\n" +
+                    "          );");
+            instance.execSQL("CREATE INDEX nostros_relay_metadata_index ON nostros_relay_metadata(pubkey);");
+        } catch (SQLException e) { }
     }
 
     public void saveEvent(JSONObject data, String userPubKey, String relayUrl) throws JSONException {

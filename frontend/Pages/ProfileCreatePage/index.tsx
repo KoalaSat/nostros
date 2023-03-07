@@ -8,6 +8,9 @@ import { DrawerNavigationHelpers } from '@react-navigation/drawer/lib/typescript
 import { UserContext } from '../../Contexts/UserContext'
 import { privateKeyFromSeedWords } from 'nostr-tools/nip06'
 import { nsecEncode } from 'nostr-tools/nip19'
+import { RelayPoolContext } from '../../Contexts/RelayPoolContext'
+import { getUnixTime } from 'date-fns'
+import { Event } from '../../lib/nostr/Events'
 
 interface ProfileCreatePageProps {
   navigation: DrawerNavigationHelpers
@@ -15,7 +18,8 @@ interface ProfileCreatePageProps {
 
 export const ProfileCreatePage: React.FC<ProfileCreatePageProps> = ({ navigation }) => {
   const { t } = useTranslation('common')
-  const { setPrivateKey, setUserState } = useContext(UserContext)
+  const { setPrivateKey, setUserState, publicKey } = useContext(UserContext)
+  const { createRandomRelays, relayPool, relays } = useContext(RelayPoolContext)
   const [key, setKey] = useState<string>()
   const [inputValue, setInputValue] = useState<string>()
   const [keyboardShow, setKeyboardShow] = useState<boolean>(false)
@@ -36,6 +40,7 @@ export const ProfileCreatePage: React.FC<ProfileCreatePageProps> = ({ navigation
       const nsec = nsecEncode(privateKey)
       setInputValue(nsec)
     })
+    createRandomRelays()
   }, [])
 
   useEffect(() => {
@@ -60,6 +65,16 @@ export const ProfileCreatePage: React.FC<ProfileCreatePageProps> = ({ navigation
 
   const onPress: () => void = () => {
     if (step > 1) {
+      if (publicKey) {
+        const event: Event = {
+          content: '',
+          created_at: getUnixTime(new Date()),
+          kind: 10002,
+          pubkey: publicKey,
+          tags: relays.map((relay) => ['r', relay.url, '']),
+        }
+        relayPool?.sendEvent(event)
+      }
       if (validConfirmation()) {
         setPrivateKey(key)
         setUserState('ready')

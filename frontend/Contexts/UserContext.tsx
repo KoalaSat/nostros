@@ -134,6 +134,7 @@ export const UserContextProvider = ({ children }: UserContextProviderProps): JSX
   const logout: () => void = () => {
     if (database) {
       relayPool?.unsubscribeAll()
+      relayPool?.removeAll()
       setPrivateKey(undefined)
       setPublicKey(undefined)
       setNpub(undefined)

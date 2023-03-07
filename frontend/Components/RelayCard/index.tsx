@@ -32,6 +32,7 @@ import { Kind } from 'nostr-tools'
 import { usersToTags } from '../../Functions/RelayFunctions/Users'
 import { getRawUserGroupMessages, getRawUserGroups } from '../../Functions/DatabaseFunctions/Groups'
 import { getRawLists } from '../../Functions/DatabaseFunctions/Lists'
+import { getRawRelayMetadata } from '../../Functions/DatabaseFunctions/RelayMetadatas'
 
 interface RelayCardProps {
   url?: string
@@ -105,6 +106,11 @@ export const RelayCard: React.FC<RelayCardProps> = ({ url, bottomSheetRef }) => 
         })
       })
       getRawLists(database, publicKey).then((lists) => {
+        lists.forEach((list) => {
+          relayPool.sendEvent(list, url)
+        })
+      })
+      getRawRelayMetadata(database, publicKey).then((lists) => {
         lists.forEach((list) => {
           relayPool.sendEvent(list, url)
         })

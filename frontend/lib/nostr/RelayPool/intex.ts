@@ -191,8 +191,8 @@ class RelayPool {
     }
 
     // Stores in DB
-    resilientUrls.forEach((url) => DatabaseModule.createResilientRelay(url))
-    resilientUrls.forEach((url) => DatabaseModule.activateResilientRelay(url))
+    // resilientUrls.forEach((url) => DatabaseModule.createResilientRelay(url))
+    // resilientUrls.forEach((url) => DatabaseModule.activateResilientRelay(url))
   }
 
   public readonly add: (relayUrl: string, callback?: () => void) => void = async (
@@ -207,6 +207,10 @@ class RelayPool {
     callback = () => {},
   ) => {
     RelayPoolModule.remove(relayUrl, callback)
+  }
+
+  public readonly removeAll: (callback?: () => void) => void = async (callback) => {
+    RelayPoolModule.removeAll(callback)
   }
 
   public readonly update: (
