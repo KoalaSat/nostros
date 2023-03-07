@@ -50,6 +50,7 @@ export const TextContent: React.FC<TextContentProps> = ({
   const MEDIA_COVER = '../../../assets/images/placeholders/placeholder_media.png'
   const IMAGE_COVER = '../../../assets/images/placeholders/placeholder_image.png'
   const BLUEBIRD_COVER = '../../../assets/images/placeholders/placeholder_bluebird.png'
+  const MAGNET_COVER = '../../../assets/images/placeholders/placeholder_magnet.png'
   const MAGNET_LINK = /(magnet:)\S+/
 
   useEffect(() => {
@@ -177,7 +178,7 @@ export const TextContent: React.FC<TextContentProps> = ({
 
     const getDefaultCover: () => number = () => {
       if (!linkPreview) return require(DEFAULT_COVER)
-      if (linkType === 'magnet') return require(DEFAULT_COVER)
+      if (linkType === 'magnet') return require(MAGNET_COVER)
       if (linkType === 'blueBird') return require(BLUEBIRD_COVER)
       if (linkType === 'audio') return require(MEDIA_COVER)
       if (linkType === 'video') return require(MEDIA_COVER)
