@@ -50,7 +50,7 @@
       "groupUpdate": "更新群组",
       "newGroupCreate": "创建群组",
       "createTitle": "创建群组",
-      "groupId": "群组 id",
+      "groupId": "群组 ID",
       "addTitle": "添加已有的群组",
       "add": "添加群组"
     },
@@ -134,8 +134,8 @@
       "view": "查看",
       "bookmarked": "已收藏",
       "bookmark": "收藏",
-      "mutedThread": "Thread muted",
-      "muteThread": "Mute thread"
+      "mutedThread": "对话串已静音",
+      "muteThread": "静音对话串"
     },
     "noteCard": {
       "notifications": {
@@ -203,7 +203,7 @@
         "addContactError": "发布更新时发生了错误",
         "contactRemoved": "已取消关注",
         "contactUnblocked": "用户已屏蔽",
-        "contactUnmuted": "Profile unmuted."
+        "contactUnmuted": "用户已静音"
       },
       "emptyTitleBlocked": "您还没有屏蔽任何人",
       "emptyDescriptionBlocked": "您可以随时在用户详情页屏蔽用户",
@@ -223,8 +223,8 @@
       "follow": "回关",
       "blocked": "已屏蔽 ({{count}})",
       "unblock": "取消屏蔽",
-      "muted": "Muted ({{count}})",
-      "unmute": "Unmute"
+      "muted": "已静音 ({{count}})",
+      "unmute": "取消静音"
     },
     "aboutPage": {
       "telegram": "Telegram",
@@ -418,12 +418,12 @@
       "blocked": "已屏蔽",
       "mute": "静音",
       "muted": "已静音",
-      "hideChats": "Hide chats",
-      "muteUser": "Mute {{username}} on chats",
-      "hideWarningTitle": "Important",
-      "hideWarning": "This action will hide the messages of this user on all chats and cannot be undone.",
-      "hideChatsForever": "Mute {{username}} forever",
-      "cancel": "Cancel"
+      "hideChats": "隐藏聊天",
+      "muteUser": "在聊天中将{{username}}静音",
+      "hideWarningTitle": "注意",
+      "hideWarning": "此操作将在所有聊天中隐藏该用户的消息，且无法撤消",
+      "hideChatsForever": "永久静音{{username}}",
+      "cancel": "取消"
     },
     "conversationsFeed": {
       "openMessage": "发送私信",
