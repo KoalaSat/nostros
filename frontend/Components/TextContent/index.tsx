@@ -6,14 +6,11 @@ import { AppContext } from '../../Contexts/AppContext'
 import { getUser, User } from '../../Functions/DatabaseFunctions/Users'
 import { formatPubKey } from '../../Functions/RelayFunctions/Users'
 import getUnixTime from 'date-fns/getUnixTime'
-import { Avatar, Card, Text, useTheme } from 'react-native-paper'
+import { useTheme } from 'react-native-paper'
 import { getNip19Key, getNpub } from '../../lib/nostr/Nip19'
 import { navigate } from '../../lib/Navigation'
 import { validBlueBirdUrl, validImageUrl, validMediaUrl } from '../../Functions/NativeFunctions'
-import FastImage from 'react-native-fast-image'
-import { useTranslation } from 'react-i18next'
-import { decode, PaymentRequestObject, TagsObject } from 'bolt11'
-import LnPreview from '../LnPreview'
+import { LinksPreview } from './LinksPreview'
 
 interface TextContentProps {
   event?: Event
@@ -33,52 +30,20 @@ export const TextContent: React.FC<TextContentProps> = ({
   copyText = false,
 }) => {
   const theme = useTheme()
-  const { t } = useTranslation('common')
-  const { database, getSatoshiSymbol } = useContext(AppContext)
+  const { database } = useContext(AppContext)
   const [userNames, setUserNames] = useState<Record<number, string>>({})
   const [loadedUsers, setLoadedUsers] = useState<number>(0)
-  const [url, setUrl] = useState<string>()
+  const [urls, setUrls] = useState<Record<string, string>>({})
   const [lnUrl, setLnUrl] = useState<string>()
-  const [invoice, setInvoice] = useState<string>()
-  const [decodedLnUrl, setDecodedLnUrl] = useState<
-    PaymentRequestObject & { tagsObject: TagsObject }
-  >()
-  const [linkPreview, setLinkPreview] = useState<string>()
-  const [linkType, setLinkType] = useState<string>()
   const text = event?.content ?? content ?? ''
-  const DEFAULT_COVER = '../../../assets/images/placeholders/placeholder_url.png'
-  const MEDIA_COVER = '../../../assets/images/placeholders/placeholder_media.png'
-  const IMAGE_COVER = '../../../assets/images/placeholders/placeholder_image.png'
-  const BLUEBIRD_COVER = '../../../assets/images/placeholders/placeholder_bluebird.png'
-  const MAGNET_COVER = '../../../assets/images/placeholders/placeholder_magnet.png'
   const MAGNET_LINK = /(magnet:)\S+/
 
-  useEffect(() => {
-    if (!linkPreview && url) {
-      if (validMediaUrl(url)) {
-        setLinkPreview(url)
-        setLinkType('video')
-      } else if (validImageUrl(url)) {
-        setLinkPreview(url)
-        setLinkType('image')
-      } else if (validBlueBirdUrl(url)) {
-        setLinkPreview(url)
-        setLinkType('blueBird')
-      } else if (MAGNET_LINK.test(url)) {
-        setLinkPreview(url)
-        setLinkType('magnet')
-      }
-    }
-  }, [loadedUsers, url])
+  useEffect(() => {}, [loadedUsers])
 
   const handleUrlPress: (url: string | undefined) => void = (url) => {
     if (!url) return
 
     Linking.openURL(url)
-  }
-
-  const handleLnUrlPress: () => void = () => {
-    setInvoice(lnUrl)
   }
 
   const handleNip05NotePress: (nip19: string) => void = (nip19) => {
@@ -109,7 +74,6 @@ export const TextContent: React.FC<TextContentProps> = ({
   const renderLnurl: (lnurl: string | undefined) => string = (lnurl) => {
     if (!lnUrl && lnurl) {
       try {
-        setDecodedLnUrl(decode(lnurl))
         setLnUrl(lnurl)
       } catch (e) {
         console.log(e)
@@ -153,103 +117,34 @@ export const TextContent: React.FC<TextContentProps> = ({
     }
   }
 
+  const linkPreview: (url: string) => string = (url) => {
+    if (validMediaUrl(url)) {
+      return 'video'
+    } else if (validImageUrl(url)) {
+      return 'image'
+    } else if (validBlueBirdUrl(url)) {
+      return 'blueBird'
+    } else if (MAGNET_LINK.test(url)) {
+      return 'magnet'
+    }
+    return 'url'
+  }
+
   const renderUrlText: (matchingString: string, matches: string[]) => string = (
     matchingString,
     _matches,
   ) => {
-    setUrl((prev) => {
-      return prev ?? matchingString
+    setUrls((prev) => {
+      prev[matchingString] = linkPreview(matchingString)
+      return prev
     })
+
     return matchingString
   }
 
   const onLongPress: () => void = () => {
     if (copyText) Clipboard.setString(text)
   }
-
-  const preview = React.useMemo(() => {
-    if (!showPreview) return <></>
-
-    const getRequireCover: () => string | undefined = () => {
-      if (linkType === 'image') return url
-
-      return ''
-    }
-
-    const getDefaultCover: () => number = () => {
-      if (!linkPreview) return require(DEFAULT_COVER)
-      if (linkType === 'magnet') return require(MAGNET_COVER)
-      if (linkType === 'blueBird') return require(BLUEBIRD_COVER)
-      if (linkType === 'audio') return require(MEDIA_COVER)
-      if (linkType === 'video') return require(MEDIA_COVER)
-      return require(DEFAULT_COVER)
-    }
-
-    return (
-      <View>
-        {decodedLnUrl && (
-          <Card onPress={handleLnUrlPress}>
-            <Card.Title
-              title={t('textContent.invoice')}
-              subtitle={
-                <>
-                  <Text>{decodedLnUrl.satoshis}</Text>
-                  {getSatoshiSymbol(16)}
-                </>
-              }
-              left={(props) => (
-                <Avatar.Icon
-                  {...props}
-                  icon='lightning-bolt'
-                  style={{
-                    backgroundColor: '#F5D112',
-                  }}
-                />
-              )}
-            />
-          </Card>
-        )}
-        {url && (
-          <View style={styles.previewCard}>
-            <Card onPress={() => handleUrlPress(url)}>
-              {linkType === 'image' ? (
-                <FastImage
-                  style={[
-                    styles.cardCover,
-                    {
-                      backgroundColor: theme.colors.backdrop,
-                    },
-                  ]}
-                  source={{
-                    uri: getRequireCover(),
-                    priority: FastImage.priority.high,
-                  }}
-                  resizeMode={FastImage.resizeMode.contain}
-                  defaultSource={require(IMAGE_COVER)}
-                />
-              ) : (
-                <Card.Cover source={getDefaultCover()} resizeMode='contain' />
-              )}
-              {linkType !== 'image' && (
-                <Card.Content style={styles.previewContent}>
-                  <Text variant='bodyMedium' numberOfLines={3}>
-                    {/* {linkPreview?.title ?? linkPreview?.url ?? url} */}
-                    {url}
-                  </Text>
-                  {/* {linkPreview?.description && (
-              <Text variant='bodySmall' numberOfLines={3}>
-                {linkPreview.description}
-              </Text>
-            )} */}
-                </Card.Content>
-              )}
-            </Card>
-          </View>
-        )}
-        {invoice && <LnPreview invoice={invoice} setInvoice={setInvoice} />}
-      </View>
-    )
-  }, [invoice, url, linkType, lnUrl])
 
   return (
     <View style={styles.container}>
@@ -290,7 +185,7 @@ export const TextContent: React.FC<TextContentProps> = ({
       >
         {text}
       </ParsedText>
-      {preview}
+      {showPreview && <LinksPreview urls={urls} lnUrl={lnUrl} />}
     </View>
   )
 }
@@ -298,11 +193,6 @@ export const TextContent: React.FC<TextContentProps> = ({
 const styles = StyleSheet.create({
   container: {
     width: '100%',
-  },
-  cardCover: {
-    flex: 1,
-    height: 180,
-    borderRadius: 16,
   },
   url: {
     textDecorationLine: 'underline',
@@ -319,12 +209,6 @@ const styles = StyleSheet.create({
   },
   hashTag: {
     fontStyle: 'italic',
-  },
-  previewContent: {
-    padding: 16,
-  },
-  previewCard: {
-    paddingTop: 16,
   },
 })
 

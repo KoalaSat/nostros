@@ -135,6 +135,7 @@ export const RelaysPage: React.FC = () => {
       }
       relayPool?.sendEvent(event)
     }
+    bottomSheetPushRef.current?.close()
     setShowNotification('listPushed')
   }
 
