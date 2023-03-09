@@ -25,6 +25,7 @@ import GroupHeaderIcon from '../../Components/GroupHeaderIcon'
 import NoteActions from '../../Components/NoteActions'
 import QrReaderPage from '../QrReaderPage'
 import DatabaseModule from '../../lib/Native/DatabaseModule'
+import ImageGalleryPage from '../ImageGalleryPage'
 
 export const HomeNavigator: React.FC = () => {
   const theme = useTheme()
@@ -176,6 +177,7 @@ export const HomeNavigator: React.FC = () => {
           <Stack.Screen name='ProfileConfig' component={ProfileConfigPage} />
           <Stack.Screen name='Profile' component={ProfilePage} />
           <Stack.Screen name='QrReader' component={QrReaderPage} />
+          <Stack.Screen name='ImageGallery' component={ImageGalleryPage} />
         </Stack.Group>
       </Stack.Navigator>
       <RBSheet
