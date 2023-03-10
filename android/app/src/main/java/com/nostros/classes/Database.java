@@ -269,7 +269,7 @@ public class Database {
                     String relayUrl = cursor.getString(0);
                     int active = cursor.getInt(1);
                     int globalFeed = cursor.getInt(2);
-                    Relay relay = new Relay(relayUrl, active, globalFeed,this, reactContext);
+                    Relay relay = new Relay(relayUrl, active, globalFeed,0, this, reactContext);
                     relayList.add(relay);
                 } catch (IOException e) {
                     Log.d("WebSocket", e.toString());

@@ -5,17 +5,17 @@ import {
   getRepliesCount,
   getRepostCount,
   isUserReposted,
-  Note,
-  NoteRelay,
+  type Note,
+  type NoteRelay,
 } from '../../Functions/DatabaseFunctions/Notes'
 import { StyleSheet, View } from 'react-native'
 import { RelayPoolContext } from '../../Contexts/RelayPoolContext'
 import { AppContext } from '../../Contexts/AppContext'
 import { t } from 'i18next'
 import { isContentWarning } from '../../Functions/RelayFunctions/Events'
-import { Event } from '../../lib/nostr/Events'
+import { type Event } from '../../lib/nostr/Events'
 import { getUnixTime } from 'date-fns'
-import { Relay, searchRelays } from '../../Functions/DatabaseFunctions/Relays'
+import { type Relay, searchRelays } from '../../Functions/DatabaseFunctions/Relays'
 import TextContent from '../../Components/TextContent'
 import { formatPubKey } from '../../Functions/RelayFunctions/Users'
 import { getReactions } from '../../Functions/DatabaseFunctions/Reactions'

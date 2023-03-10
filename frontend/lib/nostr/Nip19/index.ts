@@ -1,10 +1,10 @@
 import {
   decode,
-  EventPointer,
+  type EventPointer,
   neventEncode,
   nprofileEncode,
   npubEncode,
-  ProfilePointer,
+  type ProfilePointer,
 } from 'nostr-tools/nip19'
 
 export function getNpub(key: string | undefined): string {

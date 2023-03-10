@@ -3,7 +3,7 @@ import { StyleSheet, View } from 'react-native'
 import { Button, Card, Snackbar, Text, useTheme } from 'react-native-paper'
 import { useTranslation } from 'react-i18next'
 import RBSheet from 'react-native-raw-bottom-sheet'
-import { Asset, launchImageLibrary } from 'react-native-image-picker'
+import { type Asset, launchImageLibrary } from 'react-native-image-picker'
 import { imageHostingServices } from '../../Constants/Services'
 import { AppContext } from '../../Contexts/AppContext'
 

@@ -4,6 +4,7 @@ import { StyleSheet, View } from 'react-native'
 import { useFocusEffect } from '@react-navigation/native'
 import FirstStep from './FirstStep'
 import SecondStep from './SecondStep'
+import ThirdStep from './ThirdStep'
 
 export const ProfileLoadPage: React.FC = () => {
   const { relayPool } = useContext(RelayPoolContext)
@@ -15,8 +16,8 @@ export const ProfileLoadPage: React.FC = () => {
         relayPool?.unsubscribe([
           'profile-load-meta',
           'profile-load-contacts',
-          'profile-load-others',
           'profile-load-notes',
+          'profile-load-relays',
         ])
     }, []),
   )
@@ -29,6 +30,7 @@ export const ProfileLoadPage: React.FC = () => {
     <View style={styles.container}>
       {step === 0 && <FirstStep nextStep={nextStep} />}
       {step === 1 && <SecondStep nextStep={nextStep} />}
+      {step === 2 && <ThirdStep nextStep={nextStep} />}
     </View>
   )
 }

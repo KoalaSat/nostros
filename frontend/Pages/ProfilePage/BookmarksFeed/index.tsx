@@ -1,18 +1,18 @@
 import React, { useContext, useState, useEffect } from 'react'
-import { NativeScrollEvent, NativeSyntheticEvent, StyleSheet, View } from 'react-native'
+import { type NativeScrollEvent, type NativeSyntheticEvent, StyleSheet, View } from 'react-native'
 import { AppContext } from '../../../Contexts/AppContext'
-import { getNotes, Note } from '../../../Functions/DatabaseFunctions/Notes'
+import { getNotes, type Note } from '../../../Functions/DatabaseFunctions/Notes'
 import { RelayPoolContext } from '../../../Contexts/RelayPoolContext'
 import { Kind } from 'nostr-tools'
 import { ActivityIndicator, Text, useTheme } from 'react-native-paper'
 import NoteCard from '../../../Components/NoteCard'
-import { FlashList, ListRenderItem } from '@shopify/flash-list'
+import { FlashList, type ListRenderItem } from '@shopify/flash-list'
 import { handleInfinityScroll } from '../../../Functions/NativeFunctions'
 import { getETags } from '../../../Functions/RelayFunctions/Events'
 import { getList } from '../../../Functions/DatabaseFunctions/Lists'
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'
 import { useTranslation } from 'react-i18next'
-import { RelayFilters } from '../../../lib/nostr/RelayPool/intex'
+import { type RelayFilters } from '../../../lib/nostr/RelayPool/intex'
 
 interface BookmarksFeedProps {
   publicKey: string

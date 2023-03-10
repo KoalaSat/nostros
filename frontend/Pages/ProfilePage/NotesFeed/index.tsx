@@ -1,14 +1,14 @@
 import React, { useContext, useState, useEffect } from 'react'
-import { NativeScrollEvent, NativeSyntheticEvent, StyleSheet, View } from 'react-native'
+import { type NativeScrollEvent, type NativeSyntheticEvent, StyleSheet, View } from 'react-native'
 import { AppContext } from '../../../Contexts/AppContext'
-import { getMainNotes, Note } from '../../../Functions/DatabaseFunctions/Notes'
+import { getMainNotes, type Note } from '../../../Functions/DatabaseFunctions/Notes'
 import { RelayPoolContext } from '../../../Contexts/RelayPoolContext'
 import { Kind } from 'nostr-tools'
 import { ActivityIndicator } from 'react-native-paper'
 import NoteCard from '../../../Components/NoteCard'
-import { FlashList, ListRenderItem } from '@shopify/flash-list'
+import { FlashList, type ListRenderItem } from '@shopify/flash-list'
 import { handleInfinityScroll } from '../../../Functions/NativeFunctions'
-import { RelayFilters } from '../../../lib/nostr/RelayPool/intex'
+import { type RelayFilters } from '../../../lib/nostr/RelayPool/intex'
 
 interface NotesFeedProps {
   publicKey: string

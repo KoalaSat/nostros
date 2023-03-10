@@ -6,7 +6,7 @@ import { useTranslation } from 'react-i18next'
 import RBSheet from 'react-native-raw-bottom-sheet'
 import { Card, IconButton, Text, useTheme } from 'react-native-paper'
 import { AppContext } from '../../Contexts/AppContext'
-import { decode, PaymentRequestObject, TagsObject } from 'bolt11'
+import { decode, type PaymentRequestObject, type TagsObject } from 'bolt11'
 
 interface LnPreviewProps {
   setOpen?: (open: boolean) => void

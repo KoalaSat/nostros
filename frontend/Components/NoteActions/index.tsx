@@ -4,7 +4,12 @@ import { FlatList, StyleSheet, TouchableNativeFeedback, View } from 'react-nativ
 import { Divider, IconButton, List, Text, useTheme } from 'react-native-paper'
 import { AppContext } from '../../Contexts/AppContext'
 import RBSheet from 'react-native-raw-bottom-sheet'
-import { getNoteRelays, getNotes, Note, NoteRelay } from '../../Functions/DatabaseFunctions/Notes'
+import {
+  getNoteRelays,
+  getNotes,
+  type Note,
+  type NoteRelay,
+} from '../../Functions/DatabaseFunctions/Notes'
 import Clipboard from '@react-native-clipboard/clipboard'
 import NoteShare from '../NoteShare'
 import { navigate } from '../../lib/Navigation'

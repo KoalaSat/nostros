@@ -1,27 +1,27 @@
 import React, { useCallback, useContext, useState, useEffect } from 'react'
 import {
-  NativeScrollEvent,
-  NativeSyntheticEvent,
+  type NativeScrollEvent,
+  type NativeSyntheticEvent,
   RefreshControl,
   StyleSheet,
   View,
 } from 'react-native'
 import { AppContext } from '../../../Contexts/AppContext'
-import { getNotes, Note } from '../../../Functions/DatabaseFunctions/Notes'
+import { getNotes, type Note } from '../../../Functions/DatabaseFunctions/Notes'
 import { handleInfinityScroll } from '../../../Functions/NativeFunctions'
 import { UserContext } from '../../../Contexts/UserContext'
 import { RelayPoolContext } from '../../../Contexts/RelayPoolContext'
 import { Kind } from 'nostr-tools'
-import { RelayFilters } from '../../../lib/nostr/RelayPool/intex'
+import { type RelayFilters } from '../../../lib/nostr/RelayPool/intex'
 import { ActivityIndicator, Button, Text } from 'react-native-paper'
 import NoteCard from '../../../Components/NoteCard'
 import { useTheme } from '@react-navigation/native'
-import { FlashList, ListRenderItem } from '@shopify/flash-list'
+import { FlashList, type ListRenderItem } from '@shopify/flash-list'
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'
 import { useTranslation } from 'react-i18next'
 import { getMostZapedNotesContacts } from '../../../Functions/DatabaseFunctions/Zaps'
 import { getUnixTime } from 'date-fns'
-import { getUsers, User } from '../../../Functions/DatabaseFunctions/Users'
+import { getUsers, type User } from '../../../Functions/DatabaseFunctions/Users'
 
 interface ZapsFeedProps {
   navigation: any

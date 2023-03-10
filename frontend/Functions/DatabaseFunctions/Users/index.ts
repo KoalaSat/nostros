@@ -1,5 +1,5 @@
 import { getItems } from '..'
-import { QuickSQLiteConnection } from 'react-native-quick-sqlite'
+import { type QuickSQLiteConnection } from 'react-native-quick-sqlite'
 
 export interface User {
   id: string

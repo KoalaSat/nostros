@@ -1,14 +1,14 @@
 import React, { useContext, useEffect, useState } from 'react'
-import { NativeScrollEvent, NativeSyntheticEvent, StyleSheet, View } from 'react-native'
+import { type NativeScrollEvent, type NativeSyntheticEvent, StyleSheet, View } from 'react-native'
 import Clipboard from '@react-native-clipboard/clipboard'
 import { AppContext } from '../../Contexts/AppContext'
 import { Kind } from 'nostr-tools'
 import { useTranslation } from 'react-i18next'
-import { FlashList, ListRenderItem } from '@shopify/flash-list'
+import { FlashList, type ListRenderItem } from '@shopify/flash-list'
 import {
   getBlocked,
   getFollowersAndFollowing,
-  User,
+  type User,
   getUsers,
 } from '../../Functions/DatabaseFunctions/Users'
 import { RelayPoolContext } from '../../Contexts/RelayPoolContext'

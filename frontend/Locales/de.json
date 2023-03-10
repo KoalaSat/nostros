@@ -252,7 +252,9 @@
     },
     "relaysPage": {
       "pushListTitle": "Push relay list to the network",
+      "pushListDescription": "Only relays on \"My relays\" list will be pushed.",
       "pushList": "Push list",
+      "contactsList": "Contact's relays",
       "freeAccess": "Free access",
       "paid": "Paid",
       "paidRelay": "Paid relay",

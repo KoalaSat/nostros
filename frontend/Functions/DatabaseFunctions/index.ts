@@ -1,8 +1,8 @@
 import {
   open,
-  QuickSQLiteConnection,
-  BatchQueryResult,
-  QueryResult,
+  type QuickSQLiteConnection,
+  type BatchQueryResult,
+  type QueryResult,
 } from 'react-native-quick-sqlite'
 
 export const initDatabase: () => QuickSQLiteConnection = () => {

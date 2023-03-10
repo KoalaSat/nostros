@@ -4,11 +4,11 @@ import { Dimensions, StyleSheet, View } from 'react-native'
 import Clipboard from '@react-native-clipboard/clipboard'
 import { IconButton, Snackbar, Text, TouchableRipple } from 'react-native-paper'
 import Share from 'react-native-share'
-import RBSheet from 'react-native-raw-bottom-sheet'
+import type RBSheet from 'react-native-raw-bottom-sheet'
 import QRCode from 'react-native-qrcode-svg'
 import { useContext } from 'react'
 import { AppContext } from '../../Contexts/AppContext'
-import { getNoteRelays, Note } from '../../Functions/DatabaseFunctions/Notes'
+import { getNoteRelays, type Note } from '../../Functions/DatabaseFunctions/Notes'
 import { getNevent } from '../../lib/nostr/Nip19'
 
 interface NoteShareProps {

@@ -1,6 +1,6 @@
 import * as React from 'react'
 import { useTranslation } from 'react-i18next'
-import { FlatList, Linking, ListRenderItem, StyleSheet } from 'react-native'
+import { FlatList, Linking, type ListRenderItem, StyleSheet } from 'react-native'
 import { Divider, List, Text, useTheme } from 'react-native-paper'
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'
 import VersionNumber from 'react-native-version-number'

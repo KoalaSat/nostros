@@ -1,5 +1,5 @@
 import schnorr from 'bip-schnorr'
-import { Kind } from 'nostr-tools'
+import { type Kind } from 'nostr-tools'
 
 export interface Event {
   content: string

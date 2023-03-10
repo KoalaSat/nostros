@@ -1,6 +1,6 @@
-import { QuickSQLiteConnection } from 'react-native-quick-sqlite'
+import { type QuickSQLiteConnection } from 'react-native-quick-sqlite'
 import { getItems } from '..'
-import { Event } from '../../../lib/nostr/Events'
+import { type Event } from '../../../lib/nostr/Events'
 
 export interface Zap extends Event {
   amount: boolean
