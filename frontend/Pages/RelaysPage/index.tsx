@@ -136,12 +136,7 @@ export const RelaysPage: React.FC = () => {
       const activeRelays = relays.filter(
         (relay) => relay?.active && (!relay.resilient || relay.resilient < 0),
       )
-      const tags: string[][] = activeRelays.map((relay) => [
-        'r',
-        relay.url ?? '',
-        relay.mode ?? '',
-        relay.paid ? 'paid' : '',
-      ])
+      const tags: string[][] = activeRelays.map((relay) => ['r', relay.url ?? '', relay.mode ?? ''])
       const event: Event = {
         content: '',
         created_at: getUnixTime(new Date()),
@@ -267,14 +262,14 @@ export const RelaysPage: React.FC = () => {
         </View>
         <FlatList
           showsVerticalScrollIndicator={false}
-          data={relays.filter((relay) => {
-            return (
-              (!relay.resilient &&
-                (relay.paid === undefined || relay.paid < 1) &&
-                showFreeRelays) ||
-              (!relay.resilient && relay.paid !== undefined && relay.paid > 0 && showPaidRelays)
-            )
-          })}
+          data={relays
+            .filter((relay) => !relay.resilient || relay.resilient < 1)
+            .filter((relay) => {
+              return (
+                ((relay.paid === undefined || relay.paid < 1) && showFreeRelays) ||
+                (relay.paid !== undefined && relay.paid > 0 && showPaidRelays)
+              )
+            })}
           renderItem={renderItem}
           ItemSeparatorComponent={Divider}
         />
@@ -287,12 +282,16 @@ export const RelaysPage: React.FC = () => {
         <FlatList
           showsVerticalScrollIndicator={false}
           style={styles.relayList}
-          data={relays.filter((relay) => {
-            return (
-              (relay.resilient && (relay.paid === undefined || relay.paid < 1) && showFreeRelays) ??
-              (relay.resilient && relay.paid !== undefined && relay.paid > 0 && showPaidRelays)
-            )
-          })}
+          data={relays
+            .filter((relay) => relay.resilient && relay.resilient > 0)
+            .filter((relay) => {
+              return (
+                (relay.resilient &&
+                  (relay.paid === undefined || relay.paid < 1) &&
+                  showFreeRelays) ??
+                (relay.resilient && relay.paid !== undefined && relay.paid > 0 && showPaidRelays)
+              )
+            })}
           renderItem={renderItem}
           ItemSeparatorComponent={Divider}
         />
