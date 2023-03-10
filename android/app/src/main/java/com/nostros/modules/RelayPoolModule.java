@@ -76,7 +76,7 @@ public class RelayPoolModule extends ReactContextBaseJavaModule {
     }
 
     @ReactMethod
-    public void update(String url, int active, int globalFeed, Callback callback) throws IOException {
+    public void update(String url, int active, int globalFeed, int paid, Callback callback) throws IOException {
         ListIterator<Relay> iterator = relays.listIterator();
         boolean relayExists = false;
         while(iterator.hasNext()){
@@ -86,6 +86,7 @@ public class RelayPoolModule extends ReactContextBaseJavaModule {
                 relay.connect(userPubKey);
                 relay.setActive(active);
                 relay.setGlobalFeed(globalFeed);
+                relay.setPaid(paid);
                 relay.save(database);
                 this.relays.set(index, relay);
                 relayExists = true;

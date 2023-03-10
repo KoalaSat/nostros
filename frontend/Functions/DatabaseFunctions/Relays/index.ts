@@ -10,6 +10,7 @@ export interface Relay {
   global_feed?: number
   resilient?: number
   manual?: number
+  paid?: number
   mode?: 'read' | 'write' | ''
 }
 

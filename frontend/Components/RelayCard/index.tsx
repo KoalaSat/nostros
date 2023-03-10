@@ -174,6 +174,28 @@ export const RelayCard: React.FC<RelayCardProps> = ({ url, bottomSheetRef }) => 
     }
   }
 
+  const paidRelay: () => void = () => {
+    if (relay) {
+      const newRelay = relay
+      newRelay.paid = 1
+      updateRelayItem(newRelay).then(() => {
+        setShowNotification('paid')
+      })
+      setRelay(newRelay)
+    }
+  }
+
+  const freeRelay: () => void = () => {
+    if (relay) {
+      const newRelay = relay
+      newRelay.paid = 0
+      updateRelayItem(newRelay).then(() => {
+        setShowNotification('noPaid')
+      })
+      setRelay(newRelay)
+    }
+  }
+
   const activeGlobalFeedRelay: () => void = () => {
     if (relay) {
       const newRelay = relay
@@ -223,15 +245,25 @@ export const RelayCard: React.FC<RelayCardProps> = ({ url, bottomSheetRef }) => 
   return relay ? (
     <View>
       <View style={styles.relayDescription}>
-        <View style={styles.relayName}>
-          <MaterialCommunityIcons
-            style={styles.relayColor}
-            name='circle'
-            color={relayToColor(relay.url)}
-          />
-          <Text>{relay.url}</Text>
+        <View style={styles.relayData}>
+          <View style={styles.relayName}>
+            <MaterialCommunityIcons
+              style={styles.relayColor}
+              name='circle'
+              color={relayToColor(relay.url)}
+            />
+            <Text>{relay.url}</Text>
+          </View>
+          {relay.paid && relay.paid > 0 ? (
+            <MaterialCommunityIcons
+              name='wallet-outline'
+              size={16}
+              color={theme.colors.onPrimaryContainer}
+            />
+          ) : (
+            <></>
+          )}
         </View>
-        <Text>{relay.url}</Text>
         <View style={styles.moreInfo}>
           {!moreInfo && (
             <Text style={styles.moreInfoText} onPress={() => setMoreInfo(true)}>
@@ -319,6 +351,15 @@ export const RelayCard: React.FC<RelayCardProps> = ({ url, bottomSheetRef }) => 
             <Switch
               value={relay.active !== undefined && relay.active > 0}
               onValueChange={() => (relay.active ? desactiveRelay() : activeRelay())}
+            />
+          )}
+        />
+        <List.Item
+          title={t('relayCard.paid')}
+          right={() => (
+            <Switch
+              value={relay.paid !== undefined && relay.paid > 0}
+              onValueChange={() => (relay.paid ? freeRelay() : paidRelay())}
             />
           )}
         />
@@ -446,13 +487,17 @@ const styles = StyleSheet.create({
   },
   snackbar: {
     marginBottom: 85,
-    width: '100%',
+    flex: 1,
   },
   moreInfo: {
     paddingTop: 16,
   },
   moreInfoText: {
     textDecorationLine: 'underline',
+  },
+  relayData: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
   },
   relayName: {
     flexDirection: 'row',

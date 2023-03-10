@@ -39,6 +39,7 @@
       "markAllRead": "Marcar todo como leído"
     },
     "conversationPage": {
+      "unableDecypt": "{{username}} está hablando con otros sobre ti",
       "typeMessage": "Escribir mensaje",
       "notifications": {
         "privateMessageSendError": "Ha ocurrido un error enviando el mensaje."
@@ -264,6 +265,7 @@
     },
     "relayCard": {
       "pushDone": "Completado",
+      "paid": "Pago",
       "pushHistoricTitle": "Subir histórico",
       "pushHistoricDescription": "Nostros almacena en su propia base de datos todos los datos recibidos de los relays. Con esta opción puedes enviar a cualquier relay todos los datos que Nostros ha asociado a tu perfil.",
       "pushHistoricAlertTitle": "Importante",
@@ -287,6 +289,8 @@
       "description": "Descripción",
       "obtainingInfo": "Obteniendo información del relay",
       "notifications": {
+        "paid": "Relay marcado como de pago.",
+        "noPaid": "Relay marcado como de acceso libre.",
         "active": "Relay activado.",
         "desactive": "Relay desactivado.",
         "globalFeedActive": "Feed global activado.",
@@ -300,6 +304,9 @@
     "relaysPage": {
       "pushListTitle": "Subir lista de relays",
       "pushList": "Subir lista",
+      "freeAccess": "Acceso libre",
+      "paid": "Pago",
+      "paidRelay": "Relay de pago",
       "resilienceTitle": "Resilience (experimental)",
       "resilienceDescription": "The Nostr protocol provides a good number of tools to build a decentralized network, but unlike other decentralized protocols such as Bitcoin, it is not inherently bound to its use. To achieve the goal of a decentralized network, clients (e.g., Nostros) and relays (content servers) should actively cooperate. The Nostros resilience mode seeks first to raise awareness of this among users, and second to test new patterns and methods to improve the resilience of the network.\nA working implementation for this will soon be applied in Nostros.",
       "resilienceCategories": "Resilience exposure",

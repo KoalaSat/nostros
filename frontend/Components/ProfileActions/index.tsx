@@ -395,6 +395,7 @@ const styles = StyleSheet.create({
   snackbar: {
     marginLeft: 16,
     bottom: 16,
+    flex: 1,
   },
   switch: {
     marginLeft: 32,

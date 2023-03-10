@@ -20,8 +20,7 @@ interface ProfileCardProps {
 
 export const ProfileCard: React.FC<ProfileCardProps> = ({ bottomSheetRef, showImages = true }) => {
   const theme = useTheme()
-  const { displayUserDrawer } = React.useContext(AppContext)
-  const { database } = React.useContext(AppContext)
+  const { displayUserDrawer, database } = React.useContext(AppContext)
   const [user, setUser] = React.useState<User>()
   const [openLn, setOpenLn] = React.useState<boolean>(false)
   const [showNotification, setShowNotification] = React.useState<undefined | string>()
@@ -108,7 +107,7 @@ const styles = StyleSheet.create({
   },
   snackbar: {
     marginBottom: 85,
-    width: '100%',
+    flex: 1,
   },
   usernameData: {
     paddingLeft: 16,

@@ -587,7 +587,7 @@ const styles = StyleSheet.create({
   snackbar: {
     marginBottom: 50,
     marginLeft: 0,
-    width: '100%',
+    flex: 1,
   },
   noteOptionsIcon: {
     marginBottom: -16,

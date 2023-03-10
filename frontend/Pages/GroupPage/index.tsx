@@ -604,7 +604,7 @@ const styles = StyleSheet.create({
   snackbar: {
     margin: 16,
     bottom: 70,
-    width: '100%',
+    flex: 1,
   },
   verifyIcon: {
     paddingTop: 4,

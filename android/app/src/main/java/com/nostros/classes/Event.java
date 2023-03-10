@@ -590,16 +590,11 @@ public class Event {
             for (int i = 0; i < tags.length(); ++i) {
                 JSONArray tag = tags.getJSONArray(i);
                 String petId = tag.getString(1);
-                String name = "";
-                if (tag.length() >= 4) {
-                    name = tag.getString(3);
-                }
                 String query = "SELECT * FROM nostros_users WHERE id = ?";
                 Cursor cursor = database.rawQuery(query, new String[] {petId});
                 ContentValues values = new ContentValues();
                 values.put("pet_at", created_at);
                 values.put("contact", 1);
-                values.put("name", name);
                 values.put("blocked", 0);
 
                 if (cursor.getCount() == 0) {

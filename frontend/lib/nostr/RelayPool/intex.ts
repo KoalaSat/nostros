@@ -47,7 +47,6 @@ export const fallbackRelays = [
   'wss://relay.wellorder.net',
   'wss://nostr.btcmp.com',
   'wss://relay.nostromo.social',
-  'wss://relay.stoner.com',
   'wss://nostr.massmux.com',
   'wss://nostr.robotesc.ro',
   'wss://relay.humanumest.social',
@@ -217,9 +216,10 @@ class RelayPool {
     relayUrl: string,
     active: number,
     globalfeed: number,
+    paid: number,
     callback?: () => void,
-  ) => void = async (relayUrl, active, globalfeed, callback = () => {}) => {
-    RelayPoolModule.update(relayUrl, active, globalfeed, callback)
+  ) => void = async (relayUrl, active, globalfeed, paid, callback = () => {}) => {
+    RelayPoolModule.update(relayUrl, active, globalfeed, paid, callback)
   }
 
   public readonly sendEvent: (event: Event, relayUrl?: string) => Promise<Event | null> = async (

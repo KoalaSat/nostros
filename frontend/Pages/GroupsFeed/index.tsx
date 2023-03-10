@@ -461,7 +461,7 @@ const styles = StyleSheet.create({
   snackbar: {
     marginLeft: 16,
     bottom: 16,
-    width: '100%',
+    flex: 1,
   },
   containerAvatar: {
     marginTop: 10,

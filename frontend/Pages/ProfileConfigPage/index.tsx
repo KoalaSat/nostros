@@ -499,7 +499,7 @@ const styles = StyleSheet.create({
   snackbar: {
     marginLeft: 16,
     bottom: 24,
-    width: '100%',
+    flex: 1,
   },
   link: {
     textDecorationLine: 'underline',

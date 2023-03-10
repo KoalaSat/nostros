@@ -75,8 +75,8 @@ export const LinksPreview: React.FC<TextContentProps> = ({ urls, lnUrl }) => {
     <TouchableWithoutFeedback
       onPress={() =>
         navigate('ImageGallery', {
-          urls: Object.keys(urls),
-          index: Object.keys(urls).indexOf(link),
+          urls: imageLinks,
+          index: imageLinks.indexOf(link),
         })
       }
     >

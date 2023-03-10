@@ -74,7 +74,9 @@ export const FirstStep: React.FC<FirstStepProps> = ({ nextStep }) => {
       relays.forEach((relay) => {
         removeRelayItem(relay)
       })
-      metadata.tags.forEach(async (tag) => await addRelayItem({ url: tag[1] }))
+      metadata.tags.forEach(
+        async (tag) => await addRelayItem({ url: tag[1], paid: tag[3] === 'paid' ? 1 : 0 }),
+      )
       nextStep()
     }
   }

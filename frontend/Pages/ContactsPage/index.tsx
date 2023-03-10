@@ -567,7 +567,7 @@ const styles = StyleSheet.create({
   snackbar: {
     margin: 16,
     marginBottom: 95,
-    width: '100%',
+    flex: 1,
   },
   contactRow: {
     padding: 16,

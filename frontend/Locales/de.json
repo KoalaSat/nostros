@@ -39,6 +39,7 @@
       "markAllRead": "Alle als gelesen markieren"
     },
     "conversationPage": {
+      "unableDecypt": "{{username}} is talking with others about you",
       "typeMessage": "Nachricht schreiben",
       "notifications": {
         "privateMessageSendError": "Fehler beim Senden der Nachricht."
@@ -252,6 +253,9 @@
     "relaysPage": {
       "pushListTitle": "Push relay list to the network",
       "pushList": "Push list",
+      "freeAccess": "Free access",
+      "paid": "Paid",
+      "paidRelay": "Paid relay",
       "resilienceTitle": "Beständigkeit (experimental)",
       "resilienceDescription": "Das Nostr Protokoll stellt eine Reihe von Tools zur Verfügung, um ein dezentrales Netzwerk zu bauen, aber im Gegensatz zu anderen dezentralen Protokollen wie Bitcoin, ist es nicht von vornherein an seine Verwendung gebunden.\n\nUm das Ziel eines dezentralen Netzwerks zu erreichen, sollten Clients (z.B. Nostros) und Relays (Content-Server) aktiv zusammenarbeiten. Der Nostros-Resilienzmodus versucht erstens, dafür ein Gewahrsein bei den Nutzern zu wecken, und zweitens, neue Muster und Methoden zu erproben, um die Resilienz des Netzwerks zu verbessern.\n\nEine funktionierende Implementation hierfür wird bald in Nostros zur Anwendung kommen",
       "resilienceCategories": "Ausgewogenheitsfindung",
@@ -284,6 +288,7 @@
     },
     "relayCard": {
       "pushDone": "Fertig",
+      "paid": "Paid",
       "pushHistoricTitle": "Alle meine Daten hochladen",
       "pushHistoricDescription": "Alle Daten die Nostros von Relays empfängt, werden in einer lokalen Datenbank gespeichert. Mit dieser Funktion kannst du alle Daten, die Nostros mit deinem Profil verbindet, hochladen",
       "pushHistoricAlertTitle": "Wichtig!",
@@ -307,6 +312,8 @@
       "description": "Beschreibung",
       "obtainingInfo": "Relay Infos einholen",
       "notifications": {
+        "paid": "Relay marked as paid.",
+        "noPaid": "Relay marked as free.",
         "active": "Relay aktiviert.",
         "desactive": "Relay deaktiviert.",
         "globalFeedActive": "Globaler Feed aktiv.",
