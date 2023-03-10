@@ -6,7 +6,6 @@ import { Relay } from '../../Functions/DatabaseFunctions/Relays'
 import { REGEX_SOCKET_LINK } from '../../Constants/Relay'
 import {
   List,
-  Switch,
   AnimatedFAB,
   useTheme,
   Text,
@@ -15,6 +14,7 @@ import {
   IconButton,
   Divider,
   Snackbar,
+  Switch,
 } from 'react-native-paper'
 import RBSheet from 'react-native-raw-bottom-sheet'
 import { relayToColor } from '../../Functions/NativeFunctions'
@@ -39,10 +39,12 @@ export const RelaysPage: React.FC = () => {
   const { t } = useTranslation('common')
   const theme = useTheme()
   const bottomSheetAddRef = React.useRef<RBSheet>(null)
-  const bottomSheetResilenseRef = React.useRef<RBSheet>(null)
   const bottomSheetPushRef = React.useRef<RBSheet>(null)
   const [addRelayInput, setAddRelayInput] = useState<string>(defaultRelayInput)
+  const [addRelayPaid, setAddRelayPaid] = useState<boolean>(false)
   const [showNotification, setShowNotification] = useState<string>()
+  const [showPaidRelays, setShowPaidRelays] = useState<boolean>(true)
+  const [showFreeRelays, setShowFreeRelays] = useState<boolean>(true)
 
   useFocusEffect(
     React.useCallback(() => {
@@ -125,7 +127,12 @@ export const RelaysPage: React.FC = () => {
   const onPressPushRelay: () => void = () => {
     if (publicKey) {
       const activeRelays = relays.filter((relay) => relay?.active)
-      const tags: string[][] = activeRelays.map((relay) => ['r', relay.url ?? '', relay.mode ?? ''])
+      const tags: string[][] = activeRelays.map((relay) => [
+        'r',
+        relay.url ?? '',
+        relay.mode ?? '',
+        relay.paid ? 'paid' : 'free',
+      ])
       const event: Event = {
         content: '',
         created_at: getUnixTime(new Date()),
@@ -162,76 +169,57 @@ export const RelaysPage: React.FC = () => {
 
   const renderItem: ListRenderItem<Relay> = ({ item, index }) => {
     return (
-      <List.Item
-        key={index}
-        title={item.url.replace('wss://', '').replace('ws://', '')}
-        right={() => (
-          <>
-            <Switch
-              value={item.global_feed !== undefined && item.global_feed > 0}
-              onValueChange={() =>
-                item.global_feed ? desactiveGlobalFeedRelay(item) : activeGlobalFeedRelay(item)
+      <View style={styles.relayItem}>
+        <List.Item
+          key={index}
+          title={item.url.replace('wss://', '').replace('ws://', '')}
+          right={() => {
+            if (!item?.paid) return <></>
+            return (
+              <MaterialCommunityIcons
+                name='wallet-outline'
+                size={16}
+                color={theme.colors.onPrimaryContainer}
+              />
+            )
+          }}
+          left={() => (
+            <MaterialCommunityIcons
+              style={styles.relayColor}
+              name='circle'
+              color={relayToColor(item.url)}
+            />
+          )}
+        />
+        <View style={styles.relayButtons}>
+          <View style={styles.relayActionButtons}>
+            <Button
+              mode={item.active !== undefined && item.active > 0 ? 'contained' : 'outlined'}
+              style={styles.relayButton}
+              onPress={() => (item.active ? desactiveRelay(item) : activeRelay(item))}
+            >
+              {t('relaysPage.active')}
+            </Button>
+            <Button
+              mode={
+                item.global_feed !== undefined && item.global_feed > 0 ? 'contained' : 'outlined'
               }
-            />
-            <Switch
-              style={styles.switch}
-              value={item.active !== undefined && item.active > 0}
-              onValueChange={() => (item.active ? desactiveRelay(item) : activeRelay(item))}
-            />
-          </>
-        )}
-        left={() => (
-          <MaterialCommunityIcons
-            style={styles.relayColor}
-            name='circle'
-            color={relayToColor(item.url)}
+              style={styles.relayButton}
+              onPress={() => {
+                item.global_feed ? desactiveGlobalFeedRelay(item) : activeGlobalFeedRelay(item)
+              }}
+            >
+              {t('relaysPage.globalFeed')}
+            </Button>
+          </View>
+          <IconButton
+            icon='dots-vertical'
+            size={28}
+            onPress={() => setDisplayrelayDrawer(item.url)}
+            style={styles.relayOptionButton}
           />
-        )}
-        onPress={() => {
-          setDisplayrelayDrawer(item.url)
-        }}
-      />
-    )
-  }
-
-  const renderResilienceItem: (item: string, index: number, type?: string) => JSX.Element = (
-    item,
-    index,
-    type,
-  ) => {
-    return (
-      <List.Item
-        key={index}
-        title={item.replace('wss://', '').replace('ws://', '')}
-        left={() => (
-          <MaterialCommunityIcons
-            style={styles.relayColor}
-            name='circle'
-            color={relayToColor(item)}
-          />
-        )}
-        right={() => (
-          <>
-            {type === 'centralized' && (
-              <Text style={[styles.smallRelay, { color: theme.colors.error }]}>
-                {relayPool?.resilientAssignation.centralizedRelays[item] &&
-                  t('relaysPage.centralized')}
-              </Text>
-            )}
-            {type === 'small' && (
-              <Text style={[styles.smallRelay, { color: theme.colors.error }]}>
-                {relayPool?.resilientAssignation.smallRelays[item] && t('relaysPage.small')}
-              </Text>
-            )}
-            <Text>
-              {type === undefined && relayPool?.resilientAssignation.resilientRelays[item]?.length}
-              {type === 'small' && relayPool?.resilientAssignation.smallRelays[item]?.length}
-              {type === 'centralized' &&
-                relayPool?.resilientAssignation.centralizedRelays[item]?.length}
-            </Text>
-          </>
-        )}
-      />
+        </View>
+      </View>
     )
   }
 
@@ -243,60 +231,40 @@ export const RelaysPage: React.FC = () => {
 
   return (
     <View style={styles.container}>
+      <View style={styles.relayFilters}>
+        <Button
+          mode={showFreeRelays ? 'contained' : 'outlined'}
+          style={styles.relayFilterButton}
+          onPress={() => setShowFreeRelays((prev) => !prev)}
+        >
+          {t('relaysPage.freeAccess')}
+        </Button>
+        <Button
+          mode={showPaidRelays ? 'contained' : 'outlined'}
+          style={styles.relayFilterButton}
+          onPress={() => setShowPaidRelays((prev) => !prev)}
+        >
+          {t('relaysPage.paid')}
+        </Button>
+      </View>
       <ScrollView horizontal={false}>
-        <View style={styles.titleWrapper}>
-          <View style={styles.title}>
-            <Text style={styles.title} variant='titleMedium'>
-              {t('relaysPage.resilienceMode')}
-            </Text>
-            <IconButton
-              style={styles.titleAction}
-              icon='help'
-              size={20}
-              onPress={() => bottomSheetResilenseRef.current?.open()}
-            />
-          </View>
-          <Divider />
-        </View>
-        <List.Item
-          title={t('relaysPage.relayName')}
-          right={() => <Text style={styles.listHeader}>{t('relaysPage.contacts')}</Text>}
-        />
-        <FlatList
-          showsVerticalScrollIndicator={false}
-          data={Object.keys(relayPool?.resilientAssignation.resilientRelays ?? {})}
-          renderItem={(data) => renderResilienceItem(data.item, data.index)}
-        />
-        <FlatList
-          showsVerticalScrollIndicator={false}
-          data={Object.keys(relayPool?.resilientAssignation.centralizedRelays ?? {})}
-          renderItem={(data) => renderResilienceItem(data.item, data.index, 'centralized')}
-        />
-        <FlatList
-          showsVerticalScrollIndicator={false}
-          data={Object.keys(relayPool?.resilientAssignation.smallRelays ?? {})}
-          renderItem={(data) => renderResilienceItem(data.item, data.index, 'small')}
-        />
         <View style={styles.titleWrapper}>
           <Text style={styles.title} variant='titleMedium'>
             {t('relaysPage.myList')}
           </Text>
           <Divider />
         </View>
-        <List.Item
-          title={t('relaysPage.relayName')}
-          right={() => (
-            <>
-              <Text style={styles.listHeader}>{t('relaysPage.globalFeed')}</Text>
-              <Text style={styles.listHeader}>{t('relaysPage.active')}</Text>
-            </>
-          )}
-        />
         <FlatList
           showsVerticalScrollIndicator={false}
-          data={relays}
+          data={relays.filter((relay) => {
+            return (
+              ((relay.paid === undefined || relay.paid < 1) && showFreeRelays) ||
+              (relay.paid !== undefined && relay.paid > 0 && showPaidRelays)
+            )
+          })}
           renderItem={renderItem}
           style={styles.relayList}
+          ItemSeparatorComponent={Divider}
         />
       </ScrollView>
       <AnimatedFAB
@@ -348,18 +316,6 @@ export const RelaysPage: React.FC = () => {
           </Button>
         </View>
       </RBSheet>
-      <RBSheet
-        ref={bottomSheetResilenseRef}
-        closeOnDragDown={true}
-        customStyles={rbSheetCustomStyles}
-      >
-        <View style={styles.resilienceDrawer}>
-          <Text variant='headlineSmall'>{t('relaysPage.resilienceTitle')}</Text>
-          <Text variant='bodyMedium'>{t('relaysPage.resilienceDescription')}</Text>
-          <Text variant='titleMedium'>{t('relaysPage.resilienceCategories')}</Text>
-          <Text variant='bodyMedium'>{t('relaysPage.resilienceCategoriesDescription')}</Text>
-        </View>
-      </RBSheet>
       <RBSheet ref={bottomSheetAddRef} closeOnDragDown={true} customStyles={rbSheetCustomStyles}>
         <View style={styles.addRelay}>
           <View style={styles.bottomDrawerButton}>
@@ -376,6 +332,10 @@ export const RelaysPage: React.FC = () => {
                 />
               }
             />
+          </View>
+          <View style={styles.switchWrapper}>
+            <Text>{t('relaysPage.paidRelay')}</Text>
+            <Switch value={addRelayPaid} onValueChange={setAddRelayPaid} />
           </View>
           <View style={styles.bottomDrawerButton}>
             <Button mode='contained' onPress={onPressAddRelay}>
@@ -398,12 +358,18 @@ export const RelaysPage: React.FC = () => {
 }
 
 const styles = StyleSheet.create({
+  relayFilters: {
+    paddingLeft: 16,
+    flexDirection: 'row',
+    paddingBottom: 16,
+  },
   titleWrapper: {
     marginBottom: 4,
     marginTop: 24,
-    paddingRight: 16,
   },
   title: {
+    paddingLeft: 16,
+    paddingRight: 16,
     marginBottom: 8,
     flexDirection: 'row',
     justifyContent: 'space-between',
@@ -415,17 +381,20 @@ const styles = StyleSheet.create({
   bottomDrawerButton: {
     paddingBottom: 16,
   },
+  relayOptionButton: {
+    margin: 0,
+    marginRight: 10,
+  },
   container: {
     padding: 0,
-    paddingLeft: 16,
   },
   list: {
     paddingBottom: 130,
   },
   snackbar: {
-    margin: 16,
+    padding: 16,
     bottom: 70,
-    width: '100%',
+    flex: 1,
   },
   relayColor: {
     paddingTop: 9,
@@ -433,21 +402,16 @@ const styles = StyleSheet.create({
   switch: {
     marginLeft: 32,
   },
-  listHeader: {
-    paddingRight: 5,
-    paddingLeft: 16,
-    textAlign: 'center',
-  },
   relayList: {
-    paddingBottom: 150,
+    paddingBottom: 200,
   },
   fabPush: {
-    bottom: 85,
+    bottom: 142,
     right: 16,
     position: 'absolute',
   },
   fabAdd: {
-    bottom: 16,
+    bottom: 72,
     right: 16,
     position: 'absolute',
   },
@@ -463,6 +427,13 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     width: 80,
   },
+  switchWrapper: {
+    justifyContent: 'space-between',
+    flexDirection: 'row',
+    alignItems: 'center',
+    width: '100%',
+    marginBottom: 16,
+  },
   divider: {
     marginBottom: 26,
     marginTop: 26,
@@ -476,6 +447,25 @@ const styles = StyleSheet.create({
   resilienceDrawer: {
     height: 630,
     justifyContent: 'space-between',
+  },
+  relayButtons: {
+    paddingBottom: 16,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+  },
+  relayButton: {
+    marginRight: 16,
+  },
+  relayFilterButton: {
+    borderRadius: 8,
+    marginRight: 16,
+  },
+  relayItem: {
+    paddingLeft: 16,
+    paddingRight: 16,
+  },
+  relayActionButtons: {
+    flexDirection: 'row',
   },
 })
 

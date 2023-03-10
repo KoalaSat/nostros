@@ -101,7 +101,7 @@ export const ProfileShare: React.FC<ProfileShareProps> = ({ user }) => {
 const styles = StyleSheet.create({
   snackbar: {
     marginBottom: 85,
-    width: '100%',
+    flex: 1,
   },
   mainLayout: {
     flexDirection: 'row',

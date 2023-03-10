@@ -64,6 +64,7 @@ const styles = StyleSheet.create({
   rouletteImage: {
     width: 80,
     margin: 8,
+    borderRadius: 16,
   },
   roulette: {
     flexDirection: 'row',

@@ -15,6 +15,7 @@ public class Relay {
     public String url;
     public int active;
     public int globalFeed;
+    public int paid;
 
     public Relay(String serverUrl, int isActive, int showGlobalFeed, Database database, ReactApplicationContext reactContext) throws IOException {
         webSocket = new Websocket(serverUrl, database, reactContext);
@@ -35,6 +36,10 @@ public class Relay {
         this.globalFeed = globalFeed;
     }
 
+    public void setPaid(int paid) {
+        this.paid = paid;
+    }
+
     public void send(String message) {
         webSocket.send(message);
     }
@@ -50,6 +55,7 @@ public class Relay {
     public void save(Database database) {
         ContentValues values = new ContentValues();
         values.put("url", url);
+        values.put("paid", paid);
         values.put("active", active);
         values.put("global_feed", globalFeed);
         values.put("deleted_at", 0);

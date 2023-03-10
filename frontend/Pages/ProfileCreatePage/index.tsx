@@ -284,7 +284,7 @@ const styles = StyleSheet.create({
   },
   snackbar: {
     margin: 16,
-    width: '100%',
+    flex: 1,
   },
   warning: {
     borderRadius: 4,

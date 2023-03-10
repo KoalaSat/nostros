@@ -130,9 +130,15 @@ export const RelayPoolContextProvider = ({
     })
     return await new Promise((resolve, _reject) => {
       if (relayPool && database && publicKey) {
-        relayPool.update(relay.url, relay.active ?? 1, relay.global_feed ?? 1, () => {
-          loadRelays().then(() => resolve())
-        })
+        relayPool.update(
+          relay.url,
+          relay.active ?? 1,
+          relay.global_feed ?? 1,
+          relay.paid ?? 0,
+          () => {
+            loadRelays().then(() => resolve())
+          },
+        )
       }
     })
   }

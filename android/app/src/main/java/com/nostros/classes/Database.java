@@ -234,6 +234,9 @@ public class Database {
                     "          );");
             instance.execSQL("CREATE INDEX nostros_relay_metadata_index ON nostros_relay_metadata(pubkey);");
         } catch (SQLException e) { }
+        try {
+            instance.execSQL("ALTER TABLE nostros_relays ADD COLUMN paid INT DEFAULT 0;");
+        } catch (SQLException e) { }
     }
 
     public void saveEvent(JSONObject data, String userPubKey, String relayUrl) throws JSONException {

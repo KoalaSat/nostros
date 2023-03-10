@@ -87,7 +87,7 @@ export const NoteShare: React.FC<NoteShareProps> = ({ note }) => {
 const styles = StyleSheet.create({
   snackbar: {
     marginBottom: 85,
-    width: '100%',
+    flex: 1,
   },
   mainLayout: {
     flexDirection: 'row',

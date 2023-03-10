@@ -8,7 +8,7 @@ import { Kind } from 'nostr-tools'
 
 export const usersToTags: (users: User[]) => string[][] = (users) => {
   return users.map((user): string[] => {
-    return ['p', user.id, user.main_relay ?? '', '']
+    return ['p', user.id, user.main_relay ?? '']
   })
 }
 

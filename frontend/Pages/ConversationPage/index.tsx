@@ -61,6 +61,7 @@ export const ConversationPage: React.FC<ConversationPageProps> = ({ route }) => 
   const [showNotification, setShowNotification] = useState<string>()
   const [startUpload, setStartUpload] = useState<boolean>(false)
   const [uploadingFile, setUploadingFile] = useState<boolean>(false)
+  const [unableDecrypt, setUnableDecrypt] = useState<boolean>(false)
 
   const { t } = useTranslation('common')
 
@@ -101,11 +102,15 @@ export const ConversationPage: React.FC<ConversationPageProps> = ({ route }) => 
                 if (decryptedMessages[message.id]) {
                   message.content = decryptedMessages[message.id]
                 } else {
-                  message.content = decrypt(privateKey, otherPubKey, message.content ?? '')
-                  setDecryptedMessages((prev) => {
-                    if (message?.id) prev[message.id] = message.content
-                    return prev
-                  })
+                  try {
+                    message.content = decrypt(privateKey, otherPubKey, message.content ?? '')
+                    setDecryptedMessages((prev) => {
+                      if (message?.id) prev[message.id] = message.content
+                      return prev
+                    })
+                  } catch (e) {
+                    setUnableDecrypt(true)
+                  }
                 }
               }
               return message
@@ -354,7 +359,26 @@ export const ConversationPage: React.FC<ConversationPageProps> = ({ route }) => 
     }
   }
 
-  return (
+  const unableDecryptView = React.useMemo(
+    () => (
+      <View style={styles.blank}>
+        <MaterialCommunityIcons
+          name='email-outline'
+          size={64}
+          style={styles.center}
+          color={theme.colors.onPrimaryContainer}
+        />
+        <Text variant='headlineSmall' style={styles.center}>
+          {t('conversationPage.unableDecypt', { username: username(otherUser) })}
+        </Text>
+      </View>
+    ),
+    [otherUser],
+  )
+
+  return unableDecrypt ? (
+    unableDecryptView
+  ) : (
     <View style={styles.container}>
       <FlatList
         style={styles.list}
@@ -462,6 +486,11 @@ const styles = StyleSheet.create({
   list: {
     scaleY: -1,
   },
+  blank: {
+    justifyContent: 'space-between',
+    height: 170,
+    marginTop: 91,
+  },
   replyText: {
     width: '80%',
     paddingLeft: 16,
@@ -536,7 +565,7 @@ const styles = StyleSheet.create({
   snackbar: {
     margin: 16,
     bottom: 70,
-    width: '100%',
+    flex: 1,
   },
   verifyIcon: {
     paddingTop: 4,
@@ -548,6 +577,10 @@ const styles = StyleSheet.create({
   cardContentReply: {
     marginTop: -16,
     marginBottom: 16,
+  },
+  center: {
+    alignContent: 'center',
+    textAlign: 'center',
   },
 })
 
