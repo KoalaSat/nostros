@@ -41,7 +41,7 @@ export const ThirdStep: React.FC<ThirdStepProps> = ({ nextStep }) => {
       getUsers(database, {}).then((results) => {
         if (results.length > 0) {
           const authors = [...results.map((user: User) => user.id), publicKey]
-          relayPool?.subscribe('profile-load-relays', [
+          relayPool?.subscribe('profile-load-contacts', [
             {
               kinds: [10002],
               authors,

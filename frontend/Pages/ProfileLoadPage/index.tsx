@@ -12,13 +12,7 @@ export const ProfileLoadPage: React.FC = () => {
 
   useFocusEffect(
     React.useCallback(() => {
-      return () =>
-        relayPool?.unsubscribe([
-          'profile-load-meta',
-          'profile-load-contacts',
-          'profile-load-notes',
-          'profile-load-relays',
-        ])
+      return () => relayPool?.unsubscribe(['profile-load-meta', 'profile-load-contacts'])
     }, []),
   )
 

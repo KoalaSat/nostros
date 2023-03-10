@@ -77,7 +77,7 @@ export const SecondStep: React.FC<SecondStepProps> = ({ nextStep }) => {
         if (results.length > 0) {
           setContactsCount(results.filter((user) => user.contact).length)
           const authors = [...results.map((user: User) => user.id)]
-          relayPool?.subscribe('profile-load-notes', [
+          relayPool?.subscribe('profile-load-contacts', [
             {
               kinds: [Kind.Metadata, 10002],
               authors,
@@ -156,7 +156,7 @@ export const SecondStep: React.FC<SecondStepProps> = ({ nextStep }) => {
         </View>
       </View>
       <View style={styles.buttons}>
-        <Button mode='contained' onPress={nextStep} disabled={contactsCount === undefined}>
+        <Button mode='contained' onPress={nextStep} disabled={!contactsCount}>
           {t('profileLoadPage.nextStep')}
         </Button>
         <Button mode='outlined' onPress={() => setUserState('ready')}>
