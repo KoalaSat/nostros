@@ -1,6 +1,6 @@
-import { QuickSQLiteConnection } from 'react-native-quick-sqlite'
+import { type QuickSQLiteConnection } from 'react-native-quick-sqlite'
 import { getItems } from '..'
-import { Relay } from '../Relays'
+import { type Relay } from '../Relays'
 
 export interface NoteRelay extends Relay {
   relay_url: string

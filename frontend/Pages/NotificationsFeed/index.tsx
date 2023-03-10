@@ -1,14 +1,14 @@
 import React, { useCallback, useContext, useEffect, useState } from 'react'
 import {
-  NativeScrollEvent,
-  NativeSyntheticEvent,
+  type NativeScrollEvent,
+  type NativeSyntheticEvent,
   RefreshControl,
   StyleSheet,
   View,
 } from 'react-native'
 import { AppContext } from '../../Contexts/AppContext'
 import SInfo from 'react-native-sensitive-info'
-import { getMentionNotes, Note } from '../../Functions/DatabaseFunctions/Notes'
+import { getMentionNotes, type Note } from '../../Functions/DatabaseFunctions/Notes'
 import NoteCard from '../../Components/NoteCard'
 import { RelayPoolContext } from '../../Contexts/RelayPoolContext'
 import { Kind } from 'nostr-tools'
@@ -20,8 +20,8 @@ import { useTranslation } from 'react-i18next'
 import { navigate } from '../../lib/Navigation'
 import { useFocusEffect } from '@react-navigation/native'
 import { getUnixTime } from 'date-fns'
-import { Config } from '../../Functions/DatabaseFunctions/Config'
-import { FlashList, ListRenderItem } from '@shopify/flash-list'
+import { type Config } from '../../Functions/DatabaseFunctions/Config'
+import { FlashList, type ListRenderItem } from '@shopify/flash-list'
 import { getETags } from '../../Functions/RelayFunctions/Events'
 
 export const NotificationsFeed: React.FC = () => {

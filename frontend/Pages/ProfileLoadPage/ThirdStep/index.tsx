@@ -1,16 +1,7 @@
-import { Kind } from 'nostr-tools'
-import React, { useContext, useEffect, useState } from 'react'
+import React, { useContext, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { type Relay } from '../../../Functions/DatabaseFunctions/Relays'
-import {
-  ActivityIndicator,
-  FlatList,
-  type ListRenderItem,
-  ScrollView,
-  StyleSheet,
-  View,
-} from 'react-native'
-import { Button, Divider, List, Text, useTheme } from 'react-native-paper'
+import { FlatList, type ListRenderItem, ScrollView, StyleSheet, View } from 'react-native'
+import { Button, Divider, List, Text } from 'react-native-paper'
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'
 import Logo from '../../../Components/Logo'
 import { AppContext } from '../../../Contexts/AppContext'
@@ -18,68 +9,41 @@ import { RelayPoolContext } from '../../../Contexts/RelayPoolContext'
 import { UserContext } from '../../../Contexts/UserContext'
 import { getUsers, type User } from '../../../Functions/DatabaseFunctions/Users'
 import { relayToColor } from '../../../Functions/NativeFunctions'
+import { getAllRelayMetadata } from '../../../Functions/DatabaseFunctions/RelayMetadatas'
+import { getContactsRelays } from '../../../Functions/RelayFunctions/Metadata'
 
-interface SecondStepProps {
+interface ThirdStepProps {
   nextStep: () => void
 }
 
-export const SecondStep: React.FC<SecondStepProps> = ({ nextStep }) => {
+export const ThirdStep: React.FC<ThirdStepProps> = ({ nextStep }) => {
   const { t } = useTranslation('common')
-  const theme = useTheme()
   const { database } = useContext(AppContext)
-  const { relayPool, relayPoolReady, lastEventId, relays } = useContext(RelayPoolContext)
+  const { relayPool, relayPoolReady, lastEventId, relays, addRelayItem } =
+    useContext(RelayPoolContext)
   const { publicKey, setUserState } = useContext(UserContext)
-  const [contactsCount, setContactsCount] = useState<number>()
+  const [asignation, setAsignation] = useState<string[]>()
 
   React.useEffect(() => {
-    setTimeout(loadData, 1500)
+    loadPetsRelays()
   }, [])
 
-  useEffect(() => {
-    if (publicKey && relayPoolReady && database) {
-      loadPets()
+  React.useEffect(() => {
+    if (database) {
+      getAllRelayMetadata(database).then((relayMetadata) => {
+        getContactsRelays(relays, relayMetadata).then(setAsignation)
+      })
     }
-  }, [publicKey, lastEventId])
+  }, [lastEventId])
 
-  const loadData: () => void = () => {
-    if (publicKey && relayPoolReady) {
-      relayPool?.subscribe('profile-load-contacts', [
-        {
-          kinds: [Kind.Contacts],
-          authors: [publicKey],
-        },
-        {
-          kinds: [Kind.ChannelCreation, Kind.ChannelMetadata],
-          authors: [publicKey],
-        },
-        {
-          kinds: [10000],
-          authors: [publicKey],
-          limit: 1,
-        },
-        {
-          kinds: [10001],
-          authors: [publicKey],
-          limit: 1,
-        },
-        {
-          kinds: [30001],
-          authors: [publicKey],
-          limit: 1,
-        },
-      ])
-    }
-  }
-
-  const loadPets: () => void = () => {
+  const loadPetsRelays: () => void = () => {
     if (database && publicKey && relayPoolReady) {
       getUsers(database, {}).then((results) => {
         if (results.length > 0) {
-          setContactsCount(results.filter((user) => user.contact).length)
-          const authors = [...results.map((user: User) => user.id)]
-          relayPool?.subscribe('profile-load-notes', [
+          const authors = [...results.map((user: User) => user.id), publicKey]
+          relayPool?.subscribe('profile-load-relays', [
             {
-              kinds: [Kind.Metadata, 10002],
+              kinds: [10002],
               authors,
             },
           ])
@@ -88,32 +52,29 @@ export const SecondStep: React.FC<SecondStepProps> = ({ nextStep }) => {
     }
   }
 
-  const renderItem: ListRenderItem<Relay> = ({ item, index }) => {
+  const renderItem: ListRenderItem<string> = ({ item, index }) => {
     return (
       <View style={styles.relayItem}>
         <List.Item
           key={index}
-          title={item.url.replace('wss://', '').replace('ws://', '')}
-          right={() => {
-            if (!item?.paid) return <></>
-            return (
-              <MaterialCommunityIcons
-                name='wallet-outline'
-                size={16}
-                color={theme.colors.onPrimaryContainer}
-              />
-            )
-          }}
+          title={item.replace('wss://', '').replace('ws://', '')}
           left={() => (
             <MaterialCommunityIcons
               style={styles.relayColor}
               name='circle'
-              color={relayToColor(item.url)}
+              color={relayToColor(item)}
             />
           )}
         />
       </View>
     )
+  }
+
+  const connect: () => void = () => {
+    if (asignation) {
+      asignation.forEach(async (url) => await addRelayItem({ url, resilient: 1, global_feed: 0 }))
+    }
+    setUserState('ready')
   }
 
   return (
@@ -129,26 +90,21 @@ export const SecondStep: React.FC<SecondStepProps> = ({ nextStep }) => {
           <Logo onlyIcon size='medium' />
         </View>
         <View style={styles.loadingProfile}>
-          {!contactsCount && (
-            <ActivityIndicator animating={true} style={styles.activityIndicator} />
-          )}
           <Text variant='titleMedium' style={styles.center}>
-            {contactsCount
-              ? t('profileLoadPage.foundContacts', { contactsCount })
-              : t('profileLoadPage.searchingContacts')}
+            {t('profileLoadPage.contactRelaysDescription')}
           </Text>
         </View>
         <View style={styles.list}>
           <View style={styles.titleWrapper}>
             <Text style={styles.title} variant='titleMedium'>
-              {t('relaysPage.myList')}
+              {t('profileLoadPage.contactRelays')}
             </Text>
             <Divider />
           </View>
           <ScrollView horizontal={false}>
             <FlatList
               showsVerticalScrollIndicator={false}
-              data={relays}
+              data={asignation}
               renderItem={renderItem}
               ItemSeparatorComponent={Divider}
             />
@@ -156,8 +112,8 @@ export const SecondStep: React.FC<SecondStepProps> = ({ nextStep }) => {
         </View>
       </View>
       <View style={styles.buttons}>
-        <Button mode='contained' onPress={nextStep} disabled={contactsCount === undefined}>
-          {t('profileLoadPage.nextStep')}
+        <Button mode='contained' onPress={connect}>
+          {t('profileLoadPage.connect')}
         </Button>
         <Button mode='outlined' onPress={() => setUserState('ready')}>
           {t('profileLoadPage.home')}
@@ -183,7 +139,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
   },
   list: {
-    maxHeight: 400,
+    maxHeight: 450,
   },
   center: {
     alignContent: 'center',
@@ -228,4 +184,4 @@ const styles = StyleSheet.create({
   },
 })
 
-export default SecondStep
+export default ThirdStep

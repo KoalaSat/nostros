@@ -2,18 +2,21 @@ import React, { useContext, useEffect, useMemo, useRef, useState } from 'react'
 import {
   FlatList,
   Animated,
-  ListRenderItem,
-  NativeScrollEvent,
-  NativeSyntheticEvent,
-  ScrollView,
+  type ListRenderItem,
+  type NativeScrollEvent,
+  type NativeSyntheticEvent,
+  type ScrollView,
   StyleSheet,
   View,
 } from 'react-native'
 import { AppContext } from '../../Contexts/AppContext'
 import { RelayPoolContext } from '../../Contexts/RelayPoolContext'
-import { Event } from '../../lib/nostr/Events'
-import { DirectMessage, getDirectMessages } from '../../Functions/DatabaseFunctions/DirectMessages'
-import { getUser, User } from '../../Functions/DatabaseFunctions/Users'
+import { type Event } from '../../lib/nostr/Events'
+import {
+  type DirectMessage,
+  getDirectMessages,
+} from '../../Functions/DatabaseFunctions/DirectMessages'
+import { getUser, type User } from '../../Functions/DatabaseFunctions/Users'
 import { useTranslation } from 'react-i18next'
 import { username, usernamePubKey, usersToTags } from '../../Functions/RelayFunctions/Users'
 import { getUnixTime } from 'date-fns'

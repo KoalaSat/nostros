@@ -1,11 +1,11 @@
 import React, { useCallback, useContext, useEffect, useState } from 'react'
 import { AppContext } from '../../Contexts/AppContext'
-import { getNotes, Note } from '../../Functions/DatabaseFunctions/Notes'
+import { getNotes, type Note } from '../../Functions/DatabaseFunctions/Notes'
 import { RelayPoolContext } from '../../Contexts/RelayPoolContext'
 import NoteCard from '../../Components/NoteCard'
 import { Kind } from 'nostr-tools'
 import { Dimensions, RefreshControl, StyleSheet, View } from 'react-native'
-import { FlashList, ListRenderItem } from '@shopify/flash-list'
+import { FlashList, type ListRenderItem } from '@shopify/flash-list'
 import { getDirectReplies } from '../../Functions/RelayFunctions/Events'
 import { AnimatedFAB, useTheme } from 'react-native-paper'
 import { UserContext } from '../../Contexts/UserContext'
@@ -13,7 +13,7 @@ import { navigate } from '../../lib/Navigation'
 import { useFocusEffect } from '@react-navigation/native'
 import { SkeletonNote } from '../../Components/SkeletonNote/SkeletonNote'
 import { ScrollView } from 'react-native-gesture-handler'
-import { RelayFilters } from '../../lib/nostr/RelayPool/intex'
+import { type RelayFilters } from '../../lib/nostr/RelayPool/intex'
 
 interface NotePageProps {
   route: { params: { noteId: string } }

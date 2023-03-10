@@ -16,12 +16,14 @@ public class Relay {
     public int active;
     public int globalFeed;
     public int paid;
+    public int resilient;
 
-    public Relay(String serverUrl, int isActive, int showGlobalFeed, Database database, ReactApplicationContext reactContext) throws IOException {
+    public Relay(String serverUrl, int isActive, int showGlobalFeed, int isResilient, Database database, ReactApplicationContext reactContext) throws IOException {
         webSocket = new Websocket(serverUrl, database, reactContext);
         url = serverUrl;
         active = isActive;
         globalFeed = showGlobalFeed;
+        resilient = isResilient;
     }
 
     public int active() {
@@ -58,6 +60,7 @@ public class Relay {
         values.put("paid", paid);
         values.put("active", active);
         values.put("global_feed", globalFeed);
+        values.put("resilient", resilient);
         values.put("deleted_at", 0);
         database.instance.replace("nostros_relays", null, values);
     }

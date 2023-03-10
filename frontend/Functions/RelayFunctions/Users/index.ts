@@ -1,8 +1,8 @@
 import getUnixTime from 'date-fns/getUnixTime'
-import { QuickSQLiteConnection } from 'react-native-quick-sqlite'
-import RelayPool from '../../../lib/nostr/RelayPool/intex'
-import { getUser, getUsers, User } from '../../DatabaseFunctions/Users'
-import { Event } from '../../../lib/nostr/Events'
+import { type QuickSQLiteConnection } from 'react-native-quick-sqlite'
+import type RelayPool from '../../../lib/nostr/RelayPool/intex'
+import { getUser, getUsers, type User } from '../../DatabaseFunctions/Users'
+import { type Event } from '../../../lib/nostr/Events'
 import { getNpub } from '../../../lib/nostr/Nip19'
 import { Kind } from 'nostr-tools'
 

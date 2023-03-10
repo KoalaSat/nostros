@@ -1,6 +1,6 @@
-import { QuickSQLiteConnection } from 'react-native-quick-sqlite'
+import { type QuickSQLiteConnection } from 'react-native-quick-sqlite'
 import { getItems } from '..'
-import { Event } from '../../../lib/nostr/Events'
+import { type Event } from '../../../lib/nostr/Events'
 
 export interface RelayMetadata extends Event {
   url: string
@@ -26,7 +26,7 @@ export const getRawRelayMetadata: (
   publicKey: string,
 ) => Promise<Event[]> = async (db, publicKey) => {
   const notesQuery = 'SELECT * FROM nostros_relay_metadata WHERE pubkey = ?;'
-  const resultSet = await db.execute(notesQuery, [publicKey])
+  const resultSet = db.execute(notesQuery, [publicKey])
   const items: object[] = getItems(resultSet)
   const relays: Event[] = items.map((object) => databaseToRawEntity(object))
   return relays
@@ -38,8 +38,18 @@ export const getRelayMetadata: (
 ) => Promise<RelayMetadata> = async (db, publicKey) => {
   const notesQuery =
     'SELECT * FROM nostros_relay_metadata WHERE pubkey = ? ORDER BY created_at DESC;'
-  const resultSet = await db.execute(notesQuery, [publicKey])
+  const resultSet = db.execute(notesQuery, [publicKey])
   const items: object[] = getItems(resultSet)
   const relays: RelayMetadata[] = items.map((object) => databaseToEntity(object))
   return relays[0]
+}
+
+export const getAllRelayMetadata: (db: QuickSQLiteConnection) => Promise<RelayMetadata[]> = async (
+  db,
+) => {
+  const notesQuery = 'SELECT * FROM nostros_relay_metadata;'
+  const resultSet = db.execute(notesQuery)
+  const items: object[] = getItems(resultSet)
+  const relays: RelayMetadata[] = items.map((object) => databaseToEntity(object))
+  return relays
 }

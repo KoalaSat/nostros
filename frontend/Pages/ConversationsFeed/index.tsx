@@ -2,9 +2,9 @@ import React, { useContext, useEffect, useState } from 'react'
 import {
   Dimensions,
   FlatList,
-  ListRenderItem,
-  NativeScrollEvent,
-  NativeSyntheticEvent,
+  type ListRenderItem,
+  type NativeScrollEvent,
+  type NativeSyntheticEvent,
   StyleSheet,
   View,
 } from 'react-native'
@@ -13,11 +13,11 @@ import { AppContext } from '../../Contexts/AppContext'
 import { RelayPoolContext } from '../../Contexts/RelayPoolContext'
 import { Kind } from 'nostr-tools'
 import {
-  DirectMessage,
+  type DirectMessage,
   getGroupedDirectMessages,
   getUserLastDirectMessages,
 } from '../../Functions/DatabaseFunctions/DirectMessages'
-import { getUsers, User } from '../../Functions/DatabaseFunctions/Users'
+import { getUsers, type User } from '../../Functions/DatabaseFunctions/Users'
 import { getOtherPubKey } from '../../Functions/RelayFunctions/DirectMessages'
 import { username } from '../../Functions/RelayFunctions/Users'
 import {

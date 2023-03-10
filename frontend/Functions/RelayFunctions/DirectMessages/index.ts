@@ -1,4 +1,4 @@
-import { DirectMessage } from '../../DatabaseFunctions/DirectMessages'
+import { type DirectMessage } from '../../DatabaseFunctions/DirectMessages'
 
 export const getOtherPubKey: (message: DirectMessage, ownPubKey: string) => string = (
   message,

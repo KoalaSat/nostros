@@ -1,4 +1,4 @@
-import { QuickSQLiteConnection } from 'react-native-quick-sqlite'
+import { type QuickSQLiteConnection } from 'react-native-quick-sqlite'
 import { getItems } from '..'
 import { median } from '../../NativeFunctions'
 import { getNoteRelaysUsage } from '../NotesRelays'
@@ -33,7 +33,7 @@ export const searchRelays: (
   db: QuickSQLiteConnection,
 ) => Promise<Relay[]> = async (relayUrl, db) => {
   const searchQuery = `SELECT * FROM nostros_relays WHERE url = '${relayUrl}' AND deleted_at = 0;`
-  const results = await db.execute(searchQuery)
+  const results = db.execute(searchQuery)
   const items: object[] = getItems(results)
   const relays: Relay[] = items.map((object) => databaseToEntity(object))
   return relays
@@ -41,15 +41,16 @@ export const searchRelays: (
 
 export const getRelays: (db: QuickSQLiteConnection) => Promise<Relay[]> = async (db) => {
   const notesQuery = 'SELECT * FROM nostros_relays WHERE deleted_at = 0;'
-  const resultSet = await db.execute(notesQuery)
+  const resultSet = db.execute(notesQuery)
   const items: object[] = getItems(resultSet)
   const relays: Relay[] = items.map((object) => databaseToEntity(object))
   return relays
 }
 
 export const getActiveRelays: (db: QuickSQLiteConnection) => Promise<Relay[]> = async (db) => {
-  const notesQuery = 'SELECT * FROM nostros_relays WHERE active = 1 AND deleted_at = 0;'
-  const resultSet = await db.execute(notesQuery)
+  const notesQuery =
+    'SELECT * FROM nostros_relays WHERE active = 1 AND deleted_at = 0 AND resilient != 0;'
+  const resultSet = db.execute(notesQuery)
   const items: object[] = getItems(resultSet)
   const relays: Relay[] = items.map((object) => databaseToEntity(object))
   return relays
@@ -60,7 +61,7 @@ export const getRelay: (db: QuickSQLiteConnection, url: string) => Promise<Relay
   url,
 ) => {
   const notesQuery = 'SELECT * FROM nostros_relays WHERE url = ? AND deleted_at = 0;'
-  const resultSet = await db.execute(notesQuery, [url])
+  const resultSet = db.execute(notesQuery, [url])
   const items: object[] = getItems(resultSet)
   const relays: Relay[] = items.map((object) => databaseToEntity(object))
   return relays[0]

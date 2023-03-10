@@ -41,6 +41,7 @@
       }
     },
     "profileLoadPage": {
+      "connect": "Connect and go home",
       "foundRelays": "Relays found",
       "searchingContacts": "Searching for your contacts",
       "retry": "Retry",
@@ -48,6 +49,8 @@
       "nextStep": "Next step",
       "searchingRelays": "Searching for your relays",
       "reconnectOther": "Reconnect to other relays",
+      "contactRelays": "Contact's relays",
+      "contactRelaysDescription": "Searching for relays where your contacts can be found",
       "relaysDescripion": "Connect with other relays if you have problems finding your data.",
       "relays": "See relays",
       "home": "Go Home",
@@ -252,7 +255,9 @@
     },
     "relaysPage": {
       "pushListTitle": "Push relay list to the network",
+      "pushListDescription": "Only relays on \"My relays\" list will be pushed.",
       "pushList": "Push list",
+      "contactsList": "Contact's relays",
       "freeAccess": "Free access",
       "paid": "Paid",
       "paidRelay": "Paid relay",

@@ -1,4 +1,4 @@
-import { Event } from '../../../lib/nostr/Events'
+import { type Event } from '../../../lib/nostr/Events'
 
 export const getReplyEventId: (event: Event) => string | null = (event) => {
   const eTags = getETags(event)
@@ -41,6 +41,10 @@ export const getTaggedEventIds: (event: Event) => string[] = (event) => {
 export const getTaggedPubKeys: (event: Event) => string[] = (event) => {
   const mainEventETags: string[][] = getPTags(event)
   return mainEventETags.map((item) => item[1] ?? '')
+}
+
+export const getRTags: (event: Event) => string[][] = (event) => {
+  return event?.tags.filter((tag) => tag[0] === 'r') || []
 }
 
 export const getETags: (event: Event) => string[][] = (event) => {

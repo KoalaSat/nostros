@@ -27,6 +27,7 @@ module.exports = {
     '@typescript-eslint/no-misused-promises': 'off',
     '@typescript-eslint/restrict-template-expressions': 'off',
     '@typescript-eslint/restrict-plus-operands': 'off',
+    '@typescript-eslint/key-spacing': 'off',
   },
   settings: {
     'import/resolver': {

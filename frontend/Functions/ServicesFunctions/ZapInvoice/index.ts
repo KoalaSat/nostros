@@ -1,10 +1,10 @@
 // Thanks to v0l/snort for the nice code!
 // https://github.com/v0l/snort/blob/39fbe3b10f94b7542df01fb085e4f164aab15fca/src/Feed/VoidUpload.ts
 
-import { QuickSQLiteConnection } from 'react-native-quick-sqlite'
-import { getRelays, Relay } from '../../DatabaseFunctions/Relays'
+import { type QuickSQLiteConnection } from 'react-native-quick-sqlite'
+import { getRelays, type Relay } from '../../DatabaseFunctions/Relays'
 import { getUnixTime } from 'date-fns'
-import { Event, signEvent } from '../../../lib/nostr/Events'
+import { type Event, signEvent } from '../../../lib/nostr/Events'
 import { requestInvoiceWithServiceParams, requestPayServiceParams } from 'lnurl-pay'
 import axios from 'axios'
 

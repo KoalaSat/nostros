@@ -9,7 +9,7 @@ import { useTranslation } from 'react-i18next'
 import { AppContext } from '../../../Contexts/AppContext'
 import {
   getRelayMetadata,
-  RelayMetadata,
+  type RelayMetadata,
 } from '../../../Functions/DatabaseFunctions/RelayMetadatas'
 
 interface FirstStepProps {
@@ -115,11 +115,11 @@ export const FirstStep: React.FC<FirstStepProps> = ({ nextStep }) => {
         </View>
       </View>
       <View style={styles.buttons}>
-        <Button mode='contained' onPress={finish} disabled={!profileFound}>
-          {t('profileLoadPage.nextStep')}
-        </Button>
         <Button mode='outlined' onPress={() => reconnectRelays()}>
           {t('profileLoadPage.reconnectOther')}
+        </Button>
+        <Button mode='contained' onPress={finish} disabled={!profileFound}>
+          {t('profileLoadPage.nextStep')}
         </Button>
         <Button mode='outlined' onPress={() => setUserState('ready')}>
           {t('profileLoadPage.home')}

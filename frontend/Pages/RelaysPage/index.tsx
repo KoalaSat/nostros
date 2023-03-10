@@ -1,8 +1,15 @@
 import React, { useContext, useState } from 'react'
-import { Clipboard, FlatList, ListRenderItem, ScrollView, StyleSheet, View } from 'react-native'
+import {
+  Clipboard,
+  FlatList,
+  type ListRenderItem,
+  ScrollView,
+  StyleSheet,
+  View,
+} from 'react-native'
 import { useTranslation } from 'react-i18next'
 import { RelayPoolContext } from '../../Contexts/RelayPoolContext'
-import { Relay } from '../../Functions/DatabaseFunctions/Relays'
+import { type Relay } from '../../Functions/DatabaseFunctions/Relays'
 import { REGEX_SOCKET_LINK } from '../../Constants/Relay'
 import {
   List,
@@ -21,7 +28,7 @@ import { relayToColor } from '../../Functions/NativeFunctions'
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'
 import { useFocusEffect } from '@react-navigation/native'
 import { UserContext } from '../../Contexts/UserContext'
-import { Event } from '../../lib/nostr/Events'
+import { type Event } from '../../lib/nostr/Events'
 import { getUnixTime } from 'date-fns'
 
 export const RelaysPage: React.FC = () => {
@@ -126,12 +133,14 @@ export const RelaysPage: React.FC = () => {
 
   const onPressPushRelay: () => void = () => {
     if (publicKey) {
-      const activeRelays = relays.filter((relay) => relay?.active)
+      const activeRelays = relays.filter(
+        (relay) => relay?.active && (!relay.resilient || relay.resilient < 0),
+      )
       const tags: string[][] = activeRelays.map((relay) => [
         'r',
         relay.url ?? '',
         relay.mode ?? '',
-        relay.paid ? 'paid' : 'free',
+        relay.paid ? 'paid' : '',
       ])
       const event: Event = {
         content: '',
@@ -174,14 +183,16 @@ export const RelaysPage: React.FC = () => {
           key={index}
           title={item.url.replace('wss://', '').replace('ws://', '')}
           right={() => {
-            if (!item?.paid) return <></>
-            return (
+            const icons: string[] = []
+            if (item?.paid) icons.push('wallet-outline')
+            return icons.map((icon) => (
               <MaterialCommunityIcons
-                name='wallet-outline'
+                key={icon}
+                name={icon}
                 size={16}
                 color={theme.colors.onPrimaryContainer}
               />
-            )
+            ))
           }}
           left={() => (
             <MaterialCommunityIcons
@@ -258,12 +269,31 @@ export const RelaysPage: React.FC = () => {
           showsVerticalScrollIndicator={false}
           data={relays.filter((relay) => {
             return (
-              ((relay.paid === undefined || relay.paid < 1) && showFreeRelays) ||
-              (relay.paid !== undefined && relay.paid > 0 && showPaidRelays)
+              (!relay.resilient &&
+                (relay.paid === undefined || relay.paid < 1) &&
+                showFreeRelays) ||
+              (!relay.resilient && relay.paid !== undefined && relay.paid > 0 && showPaidRelays)
             )
           })}
           renderItem={renderItem}
+          ItemSeparatorComponent={Divider}
+        />
+        <View style={styles.titleWrapper}>
+          <Text style={styles.title} variant='titleMedium'>
+            {t('relaysPage.contactsList')}
+          </Text>
+          <Divider />
+        </View>
+        <FlatList
+          showsVerticalScrollIndicator={false}
           style={styles.relayList}
+          data={relays.filter((relay) => {
+            return (
+              (relay.resilient && (relay.paid === undefined || relay.paid < 1) && showFreeRelays) ??
+              (relay.resilient && relay.paid !== undefined && relay.paid > 0 && showPaidRelays)
+            )
+          })}
+          renderItem={renderItem}
           ItemSeparatorComponent={Divider}
         />
       </ScrollView>
@@ -300,6 +330,7 @@ export const RelaysPage: React.FC = () => {
         <View style={styles.addRelay}>
           <View style={styles.bottomDrawerButton}>
             <Text variant='titleLarge'>{t('relaysPage.pushListTitle')}</Text>
+            <Text variant='bodyMedium'>{t('relaysPage.pushListDescription')}</Text>
           </View>
           <View style={styles.bottomDrawerButton}>
             <Button mode='contained' onPress={onPressPushRelay}>

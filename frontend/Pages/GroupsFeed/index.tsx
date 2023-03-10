@@ -17,7 +17,7 @@ import RBSheet from 'react-native-raw-bottom-sheet'
 import UploadImage from '../../Components/UploadImage'
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'
 import { Kind } from 'nostr-tools'
-import { Event } from '../../lib/nostr/Events'
+import { type Event } from '../../lib/nostr/Events'
 import { UserContext } from '../../Contexts/UserContext'
 import { RelayPoolContext } from '../../Contexts/RelayPoolContext'
 import { getUnixTime } from 'date-fns'
@@ -27,13 +27,13 @@ import {
   getGroupMessagesCount,
   getGroupMessagesMentionsCount,
   getGroups,
-  Group,
+  type Group,
 } from '../../Functions/DatabaseFunctions/Groups'
 import { formatId } from '../../Functions/RelayFunctions/Users'
 import NostrosAvatar from '../../Components/NostrosAvatar'
 import { navigate } from '../../lib/Navigation'
-import { FlashList, ListRenderItem } from '@shopify/flash-list'
-import { RelayFilters } from '../../lib/nostr/RelayPool/intex'
+import { FlashList, type ListRenderItem } from '@shopify/flash-list'
+import { type RelayFilters } from '../../lib/nostr/RelayPool/intex'
 import { validNip21 } from '../../Functions/NativeFunctions'
 import { getNip19Key } from '../../lib/nostr/Nip19'
 import DatabaseModule from '../../lib/Native/DatabaseModule'

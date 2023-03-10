@@ -3,10 +3,10 @@ import RelayPool, { fallbackRelays } from '../lib/nostr/RelayPool/intex'
 import { AppContext } from './AppContext'
 import { DeviceEventEmitter } from 'react-native'
 import debounce from 'lodash.debounce'
-import { getActiveRelays, getRelays, Relay } from '../Functions/DatabaseFunctions/Relays'
+import { getActiveRelays, getRelays, type Relay } from '../Functions/DatabaseFunctions/Relays'
 import { UserContext } from './UserContext'
 import { getUnixTime } from 'date-fns'
-import { Event } from '../lib/nostr/Events'
+import { type Event } from '../lib/nostr/Events'
 import { randomInt } from '../Functions/NativeFunctions'
 
 export interface RelayPoolContextProps {
@@ -99,7 +99,6 @@ export const RelayPoolContextProvider = ({
     if (database && publicKey) {
       const initRelayPool = new RelayPool(privateKey)
       initRelayPool.connect(publicKey, () => {
-        initRelayPool.resilientMode(database, publicKey)
         setRelayPool(initRelayPool)
       })
     }
@@ -143,11 +142,11 @@ export const RelayPoolContextProvider = ({
     })
   }
 
-  const addRelayItem: (relay: Relay) => Promise<void> = async (relay, send = true) => {
+  const addRelayItem: (relay: Relay) => Promise<void> = async (relay) => {
     setRelays((prev) => [...prev, relay])
     return await new Promise((resolve, _reject) => {
       if (relayPool && database && publicKey) {
-        relayPool.add(relay.url, () => {
+        relayPool.add(relay.url, relay.resilient ?? 0, relay.global_feed ?? 1, () => {
           loadRelays().then(() => {
             resolve()
           })

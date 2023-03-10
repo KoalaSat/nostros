@@ -271,9 +271,11 @@
     },
     "relaysPage": {
       "pushListTitle": "Push relay list to the network",
+      "pushListDescription": "Only relays on \"My relays\" list will be pushed.",
       "pushList": "Push list",
       "freeAccess": "Free access",
       "paid": "Paid",
+      "contactsList": "Contact's relays",
       "paidRelay": "Paid relay",
       "resilienceTitle": "弹性模式 (试验性)",
       "resilienceDescription": "Nostr 协议提供了大量工具来构建去中心化网络，但与比特币等其他去中心化协议不同，它并不是默认使用的。 \n\n为了实现这样的目标，客户端和中继应该积极协作。 Nostros 弹性模式首先尝试将这些问题暴露给用户，其次开始尝试新的模式和方法来帮助提高网络的弹性。 \n\n该功能的实现将很快默认出现在 Nostros 上",

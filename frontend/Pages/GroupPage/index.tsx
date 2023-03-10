@@ -2,15 +2,15 @@ import React, { useContext, useEffect, useState } from 'react'
 import {
   Animated,
   FlatList,
-  ListRenderItem,
-  NativeScrollEvent,
-  NativeSyntheticEvent,
+  type ListRenderItem,
+  type NativeScrollEvent,
+  type NativeSyntheticEvent,
   StyleSheet,
   View,
 } from 'react-native'
 import { AppContext } from '../../Contexts/AppContext'
 import { RelayPoolContext } from '../../Contexts/RelayPoolContext'
-import { Event } from '../../lib/nostr/Events'
+import { type Event } from '../../lib/nostr/Events'
 import { useTranslation } from 'react-i18next'
 import { formatPubKey, username, usernamePubKey } from '../../Functions/RelayFunctions/Users'
 import { getUnixTime } from 'date-fns'
@@ -31,9 +31,9 @@ import { Kind } from 'nostr-tools'
 import { formatDate, handleInfinityScroll } from '../../Functions/NativeFunctions'
 import NostrosAvatar from '../../Components/NostrosAvatar'
 import UploadImage from '../../Components/UploadImage'
-import { getGroupMessages, GroupMessage } from '../../Functions/DatabaseFunctions/Groups'
-import { RelayFilters } from '../../lib/nostr/RelayPool/intex'
-import { getUsers, User } from '../../Functions/DatabaseFunctions/Users'
+import { getGroupMessages, type GroupMessage } from '../../Functions/DatabaseFunctions/Groups'
+import { type RelayFilters } from '../../lib/nostr/RelayPool/intex'
+import { getUsers, type User } from '../../Functions/DatabaseFunctions/Users'
 import ProfileData from '../../Components/ProfileData'
 import { ScrollView, Swipeable } from 'react-native-gesture-handler'
 import { getETags } from '../../Functions/RelayFunctions/Events'

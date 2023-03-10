@@ -1,6 +1,6 @@
-import { QueryResult, QuickSQLiteConnection } from 'react-native-quick-sqlite'
+import { type QueryResult, type QuickSQLiteConnection } from 'react-native-quick-sqlite'
 import { getItems } from '..'
-import { Event } from '../../../lib/nostr/Events'
+import { type Event } from '../../../lib/nostr/Events'
 
 export interface Group extends Event {
   name?: string

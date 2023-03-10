@@ -4,7 +4,7 @@ import { Avatar, Card, Text, useTheme } from 'react-native-paper'
 import FastImage from 'react-native-fast-image'
 import { useTranslation } from 'react-i18next'
 import LnPreview from '../../LnPreview'
-import { decode, PaymentRequestObject, TagsObject } from 'bolt11'
+import { decode, type PaymentRequestObject, type TagsObject } from 'bolt11'
 import { AppContext } from '../../../Contexts/AppContext'
 import { navigate } from '../../../lib/Navigation'
 

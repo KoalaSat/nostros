@@ -31,22 +31,21 @@ public class RelayPoolModule extends ReactContextBaseJavaModule {
         return "RelayPoolModule";
     }
 
-    @ReactMethod
-    public void add(String url, Callback callback) {
-        add(url);
-        callback.invoke();
-    }
-
-    @ReactMethod
-    public void add(String url) {
+    private void add(String url, int resilient, int showGlobalFeed) {
         try {
-            Relay relay = new Relay(url, 1, 1, database, context);
+            Relay relay = new Relay(url, 1, showGlobalFeed, resilient, database, context);
             relay.connect(userPubKey);
             relays.add(relay);
             database.saveRelay(relay);
         } catch (IOException e) {
             Log.d("WebSocket", e.toString());
         }
+    }
+
+    @ReactMethod
+    public void add(String url, int resilient, int showGlobalFeed, Callback callback) {
+        this.add(url, resilient, showGlobalFeed);
+        callback.invoke();
     }
 
     @ReactMethod
@@ -94,7 +93,7 @@ public class RelayPoolModule extends ReactContextBaseJavaModule {
         }
 
         if (!relayExists) {
-            this.add(url);
+            this.add(url, 0, 1);
         }
 
         callback.invoke();
