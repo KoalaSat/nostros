@@ -31,7 +31,7 @@ export const ProfileData: React.FC<ProfileCardProps> = ({
   picture,
   avatarSize,
   timestamp,
-  bitcoinTag
+  bitcoinTag,
 }) => {
   const theme = useTheme()
   const { signHeight } = React.useContext(AppContext)

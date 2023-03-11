@@ -27,7 +27,7 @@ export const ConfigPage: React.FC = () => {
     longPressZap,
     setLongPressZap,
     signHeight,
-    setSignWithHeight
+    setSignWithHeight,
   } = React.useContext(AppContext)
   const bottomSheetSatoshiRef = React.useRef<RBSheet>(null)
   const bottomSheetImageHostingRef = React.useRef<RBSheet>(null)

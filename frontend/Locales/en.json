@@ -99,6 +99,7 @@
       "showSensitive": "Show sensitive notes",
       "satoshi": "Satoshi symbol",
       "imageHostingService": "Image hosting service",
+      "signHeight": "Sign with latest Bitcoin block",
       "random": "Random",
       "language": "Language",
       "relayColoruring": "Relay colouring",
@@ -113,6 +114,10 @@
       "disable": "Disable"
     },
     "noteActions": {
+      "note": "Note",
+      "bitcoinBlock": "Bitcoin block",
+      "bitcoinBlockHeight": "Height",
+      "id": "ID",
       "publicBookmark": "Add to public bookmarks",
       "privateBookmark": "Add to private bookmarks",
       "copy": "Copy",

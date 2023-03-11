@@ -112,6 +112,7 @@
       "logout": "退出"
     },
     "configPage": {
+      "signHeight": "Sign events with latest Bitcoin block",
       "showPublicImages": "显示发现页图片",
       "showSensitive": "显示敏感的 Notes",
       "satoshi": "聪符号",

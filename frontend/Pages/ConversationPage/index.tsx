@@ -178,12 +178,11 @@ export const ConversationPage: React.FC<ConversationPageProps> = ({ route }) => 
       encrypt(privateKey, otherPubKey, input)
         .then((encryptedcontent) => {
           sendEvent({
-              ...event,
-              content: encryptedcontent,
-            })
-            .catch(() => {
-              setShowNotification('privateMessageSendError')
-            })
+            ...event,
+            content: encryptedcontent,
+          }).catch(() => {
+            setShowNotification('privateMessageSendError')
+          })
         })
         .catch(() => {
           setShowNotification('privateMessageSendError')

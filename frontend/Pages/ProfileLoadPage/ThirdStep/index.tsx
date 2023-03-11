@@ -9,7 +9,10 @@ import { RelayPoolContext } from '../../../Contexts/RelayPoolContext'
 import { UserContext } from '../../../Contexts/UserContext'
 import { getUsers, type User } from '../../../Functions/DatabaseFunctions/Users'
 import { relayToColor } from '../../../Functions/NativeFunctions'
-import { getAllRelayMetadata, RelayMetadata } from '../../../Functions/DatabaseFunctions/RelayMetadatas'
+import {
+  getAllRelayMetadata,
+  RelayMetadata,
+} from '../../../Functions/DatabaseFunctions/RelayMetadatas'
 import { getContactsRelays } from '../../../Functions/RelayFunctions/Metadata'
 
 interface ThirdStepProps {

@@ -23,6 +23,7 @@ import {
   removeBookmarkList,
   removeList,
 } from '../../Functions/RelayFunctions/Lists'
+import { getBitcoinTag } from '../../Functions/RelayFunctions/Events'
 
 interface NoteActionsProps {
   bottomSheetRef: React.RefObject<RBSheet>
@@ -30,14 +31,23 @@ interface NoteActionsProps {
 
 export const NoteActions: React.FC<NoteActionsProps> = ({ bottomSheetRef }) => {
   const theme = useTheme()
-  const { reloadLists, publicBookmarks, publicKey, privateKey, privateBookmarks, mutedEvents } =
-    React.useContext(UserContext)
+  const {
+    reloadLists,
+    reloadBookmarks,
+    publicBookmarks,
+    publicKey,
+    privateKey,
+    privateBookmarks,
+    mutedEvents,
+  } = React.useContext(UserContext)
   const { database, displayNoteDrawer, relayColouring } = React.useContext(AppContext)
-  const { relayPool, setDisplayrelayDrawer, lastEventId } = React.useContext(RelayPoolContext)
+  const { relayPool, setDisplayrelayDrawer, lastEventId, sendEvent } =
+    React.useContext(RelayPoolContext)
   const [note, setNote] = React.useState<Note>()
   const [relays, setRelays] = React.useState<NoteRelay[]>([])
   const [bookmarked, setBookmarked] = React.useState<boolean>(false)
   const [isMuted, setIsMuted] = React.useState<boolean>()
+  const [bitcoinTag, setBitcoinTag] = React.useState<string[]>()
   const bottomSheetShareRef = React.useRef<RBSheet>(null)
   const bottomBookmarkRef = React.useRef<RBSheet>(null)
 
@@ -60,6 +70,7 @@ export const NoteActions: React.FC<NoteActionsProps> = ({ bottomSheetRef }) => {
 
   React.useEffect(() => {
     reloadLists()
+    reloadBookmarks()
     loadNote()
   }, [displayNoteDrawer, lastEventId, bookmarked, isMuted])
 
@@ -68,6 +79,7 @@ export const NoteActions: React.FC<NoteActionsProps> = ({ bottomSheetRef }) => {
       const allBookmarks = [...publicBookmarks, ...privateBookmarks]
       setBookmarked(allBookmarks.find((id) => id === note.id) !== undefined)
       setIsMuted(mutedEvents.find((id) => id === note.id) !== undefined)
+      setBitcoinTag(getBitcoinTag(note)[0] ?? undefined)
     }
   }, [publicBookmarks, privateBookmarks, note, mutedEvents])
 
@@ -85,9 +97,9 @@ export const NoteActions: React.FC<NoteActionsProps> = ({ bottomSheetRef }) => {
   const changeBookmark: (publicBookmark: boolean) => void = (publicBookmark) => {
     if (relayPool && database && publicKey && privateKey && note?.id) {
       if (bookmarked) {
-        removeBookmarkList(relayPool, database, privateKey, publicKey, note.id)
+        removeBookmarkList(sendEvent, database, privateKey, publicKey, note.id)
       } else {
-        addBookmarkList(relayPool, database, privateKey, publicKey, note.id, publicBookmark)
+        addBookmarkList(sendEvent, database, privateKey, publicKey, note.id, publicBookmark)
       }
       setBookmarked(!bookmarked)
       bottomBookmarkRef.current?.close()
@@ -97,9 +109,9 @@ export const NoteActions: React.FC<NoteActionsProps> = ({ bottomSheetRef }) => {
   const changeMute: () => void = () => {
     if (relayPool && database && publicKey && note?.id) {
       if (isMuted) {
-        removeList(relayPool, database, publicKey, note.id, 'mute')
+        removeList(sendEvent, database, publicKey, note.id, 'mute')
       } else {
-        addList(relayPool, database, publicKey, note.id, 'mute')
+        addList(sendEvent, database, publicKey, note.id, 'mute')
       }
       setIsMuted(!isMuted)
     }
@@ -122,7 +134,25 @@ export const NoteActions: React.FC<NoteActionsProps> = ({ bottomSheetRef }) => {
 
   return (
     <View style={styles.container}>
-      <Text variant='titleMedium'>{formatId(note?.id)}</Text>
+      <Text variant='titleMedium'>{t('noteActions.note')}</Text>
+      <Text variant='titleSmall'>
+        {t('noteActions.id')}
+        {`: ${formatId(note?.id)}`}
+      </Text>
+      {bitcoinTag && (
+        <View>
+          <Divider style={styles.divider} />
+          <Text variant='titleMedium'>{t('noteActions.bitcoinBlock')}</Text>
+          <Text variant='titleSmall'>
+            {t('noteActions.bitcoinBlockHeight')}
+            {`: ${bitcoinTag[2]}`}
+          </Text>
+          <Text variant='bodySmall'>
+            {t('noteActions.id')}
+            {`: ${bitcoinTag[1]}`}
+          </Text>
+        </View>
+      )}
       <View style={styles.mainLayout}>
         <View style={styles.actionButton}>
           <IconButton
@@ -288,6 +318,10 @@ const styles = StyleSheet.create({
   relay: {
     flex: 1,
     height: 10,
+  },
+  divider: {
+    marginTop: 16,
+    marginBottom: 16,
   },
 })
 

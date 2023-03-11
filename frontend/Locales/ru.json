@@ -114,6 +114,7 @@
       "imageHostingService": "Хостинг изображений"
     },
     "configPage": {
+      "signHeight": "Sign events with latest Bitcoin block",
       "showPublicImages": "Show images on public feed",
       "showSensitive": "Show sensitive notes",
       "satoshi": "Satoshi symbol",

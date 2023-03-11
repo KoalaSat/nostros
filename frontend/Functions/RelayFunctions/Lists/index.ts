@@ -1,6 +1,5 @@
 import getUnixTime from 'date-fns/getUnixTime'
 import { type QuickSQLiteConnection } from 'react-native-quick-sqlite'
-import type RelayPool from '../../../lib/nostr/RelayPool/intex'
 import { type Event } from '../../../lib/nostr/Events'
 import { getList } from '../../DatabaseFunctions/Lists'
 import { decrypt, encrypt } from '../../../lib/nostr/Nip04'

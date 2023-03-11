@@ -8,7 +8,6 @@ import { UserContext } from './UserContext'
 import { getUnixTime } from 'date-fns'
 import { type Event } from '../lib/nostr/Events'
 import { randomInt } from '../Functions/NativeFunctions'
-import { block } from 'react-native-reanimated'
 import axios from 'axios'
 
 export interface RelayPoolContextProps {
@@ -71,12 +70,12 @@ export const RelayPoolContextProvider = ({
   ) => {
     if (signHeight) {
       try {
-        const response = await axios.get("https://mempool.space/api/v1/blocks")
+        const response = await axios.get('https://mempool.space/api/v1/blocks')
         if (response) {
-          const lastBlock: { id: string, height: number } = response.data[0]
+          const lastBlock: { id: string; height: number } = response.data[0]
           event.tags.push(['bitcoin', lastBlock.id, lastBlock.height.toString()])
         }
-      } catch { }
+      } catch {}
     }
 
     return await relayPool?.sendEvent(event, relayUrl)
@@ -231,7 +230,7 @@ export const RelayPoolContextProvider = ({
         sendRelays,
         loadRelays,
         createRandomRelays,
-        sendEvent
+        sendEvent,
       }}
     >
       {children}

@@ -101,7 +101,7 @@ export const initialAppContext: AppContextProps = {
   longPressZap: undefined,
   setLongPressZap: () => {},
   signHeight: false,
-  setSignWithHeight: () => {}
+  setSignWithHeight: () => {},
 }
 
 export const AppContextProvider = ({ children }: AppContextProviderProps): JSX.Element => {
@@ -190,7 +190,7 @@ export const AppContextProvider = ({ children }: AppContextProviderProps): JSX.E
           language: initialAppContext.language,
           relay_coloruring: initialAppContext.relayColouring,
           long_press_zap: initialAppContext.longPressZap,
-          sign_height: initialAppContext.signHeight
+          sign_height: initialAppContext.signHeight,
         }
         SInfo.setItem('config', JSON.stringify(config), {})
       }
@@ -269,7 +269,7 @@ export const AppContextProvider = ({ children }: AppContextProviderProps): JSX.E
         qrReader,
         setQrReader,
         signHeight,
-        setSignWithHeight
+        setSignWithHeight,
       }}
     >
       {children}

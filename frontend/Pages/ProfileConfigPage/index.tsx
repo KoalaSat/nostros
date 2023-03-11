@@ -88,20 +88,19 @@ export const ProfileConfigPage: React.FC = () => {
     return await new Promise<void>((resolve) => {
       if (publicKey && relayPool) {
         sendEvent({
-            content: JSON.stringify({
-              name,
-              about,
-              lud06: lnurl,
-              lud16: lnAddress,
-              nip05,
-              picture,
-            }),
-            created_at: getUnixTime(new Date()),
-            kind: Kind.Metadata,
-            pubkey: publicKey,
-            tags: [],
-          })
-          .then(() => resolve())
+          content: JSON.stringify({
+            name,
+            about,
+            lud06: lnurl,
+            lud16: lnAddress,
+            nip05,
+            picture,
+          }),
+          created_at: getUnixTime(new Date()),
+          kind: Kind.Metadata,
+          pubkey: publicKey,
+          tags: [],
+        }).then(() => resolve())
       } else {
         resolve()
       }
