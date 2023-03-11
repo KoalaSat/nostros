@@ -139,8 +139,8 @@ android {
         applicationId "com.nostros"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 62
-        versionName "v0.3.1.5-alpha"
+        versionCode 63
+        versionName "v0.3.1.6-alpha"
         buildConfigField "boolean", "IS_NEW_ARCHITECTURE_ENABLED", isNewArchitectureEnabled().toString()
 
         if (isNewArchitectureEnabled()) {
