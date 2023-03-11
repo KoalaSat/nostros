@@ -35,7 +35,7 @@ export const ProfileActions: React.FC<ProfileActionsProps> = ({
   const theme = useTheme()
   const { database } = React.useContext(AppContext)
   const { publicKey, privateKey, mutedUsers, reloadLists } = React.useContext(UserContext)
-  const { relayPool, updateRelayItem, lastEventId } = React.useContext(RelayPoolContext)
+  const { relayPool, updateRelayItem, lastEventId, sendEvent } = React.useContext(RelayPoolContext)
   const [isContact, setIsContact] = React.useState<boolean>()
   const [isMuted, setIsMuted] = React.useState<boolean>()
   const [isGroupHidden, setIsGroupHidden] = React.useState<boolean>()
@@ -68,22 +68,20 @@ export const ProfileActions: React.FC<ProfileActionsProps> = ({
 
   const hideGroupsUser: () => void = () => {
     if (publicKey && relayPool && database && user.id) {
-      relayPool
-        ?.sendEvent({
-          content: '',
-          created_at: getUnixTime(new Date()),
-          kind: Kind.ChannelMuteUser,
-          pubkey: publicKey,
-          tags: [['p', user.id]],
-        })
-        .then(() => {
-          if (database) {
-            DatabaseModule.updateUserMutesGroups(user.id, true, () => {
-              setIsGroupHidden(true)
-              bottomSheetMuteRef.current?.close()
-            })
-          }
-        })
+      sendEvent({
+        content: '',
+        created_at: getUnixTime(new Date()),
+        kind: Kind.ChannelMuteUser,
+        pubkey: publicKey,
+        tags: [['p', user.id]],
+      }).then(() => {
+        if (database) {
+          DatabaseModule.updateUserMutesGroups(user.id, true, () => {
+            setIsGroupHidden(true)
+            bottomSheetMuteRef.current?.close()
+          })
+        }
+      })
     }
   }
 
@@ -118,10 +116,10 @@ export const ProfileActions: React.FC<ProfileActionsProps> = ({
     if (database && publicKey && privateKey && relayPool) {
       DatabaseModule.addUser(user.id, () => {
         if (isMuted) {
-          removeMutedUsersList(relayPool, database, publicKey, user.id)
+          removeMutedUsersList(sendEvent, database, publicKey, user.id)
           DatabaseModule.updateUserBlock(user.id, false, () => {})
         } else {
-          addMutedUsersList(relayPool, database, publicKey, user.id)
+          addMutedUsersList(sendEvent, database, publicKey, user.id)
         }
         setIsMuted(!isMuted)
         reloadLists()
@@ -134,7 +132,7 @@ export const ProfileActions: React.FC<ProfileActionsProps> = ({
   const removeContact: () => void = () => {
     if (relayPool && database && publicKey) {
       DatabaseModule.updateUserContact(user.id, false, () => {
-        populatePets(relayPool, database, publicKey)
+        populatePets(sendEvent, database, publicKey)
         setIsContact(false)
         setShowNotification('contactRemoved')
       })
@@ -144,7 +142,7 @@ export const ProfileActions: React.FC<ProfileActionsProps> = ({
   const addContact: () => void = () => {
     if (relayPool && database && publicKey) {
       DatabaseModule.updateUserContact(user.id, true, () => {
-        populatePets(relayPool, database, publicKey)
+        populatePets(sendEvent, database, publicKey)
         setIsContact(true)
         setShowNotification('contactAdded')
       })

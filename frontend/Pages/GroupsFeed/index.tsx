@@ -178,7 +178,7 @@ export const GroupsFeed: React.FC = () => {
         pubkey: publicKey,
         tags: [],
       }
-      relayPool?.sendEvent(event)
+      sendEvent(event)
       bottomSheetCreateRef.current?.close()
       bottomSheetFabActionRef.current?.close()
     }

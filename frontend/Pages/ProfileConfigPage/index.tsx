@@ -32,7 +32,7 @@ export const ProfileConfigPage: React.FC = () => {
   const bottomSheetNip05Ref = React.useRef<RBSheet>(null)
   const bottomSheetLud06Ref = React.useRef<RBSheet>(null)
   const { database } = useContext(AppContext)
-  const { relayPool, lastEventId, lastConfirmationtId } = useContext(RelayPoolContext)
+  const { relayPool, lastEventId, lastConfirmationtId, sendEvent } = useContext(RelayPoolContext)
   const {
     publicKey,
     nPub,
@@ -87,22 +87,20 @@ export const ProfileConfigPage: React.FC = () => {
   const publishUser: () => Promise<void> = async () => {
     return await new Promise<void>((resolve) => {
       if (publicKey && relayPool) {
-        relayPool
-          ?.sendEvent({
-            content: JSON.stringify({
-              name,
-              about,
-              lud06: lnurl,
-              lud16: lnAddress,
-              nip05,
-              picture,
-            }),
-            created_at: getUnixTime(new Date()),
-            kind: Kind.Metadata,
-            pubkey: publicKey,
-            tags: [],
-          })
-          .then(() => resolve())
+        sendEvent({
+          content: JSON.stringify({
+            name,
+            about,
+            lud06: lnurl,
+            lud16: lnAddress,
+            nip05,
+            picture,
+          }),
+          created_at: getUnixTime(new Date()),
+          kind: Kind.Metadata,
+          pubkey: publicKey,
+          tags: [],
+        }).then(() => resolve())
       } else {
         resolve()
       }

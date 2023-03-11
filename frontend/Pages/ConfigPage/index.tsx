@@ -4,20 +4,8 @@ import { FlatList, StyleSheet } from 'react-native'
 import { Button, Divider, List, Switch, Text, TextInput, useTheme } from 'react-native-paper'
 import SInfo from 'react-native-sensitive-info'
 import RBSheet from 'react-native-raw-bottom-sheet'
-import { AppContext } from '../../Contexts/AppContext'
+import { AppContext, Config } from '../../Contexts/AppContext'
 import { imageHostingServices } from '../../Constants/Services'
-
-export interface Config {
-  satoshi: 'kebab' | 'sats'
-  show_public_images: boolean
-  show_sensitive: boolean
-  last_notification_seen_at: number
-  last_pets_at: number
-  image_hosting_service: string
-  language: string
-  relay_coloruring: boolean
-  long_press_zap: number | undefined
-}
 
 export const ConfigPage: React.FC = () => {
   const theme = useTheme()
@@ -38,6 +26,8 @@ export const ConfigPage: React.FC = () => {
     setRelayColouring,
     longPressZap,
     setLongPressZap,
+    signHeight,
+    setSignWithHeight,
   } = React.useContext(AppContext)
   const bottomSheetSatoshiRef = React.useRef<RBSheet>(null)
   const bottomSheetImageHostingRef = React.useRef<RBSheet>(null)
@@ -146,6 +136,22 @@ export const ConfigPage: React.FC = () => {
             {imageHostingServices[imageHostingService]?.uri ??
               t(`configPage.${imageHostingService}`)}
           </Text>
+        )}
+      />
+      <List.Item
+        title={t('configPage.signHeight')}
+        right={() => (
+          <Switch
+            value={signHeight}
+            onValueChange={(value) => {
+              setSignWithHeight(value)
+              SInfo.getItem('config', {}).then((result) => {
+                const config: Config = JSON.parse(result)
+                config.sign_height = value
+                SInfo.setItem('config', JSON.stringify(config), {})
+              })
+            }}
+          />
         )}
       />
       <List.Item title={t('configPage.feed')} />

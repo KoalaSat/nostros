@@ -42,7 +42,7 @@ interface RelayCardProps {
 export const RelayCard: React.FC<RelayCardProps> = ({ url, bottomSheetRef }) => {
   const theme = useTheme()
   const { publicKey } = React.useContext(UserContext)
-  const { updateRelayItem, relayPool, removeRelayItem, sendRelays } =
+  const { updateRelayItem, relayPool, removeRelayItem, sendRelays, sendEvent } =
     React.useContext(RelayPoolContext)
   const { database } = React.useContext(AppContext)
   const [relay, setRelay] = React.useState<Relay>()
@@ -67,20 +67,20 @@ export const RelayCard: React.FC<RelayCardProps> = ({ url, bottomSheetRef }) => 
       getRawUserNotes(database, publicKey).then((resultNotes) => {
         resultNotes.forEach((note) => {
           note.content = note.content.replace("''", "'")
-          relayPool.sendEvent(note, url)
+          sendEvent(note, url)
         })
         setPushDone(true)
         setShowNotification('pushCompleted')
       })
       getRawUserReactions(database, publicKey).then((resultReactions) => {
         resultReactions.forEach((reaction) => {
-          relayPool.sendEvent(reaction, url)
+          sendEvent(reaction, url)
         })
       })
       getRawUserConversation(database, publicKey).then((resultConversations) => {
         resultConversations.forEach((conversation) => {
           conversation.content = conversation.content.replace("''", "'")
-          relayPool.sendEvent(conversation, url)
+          sendEvent(conversation, url)
         })
       })
       getUsers(database, { exludeIds: [publicKey], contacts: true }).then((users) => {
@@ -92,27 +92,27 @@ export const RelayCard: React.FC<RelayCardProps> = ({ url, bottomSheetRef }) => 
             pubkey: publicKey,
             tags: usersToTags(users),
           }
-          relayPool?.sendEvent(event, url)
+          sendEvent(event, url)
         }
       })
       getRawUserGroupMessages(database, publicKey).then((resultGroupMessages) => {
         resultGroupMessages.forEach((groupMessage) => {
-          relayPool.sendEvent(groupMessage, url)
+          sendEvent(groupMessage, url)
         })
       })
       getRawUserGroups(database, publicKey).then((resultGroups) => {
         resultGroups.forEach((group) => {
-          relayPool.sendEvent(group, url)
+          sendEvent(group, url)
         })
       })
       getRawLists(database, publicKey).then((lists) => {
         lists.forEach((list) => {
-          relayPool.sendEvent(list, url)
+          sendEvent(list, url)
         })
       })
       getRawRelayMetadata(database, publicKey).then((lists) => {
         lists.forEach((list) => {
-          relayPool.sendEvent(list, url)
+          sendEvent(list, url)
         })
       })
       sendRelays(url)

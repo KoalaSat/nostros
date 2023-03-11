@@ -47,7 +47,7 @@ export const GroupPage: React.FC<GroupPageProps> = ({ route }) => {
   const initialPageSize = 20
   const theme = useTheme()
   const { database, setDisplayUserDrawer } = useContext(AppContext)
-  const { relayPool, lastEventId } = useContext(RelayPoolContext)
+  const { relayPool, lastEventId, sendEvent } = useContext(RelayPoolContext)
   const { publicKey, privateKey, name, picture, validNip05 } = useContext(UserContext)
   const [pageSize, setPageSize] = useState<number>(initialPageSize)
   const [groupMessages, setGroupMessages] = useState<GroupMessage[]>([])
@@ -204,7 +204,7 @@ export const GroupPage: React.FC<GroupPageProps> = ({ route }) => {
         pubkey: publicKey,
         tags,
       }
-      relayPool?.sendEvent(event)
+      sendEvent(event)
       const groupMessage = event as GroupMessage
       groupMessage.pending = true
       groupMessage.valid_nip05 = validNip05

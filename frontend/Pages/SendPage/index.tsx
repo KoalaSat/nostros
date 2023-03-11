@@ -27,7 +27,7 @@ export const SendPage: React.FC<SendPageProps> = ({ route }) => {
   const theme = useTheme()
   const { database } = useContext(AppContext)
   const { publicKey } = useContext(UserContext)
-  const { relayPool, lastConfirmationtId } = useContext(RelayPoolContext)
+  const { sendEvent, lastConfirmationtId } = useContext(RelayPoolContext)
   const { t } = useTranslation('common')
   // state
   const [content, setContent] = useState<string>('')
@@ -104,7 +104,7 @@ export const SendPage: React.FC<SendPageProps> = ({ route }) => {
         pubkey: publicKey,
         tags,
       }
-      relayPool?.sendEvent(event).catch(() => {})
+      sendEvent(event).catch(() => {})
     }
   }
 

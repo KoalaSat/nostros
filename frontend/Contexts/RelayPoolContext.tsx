@@ -8,6 +8,7 @@ import { UserContext } from './UserContext'
 import { getUnixTime } from 'date-fns'
 import { type Event } from '../lib/nostr/Events'
 import { randomInt } from '../Functions/NativeFunctions'
+import axios from 'axios'
 
 export interface RelayPoolContextProps {
   relayPoolReady: boolean
@@ -24,6 +25,7 @@ export interface RelayPoolContextProps {
   sendRelays: (url?: string) => Promise<void>
   loadRelays: () => Promise<Relay[]>
   createRandomRelays: () => Promise<void>
+  sendEvent: (event: Event, relayUrl?: string) => Promise<Event | null | undefined>
 }
 
 export interface WebsocketEvent {
@@ -46,21 +48,38 @@ export const initialRelayPoolContext: RelayPoolContextProps = {
   sendRelays: async () => {},
   loadRelays: async () => [],
   createRandomRelays: async () => {},
+  sendEvent: async () => null,
 }
 
 export const RelayPoolContextProvider = ({
   children,
   images,
 }: RelayPoolContextProviderProps): JSX.Element => {
-  const { database } = useContext(AppContext)
+  const { database, signHeight } = useContext(AppContext)
   const { publicKey, privateKey } = React.useContext(UserContext)
-
   const [relayPool, setRelayPool] = useState<RelayPool>()
   const [relayPoolReady, setRelayPoolReady] = useState<boolean>(false)
   const [lastEventId, setLastEventId] = useState<string>('')
   const [lastConfirmationtId, setLastConfirmationId] = useState<string>('')
   const [relays, setRelays] = React.useState<Relay[]>([])
   const [displayRelayDrawer, setDisplayrelayDrawer] = React.useState<string>()
+
+  const sendEvent: (event: Event, relayUrl?: string) => Promise<Event | null | undefined> = async (
+    event,
+    relayUrl,
+  ) => {
+    if (signHeight) {
+      try {
+        const response = await axios.get('https://mempool.space/api/v1/blocks')
+        if (response) {
+          const lastBlock: { id: string; height: number } = response.data[0]
+          event.tags.push(['bitcoin', lastBlock.id, lastBlock.height.toString()])
+        }
+      } catch {}
+    }
+
+    return await relayPool?.sendEvent(event, relayUrl)
+  }
 
   const sendRelays: (url?: string) => Promise<void> = async (url) => {
     if (publicKey && database) {
@@ -73,7 +92,7 @@ export const RelayPoolContextProvider = ({
             pubkey: publicKey,
             tags: results.map((relay) => ['r', relay.url, relay.mode ?? '']),
           }
-          url ? relayPool?.sendEvent(event, url) : relayPool?.sendEvent(event)
+          url ? sendEvent(event, url) : sendEvent(event)
         }
       })
     }
@@ -211,6 +230,7 @@ export const RelayPoolContextProvider = ({
         sendRelays,
         loadRelays,
         createRandomRelays,
+        sendEvent,
       }}
     >
       {children}

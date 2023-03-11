@@ -25,6 +25,7 @@ export interface UserContextProps {
   setPrivateKey: (privateKey: string | undefined) => void
   reloadUser: () => void
   reloadLists: () => void
+  reloadBookmarks: () => void
   publicBookmarks: string[]
   privateBookmarks: string[]
   mutedEvents: string[]
@@ -56,6 +57,7 @@ export const initialUserContext: UserContextProps = {
   setPrivateKey: () => {},
   reloadUser: () => {},
   reloadLists: () => {},
+  reloadBookmarks: () => {},
   logout: () => {},
   setName: () => {},
   setPicture: () => {},
@@ -105,21 +107,32 @@ export const UserContextProvider = ({ children }: UserContextProviderProps): JSX
     }
   }
 
+  const decryptBookmarks: (content: string) => void = async (content) => {
+    if (privateKey && publicKey && content && content !== '') {
+      const privateJson = decrypt(privateKey, publicKey, content)
+      const privateList: string[][] = JSON.parse(privateJson)
+      setPrivateBookmarks(privateList.map((tag) => tag[1]))
+    }
+  }
+
+  const reloadBookmarks: () => void = () => {
+    if (database && publicKey && privateKey) {
+      getList(database, 10001, publicKey).then((result) => {
+        if (result) {
+          const eTags = getETags(result)
+          setPublicBookmarks(eTags.map((tag) => tag[1]))
+          decryptBookmarks(result.content)
+        }
+      })
+    }
+  }
+
   const reloadLists: () => void = () => {
     if (database && publicKey && privateKey) {
       getList(database, 10000, publicKey).then((result) => {
         if (result) {
           const eTags = getETags(result)
           setMutedUsers(eTags.map((tag) => tag[1]))
-        }
-      })
-      getList(database, 10001, publicKey).then((result) => {
-        if (result) {
-          const eTags = getETags(result)
-          setPublicBookmarks(eTags.map((tag) => tag[1]))
-          const privateJson = decrypt(privateKey, publicKey, result.content ?? '')
-          const privateList: string[][] = JSON.parse(privateJson)
-          setPrivateBookmarks(privateList.map((tag) => tag[1]))
         }
       })
       getList(database, 30001, publicKey, 'mute').then((result) => {
@@ -172,6 +185,7 @@ export const UserContextProvider = ({ children }: UserContextProviderProps): JSX
       setNpub(getNpub(publicKey))
       reloadUser()
       reloadLists()
+      reloadBookmarks()
     }
   }, [publicKey])
 
@@ -222,6 +236,7 @@ export const UserContextProvider = ({ children }: UserContextProviderProps): JSX
         setPrivateKey,
         reloadUser,
         reloadLists,
+        reloadBookmarks,
         publicBookmarks,
         privateBookmarks,
         mutedEvents,

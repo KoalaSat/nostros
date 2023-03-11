@@ -6,7 +6,7 @@ import {
   StyleSheet,
   View,
 } from 'react-native'
-import { AppContext } from '../../Contexts/AppContext'
+import { AppContext, Config } from '../../Contexts/AppContext'
 import SInfo from 'react-native-sensitive-info'
 import { getMentionNotes, type Note } from '../../Functions/DatabaseFunctions/Notes'
 import NoteCard from '../../Components/NoteCard'
@@ -20,7 +20,6 @@ import { useTranslation } from 'react-i18next'
 import { navigate } from '../../lib/Navigation'
 import { useFocusEffect } from '@react-navigation/native'
 import { getUnixTime } from 'date-fns'
-import { type Config } from '../../Functions/DatabaseFunctions/Config'
 import { FlashList, type ListRenderItem } from '@shopify/flash-list'
 import { getETags } from '../../Functions/RelayFunctions/Events'
 

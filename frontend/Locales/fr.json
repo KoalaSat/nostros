@@ -121,6 +121,7 @@
       "zhCn": "简体中文"
     },
     "configPage": {
+      "signHeight": "Sign events with latest Bitcoin block",
       "showPublicImages": "Afficher les images dans le flux global",
       "showSensitive": "Montrer les notes sensibles",
       "satoshi": "Symbole de satoshi",

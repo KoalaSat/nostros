@@ -92,6 +92,7 @@
       "logout": "Abmelden"
     },
     "configPage": {
+      "signHeight": "Sign events with latest Bitcoin block",
       "showPublicImages": "Bilder aus globalem Feed Anzeigen",
       "showSensitive": "Sensible Inhalte anzeigen",
       "satoshi": "Satoshi Symbol",

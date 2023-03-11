@@ -80,8 +80,8 @@ export const QrReaderPage: React.FC = () => {
         </Text>
       </View>
     </View>
-  // ) : (
-  //   NoPermissionsComponent
+    // ) : (
+    //   NoPermissionsComponent
   )
 }
 

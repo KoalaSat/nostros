@@ -1,6 +1,5 @@
 import getUnixTime from 'date-fns/getUnixTime'
 import { type QuickSQLiteConnection } from 'react-native-quick-sqlite'
-import type RelayPool from '../../../lib/nostr/RelayPool/intex'
 import { getUser, getUsers, type User } from '../../DatabaseFunctions/Users'
 import { type Event } from '../../../lib/nostr/Events'
 import { getNpub } from '../../../lib/nostr/Nip19'
@@ -58,10 +57,10 @@ export const getNip05Domain: (nip05: string | undefined) => string | null = (nip
 }
 
 export const populatePets: (
-  relayPool: RelayPool,
+  sendEvent: (event: Event, relayUrl?: string) => Promise<Event | null | undefined>,
   database: QuickSQLiteConnection,
   publicKey: string,
-) => void = async (relayPool, database, publicKey) => {
+) => void = async (sendEvent, database, publicKey) => {
   const results = await getUsers(database, { exludeIds: [publicKey], contacts: true })
   if (results) {
     const event: Event = {
@@ -71,15 +70,15 @@ export const populatePets: (
       pubkey: publicKey,
       tags: usersToTags(results),
     }
-    relayPool?.sendEvent(event)
+    sendEvent(event)
   }
 }
 
 export const populateProfile: (
-  relayPool: RelayPool,
+  sendEvent: (event: Event, relayUrl?: string) => Promise<Event | null | undefined>,
   database: QuickSQLiteConnection,
   publicKey: string,
-) => void = async (relayPool, database, publicKey) => {
+) => void = async (sendEvent, database, publicKey) => {
   const result = await getUser(publicKey, database)
   if (result) {
     const profile = {
@@ -95,6 +94,6 @@ export const populateProfile: (
       pubkey: publicKey,
       tags: usersToTags([result]),
     }
-    relayPool?.sendEvent(event)
+    sendEvent(event)
   }
 }

@@ -40,7 +40,7 @@ export const BookmarksFeed: React.FC<BookmarksFeedProps> = ({
   const theme = useTheme()
   const { t } = useTranslation('common')
   const { database, pushedTab } = useContext(AppContext)
-  const { publicKey, publicBookmarks, privateBookmarks, reloadLists } = useContext(UserContext)
+  const { publicKey, publicBookmarks, privateBookmarks, reloadBookmarks } = useContext(UserContext)
   const { lastEventId, relayPool, lastConfirmationtId } = useContext(RelayPoolContext)
   const initialPageSize = 10
   const [notes, setNotes] = useState<Note[]>([])
@@ -50,7 +50,7 @@ export const BookmarksFeed: React.FC<BookmarksFeedProps> = ({
   const flashListRef = React.useRef<FlashList<Note>>(null)
 
   useEffect(() => {
-    reloadLists()
+    reloadBookmarks()
   }, [])
 
   useEffect(() => {
@@ -79,7 +79,7 @@ export const BookmarksFeed: React.FC<BookmarksFeedProps> = ({
   useEffect(() => {
     if (pageSize > initialPageSize) {
       loadNotes()
-      reloadLists()
+      reloadBookmarks()
     }
   }, [pageSize])
 

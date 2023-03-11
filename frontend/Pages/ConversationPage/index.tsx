@@ -51,7 +51,7 @@ export const ConversationPage: React.FC<ConversationPageProps> = ({ route }) => 
   const theme = useTheme()
   const scrollViewRef = useRef<ScrollView>()
   const { database, setRefreshBottomBarAt, setDisplayUserDrawer } = useContext(AppContext)
-  const { relayPool, lastEventId } = useContext(RelayPoolContext)
+  const { relayPool, lastEventId, sendEvent } = useContext(RelayPoolContext)
   const { publicKey, privateKey, name, picture, validNip05 } = useContext(UserContext)
   const otherPubKey = useMemo(() => route.params.pubKey, [])
   const [pageSize, setPageSize] = useState<number>(initialPageSize)
@@ -177,14 +177,12 @@ export const ConversationPage: React.FC<ConversationPageProps> = ({ route }) => 
       }
       encrypt(privateKey, otherPubKey, input)
         .then((encryptedcontent) => {
-          relayPool
-            ?.sendEvent({
-              ...event,
-              content: encryptedcontent,
-            })
-            .catch(() => {
-              setShowNotification('privateMessageSendError')
-            })
+          sendEvent({
+            ...event,
+            content: encryptedcontent,
+          }).catch(() => {
+            setShowNotification('privateMessageSendError')
+          })
         })
         .catch(() => {
           setShowNotification('privateMessageSendError')

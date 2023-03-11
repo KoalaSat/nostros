@@ -31,7 +31,6 @@ import { useFocusEffect } from '@react-navigation/native'
 import ProfileData from '../../Components/ProfileData'
 import { handleInfinityScroll } from '../../Functions/NativeFunctions'
 import { queryProfile } from 'nostr-tools/nip05'
-import { navigate } from '../../lib/Navigation'
 import DatabaseModule from '../../lib/Native/DatabaseModule'
 import { removeMutedUsersList } from '../../Functions/RelayFunctions/Lists'
 
@@ -40,7 +39,7 @@ export const ContactsPage: React.FC = () => {
   const initialPageSize = 20
   const { database, setDisplayUserDrawer, qrReader, setQrReader } = useContext(AppContext)
   const { privateKey, publicKey, nPub, mutedUsers, reloadLists } = React.useContext(UserContext)
-  const { relayPool, lastEventId } = useContext(RelayPoolContext)
+  const { relayPool, lastEventId, sendEvent } = useContext(RelayPoolContext)
   const theme = useTheme()
   const [pageSize, setPageSize] = useState<number>(initialPageSize)
   const bottomSheetAddContactRef = React.useRef<RBSheet>(null)
@@ -158,7 +157,7 @@ export const ContactsPage: React.FC = () => {
 
       if (hexKey) {
         DatabaseModule.updateUserContact(hexKey, true, () => {
-          populatePets(relayPool, database, publicKey)
+          populatePets(sendEvent, database, publicKey)
           loadUsers()
           setIsAddingContact(false)
           setShowNotification('contactAdded')
@@ -179,7 +178,7 @@ export const ContactsPage: React.FC = () => {
   const removeContact: (user: User) => void = (user) => {
     if (relayPool && database && publicKey) {
       DatabaseModule.updateUserContact(user.id, false, () => {
-        populatePets(relayPool, database, publicKey)
+        populatePets(sendEvent, database, publicKey)
         setShowNotification('contactRemoved')
         loadUsers()
       })
@@ -189,7 +188,7 @@ export const ContactsPage: React.FC = () => {
   const addContact: (user: User) => void = (user) => {
     if (relayPool && database && publicKey) {
       DatabaseModule.updateUserContact(user.id, true, () => {
-        populatePets(relayPool, database, publicKey)
+        populatePets(sendEvent, database, publicKey)
         setShowNotification('contactRemoved')
         loadUsers()
       })
@@ -199,7 +198,7 @@ export const ContactsPage: React.FC = () => {
   const unmute: (user: User) => void = (user) => {
     if (relayPool && database && publicKey) {
       DatabaseModule.updateUserBlock(user.id, false, () => {
-        removeMutedUsersList(relayPool, database, publicKey, user.id)
+        removeMutedUsersList(sendEvent, database, publicKey, user.id)
         setShowNotification('contactUnmuted')
         loadUsers()
         reloadLists()

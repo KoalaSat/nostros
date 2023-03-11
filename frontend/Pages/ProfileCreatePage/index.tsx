@@ -19,7 +19,7 @@ interface ProfileCreatePageProps {
 export const ProfileCreatePage: React.FC<ProfileCreatePageProps> = ({ navigation }) => {
   const { t } = useTranslation('common')
   const { setPrivateKey, setUserState, publicKey } = useContext(UserContext)
-  const { createRandomRelays, relayPool, relays } = useContext(RelayPoolContext)
+  const { createRandomRelays, sendEvent, relays } = useContext(RelayPoolContext)
   const [key, setKey] = useState<string>()
   const [inputValue, setInputValue] = useState<string>()
   const [keyboardShow, setKeyboardShow] = useState<boolean>(false)
@@ -73,7 +73,7 @@ export const ProfileCreatePage: React.FC<ProfileCreatePageProps> = ({ navigation
           pubkey: publicKey,
           tags: relays.map((relay) => ['r', relay.url, '']),
         }
-        relayPool?.sendEvent(event)
+        sendEvent(event)
       }
       if (validConfirmation()) {
         setPrivateKey(key)
