@@ -6,6 +6,7 @@ import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityI
 import NostrosAvatar from '../NostrosAvatar'
 import { getNpub } from '../../lib/nostr/Nip19'
 import { formatDate } from '../../Functions/NativeFunctions'
+import { AppContext } from '../../Contexts/AppContext'
 
 interface ProfileCardProps {
   username?: string
@@ -17,6 +18,7 @@ interface ProfileCardProps {
   picture?: string
   avatarSize?: number
   timestamp?: number
+  bitcoinTag?: string[]
 }
 
 export const ProfileData: React.FC<ProfileCardProps> = ({
@@ -29,8 +31,10 @@ export const ProfileData: React.FC<ProfileCardProps> = ({
   picture,
   avatarSize,
   timestamp,
+  bitcoinTag
 }) => {
   const theme = useTheme()
+  const { signHeight } = React.useContext(AppContext)
   const nPub = React.useMemo(() => (publicKey ? getNpub(publicKey) : ''), [publicKey])
   const date = React.useMemo(() => formatDate(timestamp), [timestamp])
 
@@ -62,6 +66,7 @@ export const ProfileData: React.FC<ProfileCardProps> = ({
           </View>
           <Text numberOfLines={1}>
             {timestamp ? date : validNip05 ? getNip05Domain(nip05) : ''}
+            {signHeight && bitcoinTag ? ` (${bitcoinTag[2]})` : ''}
           </Text>
         </View>
       </View>

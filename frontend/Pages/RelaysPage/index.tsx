@@ -37,6 +37,7 @@ export const RelaysPage: React.FC = () => {
     updateRelayItem,
     addRelayItem,
     relayPool,
+    sendEvent,
     setDisplayrelayDrawer,
     relays,
     lastEventId,
@@ -144,7 +145,7 @@ export const RelaysPage: React.FC = () => {
         pubkey: publicKey,
         tags,
       }
-      relayPool?.sendEvent(event)
+      sendEvent(event)
     }
     bottomSheetPushRef.current?.close()
     setShowNotification('listPushed')

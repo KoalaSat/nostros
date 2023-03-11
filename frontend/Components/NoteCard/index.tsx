@@ -12,7 +12,7 @@ import { StyleSheet, View } from 'react-native'
 import { RelayPoolContext } from '../../Contexts/RelayPoolContext'
 import { AppContext } from '../../Contexts/AppContext'
 import { t } from 'i18next'
-import { isContentWarning } from '../../Functions/RelayFunctions/Events'
+import { getBitcoinTag, isContentWarning } from '../../Functions/RelayFunctions/Events'
 import { type Event } from '../../lib/nostr/Events'
 import { getUnixTime } from 'date-fns'
 import { type Relay, searchRelays } from '../../Functions/DatabaseFunctions/Relays'
@@ -72,7 +72,7 @@ export const NoteCard: React.FC<NoteCardProps> = ({
 }) => {
   const theme = useTheme()
   const { publicKey, privateKey, mutedUsers } = React.useContext(UserContext)
-  const { relayPool, lastEventId, addRelayItem } = useContext(RelayPoolContext)
+  const { sendEvent, lastEventId, addRelayItem } = useContext(RelayPoolContext)
   const {
     database,
     showSensitive,
@@ -98,6 +98,7 @@ export const NoteCard: React.FC<NoteCardProps> = ({
   const [loadingZap, setLoadingZap] = React.useState<boolean>(false)
   const [mutedUser, setMutedUser] = React.useState<boolean>(false)
   const [zapInvoice, setZapInvoice] = React.useState<string>()
+  const [bitcoinTag, setBitcoinTag] = React.useState<string[]>()
 
   useEffect(() => {
     if (database && publicKey && note?.id) {
@@ -125,6 +126,7 @@ export const NoteCard: React.FC<NoteCardProps> = ({
       }
       getNoteRelays(database, note.id).then(setRelays)
       setMutedUser(mutedUsers.find((e) => e === note.pubkey) !== undefined)
+      setBitcoinTag(getBitcoinTag(note)[0] ?? undefined)
     }
   }, [lastEventId])
 
@@ -154,7 +156,7 @@ export const NoteCard: React.FC<NoteCardProps> = ({
         pubkey: publicKey,
         tags: [...note.tags, ['e', note.id], ['p', note.pubkey]],
       }
-      relayPool?.sendEvent(event)
+      sendEvent(event)
     }
   }
 
@@ -412,6 +414,7 @@ export const NoteCard: React.FC<NoteCardProps> = ({
               lnAddress={note?.ln_address}
               picture={showAvatarImage ? note?.picture : undefined}
               timestamp={note?.created_at}
+              bitcoinTag={bitcoinTag}
             />
           </TouchableRipple>
         </View>

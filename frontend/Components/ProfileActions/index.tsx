@@ -35,7 +35,7 @@ export const ProfileActions: React.FC<ProfileActionsProps> = ({
   const theme = useTheme()
   const { database } = React.useContext(AppContext)
   const { publicKey, privateKey, mutedUsers, reloadLists } = React.useContext(UserContext)
-  const { relayPool, updateRelayItem, lastEventId } = React.useContext(RelayPoolContext)
+  const { relayPool, updateRelayItem, lastEventId, sendEvent } = React.useContext(RelayPoolContext)
   const [isContact, setIsContact] = React.useState<boolean>()
   const [isMuted, setIsMuted] = React.useState<boolean>()
   const [isGroupHidden, setIsGroupHidden] = React.useState<boolean>()
@@ -68,8 +68,7 @@ export const ProfileActions: React.FC<ProfileActionsProps> = ({
 
   const hideGroupsUser: () => void = () => {
     if (publicKey && relayPool && database && user.id) {
-      relayPool
-        ?.sendEvent({
+      sendEvent({
           content: '',
           created_at: getUnixTime(new Date()),
           kind: Kind.ChannelMuteUser,

@@ -6,13 +6,13 @@ import { getList } from '../../DatabaseFunctions/Lists'
 import { decrypt, encrypt } from '../../../lib/nostr/Nip04'
 
 export const addBookmarkList: (
-  relayPool: RelayPool,
+  sendEvent: (event: Event, relayUrl?: string) => Promise<Event | null | undefined>,
   database: QuickSQLiteConnection,
   privateKey: string,
   publicKey: string,
   eventId: string,
   publicBookmark: boolean,
-) => void = async (relayPool, database, privateKey, publicKey, eventId, publicBookmark) => {
+) => void = async (sendEvent, database, privateKey, publicKey, eventId, publicBookmark) => {
   if (!eventId || eventId === '') return
 
   const result = await getList(database, 10001, publicKey)
@@ -39,15 +39,15 @@ export const addBookmarkList: (
     pubkey: publicKey,
     tags,
   }
-  relayPool?.sendEvent(event)
+  sendEvent(event)
 }
 
 export const addMutedUsersList: (
-  relayPool: RelayPool,
+  sendEvent: (event: Event, relayUrl?: string) => Promise<Event | null | undefined>,
   database: QuickSQLiteConnection,
   publicKey: string,
   userId: string,
-) => void = async (relayPool, database, publicKey, userId) => {
+) => void = async (sendEvent, database, publicKey, userId) => {
   if (!userId || userId === '') return
 
   const result = await getList(database, 10000, publicKey)
@@ -62,16 +62,16 @@ export const addMutedUsersList: (
     pubkey: publicKey,
     tags,
   }
-  relayPool?.sendEvent(event)
+  sendEvent(event)
 }
 
 export const addList: (
-  relayPool: RelayPool,
+  sendEvent: (event: Event, relayUrl?: string) => Promise<Event | null | undefined>,
   database: QuickSQLiteConnection,
   publicKey: string,
   eventId: string,
   tag: string,
-) => void = async (relayPool, database, publicKey, eventId, tag) => {
+) => void = async (sendEvent, database, publicKey, eventId, tag) => {
   if (!eventId || eventId === '') return
 
   const result = await getList(database, 30001, publicKey, tag)
@@ -86,16 +86,16 @@ export const addList: (
     pubkey: publicKey,
     tags,
   }
-  relayPool?.sendEvent(event)
+  sendEvent(event)
 }
 
 export const removeBookmarkList: (
-  relayPool: RelayPool,
+  sendEvent: (event: Event, relayUrl?: string) => Promise<Event | null | undefined>,
   database: QuickSQLiteConnection,
   privateKey: string,
   publicKey: string,
   eventId: string,
-) => void = async (relayPool, database, privateKey, publicKey, eventId) => {
+) => void = async (sendEvent, database, privateKey, publicKey, eventId) => {
   if (!eventId || eventId === '') return
 
   const result = await getList(database, 10001, publicKey)
@@ -115,16 +115,16 @@ export const removeBookmarkList: (
       pubkey: publicKey,
       tags,
     }
-    relayPool?.sendEvent(event)
+    sendEvent(event)
   }
 }
 
 export const removeMutedUsersList: (
-  relayPool: RelayPool,
+  sendEvent: (event: Event, relayUrl?: string) => Promise<Event | null | undefined>,
   database: QuickSQLiteConnection,
   publicKey: string,
   userId: string,
-) => void = async (relayPool, database, publicKey, userId) => {
+) => void = async (sendEvent, database, publicKey, userId) => {
   if (!userId || userId === '') return
 
   const result = await getList(database, 10000, publicKey)
@@ -138,16 +138,16 @@ export const removeMutedUsersList: (
     pubkey: publicKey,
     tags,
   }
-  relayPool?.sendEvent(event)
+  sendEvent(event)
 }
 
 export const removeList: (
-  relayPool: RelayPool,
+  sendEvent: (event: Event, relayUrl?: string) => Promise<Event | null | undefined>,
   database: QuickSQLiteConnection,
   publicKey: string,
   eventId: string,
   tag: string,
-) => void = async (relayPool, database, publicKey, eventId, tag) => {
+) => void = async (sendEvent, database, publicKey, eventId, tag) => {
   if (!eventId || eventId === '') return
 
   const result = await getList(database, 30001, publicKey, tag)
@@ -161,6 +161,6 @@ export const removeList: (
       pubkey: publicKey,
       tags,
     }
-    relayPool?.sendEvent(event)
+    sendEvent(event)
   }
 }

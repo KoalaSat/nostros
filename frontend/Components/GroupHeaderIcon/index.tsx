@@ -37,7 +37,7 @@ export const GroupHeaderIcon: React.FC<GroupHeaderIconProps> = ({ groupId }) => 
   const { t } = useTranslation('common')
   const { database } = useContext(AppContext)
   const { publicKey } = useContext(UserContext)
-  const { relayPool, lastEventId } = useContext(RelayPoolContext)
+  const { sendEvent, lastEventId } = useContext(RelayPoolContext)
   const theme = useTheme()
   const [group, setGroup] = useState<Group>()
   const [user, setUser] = useState<User>()
@@ -91,7 +91,7 @@ export const GroupHeaderIcon: React.FC<GroupHeaderIconProps> = ({ groupId }) => 
         pubkey: publicKey,
         tags: [['e', group?.id, '']],
       }
-      relayPool?.sendEvent(event)
+      sendEvent(event)
       bottomSheetEditGroupRef.current?.close()
     }
   }

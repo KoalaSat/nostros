@@ -4,11 +4,23 @@ import { initDatabase } from '../Functions/DatabaseFunctions'
 import SInfo from 'react-native-sensitive-info'
 import { AppState, Linking, NativeModules, Platform, StyleSheet } from 'react-native'
 import { Text } from 'react-native-paper'
-import { type Config } from '../Pages/ConfigPage'
 import { imageHostingServices } from '../Constants/Services'
 import { randomInt, validNip21 } from '../Functions/NativeFunctions'
 import Clipboard from '@react-native-clipboard/clipboard'
 import i18next from 'i18next'
+
+export interface Config {
+  satoshi: 'kebab' | 'sats'
+  show_public_images: boolean
+  show_sensitive: boolean
+  last_notification_seen_at: number
+  last_pets_at: number
+  image_hosting_service: string
+  language: string
+  relay_coloruring: boolean
+  long_press_zap: number | undefined
+  sign_height: boolean
+}
 
 export interface AppContextProps {
   init: () => void
@@ -45,6 +57,8 @@ export interface AppContextProps {
   setPushedTab: (pushedTab: string) => void
   qrReader?: string
   setQrReader: (qrReader: string | undefined) => void
+  signHeight: boolean
+  setSignWithHeight: (signHeight: boolean) => void
 }
 
 export interface AppContextProviderProps {
@@ -86,6 +100,8 @@ export const initialAppContext: AppContextProps = {
   setDisplayNoteDrawer: () => {},
   longPressZap: undefined,
   setLongPressZap: () => {},
+  signHeight: false,
+  setSignWithHeight: () => {}
 }
 
 export const AppContextProvider = ({ children }: AppContextProviderProps): JSX.Element => {
@@ -114,6 +130,7 @@ export const AppContextProvider = ({ children }: AppContextProviderProps): JSX.E
   const [displayUserDrawer, setDisplayUserDrawer] = React.useState<string>()
   const [displayNoteDrawer, setDisplayNoteDrawer] = React.useState<string>()
   const [pushedTab, setPushedTab] = useState<string>()
+  const [signHeight, setSignWithHeight] = useState<boolean>(initialAppContext.signHeight)
 
   useEffect(() => {
     if (pushedTab) setPushedTab(undefined)
@@ -161,6 +178,7 @@ export const AppContextProvider = ({ children }: AppContextProviderProps): JSX.E
         setLanguage(config.language ?? initialAppContext.language)
         setLongPressZap(config.long_press_zap ?? initialAppContext.longPressZap)
         setRelayColouring(config.relay_coloruring ?? initialAppContext.relayColouring)
+        setSignWithHeight(config.sign_height ?? initialAppContext.signHeight)
       } else {
         const config: Config = {
           show_public_images: initialAppContext.showPublicImages,
@@ -172,6 +190,7 @@ export const AppContextProvider = ({ children }: AppContextProviderProps): JSX.E
           language: initialAppContext.language,
           relay_coloruring: initialAppContext.relayColouring,
           long_press_zap: initialAppContext.longPressZap,
+          sign_height: initialAppContext.signHeight
         }
         SInfo.setItem('config', JSON.stringify(config), {})
       }
@@ -249,6 +268,8 @@ export const AppContextProvider = ({ children }: AppContextProviderProps): JSX.E
         setDisplayNoteDrawer,
         qrReader,
         setQrReader,
+        signHeight,
+        setSignWithHeight
       }}
     >
       {children}

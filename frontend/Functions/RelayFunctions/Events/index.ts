@@ -51,6 +51,10 @@ export const getETags: (event: Event) => string[][] = (event) => {
   return event?.tags.filter((tag) => tag[0] === 'e') || []
 }
 
+export const getBitcoinTag: (event: Event) => string[][] = (event) => {
+  return event?.tags.filter((tag) => tag[0] === 'bitcoin') || []
+}
+
 export const getPTags: (event: Event) => string[][] = (event) => {
   return event?.tags.filter((tag) => tag[0] === 'p') || []
 }
