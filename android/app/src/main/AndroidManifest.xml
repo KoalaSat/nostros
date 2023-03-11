@@ -1,6 +1,5 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
   package="com.nostros">
-    <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.INTERNET" />
     <!-- required for react-native-share base64 sharing -->
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />

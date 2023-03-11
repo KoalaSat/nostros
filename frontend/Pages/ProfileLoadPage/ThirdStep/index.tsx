@@ -9,7 +9,7 @@ import { RelayPoolContext } from '../../../Contexts/RelayPoolContext'
 import { UserContext } from '../../../Contexts/UserContext'
 import { getUsers, type User } from '../../../Functions/DatabaseFunctions/Users'
 import { relayToColor } from '../../../Functions/NativeFunctions'
-import { getAllRelayMetadata } from '../../../Functions/DatabaseFunctions/RelayMetadatas'
+import { getAllRelayMetadata, RelayMetadata } from '../../../Functions/DatabaseFunctions/RelayMetadatas'
 import { getContactsRelays } from '../../../Functions/RelayFunctions/Metadata'
 
 interface ThirdStepProps {
@@ -23,6 +23,7 @@ export const ThirdStep: React.FC<ThirdStepProps> = ({ nextStep }) => {
     useContext(RelayPoolContext)
   const { publicKey, setUserState } = useContext(UserContext)
   const [asignation, setAsignation] = useState<string[]>()
+  const [contactsRelays, setContactsRelays] = useState<RelayMetadata[]>([])
 
   React.useEffect(() => {
     loadPetsRelays()
@@ -31,6 +32,7 @@ export const ThirdStep: React.FC<ThirdStepProps> = ({ nextStep }) => {
   React.useEffect(() => {
     if (database) {
       getAllRelayMetadata(database).then((relayMetadata) => {
+        setContactsRelays(relayMetadata)
         getContactsRelays(relays, relayMetadata).then(setAsignation)
       })
     }
@@ -92,6 +94,12 @@ export const ThirdStep: React.FC<ThirdStepProps> = ({ nextStep }) => {
         <View style={styles.loadingProfile}>
           <Text variant='titleMedium' style={styles.center}>
             {t('profileLoadPage.contactRelaysDescription')}
+          </Text>
+        </View>
+        <View style={styles.loadingProfile}>
+          <Text variant='titleMedium'>{t('profileLoadPage.contactsRelays')}</Text>
+          <Text variant='titleMedium' style={{ color: '#7ADC70' }}>
+            {contactsRelays.length}
           </Text>
         </View>
         <View style={styles.list}>
