@@ -1,4 +1,4 @@
-# OSX
+# MacOS
 
 Make sure you have Node 16.x
 
