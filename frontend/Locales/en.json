@@ -41,6 +41,7 @@
       }
     },
     "profileLoadPage": {
+      "contactsRelays": "Lists of relays ",
       "connect": "Connect and go home",
       "foundRelays": "Relays found",
       "searchingContacts": "Searching for your contacts",

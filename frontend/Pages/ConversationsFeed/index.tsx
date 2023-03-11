@@ -336,17 +336,17 @@ export const ConversationsFeed: React.FC = () => {
                 forceTextInputFocus={false}
               />
             }
-            left={
-              <TextInput.Icon
-                icon='qrcode'
-                onPress={() => {
-                  bottomSheetCreateRef.current?.close()
-                  bottomSheetPubKeyRef.current?.close()
-                  navigate('QrReader')
-                }}
-                forceTextInputFocus={false}
-              />
-            }
+            // left={
+            //   <TextInput.Icon
+            //     icon='qrcode'
+            //     onPress={() => {
+            //       bottomSheetCreateRef.current?.close()
+            //       bottomSheetPubKeyRef.current?.close()
+            //       navigate('QrReader')
+            //     }}
+            //     forceTextInputFocus={false}
+            //   />
+            // }
           />
           <Button
             mode='contained'

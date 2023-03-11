@@ -375,17 +375,17 @@ export const GroupsFeed: React.FC = () => {
                 forceTextInputFocus={false}
               />
             }
-            left={
-              <TextInput.Icon
-                icon='qrcode'
-                onPress={() => {
-                  bottomSheetFabActionRef.current?.close()
-                  bottomSheetSearchRef.current?.close()
-                  navigate('QrReader')
-                }}
-                forceTextInputFocus={false}
-              />
-            }
+            // left={
+            //   <TextInput.Icon
+            //     icon='qrcode'
+            //     onPress={() => {
+            //       bottomSheetFabActionRef.current?.close()
+            //       bottomSheetSearchRef.current?.close()
+            //       navigate('QrReader')
+            //     }}
+            //     forceTextInputFocus={false}
+            //   />
+            // }
           />
           <Button mode='contained' disabled={!searchGroup} onPress={onAddGroup}>
             {t('groupsFeed.add')}

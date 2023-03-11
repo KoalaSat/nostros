@@ -10,7 +10,7 @@ import {
   StyleSheet,
   View,
 } from 'react-native'
-import { Button, Divider, List, Text, useTheme } from 'react-native-paper'
+import { Button, Divider, List, Text } from 'react-native-paper'
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'
 import Logo from '../../../Components/Logo'
 import { AppContext } from '../../../Contexts/AppContext'
@@ -25,9 +25,9 @@ interface SecondStepProps {
 
 export const SecondStep: React.FC<SecondStepProps> = ({ nextStep }) => {
   const { t } = useTranslation('common')
-  const theme = useTheme()
   const { database } = useContext(AppContext)
-  const { relayPool, relayPoolReady, lastEventId, relays } = useContext(RelayPoolContext)
+  const { relayPool, relayPoolReady, lastEventId, relays, updateRelayItem } =
+    useContext(RelayPoolContext)
   const { publicKey, setUserState } = useContext(UserContext)
   const [contactsCount, setContactsCount] = useState<number>()
 
@@ -88,31 +88,41 @@ export const SecondStep: React.FC<SecondStepProps> = ({ nextStep }) => {
     }
   }
 
+  const activeGlobalFeedRelay: (relay: Relay) => void = (relay) => {
+    relay.active = 1
+    relay.global_feed = 1
+    updateRelayItem(relay)
+  }
+
+  const desactiveGlobalFeedRelay: (relay: Relay) => void = (relay) => {
+    relay.global_feed = 0
+    updateRelayItem(relay)
+  }
+
   const renderItem: ListRenderItem<Relay> = ({ item, index }) => {
     return (
-      <View style={styles.relayItem}>
-        <List.Item
-          key={index}
-          title={item.url.replace('wss://', '').replace('ws://', '')}
-          right={() => {
-            if (!item?.paid) return <></>
-            return (
-              <MaterialCommunityIcons
-                name='wallet-outline'
-                size={16}
-                color={theme.colors.onPrimaryContainer}
-              />
-            )
-          }}
-          left={() => (
-            <MaterialCommunityIcons
-              style={styles.relayColor}
-              name='circle'
-              color={relayToColor(item.url)}
-            />
-          )}
-        />
-      </View>
+      <List.Item
+        key={index}
+        title={item.url.replace('wss://', '').replace('ws://', '')}
+        right={() => (
+          <Button
+            style={styles.relayButton}
+            mode={item.global_feed !== undefined && item.global_feed > 0 ? 'contained' : 'outlined'}
+            onPress={() => {
+              item.global_feed ? desactiveGlobalFeedRelay(item) : activeGlobalFeedRelay(item)
+            }}
+          >
+            {t('relaysPage.globalFeed')}
+          </Button>
+        )}
+        left={() => (
+          <MaterialCommunityIcons
+            style={styles.relayColor}
+            name='circle'
+            color={relayToColor(item.url)}
+          />
+        )}
+      />
     )
   }
 
@@ -148,7 +158,11 @@ export const SecondStep: React.FC<SecondStepProps> = ({ nextStep }) => {
           <ScrollView horizontal={false}>
             <FlatList
               showsVerticalScrollIndicator={false}
-              data={relays}
+              data={relays.sort((a, b) => {
+                if (a.url > b.url) return 1
+                if (a.url < b.url) return -1
+                return 0
+              })}
               renderItem={renderItem}
               ItemSeparatorComponent={Divider}
             />
@@ -208,23 +222,14 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
   },
-  relayItem: {
-    paddingLeft: 16,
-    paddingRight: 16,
-  },
-  relayButtons: {
-    paddingBottom: 16,
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-  },
-  relayButton: {
-    marginRight: 16,
-  },
   relayActionButtons: {
     flexDirection: 'row',
   },
   relayColor: {
     paddingTop: 9,
+  },
+  relayButton: {
+    marginRight: -22,
   },
 })
 
