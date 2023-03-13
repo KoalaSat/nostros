@@ -160,7 +160,7 @@ export const HomeNavigator: React.FC = () => {
                       onPress={() => onGroupsPressCheckAll()}
                     />
                   )}
-                  {['Landing'].includes(route.name) &&
+                  {['Landing', 'Contacts'].includes(route.name) &&
                     (!historyKey ||
                       historyKey?.includes('feed-') ||
                       historyKey?.includes('notifications-')) && (
