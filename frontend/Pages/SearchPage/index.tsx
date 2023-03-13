@@ -148,7 +148,7 @@ export const SearchPage: React.FC<SearchPageProps> = ({ route }) => {
         />
       </View>
       {searchInput === '' && ListEmptyComponent}
-      {!/^@.*/.test(searchInput) && (
+      {searchInput !== '' && !/^@.*/.test(searchInput) && (
         <FlashList
           showsVerticalScrollIndicator={false}
           data={resultsNotes}
@@ -156,7 +156,7 @@ export const SearchPage: React.FC<SearchPageProps> = ({ route }) => {
           horizontal={false}
         />
       )}
-      {/^@.*/.test(searchInput) && (
+      {searchInput !== '' && /^@.*/.test(searchInput) && (
         <FlashList
           showsVerticalScrollIndicator={false}
           data={resultsUsers}
