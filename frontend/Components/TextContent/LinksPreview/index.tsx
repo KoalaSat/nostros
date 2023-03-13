@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState } from 'react'
-import { StyleSheet, TouchableWithoutFeedback, View } from 'react-native'
+import { Linking, StyleSheet, TouchableWithoutFeedback, View } from 'react-native'
 import { Avatar, Card, Text, useTheme } from 'react-native-paper'
 import FastImage from 'react-native-fast-image'
 import { useTranslation } from 'react-i18next'
@@ -7,6 +7,7 @@ import LnPreview from '../../LnPreview'
 import { decode, type PaymentRequestObject, type TagsObject } from 'bolt11'
 import { AppContext } from '../../../Contexts/AppContext'
 import { navigate } from '../../../lib/Navigation'
+import VideoPlayer from 'react-native-video-controls'
 
 interface TextContentProps {
   urls: Record<string, string>
@@ -48,16 +49,26 @@ export const LinksPreview: React.FC<TextContentProps> = ({ urls, lnUrl }) => {
   }
 
   const getDefaultCover: () => number = () => {
-    if (!firstLink) return require(DEFAULT_COVER)
-    if (firstLink === 'magnet') return require(MAGNET_COVER)
-    if (firstLink === 'blueBird') return require(BLUEBIRD_COVER)
-    if (firstLink === 'audio') return require(MEDIA_COVER)
-    if (firstLink === 'video') return require(MEDIA_COVER)
+    if (!firstLink || !urls[firstLink]) return require(DEFAULT_COVER)
+    if (urls[firstLink] === 'magnet') return require(MAGNET_COVER)
+    if (urls[firstLink] === 'blueBird') return require(BLUEBIRD_COVER)
+    if (urls[firstLink] === 'audio') return require(MEDIA_COVER)
+    if (urls[firstLink] === 'video') return require(MEDIA_COVER)
     return require(DEFAULT_COVER)
   }
 
+  const videoPreview = (
+    <VideoPlayer
+      source={{uri: firstLink}}
+      style={styles.videPlayer}
+      disableBack
+      disableVolume
+      disableFullscreen
+    />
+  )
+
   const linkPreview = (
-    <Card>
+    <Card onPress={async () => firstLink && (await Linking.openURL(firstLink))}>
       <Card.Cover source={getDefaultCover()} resizeMode='contain' />
       <Card.Content>
         <Text variant='bodyMedium' numberOfLines={3}>
@@ -121,6 +132,29 @@ export const LinksPreview: React.FC<TextContentProps> = ({ urls, lnUrl }) => {
     </TouchableWithoutFeedback>
   )
 
+  const preview: () => JSX.Element = () => {
+    if (imageLinks.length > 0) {
+      return (
+        <>
+          <View style={styles.previewCardRow}>
+            {firstImageRow.map((url, index) => imagePreview(url, index, 'top'))}
+          </View>
+          <View style={styles.previewCardRow}>
+            {secondImageRow.map((url, index) => imagePreview(url, index, 'bottom'))}
+          </View>
+        </>
+      )
+    } else if (firstLink) {
+      if (urls[firstLink] === 'video') {
+        return videoPreview
+      } else {
+        return linkPreview
+      }
+    } else {
+      return <></>
+    }
+  }
+
   const lnUrlPreview = (
     <Card onPress={handleLnUrlPress}>
       <Card.Title
@@ -147,24 +181,7 @@ export const LinksPreview: React.FC<TextContentProps> = ({ urls, lnUrl }) => {
   return (
     <View>
       {decodedLnUrl && lnUrlPreview}
-      {Object.keys(urls).length > 0 && (
-        <View style={styles.previewCard}>
-          {imageLinks.length > 0 ? (
-            <>
-              <View style={styles.previewCardRow}>
-                {firstImageRow.map((url, index) => imagePreview(url, index, 'top'))}
-              </View>
-              <View style={styles.previewCardRow}>
-                {secondImageRow.map((url, index) => imagePreview(url, index, 'bottom'))}
-              </View>
-            </>
-          ) : firstLink ? (
-            linkPreview
-          ) : (
-            <></>
-          )}
-        </View>
-      )}
+      {Object.keys(urls).length > 0 && <View style={styles.previewCard}>{preview()}</View>}
       {invoice && <LnPreview invoice={invoice} setInvoice={setInvoice} />}
     </View>
   )
@@ -181,4 +198,8 @@ const styles = StyleSheet.create({
     flex: 2,
     margin: 2,
   },
+  videPlayer: {
+    height: 195,
+    borderRadius: 16
+  }
 })
