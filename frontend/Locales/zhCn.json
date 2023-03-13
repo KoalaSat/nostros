@@ -12,6 +12,11 @@
       "privateKeysSnackbarTitle": "注意",
       "privateKeysSnackbarDescription": "请妥善保管您的私钥。如果遗失，您将无法访问或恢复您的账号。"
     },
+    "searchPage": {
+      "placeholder": "Look for public keys, notes...",
+      "emptyTitle": "Tip",
+      "emptyDescription": "Start typing @ to find someone"
+    },
     "qrReaderPage": {
       "emptyTitle": "未授予权限",
       "emptyDescription": "请授予 Nostros 摄像头权限以开始扫描二维码",
@@ -21,6 +26,7 @@
       "Group": "",
       "QrReader": "",
       "ImageGallery": "",
+      "Search": "",
       "ProfileCreate": "创建用户",
       "ProfileConnect": "",
       "Contacts": "联系人",

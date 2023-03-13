@@ -26,6 +26,8 @@ import NoteActions from '../../Components/NoteActions'
 import QrReaderPage from '../QrReaderPage'
 import DatabaseModule from '../../lib/Native/DatabaseModule'
 import ImageGalleryPage from '../ImageGalleryPage'
+import { navigate } from '../../lib/Navigation'
+import SearchPage from '../SearchPage'
 
 export const HomeNavigator: React.FC = () => {
   const theme = useTheme()
@@ -105,8 +107,15 @@ export const HomeNavigator: React.FC = () => {
               const routeState = routes[0]?.state
               const history = routeState?.history ?? []
               const historyKey = history[0]?.key
+
               return (
-                <Appbar.Header>
+                <Appbar.Header
+                  style={[
+                    ['Search'].includes(route.name)
+                      ? { backgroundColor: theme.colors.onSecondary }
+                      : {},
+                  ]}
+                >
                   {back ? (
                     <Appbar.BackAction onPress={() => navigation.goBack()} />
                   ) : (navigation as any).openDrawer ? (
@@ -151,6 +160,12 @@ export const HomeNavigator: React.FC = () => {
                       onPress={() => onGroupsPressCheckAll()}
                     />
                   )}
+                  {['Landing'].includes(route.name) &&
+                    (!historyKey ||
+                      historyKey?.includes('feed-') ||
+                      historyKey?.includes('notifications-')) && (
+                      <Appbar.Action icon='magnify' isLeading onPress={() => navigate('Search')} />
+                    )}
                   {['Group'].includes(route.name) && (
                     <GroupHeaderIcon groupId={route.params?.groupId} />
                   )}
@@ -168,6 +183,7 @@ export const HomeNavigator: React.FC = () => {
           <Stack.Screen name='Reply' component={SendPage} />
           <Stack.Screen name='Conversation' component={ConversationPage} />
           <Stack.Screen name='Group' component={GroupPage} />
+          <Stack.Screen name='Search' component={SearchPage} />
         </Stack.Group>
         <Stack.Group>
           <Stack.Screen name='Contacts' component={ContactsPage} />

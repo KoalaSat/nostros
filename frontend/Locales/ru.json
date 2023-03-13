@@ -12,6 +12,11 @@
       "privateKeysSnackbarTitle": "Важно",
       "privateKeysSnackbarDescription": "Keep your private key in a safe place, if you lose it you will not be able to access it again or recover your account."
     },
+    "searchPage": {
+      "placeholder": "Look for public keys, notes...",
+      "emptyTitle": "Tip",
+      "emptyDescription": "Start typing @ to find someone"
+    },
     "qrReaderPage": {
       "emptyTitle": "Permissions not granted",
       "emptyDescription": "Grant camera permissions to Nostros to start scanning QR codes",
@@ -21,6 +26,7 @@
       "Group": "",
       "QrReader": "",
       "ImageGallery": "",
+      "Search": "",
       "ProfileCreate": "Create profile",
       "ProfileConnect": "",
       "ProfileLoad": "",

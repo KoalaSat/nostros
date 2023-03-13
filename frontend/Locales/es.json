@@ -12,6 +12,11 @@
       "privateKeysSnackbarTitle": "Muy importante.",
       "privateKeysSnackbarDescription": "Guarda tu clave privada en un lugar seguro, si la pierdes no podrás volver a acceder con ella ni recuperar tu cuenta."
     },
+    "searchPage": {
+      "placeholder": "Busca for claves públicas, notas, ...",
+      "emptyTitle": "Consejo",
+      "emptyDescription": "Empieza escribiendo con @ para encontrar a alguien"
+    },
     "qrReaderPage": {
       "emptyTitle": "Permisos no concedidos",
       "emptyDescription": "Concede permisos a Nostros para acceder a tu camara y empezar a escanear códigos QR",
@@ -20,6 +25,7 @@
     "homeNavigator": {
       "Group": "",
       "QrReader": "",
+      "Search": "",
       "ImageGallery": "",
       "ProfileCreate": "Crear perfil",
       "ProfileConnect": "",

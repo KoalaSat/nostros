@@ -56,6 +56,7 @@ interface NoteCardProps {
   showRepostPreview?: boolean
   numberOfLines?: number
   mode?: 'elevated' | 'outlined' | 'contained'
+  hightlightText?: string
 }
 
 export const NoteCard: React.FC<NoteCardProps> = ({
@@ -69,6 +70,7 @@ export const NoteCard: React.FC<NoteCardProps> = ({
   showRepostPreview = true,
   numberOfLines,
   mode = 'elevated',
+  hightlightText,
 }) => {
   const theme = useTheme()
   const { publicKey, privateKey, mutedUsers } = React.useContext(UserContext)
@@ -126,7 +128,8 @@ export const NoteCard: React.FC<NoteCardProps> = ({
       }
       getNoteRelays(database, note.id).then(setRelays)
       setMutedUser(mutedUsers.find((e) => e === note.pubkey) !== undefined)
-      setBitcoinTag(getBitcoinTag(note)[0] ?? undefined)
+      const bTags = getBitcoinTag(note)
+      setBitcoinTag(bTags[bTags.length - 1] ?? undefined)
     }
   }, [lastEventId])
 
@@ -195,6 +198,7 @@ export const NoteCard: React.FC<NoteCardProps> = ({
               onPressUser={(user) => setDisplayUserDrawer(user.id)}
               showPreview={showPreview}
               numberOfLines={numberOfLines}
+              hightlightText={hightlightText}
             />
           )}
           {note?.repost_id && (

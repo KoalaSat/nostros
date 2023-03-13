@@ -79,7 +79,7 @@ export const SecondStep: React.FC<SecondStepProps> = ({ nextStep }) => {
           const authors = [...results.map((user: User) => user.id)]
           relayPool?.subscribe('profile-load-contacts', [
             {
-              kinds: [Kind.Metadata, 10002],
+              kinds: [10002],
               authors,
             },
           ])

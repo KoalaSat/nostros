@@ -1,4 +1,4 @@
-import { signEvent, validateEvent, type Event } from '../Events'
+import { validateEvent, type Event } from '../Events'
 import RelayPoolModule from '../../Native/WebsocketModule'
 
 export interface RelayFilters {
@@ -126,25 +126,15 @@ class RelayPool {
     event,
     relayUrl,
   ) => {
-    if (this.privateKey) {
-      let signedEvent: Event = event
-
-      if (!event.sig) {
-        signedEvent = await signEvent(event, this.privateKey)
-      }
-
-      if (validateEvent(signedEvent)) {
-        if (relayUrl) {
-          this.sendRelay(['EVENT', event], relayUrl)
-        } else {
-          this.sendAll(['EVENT', event])
-        }
-        return signedEvent
+    if (validateEvent(event)) {
+      if (relayUrl) {
+        this.sendRelay(['EVENT', event], relayUrl)
       } else {
-        console.log('Not valid event', event)
-        return null
+        this.sendAll(['EVENT', event])
       }
+      return event
     } else {
+      console.log('Not valid event', event)
       return null
     }
   }
