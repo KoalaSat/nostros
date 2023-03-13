@@ -12,6 +12,11 @@
       "privateKeysSnackbarTitle": "Wichtig!",
       "privateKeysSnackbarDescription": "Verwahre den privaten Schlüssel an einem sicheren Ort. Geht der Schlüssel verloren, kann er nicht wiederhergestellt werden. Das Konto kann nie wieder benutzt werden."
     },
+    "searchPage": {
+      "placeholder": "Look for public keys, notes...",
+      "emptyTitle": "Tip",
+      "emptyDescription": "Start typing @ to find someone"
+    },
     "qrReaderPage": {
       "emptyTitle": "Berechtigung nicht gewährt",
       "emptyDescription": "Nostros Kamera Berechtigungen gewähren um QRCodes zu scannen",
@@ -20,6 +25,7 @@
     "homeNavigator": {
       "Group": "",
       "QrReader": "",
+      "Search": "",
       "ImageGallery": "",
       "ProfileCreate": "Profil anlegen",
       "ProfileConnect": "",

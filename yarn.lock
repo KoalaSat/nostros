@@ -2867,7 +2867,7 @@ ci-info@^3.2.0:
   resolved "https://registry.yarnpkg.com/ci-info/-/ci-info-3.5.0.tgz#bfac2a29263de4c829d806b1ab478e35091e171f"
   integrity sha512-yH4RezKOGlOhxkmhbeNuC4eYZKAUsEaGtBuBzDDP1eFUKiccDWzBABxBfOx31IDwDIXMTxWuwAxUGModvkbuVw==
 
-cipher-base@^1.0.0, cipher-base@^1.0.1, cipher-base@^1.0.3, "cipher-base@https://github.com/KoalaSat/cipher-base":
+cipher-base@^1.0.0, cipher-base@^1.0.1, cipher-base@^1.0.3, "cipher-base@https://github.com/KoalaSat/cipher-base#e1c6384":
   version "1.0.4"
   resolved "https://github.com/KoalaSat/cipher-base#e1c6384e530c304b396656ecea2a17de41ba2de4"
   dependencies:

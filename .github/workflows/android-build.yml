@@ -35,15 +35,14 @@ jobs:
         run: |
           wget https://github.com/iBotPeaches/Apktool/releases/download/v2.5.0/apktool_2.5.0.jar
           wget https://github.com/iBotPeaches/Apktool/raw/master/scripts/linux/apktool
-          chmod u+x apktool
-          ln -s apktool_2.5.0.jar apktool.jar
-          ./apktool d android/app/build/outputs/apk/release/app-universal-release.apk
           # clone the repo
           git clone https://gitlab.com/IzzyOnDroid/repo.git
           # create a directory for Apktool and move the apktool* files there
           mkdir -p repo/lib/radar/tool
-          mv app-universal-release* repo/lib/radar/tool
+          mv apktool* repo/lib/radar/tool
           # create an alias for ease of use
+          chmod u+x repo/lib/radar/tool/apktool
+          mv repo/lib/radar/tool/apktool_2.5.0.jar repo/lib/radar/tool/apktool.jar
           repo/bin/scanapk.php android/app/build/outputs/apk/release/app-universal-release.apk
 
       - name: 'Get Commit Hash'

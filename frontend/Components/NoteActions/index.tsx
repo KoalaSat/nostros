@@ -79,7 +79,8 @@ export const NoteActions: React.FC<NoteActionsProps> = ({ bottomSheetRef }) => {
       const allBookmarks = [...publicBookmarks, ...privateBookmarks]
       setBookmarked(allBookmarks.find((id) => id === note.id) !== undefined)
       setIsMuted(mutedEvents.find((id) => id === note.id) !== undefined)
-      setBitcoinTag(getBitcoinTag(note)[0] ?? undefined)
+      const bTags = getBitcoinTag(note)
+      setBitcoinTag(bTags[bTags.length - 1] ?? undefined)
     }
   }, [publicBookmarks, privateBookmarks, note, mutedEvents])
 

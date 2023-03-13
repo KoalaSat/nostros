@@ -6,7 +6,7 @@ import debounce from 'lodash.debounce'
 import { getActiveRelays, getRelays, type Relay } from '../Functions/DatabaseFunctions/Relays'
 import { UserContext } from './UserContext'
 import { getUnixTime } from 'date-fns'
-import { type Event } from '../lib/nostr/Events'
+import { signEvent, type Event } from '../lib/nostr/Events'
 import { randomInt } from '../Functions/NativeFunctions'
 import axios from 'axios'
 
@@ -76,6 +76,9 @@ export const RelayPoolContextProvider = ({
           event.tags.push(['bitcoin', lastBlock.id, lastBlock.height.toString()])
         }
       } catch {}
+    }
+    if (!event.sig && privateKey) {
+      event = await signEvent(event, privateKey)
     }
 
     return await relayPool?.sendEvent(event, relayUrl)

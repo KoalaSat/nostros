@@ -19,6 +19,7 @@ interface TextContentProps {
   onPressUser?: (user: User) => void
   numberOfLines?: number
   copyText?: boolean
+  hightlightText?: string
 }
 
 export const TextContent: React.FC<TextContentProps> = ({
@@ -28,6 +29,7 @@ export const TextContent: React.FC<TextContentProps> = ({
   onPressUser = () => {},
   numberOfLines,
   copyText = false,
+  hightlightText,
 }) => {
   const theme = useTheme()
   const { database } = useContext(AppContext)
@@ -146,6 +148,8 @@ export const TextContent: React.FC<TextContentProps> = ({
     if (copyText) Clipboard.setString(text)
   }
 
+  const getHightlightText: () => RegExp = () => new RegExp(hightlightText ?? '@@@@@', 'i')
+
   return (
     <View style={styles.container}>
       <ParsedText
@@ -178,6 +182,10 @@ export const TextContent: React.FC<TextContentProps> = ({
             style: styles.nip19,
             onPress: handleNip05ProfilePress,
           },
+          {
+            pattern: getHightlightText(),
+            style: [styles.hightlight, { backgroundColor: theme.colors.onSecondary }],
+          },
         ]}
         childrenProps={{ allowFontScaling: false }}
         numberOfLines={numberOfLines}
@@ -209,6 +217,9 @@ const styles = StyleSheet.create({
   },
   hashTag: {
     fontStyle: 'italic',
+  },
+  hightlight: {
+    fontWeight: 'bold',
   },
 })
 

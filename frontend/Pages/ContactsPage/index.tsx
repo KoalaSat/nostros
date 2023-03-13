@@ -189,7 +189,7 @@ export const ContactsPage: React.FC = () => {
     if (relayPool && database && publicKey) {
       DatabaseModule.updateUserContact(user.id, true, () => {
         populatePets(sendEvent, database, publicKey)
-        setShowNotification('contactRemoved')
+        setShowNotification('contactAdded')
         loadUsers()
       })
     }

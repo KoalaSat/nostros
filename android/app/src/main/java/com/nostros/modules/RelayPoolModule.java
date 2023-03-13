@@ -1,11 +1,9 @@
 package com.nostros.modules;
 
-import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 
 import com.facebook.react.bridge.Callback;
 import com.facebook.react.bridge.ReactApplicationContext;
-import com.facebook.react.bridge.ReactContext;
 import com.facebook.react.bridge.ReactContextBaseJavaModule;
 import com.facebook.react.bridge.ReactMethod;
 import com.nostros.classes.Database;
@@ -116,16 +114,7 @@ public class RelayPoolModule extends ReactContextBaseJavaModule {
     }
 
     @ReactMethod
-    public void send(String message, boolean isGlobalFeed) {
-        for (Relay relay : relays) {
-            if (relay.active() > 0 && (!isGlobalFeed || relay.globalFeed > 0)) {
-                relay.send(message);
-            }
-        }
-    }
-
-    @ReactMethod
-    public void sendAll(String message, boolean isGlobalFeed) {
+    public void sendAll(String message, boolean isGlobalFeed) throws IOException {
         for (Relay relay : relays) {
             if (relay.active() > 0 && (!isGlobalFeed || relay.globalFeed > 0)) {
                 relay.send(message);

@@ -14,6 +14,7 @@
     },
     "homeNavigator": {
       "ProfileCreate": "Create profile",
+      "Search": "",
       "ImageGallery": "",
       "ProfileConnect": "",
       "Group": "",
@@ -32,6 +33,11 @@
       "Relays": "Relays",
       "ProfileConfig": "My profile",
       "markAllRead": "Mark all as read"
+    },
+    "searchPage": {
+      "placeholder": "Look for public keys, notes...",
+      "emptyTitle": "Tip",
+      "emptyDescription": "Start typing @ to find someone"
     },
     "conversationPage": {
       "unableDecypt": "{{username}} is talking with others about you",
