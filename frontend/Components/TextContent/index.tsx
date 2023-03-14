@@ -9,7 +9,12 @@ import getUnixTime from 'date-fns/getUnixTime'
 import { useTheme } from 'react-native-paper'
 import { getNip19Key, getNpub } from '../../lib/nostr/Nip19'
 import { navigate } from '../../lib/Navigation'
-import { validBlueBirdUrl, validImageUrl, validMediaUrl } from '../../Functions/NativeFunctions'
+import {
+  validBlueBirdUrl,
+  validImageUrl,
+  validMediaUrl,
+  validTubeUrl,
+} from '../../Functions/NativeFunctions'
 import { LinksPreview } from './LinksPreview'
 
 interface TextContentProps {
@@ -53,6 +58,12 @@ export const TextContent: React.FC<TextContentProps> = ({
 
     if (noteId) {
       navigate('Note', { noteId })
+    }
+  }
+
+  const handleHashtagPress: (hashtag: string) => void = (hashtag) => {
+    if (hashtag) {
+      navigate('Search', { search: hashtag })
     }
   }
 
@@ -126,6 +137,8 @@ export const TextContent: React.FC<TextContentProps> = ({
       return 'image'
     } else if (validBlueBirdUrl(url)) {
       return 'blueBird'
+    } else if (validTubeUrl(url)) {
+      return 'tube'
     } else if (MAGNET_LINK.test(url)) {
       return 'magnet'
     }
@@ -174,7 +187,7 @@ export const TextContent: React.FC<TextContentProps> = ({
                 pattern: /#\[(\d+)\]/,
                 style: styles.mention,
               },
-          { pattern: /#(\w+)/, style: styles.hashTag },
+          { pattern: /#(\w+)/, style: styles.hashTag, onPress: handleHashtagPress },
           { pattern: /(lnbc)\S+/, style: styles.nip19, renderText: renderLnurl },
           { pattern: /(nevent1)\S+/, style: styles.nip19, onPress: handleNip05NotePress },
           {

@@ -1,6 +1,6 @@
 import { t } from 'i18next'
 import * as React from 'react'
-import { StyleSheet, View, type ListRenderItem, Switch, FlatList } from 'react-native'
+import { StyleSheet, View, type ListRenderItem, FlatList } from 'react-native'
 import { Button, IconButton, List, Snackbar, Text, useTheme } from 'react-native-paper'
 import { AppContext } from '../../Contexts/AppContext'
 import { RelayPoolContext } from '../../Contexts/RelayPoolContext'
@@ -11,15 +11,15 @@ import LnPayment from '../LnPayment'
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'
 import { navigate } from '../../lib/Navigation'
 import RBSheet from 'react-native-raw-bottom-sheet'
-import { getUserRelays, type NoteRelay } from '../../Functions/DatabaseFunctions/NotesRelays'
 import { relayToColor } from '../../Functions/NativeFunctions'
-import { type Relay } from '../../Functions/DatabaseFunctions/Relays'
 import ProfileShare from '../ProfileShare'
 import { ScrollView } from 'react-native-gesture-handler'
 import { Kind } from 'nostr-tools'
 import { getUnixTime } from 'date-fns'
 import DatabaseModule from '../../lib/Native/DatabaseModule'
 import { addMutedUsersList, removeMutedUsersList } from '../../Functions/RelayFunctions/Lists'
+import { getRelayMetadata } from '../../Functions/DatabaseFunctions/RelayMetadatas'
+import { getUserRelays } from '../../Functions/DatabaseFunctions/NotesRelays'
 
 interface ProfileActionsProps {
   user: User
@@ -35,7 +35,8 @@ export const ProfileActions: React.FC<ProfileActionsProps> = ({
   const theme = useTheme()
   const { database } = React.useContext(AppContext)
   const { publicKey, privateKey, mutedUsers, reloadLists } = React.useContext(UserContext)
-  const { relayPool, updateRelayItem, lastEventId, sendEvent } = React.useContext(RelayPoolContext)
+  const { relayPool, addRelayItem, lastEventId, sendEvent, relays } =
+    React.useContext(RelayPoolContext)
   const [isContact, setIsContact] = React.useState<boolean>()
   const [isMuted, setIsMuted] = React.useState<boolean>()
   const [isGroupHidden, setIsGroupHidden] = React.useState<boolean>()
@@ -44,17 +45,24 @@ export const ProfileActions: React.FC<ProfileActionsProps> = ({
   const bottomSheetRelaysRef = React.useRef<RBSheet>(null)
   const bottomSheetShareRef = React.useRef<RBSheet>(null)
   const bottomSheetMuteRef = React.useRef<RBSheet>(null)
-  const [userRelays, setUserRelays] = React.useState<NoteRelay[]>([])
+  const [userRelays, setUserRelays] = React.useState<string[]>()
   const [openLn, setOpenLn] = React.useState<boolean>(false)
 
   React.useEffect(() => {
     loadUser()
     loadRelays()
-    if (publicKey) {
+    if (publicKey && user.id) {
       relayPool?.subscribe('lists-muted-users', [
         {
           kinds: [10000],
           authors: [publicKey],
+          limit: 1,
+        },
+      ])
+      relayPool?.subscribe(`card-user-${user.id.substring(0, 6)}`, [
+        {
+          kinds: [10002],
+          authors: [user.id],
           limit: 1,
         },
       ])
@@ -64,6 +72,7 @@ export const ProfileActions: React.FC<ProfileActionsProps> = ({
   React.useEffect(() => {
     reloadLists()
     loadUser()
+    loadRelays()
   }, [lastEventId, isMuted])
 
   const hideGroupsUser: () => void = () => {
@@ -87,9 +96,13 @@ export const ProfileActions: React.FC<ProfileActionsProps> = ({
 
   const loadRelays: () => void = () => {
     if (database) {
-      getUserRelays(database, user.id).then((results) => {
-        if (results) {
-          setUserRelays(results)
+      getRelayMetadata(database, user.id).then((resultMeta) => {
+        if (resultMeta) {
+          setUserRelays(resultMeta.tags.map((relayMeta) => relayMeta[1]))
+        } else {
+          getUserRelays(database, user.id).then((resultRelays) => {
+            setUserRelays(resultRelays.map((relay) => relay.url))
+          })
         }
       })
     }
@@ -149,21 +162,6 @@ export const ProfileActions: React.FC<ProfileActionsProps> = ({
     }
   }
 
-  const activeRelay: (relay: Relay) => void = (relay) => {
-    relay.active = 1
-    updateRelayItem(relay).then(() => {
-      setShowNotificationRelay('active')
-    })
-  }
-
-  const desactiveRelay: (relay: Relay) => void = (relay) => {
-    relay.active = 0
-    relay.global_feed = 0
-    updateRelayItem(relay).then(() => {
-      setShowNotificationRelay('desactive')
-    })
-  }
-
   const bottomSheetStyles = React.useMemo(() => {
     return {
       container: {
@@ -178,25 +176,34 @@ export const ProfileActions: React.FC<ProfileActionsProps> = ({
     }
   }, [])
 
-  const renderRelayItem: ListRenderItem<NoteRelay> = ({ index, item }) => {
+  const onPressAddRelay: (url: string) => void = (url) => {
+    addRelayItem({ url })
+  }
+
+  const renderRelayItem: ListRenderItem<string> = ({ index, item }) => {
+    const userRelayUrls = relays.map((relay) => relay.url)
     return (
       <List.Item
         key={index}
-        title={item.url}
+        title={item}
         left={() => (
           <MaterialCommunityIcons
             style={styles.relayColor}
             name='circle'
-            color={relayToColor(item.url)}
+            color={relayToColor(item)}
           />
         )}
-        right={() => (
-          <Switch
-            style={styles.switch}
-            value={item.active !== undefined && item.active > 0}
-            onValueChange={() => (item.active ? desactiveRelay(item) : activeRelay(item))}
-          />
-        )}
+        right={() => {
+          if (userRelayUrls.includes(item)) {
+            return <></>
+          } else {
+            return (
+              <Button mode='text' onPress={() => onPressAddRelay(item)}>
+                {t('profileCard.addRelay')}
+              </Button>
+            )
+          }
+        }}
       />
     )
   }

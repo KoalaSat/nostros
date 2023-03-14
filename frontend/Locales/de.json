@@ -15,7 +15,7 @@
     "searchPage": {
       "placeholder": "Look for public keys, notes...",
       "emptyTitle": "Tip",
-      "emptyDescription": "Start typing @ to find someone"
+      "emptyDescription": "Start typing @ to find someone\n\nStart typing # to search topics"
     },
     "qrReaderPage": {
       "emptyTitle": "Berechtigung nicht gewährt",
@@ -443,6 +443,7 @@
         "userUnblocked": "Profil entblockt",
         "userBlocked": "Profile geblockt"
       },
+      "addRelay": "Connect relay",
       "invoice": "Tip",
       "message": "Nachricht",
       "follow": "Folgen",

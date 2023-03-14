@@ -50,17 +50,19 @@ export const LinksPreview: React.FC<TextContentProps> = ({ urls, lnUrl }) => {
 
   const getDefaultCover: () => number = () => {
     if (!firstLink || !urls[firstLink]) return require(DEFAULT_COVER)
-    if (urls[firstLink] === 'magnet') return require(MAGNET_COVER)
-    if (urls[firstLink] === 'blueBird') return require(BLUEBIRD_COVER)
-    if (urls[firstLink] === 'audio') return require(MEDIA_COVER)
     if (urls[firstLink] === 'video') return require(MEDIA_COVER)
+    if (urls[firstLink] === 'audio') return require(MEDIA_COVER)
+    if (urls[firstLink] === 'blueBird') return require(BLUEBIRD_COVER)
+    if (urls[firstLink] === 'tube') return require(MEDIA_COVER)
+    if (urls[firstLink] === 'magnet') return require(MAGNET_COVER)
     return require(DEFAULT_COVER)
   }
 
   const videoPreview = (
     <VideoPlayer
-      source={{uri: firstLink}}
+      source={{ uri: firstLink ?? '' }}
       style={styles.videPlayer}
+      paused={true}
       disableBack
       disableVolume
       disableFullscreen
@@ -200,6 +202,6 @@ const styles = StyleSheet.create({
   },
   videPlayer: {
     height: 195,
-    borderRadius: 16
-  }
+    borderRadius: 16,
+  },
 })
