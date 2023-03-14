@@ -97,6 +97,10 @@ export const SendPage: React.FC<SendPageProps> = ({ route }) => {
         })
       }
 
+      ;[...rawContent.matchAll(/#([^#]\S+)/gi)].forEach((match) => {
+        if (match[1]) tags.push(['t', match[1]])
+      })
+
       const event: Event = {
         content: rawContent,
         created_at: getUnixTime(new Date()),
@@ -104,6 +108,7 @@ export const SendPage: React.FC<SendPageProps> = ({ route }) => {
         pubkey: publicKey,
         tags,
       }
+
       sendEvent(event).catch(() => {})
     }
   }

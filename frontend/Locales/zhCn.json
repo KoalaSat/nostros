@@ -13,9 +13,9 @@
       "privateKeysSnackbarDescription": "请妥善保管您的私钥。如果遗失，您将无法访问或恢复您的账号。"
     },
     "searchPage": {
-      "placeholder": "Look for public keys, notes...",
+      "placeholder": "Look for public keys, notes, hashtags...",
       "emptyTitle": "Tip",
-      "emptyDescription": "Start typing @ to find someone"
+      "emptyDescription": "Start typing @ to find someone\n\nStart typing # to search topics"
     },
     "qrReaderPage": {
       "emptyTitle": "未授予权限",
@@ -423,6 +423,7 @@
         "userUnblocked": "已屏蔽",
         "userBlocked": "已取消屏蔽"
       },
+      "addRelay": "Connect relay",
       "invoice": "赞赏",
       "message": "私信",
       "follow": "关注",

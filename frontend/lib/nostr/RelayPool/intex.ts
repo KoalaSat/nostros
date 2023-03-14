@@ -7,6 +7,7 @@ export interface RelayFilters {
   kinds?: number[]
   '#e'?: string[]
   '#p'?: string[]
+  '#t'?: string[]
   since?: number
   limit?: number
   until?: number

@@ -35,9 +35,9 @@
       "markAllRead": "Mark all as read"
     },
     "searchPage": {
-      "placeholder": "Look for public keys, notes...",
+      "placeholder": "Look for public keys, notes, hashtags...",
       "emptyTitle": "Tip",
-      "emptyDescription": "Start typing @ to find someone"
+      "emptyDescription": "Start typing @ to find someone\n\nStart typing # to search topics"
     },
     "conversationPage": {
       "unableDecypt": "{{username}} is talking with others about you",
@@ -450,6 +450,7 @@
         "userUnblocked": "Profile unblocked",
         "userBlocked": "Profile unblocked"
       },
+      "addRelay": "Connect relay",
       "invoice": "Tip",
       "message": "Message",
       "follow": "Follow",

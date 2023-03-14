@@ -13,9 +13,9 @@
       "privateKeysSnackbarDescription": "Keep your private key in a safe place, if you lose it you will not be able to access it again or recover your account."
     },
     "searchPage": {
-      "placeholder": "Look for public keys, notes...",
+      "placeholder": "Look for public keys, notes, hashtags...",
       "emptyTitle": "Tip",
-      "emptyDescription": "Start typing @ to find someone"
+      "emptyDescription": "Start typing @ to find someone\n\nStart typing # to search topics"
     },
     "qrReaderPage": {
       "emptyTitle": "Permissions not granted",
@@ -422,6 +422,7 @@
         "userUnblocked": "Profile unblocked",
         "userBlocked": "Profile unblocked"
       },
+      "addRelay": "Connect relay",
       "invoice": "Tip",
       "message": "Message",
       "follow": "Follow",

@@ -1,6 +1,8 @@
 import { useFocusEffect } from '@react-navigation/native'
 import { FlashList, ListRenderItem } from '@shopify/flash-list'
 import { t } from 'i18next'
+import debounce from 'lodash.debounce'
+import { Kind } from 'nostr-tools'
 import { decode } from 'nostr-tools/nip19'
 import * as React from 'react'
 import { StyleSheet, View } from 'react-native'
@@ -9,6 +11,7 @@ import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityI
 import NoteCard from '../../Components/NoteCard'
 import ProfileData from '../../Components/ProfileData'
 import { AppContext } from '../../Contexts/AppContext'
+import { RelayPoolContext } from '../../Contexts/RelayPoolContext'
 import { getNotes, Note } from '../../Functions/DatabaseFunctions/Notes'
 import { getUsers, User } from '../../Functions/DatabaseFunctions/Users'
 import { validNip21 } from '../../Functions/NativeFunctions'
@@ -16,17 +19,19 @@ import { navigate } from '../../lib/Navigation'
 import { getNpub } from '../../lib/nostr/Nip19'
 
 interface SearchPageProps {
-  route: { params: { urls: string[]; index?: number } }
+  route: { params: { search: string } }
 }
 
 export const SearchPage: React.FC<SearchPageProps> = ({ route }) => {
+  const pageSize = 30
   const theme = useTheme()
   const { database } = React.useContext(AppContext)
+  const { relayPool, lastEventId } = React.useContext(RelayPoolContext)
   const [users, setUsers] = React.useState<User[]>([])
   const [resultsUsers, setResultsUsers] = React.useState<User[]>([])
   const [notes, setNotes] = React.useState<Note[]>([])
   const [resultsNotes, setResultsNotes] = React.useState<Note[]>([])
-  const [searchInput, setSearchInput] = React.useState<string>('')
+  const [searchInput, setSearchInput] = React.useState<string>(route?.params?.search ?? '')
   const inputRef = React.useRef<TextInput>(null)
 
   useFocusEffect(
@@ -46,37 +51,74 @@ export const SearchPage: React.FC<SearchPageProps> = ({ route }) => {
   )
 
   React.useEffect(() => {
-    if (searchInput !== '') {
+    if (/^#.*/.test(searchInput)) {
       const search = searchInput.toLocaleLowerCase()
-      if (/^@.*/.test(search)) {
-        const searchUser = search.replace(/^@/, '')
-        setResultsUsers(
-          users.filter(
-            (user) =>
-              user.name?.toLocaleLowerCase().includes(searchUser) ??
-              user.nip05?.toLocaleLowerCase().includes(searchUser),
-          ),
-        )
-      } else {
-        if (validNip21(search)) {
-          try {
-            const key = decode(search.replace('nostr:', ''))
-            if (key?.data) {
-              if (key.type === 'nevent') {
-                setSearchInput('')
-                navigate('Note', { noteId: key.data.id })
-              } else if (key.type === 'npub') {
-                setSearchInput('')
-                navigate('Profile', { pubKey: key.data })
-              } else if (key.type === 'nprofile' && key.data.pubkey) {
-                setSearchInput('')
-                navigate('Profile', { pubKey: key.data.pubkey })
-              }
-            }
-          } catch {}
-        }
-        setResultsNotes(notes.filter((note) => note.content.toLocaleLowerCase().includes(search)))
+      setResultsNotes(
+        notes.filter((note) => note.content.toLocaleLowerCase().includes(search.trim())),
+      )
+    }
+  }, [lastEventId])
+
+  const subscribeHandler = React.useMemo(
+    () =>
+      debounce((hastags) => {
+        relayPool?.subscribe('search-hastags', [
+          {
+            kinds: [Kind.Text],
+            '#t': hastags,
+            limit: pageSize,
+          },
+        ])
+      }, 600),
+    [pageSize],
+  )
+
+  React.useEffect(() => {
+    if (/^#.*/.test(searchInput)) {
+      const hastags = [...searchInput.matchAll(/#([^#]\S+)/gi)].map((match) => {
+        return match[1]
+      })
+      if (hastags.length > 0) {
+        subscribeHandler(hastags)
       }
+    }
+  }, [searchInput])
+
+  React.useEffect(() => {
+    if (/^@.*/.test(searchInput)) {
+      const searchUser = searchInput.replace(/^@/, '')
+      setResultsUsers(
+        users.filter(
+          (user) =>
+            user.name?.toLocaleLowerCase().includes(searchUser) ??
+            user.nip05?.toLocaleLowerCase().includes(searchUser),
+        ),
+      )
+    } else {
+      const search = searchInput.toLocaleLowerCase()
+      setResultsNotes(
+        notes.filter((note) => note.content.toLocaleLowerCase().includes(search.trim())),
+      )
+    }
+  }, [searchInput, notes])
+
+  React.useEffect(() => {
+    if (searchInput !== '' && validNip21(searchInput)) {
+      try {
+        const key = decode(searchInput.replace('nostr:', ''))
+        if (key?.data) {
+          if (key.type === 'nevent') {
+            setSearchInput('')
+            navigate('Note', { noteId: key.data.id })
+          } else if (key.type === 'npub') {
+            setSearchInput('')
+            navigate('Profile', { pubKey: key.data })
+          } else if (key.type === 'nprofile' && key.data.pubkey) {
+            setSearchInput('')
+            navigate('Profile', { pubKey: key.data.pubkey })
+          }
+        }
+      } catch {}
     }
   }, [searchInput])
 
@@ -173,7 +215,8 @@ const styles = StyleSheet.create({
     paddingTop: 16,
   },
   container: {
-    padding: 16,
+    paddingLeft: 16,
+    paddingRight: 16,
     flex: 1,
   },
   inputContainer: {

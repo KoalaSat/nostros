@@ -15,7 +15,7 @@
     "searchPage": {
       "placeholder": "Busca for claves públicas, notas, ...",
       "emptyTitle": "Consejo",
-      "emptyDescription": "Empieza escribiendo con @ para encontrar a alguien"
+      "emptyDescription": "Empieza escribiendo con @ para encontrar a alguien.\n\nEmpieza escribiendo # para buscar temas."
     },
     "qrReaderPage": {
       "emptyTitle": "Permisos no concedidos",
@@ -430,6 +430,7 @@
         "userUnblocked": "Perfil desbloqueado",
         "userBlocked": "Perfil bloqueado"
       },
+      "addRelay": "Connectar a relay",
       "invoice": "Propina",
       "message": "Mensaje",
       "follow": "Seguir",
