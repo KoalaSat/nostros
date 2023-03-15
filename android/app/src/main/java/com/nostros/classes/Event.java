@@ -314,8 +314,7 @@ public class Event {
         String query = "SELECT id FROM nostros_users WHERE id = ?";
         @SuppressLint("Recycle") Cursor cursor = database.rawQuery(query, new String[] {groupId});
 
-        if (cursor.getCount() == 0) {
-        } else {
+        if (cursor.getCount() != 0) {
             ContentValues values = new ContentValues();
             values.put("muted_groups", 1);
             String whereClause = "id = ?";
@@ -496,15 +495,16 @@ public class Event {
 
     protected void saveUserMeta(SQLiteDatabase database) throws JSONException {
         JSONObject userContent = new JSONObject(content);
-        String query = "SELECT created_at, valid_nip05, nip05, zap_pubkey FROM nostros_users WHERE id = ?";
+        String query = "SELECT created_at, name FROM nostros_users WHERE id = ?";
         @SuppressLint("Recycle") Cursor cursor = database.rawQuery(query, new String[] {pubkey});
 
         String nip05 = userContent.optString("nip05");
         String lnurl = userContent.optString("lud06");
         String ln_address = userContent.optString("lud16");
+        String name = userContent.optString("name");
 
         ContentValues values = new ContentValues();
-        values.put("name", userContent.optString("name"));
+        values.put("name", name);
         values.put("picture", userContent.optString("picture"));
         values.put("about", userContent.optString("about"));
         values.put("lnurl", lnurl);
@@ -518,14 +518,20 @@ public class Event {
             values.put("id", pubkey);
             values.put("blocked", 0);
             database.insert("nostros_users", null, values);
-        } else if (cursor.moveToFirst() && created_at > cursor.getInt(0)){
+        } else if (cursor.moveToFirst()){
             String whereClause = "id = ?";
             String[] whereArgs = new String[]{
                     this.pubkey
             };
-            values.put("zap_pubkey", getZapPubkey(lnurl, ln_address));
-            values.put("valid_nip05", validateNip05(nip05) ? 1 : 0);
-            database.update("nostros_users", values, whereClause, whereArgs);
+            if (created_at > cursor.getInt(0)) {
+                values.put("zap_pubkey", getZapPubkey(lnurl, ln_address));
+                values.put("valid_nip05", validateNip05(nip05) ? 1 : 0);
+                database.update("nostros_users", values, whereClause, whereArgs);
+            } else if (cursor.getString(1).equals("")) {
+                ContentValues nameValues = new ContentValues();
+                nameValues.put("name", name);
+                database.update("nostros_users", nameValues, whereClause, whereArgs);
+            }
         }
     }
 

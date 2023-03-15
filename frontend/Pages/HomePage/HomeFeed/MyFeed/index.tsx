@@ -6,20 +6,24 @@ import {
   StyleSheet,
   View,
 } from 'react-native'
-import { AppContext } from '../../../Contexts/AppContext'
-import { getMainNotes, type Note } from '../../../Functions/DatabaseFunctions/Notes'
-import { handleInfinityScroll } from '../../../Functions/NativeFunctions'
-import { UserContext } from '../../../Contexts/UserContext'
-import { RelayPoolContext } from '../../../Contexts/RelayPoolContext'
+import { AppContext } from '../../../../Contexts/AppContext'
+import { getMainNotes, type Note } from '../../../../Functions/DatabaseFunctions/Notes'
+import { handleInfinityScroll } from '../../../../Functions/NativeFunctions'
+import { UserContext } from '../../../../Contexts/UserContext'
+import { RelayPoolContext } from '../../../../Contexts/RelayPoolContext'
 import { Kind } from 'nostr-tools'
-import { type RelayFilters } from '../../../lib/nostr/RelayPool/intex'
+import { type RelayFilters } from '../../../../lib/nostr/RelayPool/intex'
 import { ActivityIndicator, Button, Text } from 'react-native-paper'
-import NoteCard from '../../../Components/NoteCard'
+import NoteCard from '../../../../Components/NoteCard'
 import { useTheme } from '@react-navigation/native'
 import { FlashList, type ListRenderItem } from '@shopify/flash-list'
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'
 import { useTranslation } from 'react-i18next'
-import { getContactsCount, getUsers, type User } from '../../../Functions/DatabaseFunctions/Users'
+import {
+  getContactsCount,
+  getUsers,
+  type User,
+} from '../../../../Functions/DatabaseFunctions/Users'
 
 interface MyFeedProps {
   navigation: any

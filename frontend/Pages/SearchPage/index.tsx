@@ -53,9 +53,18 @@ export const SearchPage: React.FC<SearchPageProps> = ({ route }) => {
   React.useEffect(() => {
     if (/^#.*/.test(searchInput)) {
       const search = searchInput.toLocaleLowerCase()
-      setResultsNotes(
-        notes.filter((note) => note.content.toLocaleLowerCase().includes(search.trim())),
+      const results = notes.filter((note) =>
+        note.content.toLocaleLowerCase().includes(search.trim()),
       )
+      setResultsNotes(results)
+      if (results.length > 0) {
+        relayPool?.subscribe('search-hastags-metadata', [
+          {
+            kinds: [Kind.Metadata],
+            authors: results.map((res) => res.pubkey),
+          },
+        ])
+      }
     }
   }, [lastEventId])
 

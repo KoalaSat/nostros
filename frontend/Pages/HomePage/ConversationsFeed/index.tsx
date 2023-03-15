@@ -9,17 +9,17 @@ import {
   View,
 } from 'react-native'
 import Clipboard from '@react-native-clipboard/clipboard'
-import { AppContext } from '../../Contexts/AppContext'
-import { RelayPoolContext } from '../../Contexts/RelayPoolContext'
+import { AppContext } from '../../../Contexts/AppContext'
+import { RelayPoolContext } from '../../../Contexts/RelayPoolContext'
 import { Kind } from 'nostr-tools'
 import {
   type DirectMessage,
   getGroupedDirectMessages,
   getUserLastDirectMessages,
-} from '../../Functions/DatabaseFunctions/DirectMessages'
-import { getUsers, type User } from '../../Functions/DatabaseFunctions/Users'
-import { getOtherPubKey } from '../../Functions/RelayFunctions/DirectMessages'
-import { username } from '../../Functions/RelayFunctions/Users'
+} from '../../../Functions/DatabaseFunctions/DirectMessages'
+import { getUsers, type User } from '../../../Functions/DatabaseFunctions/Users'
+import { getOtherPubKey } from '../../../Functions/RelayFunctions/DirectMessages'
+import { username } from '../../../Functions/RelayFunctions/Users'
 import {
   AnimatedFAB,
   Badge,
@@ -31,14 +31,14 @@ import {
   TouchableRipple,
   useTheme,
 } from 'react-native-paper'
-import { UserContext } from '../../Contexts/UserContext'
-import { navigate } from '../../lib/Navigation'
+import { UserContext } from '../../../Contexts/UserContext'
+import { navigate } from '../../../lib/Navigation'
 import RBSheet from 'react-native-raw-bottom-sheet'
 import { useTranslation } from 'react-i18next'
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'
 import { useFocusEffect } from '@react-navigation/native'
-import ProfileData from '../../Components/ProfileData'
-import { formatDate, handleInfinityScroll } from '../../Functions/NativeFunctions'
+import ProfileData from '../../../Components/ProfileData'
+import { formatDate, handleInfinityScroll } from '../../../Functions/NativeFunctions'
 
 export const ConversationsFeed: React.FC = () => {
   const initialPageSize = 14

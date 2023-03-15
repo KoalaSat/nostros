@@ -30,16 +30,32 @@ export const getRawUserReactions: (
 export const getReactions: (
   db: QuickSQLiteConnection,
   filters: {
-    eventId: string
+    eventId?: string
+    reactedUser?: string
+    limitDate?: number
   },
-) => Promise<Reaction[]> = async (db, { eventId }) => {
-  const reactionsQuery = `
+) => Promise<Reaction[]> = async (db, { eventId, reactedUser, limitDate }) => {
+  let reactionsQuery = `
     SELECT 
       *
     FROM
       nostros_reactions
-    WHERE reacted_event_id = "${eventId}"
   `
+  if (eventId) {
+    reactionsQuery += `
+     WHERE reacted_event_id = "${eventId}"
+    `
+  }
+  if (reactedUser) {
+    reactionsQuery += `
+     WHERE reacted_user_id = "${reactedUser}"
+    `
+  }
+  if (limitDate) {
+    reactionsQuery += `
+      AND created_at > ${limitDate}
+    `
+  }
 
   const resultSet = await db.execute(reactionsQuery)
   const items: object[] = getItems(resultSet)

@@ -152,6 +152,11 @@
       "zap": "Zap"
     },
     "notificationsFeed": {
+      "reposted": "Reposted",
+      "zap": "Zapped {{amount}}",
+      "like": "Like",
+      "dislike": "Dislike",
+      "replied": "Replied",
       "emptyTitle": "Keine Benachrichtigung.",
       "emptyDescription": "Poste etwas und erhalte Antworten und Reaktionen.",
       "emptyButton": "Post verfassen"

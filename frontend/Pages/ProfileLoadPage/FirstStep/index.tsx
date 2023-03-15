@@ -82,6 +82,7 @@ export const FirstStep: React.FC<FirstStepProps> = ({ nextStep }) => {
   }
 
   const reconnectRelays: () => void = () => {
+    relayPool?.unsubscribeAll()
     relays.forEach((relay) => {
       removeRelayItem(relay)
     })

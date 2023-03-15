@@ -16,7 +16,8 @@ export interface Zap extends Event {
   ln_address: string
 }
 
-const databaseToEntity: (object: object) => Zap = (object) => {
+const databaseToEntity: (object: any) => Zap = (object) => {
+  object.tags = object.tags ? JSON.parse(object.tags) : []
   return object as Zap
 }
 
@@ -79,6 +80,27 @@ export const getMostZapedNotesContacts: (
     ORDER BY total DESC
   `
   const resultSet = await db.execute(zapsQuery)
+  const items: object[] = getItems(resultSet)
+  const zaps: Zap[] = items.map((object) => databaseToEntity(object))
+
+  return zaps
+}
+
+export const getUserZaps: (
+  db: QuickSQLiteConnection,
+  publicKey: string,
+  limitDate: number,
+) => Promise<Zap[]> = async (db, publicKey, limitDate) => {
+  const groupsQuery = `
+    SELECT
+      *
+    FROM
+      nostros_zaps
+    WHERE zapped_user_id = "${publicKey}"
+    AND created_at > ${limitDate}
+  `
+
+  const resultSet = await db.execute(groupsQuery)
   const items: object[] = getItems(resultSet)
   const zaps: Zap[] = items.map((object) => databaseToEntity(object))
 

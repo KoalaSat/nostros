@@ -173,6 +173,11 @@
       "zap": "Zap"
     },
     "notificationsFeed": {
+      "reposted": "Reposteado",
+      "zap": "Zap {{amount}}",
+      "like": "Le ha gustado",
+      "Dislike": "No le ha gustado",
+      "replied": "Respuesta",
       "emptyTitle": "No tienes notificationes.",
       "emptyDescription": "Escribe una nota para tener respuestas y reacciones.",
       "emptyButton": "Escribe una nota"

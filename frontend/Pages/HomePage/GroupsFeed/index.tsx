@@ -14,36 +14,36 @@ import {
   useTheme,
 } from 'react-native-paper'
 import RBSheet from 'react-native-raw-bottom-sheet'
-import UploadImage from '../../Components/UploadImage'
+import UploadImage from '../../../Components/UploadImage'
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'
 import { Kind } from 'nostr-tools'
-import { type Event } from '../../lib/nostr/Events'
-import { UserContext } from '../../Contexts/UserContext'
-import { RelayPoolContext } from '../../Contexts/RelayPoolContext'
+import { type Event } from '../../../lib/nostr/Events'
+import { UserContext } from '../../../Contexts/UserContext'
+import { RelayPoolContext } from '../../../Contexts/RelayPoolContext'
 import { getUnixTime } from 'date-fns'
 import { useFocusEffect } from '@react-navigation/native'
-import { AppContext } from '../../Contexts/AppContext'
+import { AppContext } from '../../../Contexts/AppContext'
 import {
   getGroupMessagesCount,
   getGroupMessagesMentionsCount,
   getGroups,
   type Group,
-} from '../../Functions/DatabaseFunctions/Groups'
-import { formatId } from '../../Functions/RelayFunctions/Users'
-import NostrosAvatar from '../../Components/NostrosAvatar'
-import { navigate } from '../../lib/Navigation'
+} from '../../../Functions/DatabaseFunctions/Groups'
+import { formatId } from '../../../Functions/RelayFunctions/Users'
+import NostrosAvatar from '../../../Components/NostrosAvatar'
+import { navigate } from '../../../lib/Navigation'
 import { FlashList, type ListRenderItem } from '@shopify/flash-list'
-import { type RelayFilters } from '../../lib/nostr/RelayPool/intex'
-import { validNip21 } from '../../Functions/NativeFunctions'
-import { getNip19Key } from '../../lib/nostr/Nip19'
-import DatabaseModule from '../../lib/Native/DatabaseModule'
+import { type RelayFilters } from '../../../lib/nostr/RelayPool/intex'
+import { validNip21 } from '../../../Functions/NativeFunctions'
+import { getNip19Key } from '../../../lib/nostr/Nip19'
+import DatabaseModule from '../../../lib/Native/DatabaseModule'
 
 export const GroupsFeed: React.FC = () => {
   const { t } = useTranslation('common')
   const theme = useTheme()
   const { database, qrReader, setQrReader, refreshBottomBarAt } = useContext(AppContext)
   const { publicKey } = useContext(UserContext)
-  const { relayPool, lastEventId, lastConfirmationtId } = useContext(RelayPoolContext)
+  const { relayPool, lastEventId, lastConfirmationtId, sendEvent } = useContext(RelayPoolContext)
   const bottomSheetSearchRef = React.useRef<RBSheet>(null)
   const bottomSheetCreateRef = React.useRef<RBSheet>(null)
   const bottomSheetFabActionRef = React.useRef<RBSheet>(null)

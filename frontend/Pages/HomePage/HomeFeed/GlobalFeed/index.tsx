@@ -7,19 +7,19 @@ import {
   StyleSheet,
   View,
 } from 'react-native'
-import { AppContext } from '../../../Contexts/AppContext'
+import { AppContext } from '../../../../Contexts/AppContext'
 import {
   getMainNotes,
   getMainNotesCount,
   type Note,
-} from '../../../Functions/DatabaseFunctions/Notes'
-import { handleInfinityScroll } from '../../../Functions/NativeFunctions'
-import { UserContext } from '../../../Contexts/UserContext'
-import { RelayPoolContext } from '../../../Contexts/RelayPoolContext'
+} from '../../../../Functions/DatabaseFunctions/Notes'
+import { handleInfinityScroll } from '../../../../Functions/NativeFunctions'
+import { UserContext } from '../../../../Contexts/UserContext'
+import { RelayPoolContext } from '../../../../Contexts/RelayPoolContext'
 import { Kind } from 'nostr-tools'
-import { type RelayFilters } from '../../../lib/nostr/RelayPool/intex'
+import { type RelayFilters } from '../../../../lib/nostr/RelayPool/intex'
 import { Chip, Button, Text } from 'react-native-paper'
-import NoteCard from '../../../Components/NoteCard'
+import NoteCard from '../../../../Components/NoteCard'
 import { useTheme } from '@react-navigation/native'
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'
 import { t } from 'i18next'
