@@ -30,6 +30,10 @@ import { useFocusEffect } from '@react-navigation/native'
 import { UserContext } from '../../Contexts/UserContext'
 import { type Event } from '../../lib/nostr/Events'
 import { getUnixTime } from 'date-fns'
+import { getAllRelayMetadata } from '../../Functions/DatabaseFunctions/RelayMetadatas'
+import { getContactsRelays } from '../../Functions/RelayFunctions/Metadata'
+import { AppContext } from '../../Contexts/AppContext'
+import { getUsers, User } from '../../Functions/DatabaseFunctions/Users'
 
 export const RelaysPage: React.FC = () => {
   const defaultRelayInput = React.useMemo(() => 'wss://', [])
@@ -42,31 +46,40 @@ export const RelaysPage: React.FC = () => {
     relays,
     lastEventId,
     loadRelays,
+    removeRelayItem,
   } = useContext(RelayPoolContext)
   const { publicKey } = useContext(UserContext)
+  const { database } = useContext(AppContext)
   const { t } = useTranslation('common')
   const theme = useTheme()
   const bottomSheetAddRef = React.useRef<RBSheet>(null)
   const bottomSheetPushRef = React.useRef<RBSheet>(null)
+  const bottomSheetContactsRef = React.useRef<RBSheet>(null)
   const [addRelayInput, setAddRelayInput] = useState<string>(defaultRelayInput)
   const [addRelayPaid, setAddRelayPaid] = useState<boolean>(false)
   const [showNotification, setShowNotification] = useState<string>()
+  const [asignation, setAsignation] = useState<string[]>()
   const [showPaidRelays, setShowPaidRelays] = useState<boolean>(true)
   const [showFreeRelays, setShowFreeRelays] = useState<boolean>(true)
 
   useFocusEffect(
     React.useCallback(() => {
       relayPool?.unsubscribeAll()
-      if (publicKey) {
-        relayPool?.subscribe('relays', [
-          {
-            kinds: [1002],
-            authors: [publicKey],
-          },
-        ])
+      if (publicKey && database) {
+        getUsers(database, {}).then((results) => {
+          if (results.length > 0) {
+            const authors = [...results.map((user: User) => user.id), publicKey]
+            relayPool?.subscribe('relays-contacts', [
+              {
+                kinds: [10002],
+                authors,
+              },
+            ])
+          }
+        })
       }
 
-      return () => relayPool?.unsubscribe(['relays'])
+      return () => relayPool?.unsubscribe(['relays-contacts'])
     }, []),
   )
 
@@ -172,6 +185,14 @@ export const RelaysPage: React.FC = () => {
     return 0
   })
 
+  const calculateContactsRelays: () => void = () => {
+    if (database) {
+      getAllRelayMetadata(database).then((relayMetadata) => {
+        getContactsRelays(relays, relayMetadata).then(setAsignation)
+      })
+    }
+  }
+
   const renderItem: ListRenderItem<Relay> = ({ item, index }) => {
     return (
       <View style={styles.relayItem}>
@@ -230,10 +251,40 @@ export const RelaysPage: React.FC = () => {
     )
   }
 
+  const renderContactRelayItem: ListRenderItem<string> = ({ item, index }) => {
+    return (
+      <View style={styles.relayItem}>
+        <List.Item
+          key={index}
+          title={item.replace('wss://', '').replace('ws://', '')}
+          left={() => (
+            <MaterialCommunityIcons
+              style={styles.relayColor}
+              name='circle'
+              color={relayToColor(item)}
+            />
+          )}
+        />
+      </View>
+    )
+  }
+
   const pasteUrl: () => void = () => {
     Clipboard.getString().then((value) => {
       setAddRelayInput(value ?? '')
     })
+  }
+
+  const onPressAddContactRelay: () => void = () => {
+    relays
+      .filter((relay) => relay.resilient && relay.resilient > 0)
+      .forEach((relay) => {
+        removeRelayItem(relay)
+      })
+    if (asignation) {
+      asignation.forEach(async (url) => await addRelayItem({ url, resilient: 1, global_feed: 0 }))
+    }
+    bottomSheetContactsRef.current?.close()
   }
 
   return (
@@ -298,6 +349,18 @@ export const RelaysPage: React.FC = () => {
         />
       </ScrollView>
       <AnimatedFAB
+        style={styles.fabContacts}
+        icon='cached'
+        label='push'
+        onPress={() => {
+          calculateContactsRelays()
+          bottomSheetContactsRef.current?.open()
+        }}
+        animateFrom='right'
+        iconMode='static'
+        extended={false}
+      />
+      <AnimatedFAB
         style={styles.fabPush}
         icon='upload-multiple'
         label='push'
@@ -346,6 +409,27 @@ export const RelaysPage: React.FC = () => {
             {t('relaysPage.cancel')}
           </Button>
         </View>
+      </RBSheet>
+      <RBSheet
+        ref={bottomSheetContactsRef}
+        closeOnDragDown={true}
+        customStyles={rbSheetCustomStyles}
+      >
+        <FlatList
+          showsVerticalScrollIndicator={false}
+          data={asignation}
+          renderItem={renderContactRelayItem}
+          ItemSeparatorComponent={Divider}
+          style={styles.conteactRelaysList}
+        />
+        <View style={styles.bottomDrawerButton}>
+          <Button mode='contained' onPress={onPressAddContactRelay}>
+            {t('relaysPage.connectContactRelays')}
+          </Button>
+        </View>
+        <Button mode='outlined' onPress={() => bottomSheetContactsRef.current?.close()}>
+          {t('relaysPage.cancel')}
+        </Button>
       </RBSheet>
       <RBSheet ref={bottomSheetAddRef} closeOnDragDown={true} customStyles={rbSheetCustomStyles}>
         <View style={styles.addRelay}>
@@ -410,11 +494,15 @@ const styles = StyleSheet.create({
     marginBottom: -10,
   },
   bottomDrawerButton: {
+    paddingTop: 16,
     paddingBottom: 16,
   },
   relayOptionButton: {
     margin: 0,
     marginRight: 10,
+  },
+  conteactRelaysList: {
+    maxHeight: 400,
   },
   container: {
     padding: 0,
@@ -434,7 +522,12 @@ const styles = StyleSheet.create({
     marginLeft: 32,
   },
   relayList: {
-    paddingBottom: 200,
+    paddingBottom: 260,
+  },
+  fabContacts: {
+    bottom: 212,
+    right: 16,
+    position: 'absolute',
   },
   fabPush: {
     bottom: 142,

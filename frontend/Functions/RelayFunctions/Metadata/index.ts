@@ -20,7 +20,7 @@ export const getContactsRelays: (
   relayMetadada.forEach((metadata) => {
     pubKeys.push(metadata.pubkey)
     let rTags: string[][] = getRTags(metadata)
-    rTags = rTags.filter(tag => tag.length < 3 || tag[2] !== 'read')
+    rTags = rTags.filter((tag) => tag.length < 3 || tag[2] !== 'read')
     const urls = rTags.map((tags) => tags[1])
     urls.forEach((url) => {
       if (!localhostRegExp.test(url)) {
