@@ -178,6 +178,11 @@
       "zap": "Zap"
     },
     "notificationsFeed": {
+      "reposted": "Reposted",
+      "zap": "Zapped {{amount}}",
+      "like": "Like",
+      "dislike": "Dislike",
+      "replied": "Replied",
       "emptyTitle": "Vous n'avez pas de notification.",
       "emptyDescription": "Écrivez une note pour obtenir des réponses et des réactions.",
       "emptyButton": "Écrivez une note"

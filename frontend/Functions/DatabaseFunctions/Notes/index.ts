@@ -147,9 +147,9 @@ export const getNoteRelays: (
 export const getMentionNotes: (
   db: QuickSQLiteConnection,
   pubKey: string,
-  limit: number,
-) => Promise<Note[]> = async (db, pubKey, limit) => {
-  const notesQuery = `
+  limitDate?: number,
+) => Promise<Note[]> = async (db, pubKey, limitDate) => {
+  let notesQuery = `
     SELECT
       nostros_notes.*, nostros_users.zap_pubkey, nostros_users.nip05, nostros_users.valid_nip05, nostros_users.lnurl, 
       nostros_users.ln_address, nostros_users.name, nostros_users.picture, nostros_users.contact, 
@@ -160,9 +160,10 @@ export const getMentionNotes: (
       SELECT nostros_notes.id FROM nostros_notes WHERE pubkey = '${pubKey}'
     ) OR nostros_notes.user_mentioned = 1)
     AND nostros_notes.pubkey != '${pubKey}'
-    ORDER BY created_at DESC
-    LIMIT ${limit}
   `
+  if (limitDate) notesQuery += `AND nostros_notes.created_at > ${limitDate} `
+
+  notesQuery += `ORDER BY created_at DESC`
 
   const resultSet = await db.execute(notesQuery)
   const items: object[] = getItems(resultSet)
@@ -340,8 +341,9 @@ export const getNotes: (
     limit?: number
     contacts?: boolean
     includeIds?: string[]
+    limitDate?: number
   },
-) => Promise<Note[]> = async (db, { filters = {}, limit, contacts, includeIds }) => {
+) => Promise<Note[]> = async (db, { filters = {}, limit, contacts, includeIds, limitDate }) => {
   let notesQuery = `
     SELECT
       nostros_notes.*, nostros_users.zap_pubkey, nostros_users.nip05, nostros_users.valid_nip05, 
@@ -376,6 +378,14 @@ export const getNotes: (
       notesQuery += 'WHERE '
     }
     notesQuery += `nostros_users.id IN ('${includeIds.join("', '")}') `
+  }
+  if (limitDate) {
+    if (Object.keys(filters).length > 0) {
+      notesQuery += 'OR '
+    } else {
+      notesQuery += 'WHERE '
+    }
+    notesQuery += `nostros_users.created_at > ${limitDate} `
   }
 
   notesQuery += 'ORDER BY created_at DESC '

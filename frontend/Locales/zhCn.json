@@ -172,6 +172,11 @@
       "zap": "赞赏"
     },
     "notificationsFeed": {
+      "reposted": "Reposted",
+      "zap": "Zapped {{amount}}",
+      "like": "Like",
+      "dislike": "Dislike",
+      "replied": "Replied",
       "emptyTitle": "还没有新通知",
       "emptyDescription": "发布信息以获得回复和回应",
       "emptyButton": "发布信息"

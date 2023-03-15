@@ -160,9 +160,15 @@
       "zap": "Zap"
     },
     "notificationsFeed": {
+      "reposted": "Reposted",
+      "zap": "Zapped {{amount}}",
+      "like": "Like",
+      "dislike": "Dislike",
+      "replied": "Replied",
       "emptyTitle": "You don't have any notifications.",
       "emptyDescription": "Write a message to get replies and reactions.",
-      "emptyButton": "Write a message."
+      "emptyButton": "Write a message.",
+      "notificationsFeed": "Write a message."
     },
     "profileCreatePage": {
       "notifications": {

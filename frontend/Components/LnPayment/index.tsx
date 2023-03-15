@@ -109,6 +109,8 @@ export const LnPayment: React.FC<LnPaymentProps> = ({ open, setOpen, note, user 
   }
 
   const renderZapperItem: ListRenderItem<Zap> = ({ item }) => {
+    const zapDescription = item.tags?.find((tag) => tag[0] === 'description')
+    const content = zapDescription ? JSON.parse(zapDescription[1])?.content : ''
     return (
       <TouchableRipple onPress={() => setDisplayUserDrawer(item.user_id)}>
         <View key={item.id} style={styles.zapperRow}>
@@ -122,6 +124,7 @@ export const LnPayment: React.FC<LnPaymentProps> = ({ open, setOpen, note, user 
               lnAddress={item?.ln_address}
               picture={item?.picture}
             />
+            {content && <Text style={styles.zapComment}>{content}</Text>}
           </View>
           <View style={styles.zapperAmount}>
             <MaterialCommunityIcons
@@ -278,6 +281,9 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     padding: 16,
+  },
+  zapComment: {
+    marginLeft: 54,
   },
   zapperRow: {
     padding: 16,

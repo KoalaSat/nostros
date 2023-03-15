@@ -1,8 +1,8 @@
 import React, { useContext, useEffect, useState } from 'react'
 import { Badge, Button, Text, TouchableRipple, useTheme } from 'react-native-paper'
-import ConversationsFeed from '../ConversationsFeed'
-import HomeFeed from '../HomeFeed'
-import NotificationsFeed from '../NotificationsFeed'
+import ConversationsFeed from './ConversationsFeed'
+import HomeFeed from './HomeFeed'
+import NotificationsFeed from './NotificationsFeed'
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs'
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'
 import { UserContext } from '../../Contexts/UserContext'
@@ -19,7 +19,7 @@ import {
   getDirectMessagesCount,
   getGroupedDirectMessages,
 } from '../../Functions/DatabaseFunctions/DirectMessages'
-import GroupsFeed from '../GroupsFeed'
+import GroupsFeed from './GroupsFeed'
 import { getUserGroupMessagesCount } from '../../Functions/DatabaseFunctions/Groups'
 
 export const HomePage: React.FC = () => {
