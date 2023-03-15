@@ -152,6 +152,7 @@
       "zap": "Zap"
     },
     "notificationsFeed": {
+      "connectContactRelays": "Reconnect to contacts' relays",
       "reposted": "Reposted",
       "zap": "Zapped {{amount}}",
       "like": "Like",

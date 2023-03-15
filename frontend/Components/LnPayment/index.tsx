@@ -110,7 +110,7 @@ export const LnPayment: React.FC<LnPaymentProps> = ({ open, setOpen, note, user 
 
   const renderZapperItem: ListRenderItem<Zap> = ({ item }) => {
     const zapDescription = item.tags?.find((tag) => tag[0] === 'description')
-    const content = zapDescription ? JSON.parse(zapDescription[1])?.content : ''
+    const content = zapDescription ? JSON.parse(zapDescription[1])?.content : undefined
     return (
       <TouchableRipple onPress={() => setDisplayUserDrawer(item.user_id)}>
         <View key={item.id} style={styles.zapperRow}>

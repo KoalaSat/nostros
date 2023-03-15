@@ -176,6 +176,7 @@
       "reposted": "Reposteado",
       "zap": "Zap {{amount}}",
       "like": "Le ha gustado",
+      "connectContactRelays": "Reconnectar a los relays de mis contactos",
       "Dislike": "No le ha gustado",
       "replied": "Respuesta",
       "emptyTitle": "No tienes notificationes.",

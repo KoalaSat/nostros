@@ -96,7 +96,7 @@ export const RelayPoolContextProvider = ({
           const event: Event = {
             content: '',
             created_at: getUnixTime(new Date()),
-            kind: 1002,
+            kind: 10002,
             pubkey: publicKey,
             tags: results.map((relay) => ['r', relay.url, relay.mode ?? '']),
           }

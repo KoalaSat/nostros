@@ -312,6 +312,7 @@
       }
     },
     "relaysPage": {
+      "connectContactRelays": "Reconnect to contacts' relays",
       "pushListTitle": "Push relay list to the network",
       "pushListDescription": "Only relays on \"My relays\" list will be pushed.",
       "pushList": "Push list",

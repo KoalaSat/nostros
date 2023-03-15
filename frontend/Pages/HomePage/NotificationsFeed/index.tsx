@@ -77,7 +77,8 @@ export const NotificationsFeed: React.FC = () => {
   }, [pushedTab])
 
   useEffect(() => {
-    if (pubKeys.length > 0) {
+    if (database && pubKeys.length > 0) {
+      getUsers(database, { includeIds: pubKeys }).then(setUsers)
       relayPool?.subscribe('notification-users', [
         {
           kinds: [Kind.Metadata],
@@ -132,7 +133,6 @@ export const NotificationsFeed: React.FC = () => {
 
   const loadNotes: () => void = async () => {
     if (database && publicKey) {
-      getUsers(database, { includeIds: pubKeys }).then(setUsers)
       getReactions(database, { reactedUser: publicKey, limitDate }).then((results) => {
         setPubKeys((prev) => [...prev, ...results.map((res) => res.pubkey)])
         setReaction(results)

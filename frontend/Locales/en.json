@@ -274,6 +274,7 @@
     "relaysPage": {
       "pushListTitle": "Push relay list to the network",
       "pushListDescription": "Only relays on \"My relays\" list will be pushed.",
+      "connectContactRelays": "Reconnect to contacts' relays",
       "pushList": "Push list",
       "contactsList": "Contact's relays",
       "freeAccess": "Free access",
