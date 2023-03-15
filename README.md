@@ -29,17 +29,14 @@ Nostros chat
 - [x] Reposts
 - [x] Reactions (likes & dislikes)
 - [x] Encrypted direct messsages
-- [x] Notifications feed
 - [x] NIP-05 validation
 - [x] Lightning Network invoice generation for profiles and notes
 - [x] Sensitive content flag
-- [x] Multirelay management
 - [x] Bech-32 keys
-- [x] Public Feed
 - [x] Block users and content
-- [x] Channels
+- [x] Groups
 - [x] Deep Links
-- [ ] Search
+- [x] Search (content and hashtags)
 - [x] Mnemonic login
 - [x] Upload images to hosting services
 - [x] Push all data to a relay
@@ -47,7 +44,8 @@ Nostros chat
 - [x] Relay colouring
 - [x] Push events to private relay
 - [x] Zaps
-- [x] Bookmarks
+- [x] Bookmarks (public and private)
+- [x] Dynamicall connection to contacts' relays
 
 # Kudos
 
