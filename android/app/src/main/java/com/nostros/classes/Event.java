@@ -565,7 +565,7 @@ public class Event {
                 zapped_user_id = pTags.getJSONArray(pTags.length() - 1).getString(1);
             }
 
-            String userQuery = "SELECT created_at FROM nostros_users WHERE zap_pubkey = ? AND zapped_user_id = ?";
+            String userQuery = "SELECT created_at FROM nostros_users WHERE zap_pubkey = ? AND id = ?";
             @SuppressLint("Recycle") Cursor userCursor = database.rawQuery(userQuery, new String[] {pubkey, zapped_user_id});
 
             if (userCursor.moveToFirst()) {

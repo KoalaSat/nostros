@@ -79,12 +79,6 @@ export const NotificationsFeed: React.FC = () => {
   useEffect(() => {
     if (database && pubKeys.length > 0) {
       getUsers(database, { includeIds: pubKeys }).then(setUsers)
-      relayPool?.subscribe('notification-users', [
-        {
-          kinds: [Kind.Metadata],
-          authors: pubKeys,
-        },
-      ])
     }
   }, [pubKeys])
 
