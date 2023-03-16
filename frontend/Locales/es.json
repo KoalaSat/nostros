@@ -481,6 +481,18 @@
       "resilient_login": {
         "question": "Acceso",
         "answer": "El proceso de 'inicio de sesión resiliente' consta de tres pasos que ayudan a que la red sea más sólida y descentralizada. \n\n1. Conexión a relays aleatorios \nTe conectarás a 8 relays elegidos al azar de un pool de relays. Tu perfil de usuario y tu lista de relays se buscarán en estos 8 relays. \n\n2. Buscar contactos en su lista de relays \nDesconexión de los 8 relays aleatorios y conexión tu lista de relays. Tus contactos se buscarán en esta lista. \n\n3. Buscar los relays de tus contactos \nVerás una lista de los relays utilizados por tus contactos. Puedes añadir estos relays a tu lista y conectarte a ellos, haciendo la red más resistente."
+      },
+      "what_are_zaps": {
+        "question": "Zaps: Qué son?",
+        "answer": "Zaps son un tipo de propinas en Lightning Network que permiten una transmisión de valor rápida y de bajo costo. En esencia, los Zaps son propinas que se envían a través de la red Lightning prácticamente sin costes por transacción. Anteriormente, las facturas Lightning a menudo se incluían en las notas al comienzo del protocolo Nostr. Sin embargo, con la implementación de NIP-57, los Zaps se han convertido en el principal medio de transmisión de valor en los valor en Nostr. \n\nNIP-57 es un documento que especifica cómo se deben implementar los Zaps e introduce dos nuevos tipos de notas, a saber, el tipo 9735 (Zap) y el tipo 9734 (solicitud de Zap). Estos tipos de notas permiten a los clientes de Nostr solicitar facturas de los servidores LNURL y pagarlas. \n\nAdemás, la especificación NIP-57 explica cómo las billeteras Lightning que reciben pagos Zap deben crear notas para enviarlas a los relays."
+      },
+      "what_are_relays": {
+        "question": "Relays: ¿Qué son?",
+        "answer": "Los relays sirven como servidores backend para Nostr, permitiendo a los clientes enviar mensajes que pueden o no ser almacenados y difundidos a otros clientes conectados. Dados los rápidos cambios en el mundo de los relays, es probable que se produzcan muchos cambios en el futuro.\n\nEs importante tener en cuenta que Nostr es un sistema descentralizado que depende de relays para el almacenamiento y recuperación de datos. Por lo tanto, si experimentas un rendimiento lento en tu cliente Nostr, es probable que se deba a los relays que estás utilizando. \n\nAñadir o quitar relays en tu cliente puede ser una consideración a tener en cuenta."
+      },
+      "relays_paid_vs_free": {
+        "question": "Relays: Relays gratuitos y de pago",
+        "answer": "Hay relays públicos disponibles, que ofrecen un servicio de incorporación gratuito para el usuario medio. Sin embargo, la falta de costo para acceder y escribir en estos relays atrae a los spammers y las cuentas de bots. Si bien algunos propietarios de relays ponen en la lista negra las cuentas de spam, este es un proceso reactivo que puede no ser suficiente para mantenerse al día con los spammers persistentes. \n\nA medida que Nostr escala, el volumen de spam en las relays públicos aumentará. Para combatir esto, los usuarios pueden migrar a su propio relay o a un relay de pago para tener más control sobre su feed y reducir las descargas de datos innecesarias. Los relays de pago requieren un pago para acceder y mantener un alto nivel de operación, lo que da como resultado un feed más limpio y confiable. \n\nHay varias opciones de relays de pago disponibles, y se añaden más con regularidad. Para usar un relay de pago, los usuarios deben comunicarse con el propietario y pagar para que se agregue su clave pública a la lista blanca. Puedes encontrar relays de pago en varios sitios web, por ejemplo: https://nostr.watch/relays/find"
       }
     }
   }

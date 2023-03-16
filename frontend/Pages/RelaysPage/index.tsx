@@ -12,6 +12,7 @@ import { RelayPoolContext } from '../../Contexts/RelayPoolContext'
 import { type Relay } from '../../Functions/DatabaseFunctions/Relays'
 import { REGEX_SOCKET_LINK } from '../../Constants/Relay'
 import {
+  Chip,
   List,
   AnimatedFAB,
   useTheme,
@@ -222,16 +223,18 @@ export const RelaysPage: React.FC = () => {
         />
         <View style={styles.relayButtons}>
           <View style={styles.relayActionButtons}>
-            <Button
-              mode={item.active !== undefined && item.active > 0 ? 'contained' : 'outlined'}
+            <Chip
+              compact
+              mode={item.active !== undefined && item.active > 0 ? 'flat' : 'outlined'}
               style={styles.relayButton}
               onPress={() => (item.active ? desactiveRelay(item) : activeRelay(item))}
             >
               {t('relaysPage.active')}
-            </Button>
-            <Button
+            </Chip>
+            <Chip
+            compact
               mode={
-                item.global_feed !== undefined && item.global_feed > 0 ? 'contained' : 'outlined'
+                item.global_feed !== undefined && item.global_feed > 0 ? 'flat' : 'outlined'
               }
               style={styles.relayButton}
               onPress={() => {
@@ -239,7 +242,7 @@ export const RelaysPage: React.FC = () => {
               }}
             >
               {t('relaysPage.globalFeed')}
-            </Button>
+            </Chip>
           </View>
           <IconButton
             icon='dots-vertical'
@@ -579,7 +582,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
   },
   relayButton: {
-    marginRight: 16,
+    marginRight: 12,
   },
   relayFilterButton: {
     borderRadius: 8,
