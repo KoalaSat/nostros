@@ -188,7 +188,8 @@ export const RelaysPage: React.FC = () => {
   const calculateContactsRelays: () => void = () => {
     if (database) {
       getAllRelayMetadata(database).then((relayMetadata) => {
-        getContactsRelays(relays, relayMetadata).then(setAsignation)
+        const userRelays = relays.filter((relay) => !relay.resilient || relay.resilient < 1)
+        getContactsRelays(userRelays, relayMetadata).then(setAsignation)
       })
     }
   }

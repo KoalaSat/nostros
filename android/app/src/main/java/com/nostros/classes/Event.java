@@ -565,20 +565,25 @@ public class Event {
                 zapped_user_id = pTags.getJSONArray(pTags.length() - 1).getString(1);
             }
 
-            ContentValues values = new ContentValues();
-            values.put("id", id);
-            values.put("content", content);
-            values.put("created_at", created_at);
-            values.put("kind", kind);
-            values.put("pubkey", pubkey);
-            values.put("sig", sig);
-            values.put("tags", tags.toString());
-            values.put("amount", amount);
-            values.put("zapped_user_id", zapped_user_id);
-            values.put("zapped_event_id", zapped_event_id);
-            values.put("zapper_user_id", zapper_user_id);
+            String userQuery = "SELECT created_at FROM nostros_users WHERE zap_pubkey = ? AND id = ?";
+            @SuppressLint("Recycle") Cursor userCursor = database.rawQuery(userQuery, new String[] {pubkey, zapped_user_id});
 
-            database.insert("nostros_zaps", null, values);
+            if (userCursor.moveToFirst()) {
+                ContentValues values = new ContentValues();
+                values.put("id", id);
+                values.put("content", content);
+                values.put("created_at", created_at);
+                values.put("kind", kind);
+                values.put("pubkey", pubkey);
+                values.put("sig", sig);
+                values.put("tags", tags.toString());
+                values.put("amount", amount);
+                values.put("zapped_user_id", zapped_user_id);
+                values.put("zapped_event_id", zapped_event_id);
+                values.put("zapper_user_id", zapper_user_id);
+
+                database.insert("nostros_zaps", null, values);
+            }
         }
     }
 

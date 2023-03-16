@@ -82,7 +82,7 @@ export const NotificationsFeed: React.FC = () => {
       relayPool?.subscribe('notification-users', [
         {
           kinds: [Kind.Metadata],
-          authors: pubKeys,
+          authors: pubKeys.filter((key, index, array) => array.indexOf(key) === index),
         },
       ])
     }
