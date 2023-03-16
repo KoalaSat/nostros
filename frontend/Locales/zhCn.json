@@ -488,6 +488,14 @@
       "relays_paid_vs_free": {
         "question": "中继：免费和付费中继",
         "answer": "有可用的公共中继，可为普通用户提供免费的入门服务。 然而，访问和写入这些中继的成本较低，吸引了垃圾邮件发送者和机器人帐户。 虽然一些中继所有者将垃圾邮件帐户列入黑名单，但这是一个被动过程，可能不足以跟上顽固的垃圾邮件发送者。 \n\n随着 Nostr 规模的扩大，公共中继上的垃圾邮件数量将会增加。 为了解决这个问题，用户可以迁移到他们自己的中继或付费中继，以更好地控制他们的提要并减少不必要的数据下载。 支付中继需要支付才能访问和维持高水平的操作，从而产生更清洁和更可靠的馈送。 \n\n有多种支付中继选项可用，并会定期添加更多选项。 要使用付费中继，用户必须联系所有者并付费以将其公钥添加到白名单中。 您可以在各种网站上找到付费中继，例如：https://nostr.watch/relays/find"
+      },
+      "what_are_nips": {
+        "question": "NIP：它们是什么？",
+        "answer": "Nostr Implementation Possibilities (NIPs) 是一个类似于比特币改进提案 (BIP) 系统的过程，但它不那么复杂，因为它不涉及更新持有数十亿美元人们资金的网络。 NIP 旨在记录与 Nostr 兼容的中继和客户端软件的要求、建议和可选实现。 通过参考过去的 NIP，开发人员可以确保他们的工具与更广泛的 Nostr 网络保持兼容。 \n\nNIP 流程是 Nostr 社区提出想法、建议更改和改进协议的正式方式。 任何人都可以提交 NIP 并接收来自社区成员的反馈、共享代码和示例，或者为他们的想法提供测试方法。 在 NIP 从草案过渡到提议阶段后，它可以被撤回、拒绝或接受。 接受的 NIP 可以集成到想要使用新功能的中继和客户端的代码库中。 \n\nNostr 协议的目标是开放、去中心化，并且每个人都可以访问。 NIP 流程支持社区决策的透明度，鼓励贡献，并促进协议的构建。"
+      },
+      "nostros_nip_support": {
+        "question": "在Nostros实施的NIPs",
+        "answer": "NIP-01 Basic protocol flow description, NIP-02 Contact List and Petnames, NIP-04 Encrypted Direct Message, NIP-05 Mapping Nostr keys to DNS-based internet identifiers, NIP-06 Basic key derivation from mnemonic seed phrase, NIP-08 Handling Mentions, NIP-10 Conventions for clients' use of e and p tags in text events, NIP-11 Relay Information Document, NIP-12 Generic Tag Queries, NIP-19 bech32-encoded entities, NIP-21 nostr: URL scheme, NIP-25 Reactions, NIP-28 Public Chat, NIP-36 Sensitive Content, NIP-51 Lists, NIP-57 Lightning Zaps, y NIP-65 Relay List Metadata."
       }
     }
   }

@@ -85,6 +85,18 @@ const FaqPage: React.FC = () => {
           answer: t('faq.relays_paid_vs_free.answer'),
           group: '',
         },
+        {
+          id: 7,
+          question: t('faq.what_are_nips.question'),
+          answer: t('faq.what_are_nips.answer'),
+          group: '',
+        },
+        {
+          id: 8,
+          question: t('faq.nostros_nip_support.question'),
+          answer: t('faq.nostros_nip_support.answer'),
+          group: '',
+        },
       ]
         .map((item) => {
           item.group = item.question[0].toLowerCase()
