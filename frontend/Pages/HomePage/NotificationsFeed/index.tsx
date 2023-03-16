@@ -1,12 +1,12 @@
 import React, { useCallback, useContext, useEffect, useState } from 'react'
 import {
-  NativeScrollEvent,
-  NativeSyntheticEvent,
+  type NativeScrollEvent,
+  type NativeSyntheticEvent,
   RefreshControl,
   StyleSheet,
   View,
 } from 'react-native'
-import { AppContext, Config } from '../../../Contexts/AppContext'
+import { AppContext, type Config } from '../../../Contexts/AppContext'
 import SInfo from 'react-native-sensitive-info'
 import { getMentionNotes, getNotes, type Note } from '../../../Functions/DatabaseFunctions/Notes'
 import { RelayPoolContext } from '../../../Contexts/RelayPoolContext'
@@ -20,11 +20,11 @@ import { useFocusEffect } from '@react-navigation/native'
 import { format, formatRelative, fromUnixTime, getUnixTime } from 'date-fns'
 import { FlashList, type ListRenderItem } from '@shopify/flash-list'
 import { getETags } from '../../../Functions/RelayFunctions/Events'
-import { getReactions, Reaction } from '../../../Functions/DatabaseFunctions/Reactions'
-import { getUsers, User } from '../../../Functions/DatabaseFunctions/Users'
+import { getReactions, type Reaction } from '../../../Functions/DatabaseFunctions/Reactions'
+import { getUsers, type User } from '../../../Functions/DatabaseFunctions/Users'
 import { username } from '../../../Functions/RelayFunctions/Users'
 import { TouchableWithoutFeedback } from 'react-native-gesture-handler'
-import { getUserZaps, Zap } from '../../../Functions/DatabaseFunctions/Zaps'
+import { getUserZaps, type Zap } from '../../../Functions/DatabaseFunctions/Zaps'
 import { handleInfinityScroll } from '../../../Functions/NativeFunctions'
 
 export const NotificationsFeed: React.FC = () => {

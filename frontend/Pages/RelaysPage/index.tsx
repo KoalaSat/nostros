@@ -33,7 +33,7 @@ import { getUnixTime } from 'date-fns'
 import { getAllRelayMetadata } from '../../Functions/DatabaseFunctions/RelayMetadatas'
 import { getContactsRelays } from '../../Functions/RelayFunctions/Metadata'
 import { AppContext } from '../../Contexts/AppContext'
-import { getUsers, User } from '../../Functions/DatabaseFunctions/Users'
+import { getUsers, type User } from '../../Functions/DatabaseFunctions/Users'
 
 export const RelaysPage: React.FC = () => {
   const defaultRelayInput = React.useMemo(() => 'wss://', [])

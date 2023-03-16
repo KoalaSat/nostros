@@ -11,7 +11,7 @@ import { getUsers, type User } from '../../../Functions/DatabaseFunctions/Users'
 import { relayToColor } from '../../../Functions/NativeFunctions'
 import {
   getAllRelayMetadata,
-  RelayMetadata,
+  type RelayMetadata,
 } from '../../../Functions/DatabaseFunctions/RelayMetadatas'
 import { getContactsRelays } from '../../../Functions/RelayFunctions/Metadata'
 

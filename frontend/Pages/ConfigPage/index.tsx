@@ -4,7 +4,7 @@ import { FlatList, StyleSheet } from 'react-native'
 import { Button, Divider, List, Switch, Text, TextInput, useTheme } from 'react-native-paper'
 import SInfo from 'react-native-sensitive-info'
 import RBSheet from 'react-native-raw-bottom-sheet'
-import { AppContext, Config } from '../../Contexts/AppContext'
+import { AppContext, type Config } from '../../Contexts/AppContext'
 import { imageHostingServices } from '../../Constants/Services'
 
 export const ConfigPage: React.FC = () => {

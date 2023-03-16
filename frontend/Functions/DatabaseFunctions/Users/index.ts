@@ -28,7 +28,7 @@ export const getUser: (pubkey: string, db: QuickSQLiteConnection) => Promise<Use
   db,
 ) => {
   const userQuery = `SELECT * FROM nostros_users WHERE id = '${pubkey}';`
-  const resultSet = await db.execute(userQuery)
+  const resultSet = db.execute(userQuery)
 
   if (resultSet.rows && resultSet.rows?.length > 0) {
     const items: object[] = getItems(resultSet)

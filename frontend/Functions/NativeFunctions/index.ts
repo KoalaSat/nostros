@@ -41,7 +41,7 @@ export const relayToColor: (string: string) => string = (string) => {
   return relayColors[Math.abs(hash) % (relayColors.length - 1)]
 }
 
-export const pickRandomItems = <T extends unknown>(arr: T[], n: number): T[] => {
+export const pickRandomItems = <T>(arr: T[], n: number): T[] => {
   const shuffled = Array.from(arr).sort(() => 0.5 - Math.random())
   return shuffled.slice(0, n)
 }

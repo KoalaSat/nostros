@@ -22,7 +22,7 @@ export const getRawUserConversation: (
     WHERE pubkey = ? 
     ORDER BY created_at DESC 
   `
-  const resultSet = await db.execute(notesQuery, [pubKey])
+  const resultSet = db.execute(notesQuery, [pubKey])
   const items: object[] = getItems(resultSet)
   const notes: Event[] = items.map((object) => evetDatabaseToEntity(object))
 
@@ -64,7 +64,7 @@ export const getGroupedDirectMessages: (
   notesQuery += `ORDER BY created_at ${order} `
   if (limit) notesQuery += `LIMIT ${limit}`
 
-  const resultSet = await db.execute(notesQuery)
+  const resultSet = db.execute(notesQuery)
   const items: object[] = getItems(resultSet)
   const notes: DirectMessage[] = items.map((object) => databaseToEntity(object))
 
@@ -91,7 +91,7 @@ export const getDirectMessages: (
     notesQuery += `LIMIT ${limit}`
   }
 
-  const resultSet = await db.execute(notesQuery)
+  const resultSet = db.execute(notesQuery)
   const items: object[] = getItems(resultSet)
   const notes: DirectMessage[] = items.map((object) => databaseToEntity(object))
 
@@ -112,7 +112,7 @@ export const getUserLastDirectMessages: (
     LIMIT 1
   `
 
-  const resultSet = await db.execute(messageQuery, [userId])
+  const resultSet = db.execute(messageQuery, [userId])
   const items: object[] = getItems(resultSet)
   if (items.length) {
     const notes: DirectMessage = databaseToEntity(items[0])

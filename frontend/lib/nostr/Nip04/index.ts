@@ -1,7 +1,6 @@
 import { Buffer } from 'buffer'
 import { generateSecureRandom } from 'react-native-securerandom'
 import * as secp256k1 from '@noble/secp256k1'
-// @ts-expect-error
 import aes from 'browserify-cipher'
 
 export const encrypt: (privkey: string, pubkey: string, text: string) => Promise<string> = async (

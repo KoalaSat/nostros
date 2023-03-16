@@ -20,6 +20,8 @@ import DatabaseModule from '../../lib/Native/DatabaseModule'
 import { addMutedUsersList, removeMutedUsersList } from '../../Functions/RelayFunctions/Lists'
 import { getRelayMetadata } from '../../Functions/DatabaseFunctions/RelayMetadatas'
 import { getUserRelays } from '../../Functions/DatabaseFunctions/NotesRelays'
+import { lightningInvoice } from '../../Functions/ServicesFunctions/ZapInvoice'
+import LnPreview from '../LnPreview'
 
 interface ProfileActionsProps {
   user: User
@@ -33,7 +35,7 @@ export const ProfileActions: React.FC<ProfileActionsProps> = ({
   onActionDone = () => {},
 }) => {
   const theme = useTheme()
-  const { database } = React.useContext(AppContext)
+  const { database, longPressZap } = React.useContext(AppContext)
   const { publicKey, privateKey, mutedUsers, reloadLists } = React.useContext(UserContext)
   const { relayPool, addRelayItem, lastEventId, sendEvent, relays } =
     React.useContext(RelayPoolContext)
@@ -47,6 +49,7 @@ export const ProfileActions: React.FC<ProfileActionsProps> = ({
   const bottomSheetMuteRef = React.useRef<RBSheet>(null)
   const [userRelays, setUserRelays] = React.useState<string[]>()
   const [openLn, setOpenLn] = React.useState<boolean>(false)
+  const [zapInvoice, setZapInvoice] = React.useState<string>()
 
   React.useEffect(() => {
     loadUser()
@@ -208,6 +211,25 @@ export const ProfileActions: React.FC<ProfileActionsProps> = ({
     )
   }
 
+  const generateZapInvoice: () => void = () => {
+    const lud = user?.ln_address && user?.ln_address !== '' ? user?.ln_address : user?.lnurl
+
+    if (lud && lud !== '' && longPressZap && database && privateKey && publicKey && user?.id) {
+      lightningInvoice(
+        database,
+        lud,
+        longPressZap,
+        privateKey,
+        publicKey,
+        user?.id,
+        true,
+        user?.zap_pubkey,
+      ).then((invoice) => {
+        if (invoice) setZapInvoice(invoice)
+      })
+    }
+  }
+
   return (
     <View style={styles.container}>
       <View style={styles.mainLayout}>
@@ -241,6 +263,7 @@ export const ProfileActions: React.FC<ProfileActionsProps> = ({
             icon='lightning-bolt'
             size={28}
             onPress={() => setOpenLn(true)}
+            onLongPress={longPressZap ? generateZapInvoice : undefined}
             disabled={
               !user.lnurl && user.lnurl !== '' && !user?.ln_address && user.ln_address !== ''
             }
@@ -368,6 +391,7 @@ export const ProfileActions: React.FC<ProfileActionsProps> = ({
         </View>
       </RBSheet>
       <LnPayment setOpen={setOpenLn} open={openLn} user={user} />
+      {zapInvoice && <LnPreview invoice={zapInvoice} setInvoice={setZapInvoice} />}
       {showNotification && (
         <Snackbar
           style={styles.snackbar}

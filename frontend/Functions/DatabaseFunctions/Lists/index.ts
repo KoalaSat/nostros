@@ -19,7 +19,7 @@ export const getList: (
   if (tag) {
     notesQuery += ' AND list_tag = ?'
   }
-  const resultSet = await db.execute(notesQuery, [kind, pubKey, tag])
+  const resultSet = db.execute(notesQuery, [kind, pubKey, tag])
   const items: object[] = getItems(resultSet)
   const relays: List[] = items.map((object) => databaseToEntity(object))
   return relays[0]
@@ -31,7 +31,7 @@ export const getRawLists: (db: QuickSQLiteConnection, pubKey: string) => Promise
 ) => {
   const notesQuery = 'SELECT * FROM nostros_lists WHERE pubkey = ?'
 
-  const resultSet = await db.execute(notesQuery, [pubKey])
+  const resultSet = db.execute(notesQuery, [pubKey])
   const items: object[] = getItems(resultSet)
   const lists: Event[] = items.map((object) => evetDatabaseToEntity(object))
 
