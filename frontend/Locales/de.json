@@ -38,6 +38,7 @@
       "Note": "Notiz",
       "Profile": "Profil",
       "About": "Über",
+      "Faq": "",
       "Config": "Einstellungen",
       "Send": "Senden",
       "Relays": "Relays",
@@ -94,6 +95,7 @@
       "followers": "{{followers}} folgen mir",
       "configuration": "Einstellungen",
       "about": "Über Nostros",
+      "faq": "FAQ",
       "reportBug": "Bug melden",
       "logout": "Abmelden"
     },
@@ -478,6 +480,21 @@
       "emptyTitle": "Keine Nachrichten",
       "emptyDescription": "Direkte Nachricht an Kontakt oder andere schreiben",
       "emptyButton": "Unterhaltung beginnen"
+    },
+    "faq": {
+      "searchLabel": "Suche in häufig gestellten Fragen",
+      "note_broadcasting": {
+        "question": "Hinweise: Rundfunk",
+        "answer": "Wenn ein Benutzer eine Notiz oder ein Ereignis in Nostr einstellt, wird diese Information an das Relays gesendet, mit dem der Benutzer verbunden ist. Dank der Funktion zum Senden von Notizen können diese Informationen jedoch an andere Relays im Netzwerk weitergegeben werden, so dass sie eine größere Anzahl von Benutzern erreichen. \n\nDiese Funktion zur Weiterleitung von Notizen trägt dazu bei, dass das Netzwerk und die Relays effizienter und dezentraler arbeiten. Durch die gemeinsame Nutzung der Informationen mit anderen Relays werden die Arbeitslast und die Überlastung der Server des Netzes verringert, was die Leistung und die Fähigkeit des Netzes, eine größere Anzahl von Benutzern zu bedienen, verbessert. Außerdem macht die Dezentralisierung der Informationen Nostr widerstandsfähiger gegen Ausfälle und schwieriger zu zensieren, da die Informationen über mehrere Knoten im Netzwerk verteilt sind."
+      },
+      "notes_colouring": {
+        "Frage": "Notizen: Färbung",
+        "answer": "Diese Funktion zeigt einen Farbbalken neben den in der App angezeigten Beiträgen oder Notizen an. Jede Farbe steht für ein Relays, in dem diese Notiz vorhanden ist. \n\nWenn Sie das Detail einer Notiz öffnen, können Sie die Informationen zu den verschiedenen Relays sehen, in denen sich die Notiz befindet. Dies dient dazu, die Relays besser sichtbar zu machen und ihre Bedeutung im Nostr-Netzwerk hervorzuheben. \n\nDurch die Anzeige der Informationen zu den Relays, an denen sich die Notiz befindet, können Sie sehen, wie die Informationen durch das Nostr-Netzwerk übertragen werden. Außerdem wird durch die Hervorhebung der Bedeutung der Relays die Dezentralisierung gefördert und die Benutzer werden dazu angeregt, sich mit mehr Servern im Netzwerk zu verbinden, was die Effizienz und Ausfallsicherheit des Netzwerks erhöht."
+      },
+      "resilient_login": {
+        "Frage": "Zugang",
+        "answer": "Der 'resilient login' Prozess besteht aus drei Schritten, die dazu beitragen, das Netzwerk stärker und dezentraler zu machen. \n\n1. Verbindung zu zufälligen Relays \nSie stellen eine Verbindung zu 8 Relays her, die nach dem Zufallsprinzip aus einem Pool von Relays ausgewählt werden. Ihr Benutzerprofil und Ihre Relaysliste werden in diesen 8 Relays durchsucht. \n\n2. Suche nach Kontakten in Ihrer Relaysliste \nSie trennen die Verbindung zu den 8 zufällig ausgewählten Relays und verbinden sich mit Ihrer Relaysliste. Ihre Kontakte werden in dieser Liste gesucht. \n\n3. Suchen Sie nach den Relays Ihrer Kontakte \nSie erhalten eine Liste der von Ihren Kontakten verwendeten Relays. Sie können diese Relays zu Ihrer Liste hinzufügen und eine Verbindung zu ihnen herstellen, um das Netzwerk belastbarer zu machen."
+      }
     }
   }
 }

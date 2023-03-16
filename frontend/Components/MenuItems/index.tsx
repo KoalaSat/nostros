@@ -55,6 +55,8 @@ export const MenuItems: React.FC = () => {
       navigate('Feed', { page: 'ProfileConfig' })
     } else if (key === 'about') {
       navigate('About')
+    } else if (key === 'faq') {
+      navigate('Faq')
     } else if (key === 'config') {
       navigate('Config')
     } else if (key === 'contacts') {
@@ -167,8 +169,14 @@ export const MenuItems: React.FC = () => {
             onPress={() => onPressItem('about', 2)}
             onTouchEnd={() => setDrawerItemIndex(-1)}
           />
-        </Drawer.Section>
-        <Drawer.Section showDivider={false}>
+          <Drawer.Item
+            label={t('menuItems.faq')}
+            icon='message-question-outline'
+            key='faq'
+            active={drawerItemIndex === 2}
+            onPress={() => onPressItem('faq', 2)}
+            onTouchEnd={() => setDrawerItemIndex(-1)}
+          />
           <Drawer.Item
             label={t('menuItems.reportBug')}
             icon='bug-outline'
