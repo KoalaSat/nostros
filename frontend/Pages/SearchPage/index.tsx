@@ -51,20 +51,24 @@ export const SearchPage: React.FC<SearchPageProps> = ({ route }) => {
   )
 
   React.useEffect(() => {
-    if (/^#.*/.test(searchInput)) {
+    if (database && /^#.*/.test(searchInput)) {
       const search = searchInput.toLocaleLowerCase()
-      const results = notes.filter((note) =>
-        note.content.toLocaleLowerCase().includes(search.trim()),
-      )
-      setResultsNotes(results)
-      if (results.length > 0) {
-        relayPool?.subscribe('search-hastags-metadata', [
-          {
-            kinds: [Kind.Metadata],
-            authors: results.map((res) => res.pubkey),
-          },
-        ])
-      }
+      getNotes(database, {}).then((results) => {
+        if (results.length > 0) {
+          setNotes(results)
+          setResultsNotes(
+            results.filter((note) => note.content.toLocaleLowerCase().includes(search.trim())),
+          )
+          if (results.length > 0) {
+            relayPool?.subscribe('search-hastags-metadata', [
+              {
+                kinds: [Kind.Metadata],
+                authors: results.map((res) => res.pubkey),
+              },
+            ])
+          }
+        }
+      })
     }
   }, [lastEventId])
 
