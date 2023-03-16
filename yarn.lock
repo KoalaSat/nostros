@@ -1797,10 +1797,10 @@
   resolved "https://registry.yarnpkg.com/@types/prop-types/-/prop-types-15.7.5.tgz#5f19d2b85a98e9558036f6a3cacc8819420f05cf"
   integrity sha512-JCB8C6SnDoQf0cNycqd/35A7MjcnK+ZTqE7judS6o7utxUCg6imJg3QK2qzHKszlTjcj2cn+NwMB2i96ubpj7w==
 
-"@types/react-native-sqlite-storage@^5.0.2":
-  version "5.0.2"
-  resolved "https://registry.yarnpkg.com/@types/react-native-sqlite-storage/-/react-native-sqlite-storage-5.0.2.tgz#eefcc9ea6ff73043bb2945023fa8ee721683b61b"
-  integrity sha512-L3dbsBnvk5OmsaMFSJZHQaAJzCJ6oav3Muvs6e7FBTaj3zPIO0ju+ftfZEh3Kh7YtIl+nfiZKF+BIo9VufjL9A==
+"@types/react-native-sqlite-storage@^6.0.0":
+  version "6.0.0"
+  resolved "https://registry.yarnpkg.com/@types/react-native-sqlite-storage/-/react-native-sqlite-storage-6.0.0.tgz#3d183123f1200744f84b699704a3221ded4cb04b"
+  integrity sha512-bzZLc+DsfSQUcUtZUa5M1Ubi/ud88Pdd3k1nbUCQ1baHHzLg95S0DidCWscDHnnuGFB+18GBbcY7r97ivb0XpA==
 
 "@types/react-native-vector-icons@^6.4.13":
   version "6.4.13"
@@ -1842,11 +1842,6 @@
   version "7.3.13"
   resolved "https://registry.yarnpkg.com/@types/semver/-/semver-7.3.13.tgz#da4bfd73f49bd541d28920ab0e2bf0ee80f71c91"
   integrity sha512-21cFJr9z3g5dW8B0CVI9g2O9beqaThGQ6ZFBqHfwhzLDKUxaqTIy3vnfah/UPkfOiF2pLq+tGz+W8RyCskuslw==
-
-"@types/sqlstring@^2.3.0":
-  version "2.3.0"
-  resolved "https://registry.yarnpkg.com/@types/sqlstring/-/sqlstring-2.3.0.tgz#5960ade0166cfaaa4673fc74ec8157a08d06c89e"
-  integrity sha512-kMFecDYYFk/f5fljO0UFrSPwU1JxY4mIjX6ic7MHv5nD6sEd3NYLoWcOV/3s6Drs7RHdCwTQdD5NdgVl0I2zzg==
 
 "@types/stack-utils@^2.0.0":
   version "2.0.1"
@@ -7834,11 +7829,6 @@ sprintf-js@~1.0.2:
   version "1.0.3"
   resolved "https://registry.yarnpkg.com/sprintf-js/-/sprintf-js-1.0.3.tgz#04e6926f662895354f3dd015203633b857297e2c"
   integrity sha512-D9cPgkvLlV3t3IzL0D0YLvGA9Ahk4PcvVwUbN0dSGr1aP0Nrt4AEnTUbuGvquEC0mA64Gqt1fzirlRs5ibXx8g==
-
-sqlstring@^2.3.3:
-  version "2.3.3"
-  resolved "https://registry.yarnpkg.com/sqlstring/-/sqlstring-2.3.3.tgz#2ddc21f03bce2c387ed60680e739922c65751d0c"
-  integrity sha512-qC9iz2FlN7DQl3+wjwn3802RTyjCx7sDvfQEXchwa6CWOx07/WVfh91gBmQ9fahw8snwGEWU3xGzOt4tFyHLxg==
 
 stack-utils@^2.0.3:
   version "2.0.5"
