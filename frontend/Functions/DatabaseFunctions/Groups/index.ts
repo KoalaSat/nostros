@@ -35,7 +35,7 @@ export const getGroups: (db: QuickSQLiteConnection) => Promise<Group[]> = async 
       nostros_group_meta
     WHERE (deleted = NULL OR deleted = 0)
   `
-  const resultSet = await db.execute(groupsQuery)
+  const resultSet = db.execute(groupsQuery)
   const items: object[] = getItems(resultSet)
   const notes: Group[] = items.map((object) => databaseToGroup(object))
 
@@ -54,7 +54,7 @@ export const getGroup: (db: QuickSQLiteConnection, groupId: string) => Promise<G
     WHERE
       id = ?
   `
-  const resultSet = await db.execute(groupsQuery, [groupId])
+  const resultSet = db.execute(groupsQuery, [groupId])
   const items: object[] = getItems(resultSet)
   const group: Group = databaseToGroup(items[0])
 
@@ -92,7 +92,7 @@ export const getGroupMessages: (
     notesQuery += `LIMIT ${limit}`
   }
 
-  const resultSet = await db.execute(notesQuery)
+  const resultSet = db.execute(notesQuery)
   const items: object[] = getItems(resultSet)
   const messages: GroupMessage[] = items.map((object) => databaseToGroupMessage(object))
 
@@ -174,7 +174,7 @@ export const getRawUserGroupMessages: (
     WHERE pubkey = ? 
     ORDER BY created_at DESC 
   `
-  const resultSet = await db.execute(notesQuery, [pubKey])
+  const resultSet = db.execute(notesQuery, [pubKey])
   const items: object[] = getItems(resultSet)
   const groupMessages: Event[] = items.map((object) => databaseToGroupMessage(object))
 
@@ -189,7 +189,7 @@ export const getRawUserGroups: (
     WHERE pubkey = ? 
     ORDER BY created_at DESC 
   `
-  const resultSet = await db.execute(notesQuery, [pubKey])
+  const resultSet = db.execute(notesQuery, [pubKey])
   const items: object[] = getItems(resultSet)
   const groups: Event[] = items.map((object) => databaseToGroup(object))
 

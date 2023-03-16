@@ -20,7 +20,7 @@ export const getRawUserReactions: (
     WHERE pubkey = ? 
     ORDER BY created_at DESC 
   `
-  const resultSet = await db.execute(notesQuery, [pubKey])
+  const resultSet = db.execute(notesQuery, [pubKey])
   const items: object[] = getItems(resultSet)
   const notes: Event[] = items.map((object) => evetDatabaseToEntity(object))
 
@@ -57,7 +57,7 @@ export const getReactions: (
     `
   }
 
-  const resultSet = await db.execute(reactionsQuery)
+  const resultSet = db.execute(reactionsQuery)
   const items: object[] = getItems(resultSet)
   const reactions: Reaction[] = items.map((object) => databaseToEntity(object))
 
@@ -82,7 +82,7 @@ export const getLastReaction: (
     LIMIT 1
   `
 
-  const resultSet = await db.execute(reactionsQuery)
+  const resultSet = db.execute(reactionsQuery)
   const item: object = getItems(resultSet)[0]
   const reaction: Reaction = databaseToEntity(item)
 

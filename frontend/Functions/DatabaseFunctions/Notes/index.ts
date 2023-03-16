@@ -64,7 +64,7 @@ export const getMainNotes: (
     ORDER BY created_at DESC
     LIMIT ${limit}
   `
-  const resultSet = await db.execute(notesQuery)
+  const resultSet = db.execute(notesQuery)
   const items: object[] = getItems(resultSet)
   const notes: Note[] = items.map((object) => databaseToEntity(object))
 
@@ -98,7 +98,7 @@ export const getReplyNotes: (
     LIMIT ${limit}
   `
 
-  const resultSet = await db.execute(notesQuery)
+  const resultSet = db.execute(notesQuery)
   const items: object[] = getItems(resultSet)
   const notes: Note[] = items.map((object) => databaseToEntity(object))
 
@@ -137,7 +137,7 @@ export const getNoteRelays: (
     WHERE note_id = "${noteId}"
     ORDER BY relay_url
   `
-  const resultSet = await db.execute(relaysQuery)
+  const resultSet = db.execute(relaysQuery)
   const items: object[] = getItems(resultSet)
   const relays: NoteRelay[] = items.map((object) => noteRelayDatabaseToEntity(object))
 
@@ -165,7 +165,7 @@ export const getMentionNotes: (
 
   notesQuery += `ORDER BY created_at DESC`
 
-  const resultSet = await db.execute(notesQuery)
+  const resultSet = db.execute(notesQuery)
   const items: object[] = getItems(resultSet)
   const notes: Note[] = items.map((object) => databaseToEntity(object))
 
@@ -191,7 +191,7 @@ export const getReactedNotes: (
     LIMIT ${limit}
   `
 
-  const resultSet = await db.execute(notesQuery)
+  const resultSet = db.execute(notesQuery)
   const items: object[] = getItems(resultSet)
   const notes: Note[] = items.map((object) => databaseToEntity(object))
 
@@ -216,7 +216,7 @@ export const getRepostedNotes: (
     LIMIT ${limit}
   `
 
-  const resultSet = await db.execute(notesQuery)
+  const resultSet = db.execute(notesQuery)
   const items: object[] = getItems(resultSet)
   const notes: Note[] = items.map((object) => databaseToEntity(object))
 
@@ -312,7 +312,7 @@ export const getLastReply: (
     LIMIT 1
   `
 
-  const resultSet = await db.execute(replyQuery)
+  const resultSet = db.execute(replyQuery)
   const item: object = getItems(resultSet)[0]
   const reaction: Note = databaseToEntity(item)
 
@@ -327,7 +327,7 @@ export const getRawUserNotes: (
     WHERE pubkey = ? 
     ORDER BY created_at DESC 
   `
-  const resultSet = await db.execute(notesQuery, [pubKey])
+  const resultSet = db.execute(notesQuery, [pubKey])
   const items: object[] = getItems(resultSet)
   const notes: Event[] = items.map((object) => evetDatabaseToEntity(object))
 
@@ -394,7 +394,7 @@ export const getNotes: (
     notesQuery += `LIMIT ${limit}`
   }
 
-  const resultSet = await db.execute(notesQuery)
+  const resultSet = db.execute(notesQuery)
   const items: object[] = getItems(resultSet)
   const notes: Note[] = items.map((object) => databaseToEntity(object))
 

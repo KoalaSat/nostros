@@ -123,7 +123,7 @@ export const HomeNavigator: React.FC = () => {
                     <Appbar.Action
                       icon='menu'
                       isLeading
-                      onPress={() => (navigation as any as DrawerNavigationProp<{}>).openDrawer()}
+                      onPress={() => (navigation as any as DrawerNavigationProp<any>).openDrawer()}
                     />
                   ) : null}
                   <Appbar.Content

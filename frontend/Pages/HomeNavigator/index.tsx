@@ -73,12 +73,12 @@ export const HomeNavigator: React.FC = () => {
               const leftAction: () => JSX.Element = () => {
                 if (back && route.name !== 'ProfileLoad') {
                   return <Appbar.BackAction onPress={() => navigation.goBack()} />
-                } else if ((navigation as any as DrawerNavigationProp<{}>).openDrawer) {
+                } else if ((navigation as any as DrawerNavigationProp<any>).openDrawer) {
                   return (
                     <Appbar.Action
                       icon='menu'
                       isLeading
-                      onPress={() => (navigation as any as DrawerNavigationProp<{}>).openDrawer()}
+                      onPress={() => (navigation as any as DrawerNavigationProp<any>).openDrawer()}
                     />
                   )
                 } else {

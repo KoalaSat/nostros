@@ -56,7 +56,7 @@ export const getMostZapedNotes: (
     ORDER BY total DESC
     LIMIT ${limit}
   `
-  const resultSet = await db.execute(zapsQuery)
+  const resultSet = db.execute(zapsQuery)
   const items: object[] = getItems(resultSet)
   const zaps: Zap[] = items.map((object) => databaseToEntity(object))
 
@@ -79,7 +79,7 @@ export const getMostZapedNotesContacts: (
     GROUP BY nostros_zaps.zapped_event_id
     ORDER BY total DESC
   `
-  const resultSet = await db.execute(zapsQuery)
+  const resultSet = db.execute(zapsQuery)
   const items: object[] = getItems(resultSet)
   const zaps: Zap[] = items.map((object) => databaseToEntity(object))
 
@@ -100,7 +100,7 @@ export const getUserZaps: (
     AND created_at > ${limitDate}
   `
 
-  const resultSet = await db.execute(groupsQuery)
+  const resultSet = db.execute(groupsQuery)
   const items: object[] = getItems(resultSet)
   const zaps: Zap[] = items.map((object) => databaseToEntity(object))
 
@@ -138,7 +138,7 @@ export const getZaps: (
       LIMIT ${filters.limit}
     `
   }
-  const resultSet = await db.execute(groupsQuery)
+  const resultSet = db.execute(groupsQuery)
   const items: object[] = getItems(resultSet)
   const zaps: Zap[] = items.map((object) => databaseToEntity(object))
 

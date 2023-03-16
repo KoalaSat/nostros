@@ -1,4 +1,3 @@
-import { FlashList } from '@shopify/flash-list'
 import * as React from 'react'
 import { useTranslation } from 'react-i18next'
 import {
@@ -8,7 +7,7 @@ import {
   LayoutAnimation,
   Platform,
   UIManager,
-  ListRenderItem,
+  type ListRenderItem,
   FlatList,
 } from 'react-native'
 import { List, Searchbar, useTheme } from 'react-native-paper'
@@ -36,11 +35,7 @@ const FAQ: React.FC<{ item: FAQItem }> = ({ item }) => {
         setExpanded((prev) => !prev)
       }}
     >
-      <Text
-        numberOfLines={expanded ? undefined : 3}
-      >
-        {item.answer}
-      </Text>
+      <Text numberOfLines={expanded ? undefined : 3}>{item.answer}</Text>
     </List.Accordion>
   )
 }
@@ -103,7 +98,7 @@ const FaqPage: React.FC = () => {
   return (
     <View style={[styles.container, { backgroundColor: theme.colors.background }]}>
       <Searchbar placeholder={t('faq.searchLabel') ?? ''} value={search} onChangeText={setSearch} />
-      <FlatList data={visibleFaqs} renderItem={renderItem} style={styles.list}/>
+      <FlatList data={visibleFaqs} renderItem={renderItem} style={styles.list} />
     </View>
   )
 }
@@ -111,7 +106,7 @@ const FaqPage: React.FC = () => {
 const styles = StyleSheet.create({
   container: {
     padding: 16,
-    flex: 1
+    flex: 1,
   },
 })
 
