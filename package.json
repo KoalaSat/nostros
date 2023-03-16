@@ -13,6 +13,7 @@
   "dependencies": {
     "@eva-design/eva": "^2.1.0",
     "@react-native-clipboard/clipboard": "^1.11.2",
+    "@react-native-community/cli-platform-android": "^10.2.0",
     "@react-navigation/bottom-tabs": "^6.5.3",
     "@react-navigation/drawer": "^6.5.7",
     "@react-navigation/native": "^6.1.2",
@@ -36,7 +37,7 @@
     "react": "18.2.0",
     "react-content-loader": "^6.2.0",
     "react-i18next": "^12.2.0",
-    "react-native": "0.70.6",
+    "react-native": "0.71.4",
     "react-native-action-button": "^2.8.5",
     "react-native-bidirectional-infinite-scroll": "^0.3.3",
     "react-native-blob-util": "^0.17.1",
