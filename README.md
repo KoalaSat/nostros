@@ -6,7 +6,7 @@
 
 <center><a href="https://apt.izzysoft.de/fdroid/index/apk/com.nostros" target="_blank" rel="noopener noreferrer"><img src="https://gitlab.com/IzzyOnDroid/repo/-/raw/master/assets/IzzyOnDroid.png" width="170"></a></center>
 
-[![image](https://user-images.githubusercontent.com/4659020/218828666-bc52d827-df86-4d62-998a-2f3eb751065e.png)](https://nostros.net/)
+[![image](https://user-images.githubusercontent.com/4659020/225482880-07677ab8-0315-4f9c-bd2d-722538c9f9a2.png)](https://nostros.net/)
 
 # Getting Started
 
