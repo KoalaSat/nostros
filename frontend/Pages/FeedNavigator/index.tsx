@@ -8,6 +8,7 @@ import { useTranslation } from 'react-i18next'
 import HomePage from '../HomePage'
 import RelaysPage from '../RelaysPage'
 import AboutPage from '../AboutPage'
+import FaqPage from '../FaqPage'
 import ProfileConfigPage from '../ProfileConfigPage'
 import ProfilePage from '../ProfilePage'
 import ProfileCard from '../../Components/ProfileCard'
@@ -189,6 +190,7 @@ export const HomeNavigator: React.FC = () => {
           <Stack.Screen name='Contacts' component={ContactsPage} />
           <Stack.Screen name='Relays' component={RelaysPage} />
           <Stack.Screen name='About' component={AboutPage} />
+          <Stack.Screen name='Faq' component={FaqPage} />
           <Stack.Screen name='Config' component={ConfigPage} />
           <Stack.Screen name='ProfileConfig' component={ProfileConfigPage} />
           <Stack.Screen name='Profile' component={ProfilePage} />

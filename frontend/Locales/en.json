@@ -28,6 +28,7 @@
       "Note": "Note",
       "Profile": "Profile",
       "About": "About",
+      "Faq": "FAQ",
       "Config": "Config",
       "Send": "Send",
       "Relays": "Relays",
@@ -96,6 +97,7 @@
       "followers": "{{followers}} followers",
       "configuration": "Configuration",
       "about": "About",
+      "faq": "FAQ",
       "contacts": "Contacts",
       "reportBug": "Report a bug",
       "logout": "Logout"
@@ -486,6 +488,21 @@
       "emptyTitle": "You don't have any message",
       "emptyDescription": "Write direct messages to your contacts or others.",
       "emptyButton": "Open a conversation"
+    },
+    "faq": {
+      "searchLabel": "Search in Frequently Asked Questions",
+      "note_broadcasting": {
+        "question": "Notes: broadcasting",
+        "answer": "When a user posts a note or event in Nostr, that information is sent to the relay to which that user is connected. However, thanks to the note broadcasting feature, that information can be shared with other relays in the network so that it reaches a larger number of users. \n\nThis note broadcasting functionality helps the network and the relays to be more efficient and decentralized. By sharing the information with other relays, the workload and congestion on the network's servers are reduced, which improves performance and the network's ability to handle a larger number of users. Additionally, the decentralization of information makes Nostr more resilient to failures and harder to censor, as the information is distributed across multiple nodes in the network."
+      },
+      "notes_colouring": {
+        "question": "Notes: coloring",
+        "answer": "This feature displays a color bar next to the posts or notes displayed in the app. Each color represents a relay in which that note is present. \n\nUpon opening the detail of a note, you can see the information of the different relays where the note is located. This is done to give more visibility to the relays and highlight their importance in the Nostr network. \n\nBy displaying the information of the relays where the note is located, you can see how the information is transmitted through the Nostr network. In addition, by highlighting the importance of the relays, decentralization is encouraged and users are incentivized to connect to more servers in the network, which increases the efficiency and resiliency of the network."
+      },
+      "resilient_login": {
+        "question": "Access",
+        "answer": "The 'resilient login' process consists of three steps that help make the network stronger and more decentralized. \n\n1. Connection to random relays \nYou will connect to 8 relays chosen at random from a pool of relays. Your user profile and relay list will be searched in these 8 relays. \n\n2. Search for contacts in your relay list \nDisconnect from the 8 random relays and connect to your relay list. Your contacts will be searched in this list. \n\n3. Search for your contacts' relays \nYou will see a list of the relays used by your contacts. You can add these relays to your list and connect to them, making the network more resilient."
+      }
     }
   }
 }

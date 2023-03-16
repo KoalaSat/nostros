@@ -38,6 +38,7 @@
       "Note": "Nota",
       "Profile": "Perfil",
       "About": "About",
+      "Faq": "Preguntas frecuentes",
       "Config": "Configuración",
       "Send": "Send",
       "Relays": "Relays",
@@ -115,6 +116,7 @@
       "followers": "{{followers}} seguidores",
       "configuration": "Configuración",
       "about": "Sobre Nostros",
+      "faq": "Preguntas frecuentes",
       "reportBug": "Reportar un bug",
       "logout": "Salir"
     },
@@ -465,6 +467,21 @@
       "emptyTitle": "No tienes mensajes",
       "emptyDescription": "Escribe un mensaje directo a tus contactos u otros.",
       "emptyButton": "Abrir una conversación"
+    },
+    "faq": {
+      "searchLabel": "Buscar en preguntas frecuentes",
+      "note_broadcasting": {
+        "question": "Notas: transmisión",
+        "answer": "Cuando un usuario publica una nota o evento en Nostr, esa información es enviada al relay al que está conectado ese usuario. Sin embargo, gracias a la característica de transmisión de notast, esa información puede ser compartida con otros relays de la red de manera que llegue a un mayor número de usuarios. \n\nEsta funcionalidad de transmisión de notas ayuda a la red y a los relays a ser más eficientes y descentralizados. Al compartir la información con otros relays, se reduce la carga de trabajo y la congestión en los servidores de la red, lo que mejora el rendimiento y la capacidad de la red para manejar un mayor número de usuarios. Además, la descentralización de la información hace que Nostr sea más resistente a los fallos y más difícil de censurar, ya que la información está distribuida en múltiples nodos de la red."
+      },
+      "notes_colouring": {
+        "question": "Notas: coloreado",
+        "answer": "Esta característica muestra una barra de colores junto a las publicaciones o notas que se visualizan en la app. Cada color representa un relay en el que esa nota está presente. \n\nAl abrir el detalle de una nota, se puede ver la información de los diferentes relays en los que se encuentra la nota. Esto se hace para darle más visibilidad a los relays y resaltar su importancia en la red de Nostr. \n\nAl mostrar la información de los relays en los que se encuentra la nota, se puede apreciar cómo la información se transmite a través de la red de Nostr. Además, al destacar la importancia de los relays, se fomenta la descentralización y se incentiva a los usuarios a conectarse a más servidores en la red, lo que aumenta la eficiencia y la resistencia de la red."
+      },
+      "resilient_login": {
+        "question": "Acceso",
+        "answer": "El proceso de 'inicio de sesión resiliente' consta de tres pasos que ayudan a que la red sea más sólida y descentralizada. \n\n1. Conexión a relays aleatorios \nTe conectarás a 8 relays elegidos al azar de un pool de relays. Tu perfil de usuario y tu lista de relays se buscarán en estos 8 relays. \n\n2. Buscar contactos en su lista de relays \nDesconexión de los 8 relays aleatorios y conexión tu lista de relays. Tus contactos se buscarán en esta lista. \n\n3. Buscar los relays de tus contactos \nVerás una lista de los relays utilizados por tus contactos. Puedes añadir estos relays a tu lista y conectarte a ellos, haciendo la red más resistente."
+      }
     }
   }
 }

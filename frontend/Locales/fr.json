@@ -38,6 +38,7 @@
       "Note": "Note",
       "Profile": "Profil",
       "About": "À propos de Nostros",
+      "Faq": "FAQ",
       "Config": "Configuration",
       "Send": "Envoyer",
       "Relays": "Relais",
@@ -115,6 +116,7 @@
       "followers": "{{followers}} abonnés",
       "configuration": "Configuration",
       "about": "À propos de Nostros",
+      "faq": "FAQ",
       "reportBug": "Report a bug",
       "logout": "Sortir"
     },
@@ -448,6 +450,21 @@
       "emptyTitle": "Vous n'avez pas de messages",
       "emptyDescription": "Écrivez un message direct à vos contacts ou à d'autres personnes.",
       "emptyButton": "Ouvrir une conversation"
+    },
+    "faq": {
+      "searchLabel": "Rechercher dans la FAQ",
+      "note_broadcasting": {
+        "question": "Notes : diffusion",
+        "answer": "Lorsqu'un utilisateur publie une note ou un événement dans Nostr, ces informations sont envoyées au relais auquel l'utilisateur est connecté. Cependant, grâce à la fonctionnalité de diffusion des notes, ces informations peuvent être partagées avec d'autres relais du réseau afin d'atteindre un plus grand nombre d'utilisateurs. \n\nCette fonctionnalité de diffusion des notes permet au réseau et aux relais d'être plus efficaces et décentralisés. En partageant les informations avec d'autres relais, la charge de travail et la congestion sur les serveurs du réseau sont réduites, ce qui améliore les performances et la capacité du réseau à gérer un plus grand nombre d'utilisateurs. De plus, la décentralisation des informations rend Nostr plus résistant aux pannes et plus difficile à censurer, car les informations sont réparties sur plusieurs nœuds du réseau."
+      },
+      "notes_colouring": {
+        "question": "Notes : coloration",
+        "answer": "Cette fonctionnalité affiche une barre de couleurs à côté des publications ou des notes affichées dans l'application. Chaque couleur représente un relais dans lequel cette note est présente. \n\nEn ouvrant le détail d'une note, vous pouvez voir les informations des différents relais où se trouve la note. Ceci est fait pour donner plus de visibilité aux relais et mettre en évidence leur importance dans le réseau Nostr. \n\nEn affichant les informations des relais où se trouve la note, vous pouvez voir comment les informations sont transmises à travers le réseau Nostr. De plus, en mettant en évidence l'importance des relais, la décentralisation est encouragée et les utilisateurs sont incités à se connecter à plus de serveurs sur le réseau, ce qui augmente l'efficacité et la résilience du réseau."
+      },
+      "resilient_login": {
+        "question": "Accès",
+        "answer": "Le processus de 'connexion résiliente' se compose de trois étapes qui contribuent à rendre le réseau plus solide et décentralisé. \n\n1. Connexion aux relais aléatoires \nVous vous connecterez à 8 relais choisis au hasard dans un pool de relais. Votre profil d'utilisateur et votre liste de relais seront recherchés dans ces 8 relais. \n\n2. Recherche des contacts dans votre liste de relais \nDéconnexion des 8 relais aléatoires et connexion à votre liste de relais. Vos contacts seront recherchés dans cette liste. \n\n3. Recherche des relais de vos contacts \nVous verrez une liste des relais utilisés par vos contacts. Vous pouvez ajouter ces relais à votre liste et vous y connecter, rendant le réseau plus résistant."
+      }
     }
   }
 }
