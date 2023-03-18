@@ -163,7 +163,7 @@ export const MenuItems: React.FC = () => {
         <Drawer.Section showDivider={false}>
           <Drawer.Item
             label={t('menuItems.about')}
-            icon='message-question-outline'
+            icon='information-outline'
             key='about'
             active={drawerItemIndex === 2}
             onPress={() => onPressItem('about', 2)}
@@ -171,7 +171,7 @@ export const MenuItems: React.FC = () => {
           />
           <Drawer.Item
             label={t('menuItems.faq')}
-            icon='message-question-outline'
+            icon='comment-question-outline'
             key='faq'
             active={drawerItemIndex === 2}
             onPress={() => onPressItem('faq', 2)}

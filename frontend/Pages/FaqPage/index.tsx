@@ -25,6 +25,7 @@ interface FAQItem {
 
 const FAQ: React.FC<{ item: FAQItem }> = ({ item }) => {
   const [expanded, setExpanded] = React.useState<boolean>(false)
+  const theme = useTheme()
 
   return (
     <List.Accordion
@@ -34,8 +35,9 @@ const FAQ: React.FC<{ item: FAQItem }> = ({ item }) => {
         LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut)
         setExpanded((prev) => !prev)
       }}
+      titleStyle={styles.faqItemTitle}
     >
-      <Text numberOfLines={expanded ? undefined : 3}>{item.answer}</Text>
+      <Text numberOfLines={expanded ? undefined : 3} style={StyleSheet.flatten([{color: theme.colors.onBackground}, styles.faqItemContent])}>{item.answer}</Text>
     </List.Accordion>
   )
 }
@@ -63,6 +65,36 @@ const FaqPage: React.FC = () => {
           id: 3,
           question: t('faq.resilient_login.question'),
           answer: t('faq.resilient_login.answer'),
+          group: '',
+        },
+        {
+          id: 4,
+          question: t('faq.what_are_zaps.question'),
+          answer: t('faq.what_are_zaps.answer'),
+          group: '',
+        },
+        {
+          id: 5,
+          question: t('faq.what_are_relays.question'),
+          answer: t('faq.what_are_relays.answer'),
+          group: '',
+        },
+        {
+          id: 6,
+          question: t('faq.relays_paid_vs_free.question'),
+          answer: t('faq.relays_paid_vs_free.answer'),
+          group: '',
+        },
+        {
+          id: 7,
+          question: t('faq.what_are_nips.question'),
+          answer: t('faq.what_are_nips.answer'),
+          group: '',
+        },
+        {
+          id: 8,
+          question: t('faq.nostros_nip_support.question'),
+          answer: t('faq.nostros_nip_support.answer'),
           group: '',
         },
       ]
@@ -108,6 +140,13 @@ const styles = StyleSheet.create({
     padding: 16,
     flex: 1,
   },
+  faqItemTitle: {
+    fontSize: 18
+  },
+  faqItemContent: {
+    fontSize: 16,
+    lineHeight: 24,
+  }
 })
 
 export default FaqPage
