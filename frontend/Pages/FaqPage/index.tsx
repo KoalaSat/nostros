@@ -37,7 +37,12 @@ const FAQ: React.FC<{ item: FAQItem }> = ({ item }) => {
       }}
       titleStyle={styles.faqItemTitle}
     >
-      <Text numberOfLines={expanded ? undefined : 3} style={StyleSheet.flatten([{color: theme.colors.onBackground}, styles.faqItemContent])}>{item.answer}</Text>
+      <Text
+        numberOfLines={expanded ? undefined : 3}
+        style={StyleSheet.flatten([{ color: theme.colors.onBackground }, styles.faqItemContent])}
+      >
+        {item.answer}
+      </Text>
     </List.Accordion>
   )
 }
@@ -130,7 +135,7 @@ const FaqPage: React.FC = () => {
   return (
     <View style={[styles.container, { backgroundColor: theme.colors.background }]}>
       <Searchbar placeholder={t('faq.searchLabel') ?? ''} value={search} onChangeText={setSearch} />
-      <FlatList data={visibleFaqs} renderItem={renderItem} style={styles.list} />
+      <FlatList data={visibleFaqs} renderItem={renderItem} />
     </View>
   )
 }
@@ -141,12 +146,12 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   faqItemTitle: {
-    fontSize: 18
+    fontSize: 18,
   },
   faqItemContent: {
     fontSize: 16,
     lineHeight: 24,
-  }
+  },
 })
 
 export default FaqPage

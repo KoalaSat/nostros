@@ -14,10 +14,9 @@ import { Kind } from 'nostr-tools'
 import { UserContext } from '../../../Contexts/UserContext'
 import { ActivityIndicator, Button, Divider, Text, useTheme } from 'react-native-paper'
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'
-import { useTranslation } from 'react-i18next'
 import { navigate } from '../../../lib/Navigation'
 import { useFocusEffect } from '@react-navigation/native'
-import { format, formatRelative, fromUnixTime, getUnixTime } from 'date-fns'
+import { format, fromUnixTime, getUnixTime } from 'date-fns'
 import { FlashList, type ListRenderItem } from '@shopify/flash-list'
 import { getETags } from '../../../Functions/RelayFunctions/Events'
 import { getReactions, type Reaction } from '../../../Functions/DatabaseFunctions/Reactions'
@@ -25,10 +24,11 @@ import { getUsers, type User } from '../../../Functions/DatabaseFunctions/Users'
 import { username } from '../../../Functions/RelayFunctions/Users'
 import { TouchableWithoutFeedback } from 'react-native-gesture-handler'
 import { getUserZaps, type Zap } from '../../../Functions/DatabaseFunctions/Zaps'
-import { handleInfinityScroll } from '../../../Functions/NativeFunctions'
+import { formatDate, handleInfinityScroll } from '../../../Functions/NativeFunctions'
+import { useTranslation } from 'react-i18next'
 
 export const NotificationsFeed: React.FC = () => {
-  const initialLimitDate = React.useMemo(() => getUnixTime(new Date()) - 43200, [])
+  const initialLimitDate = React.useMemo(() => getUnixTime(new Date()) - 86400, [])
   const theme = useTheme()
   const { t } = useTranslation('common')
   const { database, setNotificationSeenAt, pushedTab, getSatoshiSymbol } = useContext(AppContext)
@@ -238,7 +238,6 @@ export const NotificationsFeed: React.FC = () => {
 
   const renderItem: ListRenderItem<Note | Reaction | Zap> = ({ item }) => {
     const date = fromUnixTime(item.created_at)
-
     const { user, icon, iconColor, description, content, eventId } = generateItemVariables(item)
 
     return (
@@ -265,9 +264,7 @@ export const NotificationsFeed: React.FC = () => {
             </Text>
           </View>
           <View style={styles.itemCardDates}>
-            <Text style={styles.itemCardDatesText}>
-              {formatRelative(date, new Date()).split(' at ')[0]}
-            </Text>
+            <Text style={styles.itemCardDatesText}>{formatDate(item.created_at, false)}</Text>
             <Text style={styles.itemCardDatesText}>{format(date, 'HH:mm')}</Text>
           </View>
         </View>

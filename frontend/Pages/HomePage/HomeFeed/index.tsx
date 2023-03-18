@@ -109,7 +109,7 @@ export const HomeFeed: React.FC<HomeFeedProps> = ({ navigation }) => {
   return (
     <View>
       <Tabs
-        tabs={['globalFeed', 'myFeed', 'zaps', 'bookmarks']}
+        tabs={['myFeed', 'globalFeed', 'zaps', 'bookmarks']}
         setActiveTab={setActiveTab}
         defaultTab='myFeed'
       />

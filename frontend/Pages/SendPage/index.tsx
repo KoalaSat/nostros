@@ -174,8 +174,6 @@ export const SendPage: React.FC<SendPageProps> = ({ route }) => {
             value={content}
             onChangeText={onChangeText}
             scrollEnabled
-            // cursorColor={theme.colors.inverseOnSurface}
-            // selectionColor={theme.colors.inverseOnSurface}
           />
         </View>
       </ScrollView>

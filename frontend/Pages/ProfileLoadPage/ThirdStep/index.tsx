@@ -1,9 +1,8 @@
 import React, { useContext, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { FlatList, type ListRenderItem, ScrollView, StyleSheet, View } from 'react-native'
-import { Button, Divider, List, Text } from 'react-native-paper'
+import { type ListRenderItem, StyleSheet, View, FlatList } from 'react-native'
+import { Button, Card, Divider, List, Text, useTheme } from 'react-native-paper'
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'
-import Logo from '../../../Components/Logo'
 import { AppContext } from '../../../Contexts/AppContext'
 import { RelayPoolContext } from '../../../Contexts/RelayPoolContext'
 import { UserContext } from '../../../Contexts/UserContext'
@@ -17,9 +16,11 @@ import { getContactsRelays } from '../../../Functions/RelayFunctions/Metadata'
 
 interface ThirdStepProps {
   nextStep: () => void
+  skip: () => void
 }
 
-export const ThirdStep: React.FC<ThirdStepProps> = ({ nextStep }) => {
+export const ThirdStep: React.FC<ThirdStepProps> = ({ nextStep, skip }) => {
+  const theme = useTheme()
   const { t } = useTranslation('common')
   const { database } = useContext(AppContext)
   const { relayPool, relayPoolReady, lastEventId, relays, addRelayItem } =
@@ -28,18 +29,21 @@ export const ThirdStep: React.FC<ThirdStepProps> = ({ nextStep }) => {
   const [asignation, setAsignation] = useState<string[]>()
   const [contactsRelays, setContactsRelays] = useState<RelayMetadata[]>([])
 
-  React.useEffect(() => {
-    loadPetsRelays()
-  }, [])
-
-  React.useEffect(() => {
+  const calculateRelays: () => void = () => {
     if (database) {
       getAllRelayMetadata(database).then((relayMetadata) => {
         setContactsRelays(relayMetadata)
         getContactsRelays(relays, relayMetadata).then(setAsignation)
       })
     }
-  }, [lastEventId])
+  }
+
+  React.useEffect(() => {
+    loadPetsRelays()
+    calculateRelays()
+  }, [])
+
+  React.useEffect(calculateRelays, [lastEventId])
 
   const loadPetsRelays: () => void = () => {
     if (database && publicKey && relayPoolReady) {
@@ -86,48 +90,56 @@ export const ThirdStep: React.FC<ThirdStepProps> = ({ nextStep }) => {
     <View style={styles.container}>
       <View>
         <View style={styles.loadingProfile}>
-          <Text variant='titleMedium'>{t('profileLoadPage.connectedRelays')}</Text>
-          <Text variant='titleMedium' style={{ color: '#7ADC70' }}>
-            {relays.length}
+          <Text style={{ color: theme.colors.onSurfaceVariant }} variant='titleMedium'>
+            {t('profileLoadPage.connectingRandomRelays')}
           </Text>
-        </View>
-        <View style={styles.logo}>
-          <Logo onlyIcon size='medium' />
+          <MaterialCommunityIcons
+            style={{ color: '#7ADC70' }}
+            name='check-circle-outline'
+            size={20}
+          />
         </View>
         <View style={styles.loadingProfile}>
-          <Text variant='titleMedium' style={styles.center}>
-            {t('profileLoadPage.contactRelaysDescription')}
+          <Text style={{ color: theme.colors.onSurfaceVariant }} variant='titleMedium'>
+            {t('profileLoadPage.searchContacts')}
           </Text>
+          <MaterialCommunityIcons
+            style={{ color: '#7ADC70' }}
+            name='check-circle-outline'
+            size={20}
+          />
         </View>
         <View style={styles.loadingProfile}>
-          <Text variant='titleMedium'>{t('profileLoadPage.contactsRelays')}</Text>
-          <Text variant='titleMedium' style={{ color: '#7ADC70' }}>
-            {contactsRelays.length}
+          <Text variant='titleMedium'>{t('profileLoadPage.searchContactsRelays')}</Text>
+        </View>
+        <View style={styles.loadingProfile}>
+          <Text style={{ color: theme.colors.onSurfaceVariant }}>
+            {t('profileLoadPage.searchContactsRelaysDescription')}
           </Text>
         </View>
-        <View style={styles.list}>
-          <View style={styles.titleWrapper}>
-            <Text style={styles.title} variant='titleMedium'>
-              {t('profileLoadPage.contactRelays')}
-            </Text>
-            <Divider />
-          </View>
-          <ScrollView horizontal={false}>
+        <Card style={styles.card}>
+          <Card.Content>
+            <View style={styles.loadingProfile}>
+              <Text>{t('profileLoadPage.contatcsRelays')}</Text>
+              <Text style={{ color: '#7ADC70' }}>
+                {t('profileLoadPage.contatcsRelaysCount', { activeRelays: contactsRelays.length })}
+              </Text>
+            </View>
             <FlatList
               showsVerticalScrollIndicator={false}
               data={asignation}
               renderItem={renderItem}
               ItemSeparatorComponent={Divider}
             />
-          </ScrollView>
-        </View>
+          </Card.Content>
+        </Card>
       </View>
       <View style={styles.buttons}>
-        <Button mode='contained' onPress={connect}>
-          {t('profileLoadPage.connect')}
+        <Button style={styles.button} mode='outlined' onPress={skip}>
+          {t('profileLoadPage.skip')}
         </Button>
-        <Button mode='outlined' onPress={() => setUserState('ready')}>
-          {t('profileLoadPage.home')}
+        <Button mode='contained' onPress={connect} disabled={contactsRelays === undefined}>
+          {t('profileLoadPage.connectAccess')}
         </Button>
       </View>
     </View>
@@ -141,54 +153,31 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   buttons: {
-    height: 100,
     justifyContent: 'space-between',
+  },
+  button: {
+    marginBottom: 16,
   },
   logo: {
     justifyContent: 'center',
     alignContent: 'center',
     flexDirection: 'row',
   },
-  list: {
-    maxHeight: 450,
-  },
   center: {
     alignContent: 'center',
     textAlign: 'center',
   },
+  card: {
+    marginBottom: 16,
+  },
   loadingProfile: {
-    justifyContent: 'center',
-    alignContent: 'center',
     flexDirection: 'row',
-  },
-  activityIndicator: {
-    paddingRight: 16,
-  },
-  titleWrapper: {
-    marginBottom: 4,
-    marginTop: 24,
-  },
-  title: {
-    paddingLeft: 16,
-    paddingRight: 16,
-    marginBottom: 8,
-    flexDirection: 'row',
+    marginBottom: 16,
     justifyContent: 'space-between',
   },
   relayItem: {
     paddingLeft: 16,
     paddingRight: 16,
-  },
-  relayButtons: {
-    paddingBottom: 16,
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-  },
-  relayButton: {
-    marginRight: 16,
-  },
-  relayActionButtons: {
-    flexDirection: 'row',
   },
   relayColor: {
     paddingTop: 9,

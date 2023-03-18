@@ -63,6 +63,23 @@ export const ProfileCreatePage: React.FC<ProfileCreatePageProps> = ({ navigation
     }
   }
 
+  const publishRelays: () => void = () => {
+    if (publicKey) {
+      const activeRelays = relays.filter(
+        (relay) => relay?.active && (!relay.resilient || relay.resilient < 0),
+      )
+      const tags: string[][] = activeRelays.map((relay) => ['r', relay.url ?? '', relay.mode ?? ''])
+      const event: Event = {
+        content: '',
+        created_at: getUnixTime(new Date()),
+        kind: 10002,
+        pubkey: publicKey,
+        tags,
+      }
+      sendEvent(event)
+    }
+  }
+
   const onPress: () => void = () => {
     if (step > 1) {
       if (publicKey) {
@@ -77,6 +94,7 @@ export const ProfileCreatePage: React.FC<ProfileCreatePageProps> = ({ navigation
       }
       if (validConfirmation()) {
         setPrivateKey(key)
+        publishRelays()
         setUserState('ready')
       } else {
         setShowNotification('wrongWords')
@@ -88,6 +106,7 @@ export const ProfileCreatePage: React.FC<ProfileCreatePageProps> = ({ navigation
 
   const onPressSkip: () => void = () => {
     setPrivateKey(key)
+    publishRelays()
     setUserState('ready')
   }
 

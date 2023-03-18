@@ -35,7 +35,7 @@ import { UserContext } from '../../Contexts/UserContext'
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'
 import { useFocusEffect } from '@react-navigation/native'
 import { Kind } from 'nostr-tools'
-import { formatDate, handleInfinityScroll } from '../../Functions/NativeFunctions'
+import { handleInfinityScroll } from '../../Functions/NativeFunctions'
 import NostrosAvatar from '../../Components/NostrosAvatar'
 import UploadImage from '../../Components/UploadImage'
 import { Swipeable } from 'react-native-gesture-handler'
@@ -249,7 +249,7 @@ export const ConversationPage: React.FC<ConversationPageProps> = ({ route }) => 
                 />
               </View>
             )}
-            <Text>{formatDate(message?.created_at)}</Text>
+            <Text>{formatHour(message?.created_at)}</Text>
           </View>
         </View>
         {message ? (

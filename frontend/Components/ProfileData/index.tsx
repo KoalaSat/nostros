@@ -13,7 +13,7 @@ interface ProfileCardProps {
   publicKey?: string
   lnurl?: string
   lnAddress?: string
-  validNip05?: number
+  validNip05?: number | undefined
   nip05?: string
   picture?: string
   avatarSize?: number
