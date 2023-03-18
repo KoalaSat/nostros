@@ -12,25 +12,15 @@
       "privateKeysSnackbarTitle": "Wichtig!",
       "privateKeysSnackbarDescription": "Verwahre den privaten Schlüssel an einem sicheren Ort. Geht der Schlüssel verloren, kann er nicht wiederhergestellt werden. Das Konto kann nie wieder benutzt werden."
     },
-    "searchPage": {
-      "placeholder": "Look for public keys, notes...",
-      "emptyTitle": "Tip",
-      "emptyDescription": "Start typing @ to find someone\n\nStart typing # to search topics"
-    },
-    "qrReaderPage": {
-      "emptyTitle": "Berechtigung nicht gewährt",
-      "emptyDescription": "Nostros Kamera Berechtigungen gewähren um QRCodes zu scannen",
-      "QRreader": "QR Leser"
-    },
     "homeNavigator": {
-      "Group": "",
-      "QrReader": "",
+      "ProfileCreate": "Profil anlegen",
       "Search": "",
       "ImageGallery": "",
-      "ProfileCreate": "Profil anlegen",
       "ProfileConnect": "",
+	  "Group": "",
       "ProfileLoad": "",
       "Landing": "",
+      "QrReader": "",
       "Contacts": "Kontakte",
       "Conversation": "Unterhaltung",
       "Reply": "Antworten",
@@ -38,29 +28,36 @@
       "Note": "Notiz",
       "Profile": "Profil",
       "About": "Über",
-      "Faq": "",
+      "Faq": "FAQ",
       "Config": "Einstellungen",
       "Send": "Senden",
       "Relays": "Relays",
       "ProfileConfig": "Mein Profil",
       "markAllRead": "Alle als gelesen markieren"
     },
+    "searchPage": {
+      "placeholder": "Suche nach öffentlichen Schlüsseln, Notizen, hashtags...",
+      "emptyTitle": "Tip",
+      "emptyDescription": "Tippe @ um jemanden zu finden\n\nTippe # um nach Themen zu suchen"
+    },
+ 
     "conversationPage": {
-      "unableDecypt": "{{username}} is talking with others about you",
+      "unableDecypt": "{{username}} hat dich erwähnt",
       "typeMessage": "Nachricht schreiben",
       "notifications": {
         "privateMessageSendError": "Fehler beim Senden der Nachricht."
       }
     },
     "profileLoadPage": {
-      "contactsRelays": "Lists of relays ",
-      "foundRelays": "Relays found",
-      "searchingContacts": "Searching for your contacts",
-      "retry": "Retry",
-      "connectedRelays": "Connected relays ",
-      "nextStep": "Next step",
-      "searchingRelays": "Searching for your relays",
-      "reconnectOther": "Reconnect to other relays",
+      "contactsRelays": "Relay Liste",
+      "connect": "Verbinden und zum Start gehen",
+      "foundRelays": "Relays gefunden",
+      "searchingContacts": "Suche nach deinen Kontakten",
+      "retry": "Wiederholen",
+      "connectedRelays": "Relays verbinden",
+      "nextStep": "Nächster Schritt",
+      "searchingRelays": "Suche nach deinen Relays",
+      "reconnectOther": "Zu den anderen Relays neu verbinden",
       "relaysDescripion": "Verbinde dich zu einem anderen Relay falls deine Daten nicht gefunden werden.",
       "relays": "Deine Relays",
       "home": "Start",
@@ -68,6 +65,11 @@
       "foundProfile": "Profil gefunden",
       "foundContacts": "{{contactsCount}} Kontakte gefunden",
       "storing": "Speichere {{lastEventId}} in Datenbank."
+   },
+   "qrReaderPage": {
+      "emptyTitle": "Berechtigung nicht gewährt",
+      "emptyDescription": "Nostros Kamera Berechtigungen gewähren um QRCodes zu scannen",
+      "QRreader": "QR Leser"
     },
     "sendPage": {
       "isContact": "Folge ich",
@@ -119,6 +121,10 @@
       "disable": "Deaktivieren"
     },
     "noteActions": {
+      "note": "Notiz",
+      "bitcoinBlock": "Bitcoin Block",
+      "bitcoinBlockHeight": "Höhe",
+      "id": "ID",
       "publicBookmark": "Öffentliches Lesezeichen hinzufügen",
       "privateBookmark": "Privates Lesezeichen hinzufügen",
       "copy": "Kopieren",
@@ -137,7 +143,7 @@
       "reposting": "{{pubkey}} reposten",
       "seeParent": "Notiz ansehen",
       "userBlocked": "Benutzer blockiert",
-      "userMuted": "User muted",
+      "userMuted": "Benutzer ausblenden",
       "contentWarning": "Sensibler Inhalt",
       "recommendation": "Relay Empfehlung",
       "addRelay": "Relay hinzufügen",
@@ -156,13 +162,14 @@
     "notificationsFeed": {
       "connectContactRelays": "Reconnect to contacts' relays",
       "reposted": "Reposted",
-      "zap": "Zapped {{amount}}",
-      "like": "Like",
-      "dislike": "Dislike",
-      "replied": "Replied",
+      "zap": "Gezappt {{amount}}",
+      "like": "Gefällt mir",
+      "dislike": "Mag ich nicht",
+      "replied": "Geantwortet",
       "emptyTitle": "Keine Benachrichtigung.",
       "emptyDescription": "Poste etwas und erhalte Antworten und Reaktionen.",
-      "emptyButton": "Post verfassen"
+      "emptyButton": "Schreibe etwas"
+      "notificationsFeed": "Schreibe etwas"
     },
     "profileCreatePage": {
       "notifications": {
@@ -183,7 +190,7 @@
       "accessButton": "Zutritt",
       "label": "Privater Schlüssel",
       "copied": "Schlüssel kopiert",
-      "description": "Verwahre den Schlüssel an einem sicheren Ort"
+      "description": "Verwahre den Schlüssel an einem sicheren Ort!"
     },
     "loggerPage": {
       "createButton": "Schlüssel erstellen",
@@ -194,6 +201,7 @@
       "publicKey": "Öffentlicher Schlüssel",
       "loginMethod": "Einloggen mit",
       "mnemonic": "Mnemonic"
+	  "mnemonicInput": "Zum Einloggen Mnemonic Wörter in richtiger Reihenfolge eingeben"
     },
     "contactsPage": {
       "notifications": {
@@ -202,7 +210,7 @@
         "addContactError": "Ein Fehler ist aufgetreten.",
         "contactRemoved": "Abo wurde entfernt",
         "contactUnblocked": "Profil entsperrt.",
-        "contactUnmuted": "Profile unmuted."
+        "contactUnmuted": "Profile wieder eingeblendet."
       },
       "emptyTitleBlocked": "Du hast keine geblockten Profile",
       "emptyDescriptionBlocked": "In der Profil Ansicht kannst du jederzeit jemanden blocken",
@@ -222,8 +230,8 @@
       "unblock": "entsperren",
       "stopFollowing": "Abo stoppen",
       "follow": "Folgen",
-      "muted": "Muted ({{count}})",
-      "unmute": "Unmute"
+      "muted": "Ausgeblendet ({{count}})",
+      "unmute": "Einblenden"
     },
     "aboutPage": {
       "telegram": "Telegram",
@@ -267,13 +275,13 @@
       "newMessages": "{{newNotesCount}} neue Nachrichten. Zum Aktualisieren tippen."
     },
     "relaysPage": {
-      "pushListTitle": "Push relay list to the network",
-      "pushListDescription": "Only relays on \"My relays\" list will be pushed.",
-      "pushList": "Push list",
-      "contactsList": "Contact's relays",
-      "freeAccess": "Free access",
-      "paid": "Paid",
-      "paidRelay": "Paid relay",
+      "pushListTitle": "Relay Liste ins Netzwerk hochladen (Push)",
+      "pushListDescription": "Nur Relays von \"My relays\" Liste werden hochgeladen.",
+      "pushList": "Push Liste",
+      "contactsList": "Relays von Kontakten",
+      "freeAccess": "Freier Zugang",
+      "paid": "Bezahlt",
+      "paidRelay": "Kostenpflichtiger Relay",
       "resilienceTitle": "Beständigkeit (experimental)",
       "resilienceDescription": "Das Nostr Protokoll stellt eine Reihe von Tools zur Verfügung, um ein dezentrales Netzwerk zu bauen, aber im Gegensatz zu anderen dezentralen Protokollen wie Bitcoin, ist es nicht von vornherein an seine Verwendung gebunden.\n\nUm das Ziel eines dezentralen Netzwerks zu erreichen, sollten Clients (z.B. Nostros) und Relays (Content-Server) aktiv zusammenarbeiten. Der Nostros-Resilienzmodus versucht erstens, dafür ein Gewahrsein bei den Nutzern zu wecken, und zweitens, neue Muster und Methoden zu erproben, um die Resilienz des Netzwerks zu verbessern.\n\nEine funktionierende Implementation hierfür wird bald in Nostros zur Anwendung kommen",
       "resilienceCategories": "Ausgewogenheitsfindung",
@@ -301,7 +309,7 @@
         "desactive": "Relay deaktivieren.",
         "badFormat": "Die URL des Relays hat kein gültiges Format.",
         "alreadyExists": "Relay existiert bereits",
-        "listPushed": "Relay list pushed."
+        "listPushed": "Relay Liste hochgeladen."
       }
     },
     "relayCard": {
@@ -330,8 +338,8 @@
       "description": "Beschreibung",
       "obtainingInfo": "Relay Infos einholen",
       "notifications": {
-        "paid": "Relay marked as paid.",
-        "noPaid": "Relay marked as free.",
+        "paid": "Relay als bezahlt markieren",
+        "noPaid": "Relays als frei markiert",
         "active": "Relay aktiviert.",
         "desactive": "Relay deaktiviert.",
         "globalFeedActive": "Globaler Feed aktiv.",
@@ -451,7 +459,7 @@
         "userUnblocked": "Profil entblockt",
         "userBlocked": "Profile geblockt"
       },
-      "addRelay": "Connect relay",
+      "addRelay": "Relay verbinden",
       "invoice": "Tip",
       "message": "Nachricht",
       "follow": "Folgen",
@@ -484,16 +492,16 @@
     "faq": {
       "searchLabel": "Suche in häufig gestellten Fragen",
       "note_broadcasting": {
-        "question": "Hinweise: Rundfunk",
+        "question": "Hinweise: Broadcast",
         "answer": "Wenn ein Benutzer eine Notiz oder ein Ereignis in Nostr einstellt, wird diese Information an das Relays gesendet, mit dem der Benutzer verbunden ist. Dank der Funktion zum Senden von Notizen können diese Informationen jedoch an andere Relays im Netzwerk weitergegeben werden, so dass sie eine größere Anzahl von Benutzern erreichen. \n\nDiese Funktion zur Weiterleitung von Notizen trägt dazu bei, dass das Netzwerk und die Relays effizienter und dezentraler arbeiten. Durch die gemeinsame Nutzung der Informationen mit anderen Relays werden die Arbeitslast und die Überlastung der Server des Netzes verringert, was die Leistung und die Fähigkeit des Netzes, eine größere Anzahl von Benutzern zu bedienen, verbessert. Außerdem macht die Dezentralisierung der Informationen Nostr widerstandsfähiger gegen Ausfälle und schwieriger zu zensieren, da die Informationen über mehrere Knoten im Netzwerk verteilt sind."
       },
       "notes_colouring": {
         "Frage": "Notizen: Färbung",
-        "answer": "Diese Funktion zeigt einen Farbbalken neben den in der App angezeigten Beiträgen oder Notizen an. Jede Farbe steht für ein Relays, in dem diese Notiz vorhanden ist. \n\nWenn Sie das Detail einer Notiz öffnen, können Sie die Informationen zu den verschiedenen Relays sehen, in denen sich die Notiz befindet. Dies dient dazu, die Relays besser sichtbar zu machen und ihre Bedeutung im Nostr-Netzwerk hervorzuheben. \n\nDurch die Anzeige der Informationen zu den Relays, an denen sich die Notiz befindet, können Sie sehen, wie die Informationen durch das Nostr-Netzwerk übertragen werden. Außerdem wird durch die Hervorhebung der Bedeutung der Relays die Dezentralisierung gefördert und die Benutzer werden dazu angeregt, sich mit mehr Servern im Netzwerk zu verbinden, was die Effizienz und Ausfallsicherheit des Netzwerks erhöht."
+        "answer": "Diese Funktion zeigt einen Farbbalken neben den in der App angezeigten Beiträgen oder Notizen an. Jede Farbe steht für ein Relay, in dem diese Notiz vorhanden ist. \n\nWenn Sie das Detail einer Notiz öffnen, können Sie die Informationen zu den verschiedenen Relays sehen, in denen sich die Notiz befindet. Dies dient dazu, die Relays besser sichtbar zu machen und ihre Bedeutung im Nostr-Netzwerk hervorzuheben. \n\nDurch die Anzeige der Informationen zu den Relays, auf denen sich die Notiz befindet, können Sie sehen, wie die Informationen durch das Nostr-Netzwerk übertragen werden. Außerdem wird durch die Hervorhebung der Bedeutung der Relays die Dezentralisierung gefördert und die Benutzer werden dazu angeregt, sich mit mehr Servern im Netzwerk zu verbinden, was die Effizienz und Ausfallsicherheit des Netzwerks erhöht."
       },
       "resilient_login": {
         "Frage": "Zugang",
-        "answer": "Der 'resilient login' Prozess besteht aus drei Schritten, die dazu beitragen, das Netzwerk stärker und dezentraler zu machen. \n\n1. Verbindung zu zufälligen Relays \nSie stellen eine Verbindung zu 8 Relays her, die nach dem Zufallsprinzip aus einem Pool von Relays ausgewählt werden. Ihr Benutzerprofil und Ihre Relaysliste werden in diesen 8 Relays durchsucht. \n\n2. Suche nach Kontakten in Ihrer Relaysliste \nSie trennen die Verbindung zu den 8 zufällig ausgewählten Relays und verbinden sich mit Ihrer Relaysliste. Ihre Kontakte werden in dieser Liste gesucht. \n\n3. Suchen Sie nach den Relays Ihrer Kontakte \nSie erhalten eine Liste der von Ihren Kontakten verwendeten Relays. Sie können diese Relays zu Ihrer Liste hinzufügen und eine Verbindung zu ihnen herstellen, um das Netzwerk belastbarer zu machen."
+        "answer": "Der 'resilient login' Prozess besteht aus drei Schritten, die dazu beitragen, das Netzwerk stärker und dezentraler zu machen. \n\n1. Verbindung zu zufällig gewählten Relays \nNostros stellt eine Verbindung zu 8 Relays her, die nach dem Zufallsprinzip aus einem Pool von Relays ausgewählt werden. Ihr Benutzerprofil und Ihre Relaysliste werden auf diesen 8 Relays gesucht. \n\n2. Suche nach Kontakten in Ihrer Relaysliste \nSie trennen die Verbindung zu den 8 zufällig ausgewählten Relays und verbinden sich mit Ihrer Relaysliste. Ihre Kontakte werden in dieser Liste gesucht. \n\n3. Suchen Sie nach den Relays Ihrer Kontakte \nSie erhalten eine Liste der von Ihren Kontakten verwendeten Relays. Sie können diese Relays zu Ihrer Liste hinzufügen und eine Verbindung zu ihnen herstellen, um das Netzwerk belastbarer zu machen."
       },
       "what_are_zaps": {
         "question": "Zappen: Was sind sie?",
