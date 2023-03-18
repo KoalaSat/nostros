@@ -6,7 +6,7 @@ import { Kind } from 'nostr-tools'
 import { decode } from 'nostr-tools/nip19'
 import * as React from 'react'
 import { StyleSheet, View } from 'react-native'
-import { Text, TextInput, TouchableRipple, useTheme } from 'react-native-paper'
+import { ActivityIndicator, Text, TextInput, TouchableRipple, useTheme } from 'react-native-paper'
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'
 import NoteCard from '../../Components/NoteCard'
 import ProfileData from '../../Components/ProfileData'
@@ -209,6 +209,13 @@ export const SearchPage: React.FC<SearchPageProps> = ({ route }) => {
           data={resultsNotes}
           renderItem={renderItemNote}
           horizontal={false}
+          ListFooterComponent={
+            /^#.*/.test(searchInput) ? (
+              <ActivityIndicator style={styles.loading} animating={true} />
+            ) : (
+              <></>
+            )
+          }
         />
       )}
       {searchInput !== '' && /^@.*/.test(searchInput) && (

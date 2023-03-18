@@ -1,5 +1,9 @@
 {
   "common": {
+    "time": {
+      "today": "Today",
+      "yerterday": "Yesterday"
+    },
     "drawers": {
       "relaysTitle": "Relays",
       "relaysDescription": "Relays are nodes on the network that act as intermediaries for the transmission of messages between applications.\n\n\nRelays can be used to improve network resiliency and availability by allowing messages to be delivered even when there are failures or interruptions in connectivity.\n\n\nRelays can also be used to improve privacy and network security, as they can hide the location and identity of applications that communicate with each other. This can be useful in environments where censorship or surveillance is an issue.\n\n\nIt is important to note that relays can also be used for malicious purposes, such as sniffing or censoring network traffic.\n\n\nTherefore, it is important to carefully evaluate the use of relays and consider appropriate security measures to protect privacy and network security.",
@@ -10,7 +14,16 @@
       "privateKey": "Private key",
       "privateKeyDescription": "Think of your private key as your password.",
       "privateKeysSnackbarTitle": "Important.",
-      "privateKeysSnackbarDescription": "Keep your private key in a safe place. If you lose it, you will not be able to access it again or recover your account."
+      "privateKeysSnackbarDescription": "Keep your private key in a safe place. If you lose it, you will not be able to access it again or recover your account.",
+      "loginTitle": "Resilient login",
+      "loginDescription": "The \"resilient login\" process has three steps that help make the network stronger and more decentralized.",
+      "loginStep1Title": "1. Connect to random relays",
+      "loginStep1Description": "Randomly connect to 8 relays to search for your profile and your list of relays.",
+      "loginStep2Title": "2. Search for contacts in your relay list",
+      "loginStep2Description": "Connecting to your relays and searching for your contacts.",
+      "loginStep3Title": "3. Search the relays of your contacts",
+      "loginStep3Description": "You can add the relays used by your contacts to your list and connect to them to strengthen the network.",
+      "loginskip": "You can skip this process but you may miss out on the opportunity to connect to a diverse range of relays and expand your network's reach"
     },
     "homeNavigator": {
       "ProfileCreate": "Create profile",
@@ -18,7 +31,7 @@
       "ImageGallery": "",
       "ProfileConnect": "",
       "Group": "",
-      "ProfileLoad": "",
+      "ProfileLoad": "Login",
       "Landing": "",
       "QrReader": "",
       "Contacts": "Contacts",
@@ -48,24 +61,27 @@
       }
     },
     "profileLoadPage": {
-      "contactsRelays": "Lists of relays ",
-      "connect": "Connect and go home",
-      "foundRelays": "Relays found",
-      "searchingContacts": "Searching for your contacts",
-      "retry": "Retry",
-      "connectedRelays": "Connected relays ",
-      "nextStep": "Next step",
-      "searchingRelays": "Searching for your relays",
-      "reconnectOther": "Reconnect to other relays",
-      "contactRelays": "Contact's relays",
-      "contactRelaysDescription": "Searching for relays where your contacts can be found",
-      "relaysDescripion": "Connect with other relays if you have problems finding your data.",
-      "relays": "See relays",
-      "home": "Go Home",
-      "searchingProfile": "Searching for your profile",
-      "foundProfile": "Profile found",
-      "foundContacts": "{{contactsCount}} contacts found",
-      "storing": "Event {{lastEventId}} stored on database."
+      "connectingRandomRelays": "1. Connect to random relays",
+      "connectingRandomRelaysDescription": "Randomly connect to 8 relays to search for your profile and your list of relays.",
+      "randomRelays": "Random relays",
+      "connectedRelays": "{{activeRelays}} connected",
+      "myProfile": "My profile",
+      "myRelays": "My relays",
+      "relaysTooLong": "Taking too long?",
+      "relaysReconnect": "Reconnect to other relays",
+      "skip": "Skip",
+      "continue": "Continue",
+      "searchContacts": "2. Search contacts in your relays",
+      "searchContactsDescription": "Connecting to your relays and searching for your contacts.",
+      "contactsCount": "Contacts found",
+      "searchContactsRelays": "3. Search your contacts relays",
+      "searchContactsRelaysDescription": "You can add the relays used by your contacts to your list and connect to them to strengthen the network.",
+      "contatcsRelays": "Contatcs Relays",
+      "contatcsRelaysCount": "{{activeRelays}} lists found",
+      "connectAccess": "Connect and access",
+      "skipTitle": "Skip resilient login",
+      "skipDescription": "By skipping this login process, it may take you more time to find your contacts and view events.\n\nThis login process improves the decentralization of the network and its resilience.",
+      "continueLogin": "Continue with resilient login"
     },
     "qrReaderPage": {
       "emptyTitle": "Permissions not granted",

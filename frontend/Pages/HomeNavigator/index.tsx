@@ -12,12 +12,15 @@ import { type DrawerNavigationProp } from '@react-navigation/drawer'
 import RelaysPage from '../RelaysPage'
 import ConfigPage from '../ConfigPage'
 import QrReaderPage from '../QrReaderPage'
+import { UserContext } from '../../Contexts/UserContext'
 
 export const HomeNavigator: React.FC = () => {
   const theme = useTheme()
   const { t } = useTranslation('common')
+  const { logout } = React.useContext(UserContext)
   const bottomSheetKeysRef = React.useRef<RBSheet>(null)
   const bottomSheetRelaysRef = React.useRef<RBSheet>(null)
+  const bottomSheetLoginRef = React.useRef<RBSheet>(null)
   const Stack = React.useMemo(() => createStackNavigator(), [])
   const cardStyleInterpolator = React.useMemo(
     () =>
@@ -27,9 +30,13 @@ export const HomeNavigator: React.FC = () => {
     [],
   )
   const onPressQuestion: (pageName: string) => void = (pageName) => {
-    pageName === 'Relays'
-      ? bottomSheetRelaysRef.current?.open()
-      : bottomSheetKeysRef.current?.open()
+    if (pageName === 'Relays') {
+      bottomSheetRelaysRef.current?.open()
+    } else if (pageName === 'ProfileLoad') {
+      bottomSheetLoginRef.current?.open()
+    } else {
+      bottomSheetKeysRef.current?.open()
+    }
   }
 
   const BottomSheetKeys = React.useMemo(
@@ -52,6 +59,45 @@ export const HomeNavigator: React.FC = () => {
     [],
   )
 
+  const BottomLogin = React.useMemo(
+    () => (
+      <View style={styles.bottomSheetKeysContainer}>
+        <View style={styles.drawerParagraph}>
+          <Text variant='headlineSmall'>{t('drawers.loginTitle')}</Text>
+        </View>
+        <View style={styles.drawerParagraph}>
+          <Text variant='bodyMedium' style={{ color: theme.colors.onSurfaceVariant }}>
+            {t('drawers.loginDescription')}
+          </Text>
+        </View>
+        <View style={styles.drawerParagraph}>
+          <Text variant='titleMedium'>{t('drawers.loginStep1Title')}</Text>
+          <Text variant='bodyMedium' style={{ color: theme.colors.onSurfaceVariant }}>
+            {t('drawers.loginStep1Description')}
+          </Text>
+        </View>
+        <View style={styles.drawerParagraph}>
+          <Text variant='titleMedium'>{t('drawers.loginStep2Title')}</Text>
+          <Text variant='bodyMedium' style={{ color: theme.colors.onSurfaceVariant }}>
+            {t('drawers.loginStep2Description')}
+          </Text>
+        </View>
+        <View style={styles.drawerParagraph}>
+          <Text variant='titleMedium'>{t('drawers.loginStep3Title')}</Text>
+          <Text variant='bodyMedium' style={{ color: theme.colors.onSurfaceVariant }}>
+            {t('drawers.loginStep3Description')}
+          </Text>
+        </View>
+        <View>
+          <Text variant='bodyMedium' style={{ color: theme.colors.onSurfaceVariant }}>
+            {t('drawers.loginskip')}
+          </Text>
+        </View>
+      </View>
+    ),
+    [],
+  )
+
   const BottomSheetRelays = React.useMemo(
     () => (
       <View>
@@ -62,6 +108,21 @@ export const HomeNavigator: React.FC = () => {
     [],
   )
 
+  const bottomSheetStyles = React.useMemo(() => {
+    return {
+      container: {
+        backgroundColor: theme.colors.background,
+        paddingTop: 16,
+        paddingRight: 16,
+        paddingBottom: 32,
+        paddingLeft: 16,
+        borderTopRightRadius: 28,
+        borderTopLeftRadius: 28,
+        height: 'auto',
+      },
+    }
+  }, [])
+
   return (
     <>
       <Stack.Navigator
@@ -71,8 +132,15 @@ export const HomeNavigator: React.FC = () => {
             cardStyleInterpolator,
             header: ({ navigation, route, back }) => {
               const leftAction: () => JSX.Element = () => {
-                if (back && route.name !== 'ProfileLoad') {
-                  return <Appbar.BackAction onPress={() => navigation.goBack()} />
+                if (back) {
+                  return (
+                    <Appbar.BackAction
+                      onPress={() => {
+                        logout()
+                        navigation.goBack()
+                      }}
+                    />
+                  )
                 } else if ((navigation as any as DrawerNavigationProp<any>).openDrawer) {
                   return (
                     <Appbar.Action
@@ -117,37 +185,15 @@ export const HomeNavigator: React.FC = () => {
         ref={bottomSheetKeysRef}
         closeOnDragDown={true}
         height={420}
-        customStyles={{
-          container: {
-            backgroundColor: theme.colors.background,
-            paddingTop: 16,
-            paddingRight: 16,
-            paddingBottom: 32,
-            paddingLeft: 16,
-            borderTopRightRadius: 28,
-            borderTopLeftRadius: 28,
-          },
-        }}
+        customStyles={bottomSheetStyles}
       >
         {BottomSheetKeys}
       </RBSheet>
-      <RBSheet
-        ref={bottomSheetRelaysRef}
-        closeOnDragDown={true}
-        customStyles={{
-          container: {
-            backgroundColor: theme.colors.background,
-            paddingTop: 16,
-            paddingRight: 16,
-            paddingBottom: 32,
-            paddingLeft: 16,
-            borderTopRightRadius: 28,
-            borderTopLeftRadius: 28,
-            height: 'auto',
-          },
-        }}
-      >
+      <RBSheet ref={bottomSheetRelaysRef} closeOnDragDown={true} customStyles={bottomSheetStyles}>
         {BottomSheetRelays}
+      </RBSheet>
+      <RBSheet ref={bottomSheetLoginRef} closeOnDragDown={true} customStyles={bottomSheetStyles}>
+        {BottomLogin}
       </RBSheet>
     </>
   )
@@ -171,11 +217,13 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-end',
   },
   bottomSheetKeysContainer: {
-    flex: 1,
     justifyContent: 'space-between',
   },
   bold: {
     fontWeight: 'bold',
+  },
+  drawerParagraph: {
+    marginBottom: 16,
   },
 })
 

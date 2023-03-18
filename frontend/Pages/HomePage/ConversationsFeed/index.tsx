@@ -38,7 +38,7 @@ import { useTranslation } from 'react-i18next'
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'
 import { useFocusEffect } from '@react-navigation/native'
 import ProfileData from '../../../Components/ProfileData'
-import { formatDate, handleInfinityScroll } from '../../../Functions/NativeFunctions'
+import { handleInfinityScroll } from '../../../Functions/NativeFunctions'
 
 export const ConversationsFeed: React.FC = () => {
   const initialPageSize = 14
@@ -154,7 +154,7 @@ export const ConversationsFeed: React.FC = () => {
           </View>
           <View style={styles.contactInfo}>
             <View style={styles.contactDate}>
-              <Text>{formatDate(item?.created_at)}</Text>
+              <Text>{formatHour(item?.created_at, false)}</Text>
               {item.pubkey !== publicKey && !item.read && <Badge size={16}></Badge>}
             </View>
           </View>

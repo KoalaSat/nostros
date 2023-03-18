@@ -232,10 +232,8 @@ export const RelaysPage: React.FC = () => {
               {t('relaysPage.active')}
             </Chip>
             <Chip
-            compact
-              mode={
-                item.global_feed !== undefined && item.global_feed > 0 ? 'flat' : 'outlined'
-              }
+              compact
+              mode={item.global_feed !== undefined && item.global_feed > 0 ? 'flat' : 'outlined'}
               style={styles.relayButton}
               onPress={() => {
                 item.global_feed ? desactiveGlobalFeedRelay(item) : activeGlobalFeedRelay(item)

@@ -1,4 +1,14 @@
-import { endOfYesterday, format, formatDistanceToNow, fromUnixTime, isBefore } from 'date-fns'
+import {
+  differenceInDays,
+  endOfYesterday,
+  format,
+  formatDistanceToNow,
+  fromUnixTime,
+  isBefore,
+  isToday,
+  isYesterday,
+} from 'date-fns'
+import { t } from 'i18next'
 
 export const handleInfinityScroll: (event: any) => boolean = (event) => {
   const mHeight = event.nativeEvent.layoutMeasurement.height
@@ -89,7 +99,7 @@ export const validNip21: (string: string | undefined) => boolean = (string) => {
   }
 }
 
-export const formatDate: (unix: number | undefined) => string = (unix) => {
+export const formatHour: (unix: number | undefined) => string = (unix) => {
   if (!unix) return ''
 
   const date = fromUnixTime(unix)
@@ -98,6 +108,27 @@ export const formatDate: (unix: number | undefined) => string = (unix) => {
   } else {
     return format(date, 'HH:mm')
   }
+}
+
+export const formatDate: (timestamp: number | undefined, showTime?: boolean) => string = (
+  timestamp,
+  showTime = true,
+) => {
+  if (!timestamp) return ''
+  const date = fromUnixTime(timestamp)
+
+  let result = format(date, 'MM-dd-yy')
+  if (isToday(date)) {
+    result = t('time.today')
+  } else if (isYesterday(date)) {
+    result = t('time.yesterday')
+  } else if (differenceInDays(new Date(), date) < 6) {
+    result = format(date, 'EEEE')
+  }
+
+  if (showTime) result += `, ${format(date, 'HH:mm')}`
+
+  return result
 }
 
 export const formatBigNumber: (num: number | undefined) => string = (num) => {

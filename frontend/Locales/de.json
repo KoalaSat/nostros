@@ -1,5 +1,9 @@
 {
   "common": {
+    "time": {
+      "today": "Today",
+      "yerterday": "Yesterday"
+    },
     "drawers": {
       "relaysTitle": "Relays",
       "relaysDescription": "Relays sind Nodes (Netzknoten) im Netzwerk, die als Vermittler von Nachrichten zwischen den Anwendungen dienen.\n\n\nRelays können die Belastbarkeit und die Verfügbarkeit des Netzwerks verbessern, indem sie dafür sorgen, das Nachrichten trotz Unterbrechungen oder Ausfällen der Verfügbarkeit ausgeliefert werden.\n\n\nRelays können Privatsphäre und Netzwerksicherheit erhöhen, indem sie Aufenthaltsort und Identität der Anwendungen bzw. der Benutzer, die miteinander kommunizieren, verbergen\n\n\nDies kann von Wert sein in Umgebungen, in denen Zensur oder Überwachung ein Problem ist.\n\n\nEs ist wichtig darauf hinzuweisen, das Relays für schadhafte Zwecke missbraucht werden können, wie zum Beispiel Sniffing oder das Zensieren von Netzwerkverkehr.\n\n\nDeswegen ist es von Bedeutung, die Nutzung von Relays sorgfältig abzuwägen, und angemessenene Sichheitsmassnahmen anzuwenden, um Identität, Privatsphäre und Netzwerksicherheit zu schützen.",
@@ -10,15 +14,24 @@
       "privateKey": "Privater Schlüssel",
       "privateKeyDescription": "Behandele den privaten Schlüssel wie ein Passwort",
       "privateKeysSnackbarTitle": "Wichtig!",
-      "privateKeysSnackbarDescription": "Verwahre den privaten Schlüssel an einem sicheren Ort. Geht der Schlüssel verloren, kann er nicht wiederhergestellt werden. Das Konto kann nie wieder benutzt werden."
+      "privateKeysSnackbarDescription": "Verwahre den privaten Schlüssel an einem sicheren Ort. Geht der Schlüssel verloren, kann er nicht wiederhergestellt werden. Das Konto kann nie wieder benutzt werden.",
+      "loginTitle": "Resilient login",
+      "loginDescription": "The \"resilient login\" process has three steps that help make the network stronger and more decentralized.",
+      "loginStep1Title": "1. Connect to random relays",
+      "loginStep1Description": "Randomly connect to 8 relays to search for your profile and your list of relays.",
+      "loginStep2Title": "2. Search for contacts in your relay list",
+      "loginStep2Description": "Connecting to your relays and searching for your contacts.",
+      "loginStep3Title": "3. Search the relays of your contacts",
+      "loginStep3Description": "You can add the relays used by your contacts to your list and connect to them to strengthen the network.",
+      "loginskip": "You can skip this process but you may miss out on the opportunity to connect to a diverse range of relays and expand your network's reach"
     },
     "homeNavigator": {
       "ProfileCreate": "Profil anlegen",
       "Search": "",
       "ImageGallery": "",
       "ProfileConnect": "",
-	  "Group": "",
-      "ProfileLoad": "",
+      "Group": "",
+      "ProfileLoad": "Login",
       "Landing": "",
       "QrReader": "",
       "Contacts": "Kontakte",
@@ -40,7 +53,7 @@
       "emptyTitle": "Tip",
       "emptyDescription": "Tippe @ um jemanden zu finden\n\nTippe # um nach Themen zu suchen"
     },
- 
+
     "conversationPage": {
       "unableDecypt": "{{username}} hat dich erwähnt",
       "typeMessage": "Nachricht schreiben",
@@ -49,24 +62,26 @@
       }
     },
     "profileLoadPage": {
-      "contactsRelays": "Relay Liste",
-      "connect": "Verbinden und zum Start gehen",
-      "foundRelays": "Relays gefunden",
-      "searchingContacts": "Suche nach deinen Kontakten",
-      "retry": "Wiederholen",
-      "connectedRelays": "Relays verbinden",
-      "nextStep": "Nächster Schritt",
-      "searchingRelays": "Suche nach deinen Relays",
-      "reconnectOther": "Zu den anderen Relays neu verbinden",
-      "relaysDescripion": "Verbinde dich zu einem anderen Relay falls deine Daten nicht gefunden werden.",
-      "relays": "Deine Relays",
-      "home": "Start",
-      "searchingProfile": "Durchsuche Profil",
-      "foundProfile": "Profil gefunden",
-      "foundContacts": "{{contactsCount}} Kontakte gefunden",
-      "storing": "Speichere {{lastEventId}} in Datenbank."
-   },
-   "qrReaderPage": {
+      "connectingRandomRelays": "1. Connect to random relays",
+      "connectingRandomRelaysDescription": "Randomly connect to 8 relays to search for your profile and your list of relays.",
+      "randomRelays": "Random relays",
+      "connectedRelays": "{{activeRelays}} connected",
+      "myProfile": "My profile",
+      "myRelays": "My relays",
+      "relaysTooLong": "Taking too long?",
+      "relaysReconnect": "Reconnect to other relays",
+      "skip": "Überspringen",
+      "continue": "Weiter",
+      "searchContacts": "2. Search contacts in your relays",
+      "searchContactsDescription": "Connecting to your relays and searching for your contacts.",
+      "contactsCount": "Contacts found",
+      "searchContactsRelays": "3. Search your contacts relays",
+      "searchContactsRelaysDescription": "You can add the relays used by your contacts to your list and connect to them to strengthen the network.",
+      "contatcsRelays": "Contatcs Relays",
+      "contatcsRelaysCount": "{{activeRelays}} lists found",
+      "connectAccess": "Connect and access"
+    },
+    "qrReaderPage": {
       "emptyTitle": "Berechtigung nicht gewährt",
       "emptyDescription": "Nostros Kamera Berechtigungen gewähren um QRCodes zu scannen",
       "QRreader": "QR Leser"
@@ -168,7 +183,7 @@
       "replied": "Geantwortet",
       "emptyTitle": "Keine Benachrichtigung.",
       "emptyDescription": "Poste etwas und erhalte Antworten und Reaktionen.",
-      "emptyButton": "Schreibe etwas"
+      "emptyButton": "Schreibe etwas",
       "notificationsFeed": "Schreibe etwas"
     },
     "profileCreatePage": {
@@ -200,8 +215,8 @@
       "privateKey": "Privater Schlüssel",
       "publicKey": "Öffentlicher Schlüssel",
       "loginMethod": "Einloggen mit",
-      "mnemonic": "Mnemonic"
-	  "mnemonicInput": "Zum Einloggen Mnemonic Wörter in richtiger Reihenfolge eingeben"
+      "mnemonic": "Mnemonic",
+      "mnemonicInput": "Zum Einloggen Mnemonic Wörter in richtiger Reihenfolge eingeben"
     },
     "contactsPage": {
       "notifications": {

@@ -1,5 +1,9 @@
 {
   "common": {
+    "time": {
+      "today": "Today",
+      "yerterday": "Yesterday"
+    },
     "drawers": {
       "relaysTitle": "Реле",
       "relaysDescription": "Реле(ретрансляторы) — это сетевые узлы, которые работают как посредники для передачи сообщений между приложениями.\n\n\nРетрансляторы можно использовать для повышения отказоустойчивости и доступности сети, позволяя доставлять сообщения даже при сбоях и проблемах с подключением. n\n\nРеле также можно использовать для повышения конфиденциальности и сетевой безопасности, поскольку они могут скрывать местоположение и идентификационные данные приложений, которые обмениваются данными. Это может быть полезно в условиях цензуры или слежки.\n\n \nВажно отметить, что реле также могут использоваться в злонамеренных целях, таких как прослушивание или цензура сетевого трафика.\n \n\nПоэтому важно тщательно оценивать использование реле и принимать соответствующие меры безопасности для защиты конфиденциальности и сетевой безопасности.",
@@ -10,7 +14,16 @@
       "privateKey": "Приватный ключ",
       "privateKeyDescription": "Представьте, что приватный(секретный) ключ это пароль.",
       "privateKeysSnackbarTitle": "Важно",
-      "privateKeysSnackbarDescription": "Keep your private key in a safe place, if you lose it you will not be able to access it again or recover your account."
+      "privateKeysSnackbarDescription": "Keep your private key in a safe place, if you lose it you will not be able to access it again or recover your account.",
+      "loginTitle": "Resilient login",
+      "loginDescription": "The \"resilient login\" process has three steps that help make the network stronger and more decentralized.",
+      "loginStep1Title": "1. Connect to random relays",
+      "loginStep1Description": "Randomly connect to 8 relays to search for your profile and your list of relays.",
+      "loginStep2Title": "2. Search for contacts in your relay list",
+      "loginStep2Description": "Connecting to your relays and searching for your contacts.",
+      "loginStep3Title": "3. Search the relays of your contacts",
+      "loginStep3Description": "You can add the relays used by your contacts to your list and connect to them to strengthen the network.",
+      "loginskip": "You can skip this process but you may miss out on the opportunity to connect to a diverse range of relays and expand your network's reach"
     },
     "searchPage": {
       "placeholder": "Look for public keys, notes, hashtags...",
@@ -29,7 +42,7 @@
       "Search": "",
       "ProfileCreate": "Create profile",
       "ProfileConnect": "",
-      "ProfileLoad": "",
+      "ProfileLoad": "Login",
       "Landing": "",
       "Contacts": "Contacts",
       "Conversation": "Диалог",
@@ -71,21 +84,24 @@
       }
     },
     "profileLoadPage": {
-      "contactsRelays": "Lists of relays ",
-      "foundRelays": "Relays found",
-      "searchingContacts": "Searching for your contacts",
-      "retry": "Retry",
-      "connectedRelays": "Connected relays ",
-      "nextStep": "Next step",
-      "searchingRelays": "Searching for your relays",
-      "reconnectOther": "Reconnect to other relays",
-      "relaysDescripion": "При проблемах с получением данных, подключитесь к другим реле.",
-      "relays": "Посмотреть реле",
-      "home": "На главную",
-      "searchingProfile": "Ищем Ваш профиль.",
-      "foundProfile": "Профиль найден.",
-      "foundContacts": "{{contactsCount}} контакта(ов) найдено",
-      "storing": "Event {{lastEventId}} stored on database."
+      "connectingRandomRelays": "1. Connect to random relays",
+      "connectingRandomRelaysDescription": "Randomly connect to 8 relays to search for your profile and your list of relays.",
+      "randomRelays": "Random relays",
+      "connectedRelays": "{{activeRelays}} connected",
+      "myProfile": "My profile",
+      "myRelays": "My relays",
+      "relaysTooLong": "Taking too long?",
+      "relaysReconnect": "Reconnect to other relays",
+      "skip": "Skip",
+      "continue": "Continue",
+      "searchContacts": "2. Search contacts in your relays",
+      "searchContactsDescription": "Connecting to your relays and searching for your contacts.",
+      "contactsCount": "Contacts found",
+      "searchContactsRelays": "3. Search your contacts relays",
+      "searchContactsRelaysDescription": "You can add the relays used by your contacts to your list and connect to them to strengthen the network.",
+      "contatcsRelays": "Contatcs Relays",
+      "contatcsRelaysCount": "{{activeRelays}} lists found",
+      "connectAccess": "Connect and access"
     },
     "sendPage": {
       "isContact": "Подписаны",

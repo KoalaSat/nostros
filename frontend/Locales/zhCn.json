@@ -1,5 +1,9 @@
 {
   "common": {
+    "time": {
+      "today": "Today",
+      "yerterday": "Yesterday"
+    },
     "drawers": {
       "relaysTitle": "关于中继",
       "relaysDescription": "中继是网络上的节点，作为应用程序之间传输消息的中介。\n\n\n中继可用于提高网络的弹性和可用性，即使在连接出现故障或中断的情况下，也能传递消息。 \n\n\n中继还可用于提高隐私和网络安全，因为它们可以隐藏相互通信的用户的位置和身份。 \n\n\n这在审查或监视是一个问题的环境中是很有用的。 \n\n\n需要注意的是，中继也可以用于恶意的目的，如嗅探或审查网络流量。",
@@ -10,7 +14,16 @@
       "privateKey": "私钥",
       "privateKeyDescription": "您可以将私钥看作是您的密码",
       "privateKeysSnackbarTitle": "注意",
-      "privateKeysSnackbarDescription": "请妥善保管您的私钥。如果遗失，您将无法访问或恢复您的账号。"
+      "privateKeysSnackbarDescription": "请妥善保管您的私钥。如果遗失，您将无法访问或恢复您的账号。",
+      "loginTitle": "Resilient login",
+      "loginDescription": "The \"resilient login\" process has three steps that help make the network stronger and more decentralized.",
+      "loginStep1Title": "1. Connect to random relays",
+      "loginStep1Description": "Randomly connect to 8 relays to search for your profile and your list of relays.",
+      "loginStep2Title": "2. Search for contacts in your relay list",
+      "loginStep2Description": "Connecting to your relays and searching for your contacts.",
+      "loginStep3Title": "3. Search the relays of your contacts",
+      "loginStep3Description": "You can add the relays used by your contacts to your list and connect to them to strengthen the network.",
+      "loginskip": "You can skip this process but you may miss out on the opportunity to connect to a diverse range of relays and expand your network's reach"
     },
     "searchPage": {
       "placeholder": "Look for public keys, notes, hashtags...",
@@ -30,7 +43,7 @@
       "ProfileCreate": "创建用户",
       "ProfileConnect": "",
       "Contacts": "联系人",
-      "ProfileLoad": "",
+      "ProfileLoad": "Login",
       "Landing": "",
       "Conversation": "会话",
       "Repost": "转发",
@@ -70,21 +83,24 @@
       }
     },
     "profileLoadPage": {
-      "contactsRelays": "Lists of relays ",
-      "foundRelays": "Relays found",
-      "searchingContacts": "Searching for your contacts",
-      "retry": "Retry",
-      "connectedRelays": "Connected relays ",
-      "nextStep": "Next step",
-      "searchingRelays": "Searching for your relays",
-      "reconnectOther": "Reconnect to other relays",
-      "relaysDescripion": "若查看您的数据时遇到问题，可尝试连接其他中继重试",
-      "relays": "查看中继",
-      "home": "去首页",
-      "searchingProfile": "搜索用户",
-      "foundProfile": "已找到的用户",
-      "foundContacts": "已找到 {{contactsCount}} 个联系人",
-      "storing": "事件 {{lastEventId}} 已存储到数据库"
+      "connectingRandomRelays": "1. Connect to random relays",
+      "connectingRandomRelaysDescription": "Randomly connect to 8 relays to search for your profile and your list of relays.",
+      "randomRelays": "Random relays",
+      "connectedRelays": "{{activeRelays}} connected",
+      "myProfile": "My profile",
+      "myRelays": "My relays",
+      "relaysTooLong": "Taking too long?",
+      "relaysReconnect": "Reconnect to other relays",
+      "skip": "跳过",
+      "continue": "继续",
+      "searchContacts": "2. Search contacts in your relays",
+      "searchContactsDescription": "Connecting to your relays and searching for your contacts.",
+      "contactsCount": "Contacts found",
+      "searchContactsRelays": "3. Search your contacts relays",
+      "searchContactsRelaysDescription": "You can add the relays used by your contacts to your list and connect to them to strengthen the network.",
+      "contatcsRelays": "Contatcs Relays",
+      "contatcsRelaysCount": "{{activeRelays}} lists found",
+      "connectAccess": "Connect and access"
     },
     "sendPage": {
       "isContact": "正在关注",
