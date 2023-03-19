@@ -9,7 +9,7 @@ import Logo from '../../Components/Logo'
 import { navigate } from '../../lib/Navigation'
 import { useFocusEffect } from '@react-navigation/native'
 import RBSheet from 'react-native-raw-bottom-sheet'
-import { privateKeyFromSeedWords } from 'nostr-tools/nip06'
+import { nip06 } from 'nostr-tools'
 import { AppContext } from '../../Contexts/AppContext'
 
 interface ProfileConnectPageProps {
@@ -77,7 +77,7 @@ export const ProfileConnectPage: React.FC<ProfileConnectPageProps> = ({ route })
       for (let index = 1; index <= 12; index++) {
         words.push(mnemonicWords[index].trim())
       }
-      setPrivateKey(privateKeyFromSeedWords(words.join(' ')))
+      setPrivateKey(nip06.privateKeyFromSeedWords(words.join(' ')))
       setMnemonicWords({})
       navigate('ProfileLoad')
     }

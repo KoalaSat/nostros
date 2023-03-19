@@ -6,8 +6,7 @@ import { Button, Checkbox, Snackbar, Text, TextInput } from 'react-native-paper'
 import { useTranslation } from 'react-i18next'
 import { type DrawerNavigationHelpers } from '@react-navigation/drawer/lib/typescript/src/types'
 import { UserContext } from '../../Contexts/UserContext'
-import { privateKeyFromSeedWords } from 'nostr-tools/nip06'
-import { nsecEncode } from 'nostr-tools/nip19'
+import { nip06, nip19 } from 'nostr-tools'
 import { RelayPoolContext } from '../../Contexts/RelayPoolContext'
 import { getUnixTime } from 'date-fns'
 import { type Event } from '../../lib/nostr/Events'
@@ -35,9 +34,9 @@ export const ProfileCreatePage: React.FC<ProfileCreatePageProps> = ({ navigation
     Keyboard.addListener('keyboardDidHide', () => setKeyboardShow(false))
     generateRandomMnemonic().then((words) => {
       setMnemonicWords(words)
-      const privateKey = privateKeyFromSeedWords(Object.values(words).join(' '))
+      const privateKey = nip06.privateKeyFromSeedWords(Object.values(words).join(' '))
       setKey(privateKey)
-      const nsec = nsecEncode(privateKey)
+      const nsec = nip19.nsecEncode(privateKey)
       setInputValue(nsec)
     })
     createRandomRelays()

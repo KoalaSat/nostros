@@ -7,14 +7,13 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs'
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'
 import { UserContext } from '../../Contexts/UserContext'
 import { RelayPoolContext } from '../../Contexts/RelayPoolContext'
-import { Kind } from 'nostr-tools'
+import { Kind, nip19 } from 'nostr-tools'
 import { getMentionNotes, getNotificationsIds } from '../../Functions/DatabaseFunctions/Notes'
 import { AppContext } from '../../Contexts/AppContext'
 import { StyleSheet } from 'react-native'
 import RBSheet from 'react-native-raw-bottom-sheet'
 import { useTranslation } from 'react-i18next'
 import { navigate } from '../../lib/Navigation'
-import { decode } from 'nostr-tools/nip19'
 import {
   getDirectMessagesCount,
   getGroupedDirectMessages,
@@ -94,7 +93,7 @@ export const HomePage: React.FC = () => {
 
   const goToEvent: () => void = () => {
     if (clipboardNip21) {
-      const key = decode(clipboardNip21.replace('nostr:', ''))
+      const key = nip19.decode(clipboardNip21.replace('nostr:', ''))
       if (key?.data) {
         if (key.type === 'nevent') {
           navigate('Note', { noteId: key.data.id })

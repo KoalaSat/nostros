@@ -3,10 +3,9 @@ import SInfo from 'react-native-sensitive-info'
 import { RelayPoolContext } from './RelayPoolContext'
 import { AppContext } from './AppContext'
 import { getUser } from '../Functions/DatabaseFunctions/Users'
-import { getPublicKey } from 'nostr-tools'
+import { getPublicKey, nip19 } from 'nostr-tools'
 import { dropTables } from '../Functions/DatabaseFunctions'
 import { navigate } from '../lib/Navigation'
-import { nsecEncode } from 'nostr-tools/nip19'
 import { getNpub } from '../lib/nostr/Nip19'
 import { getGroups } from '../Functions/DatabaseFunctions/Groups'
 import { getList } from '../Functions/DatabaseFunctions/Lists'
@@ -174,7 +173,7 @@ export const UserContextProvider = ({ children }: UserContextProviderProps): JSX
   useEffect(() => {
     if (privateKey && privateKey !== '') {
       SInfo.setItem('privateKey', privateKey, {})
-      setNsec(nsecEncode(privateKey))
+      setNsec(nip19.nsecEncode(privateKey))
       setPublicKey(getPublicKey(privateKey))
     }
   }, [privateKey])
