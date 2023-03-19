@@ -2,9 +2,10 @@
   "common": {
     "time": {
       "today": "Today",
-      "yerterday": "Yesterday"
+      "yesterday": "Yesterday"
     },
     "drawers": {
+      "walletLogout": "Logout",
       "relaysTitle": "Relais",
       "relaysDescription": "Les relais sont des nœuds du réseau qui servent d'intermédiaires pour la transmission de messages entre les applications.\n\nLes relais peuvent être utilisés pour améliorer la résilience et la disponibilité des réseaux en permettant la transmission des messages même en cas de défaillance ou d'interruption de la connectivité.\n\nLes relais peuvent également être utilisés pour améliorer la confidentialité et la sécurité des réseaux, car ils peuvent cacher l'emplacement et l'identité des applications qui communiquent entre elles par leur intermédiaire. Cela peut être utile dans les environnements où la censure ou la surveillance est un problème.\n\nIl est important de noter que les relais peuvent également être utilisés à des fins malveillantes, par exemple pour suivre ou censurer le trafic réseau.\n\nIl est donc important d'évaluer soigneusement l'utilisation des relais et d'envisager des mesures de sécurité appropriées pour protéger la vie privée et la sécurité du réseau.",
       "keysTitle": "C'est quoi les clés ?",
@@ -39,6 +40,7 @@
       "Group": "",
       "QrReader": "",
       "ImageGallery": "",
+      "Wallet": "Wallet",
       "Search": "",
       "ProfileCreate": "Create profile",
       "ProfileConnect": "",
@@ -193,7 +195,8 @@
       "copy": "Copier",
       "open": "Ouvrir le wallet",
       "anonTip": "Anonymous tip",
-      "zap": "Zap"
+      "zap": "Zap",
+      "pay": "Pay"
     },
     "notificationsFeed": {
       "reposted": "Reposted",

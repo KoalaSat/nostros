@@ -20,6 +20,7 @@ import nostrosDarkTheme from './Constants/Theme/theme-dark.json'
 import { navigationRef } from './lib/Navigation'
 import { UserContextProvider } from './Contexts/UserContext'
 import NostrosDrawerNavigator from './Pages/NostrosDrawerNavigator'
+import { WalletContextProvider } from './Contexts/WalletContext'
 
 export const Frontend: React.FC = () => {
   const { LightTheme, DarkTheme } = adaptNavigationTheme({
@@ -41,15 +42,17 @@ export const Frontend: React.FC = () => {
         <SafeAreaProvider>
           <I18nextProvider i18n={i18n}>
             <AppContextProvider>
-              <UserContextProvider>
-                <RelayPoolContextProvider>
-                  <React.Fragment>
-                    <SafeAreaInsetsContext.Consumer>
-                      {() => <NostrosDrawerNavigator />}
-                    </SafeAreaInsetsContext.Consumer>
-                  </React.Fragment>
-                </RelayPoolContextProvider>
-              </UserContextProvider>
+              <WalletContextProvider>
+                <UserContextProvider>
+                  <RelayPoolContextProvider>
+                    <React.Fragment>
+                      <SafeAreaInsetsContext.Consumer>
+                        {() => <NostrosDrawerNavigator />}
+                      </SafeAreaInsetsContext.Consumer>
+                    </React.Fragment>
+                  </RelayPoolContextProvider>
+                </UserContextProvider>
+              </WalletContextProvider>
             </AppContextProvider>
           </I18nextProvider>
         </SafeAreaProvider>

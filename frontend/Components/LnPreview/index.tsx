@@ -7,6 +7,8 @@ import RBSheet from 'react-native-raw-bottom-sheet'
 import { Card, IconButton, Text, useTheme } from 'react-native-paper'
 import { AppContext } from '../../Contexts/AppContext'
 import { decode, type PaymentRequestObject, type TagsObject } from 'bolt11'
+import { WalletContext } from '../../Contexts/WalletContext'
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'
 
 interface LnPreviewProps {
   setOpen?: (open: boolean) => void
@@ -21,11 +23,13 @@ export const LnPreview: React.FC<LnPreviewProps> = ({
 }) => {
   const theme = useTheme()
   const { t } = useTranslation('common')
+  const { active, payInvoice } = React.useContext(WalletContext)
   const { getSatoshiSymbol } = React.useContext(AppContext)
   const bottomSheetInvoiceRef = React.useRef<RBSheet>(null)
   const [decodedLnUrl, setDecodedLnUrl] = useState<
     PaymentRequestObject & { tagsObject: TagsObject }
   >()
+  const [paymentDone, setPaymentDone] = useState<boolean>()
 
   useEffect(() => {
     if (invoice) {
@@ -41,6 +45,12 @@ export const LnPreview: React.FC<LnPreviewProps> = ({
 
   const copyInvoice: () => void = () => {
     Clipboard.setString(invoice ?? '')
+  }
+
+  const payWithWallet: () => void = () => {
+    if (invoice) {
+      payInvoice(invoice).then(setPaymentDone)
+    }
   }
 
   const openApp: () => void = () => {
@@ -76,7 +86,15 @@ export const LnPreview: React.FC<LnPreviewProps> = ({
       <Card style={styles.qrContainer}>
         <Card.Content>
           <View style={styles.qr}>
-            <QRCode value={invoice} quietZone={8} size={Dimensions.get('window').width - 64} />
+            {paymentDone === undefined ? (
+              <QRCode value={invoice} quietZone={8} size={Dimensions.get('window').width - 64} />
+            ) : (
+              <MaterialCommunityIcons
+                name={paymentDone ? 'check-circle-outline' : 'close-circle-outline'}
+                size={120}
+                color={paymentDone ? '#7ADC70' : theme.colors.error}
+              />
+            )}
           </View>
           <View style={styles.qrText}>
             <Text>{decodedLnUrl?.satoshis} </Text>
@@ -89,8 +107,14 @@ export const LnPreview: React.FC<LnPreviewProps> = ({
           <IconButton icon='content-copy' size={28} onPress={copyInvoice} />
           <Text>{t('lnPayment.copy')}</Text>
         </View>
+        {active && (
+          <View style={styles.actionButton}>
+            <IconButton icon='wallet' size={28} onPress={payWithWallet} />
+            <Text>{t('lnPayment.pay')}</Text>
+          </View>
+        )}
         <View style={styles.actionButton}>
-          <IconButton icon='wallet' size={28} onPress={openApp} />
+          <IconButton icon='exit-to-app' size={28} onPress={openApp} />
           <Text>{t('lnPayment.open')}</Text>
         </View>
       </View>

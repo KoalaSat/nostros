@@ -14,6 +14,7 @@ export interface Zap extends Event {
   nip05: string
   lnurl: string
   ln_address: string
+  preimage: string
 }
 
 const databaseToEntity: (object: any) => Zap = (object) => {
@@ -109,7 +110,7 @@ export const getUserZaps: (
 
 export const getZaps: (
   db: QuickSQLiteConnection,
-  filters: { eventId?: string; zapperId?: string; limit?: number },
+  filters: { eventId?: string; zapperId?: string; limit?: number; preimages?: string[] },
 ) => Promise<Zap[]> = async (db, filters) => {
   let groupsQuery = `
     SELECT
@@ -120,6 +121,12 @@ export const getZaps: (
     LEFT JOIN
       nostros_users ON nostros_users.id = nostros_zaps.zapper_user_id
   `
+
+  if (filters.preimages) {
+    groupsQuery += `
+      WHERE preimage IN ("${filters.preimages.join('", "')}")
+    `
+  }
 
   if (filters.eventId) {
     groupsQuery += `

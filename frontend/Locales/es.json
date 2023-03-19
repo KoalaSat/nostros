@@ -2,9 +2,10 @@
   "common": {
     "time": {
       "today": "Hoy",
-      "yerterday": "Ayer"
+      "yesterday": "Ayer"
     },
     "drawers": {
+      "walletLogout": "Logout",
       "relaysTitle": "Relés",
       "relaysDescription": "Los relays son nodos en la red que actúan como intermediarios para la transmisión demensajes entre aplicaciones.\n\n\nLos relays pueden ser utilizados para mejorar la resiliencia yla disponibilidad de la red, ya que permiten que los mensajes sean entregados aun cuandohay fallos o interrupciones en la conectividad.\n\n\nLos relays también pueden ser utilizadospara mejorar la privacidad y la seguridad de la red, ya que pueden ocultar la ubicación yel identidad de las aplicaciones que se comunican entre sí a través de ellos. Esto puedeser útil en entornos donde la censura o la vigilancia son un problema.\n\n\nEs importante teneren cuenta que los relays también pueden ser utilizados para propósitos malintencionados,como para rastrear o censurar el tráfico de la red.\n\n\nPor lo tanto, es importante evaluarcuidadosamente el uso de relays y considerar medidas de seguridad adecuadas para protegerla privacidad y la seguridad de la red.",
       "keysTitle": "¿Qué son las claves?",
@@ -39,6 +40,7 @@
       "Group": "",
       "QrReader": "",
       "Search": "",
+      "Wallet": "Wallet",
       "ImageGallery": "",
       "ProfileCreate": "Crear perfil",
       "ProfileConnect": "",
@@ -188,7 +190,8 @@
       "copy": "Copiar",
       "open": "Abrir wallet",
       "anonTip": "Propina anónima",
-      "zap": "Zap"
+      "zap": "Zap",
+      "pay": "Pagar"
     },
     "notificationsFeed": {
       "reposted": "Reposteado",

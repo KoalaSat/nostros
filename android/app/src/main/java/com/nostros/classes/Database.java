@@ -237,6 +237,9 @@ public class Database {
         try {
             instance.execSQL("ALTER TABLE nostros_relays ADD COLUMN paid INT DEFAULT 0;");
         } catch (SQLException e) { }
+        try {
+            instance.execSQL("ALTER TABLE nostros_zaps ADD COLUMN preimage TEXT;");
+        } catch (SQLException e) { }
     }
 
     public void saveEvent(JSONObject data, String userPubKey, String relayUrl) throws JSONException {

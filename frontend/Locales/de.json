@@ -2,9 +2,10 @@
   "common": {
     "time": {
       "today": "Today",
-      "yerterday": "Yesterday"
+      "yesterday": "Yesterday"
     },
     "drawers": {
+      "walletLogout": "Logout",
       "relaysTitle": "Relays",
       "relaysDescription": "Relays sind Nodes (Netzknoten) im Netzwerk, die als Vermittler von Nachrichten zwischen den Anwendungen dienen.\n\n\nRelays können die Belastbarkeit und die Verfügbarkeit des Netzwerks verbessern, indem sie dafür sorgen, das Nachrichten trotz Unterbrechungen oder Ausfällen der Verfügbarkeit ausgeliefert werden.\n\n\nRelays können Privatsphäre und Netzwerksicherheit erhöhen, indem sie Aufenthaltsort und Identität der Anwendungen bzw. der Benutzer, die miteinander kommunizieren, verbergen\n\n\nDies kann von Wert sein in Umgebungen, in denen Zensur oder Überwachung ein Problem ist.\n\n\nEs ist wichtig darauf hinzuweisen, das Relays für schadhafte Zwecke missbraucht werden können, wie zum Beispiel Sniffing oder das Zensieren von Netzwerkverkehr.\n\n\nDeswegen ist es von Bedeutung, die Nutzung von Relays sorgfältig abzuwägen, und angemessenene Sichheitsmassnahmen anzuwenden, um Identität, Privatsphäre und Netzwerksicherheit zu schützen.",
       "keysTitle": "Was sind Schlüssel?",
@@ -28,6 +29,7 @@
     "homeNavigator": {
       "ProfileCreate": "Profil anlegen",
       "Search": "",
+      "Wallet": "Wallet",
       "ImageGallery": "",
       "ProfileConnect": "",
       "Group": "",
@@ -172,7 +174,8 @@
       "copy": "Kopieren",
       "open": "Öffne Wallet",
       "anonTip": "Anonymer Tip",
-      "zap": "Zap"
+      "zap": "Zap",
+      "pay": "Pay"
     },
     "notificationsFeed": {
       "connectContactRelays": "Reconnect to contacts' relays",

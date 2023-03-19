@@ -2,9 +2,10 @@
   "common": {
     "time": {
       "today": "Today",
-      "yerterday": "Yesterday"
+      "yesterday": "Yesterday"
     },
     "drawers": {
+      "walletLogout": "Logout",
       "relaysTitle": "关于中继",
       "relaysDescription": "中继是网络上的节点，作为应用程序之间传输消息的中介。\n\n\n中继可用于提高网络的弹性和可用性，即使在连接出现故障或中断的情况下，也能传递消息。 \n\n\n中继还可用于提高隐私和网络安全，因为它们可以隐藏相互通信的用户的位置和身份。 \n\n\n这在审查或监视是一个问题的环境中是很有用的。 \n\n\n需要注意的是，中继也可以用于恶意的目的，如嗅探或审查网络流量。",
       "keysTitle": "这些密钥是什么？",
@@ -40,6 +41,7 @@
       "QrReader": "",
       "ImageGallery": "",
       "Search": "",
+      "Wallet": "Wallet",
       "ProfileCreate": "创建用户",
       "ProfileConnect": "",
       "Contacts": "联系人",
@@ -187,7 +189,8 @@
       "copy": "复制",
       "open": "打开钱包",
       "anonTip": "匿名赞赏",
-      "zap": "赞赏"
+      "zap": "赞赏",
+      "pay": "Pay"
     },
     "notificationsFeed": {
       "reposted": "Reposted",

@@ -2,7 +2,7 @@ import * as React from 'react'
 import { Platform, View } from 'react-native'
 import type { DrawerNavigationProp } from '@react-navigation/drawer'
 import { CardStyleInterpolators, createStackNavigator } from '@react-navigation/stack'
-import { Appbar, Text, useTheme } from 'react-native-paper'
+import { Appbar, Button, Text, useTheme } from 'react-native-paper'
 import RBSheet from 'react-native-raw-bottom-sheet'
 import { useTranslation } from 'react-i18next'
 import HomePage from '../HomePage'
@@ -29,11 +29,14 @@ import DatabaseModule from '../../lib/Native/DatabaseModule'
 import ImageGalleryPage from '../ImageGalleryPage'
 import { navigate } from '../../lib/Navigation'
 import SearchPage from '../SearchPage'
+import WalletPage from '../WalletPage'
+import { WalletContext } from '../../Contexts/WalletContext'
 
 export const HomeNavigator: React.FC = () => {
   const theme = useTheme()
   const { t } = useTranslation('common')
   const { displayRelayDrawer, setDisplayrelayDrawer } = React.useContext(RelayPoolContext)
+  const { logoutWallet } = React.useContext(WalletContext)
   const {
     displayUserDrawer,
     setDisplayNoteDrawer,
@@ -46,6 +49,7 @@ export const HomeNavigator: React.FC = () => {
   const bottomSheetProfileRef = React.useRef<RBSheet>(null)
   const bottomSheetNoteRef = React.useRef<RBSheet>(null)
   const bottomSheetRelayRef = React.useRef<RBSheet>(null)
+  const bottomWalletRef = React.useRef<RBSheet>(null)
   const Stack = React.useMemo(() => createStackNavigator(), [])
   const cardStyleInterpolator = React.useMemo(
     () =>
@@ -131,6 +135,12 @@ export const HomeNavigator: React.FC = () => {
                       route.params?.title ? route.params?.title : t(`homeNavigator.${route.name}`)
                     }
                   />
+                  {['Wallet'].includes(route.name) && (
+                    <Appbar.Action
+                      icon='dots-vertical'
+                      onPress={() => bottomWalletRef.current?.open()}
+                    />
+                  )}
                   {['Profile', 'Conversation'].includes(route.name) && (
                     <Appbar.Action
                       icon='dots-vertical'
@@ -187,6 +197,7 @@ export const HomeNavigator: React.FC = () => {
           <Stack.Screen name='Search' component={SearchPage} />
         </Stack.Group>
         <Stack.Group>
+          <Stack.Screen name='Wallet' component={WalletPage} />
           <Stack.Screen name='Contacts' component={ContactsPage} />
           <Stack.Screen name='Relays' component={RelaysPage} />
           <Stack.Screen name='About' component={AboutPage} />
@@ -226,6 +237,19 @@ export const HomeNavigator: React.FC = () => {
         <View>
           <Text variant='headlineSmall'>{t('drawers.relaysTitle')}</Text>
           <Text variant='bodyMedium'>{t('drawers.relaysDescription')}</Text>
+        </View>
+      </RBSheet>
+      <RBSheet ref={bottomWalletRef} closeOnDragDown={true} customStyles={bottomSheetStyles}>
+        <View>
+          <Button
+            mode='contained'
+            onPress={() => {
+              logoutWallet()
+              bottomWalletRef.current?.close()
+            }}
+          >
+            {t('drawers.walletLogout')}
+          </Button>
         </View>
       </RBSheet>
     </>
