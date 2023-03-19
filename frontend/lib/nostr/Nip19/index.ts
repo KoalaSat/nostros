@@ -1,18 +1,11 @@
-import {
-  decode,
-  type EventPointer,
-  neventEncode,
-  nprofileEncode,
-  npubEncode,
-  type ProfilePointer,
-} from 'nostr-tools/nip19'
+import { nip19 } from 'nostr-tools'
 
 export function getNpub(key: string | undefined): string {
   if (!key) return ''
   if (isPublicKey(key)) return key
 
   try {
-    return npubEncode(key)
+    return nip19.npubEncode(key)
   } catch {
     console.log('Error encoding')
   }
@@ -24,7 +17,7 @@ export function getNprofile(key: string, relays: string[]): string {
   if (!key) return ''
 
   try {
-    return nprofileEncode({
+    return nip19.nprofileEncode({
       pubkey: key,
       relays,
     })
@@ -40,7 +33,7 @@ export function getNevent(key: string | undefined, relays: string[]): string {
   if (isPublicKey(key)) return key
 
   try {
-    return neventEncode({ id: key, relays })
+    return nip19.neventEncode({ id: key, relays })
   } catch {
     console.log('Error encoding')
   }
@@ -48,16 +41,16 @@ export function getNevent(key: string | undefined, relays: string[]): string {
   return key
 }
 
-export function getNip19Key(nip19: string): string | null {
+export function getNip19Key(key: string): string | null {
   let result = null
 
   try {
-    const decoded = decode(nip19)
+    const decoded = nip19.decode(key)
     if (decoded.type === 'nprofile') {
-      const data = decoded.data as ProfilePointer
+      const data = decoded.data as nip19.ProfilePointer
       result = data.pubkey
     } else if (decoded.type === 'nevent') {
-      const data = decoded.data as EventPointer
+      const data = decoded.data as nip19.EventPointer
       result = data.id
     } else {
       result = decoded.data as string

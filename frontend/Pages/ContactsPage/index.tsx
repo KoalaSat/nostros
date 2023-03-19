@@ -2,7 +2,7 @@ import React, { useContext, useEffect, useState } from 'react'
 import { type NativeScrollEvent, type NativeSyntheticEvent, StyleSheet, View } from 'react-native'
 import Clipboard from '@react-native-clipboard/clipboard'
 import { AppContext } from '../../Contexts/AppContext'
-import { Kind } from 'nostr-tools'
+import { Kind, nip05 } from 'nostr-tools'
 import { useTranslation } from 'react-i18next'
 import { FlashList, type ListRenderItem } from '@shopify/flash-list'
 import {
@@ -30,7 +30,6 @@ import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityI
 import { useFocusEffect } from '@react-navigation/native'
 import ProfileData from '../../Components/ProfileData'
 import { handleInfinityScroll } from '../../Functions/NativeFunctions'
-import { queryProfile } from 'nostr-tools/nip05'
 import DatabaseModule from '../../lib/Native/DatabaseModule'
 import { removeMutedUsersList } from '../../Functions/RelayFunctions/Lists'
 
@@ -149,7 +148,7 @@ export const ContactsPage: React.FC = () => {
       let hexKey = contactInput
 
       if (contactInput.includes('@')) {
-        const profile = await queryProfile(contactInput)
+        const profile = await nip05.queryProfile(contactInput)
         hexKey = profile?.pubkey ?? hexKey
       } else {
         hexKey = getNip19Key(contactInput) ?? hexKey

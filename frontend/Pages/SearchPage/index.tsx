@@ -2,8 +2,7 @@ import { useFocusEffect } from '@react-navigation/native'
 import { FlashList, type ListRenderItem } from '@shopify/flash-list'
 import { t } from 'i18next'
 import debounce from 'lodash.debounce'
-import { Kind } from 'nostr-tools'
-import { decode } from 'nostr-tools/nip19'
+import { Kind, nip19 } from 'nostr-tools'
 import * as React from 'react'
 import { StyleSheet, View } from 'react-native'
 import { ActivityIndicator, Text, TextInput, TouchableRipple, useTheme } from 'react-native-paper'
@@ -118,7 +117,7 @@ export const SearchPage: React.FC<SearchPageProps> = ({ route }) => {
   React.useEffect(() => {
     if (searchInput !== '' && validNip21(searchInput)) {
       try {
-        const key = decode(searchInput.replace('nostr:', ''))
+        const key = nip19.decode(searchInput.replace('nostr:', ''))
         if (key?.data) {
           if (key.type === 'nevent') {
             setSearchInput('')
