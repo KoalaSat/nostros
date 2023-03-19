@@ -130,6 +130,7 @@ export const ThirdStep: React.FC<ThirdStepProps> = ({ nextStep, skip }) => {
               data={asignation}
               renderItem={renderItem}
               ItemSeparatorComponent={Divider}
+              style={styles.list}
             />
           </Card.Content>
         </Card>
@@ -181,6 +182,9 @@ const styles = StyleSheet.create({
   },
   relayColor: {
     paddingTop: 9,
+  },
+  list: {
+    maxHeight: 230,
   },
 })
 

@@ -2,9 +2,10 @@
   "common": {
     "time": {
       "today": "Today",
-      "yerterday": "Yesterday"
+      "yesterday": "Yesterday"
     },
     "drawers": {
+      "walletLogout": "Logout",
       "relaysTitle": "Relays",
       "relaysDescription": "Relays are nodes on the network that act as intermediaries for the transmission of messages between applications.\n\n\nRelays can be used to improve network resiliency and availability by allowing messages to be delivered even when there are failures or interruptions in connectivity.\n\n\nRelays can also be used to improve privacy and network security, as they can hide the location and identity of applications that communicate with each other. This can be useful in environments where censorship or surveillance is an issue.\n\n\nIt is important to note that relays can also be used for malicious purposes, such as sniffing or censoring network traffic.\n\n\nTherefore, it is important to carefully evaluate the use of relays and consider appropriate security measures to protect privacy and network security.",
       "keysTitle": "What are these keys?",
@@ -25,9 +26,15 @@
       "loginStep3Description": "You can add the relays used by your contacts to your list and connect to them to strengthen the network.",
       "loginskip": "You can skip this process but you may miss out on the opportunity to connect to a diverse range of relays and expand your network's reach"
     },
+    "walletPage": {
+      "addLnhub": "Add LNHub",
+      "lnHub": "LNHub address",
+      "connect": "Connect"
+    },
     "homeNavigator": {
       "ProfileCreate": "Create profile",
       "Search": "",
+      "Wallet": "Wallet",
       "ImageGallery": "",
       "ProfileConnect": "",
       "Group": "",
@@ -106,6 +113,7 @@
       "poweredBy": "Powered by {{uri}}"
     },
     "menuItems": {
+      "wallet": "Wallet",
       "relays": "Relays",
       "notConnected": "Not connected",
       "connectedRelays": "{{number}} connected",
@@ -175,7 +183,8 @@
       "copy": "Copy",
       "open": "Open wallet",
       "anonTip": "Anonymous tip",
-      "zap": "Zap"
+      "zap": "Zap",
+      "pay": "Pay"
     },
     "notificationsFeed": {
       "reposted": "Reposted",

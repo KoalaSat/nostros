@@ -18,10 +18,14 @@ import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityI
 import { navigate } from '../../lib/Navigation'
 import { usernamePubKey } from '../../Functions/RelayFunctions/Users'
 import ProfileData from '../ProfileData'
+import { WalletContext } from '../../Contexts/WalletContext'
+import { AppContext } from '../../Contexts/AppContext'
 
 export const MenuItems: React.FC = () => {
   const [drawerItemIndex, setDrawerItemIndex] = React.useState<number>(-1)
+  const { getSatoshiSymbol } = React.useContext(AppContext)
   const { relays } = React.useContext(RelayPoolContext)
+  const { balance, active } = React.useContext(WalletContext)
   const {
     nPub,
     publicKey,
@@ -61,6 +65,8 @@ export const MenuItems: React.FC = () => {
       navigate('Config')
     } else if (key === 'contacts') {
       navigate('Contacts')
+    } else if (key === 'wallet') {
+      navigate('Wallet')
     }
   }
 
@@ -114,49 +120,65 @@ export const MenuItems: React.FC = () => {
         )}
         <Drawer.Section>
           {publicKey && (
-            <>
-              <Drawer.Item
-                label={t('menuItems.relays')}
-                icon={() => (
-                  <MaterialCommunityIcons
-                    name='chart-timeline-variant'
-                    size={25}
-                    color={theme.colors.onPrimaryContainer}
-                  />
-                )}
-                key='relays'
-                active={drawerItemIndex === 0}
-                onPress={() => onPressItem('relays', 0)}
-                onTouchEnd={() => setDrawerItemIndex(-1)}
-                right={() =>
-                  activerelays < 1 ? (
-                    <Text style={{ color: theme.colors.error }}>{t('menuItems.notConnected')}</Text>
-                  ) : (
-                    <Text style={{ color: '#7ADC70' }}>
-                      {t('menuItems.connectedRelays', {
-                        number: activerelays,
-                      })}
-                    </Text>
-                  )
-                }
-              />
-
-              <Drawer.Item
-                label={t('menuItems.contacts')}
-                icon='contacts-outline'
-                key='contacts'
-                active={drawerItemIndex === 1}
-                onPress={() => onPressItem('contacts', 1)}
-                onTouchEnd={() => setDrawerItemIndex(-1)}
-              />
-            </>
+            <Drawer.Item
+              label={t('menuItems.relays')}
+              icon={() => (
+                <MaterialCommunityIcons
+                  name='chart-timeline-variant'
+                  size={25}
+                  color={theme.colors.onPrimaryContainer}
+                />
+              )}
+              key='relays'
+              active={drawerItemIndex === 0}
+              onPress={() => onPressItem('relays', 0)}
+              onTouchEnd={() => setDrawerItemIndex(-1)}
+              right={() =>
+                activerelays < 1 ? (
+                  <Text style={{ color: theme.colors.error }}>{t('menuItems.notConnected')}</Text>
+                ) : (
+                  <Text style={{ color: '#7ADC70' }}>
+                    {t('menuItems.connectedRelays', {
+                      number: activerelays,
+                    })}
+                  </Text>
+                )
+              }
+            />
+          )}
+          <Drawer.Item
+            label={t('menuItems.wallet')}
+            icon='wallet-outline'
+            key='wallet'
+            active={drawerItemIndex === 1}
+            onPress={() => onPressItem('wallet', 1)}
+            onTouchEnd={() => setDrawerItemIndex(-1)}
+            right={() => {
+              if (!active) return <></>
+              return (
+                <Text>
+                  {`${balance} `}
+                  {getSatoshiSymbol()}
+                </Text>
+              )
+            }}
+          />
+          {publicKey && (
+            <Drawer.Item
+              label={t('menuItems.contacts')}
+              icon='contacts-outline'
+              key='contacts'
+              active={drawerItemIndex === 1}
+              onPress={() => onPressItem('contacts', 1)}
+              onTouchEnd={() => setDrawerItemIndex(-1)}
+            />
           )}
           <Drawer.Item
             label={t('menuItems.configuration')}
             icon='cog'
             key='configuration'
-            active={drawerItemIndex === 1}
-            onPress={() => onPressItem('config', 1)}
+            active={drawerItemIndex === 2}
+            onPress={() => onPressItem('config', 2)}
             onTouchEnd={() => setDrawerItemIndex(-1)}
           />
         </Drawer.Section>
@@ -165,16 +187,16 @@ export const MenuItems: React.FC = () => {
             label={t('menuItems.about')}
             icon='information-outline'
             key='about'
-            active={drawerItemIndex === 2}
-            onPress={() => onPressItem('about', 2)}
+            active={drawerItemIndex === 3}
+            onPress={() => onPressItem('about', 3)}
             onTouchEnd={() => setDrawerItemIndex(-1)}
           />
           <Drawer.Item
             label={t('menuItems.faq')}
             icon='comment-question-outline'
             key='faq'
-            active={drawerItemIndex === 2}
-            onPress={() => onPressItem('faq', 2)}
+            active={drawerItemIndex === 4}
+            onPress={() => onPressItem('faq', 4)}
             onTouchEnd={() => setDrawerItemIndex(-1)}
           />
           <Drawer.Item

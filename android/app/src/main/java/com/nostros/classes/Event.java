@@ -544,10 +544,12 @@ public class Event {
             JSONArray eTags = filterTags("e");
             JSONArray bolt11Tags = filterTags("bolt11");
             JSONArray descriptionTags = filterTags("description");
+            JSONArray preimageTags = filterTags("preimage");
 
             String zapped_event_id = "";
             String zapped_user_id = "";
             String zapper_user_id = "";
+            String preimage = "";
             double amount = 0;
             if (descriptionTags.length() > 0) {
                 JSONArray tag = descriptionTags.getJSONArray(0);
@@ -563,6 +565,9 @@ public class Event {
             }
             if (pTags.length() > 0) {
                 zapped_user_id = pTags.getJSONArray(pTags.length() - 1).getString(1);
+            }
+            if (preimageTags.length() > 0) {
+                preimage = preimageTags.getJSONArray(preimageTags.length() - 1).getString(1);
             }
 
             String userQuery = "SELECT created_at FROM nostros_users WHERE zap_pubkey = ? AND id = ?";
@@ -581,6 +586,7 @@ public class Event {
                 values.put("zapped_user_id", zapped_user_id);
                 values.put("zapped_event_id", zapped_event_id);
                 values.put("zapper_user_id", zapper_user_id);
+                values.put("preimage", preimage);
 
                 database.insert("nostros_zaps", null, values);
             }
