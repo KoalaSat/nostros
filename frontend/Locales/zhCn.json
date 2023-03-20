@@ -1,11 +1,11 @@
 {
   "common": {
     "time": {
-      "today": "Today",
-      "yesterday": "Yesterday"
+      "today": "今天",
+      "yesterday": "昨天"
     },
     "drawers": {
-      "walletLogout": "Logout",
+      "walletLogout": "退出",
       "relaysTitle": "关于中继",
       "relaysDescription": "中继是网络上的节点，作为应用程序之间传输消息的中介。\n\n\n中继可用于提高网络的弹性和可用性，即使在连接出现故障或中断的情况下，也能传递消息。 \n\n\n中继还可用于提高隐私和网络安全，因为它们可以隐藏相互通信的用户的位置和身份。 \n\n\n这在审查或监视是一个问题的环境中是很有用的。 \n\n\n需要注意的是，中继也可以用于恶意的目的，如嗅探或审查网络流量。",
       "keysTitle": "这些密钥是什么？",
@@ -16,20 +16,20 @@
       "privateKeyDescription": "您可以将私钥看作是您的密码",
       "privateKeysSnackbarTitle": "注意",
       "privateKeysSnackbarDescription": "请妥善保管您的私钥。如果遗失，您将无法访问或恢复您的账号。",
-      "loginTitle": "Resilient login",
-      "loginDescription": "The \"resilient login\" process has three steps that help make the network stronger and more decentralized.",
-      "loginStep1Title": "1. Connect to random relays",
-      "loginStep1Description": "Randomly connect to 8 relays to search for your profile and your list of relays.",
-      "loginStep2Title": "2. Search for contacts in your relay list",
-      "loginStep2Description": "Connecting to your relays and searching for your contacts.",
-      "loginStep3Title": "3. Search the relays of your contacts",
-      "loginStep3Description": "You can add the relays used by your contacts to your list and connect to them to strengthen the network.",
-      "loginskip": "You can skip this process but you may miss out on the opportunity to connect to a diverse range of relays and expand your network's reach"
+      "loginTitle": "弹性登录",
+      "loginDescription": "\"弹性登录\" 流程分为三个步骤，有助于使网络更强大、更去中心化",
+      "loginStep1Title": "1. 连接随机的中继",
+      "loginStep1Description": "随机连接到 8 个中继以搜索您的个人资料和中继列表",
+      "loginStep2Title": "2. 在您的中继列表中搜索联系人",
+      "loginStep2Description": "连接到您的中继并搜索您的联系人",
+      "loginStep3Title": "3. 搜索联系人的中继",
+      "loginStep3Description": "您可以将您的联系人使用的中继添加到您的列表中并连接到它们以加强网络",
+      "loginskip": "您可以跳过此过程，但您可能会错过连接到各种中继和扩大网络覆盖范围的机会"
     },
     "searchPage": {
-      "placeholder": "Look for public keys, notes, hashtags...",
-      "emptyTitle": "Tip",
-      "emptyDescription": "Start typing @ to find someone\n\nStart typing # to search topics"
+      "placeholder": "查找公钥，Notes，标签...",
+      "emptyTitle": "提示",
+      "emptyDescription": "输入 @ 以搜索用户\n\n输入 # 以搜索主题"
     },
     "qrReaderPage": {
       "emptyTitle": "未授予权限",
@@ -41,11 +41,11 @@
       "QrReader": "",
       "ImageGallery": "",
       "Search": "",
-      "Wallet": "Wallet",
+      "Wallet": "钱包",
       "ProfileCreate": "创建用户",
       "ProfileConnect": "",
       "Contacts": "联系人",
-      "ProfileLoad": "Login",
+      "ProfileLoad": "登录",
       "Landing": "",
       "Conversation": "会话",
       "Repost": "转发",
@@ -78,31 +78,31 @@
       "add": "添加群组"
     },
     "conversationPage": {
-      "unableDecypt": "{{username}} is talking with others about you",
+      "unableDecypt": "{{username}} 正在和其他人谈论你",
       "typeMessage": "输入信息",
       "notifications": {
         "privateMessageSendError": "发送私信时发生了错误"
       }
     },
     "profileLoadPage": {
-      "connectingRandomRelays": "1. Connect to random relays",
-      "connectingRandomRelaysDescription": "Randomly connect to 8 relays to search for your profile and your list of relays.",
-      "randomRelays": "Random relays",
-      "connectedRelays": "{{activeRelays}} connected",
-      "myProfile": "My profile",
-      "myRelays": "My relays",
-      "relaysTooLong": "Taking too long?",
-      "relaysReconnect": "Reconnect to other relays",
+      "connectingRandomRelays": "1. 连接随机的中继",
+      "connectingRandomRelaysDescription": "随机连接到 8 个中继以搜索您的个人资料和中继列表",
+      "randomRelays": "随机中继",
+      "connectedRelays": "{{activeRelays}} 已连接",
+      "myProfile": "我的简介",
+      "myRelays": "我的中继",
+      "relaysTooLong": "花费太长时间？",
+      "relaysReconnect": "重新连接其他的中继",
       "skip": "跳过",
       "continue": "继续",
-      "searchContacts": "2. Search contacts in your relays",
-      "searchContactsDescription": "Connecting to your relays and searching for your contacts.",
-      "contactsCount": "Contacts found",
-      "searchContactsRelays": "3. Search your contacts relays",
-      "searchContactsRelaysDescription": "You can add the relays used by your contacts to your list and connect to them to strengthen the network.",
-      "contatcsRelays": "Contatcs Relays",
-      "contatcsRelaysCount": "{{activeRelays}} lists found",
-      "connectAccess": "Connect and access"
+      "searchContacts": "2. 在您的中继中查找联系人",
+      "searchContactsDescription": "连接到您的中继并搜索您的联系人。",
+      "contactsCount": "已找到的联系人",
+      "searchContactsRelays": "3. 搜索您的联系人中继",
+      "searchContactsRelaysDescription": "您可以将您的联系人使用的中继添加到您的列表中并连接到它们以加强网络",
+      "contatcsRelays": "联系人中继",
+      "contatcsRelaysCount": "找到{{activeRelays}}列表",
+      "connectAccess": "连接以访问"
     },
     "sendPage": {
       "isContact": "正在关注",
@@ -138,7 +138,7 @@
       "logout": "退出"
     },
     "configPage": {
-      "signHeight": "Sign events with latest Bitcoin block",
+      "signHeight": "用最新的比特币区块签署事件",
       "showPublicImages": "显示发现页图片",
       "showSensitive": "显示敏感的 Notes",
       "satoshi": "聪符号",
@@ -193,11 +193,11 @@
       "pay": "Pay"
     },
     "notificationsFeed": {
-      "reposted": "Reposted",
-      "zap": "Zapped {{amount}}",
-      "like": "Like",
-      "dislike": "Dislike",
-      "replied": "Replied",
+      "reposted": "已转发",
+      "zap": "已赞赏{{amount}}",
+      "like": "喜欢",
+      "dislike": "不喜欢",
+      "replied": "已回复",
       "emptyTitle": "还没有新通知",
       "emptyDescription": "发布信息以获得回复和回应",
       "emptyButton": "发布信息"
@@ -304,14 +304,14 @@
       "newMessages": "有{{newNotesCount}}条新的 Notes，下拉刷新"
     },
     "relaysPage": {
-      "connectContactRelays": "Reconnect to contacts' relays",
-      "pushListTitle": "Push relay list to the network",
-      "pushListDescription": "Only relays on \"My relays\" list will be pushed.",
-      "pushList": "Push list",
-      "freeAccess": "Free access",
-      "paid": "Paid",
-      "contactsList": "Contact's relays",
-      "paidRelay": "Paid relay",
+      "connectContactRelays": "重新连接到联系人的中继",
+      "pushListTitle": "将中继列表推送到网络",
+      "pushListDescription": "只推送\"我的中继\"列表中的中继 ",
+      "pushList": "推送列表",
+      "freeAccess": "免费",
+      "paid": "付费",
+      "contactsList": "联系人的中继",
+      "paidRelay": "付费中继",
       "resilienceTitle": "弹性模式 (试验性)",
       "resilienceDescription": "Nostr 协议提供了大量工具来构建去中心化网络，但与比特币等其他去中心化协议不同，它并不是默认使用的。 \n\n为了实现这样的目标，客户端和中继应该积极协作。 Nostros 弹性模式首先尝试将这些问题暴露给用户，其次开始尝试新的模式和方法来帮助提高网络的弹性。 \n\n该功能的实现将很快默认出现在 Nostros 上",
       "resilienceCategories": "弹性暴露",
@@ -339,7 +339,7 @@
         "desactive": "中继已停用",
         "badFormat": "中继地址格式不正确",
         "alreadyExists": "中继已存在",
-        "listPushed": "Relay list pushed."
+        "listPushed": "中继列表已推送"
       }
     },
     "relayCard": {
@@ -360,8 +360,8 @@
       "description": "描述",
       "obtainingInfo": "获取中继信息中",
       "notifications": {
-        "paid": "Relay marked as paid.",
-        "noPaid": "Relay marked as free.",
+        "paid": "标记为付费中继",
+        "noPaid": "标记为免费中继",
         "active": "中继已启用",
         "desactive": "中继已停用",
         "globalFeedActive": "已为发现页开启",
@@ -514,7 +514,7 @@
       },
       "nostros_nip_support": {
         "question": "在Nostros实施的NIPs",
-        "answer": "NIP-01 Basic protocol flow description, NIP-02 Contact List and Petnames, NIP-04 Encrypted Direct Message, NIP-05 Mapping Nostr keys to DNS-based internet identifiers, NIP-06 Basic key derivation from mnemonic seed phrase, NIP-08 Handling Mentions, NIP-10 Conventions for clients' use of e and p tags in text events, NIP-11 Relay Information Document, NIP-12 Generic Tag Queries, NIP-19 bech32-encoded entities, NIP-21 nostr: URL scheme, NIP-25 Reactions, NIP-28 Public Chat, NIP-36 Sensitive Content, NIP-51 Lists, NIP-57 Lightning Zaps, y NIP-65 Relay List Metadata."
+        "answer": "NIP-01 基本协议流程描述，NIP-02 联系人列表和昵称，NIP-04 加密私信，NIP-05 将 Nostr 密钥映射到基于 DNS 的互联网标识符，NIP-06 从助记词短语推导基本密钥，NIP-08 提及，NIP-10 客户端在文本事件中使用 e 和 p 标签的约定，NIP-11 中继信息文档，NIP-12 通用标签查询，NIP-19 bech32 编码实体，NIP-21 Nostr：URL 格式， NIP-25 回应，NIP-28 公共聊天，NIP-36 敏感内容，NIP-51 列表，NIP-57 Lightning 赞赏， NIP-65 中继列表元数据"
       }
     }
   }
