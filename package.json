@@ -80,7 +80,7 @@
     "@types/react-native-vector-icons": "^6.4.13",
     "@types/react-test-renderer": "^18.0.0",
     "@types/uuid": "^9.0.0",
-    "@typescript-eslint/eslint-plugin": "^5.43.0",
+    "@typescript-eslint/eslint-plugin": "^5.56.0",
     "babel-jest": "^29.4.3",
     "eslint": "^8.36.0",
     "eslint-config-prettier": "^8.6.0",
