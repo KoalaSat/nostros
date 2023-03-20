@@ -97,7 +97,7 @@
     "metro-react-native-babel-preset": "^0.75.0",
     "prettier": "^2.8.4",
     "react-test-renderer": "18.2.0",
-    "typescript": "^4.9.4"
+    "typescript": "^5.0.2"
   },
   "resolutions": {
     "@types/react": "^17"
