@@ -1710,10 +1710,17 @@
     "@types/react" "*"
     "@types/react-native" "^0.70"
 
-"@types/react-native@^0.70", "@types/react-native@^0.70.8":
+"@types/react-native@^0.70":
   version "0.70.11"
   resolved "https://registry.yarnpkg.com/@types/react-native/-/react-native-0.70.11.tgz#50c3d81e1351aac0562c3341c9bd57885651a2fe"
   integrity sha512-FobPtzoNPNHugBKMfzs4Li0Q9ei4tgU8SI1M5Ayg7+t5/+noCm2sknI8uwij22wMkcHcefv8RFx4q28nNVJtCQ==
+  dependencies:
+    "@types/react" "*"
+
+"@types/react-native@^0.71.4":
+  version "0.71.4"
+  resolved "https://registry.yarnpkg.com/@types/react-native/-/react-native-0.71.4.tgz#0d0afb7784edc2f618add87c87445cbd45afa7b7"
+  integrity sha512-83wkRqauxJUtLrQN9S8P5HUSx7FalE8sDHBmvtxXGk3eb0bOsyOaOgEIfy59P/ypCDXY0oc3GiJejs/ko94tJg==
   dependencies:
     "@types/react" "*"
 
@@ -6746,10 +6753,10 @@ react-native-bidirectional-infinite-scroll@^0.3.3:
   resolved "https://registry.yarnpkg.com/react-native-bidirectional-infinite-scroll/-/react-native-bidirectional-infinite-scroll-0.3.3.tgz#31e83e30514be2eaaa889b97d01149c8a08576ec"
   integrity sha512-zxYJDjrxTkGqg83WH3fSdufg79XZ7xDDn9HdHlKo9avAcz92Rf28/ivDeUM2aOUmmboqJK8BqtVByT6cF/taYg==
 
-react-native-blob-util@^0.17.1:
-  version "0.17.2"
-  resolved "https://registry.yarnpkg.com/react-native-blob-util/-/react-native-blob-util-0.17.2.tgz#5a3b31d827bd8cc4306cf6fa39e842a38c5d96b0"
-  integrity sha512-JXdUt/NfG6lDtDNDJ4/mAXiOl4elzhIPZDWQBlIwiCwQczo4TU10iGZl5+f8uMwKtbh3leuUjL2PESOkBYCRBg==
+react-native-blob-util@^0.17.3:
+  version "0.17.3"
+  resolved "https://registry.yarnpkg.com/react-native-blob-util/-/react-native-blob-util-0.17.3.tgz#5dead89807ec176828a91c815c276da2e5c71fea"
+  integrity sha512-nO4VXIPtCrtf3mzCiOkdrXsmc8WmOLNSziS7dCnQ6kSyg4LOLXP4mQOFqfiNxt78n7cZ0QOF5CdUY/sIZZ2aOA==
   dependencies:
     base-64 "0.1.0"
     glob "^7.2.3"
@@ -6819,10 +6826,10 @@ react-native-qrcode-svg@^6.2.0:
     prop-types "^15.8.0"
     qrcode "^1.5.1"
 
-react-native-quick-sqlite@^7.0.0:
-  version "7.0.0"
-  resolved "https://registry.yarnpkg.com/react-native-quick-sqlite/-/react-native-quick-sqlite-7.0.0.tgz#a8bd9344a784f391392d5ac703ebd1d6db06889f"
-  integrity sha512-SSJeC2ERhZz90IhCr4MZIs34+OStnfD7ziCi+XC43/YU/eymC4ko9pFmnb57e4bPRjkT891C4D4R+c2TM7QzeQ==
+react-native-quick-sqlite@^8.0.2:
+  version "8.0.2"
+  resolved "https://registry.yarnpkg.com/react-native-quick-sqlite/-/react-native-quick-sqlite-8.0.2.tgz#67ad0a330ede647f9cd02c83115810722d5bd828"
+  integrity sha512-w5m4y0q5ggaiVS8vHmN0ihynD9hMPgLNAZJA7ZRcXs6WwR+VSW9WXUlEn1N0fgIrmoYRLNXyU5TjXx/IiKPlMA==
 
 react-native-raw-bottom-sheet@^2.2.0:
   version "2.2.0"
