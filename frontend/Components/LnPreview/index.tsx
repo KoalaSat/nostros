@@ -23,7 +23,7 @@ export const LnPreview: React.FC<LnPreviewProps> = ({
 }) => {
   const theme = useTheme()
   const { t } = useTranslation('common')
-  const { active, payInvoice } = React.useContext(WalletContext)
+  const { type, payInvoice } = React.useContext(WalletContext)
   const { getSatoshiSymbol } = React.useContext(AppContext)
   const bottomSheetInvoiceRef = React.useRef<RBSheet>(null)
   const [decodedLnUrl, setDecodedLnUrl] = useState<
@@ -107,7 +107,7 @@ export const LnPreview: React.FC<LnPreviewProps> = ({
           <IconButton icon='content-copy' size={28} onPress={copyInvoice} />
           <Text>{t('lnPayment.copy')}</Text>
         </View>
-        {active && (
+        {type && (
           <View style={styles.actionButton}>
             <IconButton icon='wallet' size={28} onPress={payWithWallet} />
             <Text>{t('lnPayment.pay')}</Text>
