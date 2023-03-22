@@ -26,6 +26,17 @@
       "loginStep3Description": "You can add the relays used by your contacts to your list and connect to them to strengthen the network.",
       "loginskip": "You can skip this process but you may miss out on the opportunity to connect to a diverse range of relays and expand your network's reach"
     },
+    "walletPage": {
+      "addLnBits": "Add LnBits",
+      "adminKey": "Admin Key",
+      "invoiceReadKey": "Invoice Read Key",
+      "address": "Address",
+      "walletId": "Wallet id",
+      "connectingWallet": "Connecting to wallet",
+      "lnHub": "LNDHub address",
+      "addLnhub": "Add LNDHub",
+      "connect": "Connect"
+    },
     "searchPage": {
       "placeholder": "Look for public keys, notes, hashtags...",
       "emptyTitle": "Tip",

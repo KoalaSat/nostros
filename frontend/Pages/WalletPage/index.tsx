@@ -1,4 +1,5 @@
 import Clipboard from '@react-native-clipboard/clipboard'
+import { useFocusEffect } from '@react-navigation/native'
 import { differenceInDays, format, fromUnixTime, isSameDay } from 'date-fns'
 import { t } from 'i18next'
 import React, { useEffect, useMemo } from 'react'
@@ -15,24 +16,36 @@ import {
 } from 'react-native-paper'
 import RBSheet from 'react-native-raw-bottom-sheet'
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'
+import Logo from '../../Components/Logo'
 import NostrosAvatar from '../../Components/NostrosAvatar'
 import { AppContext } from '../../Contexts/AppContext'
-import { type WalletAction, WalletContext } from '../../Contexts/WalletContext'
+import { WalletContext } from '../../Contexts/WalletContext'
 import { getZaps, type Zap } from '../../Functions/DatabaseFunctions/Zaps'
+import type WalletAction from '../../lib/Lightning'
 import { navigate } from '../../lib/Navigation'
 
 export const WalletPage: React.FC = () => {
   const theme = useTheme()
   const { getSatoshiSymbol, database, setDisplayUserDrawer } = React.useContext(AppContext)
-  const { refreshLndHub, active, balance, transactions, invoices, updatedAt } =
+  const { refreshWallet, updateWallet, type, balance, transactions, invoices, updatedAt } =
     React.useContext(WalletContext)
   const [lnHubAddress, setLndHubAddress] = React.useState<string>()
+  const [lnBitsAddress, setLnBitsAddress] = React.useState<string>()
+  const [lnBitsInvoiceKey, setLnBitsInvoiceKey] = React.useState<string>()
+  const [lnBitsAdminKey, setLnBitsAdminKey] = React.useState<string>()
   const [showNotification, setShowNotification] = React.useState<undefined | string>()
   const [actions, setActions] = React.useState<WalletAction[]>([])
   const [zaps, setZaps] = React.useState<Record<string, Zap>>({})
   const bottomLndHubRef = React.useRef<RBSheet>(null)
+  const bottomLndBitsRef = React.useRef<RBSheet>(null)
 
-  useEffect(refreshLndHub, [])
+  useFocusEffect(
+    React.useCallback(() => {
+      updateWallet()
+      return () => {}
+    }, []),
+  )
+
   useEffect(() => {
     const array = [...transactions, ...invoices].sort(
       (item1, item2) => item2.timestamp - item1.timestamp,
@@ -51,9 +64,9 @@ export const WalletPage: React.FC = () => {
     }
   }, [updatedAt])
 
-  const pasteLndHub: () => void = () => {
+  const paste: (setFunction: (value: string) => void) => void = (setFunction) => {
     Clipboard.getString().then((value) => {
-      setLndHubAddress(value ?? '')
+      setFunction(value ?? '')
     })
   }
 
@@ -67,10 +80,24 @@ export const WalletPage: React.FC = () => {
         if (uri[uri.length - 1] === '/') {
           uri = uri.substring(0, uri.length - 1)
         }
-        refreshLndHub(login, password, uri)
+        refreshWallet({ login, password, uri }, 'lndHub')
         setLndHubAddress(undefined)
         bottomLndHubRef.current?.close()
       }
+    }
+  }
+
+  const connectLnBits: () => void = () => {
+    if (lnBitsAddress && lnBitsAdminKey && lnBitsInvoiceKey) {
+      let uri = lnBitsAddress
+      if (uri[uri.length - 1] === '/') {
+        uri = uri.substring(0, uri.length - 1)
+      }
+      refreshWallet({ lnBitsAddress, lnBitsAdminKey, lnBitsInvoiceKey }, 'lnBits')
+      setLnBitsAddress(undefined)
+      setLnBitsAdminKey(undefined)
+      setLnBitsInvoiceKey(undefined)
+      bottomLndBitsRef.current?.close()
     }
   }
 
@@ -95,6 +122,13 @@ export const WalletPage: React.FC = () => {
         <Button mode='contained' onPress={() => bottomLndHubRef.current?.open()}>
           {t('walletPage.addLnhub')}
         </Button>
+        <Button
+          mode='contained'
+          style={styles.button}
+          onPress={() => bottomLndBitsRef.current?.open()}
+        >
+          {t('walletPage.addLnBits')}
+        </Button>
       </View>
     ),
     [],
@@ -109,7 +143,7 @@ export const WalletPage: React.FC = () => {
     const zap = zaps[item.id]
 
     return (
-      <>
+      <View key={item.id ?? index}>
         {(index === 0 || !isSameDay(date, prevDate)) && (
           <Text variant='titleMedium'>{format(date, formatPattern)}</Text>
         )}
@@ -172,29 +206,33 @@ export const WalletPage: React.FC = () => {
             </View>
           </View>
         </TouchableRipple>
-      </>
+      </View>
     )
   }
 
   return (
     <View style={styles.container}>
-      {active ? (
-        <View>
-          <View style={[styles.balance, { backgroundColor: theme.colors.onSecondary }]}>
-            <View style={styles.balanceNumber}>
-              <Text variant='displayMedium'>{`${balance} `}</Text>
-              <Text style={styles.balanceSymbol} variant='headlineSmall'>
-                {getSatoshiSymbol()}
-              </Text>
+      {type ? (
+        balance !== undefined ? (
+          <View>
+            <View style={[styles.balance, { backgroundColor: theme.colors.onSecondary }]}>
+              <View style={styles.balanceNumber}>
+                <Text variant='displayMedium'>{`${balance} `}</Text>
+                <Text style={styles.balanceSymbol} variant='headlineSmall'>
+                  {getSatoshiSymbol()}
+                </Text>
+              </View>
             </View>
+            <FlatList data={actions} renderItem={renderAction} style={styles.list} />
           </View>
-          <FlatList
-            data={actions}
-            renderItem={renderAction}
-            style={styles.list}
-            keyExtractor={(item) => item.id}
-          />
-        </View>
+        ) : (
+          <View style={styles.center}>
+            <View style={styles.centerItem}>
+              <Logo onlyIcon size='large' />
+            </View>
+            <Text style={styles.centerItem}>{t('walletPage.connectingWallet')}</Text>
+          </View>
+        )
       ) : (
         login
       )}
@@ -206,7 +244,7 @@ export const WalletPage: React.FC = () => {
           onIconPress={() => setShowNotification(undefined)}
           onDismiss={() => setShowNotification(undefined)}
         >
-          {t(`profileCard.notifications.${showNotification}`)}
+          {t(`walletPage.notifications.${showNotification}`)}
         </Snackbar>
       )}
       <RBSheet ref={bottomLndHubRef} closeOnDragDown={true} customStyles={bottomSheetStyles}>
@@ -224,12 +262,75 @@ export const WalletPage: React.FC = () => {
             right={
               <TextInput.Icon
                 icon='content-paste'
-                onPress={pasteLndHub}
+                onPress={() => paste(setLndHubAddress)}
                 forceTextInputFocus={false}
               />
             }
           />
           <Button mode='contained' onPress={connectLndHub} disabled={lnHubAddress === undefined}>
+            {t('walletPage.connect')}
+          </Button>
+        </View>
+      </RBSheet>
+      <RBSheet ref={bottomLndBitsRef} closeOnDragDown={true} customStyles={bottomSheetStyles}>
+        <View>
+          <Text variant='headlineSmall' style={styles.drawerParagraph}>
+            {t('walletPage.addLnBits')}
+          </Text>
+          <TextInput
+            style={styles.drawerParagraph}
+            mode='outlined'
+            multiline
+            label={t('walletPage.address') ?? ''}
+            onChangeText={setLnBitsAddress}
+            value={lnBitsAddress}
+            right={
+              <TextInput.Icon
+                icon='content-paste'
+                onPress={() => paste(setLnBitsAddress)}
+                forceTextInputFocus={false}
+              />
+            }
+          />
+          <TextInput
+            style={styles.drawerParagraph}
+            mode='outlined'
+            multiline
+            label={t('walletPage.adminKey') ?? ''}
+            onChangeText={setLnBitsAdminKey}
+            value={lnBitsAdminKey}
+            right={
+              <TextInput.Icon
+                icon='content-paste'
+                onPress={() => paste(setLnBitsAdminKey)}
+                forceTextInputFocus={false}
+              />
+            }
+          />
+          <TextInput
+            style={styles.drawerParagraph}
+            mode='outlined'
+            multiline
+            label={t('walletPage.invoiceReadKey') ?? ''}
+            onChangeText={setLnBitsInvoiceKey}
+            value={lnBitsInvoiceKey}
+            right={
+              <TextInput.Icon
+                icon='content-paste'
+                onPress={() => paste(setLnBitsInvoiceKey)}
+                forceTextInputFocus={false}
+              />
+            }
+          />
+          <Button
+            mode='contained'
+            onPress={connectLnBits}
+            disabled={
+              lnBitsAddress === undefined ||
+              lnBitsAdminKey === undefined ||
+              lnBitsInvoiceKey === undefined
+            }
+          >
             {t('walletPage.connect')}
           </Button>
         </View>
@@ -245,9 +346,17 @@ const styles = StyleSheet.create({
   },
   center: {
     justifyContent: 'center',
-    alignContent: 'center',
     height: '100%',
     padding: 16,
+  },
+  centerItem: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    width: '100%',
+    textAlign: 'center',
+  },
+  button: {
+    marginTop: 16,
   },
   drawerParagraph: {
     marginBottom: 16,

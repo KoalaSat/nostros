@@ -1,31 +1,20 @@
-import axios from 'axios'
 import { getUnixTime } from 'date-fns'
 import React, { useEffect, useState } from 'react'
 import SInfo from 'react-native-sensitive-info'
-
-export interface LndHub {
-  accessToken: string
-  refreshToken: string
-  url: string
-}
-
-export interface WalletAction {
-  id: string
-  monto: number
-  type: 'invoice' | 'transaction'
-  description: string
-  timestamp: number
-}
+import type WalletAction from '../lib/Lightning'
+import LnBits, { type LnBitsConfig } from '../lib/Lightning/LnBits'
+import LndHub, { type LndHubConfig } from '../lib/Lightning/LndHub'
 
 export interface WalletContextProps {
-  active: boolean
-  updatedAt?: number
-  lndHub?: LndHub
-  setLndHub: (lndHub: LndHub) => void
+  type?: string
+  setType: (type: string) => void
+  updatedAt?: string
+  lndHub?: LndHubConfig | LnBitsConfig
   balance?: number
   transactions: WalletAction[]
   invoices: WalletAction[]
-  refreshLndHub: (login?: string, password?: string, uri?: string) => void
+  updateWallet: () => Promise<void>
+  refreshWallet: (params?: object, type?: string) => void
   payInvoice: (invoice: string) => Promise<boolean>
   logoutWallet: () => void
 }
@@ -35,18 +24,18 @@ export interface WalletContextProviderProps {
 }
 
 export const initialWalletContext: WalletContextProps = {
-  active: false,
-  setLndHub: () => {},
   transactions: [],
   invoices: [],
-  refreshLndHub: () => {},
+  setType: () => {},
+  updateWallet: async () => {},
+  refreshWallet: () => {},
   payInvoice: async () => false,
   logoutWallet: () => {},
 }
 
 export const WalletContextProvider = ({ children }: WalletContextProviderProps): JSX.Element => {
-  const [active, setActive] = React.useState<boolean>(initialWalletContext.active)
-  const [lndHub, setLndHub] = useState<LndHub>()
+  const [type, setType] = React.useState<string>()
+  const [config, setConfig] = useState<LndHubConfig | LnBitsConfig>()
   const [balance, setBalance] = useState<number>()
   const [updatedAt, setUpdatedAt] = useState<string>()
   const [transactions, setTransactions] = useState<WalletAction[]>(
@@ -57,119 +46,82 @@ export const WalletContextProvider = ({ children }: WalletContextProviderProps):
   useEffect(() => {
     SInfo.getItem('lndHub', {}).then((value) => {
       if (value) {
-        setLndHub(JSON.parse(value))
+        setConfig(JSON.parse(value))
+        setType('lndHub')
+      }
+    })
+    SInfo.getItem('lnBits', {}).then((value) => {
+      if (value) {
+        setConfig(JSON.parse(value))
+        setType('lnBits')
       }
     })
   }, [])
 
-  const refreshLndHub: (login?: string, password?: string, uri?: string) => void = (
-    login,
-    password,
-    uri,
+  const getClient: (params?: any, clientType?: string) => LndHub | LnBits | undefined = (
+    params,
+    clientType,
   ) => {
-    setLndHub(undefined)
-    let params:
-      | { type: string; refresh_token?: string; login?: string; password?: string }
-      | undefined
-    if (lndHub?.refreshToken) {
-      params = {
-        type: 'refresh_token',
-        refresh_token: lndHub?.refreshToken,
-      }
-      uri = lndHub?.url
-    } else if (login !== '' && password !== '' && uri !== '') {
-      params = {
-        type: 'auth',
-        login,
-        password,
+    const kind = clientType ?? type
+    let client
+    if (kind === 'lndHub') {
+      client = new LndHub(params ?? config)
+    } else if (kind === 'lnBits') {
+      client = new LnBits(params ?? config)
+    }
+
+    return client
+  }
+
+  const refreshWallet: (params?: any, clientType?: string) => void = (params, clientType) => {
+    setConfig(undefined)
+    if (clientType) {
+      setType(clientType)
+      const client = getClient(params, clientType)
+      if (client) {
+        client.refresh(params).then((response) => {
+          if (response?.status === 200) setConfig(response.config)
+        })
       }
     }
-    if (params && uri) {
-      axios.post(`${uri}/auth`, {}, { params }).then((response) => {
-        if (response?.data?.refresh_token && response.data?.access_token && uri) {
-          setLndHub({
-            accessToken: response.data.access_token,
-            refreshToken: response.data.refresh_token,
-            url: uri,
-          })
+  }
+
+  const updateWallet: () => Promise<void> = async () => {
+    console.log('config', config)
+    console.log('type', type)
+    if (!config || !type) return
+
+    const client = getClient()
+    console.log('client', client)
+    if (client) {
+      client.getBalance().then((response) => {
+        if (response?.status === 200) {
+          setUpdatedAt(`${getUnixTime(new Date())}-balance`)
+          setBalance(response.balance)
+          SInfo.setItem(type, JSON.stringify(client.config), {})
+        } else if (response?.status === 401) {
+          refreshWallet()
         }
       })
+
+      client.getMovements(setTransactions, setInvoices, setUpdatedAt)
     }
   }
 
-  const updateLndHub: () => void = () => {
-    if (!lndHub) return
-
-    const headers = {
-      Authorization: `Bearer ${lndHub.accessToken}`,
-    }
-
-    axios.get(`${lndHub.url}/balance`, { headers }).then((response) => {
-      if (response) {
-        if (response.status === 200) {
-          setUpdatedAt(`${getUnixTime(new Date())}-balance`)
-          setBalance(response.data?.BTC?.AvailableBalance ?? 0)
-          SInfo.setItem('lndHub', JSON.stringify(lndHub), {})
-          setActive(true)
-        } else if (response.status === 401) {
-          refreshLndHub()
-        }
-      }
-    })
-    axios.get(`${lndHub.url}/gettxs`, { headers }).then((response) => {
-      if (response) {
-        setTransactions(
-          response.data.map((item: any) => {
-            return {
-              id: item.payment_preimage,
-              monto: item.value,
-              type: 'transaction',
-              description: item.memo,
-              timestamp: item.timestamp,
-            }
-          }),
-        )
-        setUpdatedAt(`${getUnixTime(new Date())}-gettxs`)
-      }
-    })
-    axios.get(`${lndHub.url}/getuserinvoices`, { headers }).then((response) => {
-      if (response) {
-        setInvoices(
-          response.data
-            .filter((item: any) => item.ispaid)
-            .map((item: any) => {
-              return {
-                id: item.payment_hash,
-                monto: item.amt,
-                type: 'invoice',
-                description: item.description,
-                timestamp: item.timestamp,
-              }
-            }),
-        )
-        setUpdatedAt(`${getUnixTime(new Date())}-getuserinvoices`)
-      }
-    })
-  }
-
-  useEffect(updateLndHub, [lndHub])
+  useEffect(() => {
+    if (config) updateWallet()
+  }, [config])
 
   const payInvoice: (invoice: string) => Promise<boolean> = async (invoice) => {
-    if (active && invoice && invoice !== '') {
-      const headers = {
-        Authorization: `Bearer ${lndHub?.accessToken}`,
-      }
-      const params = {
-        invoice,
-      }
-      const response = await axios.post(`${lndHub?.url}/payinvoice`, params, { headers })
-      if (response) {
-        if (response.status === 200) {
-          updateLndHub()
-          return response?.data?.payment_error === ''
-        } else if (response.status === 401) {
-          refreshLndHub()
-        }
+    if (type && config) {
+      const client = new LndHub(config as LndHubConfig)
+      const response = await client.payInvoice(invoice)
+      if (response?.status === 200) {
+        updateWallet()
+        return true
+      } else if (response?.status === 401) {
+        refreshWallet()
+        return true
       }
     }
 
@@ -178,8 +130,8 @@ export const WalletContextProvider = ({ children }: WalletContextProviderProps):
 
   const logoutWallet: () => void = () => {
     SInfo.deleteItem('lndHub', {})
-    setActive(false)
-    setLndHub(undefined)
+    setType(undefined)
+    setConfig(undefined)
     setBalance(undefined)
     setUpdatedAt(undefined)
     setTransactions([])
@@ -189,13 +141,14 @@ export const WalletContextProvider = ({ children }: WalletContextProviderProps):
   return (
     <WalletContext.Provider
       value={{
-        active,
+        type,
+        setType,
         updatedAt,
-        setLndHub,
         balance,
         transactions,
         invoices,
-        refreshLndHub,
+        refreshWallet,
+        updateWallet,
         payInvoice,
         logoutWallet,
       }}
