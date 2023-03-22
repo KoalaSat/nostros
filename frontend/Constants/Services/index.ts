@@ -1,4 +1,5 @@
 import { nostrBuildUpload } from '../../Functions/ServicesFunctions/NostrBuildUpload'
+import { nostrcheckUpload } from '../../Functions/ServicesFunctions/nostrcheckUpload'
 import { voidCatUpload } from '../../Functions/ServicesFunctions/VoidCatUpload'
 
 export const imageHostingServices: Record<
@@ -21,5 +22,11 @@ export const imageHostingServices: Record<
     uploadUrl: 'https://nostr.build/upload.php',
     donation: 'https://nostr.build',
     sendFunction: nostrBuildUpload,
+  },
+  nostrcheck: {
+    uri: 'https://nostrcheck.me',
+    uploadUrl: 'https://nostrcheck.me/api/media.php',
+    donation: 'https://nostrcheck.me/about/support-us.php',
+    sendFunction: nostrcheckUpload,
   },
 }
