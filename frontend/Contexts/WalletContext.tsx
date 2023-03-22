@@ -87,12 +87,9 @@ export const WalletContextProvider = ({ children }: WalletContextProviderProps):
   }
 
   const updateWallet: () => Promise<void> = async () => {
-    console.log('config', config)
-    console.log('type', type)
     if (!config || !type) return
 
     const client = getClient()
-    console.log('client', client)
     if (client) {
       client.getBalance().then((response) => {
         if (response?.status === 200) {
