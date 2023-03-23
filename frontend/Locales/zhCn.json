@@ -30,12 +30,12 @@
       "addLnBits": "Add LnBits",
       "adminKey": "Admin Key",
       "invoiceReadKey": "Invoice Read Key",
-      "address": "Address",
+      "address": "地址",
       "walletId": "Wallet id",
-      "connectingWallet": "Connecting to wallet",
-      "lnHub": "LNDHub address",
-      "addLnhub": "Add LNDHub",
-      "connect": "Connect"
+      "connectingWallet": "连接钱包",
+      "lnHub": "LNDHub 地址",
+      "addLnhub": "添加 LNDHub",
+      "connect": "连接"
     },
     "searchPage": {
       "placeholder": "查找公钥，帖文，标签...",
@@ -461,7 +461,7 @@
         "userUnblocked": "已屏蔽",
         "userBlocked": "已取消屏蔽"
       },
-      "addRelay": "Connect relay",
+      "addRelay": "连接中继",
       "invoice": "赞赏",
       "message": "私信",
       "follow": "关注",
@@ -494,7 +494,7 @@
       "emptyButton": "发送私信"
     },
     "faq": {
-      "searchLabel": "搜索",
+      "searchLabel": "搜索常见问题",
       "note_broadcasting": {
         "question": "帖文：广播",
         "answer": "当用户在 Nostr 中发布帖文或事件时，该信息会发送到该用户连接的中继。然而，由于帖文广播功能，该信息可以与网络中的其他中继共享，以触及达更多的用户。\n\n帖文广播功能有助于网络和中继更加高效和去中心化。通过与其他中继共享信息，减轻了网络服务器的工作量和拥塞，提高了性能和网络处理更多用户的能力。此外，信息的去中心化使 Nostr 更能抗故障和难以审查，因为信息分布在网络的多个节点上。"
