@@ -26,6 +26,17 @@
       "loginStep3Description": "您可以将您的联系人使用的中继添加到您的列表中并连接到它们以加强网络",
       "loginskip": "您可以跳过此过程，但您可能会错过连接到各种中继和扩大网络覆盖范围的机会"
     },
+    "walletPage": {
+      "addLnBits": "Add LnBits",
+      "adminKey": "Admin Key",
+      "invoiceReadKey": "Invoice Read Key",
+      "address": "Address",
+      "walletId": "Wallet id",
+      "connectingWallet": "Connecting to wallet",
+      "lnHub": "LNDHub address",
+      "addLnhub": "Add LNDHub",
+      "connect": "Connect"
+    },
     "searchPage": {
       "placeholder": "查找公钥，帖文，标签...",
       "emptyTitle": "提示",

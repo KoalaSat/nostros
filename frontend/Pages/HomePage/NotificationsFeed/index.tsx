@@ -32,7 +32,7 @@ export const NotificationsFeed: React.FC = () => {
   const theme = useTheme()
   const { t } = useTranslation('common')
   const { database, setNotificationSeenAt, pushedTab, getSatoshiSymbol } = useContext(AppContext)
-  const { publicKey, reloadLists, mutedEvents } = useContext(UserContext)
+  const { publicKey, reloadLists, mutedEvents, mutedUsers } = useContext(UserContext)
   const { lastEventId, relayPool } = useContext(RelayPoolContext)
   const [pubKeys, setPubKeys] = React.useState<string[]>([])
   const [users, setUsers] = React.useState<User[]>([])
@@ -145,7 +145,9 @@ export const NotificationsFeed: React.FC = () => {
         const unmutedThreads = notes.filter((note) => {
           if (!note?.id) return false
           const eTags = getETags(note)
-          return !eTags.some((tag) => mutedEvents.includes(tag[1]))
+          return (
+            !eTags.some((tag) => mutedEvents.includes(tag[1])) && !mutedUsers.includes(note.pubkey)
+          )
         })
         setMentionNotes(unmutedThreads)
         setRefreshing(false)

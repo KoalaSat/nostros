@@ -27,8 +27,14 @@
       "loginskip": "You can skip this process but you may miss out on the opportunity to connect to a diverse range of relays and expand your network's reach"
     },
     "walletPage": {
-      "addLnhub": "Add LNHub",
-      "lnHub": "LNHub address",
+      "addLnBits": "Add LnBits",
+      "adminKey": "Admin Key",
+      "invoiceReadKey": "Invoice Read Key",
+      "address": "Address",
+      "walletId": "Wallet id",
+      "connectingWallet": "Connecting to wallet",
+      "lnHub": "LNDHub address",
+      "addLnhub": "Add LNDHub",
       "connect": "Connect"
     },
     "homeNavigator": {

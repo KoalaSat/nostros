@@ -25,7 +25,7 @@ export const MenuItems: React.FC = () => {
   const [drawerItemIndex, setDrawerItemIndex] = React.useState<number>(-1)
   const { getSatoshiSymbol } = React.useContext(AppContext)
   const { relays } = React.useContext(RelayPoolContext)
-  const { balance, active } = React.useContext(WalletContext)
+  const { balance, type } = React.useContext(WalletContext)
   const {
     nPub,
     publicKey,
@@ -154,7 +154,7 @@ export const MenuItems: React.FC = () => {
             onPress={() => onPressItem('wallet', 1)}
             onTouchEnd={() => setDrawerItemIndex(-1)}
             right={() => {
-              if (!active) return <></>
+              if (!type || !balance) return <></>
               return (
                 <Text>
                   {`${balance} `}
