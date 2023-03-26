@@ -37,6 +37,15 @@
       "addLnhub": "Add LNDHub",
       "connect": "Connect"
     },
+    "extenarlIdentitiedPage": {
+      "notifications": {
+        "identityUpdated": "Identidad actualizada"
+      },
+      "identity": "Identidad",
+      "proof": "Prueba",
+      "bind": "Borrar identidad",
+      "publish": "Publicar"
+    },
     "searchPage": {
       "placeholder": "Look for public keys, notes, hashtags...",
       "emptyTitle": "Tip",

@@ -47,6 +47,15 @@
       "emptyDescription": "Grant camera permissions to Nostros to start scanning QR codes",
       "QRreader": "QR reader"
     },
+    "extenarlIdentitiedPage": {
+      "notifications": {
+        "identityUpdated": "Identidad actualizada"
+      },
+      "identity": "Identidad",
+      "proof": "Prueba",
+      "bind": "Borrar identidad",
+      "publish": "Publicar"
+    },
     "homeNavigator": {
       "ExternalIdentities": "My identities",
       "Group": "",

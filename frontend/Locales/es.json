@@ -47,6 +47,15 @@
       "emptyDescription": "Concede permisos a Nostros para acceder a tu camara y empezar a escanear códigos QR",
       "QRreader": "Lector QR"
     },
+    "extenarlIdentitiedPage": {
+      "notifications": {
+        "identityUpdated": "Identidad actualizada"
+      },
+      "identity": "Identidad",
+      "proof": "Prueba",
+      "bind": "Borrar identidad",
+      "publish": "Publicar"
+    },
     "homeNavigator": {
       "ExternalIdentities": "Mis identidades",
       "Group": "",
