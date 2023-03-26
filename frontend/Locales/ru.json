@@ -48,6 +48,7 @@
       "QRreader": "QR reader"
     },
     "homeNavigator": {
+      "ExternalIdentities": "My identities",
       "Group": "",
       "QrReader": "",
       "Wallet": "Wallet",
@@ -385,6 +386,7 @@
         "active": "Relay actived.",
         "desactive": "Relay desactivated."
       },
+      "externalIdentities": "My identities",
       "publishLud06": "Опубликовть",
       "lud06Label": "LNURL",
       "lud16Label": "Lightning Address",

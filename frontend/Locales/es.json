@@ -48,6 +48,7 @@
       "QRreader": "Lector QR"
     },
     "homeNavigator": {
+      "ExternalIdentities": "Mis identidades",
       "Group": "",
       "QrReader": "",
       "Search": "",
@@ -391,6 +392,7 @@
         "picturePublished": "Imagen publicada.",
         "connectionError": "Error de conexión"
       },
+      "externalIdentities": "Mis identidades",
       "publishLud06": "Publicar",
       "lud06Label": "LNURL",
       "lud16Label": "Lightning Address",

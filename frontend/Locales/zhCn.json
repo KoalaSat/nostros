@@ -48,6 +48,7 @@
       "QRreader": "扫描二维码"
     },
     "homeNavigator": {
+      "ExternalIdentities": "My identities",
       "Group": "",
       "QrReader": "",
       "ImageGallery": "",
@@ -395,6 +396,7 @@
         "active": "中继已启用",
         "desactive": "中继已停用"
       },
+      "externalIdentities": "My identities",
       "publishLud06": "发布",
       "lud06Label": "LNURL",
       "lud16Label": "Lightning 地址",

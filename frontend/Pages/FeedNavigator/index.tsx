@@ -31,6 +31,7 @@ import { navigate } from '../../lib/Navigation'
 import SearchPage from '../SearchPage'
 import WalletPage from '../WalletPage'
 import { WalletContext } from '../../Contexts/WalletContext'
+import ExternalIdentitiesPage from '../ExternalIdentitiesPage'
 
 export const HomeNavigator: React.FC = () => {
   const theme = useTheme()
@@ -114,73 +115,75 @@ export const HomeNavigator: React.FC = () => {
               const historyKey = history[0]?.key
 
               return (
-                <Appbar.Header
-                  style={[
-                    ['Search'].includes(route.name)
-                      ? { backgroundColor: theme.colors.onSecondary }
-                      : {},
-                  ]}
-                >
-                  {back ? (
-                    <Appbar.BackAction onPress={() => navigation.goBack()} />
-                  ) : (navigation as any).openDrawer ? (
-                    <Appbar.Action
-                      icon='menu'
-                      isLeading
-                      onPress={() => (navigation as any as DrawerNavigationProp<any>).openDrawer()}
+                !['Search'].includes(route.name) && (
+                  <Appbar.Header>
+                    {back ? (
+                      <Appbar.BackAction onPress={() => navigation.goBack()} />
+                    ) : (navigation as any).openDrawer ? (
+                      <Appbar.Action
+                        icon='menu'
+                        isLeading
+                        onPress={() =>
+                          (navigation as any as DrawerNavigationProp<any>).openDrawer()
+                        }
+                      />
+                    ) : null}
+                    <Appbar.Content
+                      title={
+                        route.params?.title ? route.params?.title : t(`homeNavigator.${route.name}`)
+                      }
                     />
-                  ) : null}
-                  <Appbar.Content
-                    title={
-                      route.params?.title ? route.params?.title : t(`homeNavigator.${route.name}`)
-                    }
-                  />
-                  {['Wallet'].includes(route.name) && (
-                    <Appbar.Action
-                      icon='dots-vertical'
-                      onPress={() => bottomWalletRef.current?.open()}
-                    />
-                  )}
-                  {['Profile', 'Conversation'].includes(route.name) && (
-                    <Appbar.Action
-                      icon='dots-vertical'
-                      onPress={() => {
-                        const params = route?.params as { pubKey: string }
-                        setDisplayUserDrawer(params?.pubKey ?? '')
-                      }}
-                    />
-                  )}
-                  {['Relays'].includes(route.name) && (
-                    <Appbar.Action
-                      icon='help-circle-outline'
-                      isLeading
-                      onPress={() => onPressQuestion(route.name)}
-                    />
-                  )}
-                  {['Landing'].includes(route.name) && historyKey?.includes('messages-') && (
-                    <Appbar.Action
-                      icon='check-all'
-                      isLeading
-                      onPress={() => onMesssagesPressCheckAll()}
-                    />
-                  )}
-                  {['Landing'].includes(route.name) && historyKey?.includes('groups-') && (
-                    <Appbar.Action
-                      icon='check-all'
-                      isLeading
-                      onPress={() => onGroupsPressCheckAll()}
-                    />
-                  )}
-                  {['Landing', 'Contacts'].includes(route.name) &&
-                    (!historyKey ||
-                      historyKey?.includes('feed-') ||
-                      historyKey?.includes('notifications-')) && (
-                      <Appbar.Action icon='magnify' isLeading onPress={() => navigate('Search')} />
+                    {['Wallet'].includes(route.name) && (
+                      <Appbar.Action
+                        icon='dots-vertical'
+                        onPress={() => bottomWalletRef.current?.open()}
+                      />
                     )}
-                  {['Group'].includes(route.name) && (
-                    <GroupHeaderIcon groupId={route.params?.groupId} />
-                  )}
-                </Appbar.Header>
+                    {['Profile', 'Conversation'].includes(route.name) && (
+                      <Appbar.Action
+                        icon='dots-vertical'
+                        onPress={() => {
+                          const params = route?.params as { pubKey: string }
+                          setDisplayUserDrawer(params?.pubKey ?? '')
+                        }}
+                      />
+                    )}
+                    {['Relays'].includes(route.name) && (
+                      <Appbar.Action
+                        icon='help-circle-outline'
+                        isLeading
+                        onPress={() => onPressQuestion(route.name)}
+                      />
+                    )}
+                    {['Landing'].includes(route.name) && historyKey?.includes('messages-') && (
+                      <Appbar.Action
+                        icon='check-all'
+                        isLeading
+                        onPress={() => onMesssagesPressCheckAll()}
+                      />
+                    )}
+                    {['Landing'].includes(route.name) && historyKey?.includes('groups-') && (
+                      <Appbar.Action
+                        icon='check-all'
+                        isLeading
+                        onPress={() => onGroupsPressCheckAll()}
+                      />
+                    )}
+                    {['Landing', 'Contacts'].includes(route.name) &&
+                      (!historyKey ||
+                        historyKey?.includes('feed-') ||
+                        historyKey?.includes('notifications-')) && (
+                        <Appbar.Action
+                          icon='magnify'
+                          isLeading
+                          onPress={() => navigate('Search')}
+                        />
+                      )}
+                    {['Group'].includes(route.name) && (
+                      <GroupHeaderIcon groupId={route.params?.groupId} />
+                    )}
+                  </Appbar.Header>
+                )
               )
             },
           }
@@ -207,6 +210,7 @@ export const HomeNavigator: React.FC = () => {
           <Stack.Screen name='Profile' component={ProfilePage} />
           <Stack.Screen name='QrReader' component={QrReaderPage} />
           <Stack.Screen name='ImageGallery' component={ImageGalleryPage} />
+          <Stack.Screen name='ExternalIdentities' component={ExternalIdentitiesPage} />
         </Stack.Group>
       </Stack.Navigator>
       <RBSheet

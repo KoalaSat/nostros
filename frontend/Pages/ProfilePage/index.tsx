@@ -1,6 +1,6 @@
-import React, { useContext, useEffect, useState } from 'react'
-import { StyleSheet, View } from 'react-native'
-import { Surface, Text, Snackbar } from 'react-native-paper'
+import React, { useContext, useEffect, useMemo, useState } from 'react'
+import { Linking, StyleSheet, View } from 'react-native'
+import { Surface, Text, Snackbar, Button } from 'react-native-paper'
 import { AppContext } from '../../Contexts/AppContext'
 import { UserContext } from '../../Contexts/UserContext'
 import { RelayPoolContext } from '../../Contexts/RelayPoolContext'
@@ -115,6 +115,47 @@ export const ProfilePage: React.FC<ProfilePageProps> = ({ route }) => {
     ])
   }
 
+  const getExternalIdentities: () => Array<{
+    service: string
+    identity: string
+    proof: string
+  }> = () => {
+    if (!user) return []
+
+    const iTags = user.tags?.filter((tag) => tag[0] === 'i') ?? []
+    const itentidies: Array<{ service: string; identity: string; proof: string }> = []
+    iTags.forEach((tag) => {
+      const data = tag[1].split(':')
+      if (tag.length > 2 && data.length > 1) {
+        itentidies.push({
+          service: data[0],
+          identity: data[1],
+          proof: tag[2],
+        })
+      }
+    })
+    return itentidies
+  }
+
+  const identitiesIcons: Record<string, { url: (identity: string, proof: string) => string }> =
+    useMemo(() => {
+      return {
+        github: {
+          url: (identity: string, proof: string) => `https://gist.github.com/${identity}/${proof}`,
+        },
+        twitter: {
+          url: (identity: string, proof: string) =>
+            `https://twitter.com/${identity}/status/${proof}`,
+        },
+        mastodon: {
+          url: (identity: string, proof: string) => `https://${identity}/${proof}`,
+        },
+        telegram: {
+          url: (identity: string, proof: string) => `https://t.me/${proof}`,
+        },
+      }
+    }, [])
+
   const renderScene: Record<string, JSX.Element> = {
     notes: (
       <NotesFeed
@@ -172,6 +213,26 @@ export const ProfilePage: React.FC<ProfilePageProps> = ({ route }) => {
         <View>
           <TextContent content={user?.about} showPreview={false} numberOfLines={10} />
         </View>
+        {user?.tags && user.tags?.length > 0 && (
+          <View style={styles.externalEntities}>
+            {getExternalIdentities().map((extEntity) => {
+              return (
+                <View key={extEntity.service}>
+                  <Button
+                    onPress={async () =>
+                      await Linking.openURL(
+                        identitiesIcons[extEntity.service].url(extEntity.identity, extEntity.proof),
+                      )
+                    }
+                    labelStyle={styles.serviceButtonText}
+                  >
+                    {extEntity.service}
+                  </Button>
+                </View>
+              )
+            })}
+          </View>
+        )}
       </Surface>
       <Tabs tabs={['notes', 'replies', 'zaps', 'bookmarks']} setActiveTab={setActiveTab} />
       <View style={styles.list}>{renderScene[activeTab]}</View>
@@ -223,6 +284,14 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     paddingBottom: 16,
+  },
+  externalEntities: {
+    flexDirection: 'row',
+    justifyContent: 'flex-end',
+    paddingTop: 16,
+  },
+  serviceButtonText: {
+    textTransform: 'capitalize',
   },
 })
 

@@ -495,7 +495,7 @@ public class Event {
 
     protected void saveUserMeta(SQLiteDatabase database) throws JSONException {
         JSONObject userContent = new JSONObject(content);
-        String query = "SELECT created_at, name FROM nostros_users WHERE id = ?";
+        String query = "SELECT created_at, name, tags FROM nostros_users WHERE id = ?";
         @SuppressLint("Recycle") Cursor cursor = database.rawQuery(query, new String[] {pubkey});
 
         String nip05 = userContent.optString("nip05");
@@ -527,10 +527,11 @@ public class Event {
                 values.put("zap_pubkey", getZapPubkey(lnurl, ln_address));
                 values.put("valid_nip05", validateNip05(nip05) ? 1 : 0);
                 database.update("nostros_users", values, whereClause, whereArgs);
-            } else if (cursor.getString(1).equals("")) {
-                ContentValues nameValues = new ContentValues();
-                nameValues.put("name", name);
-                database.update("nostros_users", nameValues, whereClause, whereArgs);
+            } else if (created_at == cursor.getInt(0)) {
+                ContentValues putValues = new ContentValues();
+                putValues.put("name", name);
+                putValues.put("tags", tags.toString());
+                database.update("nostros_users", putValues, whereClause, whereArgs);
             }
         }
     }

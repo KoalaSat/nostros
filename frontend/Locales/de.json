@@ -38,6 +38,7 @@
       "connect": "Connect"
     },
     "homeNavigator": {
+      "ExternalIdentities": "My identities",
       "ProfileCreate": "Profil anlegen",
       "Search": "",
       "Wallet": "Wallet",
@@ -389,6 +390,7 @@
         "picturePublished": "Bild veröffentlicht.",
         "connectionError": "Verbindungsfehler"
       },
+      "externalIdentities": "My identities",
       "publishLud06": "Veröffentlicht",
       "lud06Label": "LNURL",
       "lud16Label": "Lightning Addresse",

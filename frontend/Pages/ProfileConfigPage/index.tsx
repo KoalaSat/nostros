@@ -23,6 +23,7 @@ import { getUnixTime } from 'date-fns'
 import { useFocusEffect } from '@react-navigation/native'
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'
 import UploadImage from '../../Components/UploadImage'
+import { navigate } from '../../lib/Navigation'
 
 export const ProfileConfigPage: React.FC = () => {
   const { t } = useTranslation('common')
@@ -215,6 +216,16 @@ export const ProfileConfigPage: React.FC = () => {
                   onPress={() => bottomSheetLud06Ref.current?.open()}
                 />
                 <Text>{t('profileConfigPage.lud06')}</Text>
+              </View>
+            </View>
+            <View style={styles.cardActions}>
+              <View style={styles.actionButton}>
+                <IconButton
+                  icon='badge-account-outline'
+                  size={28}
+                  onPress={() => navigate('ExternalIdentities')}
+                />
+                <Text>{t('profileConfigPage.externalIdentities')}</Text>
               </View>
             </View>
           </Card.Content>
