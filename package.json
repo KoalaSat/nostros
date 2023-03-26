@@ -39,6 +39,7 @@
     "react-i18next": "^12.2.0",
     "react-native": "0.71.4",
     "react-native-action-button": "^2.8.5",
+    "react-native-af-video-player": "^0.2.1",
     "react-native-bidirectional-infinite-scroll": "^0.3.3",
     "react-native-blob-util": "^0.17.3",
     "react-native-fast-image": "^8.6.3",

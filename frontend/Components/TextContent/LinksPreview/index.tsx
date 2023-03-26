@@ -7,6 +7,7 @@ import LnPreview from '../../LnPreview'
 import { decode, type PaymentRequestObject, type TagsObject } from 'bolt11'
 import { AppContext } from '../../../Contexts/AppContext'
 import { navigate } from '../../../lib/Navigation'
+import Video from 'react-native-af-video-player'
 
 interface TextContentProps {
   urls: Record<string, string>
@@ -58,15 +59,7 @@ export const LinksPreview: React.FC<TextContentProps> = ({ urls, lnUrl }) => {
   }
 
   const videoPreview = (
-    // <VideoPlayer
-    //   source={{ uri: firstLink ?? '' }}
-    //   style={styles.videPlayer}
-    //   paused={true}
-    //   disableBack
-    //   disableVolume
-    //   disableFullscreen
-    // />
-    <></>
+    <Video url="https://www.radiantmediaplayer.com/media/big-buck-bunny-360p.mp4" />
   )
 
   const linkPreview = (
