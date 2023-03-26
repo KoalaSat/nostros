@@ -26,6 +26,15 @@
       "loginStep3Description": "You can add the relays used by your contacts to your list and connect to them to strengthen the network.",
       "loginskip": "You can skip this process but you may miss out on the opportunity to connect to a diverse range of relays and expand your network's reach"
     },
+    "extenarlIdentitiedPage": {
+      "notifications": {
+        "identityUpdated": "Identity updated"
+      },
+      "identity": "Identity",
+      "proof": "Proof",
+      "bind": "Bind identity",
+      "publish": "Publish"
+    },
     "walletPage": {
       "addLnBits": "Add LnBits",
       "adminKey": "Admin Key",
@@ -38,6 +47,7 @@
       "connect": "Connect"
     },
     "homeNavigator": {
+      "ExternalIdentities": "My identities",
       "ProfileCreate": "Profil anlegen",
       "Search": "",
       "Wallet": "Wallet",
@@ -389,6 +399,7 @@
         "picturePublished": "Bild veröffentlicht.",
         "connectionError": "Verbindungsfehler"
       },
+      "externalIdentities": "My identities",
       "publishLud06": "Veröffentlicht",
       "lud06Label": "LNURL",
       "lud16Label": "Lightning Addresse",

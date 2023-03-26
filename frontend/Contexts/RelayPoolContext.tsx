@@ -73,12 +73,14 @@ export const RelayPoolContextProvider = ({
         const response = await axios.get('https://mempool.space/api/v1/blocks')
         if (response) {
           const lastBlock: { id: string; height: number; timestamp: number } = response.data[0]
-          event.tags.push([
+          const newTags = event.tags.filter((tag) => tag[0] !== 'bitcoin')
+          newTags.push([
             'bitcoin',
             lastBlock.id,
             lastBlock.height.toString(),
             lastBlock.timestamp.toString(),
           ])
+          event.tags = newTags
         }
       } catch {}
     }

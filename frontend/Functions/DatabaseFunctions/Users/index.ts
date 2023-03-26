@@ -17,9 +17,11 @@ export interface User {
   blocked?: number
   muted_groups?: number
   zap_pubkey?: string
+  tags?: string[][]
 }
 
-const databaseToEntity: (object: object) => User = (object) => {
+const databaseToEntity: (object: any) => User = (object) => {
+  object.tags = object.tags ? JSON.parse(object.tags) : []
   return object as User
 }
 

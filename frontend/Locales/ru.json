@@ -37,6 +37,15 @@
       "addLnhub": "Add LNDHub",
       "connect": "Connect"
     },
+    "extenarlIdentitiedPage": {
+      "notifications": {
+        "identityUpdated": "Identidad actualizada"
+      },
+      "identity": "Identidad",
+      "proof": "Prueba",
+      "bind": "Borrar identidad",
+      "publish": "Publicar"
+    },
     "searchPage": {
       "placeholder": "Look for public keys, notes, hashtags...",
       "emptyTitle": "Tip",
@@ -48,6 +57,7 @@
       "QRreader": "QR reader"
     },
     "homeNavigator": {
+      "ExternalIdentities": "My identities",
       "Group": "",
       "QrReader": "",
       "Wallet": "Wallet",
@@ -385,6 +395,7 @@
         "active": "Relay actived.",
         "desactive": "Relay desactivated."
       },
+      "externalIdentities": "My identities",
       "publishLud06": "Опубликовть",
       "lud06Label": "LNURL",
       "lud16Label": "Lightning Address",

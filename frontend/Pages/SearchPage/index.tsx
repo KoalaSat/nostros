@@ -5,7 +5,14 @@ import debounce from 'lodash.debounce'
 import { Kind, nip19 } from 'nostr-tools'
 import * as React from 'react'
 import { StyleSheet, View } from 'react-native'
-import { ActivityIndicator, Text, TextInput, TouchableRipple, useTheme } from 'react-native-paper'
+import {
+  ActivityIndicator,
+  IconButton,
+  Text,
+  TextInput,
+  TouchableRipple,
+  useTheme,
+} from 'react-native-paper'
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'
 import NoteCard from '../../Components/NoteCard'
 import ProfileData from '../../Components/ProfileData'
@@ -14,7 +21,7 @@ import { RelayPoolContext } from '../../Contexts/RelayPoolContext'
 import { getNotes, type Note } from '../../Functions/DatabaseFunctions/Notes'
 import { getUsers, type User } from '../../Functions/DatabaseFunctions/Users'
 import { validNip21 } from '../../Functions/NativeFunctions'
-import { navigate } from '../../lib/Navigation'
+import { goBack, navigate } from '../../lib/Navigation'
 import { getNpub } from '../../lib/nostr/Nip19'
 
 interface SearchPageProps {
@@ -189,7 +196,10 @@ export const SearchPage: React.FC<SearchPageProps> = ({ route }) => {
 
   return (
     <View style={styles.container}>
-      <View style={styles.inputContainer}>
+      <View style={[styles.inputContainer, { backgroundColor: theme.colors.onSecondary }]}>
+        <View style={styles.back}>
+          <IconButton icon='arrow-left' onPress={goBack} />
+        </View>
         <TextInput
           ref={inputRef}
           style={[styles.input, { backgroundColor: theme.colors.onSecondary }]}
@@ -208,6 +218,7 @@ export const SearchPage: React.FC<SearchPageProps> = ({ route }) => {
           data={resultsNotes}
           renderItem={renderItemNote}
           horizontal={false}
+          contentContainerStyle={styles.list}
           ListFooterComponent={
             /^#.*/.test(searchInput) ? (
               <ActivityIndicator style={styles.loading} animating={true} />
@@ -219,6 +230,7 @@ export const SearchPage: React.FC<SearchPageProps> = ({ route }) => {
       )}
       {searchInput !== '' && /^@.*/.test(searchInput) && (
         <FlashList
+          contentContainerStyle={styles.list}
           showsVerticalScrollIndicator={false}
           data={resultsUsers}
           renderItem={renderItemUser}
@@ -234,15 +246,10 @@ const styles = StyleSheet.create({
     paddingTop: 16,
   },
   container: {
-    paddingLeft: 16,
-    paddingRight: 16,
     flex: 1,
   },
   inputContainer: {
-    position: 'absolute',
-    top: -70,
-    right: 0,
-    zIndex: 999,
+    flexDirection: 'row',
     width: '100%',
   },
   input: {
@@ -270,6 +277,14 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     height: 180,
     marginTop: 91,
+  },
+  back: {
+    width: 30,
+    paddingTop: 8,
+  },
+  list: {
+    paddingLeft: 16,
+    paddingRight: 16,
   },
 })
 

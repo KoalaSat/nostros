@@ -38,6 +38,7 @@
       "connect": "Connect"
     },
     "homeNavigator": {
+      "ExternalIdentities": "My identities",
       "ProfileCreate": "Create profile",
       "Search": "",
       "Wallet": "Wallet",
@@ -343,6 +344,15 @@
         "listPushed": "Relay list pushed."
       }
     },
+    "extenarlIdentitiedPage": {
+      "notifications": {
+        "identityUpdated": "Identity updated"
+      },
+      "identity": "Identity",
+      "proof": "Proof",
+      "bind": "Bind identity",
+      "publish": "Publish"
+    },
     "relayCard": {
       "pushDone": "Completed",
       "pushHistoricTitle": "Push all my data",
@@ -391,6 +401,7 @@
         "picturePublished": "Picture published.",
         "connectionError": "Connection error."
       },
+      "externalIdentities": "My identities",
       "publishLud06": "Publish",
       "lud06Label": "LNURL",
       "lud16Label": "Lightning Address",

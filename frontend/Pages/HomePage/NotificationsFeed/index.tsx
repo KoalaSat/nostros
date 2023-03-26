@@ -154,6 +154,9 @@ export const NotificationsFeed: React.FC = () => {
         if (notes.length > 0) {
           setPubKeys((prev) => [...prev, ...notes.map((note) => note.pubkey ?? '')])
         }
+        if (notes.length < 5) {
+          setLimitDate(limitDate - 86400)
+        }
       })
     }
   }

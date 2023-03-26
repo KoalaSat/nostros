@@ -42,12 +42,22 @@
       "emptyTitle": "提示",
       "emptyDescription": "输入 @ 以搜索用户\n\n输入 # 以搜索主题"
     },
+    "extenarlIdentitiedPage": {
+      "notifications": {
+        "identityUpdated": "Identidad actualizada"
+      },
+      "identity": "Identidad",
+      "proof": "Prueba",
+      "bind": "Borrar identidad",
+      "publish": "Publicar"
+    },
     "qrReaderPage": {
       "emptyTitle": "未授予权限",
       "emptyDescription": "请授予 Nostros 摄像头权限以开始扫描二维码",
       "QRreader": "扫描二维码"
     },
     "homeNavigator": {
+      "ExternalIdentities": "My identities",
       "Group": "",
       "QrReader": "",
       "ImageGallery": "",
@@ -395,6 +405,7 @@
         "active": "中继已启用",
         "desactive": "中继已停用"
       },
+      "externalIdentities": "My identities",
       "publishLud06": "发布",
       "lud06Label": "LNURL",
       "lud16Label": "Lightning 地址",

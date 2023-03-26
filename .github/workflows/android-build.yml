@@ -33,7 +33,7 @@ jobs:
 
       - name: 'Check for non-FOSS libraries'
         run: |
-          wget https://github.com/iBotPeaches/Apktool/releases/download/v2.5.0/apktool_2.5.0.jar
+          wget https://github.com/iBotPeaches/Apktool/releases/download/v2.7.0/apktool_2.7.0.jar
           wget https://github.com/iBotPeaches/Apktool/raw/master/scripts/linux/apktool
           # clone the repo
           git clone https://gitlab.com/IzzyOnDroid/repo.git
@@ -42,7 +42,7 @@ jobs:
           mv apktool* repo/lib/radar/tool
           # create an alias for ease of use
           chmod u+x repo/lib/radar/tool/apktool
-          mv repo/lib/radar/tool/apktool_2.5.0.jar repo/lib/radar/tool/apktool.jar
+          mv repo/lib/radar/tool/apktool_2.7.0.jar repo/lib/radar/tool/apktool.jar
           repo/bin/scanapk.php android/app/build/outputs/apk/release/app-universal-release.apk
 
       - name: 'Get Commit Hash'

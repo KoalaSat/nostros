@@ -240,6 +240,9 @@ public class Database {
         try {
             instance.execSQL("ALTER TABLE nostros_zaps ADD COLUMN preimage TEXT;");
         } catch (SQLException e) { }
+        try {
+            instance.execSQL("ALTER TABLE nostros_users ADD COLUMN tags TEXT;");
+        } catch (SQLException e) { }
     }
 
     public void saveEvent(JSONObject data, String userPubKey, String relayUrl) throws JSONException {
