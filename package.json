@@ -48,8 +48,6 @@
     "react-native-pager-view": "^6.1.4",
     "react-native-paper": "^5.4.0",
     "react-native-parsed-text": "^0.0.22",
-    "react-native-qrcode-scanner": "^1.5.5",
-    "react-native-qrcode-svg": "^6.2.0",
     "react-native-quick-sqlite": "^8.0.2",
     "react-native-raw-bottom-sheet": "^2.2.0",
     "react-native-reanimated": "^2.14.4",
