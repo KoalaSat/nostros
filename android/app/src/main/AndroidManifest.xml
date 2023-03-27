@@ -2,6 +2,7 @@
     <uses-permission android:name="android.permission.INTERNET" />
     <!-- required for react-native-share base64 sharing -->
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.VIBRATE"/>
 
     <application
       android:name=".MainApplication"

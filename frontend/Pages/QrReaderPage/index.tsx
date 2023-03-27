@@ -5,6 +5,8 @@ import { StyleSheet, View } from 'react-native'
 import { Text, useTheme } from 'react-native-paper'
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'
 import { useTranslation } from 'react-i18next'
+import QRCodeScanner from 'react-native-qrcode-scanner';
+import { RNCamera } from 'react-native-camera';
 // import { goBack } from '../../lib/Navigation'
 // import { AppContext } from '../../Contexts/AppContext'
 
@@ -60,13 +62,16 @@ export const QrReaderPage: React.FC = () => {
   return (
     <View style={styles.container}>
       <View style={styles.reader}>
-        {/* <Camera
-          style={styles.camera}
-          device={device}
-          isActive={true}
-          frameProcessor={frameProcessor}
-          frameProcessorFps={5}
-        /> */}
+        <QRCodeScanner
+          onRead={(e) => console.log(e)}
+          flashMode={RNCamera.Constants.FlashMode.torch}
+          topContent={
+            <Text>
+              Go to wikipedia.org/wiki/QR_code on your computer
+              and scan the QR code.
+            </Text>
+          }
+        />
       </View>
       <View style={styles.title}>
         <MaterialCommunityIcons
