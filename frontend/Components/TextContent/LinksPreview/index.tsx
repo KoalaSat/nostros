@@ -7,7 +7,6 @@ import LnPreview from '../../LnPreview'
 import { decode, type PaymentRequestObject, type TagsObject } from 'bolt11'
 import { AppContext } from '../../../Contexts/AppContext'
 import { navigate } from '../../../lib/Navigation'
-import VideoPlayer from 'react-native-video-controls'
 
 interface TextContentProps {
   urls: Record<string, string>
@@ -58,16 +57,9 @@ export const LinksPreview: React.FC<TextContentProps> = ({ urls, lnUrl }) => {
     return require(DEFAULT_COVER)
   }
 
-  const videoPreview = (
-    <VideoPlayer
-      source={{ uri: firstLink ?? '' }}
-      style={styles.videPlayer}
-      paused={true}
-      disableBack
-      disableVolume
-      disableFullscreen
-    />
-  )
+  // const videoPreview = (
+  //   <></>
+  // )
 
   const linkPreview = (
     <Card onPress={async () => firstLink && (await Linking.openURL(firstLink))}>
@@ -147,11 +139,11 @@ export const LinksPreview: React.FC<TextContentProps> = ({ urls, lnUrl }) => {
         </>
       )
     } else if (firstLink) {
-      if (urls[firstLink] === 'video') {
-        return videoPreview
-      } else {
-        return linkPreview
-      }
+      // if (urls[firstLink] === 'video') {
+      //   return videoPreview
+      // } else {
+      return linkPreview
+      // }
     } else {
       return <></>
     }
