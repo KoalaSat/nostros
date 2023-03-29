@@ -5,7 +5,7 @@ import { type Event } from '../../lib/nostr/Events'
 import { useTranslation } from 'react-i18next'
 import { RelayPoolContext } from '../../Contexts/RelayPoolContext'
 import getUnixTime from 'date-fns/getUnixTime'
-import { type Note } from '../../Functions/DatabaseFunctions/Notes'
+import { getNoteRelays, type Note } from '../../Functions/DatabaseFunctions/Notes'
 import { getETags } from '../../Functions/RelayFunctions/Events'
 import { getUsers, type User } from '../../Functions/DatabaseFunctions/Users'
 import { formatPubKey } from '../../Functions/RelayFunctions/Users'
@@ -18,6 +18,8 @@ import NoteCard from '../../Components/NoteCard'
 import UploadImage from '../../Components/UploadImage'
 import { useFocusEffect } from '@react-navigation/native'
 import { TouchableWithoutFeedback } from 'react-native-gesture-handler'
+import { getNevent, getNprofile } from '../../lib/nostr/Nip19'
+import { getRelayMetadata } from '../../Functions/DatabaseFunctions/RelayMetadatas'
 
 interface SendPageProps {
   route: { params: { note: Note; type?: 'reply' | 'repost' } | undefined }
@@ -67,7 +69,7 @@ export const SendPage: React.FC<SendPageProps> = ({ route }) => {
     return `@${user.name ?? formatPubKey(user.id)}`
   }
 
-  const onPressSend: () => void = () => {
+  const onPressSend: () => Promise<void> = async () => {
     if (database && publicKey) {
       setIsSending(true)
       let tags: string[][] = []
@@ -80,7 +82,12 @@ export const SendPage: React.FC<SendPageProps> = ({ route }) => {
           tags.push(['e', note.id, '', eTags.length > 0 ? 'reply' : 'root'])
           tags.push(['p', note.pubkey, ''])
         } else if (route.params?.type === 'repost') {
-          rawContent = `#[${tags.length}] ${rawContent}`
+          const noteRelays = await getNoteRelays(database, note.id)
+          const nEvent = getNevent(
+            note.id,
+            noteRelays.map((noteRelay) => noteRelay.relay_url),
+          )
+          rawContent = `nostr:${nEvent} ${rawContent}`
           tags.push(['e', note.id, '', ''])
         }
       }
@@ -88,10 +95,15 @@ export const SendPage: React.FC<SendPageProps> = ({ route }) => {
       if (contentWarning) tags.push(['content-warning', ''])
 
       if (userMentions.length > 0) {
-        userMentions.forEach((user) => {
+        userMentions.forEach(async (user) => {
           const userText = mentionText(user)
           if (rawContent.includes(userText)) {
-            rawContent = rawContent.replace(userText, `#[${tags.length}]`)
+            const resultMeta = await getRelayMetadata(database, user.id)
+            const nProfile = getNprofile(
+              user.id,
+              resultMeta.tags.map((relayMeta) => relayMeta[1]),
+            )
+            rawContent = rawContent.replace(userText, `nostr:${nProfile}`)
             tags.push(['p', user.id, ''])
           }
         })

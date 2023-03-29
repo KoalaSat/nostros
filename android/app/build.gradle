@@ -165,6 +165,8 @@ dependencies {
 
     implementation 'com.facebook.fresco:animated-webp:2.6.0'
     implementation 'com.facebook.fresco:webpsupport:2.6.0'
+    implementation 'com.github.KoalaSat.nostr-java:nostr-base:70e62e24ad'
+    implementation 'com.github.KoalaSat.nostr-java:nostr-event:70e62e24ad'
 
     implementation 'com.facebook.fresco:animated-gif:2.6.0'
 

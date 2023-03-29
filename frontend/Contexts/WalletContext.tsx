@@ -58,6 +58,10 @@ export const WalletContextProvider = ({ children }: WalletContextProviderProps):
     })
   }, [])
 
+  useEffect(() => {
+    if (config) updateWallet()
+  }, [config])
+
   const getClient: (params?: any, clientType?: string) => LndHub | LnBits | undefined = (
     params,
     clientType,
@@ -105,10 +109,6 @@ export const WalletContextProvider = ({ children }: WalletContextProviderProps):
     }
   }
 
-  useEffect(() => {
-    if (config) updateWallet()
-  }, [config])
-
   const payInvoice: (invoice: string) => Promise<boolean> = async (invoice) => {
     if (type && config) {
       const client = new LndHub(config as LndHubConfig)
@@ -127,6 +127,7 @@ export const WalletContextProvider = ({ children }: WalletContextProviderProps):
 
   const logoutWallet: () => void = () => {
     SInfo.deleteItem('lndHub', {})
+    SInfo.deleteItem('lnBits', {})
     setType(undefined)
     setConfig(undefined)
     setBalance(undefined)
