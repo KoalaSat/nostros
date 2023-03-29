@@ -451,7 +451,8 @@
     },
     "groupPage": {
       "typeMessage": "Nachricht schreiben",
-      "replyText": "Nachricht"
+      "replyText": "Nachricht",
+      "note": "Note"
     },
     "groupHeaderIcon": {
       "delete": "Gruppe verlassen",

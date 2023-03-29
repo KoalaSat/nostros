@@ -7,6 +7,7 @@ export interface DirectMessage extends Event {
   read: boolean
   pending: boolean
   valid_nip05: boolean
+  repost_id?: string
 }
 
 const databaseToEntity: (object: any) => DirectMessage = (object = {}) => {

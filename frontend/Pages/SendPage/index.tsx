@@ -95,7 +95,7 @@ export const SendPage: React.FC<SendPageProps> = ({ route }) => {
       if (contentWarning) tags.push(['content-warning', ''])
 
       if (userMentions.length > 0) {
-        userMentions.forEach(async (user) => {
+        for (const user of userMentions) {
           const userText = mentionText(user)
           if (rawContent.includes(userText)) {
             const resultMeta = await getRelayMetadata(database, user.id)
@@ -106,7 +106,7 @@ export const SendPage: React.FC<SendPageProps> = ({ route }) => {
             rawContent = rawContent.replace(userText, `nostr:${nProfile}`)
             tags.push(['p', user.id, ''])
           }
-        })
+        }
       }
 
       ;[...rawContent.matchAll(/#([^#]\S+)/gi)].forEach((match) => {

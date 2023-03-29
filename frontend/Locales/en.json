@@ -453,7 +453,8 @@
     },
     "groupPage": {
       "typeMessage": "Type message",
-      "replyText": "Message"
+      "replyText": "Message",
+      "note": "Note"
     },
     "groupHeaderIcon": {
       "delete": "Leave group",

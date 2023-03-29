@@ -52,7 +52,7 @@ export const NotePage: React.FC<NotePageProps> = ({ route }) => {
   const loadGroup: () => void = async () => {
     if (database) {
       getGroup(database, route.params.noteId).then((result) => {
-        if (result) {
+        if (result.id) {
           navigate('Group', {
             groupId: result.id,
             title: result.name ?? formatId(result.id),

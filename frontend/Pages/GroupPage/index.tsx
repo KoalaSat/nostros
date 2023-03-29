@@ -23,6 +23,7 @@ import {
   Text,
   ActivityIndicator,
   IconButton,
+  Chip,
 } from 'react-native-paper'
 import { UserContext } from '../../Contexts/UserContext'
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'
@@ -38,6 +39,9 @@ import ProfileData from '../../Components/ProfileData'
 import { ScrollView, Swipeable } from 'react-native-gesture-handler'
 import { getETags } from '../../Functions/RelayFunctions/Events'
 import DatabaseModule from '../../lib/Native/DatabaseModule'
+import { getRelayMetadata } from '../../Functions/DatabaseFunctions/RelayMetadatas'
+import { getNip19Key, getNprofile } from '../../lib/nostr/Nip19'
+import { navigate } from '../../lib/Navigation'
 
 interface GroupPageProps {
   route: { params: { groupId: string } }
@@ -57,6 +61,7 @@ export const GroupPage: React.FC<GroupPageProps> = ({ route }) => {
   const [startUpload, setStartUpload] = useState<boolean>(false)
   const [uploadingFile, setUploadingFile] = useState<boolean>(false)
   const [userSuggestions, setUserSuggestions] = useState<User[]>([])
+  const [users, setUsers] = useState<User[]>([])
   const [userMentions, setUserMentions] = useState<User[]>([])
 
   const { t } = useTranslation('common')
@@ -64,6 +69,7 @@ export const GroupPage: React.FC<GroupPageProps> = ({ route }) => {
   useFocusEffect(
     React.useCallback(() => {
       loadGroupMessages(true)
+      if (database) getUsers(database, {}).then(setUsers)
 
       return () =>
         relayPool?.unsubscribe([
@@ -85,6 +91,7 @@ export const GroupPage: React.FC<GroupPageProps> = ({ route }) => {
         limit: pageSize,
       }).then((results) => {
         if (results.length > 0) {
+          console.log(results)
           setSendingMessages([])
           setGroupMessages(results)
 
@@ -176,19 +183,24 @@ export const GroupPage: React.FC<GroupPageProps> = ({ route }) => {
     </TouchableRipple>
   )
 
-  const send: () => void = () => {
+  const send: () => void = async () => {
     if (input !== '' && publicKey && privateKey && route.params.groupId) {
       let rawContent = input
       const tags: string[][] = [['e', route.params.groupId, '']]
 
-      if (userMentions.length > 0) {
-        userMentions.forEach((user) => {
+      if (userMentions.length > 0 && database) {
+        for (const user of userMentions) {
           const userText = mentionText(user)
           if (rawContent.includes(userText)) {
-            rawContent = rawContent.replace(userText, `#[${tags.length}]`)
+            const resultMeta = await getRelayMetadata(database, user.id)
+            const nProfile = getNprofile(
+              user.id,
+              resultMeta.tags.map((relayMeta) => relayMeta[1]),
+            )
+            rawContent = rawContent.replace(userText, `nostr:${nProfile}`)
             tags.push(['p', user.id, ''])
           }
-        })
+        }
       }
 
       if (reply?.id) {
@@ -205,9 +217,12 @@ export const GroupPage: React.FC<GroupPageProps> = ({ route }) => {
         tags,
       }
       sendEvent(event)
-      const groupMessage = event as GroupMessage
-      groupMessage.pending = true
-      groupMessage.valid_nip05 = validNip05
+      const groupMessage: GroupMessage = {
+        ...event,
+        name: name ?? '',
+        pending: true,
+        valid_nip05: validNip05,
+      }
       setSendingMessages((prev) => [...prev, groupMessage])
       setInput('')
       setReply(undefined)
@@ -217,9 +232,8 @@ export const GroupPage: React.FC<GroupPageProps> = ({ route }) => {
   const onChangeText: (text: string) => void = (text) => {
     const match = text.match(/.*@(.*)$/)
     if (database && match && match?.length > 0) {
-      getUsers(database, { name: match[1] }).then((results) => {
-        if (results) setUserSuggestions(results.filter((item) => item.id !== publicKey))
-      })
+      const search = match[1].toLowerCase()
+      setUserSuggestions(users.filter((item) => item.name?.toLocaleLowerCase()?.includes(search)))
     } else {
       setUserSuggestions([])
     }
@@ -276,6 +290,8 @@ export const GroupPage: React.FC<GroupPageProps> = ({ route }) => {
       message?: GroupMessage | undefined,
       messageId?: string,
     ) => JSX.Element = (message, messageId) => {
+      const bech32 = message?.content.match(/(nostr:)?((nevent1|note1)\S+)/) ?? []
+      const respotId = bech32?.length > 1 ? getNip19Key(bech32[2]) ?? '' : undefined
       return (
         <>
           <View style={styles.cardContentInfo}>
@@ -313,6 +329,24 @@ export const GroupPage: React.FC<GroupPageProps> = ({ route }) => {
             />
           ) : (
             <Text>{t('groupPage.replyText')}</Text>
+          )}
+          {respotId && (
+            <Chip
+              icon={() => (
+                <MaterialCommunityIcons
+                  name='cached'
+                  size={16}
+                  color={theme.colors.onTertiaryContainer}
+                />
+              )}
+              style={{
+                backgroundColor: theme.colors.secondaryContainer,
+                color: theme.colors.onTertiaryContainer,
+              }}
+              onPress={() => navigate('Note', { noteId: respotId })}
+            >
+              <Text style={{ color: theme.colors.onTertiaryContainer }}>{t('groupPage.note')}</Text>
+            </Chip>
           )}
         </>
       )
