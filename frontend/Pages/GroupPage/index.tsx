@@ -23,6 +23,7 @@ import {
   Text,
   ActivityIndicator,
   IconButton,
+  Chip,
 } from 'react-native-paper'
 import { UserContext } from '../../Contexts/UserContext'
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'
@@ -39,7 +40,8 @@ import { ScrollView, Swipeable } from 'react-native-gesture-handler'
 import { getETags } from '../../Functions/RelayFunctions/Events'
 import DatabaseModule from '../../lib/Native/DatabaseModule'
 import { getRelayMetadata } from '../../Functions/DatabaseFunctions/RelayMetadatas'
-import { getNprofile } from '../../lib/nostr/Nip19'
+import { getNip19Key, getNprofile } from '../../lib/nostr/Nip19'
+import { navigate } from '../../lib/Navigation'
 
 interface GroupPageProps {
   route: { params: { groupId: string } }
@@ -89,6 +91,7 @@ export const GroupPage: React.FC<GroupPageProps> = ({ route }) => {
         limit: pageSize,
       }).then((results) => {
         if (results.length > 0) {
+          console.log(results)
           setSendingMessages([])
           setGroupMessages(results)
 
@@ -287,6 +290,8 @@ export const GroupPage: React.FC<GroupPageProps> = ({ route }) => {
       message?: GroupMessage | undefined,
       messageId?: string,
     ) => JSX.Element = (message, messageId) => {
+      const bech32 = message?.content.match(/(nostr:)?((nevent1|note1)\S+)/) ?? []
+      const respotId = bech32?.length > 1 ? getNip19Key(bech32[2]) ?? '' : undefined
       return (
         <>
           <View style={styles.cardContentInfo}>
@@ -325,6 +330,26 @@ export const GroupPage: React.FC<GroupPageProps> = ({ route }) => {
           ) : (
             <Text>{t('groupPage.replyText')}</Text>
           )}
+        {respotId && (
+          <Chip
+            icon={() => (
+              <MaterialCommunityIcons
+                name='cached'
+                size={16}
+                color={theme.colors.onTertiaryContainer}
+              />
+            )}
+            style={{
+              backgroundColor: theme.colors.secondaryContainer,
+              color: theme.colors.onTertiaryContainer,
+            }}
+            onPress={() => navigate('Note', { noteId: respotId })}
+          >
+            <Text style={{ color: theme.colors.onTertiaryContainer }}>
+              {t('groupPage.note')}
+            </Text>
+          </Chip>
+        )}
         </>
       )
     }

@@ -144,7 +144,8 @@
       "poweredBy": "Powered by {{uri}}"
     },
     "groupPage": {
-      "typeMessage": "Напишите сообщение"
+      "typeMessage": "Напишите сообщение",
+      "note": "Note"
     },
     "menuItems": {
       "relays": "Реле",

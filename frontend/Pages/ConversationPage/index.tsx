@@ -4,7 +4,8 @@ import {
   Animated,
   type ListRenderItem,
   type NativeScrollEvent,
-  type NativeSyntheticEvent, ScrollView,
+  type NativeSyntheticEvent,
+  ScrollView,
   StyleSheet,
   View,
 } from 'react-native'
@@ -17,7 +18,12 @@ import {
 } from '../../Functions/DatabaseFunctions/DirectMessages'
 import { getUser, getUsers, type User } from '../../Functions/DatabaseFunctions/Users'
 import { useTranslation } from 'react-i18next'
-import { formatPubKey, username, usernamePubKey, usersToTags } from '../../Functions/RelayFunctions/Users'
+import {
+  formatPubKey,
+  username,
+  usernamePubKey,
+  usersToTags,
+} from '../../Functions/RelayFunctions/Users'
 import { getUnixTime } from 'date-fns'
 import TextContent from '../../Components/TextContent'
 import { encrypt, decrypt } from '../../lib/nostr/Nip04'
@@ -29,6 +35,7 @@ import {
   TouchableRipple,
   Text,
   IconButton,
+  Chip,
 } from 'react-native-paper'
 import { UserContext } from '../../Contexts/UserContext'
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'
@@ -42,7 +49,8 @@ import { getETags } from '../../Functions/RelayFunctions/Events'
 import DatabaseModule from '../../lib/Native/DatabaseModule'
 import ProfileData from '../../Components/ProfileData'
 import { getRelayMetadata } from '../../Functions/DatabaseFunctions/RelayMetadatas'
-import { getNprofile } from '../../lib/nostr/Nip19'
+import { getNevent, getNip19Key, getNprofile } from '../../lib/nostr/Nip19'
+import { navigate } from '../../lib/Navigation'
 
 interface ConversationPageProps {
   route: { params: { pubKey: string; conversationId: string } }
@@ -256,6 +264,8 @@ export const ConversationPage: React.FC<ConversationPageProps> = ({ route }) => 
     message,
     messageId,
   ) => {
+    const bech32 = message?.content.match(/(nostr:)?((nevent1|note1)\S+)/) ?? []
+    const respotId = bech32?.length > 1 ? getNip19Key(bech32[2]) ?? '' : undefined
     return (
       <>
         <View style={styles.cardContentInfo}>
@@ -293,6 +303,26 @@ export const ConversationPage: React.FC<ConversationPageProps> = ({ route }) => 
           />
         ) : (
           <Text>{t('groupPage.replyText')}</Text>
+        )}
+        {respotId && (
+          <Chip
+            icon={() => (
+              <MaterialCommunityIcons
+                name='cached'
+                size={16}
+                color={theme.colors.onTertiaryContainer}
+              />
+            )}
+            style={{
+              backgroundColor: theme.colors.secondaryContainer,
+              color: theme.colors.onTertiaryContainer,
+            }}
+            onPress={() => navigate('Note', { noteId: respotId })}
+          >
+            <Text style={{ color: theme.colors.onTertiaryContainer }}>
+              {t('groupPage.note')}
+            </Text>
+          </Chip>
         )}
       </>
     )

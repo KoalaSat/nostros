@@ -445,9 +445,7 @@ public class Event {
             values.put("tags", tags.toString());
             values.put("group_id", groupId);
             values.put("user_mentioned", getUserMentioned(userPubKey));
-            if (cursor.getCount() == 0) {
-                values.put("read", 0);
-            }
+            values.put("read", 0);
 
             database.insert("nostros_group_messages", null, values);
         }

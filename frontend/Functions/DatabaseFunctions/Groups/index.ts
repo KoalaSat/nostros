@@ -13,6 +13,7 @@ export interface Group extends Event {
 export interface GroupMessage extends Event {
   pending: boolean
   name: string
+  repost_id?: string
   picture?: string
   valid_nip05?: boolean
 }

@@ -144,7 +144,9 @@
       "poweredBy": "Servido por {{uri}}"
     },
     "groupPage": {
-      "typeMessage": "Escribir mensaje"
+      "typeMessage": "Escribir mensaje",
+      "replyText": "Mensaje",
+      "note": "Nota"
     },
     "menuItems": {
       "relays": "Relays",
