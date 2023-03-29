@@ -119,16 +119,16 @@ export const NotificationsFeed: React.FC = () => {
       {
         kinds: [Kind.Text],
         '#p': [publicKey],
-        since: limitDate
+        since: limitDate,
       },
       {
         kinds: [Kind.Text],
         '#e': [publicKey],
-        since: limitDate
+        since: limitDate,
       },
       {
         kinds: [30001],
-        authors: [publicKey]
+        authors: [publicKey],
       },
     ])
   }

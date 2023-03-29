@@ -330,26 +330,24 @@ export const GroupPage: React.FC<GroupPageProps> = ({ route }) => {
           ) : (
             <Text>{t('groupPage.replyText')}</Text>
           )}
-        {respotId && (
-          <Chip
-            icon={() => (
-              <MaterialCommunityIcons
-                name='cached'
-                size={16}
-                color={theme.colors.onTertiaryContainer}
-              />
-            )}
-            style={{
-              backgroundColor: theme.colors.secondaryContainer,
-              color: theme.colors.onTertiaryContainer,
-            }}
-            onPress={() => navigate('Note', { noteId: respotId })}
-          >
-            <Text style={{ color: theme.colors.onTertiaryContainer }}>
-              {t('groupPage.note')}
-            </Text>
-          </Chip>
-        )}
+          {respotId && (
+            <Chip
+              icon={() => (
+                <MaterialCommunityIcons
+                  name='cached'
+                  size={16}
+                  color={theme.colors.onTertiaryContainer}
+                />
+              )}
+              style={{
+                backgroundColor: theme.colors.secondaryContainer,
+                color: theme.colors.onTertiaryContainer,
+              }}
+              onPress={() => navigate('Note', { noteId: respotId })}
+            >
+              <Text style={{ color: theme.colors.onTertiaryContainer }}>{t('groupPage.note')}</Text>
+            </Chip>
+          )}
         </>
       )
     }

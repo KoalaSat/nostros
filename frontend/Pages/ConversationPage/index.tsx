@@ -49,7 +49,7 @@ import { getETags } from '../../Functions/RelayFunctions/Events'
 import DatabaseModule from '../../lib/Native/DatabaseModule'
 import ProfileData from '../../Components/ProfileData'
 import { getRelayMetadata } from '../../Functions/DatabaseFunctions/RelayMetadatas'
-import { getNevent, getNip19Key, getNprofile } from '../../lib/nostr/Nip19'
+import { getNip19Key, getNprofile } from '../../lib/nostr/Nip19'
 import { navigate } from '../../lib/Navigation'
 
 interface ConversationPageProps {
@@ -319,9 +319,7 @@ export const ConversationPage: React.FC<ConversationPageProps> = ({ route }) => 
             }}
             onPress={() => navigate('Note', { noteId: respotId })}
           >
-            <Text style={{ color: theme.colors.onTertiaryContainer }}>
-              {t('groupPage.note')}
-            </Text>
+            <Text style={{ color: theme.colors.onTertiaryContainer }}>{t('groupPage.note')}</Text>
           </Chip>
         )}
       </>
