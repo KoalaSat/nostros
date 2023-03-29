@@ -55,7 +55,7 @@ export const TextContent: React.FC<TextContentProps> = ({
   }
 
   const handleBech32NotePress: (nip19: string) => void = (nip19) => {
-    const noteId = getNip19Key(nip19)
+    const noteId = getNip19Key(nip19.replace('nostr:', ''))
 
     if (noteId) {
       navigate('Note', { noteId })
@@ -69,7 +69,7 @@ export const TextContent: React.FC<TextContentProps> = ({
   }
 
   const handleBech32ProfilePress: (nip19: string) => void = (nip19) => {
-    const pubKey = getNip19Key(nip19)
+    const pubKey = getNip19Key(nip19.replace('nostr:', ''))
 
     if (pubKey) {
       navigate('Profile', { pubKey })

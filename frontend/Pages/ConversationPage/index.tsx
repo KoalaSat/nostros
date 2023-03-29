@@ -4,8 +4,7 @@ import {
   Animated,
   type ListRenderItem,
   type NativeScrollEvent,
-  type NativeSyntheticEvent,
-  type ScrollView,
+  type NativeSyntheticEvent, ScrollView,
   StyleSheet,
   View,
 } from 'react-native'
@@ -16,9 +15,9 @@ import {
   type DirectMessage,
   getDirectMessages,
 } from '../../Functions/DatabaseFunctions/DirectMessages'
-import { getUser, type User } from '../../Functions/DatabaseFunctions/Users'
+import { getUser, getUsers, type User } from '../../Functions/DatabaseFunctions/Users'
 import { useTranslation } from 'react-i18next'
-import { username, usernamePubKey, usersToTags } from '../../Functions/RelayFunctions/Users'
+import { formatPubKey, username, usernamePubKey, usersToTags } from '../../Functions/RelayFunctions/Users'
 import { getUnixTime } from 'date-fns'
 import TextContent from '../../Components/TextContent'
 import { encrypt, decrypt } from '../../lib/nostr/Nip04'
@@ -41,6 +40,9 @@ import UploadImage from '../../Components/UploadImage'
 import { Swipeable } from 'react-native-gesture-handler'
 import { getETags } from '../../Functions/RelayFunctions/Events'
 import DatabaseModule from '../../lib/Native/DatabaseModule'
+import ProfileData from '../../Components/ProfileData'
+import { getRelayMetadata } from '../../Functions/DatabaseFunctions/RelayMetadatas'
+import { getNprofile } from '../../lib/nostr/Nip19'
 
 interface ConversationPageProps {
   route: { params: { pubKey: string; conversationId: string } }
@@ -65,6 +67,9 @@ export const ConversationPage: React.FC<ConversationPageProps> = ({ route }) => 
   const [startUpload, setStartUpload] = useState<boolean>(false)
   const [uploadingFile, setUploadingFile] = useState<boolean>(false)
   const [unableDecrypt, setUnableDecrypt] = useState<boolean>(false)
+  const [userMentions, setUserMentions] = useState<User[]>([])
+  const [userSuggestions, setUserSuggestions] = useState<User[]>([])
+  const [users, setUsers] = useState<User[]>([])
 
   const { t } = useTranslation('common')
 
@@ -72,6 +77,7 @@ export const ConversationPage: React.FC<ConversationPageProps> = ({ route }) => 
     React.useCallback(() => {
       loadDirectMessages(true)
       subscribeDirectMessages()
+      if (database) getUsers(database, {}).then(setUsers)
 
       return () =>
         relayPool?.unsubscribe([
@@ -84,6 +90,17 @@ export const ConversationPage: React.FC<ConversationPageProps> = ({ route }) => 
   useEffect(() => {
     loadDirectMessages(false)
   }, [lastEventId])
+
+  const onChangeText: (text: string) => void = (text) => {
+    const match = text.match(/.*@(.*)$/)
+    if (database && match && match?.length > 0) {
+      const search = match[1].toLowerCase()
+      setUserSuggestions(users.filter((item) => item.name?.toLocaleLowerCase()?.includes(search)))
+    } else {
+      setUserSuggestions([])
+    }
+    setInput(text)
+  }
 
   const loadDirectMessages: (subscribe: boolean) => void = (subscribe) => {
     if (database && publicKey && privateKey) {
@@ -159,9 +176,24 @@ export const ConversationPage: React.FC<ConversationPageProps> = ({ route }) => 
     }
   }
 
-  const send: () => void = () => {
+  const send: () => Promise<void> = async () => {
     if (input !== '' && otherPubKey && publicKey && privateKey) {
+      let rawContent = input
       const tags: string[][] = usersToTags([otherUser])
+
+      if (userMentions.length > 0 && database) {
+        for (const user of userMentions) {
+          const userText = mentionText(user)
+          if (rawContent.includes(userText)) {
+            const resultMeta = await getRelayMetadata(database, user.id)
+            const nProfile = getNprofile(
+              user.id,
+              resultMeta.tags.map((relayMeta) => relayMeta[1]),
+            )
+            rawContent = rawContent.replace(userText, `nostr:${nProfile}`)
+          }
+        }
+      }
 
       if (reply?.id) {
         const eTags = getETags(reply)
@@ -169,13 +201,13 @@ export const ConversationPage: React.FC<ConversationPageProps> = ({ route }) => 
       }
 
       const event: Event = {
-        content: input,
+        content: rawContent,
         created_at: getUnixTime(new Date()),
         kind: Kind.EncryptedDirectMessage,
         pubkey: publicKey,
         tags,
       }
-      encrypt(privateKey, otherPubKey, input)
+      encrypt(privateKey, otherPubKey, rawContent)
         .then((encryptedcontent) => {
           sendEvent({
             ...event,
@@ -360,6 +392,39 @@ export const ConversationPage: React.FC<ConversationPageProps> = ({ route }) => 
     }
   }
 
+  const mentionText: (user: User) => string = (user) => {
+    return `@${user.name ?? formatPubKey(user.id)}`
+  }
+
+  const addUserMention: (user: User) => void = (user) => {
+    setUserMentions((prev) => {
+      prev.push(user)
+      return prev
+    })
+    setInput((prev) => {
+      const splitText = prev.split('@')
+      splitText.pop()
+      return `${splitText.join('@')}${mentionText(user)} `
+    })
+    setUserSuggestions([])
+  }
+
+  const renderContactItem: (item: User, index: number) => JSX.Element = (item, index) => (
+    <TouchableRipple onPress={() => addUserMention(item)}>
+      <View key={index} style={styles.contactRow}>
+        <ProfileData
+          username={item?.name}
+          publicKey={item?.id}
+          validNip05={item?.valid_nip05}
+          nip05={item?.nip05}
+          lnurl={item?.lnurl}
+          lnAddress={item?.ln_address}
+          picture={item?.picture}
+        />
+      </View>
+    </TouchableRipple>
+  )
+
   const unableDecryptView = React.useMemo(
     () => (
       <View style={styles.blank}>
@@ -389,6 +454,15 @@ export const ConversationPage: React.FC<ConversationPageProps> = ({ route }) => 
         ref={scrollViewRef}
         onScroll={onScroll}
       />
+      {userSuggestions.length > 0 ? (
+        <View style={[styles.contactsList, { backgroundColor: theme.colors.background }]}>
+          <ScrollView>
+            {userSuggestions.map((user, index) => renderContactItem(user, index))}
+          </ScrollView>
+        </View>
+      ) : (
+        <></>
+      )}
       {reply ? (
         <View style={[styles.reply, { backgroundColor: theme.colors.backdrop }]}>
           <MaterialCommunityIcons
@@ -430,7 +504,7 @@ export const ConversationPage: React.FC<ConversationPageProps> = ({ route }) => 
           multiline
           label={t('conversationPage.typeMessage') ?? ''}
           value={input}
-          onChangeText={setInput}
+          onChangeText={onChangeText}
           onFocus={() => scrollViewRef.current?.scrollToEnd({ animated: true })}
           left={
             <TextInput.Icon
@@ -487,6 +561,14 @@ const styles = StyleSheet.create({
   list: {
     scaleY: -1,
   },
+  contactRow: {
+    paddingLeft: 16,
+    paddingRight: 16,
+    paddingTop: 16,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    width: '100%',
+  },
   blank: {
     justifyContent: 'space-between',
     height: 170,
@@ -514,6 +596,10 @@ const styles = StyleSheet.create({
   },
   scrollView: {
     paddingBottom: 16,
+  },
+  contactsList: {
+    bottom: 1,
+    maxHeight: 200,
   },
   messageRow: {
     flexDirection: 'row',
