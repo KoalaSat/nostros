@@ -92,11 +92,12 @@ export const MyFeed: React.FC<MyFeedProps> = ({
 
           const message: RelayFilters = {
             kinds: [Kind.Text, Kind.RecommendRelay],
-            authors: contacts,
-            limit: pageSize,
+            authors: contacts
           }
-          if (results.length === pageSize) {
+          if (results.length >= pageSize) {
             message.since = results[pageSize - 1].created_at
+          } else {
+            message.limit = pageSize
           }
           relayPool?.subscribe('homepage-myfeed-main', [message])
 
