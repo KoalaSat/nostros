@@ -19,6 +19,8 @@ import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityI
 import Logo from '../../Components/Logo'
 import NostrosAvatar from '../../Components/NostrosAvatar'
 import { AppContext } from '../../Contexts/AppContext'
+import { RelayPoolContext } from '../../Contexts/RelayPoolContext'
+import { UserContext } from '../../Contexts/UserContext'
 import { WalletContext } from '../../Contexts/WalletContext'
 import { getZaps, type Zap } from '../../Functions/DatabaseFunctions/Zaps'
 import type WalletAction from '../../lib/Lightning'
@@ -27,6 +29,8 @@ import { navigate } from '../../lib/Navigation'
 export const WalletPage: React.FC = () => {
   const theme = useTheme()
   const { getSatoshiSymbol, database, setDisplayUserDrawer } = React.useContext(AppContext)
+  const { publicKey } = React.useContext(UserContext)
+  const { relayPool, lastEventId } = React.useContext(RelayPoolContext)
   const { refreshWallet, updateWallet, type, balance, transactions, invoices, updatedAt } =
     React.useContext(WalletContext)
   const [lnHubAddress, setLndHubAddress] = React.useState<string>()
@@ -42,26 +46,42 @@ export const WalletPage: React.FC = () => {
   useFocusEffect(
     React.useCallback(() => {
       updateWallet()
-      return () => {}
+      return () => {
+        if (publicKey) relayPool?.unsubscribe([`profile-zaps${publicKey.substring(0, 8)}`])
+      }
     }, []),
   )
 
   useEffect(() => {
-    const array = [...transactions, ...invoices].sort(
-      (item1, item2) => item2.timestamp - item1.timestamp,
-    )
-    setActions(array)
-    if (database) {
-      getZaps(database, { preimages: array.map((item) => item.id) }).then((results) => {
-        if (results) {
-          const map: Record<string, Zap> = {}
-          results.forEach((zap) => {
-            map[zap.preimage] = zap
-          })
-          setZaps(map)
-        }
-      })
+    if (database && publicKey) {
+      const preimages: string[] = actions.filter((item) => item.id !== '').map((item) => item.id)
+
+      getZaps(database, { preimages }).then(
+        (results) => {
+          if (results) {
+            const map: Record<string, Zap> = {}
+            results.forEach((zap) => {
+              if (!zap.preimage || zap.preimage === '') return
+              map[zap.preimage] = zap
+            })
+            setZaps(map)
+          }
+        },
+      )
+      relayPool?.subscribe(`profile-zaps${publicKey.substring(0, 8)}`, [
+        {
+          kinds: [9735],
+          '#preimage': preimages,
+        },
+      ])
     }
+  }, [lastEventId])
+
+  useEffect(() => {
+    const array = [...transactions, ...invoices]
+      .filter((item) => item.id !== '')
+      .sort((item1, item2) => item2.timestamp - item1.timestamp)
+    setActions(array)
   }, [updatedAt])
 
   const paste: (setFunction: (value: string) => void) => void = (setFunction) => {
@@ -140,10 +160,10 @@ export const WalletPage: React.FC = () => {
 
     const formatPattern = differenceInDays(new Date(), date) < 7 ? 'EEEE' : 'MM-dd-yy'
 
-    const zap = zaps[item.id]
+    const zap = item.id !== '' ? zaps[item.id] : undefined
 
     return (
-      <View key={item.id ?? index}>
+      <View>
         {(index === 0 || !isSameDay(date, prevDate)) && (
           <Text variant='titleMedium'>{format(date, formatPattern)}</Text>
         )}
@@ -223,7 +243,12 @@ export const WalletPage: React.FC = () => {
                 </Text>
               </View>
             </View>
-            <FlatList data={actions} renderItem={renderAction} style={styles.list} />
+            <FlatList
+              data={actions}
+              renderItem={renderAction}
+              style={styles.list}
+              keyExtractor={(item) => item.id + item.timestamp}
+            />
           </View>
         ) : (
           <View style={styles.center}>

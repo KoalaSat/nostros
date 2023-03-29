@@ -59,8 +59,8 @@ export const WalletContextProvider = ({ children }: WalletContextProviderProps):
   }, [])
 
   useEffect(() => {
-    if (config) updateWallet()
-  }, [config])
+    if (config && type) updateWallet()
+  }, [config, type])
 
   const getClient: (params?: any, clientType?: string) => LndHub | LnBits | undefined = (
     params,
