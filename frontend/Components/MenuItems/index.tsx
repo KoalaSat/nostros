@@ -45,7 +45,7 @@ export const MenuItems: React.FC = () => {
 
   React.useEffect(() => {
     setActiveRelays(relays.filter((relay) => relay.active).length)
-  }, [relays])
+  }, [relays, balance])
 
   const onPressLogout: () => void = () => {
     logout()
@@ -154,7 +154,7 @@ export const MenuItems: React.FC = () => {
             onPress={() => onPressItem('wallet', 1)}
             onTouchEnd={() => setDrawerItemIndex(-1)}
             right={() => {
-              if (!type || !balance) return <></>
+              if (!type || balance === undefined) return <></>
               return (
                 <Text>
                   {`${balance} `}

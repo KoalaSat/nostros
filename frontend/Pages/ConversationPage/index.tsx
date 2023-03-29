@@ -75,7 +75,7 @@ export const ConversationPage: React.FC<ConversationPageProps> = ({ route }) => 
 
       return () =>
         relayPool?.unsubscribe([
-          `conversation${route.params.pubKey}`,
+          `conversation${route.params.pubKey.substring(0, 8)}`,
           `conversation-replies${route.params.pubKey.substring(0, 8)}`,
         ])
     }, []),
@@ -272,7 +272,7 @@ export const ConversationPage: React.FC<ConversationPageProps> = ({ route }) => 
     if (!publicKey || !privateKey || !otherUser) return <></>
 
     const eTags = getETags(item)
-    const showAvatar = directMessages[index - 1]?.pubkey !== item.pubkey
+    const showAvatar = index < 1 || directMessages[index - 1]?.pubkey !== item.pubkey
     const isReply = eTags.length > 0
     const repliedMessageId = eTags.length > 0 ? eTags[eTags.length - 1][1] : undefined
     const repliedMessage = directMessages.find((message) => message.id === repliedMessageId)

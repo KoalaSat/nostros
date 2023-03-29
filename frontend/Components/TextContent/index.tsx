@@ -16,6 +16,7 @@ import {
   validTubeUrl,
 } from '../../Functions/NativeFunctions'
 import { LinksPreview } from './LinksPreview'
+import { nip19 } from 'nostr-tools'
 
 interface TextContentProps {
   event?: Event
@@ -38,7 +39,7 @@ export const TextContent: React.FC<TextContentProps> = ({
 }) => {
   const theme = useTheme()
   const { database } = useContext(AppContext)
-  const [userNames, setUserNames] = useState<Record<number, string>>({})
+  const [userNames, setUserNames] = useState<Record<string, string>>({})
   const [loadedUsers, setLoadedUsers] = useState<number>(0)
   const [urls, setUrls] = useState<Record<string, string>>({})
   const [lnUrl, setLnUrl] = useState<string>()
@@ -53,7 +54,7 @@ export const TextContent: React.FC<TextContentProps> = ({
     Linking.openURL(url)
   }
 
-  const handleNip05NotePress: (nip19: string) => void = (nip19) => {
+  const handleBech32NotePress: (nip19: string) => void = (nip19) => {
     const noteId = getNip19Key(nip19)
 
     if (noteId) {
@@ -67,7 +68,7 @@ export const TextContent: React.FC<TextContentProps> = ({
     }
   }
 
-  const handleNip05ProfilePress: (nip19: string) => void = (nip19) => {
+  const handleBech32ProfilePress: (nip19: string) => void = (nip19) => {
     const pubKey = getNip19Key(nip19)
 
     if (pubKey) {
@@ -100,34 +101,55 @@ export const TextContent: React.FC<TextContentProps> = ({
     matches,
   ) => {
     const mentionIndex: number = parseInt(matches[1])
-
-    if (userNames[mentionIndex]) {
-      return userNames[mentionIndex]
-    } else if (event) {
-      const tag = event.tags[mentionIndex]
-
-      if (tag) {
-        const kind = tag[0]
-        const pudKey = tag[1]
-
+    const tag = event?.tags[mentionIndex]
+    if (tag) {
+      const kind = tag[0]
+      const pubkey = tag[1]
+      if (userNames[pubkey]) {
+        return userNames[pubkey]
+      } else {
         if (kind === 'e') return ''
-
         if (database) {
-          getUser(pudKey, database).then((user) => {
+          getUser(pubkey, database).then((user) => {
             setLoadedUsers(getUnixTime(new Date()))
             setUserNames((prev) => {
-              if (user?.name) prev[mentionIndex] = `@${user.name}`
+              if (user?.name) prev[pubkey] = `@${user.name}`
               return prev
             })
           })
         }
-        return `@${formatPubKey(getNpub(pudKey))}`
-      } else {
-        return matchingString
+        return `@${formatPubKey(getNpub(pubkey))}`
       }
-    } else {
-      return matchingString
     }
+
+    return ''
+  }
+
+  const renderhandleBech32ProfileText: (matchingString: string, matches: string[]) => string = (
+    matchingString,
+    matches,
+  ) => {
+    const decoded = nip19.decode(matches[2])
+    const pubkey = decoded?.data?.pubkey ?? decoded?.data
+
+    if (userNames[pubkey]) {
+      return userNames[pubkey]
+    } else {
+      if (database) {
+        getUser(pubkey, database).then((user) => {
+          setLoadedUsers(getUnixTime(new Date()))
+          setUserNames((prev) => {
+            if (user?.name) prev[pubkey] = `@${user.name}`
+            return prev
+          })
+        })
+      }
+      return `@${formatPubKey(getNpub(pubkey))}`
+    }
+  }
+
+  const renderBech32NoteText: () => string = () => {
+    return ''
   }
 
   const linkPreview: (url: string) => string = (url) => {
@@ -189,11 +211,17 @@ export const TextContent: React.FC<TextContentProps> = ({
               },
           { pattern: /#(\w+)/, style: styles.hashTag, onPress: handleHashtagPress },
           { pattern: /(lnbc)\S+/, style: styles.nip19, renderText: renderLnurl },
-          { pattern: /(nevent1)\S+/, style: styles.nip19, onPress: handleNip05NotePress },
           {
-            pattern: /(npub1|nprofile1)\S+/,
+            pattern: /(nostr:)?((nevent1|note1)\S+)/,
             style: styles.nip19,
-            onPress: handleNip05ProfilePress,
+            onPress: handleBech32NotePress,
+            renderText: renderBech32NoteText,
+          },
+          {
+            pattern: /(nostr:)?((npub1|nprofile1)\S+)/,
+            style: styles.nip19,
+            onPress: handleBech32ProfilePress,
+            renderText: renderhandleBech32ProfileText,
           },
           {
             pattern: getHightlightText(),

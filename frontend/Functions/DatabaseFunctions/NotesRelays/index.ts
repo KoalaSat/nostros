@@ -30,6 +30,25 @@ export const getUserRelays: (
   }
 }
 
+export const getNoteRelays: (
+  db: QuickSQLiteConnection,
+  noteId: string,
+) => Promise<NoteRelay[]> = async (db, noteId) => {
+  const query = `
+    SELECT * FROM nostros_notes_relays LEFT JOIN
+      nostros_relays ON nostros_relays.url = nostros_notes_relays.relay_url
+    WHERE note_id = ? GROUP BY relay_url
+  `
+  const resultSet = db.execute(query, [noteId])
+  if (resultSet.rows && resultSet.rows.length > 0) {
+    const items: object[] = getItems(resultSet)
+    const users: NoteRelay[] = items.map((object) => databaseToEntity(object))
+    return users
+  } else {
+    return []
+  }
+}
+
 export const getNoteRelaysUsage: (
   db: QuickSQLiteConnection,
 ) => Promise<Record<string, number>> = async (db) => {

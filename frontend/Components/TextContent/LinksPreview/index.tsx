@@ -78,6 +78,7 @@ export const LinksPreview: React.FC<TextContentProps> = ({ urls, lnUrl }) => {
     rowPosition: 'top' | 'bottom',
   ) => JSX.Element = (link, index, rowPosition) => (
     <TouchableWithoutFeedback
+      key={link}
       onPress={() =>
         navigate('ImageGallery', {
           urls: imageLinks,
@@ -86,7 +87,6 @@ export const LinksPreview: React.FC<TextContentProps> = ({ urls, lnUrl }) => {
       }
     >
       <FastImage
-        key={link}
         style={[
           styles.cardCover,
           {
