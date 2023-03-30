@@ -34,25 +34,25 @@ export const NotificationsFeed: React.FC = () => {
   const { database, setNotificationSeenAt, pushedTab, getSatoshiSymbol } = useContext(AppContext)
   const { publicKey, reloadLists, mutedEvents, mutedUsers } = useContext(UserContext)
   const { lastEventId, relayPool } = useContext(RelayPoolContext)
-  const [pubKeys, setPubKeys] = React.useState<string[]>([])
+  const [loaded, setLoaded] = useState<boolean>(false)
   const [users, setUsers] = React.useState<User[]>([])
   const [userNotes, setUserNotes] = useState<Note[]>([])
-  const [mentionNotes, setMentionNotes] = useState<Note[]>([])
-  const [reactions, setReaction] = useState<Reaction[]>([])
-  const [zaps, setZaps] = useState<Zap[]>([])
+  const [mentionNotes, setMentionNotes] = useState<Note[]>()
+  const [reactions, setReaction] = useState<Reaction[]>()
+  const [zaps, setZaps] = useState<Zap[]>()
   const [refreshing, setRefreshing] = useState(true)
   const flashListRef = React.useRef<FlashList<Note>>(null)
   const [limitDate, setLimitDate] = useState<number>(initialLimitDate)
 
   useFocusEffect(
     React.useCallback(() => {
-      subscribeNotes()
-      loadNotes()
-      updateLastSeen()
+      setLoaded(true)
       return () => {
         relayPool?.unsubscribe([
           'notification-feed',
           'notification-reactions',
+          'notification-mentions',
+          'notification-replies',
           'notification-users',
         ])
         updateLastSeen()
@@ -61,9 +61,18 @@ export const NotificationsFeed: React.FC = () => {
   )
 
   useEffect(() => {
-    loadNotes()
-    reloadLists()
-    setRefreshing(false)
+    if (loaded) {
+      subscribeNotes()
+      loadNotes()
+    }
+  }, [loaded])
+
+  useEffect(() => {
+    if (loaded) {
+      loadNotes()
+      reloadLists()
+      setRefreshing(false)
+    }
   }, [lastEventId])
 
   useEffect(() => {
@@ -77,16 +86,27 @@ export const NotificationsFeed: React.FC = () => {
   }, [pushedTab])
 
   useEffect(() => {
-    if (database && pubKeys.length > 0) {
+    if (database && mentionNotes && reactions && zaps) {
+      const pubKeys = [
+        ...(mentionNotes.map((i) => i.pubkey) ?? []),
+        ...(reactions.map((i) => i.pubkey) ?? []),
+        ...(zaps.map((i) => i.zapper_user_id) ?? []),
+      ].filter((key, index, array) => array.indexOf(key) === index)
       getUsers(database, { includeIds: pubKeys }).then(setUsers)
       relayPool?.subscribe('notification-users', [
         {
           kinds: [Kind.Metadata],
-          authors: pubKeys.filter((key, index, array) => array.indexOf(key) === index),
+          authors: pubKeys,
         },
       ])
     }
-  }, [pubKeys])
+  }, [mentionNotes, reactions, zaps])
+
+  useEffect(() => {
+    if (limitDate < initialLimitDate) {
+      loadNotes()
+    }
+  }, [limitDate])
 
   const updateLastSeen: () => void = () => {
     const unixtime = getUnixTime(new Date())
@@ -115,15 +135,10 @@ export const NotificationsFeed: React.FC = () => {
         }
       }
     })
-    relayPool?.subscribe('notification-feed', [
+    relayPool?.subscribe('notification-mentions', [
       {
         kinds: [Kind.Text],
         '#p': [publicKey],
-        since: limitDate,
-      },
-      {
-        kinds: [Kind.Text],
-        '#e': [publicKey],
         since: limitDate,
       },
       {
@@ -131,18 +146,19 @@ export const NotificationsFeed: React.FC = () => {
         authors: [publicKey],
       },
     ])
+    relayPool?.subscribe('notification-replies', [
+      {
+        kinds: [Kind.Text],
+        '#e': [publicKey],
+        since: limitDate,
+      },
+    ])
   }
 
   const loadNotes: () => void = async () => {
     if (database && publicKey) {
-      getReactions(database, { reactedUser: publicKey, limitDate }).then((results) => {
-        setPubKeys((prev) => [...prev, ...results.map((res) => res.pubkey)])
-        setReaction(results)
-      })
-      getUserZaps(database, publicKey, limitDate).then((results) => {
-        setZaps(results)
-        setPubKeys((prev) => [...prev, ...results.map((res) => res.zapper_user_id)])
-      })
+      getReactions(database, { reactedUser: publicKey, limitDate }).then(setReaction)
+      getUserZaps(database, publicKey, limitDate).then(setZaps)
       getMentionNotes(database, publicKey, limitDate).then(async (notes) => {
         const unmutedThreads = notes.filter((note) => {
           if (!note?.id) return false
@@ -153,12 +169,6 @@ export const NotificationsFeed: React.FC = () => {
         })
         setMentionNotes(unmutedThreads)
         setRefreshing(false)
-        if (notes.length > 0) {
-          setPubKeys((prev) => [...prev, ...notes.map((note) => note.pubkey ?? '')])
-        }
-        if (notes.length < 5) {
-          setLimitDate(limitDate - 86400)
-        }
       })
     }
   }
@@ -169,12 +179,6 @@ export const NotificationsFeed: React.FC = () => {
       subscribeNotes()
     }
   }, [])
-
-  useEffect(() => {
-    if (limitDate < initialLimitDate) {
-      loadNotes()
-    }
-  }, [limitDate])
 
   const generateItemVariables: (item: Note | Reaction | Zap) => {
     user: User | undefined
@@ -312,7 +316,9 @@ export const NotificationsFeed: React.FC = () => {
     <View style={styles.container}>
       <FlashList
         showsVerticalScrollIndicator={false}
-        data={[...mentionNotes, ...reactions, ...zaps].sort((a, b) => b.created_at - a.created_at)}
+        data={[...(mentionNotes ?? []), ...(reactions ?? []), ...(zaps ?? [])].sort(
+          (a, b) => b.created_at - a.created_at,
+        )}
         renderItem={renderItem}
         refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
         refreshing={refreshing}
@@ -320,7 +326,7 @@ export const NotificationsFeed: React.FC = () => {
         horizontal={false}
         estimatedItemSize={100}
         ListFooterComponent={
-          mentionNotes.length > 0 ? (
+          mentionNotes && mentionNotes.length > 0 ? (
             <ActivityIndicator style={styles.loading} animating={true} />
           ) : (
             <></>

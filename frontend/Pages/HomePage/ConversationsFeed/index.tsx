@@ -48,6 +48,7 @@ export const ConversationsFeed: React.FC = () => {
   const [pageSize, setPageSize] = useState<number>(initialPageSize)
   const { publicKey, privateKey } = useContext(UserContext)
   const { relayPool, lastEventId } = useContext(RelayPoolContext)
+  const [loaded, setLoaded] = useState<boolean>(false)
   const [directMessages, settDirectMessages] = useState<DirectMessage[]>([])
   const [sendPubKeyInput, setSendPubKeyInput] = useState<string>('')
   const [users, setUsers] = useState<User[]>()
@@ -58,6 +59,7 @@ export const ConversationsFeed: React.FC = () => {
   useFocusEffect(
     React.useCallback(() => {
       loadDirectMessages(true)
+      setLoaded(true)
 
       return () =>
         relayPool?.unsubscribe([
@@ -69,7 +71,11 @@ export const ConversationsFeed: React.FC = () => {
   )
 
   useEffect(() => {
-    loadDirectMessages(false)
+    if (loaded) setLoaded(true)
+  }, [loaded])
+
+  useEffect(() => {
+    if (loaded) loadDirectMessages(false)
   }, [lastEventId, refreshBottomBarAt])
 
   useEffect(() => {

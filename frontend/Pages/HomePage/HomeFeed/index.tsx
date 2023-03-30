@@ -26,6 +26,14 @@ export const HomeFeed: React.FC<HomeFeedProps> = ({ navigation }) => {
   const [lastLoadAt, setLastLoadAt] = useState<number>(0)
   const [pageSize, setPageSize] = useState<number>(initialPageSize)
 
+  useFocusEffect(
+    React.useCallback(() => {
+      updateLastLoad()
+
+      return unsubscribe
+    }, []),
+  )
+
   const unsubscribe: () => void = () => {
     if (activeTab !== 'zaps') {
       relayPool?.unsubscribe([
@@ -45,14 +53,6 @@ export const HomeFeed: React.FC<HomeFeedProps> = ({ navigation }) => {
       relayPool?.unsubscribe(['homepage-global-main', 'homepage-global-reposts'])
     }
   }
-
-  useFocusEffect(
-    React.useCallback(() => {
-      updateLastLoad()
-
-      return unsubscribe
-    }, []),
-  )
 
   useEffect(unsubscribe, [activeTab, database, relayPool])
 
