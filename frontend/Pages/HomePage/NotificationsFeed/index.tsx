@@ -119,14 +119,16 @@ export const NotificationsFeed: React.FC = () => {
       {
         kinds: [Kind.Text],
         '#p': [publicKey],
+        since: limitDate
       },
       {
         kinds: [Kind.Text],
         '#e': [publicKey],
+        since: limitDate
       },
       {
         kinds: [30001],
-        authors: [publicKey],
+        authors: [publicKey]
       },
     ])
   }
@@ -316,6 +318,7 @@ export const NotificationsFeed: React.FC = () => {
         refreshing={refreshing}
         ListEmptyComponent={ListEmptyComponent}
         horizontal={false}
+        estimatedItemSize={100}
         ListFooterComponent={
           mentionNotes.length > 0 ? (
             <ActivityIndicator style={styles.loading} animating={true} />
