@@ -8,6 +8,7 @@ export interface RelayFilters {
   '#e'?: string[]
   '#p'?: string[]
   '#t'?: string[]
+  '#preimage'?: string[]
   since?: number
   limit?: number
   until?: number

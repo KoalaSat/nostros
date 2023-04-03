@@ -14,6 +14,8 @@ import { useFocusEffect } from '@react-navigation/native'
 import { SkeletonNote } from '../../Components/SkeletonNote/SkeletonNote'
 import { ScrollView } from 'react-native-gesture-handler'
 import { type RelayFilters } from '../../lib/nostr/RelayPool/intex'
+import { getGroup } from '../../Functions/DatabaseFunctions/Groups'
+import { formatId } from '../../Functions/RelayFunctions/Users'
 
 interface NotePageProps {
   route: { params: { noteId: string } }
@@ -44,7 +46,21 @@ export const NotePage: React.FC<NotePageProps> = ({ route }) => {
 
   useEffect(() => {
     loadNote()
+    loadGroup()
   }, [lastEventId])
+
+  const loadGroup: () => void = async () => {
+    if (database) {
+      getGroup(database, route.params.noteId).then((result) => {
+        if (result) {
+          navigate('Group', {
+            groupId: result.id,
+            title: result.name ?? formatId(result.id),
+          })
+        }
+      })
+    }
+  }
 
   const loadNote: () => void = async () => {
     if (database && publicKey) {
@@ -86,7 +102,7 @@ export const NotePage: React.FC<NotePageProps> = ({ route }) => {
     if (database && route.params.noteId) {
       relayPool?.subscribe(`notepage${route.params.noteId.substring(0, 8)}`, [
         {
-          kinds: [Kind.Text],
+          kinds: [Kind.Text, Kind.ChannelCreation],
           ids: [route.params.noteId],
         },
       ])
