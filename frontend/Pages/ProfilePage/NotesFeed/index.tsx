@@ -44,7 +44,7 @@ export const NotesFeed: React.FC<NotesFeedProps> = ({
   }, [pageSize, lastEventId, activeTab])
 
   const subscribe: () => Promise<void> = async () => {
-    relayPool?.subscribe(`profile-user${publicKey}`, [
+    relayPool?.subscribe(`profile-user${publicKey.substring(0, 8)}`, [
       {
         kinds: [Kind.Text, Kind.RecommendRelay],
         authors: [publicKey],

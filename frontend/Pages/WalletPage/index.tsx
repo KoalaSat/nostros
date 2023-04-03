@@ -56,18 +56,16 @@ export const WalletPage: React.FC = () => {
     if (database && publicKey) {
       const preimages: string[] = actions.filter((item) => item.id !== '').map((item) => item.id)
 
-      getZaps(database, { preimages }).then(
-        (results) => {
-          if (results) {
-            const map: Record<string, Zap> = {}
-            results.forEach((zap) => {
-              if (!zap.preimage || zap.preimage === '') return
-              map[zap.preimage] = zap
-            })
-            setZaps(map)
-          }
-        },
-      )
+      getZaps(database, { preimages }).then((results) => {
+        if (results) {
+          const map: Record<string, Zap> = {}
+          results.forEach((zap) => {
+            if (!zap.preimage || zap.preimage === '') return
+            map[zap.preimage] = zap
+          })
+          setZaps(map)
+        }
+      })
       relayPool?.subscribe(`profile-zaps${publicKey.substring(0, 8)}`, [
         {
           kinds: [9735],

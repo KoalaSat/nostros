@@ -131,6 +131,7 @@ export const WalletContextProvider = ({ children }: WalletContextProviderProps):
 
   const logoutWallet: () => void = () => {
     SInfo.deleteItem('lndHub', {})
+    SInfo.deleteItem('lnBits', {})
     setType(undefined)
     setConfig(undefined)
     setBalance(undefined)
