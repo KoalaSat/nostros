@@ -53,7 +53,7 @@ class LndHub {
   private readonly getTransactions: () => Promise<WalletAction[] | undefined> = async () => {
     if (!this.config) return
     const response = await axios.get(`${this.config.url}/gettxs`, { headers: this.getHeaders() })
-    if (response) {
+    if (response?.data) {
       return response.data.map((item: any) => {
         return {
           id: item.payment_preimage,
@@ -71,7 +71,7 @@ class LndHub {
     const response = await axios.get(`${this.config.url}/getuserinvoices`, {
       headers: this.getHeaders(),
     })
-    if (response) {
+    if (response?.data) {
       return response.data
         .filter((item: any) => item.ispaid)
         .map((item: any) => {

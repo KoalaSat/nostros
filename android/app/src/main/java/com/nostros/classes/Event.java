@@ -21,6 +21,11 @@ import java.util.UUID;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import nostr.crypto.schnorr.Schnorr;
+import nostr.crypto.bech32.Bech32;
+import nostr.util.NostrException;
+import nostr.util.NostrUtil;
+
 public class Event {
     private final int created_at;
     private final String content;
@@ -87,7 +92,13 @@ public class Event {
     }
 
     protected boolean isValid() {
-        return !id.isEmpty() && !sig.isEmpty() && created_at <= System.currentTimeMillis() / 1000L;
+        boolean verified = false;
+        try {
+            verified = Schnorr.verify(NostrUtil.hexToBytes(id), NostrUtil.hexToBytes(pubkey), NostrUtil.hexToBytes(sig));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return verified && created_at <= System.currentTimeMillis() / 1000L;
     }
 
     protected String getMainEventId() {
@@ -143,9 +154,9 @@ public class Event {
 
     protected String getRepostId() {
         String match = null;
-        Matcher m = Pattern.compile("#\\[(\\d+)\\]").matcher(content);
-        while (m.find()) {
-            int position = Integer.parseInt(m.group(1));
+        Matcher matcherTag = Pattern.compile("#\\[(\\d+)\\]").matcher(content);
+        if (matcherTag.find()) {
+            int position = Integer.parseInt(matcherTag.group(1));
             try {
                 JSONArray tag = tags.getJSONArray(position);
                 String tagKind = tag.getString(0);
@@ -153,6 +164,15 @@ public class Event {
                     match = tag.getString(1);
                 }
             } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+        Matcher matcherBech = Pattern.compile("nostr:((nevent1|note1)\\S+)").matcher(content);
+        if (matcherBech.find()) {
+            String bech32 = matcherBech.group(1);
+            try {
+                match = Bech32.fromBech32(bech32);
+            } catch (NostrException e) {
                 e.printStackTrace();
             }
         }
