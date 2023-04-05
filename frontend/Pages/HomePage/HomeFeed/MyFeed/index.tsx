@@ -90,16 +90,11 @@ export const MyFeed: React.FC<MyFeedProps> = ({
           setNotes(results)
           setRefreshing(false)
 
-          const message: RelayFilters = {
+          relayPool?.subscribe('homepage-myfeed-main', [{
             kinds: [Kind.Text, Kind.RecommendRelay],
             authors: contacts,
-          }
-          if (results.length >= pageSize) {
-            message.since = results[pageSize - 1].created_at
-          } else {
-            message.limit = pageSize
-          }
-          relayPool?.subscribe('homepage-myfeed-main', [message])
+            limit: pageSize
+          }])
 
           if (results.length > 0) {
             const noteIds = results.map((note) => note.id ?? '')
