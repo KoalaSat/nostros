@@ -72,7 +72,7 @@ export const ZapsFeed: React.FC<ZapsFeedProps> = ({
     if (database && publicKey) {
       const users: User[] = await getUsers(database, { contacts: true, order: 'created_at DESC' })
       const contacts: string[] = [...users.map((user) => user.id), publicKey]
-      relayPool?.subscribe(`profile-zaps${publicKey}`, [
+      relayPool?.subscribe(`homepage-zaps`, [
         {
           kinds: [9735],
           '#p': contacts,

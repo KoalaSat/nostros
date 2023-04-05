@@ -90,11 +90,13 @@ export const MyFeed: React.FC<MyFeedProps> = ({
           setNotes(results)
           setRefreshing(false)
 
-          relayPool?.subscribe('homepage-myfeed-main', [{
-            kinds: [Kind.Text, Kind.RecommendRelay],
-            authors: contacts,
-            limit: pageSize
-          }])
+          relayPool?.subscribe('homepage-myfeed-main', [
+            {
+              kinds: [Kind.Text, Kind.RecommendRelay],
+              authors: contacts,
+              limit: pageSize,
+            },
+          ])
 
           if (results.length > 0) {
             const noteIds = results.map((note) => note.id ?? '')
