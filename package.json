@@ -13,7 +13,7 @@
   "dependencies": {
     "@eva-design/eva": "^2.1.0",
     "@react-native-clipboard/clipboard": "^1.11.2",
-    "@react-native-community/cli-platform-android": "^10.2.0",
+    "@react-native-community/cli-platform-android": "^11.1.0",
     "@react-navigation/bottom-tabs": "^6.5.3",
     "@react-navigation/drawer": "^6.5.7",
     "@react-navigation/native": "^6.1.2",
@@ -30,7 +30,7 @@
     "cryptr": "^6.1.0",
     "date-fns": "^2.29.3",
     "events": "^3.3.0",
-    "i18next": "^22.4.13",
+    "i18next": "^22.4.14",
     "lnurl-pay": "^2.2.0",
     "lodash.debounce": "^4.0.8",
     "nostr-tools": "^1.7.5",
@@ -67,7 +67,7 @@
     "uuid": "^9.0.0"
   },
   "devDependencies": {
-    "@babel/core": "^7.20.2",
+    "@babel/core": "^7.21.4",
     "@babel/runtime": "^7.20.13",
     "@react-native-community/eslint-config": "^3.2.0",
     "@types/create-hash": "^1.2.2",
@@ -84,7 +84,7 @@
     "eslint": "^8.36.0",
     "eslint-config-prettier": "^8.8.0",
     "eslint-config-standard-with-typescript": "^34.0.1",
-    "eslint-import-resolver-typescript": "^3.5.3",
+    "eslint-import-resolver-typescript": "^3.5.4",
     "eslint-plugin-i18next": "^6.0.0-8",
     "eslint-plugin-import": "^2.27.5",
     "eslint-plugin-n": "^15.6.0",

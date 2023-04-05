@@ -8,7 +8,7 @@ import {
 } from 'react-native'
 import { AppContext, type Config } from '../../../Contexts/AppContext'
 import SInfo from 'react-native-sensitive-info'
-import { getMentionNotes, getNotes, type Note } from '../../../Functions/DatabaseFunctions/Notes'
+import { type Note } from '../../../Functions/DatabaseFunctions/Notes'
 import { RelayPoolContext } from '../../../Contexts/RelayPoolContext'
 import { Kind } from 'nostr-tools'
 import { UserContext } from '../../../Contexts/UserContext'
@@ -18,31 +18,27 @@ import { navigate } from '../../../lib/Navigation'
 import { useFocusEffect } from '@react-navigation/native'
 import { format, fromUnixTime, getUnixTime } from 'date-fns'
 import { FlashList, type ListRenderItem } from '@shopify/flash-list'
-import { getETags } from '../../../Functions/RelayFunctions/Events'
-import { getReactions, type Reaction } from '../../../Functions/DatabaseFunctions/Reactions'
-import { getUsers, type User } from '../../../Functions/DatabaseFunctions/Users'
 import { username } from '../../../Functions/RelayFunctions/Users'
 import { TouchableWithoutFeedback } from 'react-native-gesture-handler'
-import { getUserZaps, type Zap } from '../../../Functions/DatabaseFunctions/Zaps'
 import { formatDate, handleInfinityScroll } from '../../../Functions/NativeFunctions'
 import { useTranslation } from 'react-i18next'
+import {
+  getNotifications,
+  type Notification,
+} from '../../../Functions/DatabaseFunctions/Notifications'
+import { getTaggedEventIds } from '../../../Functions/RelayFunctions/Events'
 
 export const NotificationsFeed: React.FC = () => {
-  const initialLimitDate = React.useMemo(() => getUnixTime(new Date()) - 86400, [])
+  const initialLimitPage = React.useMemo(() => 20, [])
   const theme = useTheme()
   const { t } = useTranslation('common')
   const { database, setNotificationSeenAt, pushedTab, getSatoshiSymbol } = useContext(AppContext)
   const { publicKey, reloadLists, mutedEvents, mutedUsers } = useContext(UserContext)
   const { lastEventId, relayPool } = useContext(RelayPoolContext)
-  const [pubKeys, setPubKeys] = React.useState<string[]>([])
-  const [users, setUsers] = React.useState<User[]>([])
-  const [userNotes, setUserNotes] = useState<Note[]>([])
-  const [mentionNotes, setMentionNotes] = useState<Note[]>([])
-  const [reactions, setReaction] = useState<Reaction[]>([])
-  const [zaps, setZaps] = useState<Zap[]>([])
+  const [notifications, setNotifications] = useState<Notification[]>([])
   const [refreshing, setRefreshing] = useState(true)
   const flashListRef = React.useRef<FlashList<Note>>(null)
-  const [limitDate, setLimitDate] = useState<number>(initialLimitDate)
+  const [limitPage, setLimitPage] = useState<number>(initialLimitPage)
 
   useFocusEffect(
     React.useCallback(() => {
@@ -76,18 +72,6 @@ export const NotificationsFeed: React.FC = () => {
     }
   }, [pushedTab])
 
-  useEffect(() => {
-    if (database && pubKeys.length > 0) {
-      getUsers(database, { includeIds: pubKeys }).then(setUsers)
-      relayPool?.subscribe('notification-users', [
-        {
-          kinds: [Kind.Metadata],
-          authors: pubKeys.filter((key, index, array) => array.indexOf(key) === index),
-        },
-      ])
-    }
-  }, [pubKeys])
-
   const updateLastSeen: () => void = () => {
     const unixtime = getUnixTime(new Date())
     setNotificationSeenAt(unixtime)
@@ -100,31 +84,16 @@ export const NotificationsFeed: React.FC = () => {
 
   const subscribeNotes: () => void = async () => {
     if (!publicKey || !database) return
-
-    getNotes(database, { filters: { pubkey: [publicKey] }, limitDate }).then((results) => {
-      if (results) {
-        setUserNotes(results)
-        const eventIds = results.map((e) => e.id ?? '')
-        if (eventIds.length > 0) {
-          relayPool?.subscribe('notification-reactions', [
-            {
-              kinds: [Kind.Reaction, 9735],
-              '#e': eventIds,
-            },
-          ])
-        }
-      }
-    })
     relayPool?.subscribe('notification-feed', [
       {
         kinds: [Kind.Text],
         '#p': [publicKey],
-        since: limitDate,
+        limit: limitPage,
       },
       {
-        kinds: [Kind.Text],
-        '#e': [publicKey],
-        since: limitDate,
+        kinds: [Kind.Reaction, 9735],
+        '#p': [publicKey],
+        limit: limitPage,
       },
       {
         kinds: [30001],
@@ -135,29 +104,22 @@ export const NotificationsFeed: React.FC = () => {
 
   const loadNotes: () => void = async () => {
     if (database && publicKey) {
-      getReactions(database, { reactedUser: publicKey, limitDate }).then((results) => {
-        setPubKeys((prev) => [...prev, ...results.map((res) => res.pubkey)])
-        setReaction(results)
-      })
-      getUserZaps(database, publicKey, limitDate).then((results) => {
-        setZaps(results)
-        setPubKeys((prev) => [...prev, ...results.map((res) => res.zapper_user_id)])
-      })
-      getMentionNotes(database, publicKey, limitDate).then(async (notes) => {
-        const unmutedThreads = notes.filter((note) => {
-          if (!note?.id) return false
-          const eTags = getETags(note)
-          return (
-            !eTags.some((tag) => mutedEvents.includes(tag[1])) && !mutedUsers.includes(note.pubkey)
-          )
+      getNotifications(database, { limit: limitPage }).then((results) => {
+        const filtered = results.filter((event) => {
+          const eTags = getTaggedEventIds(event)
+          return !mutedUsers.includes(event.pubkey) && !mutedEvents.some((id) => eTags.includes(id))
         })
-        setMentionNotes(unmutedThreads)
-        setRefreshing(false)
-        if (notes.length > 0) {
-          setPubKeys((prev) => [...prev, ...notes.map((note) => note.pubkey ?? '')])
-        }
-        if (notes.length < 5) {
-          setLimitDate(limitDate - 86400)
+        if (filtered.length > 0) {
+          setNotifications(filtered)
+          const pubKeys = filtered
+            .map((n) => n.pubkey)
+            .filter((key, index, array) => array.indexOf(key) === index)
+          relayPool?.subscribe('notification-users', [
+            {
+              kinds: [Kind.Metadata],
+              authors: pubKeys,
+            },
+          ])
         }
       })
     }
@@ -171,41 +133,30 @@ export const NotificationsFeed: React.FC = () => {
   }, [])
 
   useEffect(() => {
-    if (limitDate < initialLimitDate) {
+    if (limitPage < initialLimitPage) {
       loadNotes()
     }
-  }, [limitDate])
+  }, [limitPage])
 
-  const generateItemVariables: (item: Note | Reaction | Zap) => {
-    user: User | undefined
-    eventId: string | undefined
-    content: string | undefined
+  const generateItemVariables: (item: Notification) => {
+    noteId: string | undefined
+    content: string
     icon: string
     iconColor: string
     description: string
   } = (item) => {
-    let note: Note | undefined
-    let user: User | undefined
-    let content: string | undefined
-    let eventId: string | undefined
+    let noteId: string | undefined = item.event_id
+    let content: string = item.content.replace(/nostr:\S*/, '').trim()
     let icon: string
     let iconColor: string
     let description: string
 
     if (item.kind === 9735) {
-      note = userNotes.find((note) => note.id === item.zapped_event_id)
-      user = users.find((user) => user.id === item.zapper_user_id)
-      const zapDescription = item.tags?.find((tag) => tag[0] === 'description')
-      content = zapDescription ? JSON.parse(zapDescription[1])?.content : ''
-      eventId = note?.id
       icon = 'lightning-bolt'
       iconColor = '#F5D112'
       description = 'notificationsFeed.zap'
     } else if (item.kind === Kind.Reaction) {
-      note = userNotes.find((note) => note.id === item.reacted_event_id)
-      user = users.find((user) => user.id === item.pubkey)
-      content = note?.content
-      eventId = note?.id
+      content = ''
       if (item.content === '-') {
         icon = 'thumb-down'
         iconColor = theme.colors.error
@@ -215,60 +166,54 @@ export const NotificationsFeed: React.FC = () => {
         iconColor = theme.colors.onPrimaryContainer
         description = 'notificationsFeed.like'
       }
-    } else if (item.repost_id) {
-      note = userNotes.find((note) => note.id === item.repost_id)
-      user = users.find((user) => user.id === item.pubkey)
-      content = note?.content
-      eventId = note?.id
+    } else if (item.event_id) {
       icon = 'cached'
       iconColor = '#7ADC70'
       description = 'notificationsFeed.reposted'
     } else {
-      note = userNotes.find((note) => note.id === item.reacted_event_id)
-      user = users.find((user) => user.id === item.pubkey)
-      content = item?.content
-      eventId = item?.id
+      noteId = item.id
       icon = 'message-outline'
       iconColor = theme.colors.onPrimaryContainer
       description = 'notificationsFeed.replied'
     }
 
     return {
-      eventId,
+      noteId,
       content,
-      user,
       icon,
       iconColor,
       description,
     }
   }
 
-  const renderItem: ListRenderItem<Note | Reaction | Zap> = ({ item }) => {
+  const renderItem: ListRenderItem<Notification> = ({ item }) => {
     const date = fromUnixTime(item.created_at)
-    const { user, icon, iconColor, description, content, eventId } = generateItemVariables(item)
+    const { noteId, content, icon, iconColor, description } = generateItemVariables(item)
 
     return (
-      <TouchableWithoutFeedback onPress={() => navigate('Note', { noteId: eventId })}>
+      <TouchableWithoutFeedback onPress={() => noteId && navigate('Note', { noteId })}>
         <View style={styles.itemCard} key={item.id}>
           <View style={styles.itemCardIcon}>
             <MaterialCommunityIcons name={icon} size={25} color={iconColor} />
           </View>
           <View style={styles.itemCardInfo}>
             <Text style={[styles.itemCardText, { color: theme.colors.onSurfaceVariant }]}>
-              {username(user)}
+              {username({ name: item.name, id: item.pubkey })}
             </Text>
             <Text style={styles.itemCardText}>
               {t(description, { amount: item.amount ?? '' })}
               {item.kind === 9735 && getSatoshiSymbol(16)}
             </Text>
-            <Text
-              style={[styles.itemCardText, { color: theme.colors.onSurfaceVariant }]}
-              numberOfLines={
-                item.kind === 9735 || (item.kind === Kind.Text && !item.repost_id) ? undefined : 1
-              }
-            >
-              {content?.replace(/#\[\d\]/, '')}
-            </Text>
+            {content !== '' && (
+              <Text
+                style={[styles.itemCardText, { color: theme.colors.onSurfaceVariant }]}
+                numberOfLines={
+                  item.kind === 9735 || (item.kind === Kind.Text && !item.event_id) ? undefined : 1
+                }
+              >
+                {content?.replace(/#\[\d\]/, '')}
+              </Text>
+            )}
           </View>
           <View style={styles.itemCardDates}>
             <Text style={styles.itemCardDatesText}>{formatDate(item.created_at, false)}</Text>
@@ -304,7 +249,7 @@ export const NotificationsFeed: React.FC = () => {
 
   const onScroll: (event: NativeSyntheticEvent<NativeScrollEvent>) => void = (event) => {
     if (handleInfinityScroll(event)) {
-      setLimitDate(limitDate - 86400)
+      setLimitPage(limitPage + initialLimitPage)
     }
   }
 
@@ -312,7 +257,7 @@ export const NotificationsFeed: React.FC = () => {
     <View style={styles.container}>
       <FlashList
         showsVerticalScrollIndicator={false}
-        data={[...mentionNotes, ...reactions, ...zaps].sort((a, b) => b.created_at - a.created_at)}
+        data={notifications.sort((a, b) => b.created_at - a.created_at)}
         renderItem={renderItem}
         refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
         refreshing={refreshing}
@@ -320,7 +265,7 @@ export const NotificationsFeed: React.FC = () => {
         horizontal={false}
         estimatedItemSize={100}
         ListFooterComponent={
-          mentionNotes.length > 0 ? (
+          notifications.length > 0 ? (
             <ActivityIndicator style={styles.loading} animating={true} />
           ) : (
             <></>

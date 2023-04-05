@@ -8,24 +8,22 @@ import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityI
 import { UserContext } from '../../Contexts/UserContext'
 import { RelayPoolContext } from '../../Contexts/RelayPoolContext'
 import { Kind, nip19 } from 'nostr-tools'
-import { getMentionNotes, getNotificationsIds } from '../../Functions/DatabaseFunctions/Notes'
 import { AppContext } from '../../Contexts/AppContext'
 import { StyleSheet } from 'react-native'
 import RBSheet from 'react-native-raw-bottom-sheet'
 import { useTranslation } from 'react-i18next'
 import { navigate } from '../../lib/Navigation'
-import {
-  getDirectMessagesCount,
-  getGroupedDirectMessages,
-} from '../../Functions/DatabaseFunctions/DirectMessages'
+import { getDirectMessagesCount } from '../../Functions/DatabaseFunctions/DirectMessages'
 import GroupsFeed from './GroupsFeed'
 import { getUserGroupMessagesCount } from '../../Functions/DatabaseFunctions/Groups'
+import { getNotifications } from '../../Functions/DatabaseFunctions/Notifications'
+import { getTaggedEventIds } from '../../Functions/RelayFunctions/Events'
 
 export const HomePage: React.FC = () => {
   const theme = useTheme()
   const { t } = useTranslation('common')
   const { language, setPushedTab } = React.useContext(AppContext)
-  const { privateKey, publicKey, mutedEvents } = React.useContext(UserContext)
+  const { privateKey, publicKey, mutedEvents, mutedUsers } = React.useContext(UserContext)
   const { database, notificationSeenAt, clipboardNip21, setClipboardNip21, refreshBottomBarAt } =
     useContext(AppContext)
   const { relayPool, lastEventId } = useContext(RelayPoolContext)
@@ -42,12 +40,15 @@ export const HomePage: React.FC = () => {
 
   useEffect(() => {
     if (publicKey && database && relayPool) {
-      getNotificationsIds(database, publicKey, notificationSeenAt).then((results) => {
-        const unmutedThreads = results.filter((id) => {
-          if (!id ?? id === '') return false
-          return !mutedEvents.includes(id)
-        })
-        setNewNotifications(unmutedThreads.length)
+      getNotifications(database, { since: notificationSeenAt }).then((results) => {
+        setNewNotifications(
+          results.filter((event) => {
+            const eTags = getTaggedEventIds(event)
+            return (
+              !mutedUsers.includes(event.pubkey) && !mutedEvents.some((id) => eTags.includes(id))
+            )
+          }).length,
+        )
       })
       getUserGroupMessagesCount(database, publicKey).then(setNewGroupMessages)
       getDirectMessagesCount(database, publicKey).then(setNewdirectMessages)
@@ -57,35 +58,23 @@ export const HomePage: React.FC = () => {
 
   const subscribe: () => void = () => {
     if (publicKey && database) {
-      getMentionNotes(database, publicKey, 1).then((mentionResults) => {
-        getGroupedDirectMessages(database, { limit: 1 }).then((directMessageResults) => {
-          relayPool?.subscribe('notification-icon', [
-            {
-              kinds: [Kind.ChannelMessage],
-              '#p': [publicKey],
-              limit: 30,
-            },
-            {
-              kinds: [Kind.EncryptedDirectMessage],
-              '#p': [publicKey],
-              since: directMessageResults[0]?.created_at ?? 0,
-              limit: 30,
-            },
-            {
-              kinds: [Kind.Text],
-              '#p': [publicKey],
-              since: mentionResults[0]?.created_at ?? 0,
-              limit: 30,
-            },
-            {
-              kinds: [Kind.Text],
-              '#e': [publicKey],
-              since: mentionResults[0]?.created_at ?? 0,
-              limit: 30,
-            },
-          ])
-        })
-      })
+      relayPool?.subscribe('notification-icon', [
+        {
+          kinds: [Kind.ChannelMessage],
+          '#p': [publicKey],
+          limit: 30,
+        },
+        {
+          kinds: [Kind.EncryptedDirectMessage],
+          '#p': [publicKey],
+          limit: 30,
+        },
+        {
+          kinds: [Kind.Text, Kind.Reaction, 9735],
+          '#p': [publicKey],
+          limit: 30,
+        },
+      ])
     }
   }
 

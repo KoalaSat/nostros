@@ -67,7 +67,7 @@ public class Event {
                 } else if (kind.equals("4")) {
                     saveDirectMessage(database);
                 } else if (kind.equals("7")) {
-                    saveReaction(database);
+                    saveReaction(database, userPubKey);
                 } else if (kind.equals("40")) {
                     saveGroup(database);
                 } else if (kind.equals("41")) {
@@ -81,7 +81,7 @@ public class Event {
                 } else if (kind.equals("10002")) {
                     saveRelayMetadata(database);
                 } else if (kind.equals("9735")) {
-                    saveZap(database);
+                    saveZap(database, userPubKey);
                 } else if (kind.equals("10000") || kind.equals("10001") || kind.equals("30001")) {
                     saveList(database);
                 }
@@ -258,9 +258,32 @@ public class Event {
         return "";
     }
 
+    protected void saveNotification(SQLiteDatabase database, String eventId, double amount) {
+        String query = "SELECT id FROM nostros_notifications WHERE id = ?";
+        @SuppressLint("Recycle") Cursor cursor = database.rawQuery(query, new String[] {id});
+        if (cursor.getCount() == 0) {
+            ContentValues values = new ContentValues();
+            values.put("id", id);
+            values.put("content", content);
+            values.put("created_at", created_at);
+            values.put("kind", kind);
+            values.put("pubkey", pubkey);
+            values.put("tags", tags.toString());
+            values.put("amount", amount);
+            values.put("event_id", eventId);
+            database.replace("nostros_notifications", null, values);
+        }
+    }
+
     protected void saveNote(SQLiteDatabase database, String userPubKey) {
         String query = "SELECT id FROM nostros_notes WHERE id = ?";
         @SuppressLint("Recycle") Cursor cursor = database.rawQuery(query, new String[] {id});
+
+        int userMentioned = getUserMentioned(userPubKey);
+        String repostId = getRepostId();
+        if (userMentioned > 0 && !pubkey.equals(userPubKey)) {
+            saveNotification(database, repostId, 0);
+        }
 
         if (cursor.getCount() == 0) {
             ContentValues values = new ContentValues();
@@ -273,8 +296,8 @@ public class Event {
             values.put("tags", tags.toString());
             values.put("main_event_id", getMainEventId());
             values.put("reply_event_id", getReplyEventId());
-            values.put("user_mentioned", getUserMentioned(userPubKey));
-            values.put("repost_id", getRepostId());
+            values.put("user_mentioned", userMentioned);
+            values.put("repost_id", repostId);
             database.replace("nostros_notes", null, values);
         }
     }
@@ -480,7 +503,7 @@ public class Event {
         }
     }
 
-    protected void saveReaction(SQLiteDatabase database) throws JSONException {
+    protected void saveReaction(SQLiteDatabase database, String userPubKey) throws JSONException {
         String query = "SELECT created_at FROM nostros_reactions WHERE id = ?";
         @SuppressLint("Recycle") Cursor cursor = database.rawQuery(query, new String[] {id});
 
@@ -495,6 +518,10 @@ public class Event {
             }
             if (pTags.length() > 0) {
                 reacted_user_id = pTags.getJSONArray(pTags.length() - 1).getString(1);
+            }
+
+            if (!pubkey.equals(userPubKey) && reacted_user_id.equals(userPubKey)) {
+                saveNotification(database, reacted_event_id, 0);
             }
 
             ContentValues values = new ContentValues();
@@ -556,7 +583,7 @@ public class Event {
         }
     }
 
-    protected void saveZap(SQLiteDatabase database) throws JSONException {
+    protected void saveZap(SQLiteDatabase database, String userPubKey) throws JSONException {
         String query = "SELECT created_at FROM nostros_zaps WHERE id = ?";
         @SuppressLint("Recycle") Cursor cursor = database.rawQuery(query, new String[] {id});
 
@@ -595,6 +622,10 @@ public class Event {
             @SuppressLint("Recycle") Cursor userCursor = database.rawQuery(userQuery, new String[] {pubkey, zapped_user_id});
 
             if (userCursor.moveToFirst()) {
+                if (zapped_user_id.equals(userPubKey) && !pubkey.equals(userPubKey)) {
+                    saveNotification(database, zapped_event_id, amount);
+                }
+
                 ContentValues values = new ContentValues();
                 values.put("id", id);
                 values.put("content", content);

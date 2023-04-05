@@ -52,7 +52,7 @@ export const NotePage: React.FC<NotePageProps> = ({ route }) => {
   const loadGroup: () => void = async () => {
     if (database) {
       getGroup(database, route.params.noteId).then((result) => {
-        if (result) {
+        if (result.id) {
           navigate('Group', {
             groupId: result.id,
             title: result.name ?? formatId(result.id),
@@ -99,6 +99,7 @@ export const NotePage: React.FC<NotePageProps> = ({ route }) => {
   }, [])
 
   const subscribeNotes: (past?: boolean) => Promise<void> = async (past) => {
+    console.log(route.params)
     if (database && route.params.noteId) {
       relayPool?.subscribe(`notepage${route.params.noteId.substring(0, 8)}`, [
         {

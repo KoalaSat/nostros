@@ -243,6 +243,19 @@ public class Database {
         try {
             instance.execSQL("ALTER TABLE nostros_users ADD COLUMN tags TEXT;");
         } catch (SQLException e) { }
+        try {
+            instance.execSQL("CREATE TABLE IF NOT EXISTS nostros_notifications(\n" +
+                    "          id TEXT PRIMARY KEY NOT NULL, \n" +
+                    "          content TEXT NOT NULL,\n" +
+                    "          created_at INT NOT NULL,\n" +
+                    "          kind INT NOT NULL,\n" +
+                    "          pubkey TEXT NOT NULL,\n" +
+                    "          tags TEXT NOT NULL\n," +
+                    "          amount FLOAT,\n" +
+                    "          event_id TEXT\n" +
+                    "          );");
+            instance.execSQL("CREATE INDEX nostros_notifications_index ON nostros_notifications(created_at);");
+        } catch (SQLException e) { }
     }
 
     public void saveEvent(JSONObject data, String userPubKey, String relayUrl) throws JSONException {

@@ -32,6 +32,7 @@ export const HomeFeed: React.FC<HomeFeedProps> = ({ navigation }) => {
         'homepage-zapped-notes',
         'homepage-zapped-reactions',
         'homepage-zapped-reposts',
+        'homepage-zaps',
       ])
     }
     if (activeTab !== 'myFeed') {
@@ -42,7 +43,11 @@ export const HomeFeed: React.FC<HomeFeedProps> = ({ navigation }) => {
       ])
     }
     if (activeTab !== 'globalFeed') {
-      relayPool?.unsubscribe(['homepage-global-main', 'homepage-global-reposts'])
+      relayPool?.unsubscribe([
+        'homepage-global-main',
+        'homepage-global-reposts',
+        'homepage-global-meta',
+      ])
     }
   }
 
