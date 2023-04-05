@@ -618,14 +618,14 @@ public class Event {
                 preimage = preimageTags.getJSONArray(preimageTags.length() - 1).getString(1);
             }
 
+            if (zapped_user_id.equals(userPubKey) && !pubkey.equals(userPubKey)) {
+                saveNotification(database, zapped_event_id, amount);
+            }
+
             String userQuery = "SELECT created_at FROM nostros_users WHERE zap_pubkey = ? AND id = ?";
             @SuppressLint("Recycle") Cursor userCursor = database.rawQuery(userQuery, new String[] {pubkey, zapped_user_id});
 
             if (userCursor.moveToFirst()) {
-                if (zapped_user_id.equals(userPubKey) && !pubkey.equals(userPubKey)) {
-                    saveNotification(database, zapped_event_id, amount);
-                }
-
                 ContentValues values = new ContentValues();
                 values.put("id", id);
                 values.put("content", content);
