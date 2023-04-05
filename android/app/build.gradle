@@ -107,8 +107,8 @@ android {
         applicationId "com.nostros"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 70
-        versionName "v0.3.2.4-alpha"
+        versionCode 71
+        versionName "v0.3.2.5-alpha"
     }
 
     splits {
