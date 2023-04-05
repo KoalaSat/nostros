@@ -1386,17 +1386,6 @@
     glob "^7.1.3"
     logkitty "^0.7.1"
 
-"@react-native-community/cli-platform-android@^11.1.0":
-  version "11.1.1"
-  resolved "https://registry.yarnpkg.com/@react-native-community/cli-platform-android/-/cli-platform-android-11.1.1.tgz#843381104e61417f2d337598c6f5ff484d1fa1b2"
-  integrity sha512-+qim4c00uomP0N2VxsE4Qk3ixYLeElsIuwN5DkrSRzKwGSJqzdvkChEof7mkW803OyCl6cEBT1yrRWpvtSZOHA==
-  dependencies:
-    "@react-native-community/cli-tools" "11.1.1"
-    chalk "^4.1.2"
-    execa "^5.0.0"
-    glob "^7.1.3"
-    logkitty "^0.7.1"
-
 "@react-native-community/cli-platform-ios@10.2.0":
   version "10.2.0"
   resolved "https://registry.yarnpkg.com/@react-native-community/cli-platform-ios/-/cli-platform-ios-10.2.0.tgz#be21c0e3bbf17358d540cc23e5556bf679f6322e"
@@ -1452,21 +1441,6 @@
     pretty-format "^26.6.2"
     serve-static "^1.13.1"
     ws "^7.5.1"
-
-"@react-native-community/cli-tools@11.1.1":
-  version "11.1.1"
-  resolved "https://registry.yarnpkg.com/@react-native-community/cli-tools/-/cli-tools-11.1.1.tgz#6ec1b6bf714cb7bdb360ca4a213e969e10b644f2"
-  integrity sha512-wkyzFxIncZCYfCHt1nwGE0pKspuP6yknNCF9nHxFXag0gPkTphpZWoV+uRVNRd+Fudx/qOtPiFAivGfw+8Pp2w==
-  dependencies:
-    appdirsjs "^1.2.4"
-    chalk "^4.1.2"
-    find-up "^5.0.0"
-    mime "^2.4.1"
-    node-fetch "^2.6.0"
-    open "^6.2.0"
-    ora "^5.4.1"
-    semver "^6.3.0"
-    shell-quote "^1.7.3"
 
 "@react-native-community/cli-tools@^10.1.1":
   version "10.1.1"
