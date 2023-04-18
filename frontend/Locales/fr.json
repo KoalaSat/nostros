@@ -394,7 +394,8 @@
         "badFormat": "L'URL du relais n'est pas correctement formaté.",
         "alreadyExists": "Le relais existe déjà.",
         "listPushed": "Relay list pushed."
-      }
+      },
+      "recommended": "Recommandé"
     },
     "profileConfigPage": {
       "notifications": {
