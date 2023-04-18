@@ -189,7 +189,8 @@
       "bookmark": "Bookmark",
       "mutedThread": "Thread muted",
       "muteThread": "Mute thread",
-      "bitcoinBlock": "Биткойн-блок"
+      "bitcoinBlock": "Биткойн-блок",
+      "id": "ИДЕНТИФИКАТОР"
     },
     "noteCard": {
       "notifications": {
