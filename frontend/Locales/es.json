@@ -396,7 +396,8 @@
         "badFormat": "La URL del relay no tiene el formato adecuado.",
         "alreadyExists": "El relay ya existe.",
         "listPushed": "Lista de relays subida."
-      }
+      },
+      "connectContactRelays": "Reconectar a los relés de los contactos"
     },
     "profileConfigPage": {
       "notifications": {
