@@ -397,7 +397,8 @@
         "alreadyExists": "El relay ya existe.",
         "listPushed": "Lista de relays subida."
       },
-      "connectContactRelays": "Reconectar a los relés de los contactos"
+      "connectContactRelays": "Reconectar a los relés de los contactos",
+      "recommended": "Recomendado"
     },
     "profileConfigPage": {
       "notifications": {
