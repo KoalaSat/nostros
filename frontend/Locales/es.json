@@ -228,7 +228,8 @@
       "emptyTitle": "No tienes notificationes.",
       "emptyDescription": "Escribe una nota para tener respuestas y reacciones.",
       "emptyButton": "Escribe una nota",
-      "notificationsFeed": "Escribe un mensaje."
+      "notificationsFeed": "Escribe un mensaje.",
+      "dislike": "Disgusto"
     },
     "profileCreatePage": {
       "notifications": {
