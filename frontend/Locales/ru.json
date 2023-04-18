@@ -226,7 +226,8 @@
       "replied": "Replied",
       "emptyTitle": "У Вас нет новых уведомлений",
       "emptyDescription": "Write a message to get replies and reactions.",
-      "emptyButton": "Write a message"
+      "emptyButton": "Write a message",
+      "notificationsFeed": "Напиши сообщение."
     },
     "profileCreatePage": {
       "notifications": {
