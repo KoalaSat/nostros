@@ -553,6 +553,9 @@
     },
     "reactionsFeed": {
       "emptyDescription": "Vea aquí las notas a las que reaccionó."
+    },
+    "repostsFeed": {
+      "emptyDescription": "Vea aquí las notas que volvió a publicar."
     }
   }
 }
