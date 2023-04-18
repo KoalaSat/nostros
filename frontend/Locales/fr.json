@@ -196,7 +196,8 @@
       "bookmarked": "Bookmarked",
       "bookmark": "Bookmark",
       "mutedThread": "Thread muted",
-      "muteThread": "Mute thread"
+      "muteThread": "Mute thread",
+      "bitcoinBlock": "Bloc Bitcoin"
     },
     "noteCard": {
       "notifications": {
