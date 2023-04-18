@@ -196,7 +196,8 @@
       "open": "Öffne Wallet",
       "anonTip": "Anonymer Tip",
       "zap": "Zap",
-      "pay": "Pay"
+      "pay": "Pay",
+      "npub": "Öffentlicher Schlüssel"
     },
     "notificationsFeed": {
       "connectContactRelays": "Reconnect to contacts' relays",
