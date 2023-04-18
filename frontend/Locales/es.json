@@ -188,7 +188,8 @@
       "bookmarked": "Marcado",
       "bookmark": "Marcar",
       "mutedThread": "Hilo silenciado",
-      "muteThread": "Silenciar hilo"
+      "muteThread": "Silenciar hilo",
+      "bitcoinBlock": "bloque de bitcoins"
     },
     "noteCard": {
       "notifications": {
