@@ -76,7 +76,6 @@
       "emptyTitle": "Tip",
       "emptyDescription": "Tippe @ um jemanden zu finden\n\nTippe # um nach Themen zu suchen"
     },
-
     "conversationPage": {
       "unableDecypt": "{{username}} hat dich erwähnt",
       "typeMessage": "Nachricht schreiben",
