@@ -184,7 +184,8 @@
       "longPressZapDescription": "Define a default amount to automatically generate invoices after a long press on the Zap button.",
       "defaultZapAmount": "Defaul Zap amount",
       "update": "Update",
-      "disable": "Disable"
+      "disable": "Disable",
+      "random": "Aléatoire"
     },
     "noteActions": {
       "publicBookmark": "Add to public bookmarks",
