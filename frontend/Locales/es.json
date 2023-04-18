@@ -106,7 +106,8 @@
       "searchContactsRelaysDescription": "Puedes añadir los relays donde se encuentran tus contactos para reforzar al red.",
       "contatcsRelays": "Relays de contactos",
       "contatcsRelaysCount": "{{activeRelays}} listas encontradas",
-      "connectAccess": "Connectar y acceder"
+      "connectAccess": "Connectar y acceder",
+      "skipTitle": "Omitir inicio de sesión resistente"
     },
     "sendPage": {
       "isContact": "Siguiendo",
