@@ -215,7 +215,8 @@
       "open": "Abrir wallet",
       "anonTip": "Propina anónima",
       "zap": "Zap",
-      "pay": "Pagar"
+      "pay": "Pagar",
+      "npub": "Llave pública"
     },
     "notificationsFeed": {
       "reposted": "Reposteado",
