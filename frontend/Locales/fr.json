@@ -537,6 +537,9 @@
     },
     "reactionsFeed": {
       "emptyDescription": "Voir ici les notes auxquelles vous avez réagi."
+    },
+    "repostsFeed": {
+      "emptyDescription": "Voir ici les notes que vous avez repostées."
     }
   }
 }
