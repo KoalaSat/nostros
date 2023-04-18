@@ -397,7 +397,8 @@
         "contactCopied": "已复制联系人",
         "urlCopied": "已复制链接",
         "pushCompleted": "您的所有数据都已推送"
-      }
+      },
+      "pushHistoricTitle": "推送我所有的数据"
     },
     "profileConfigPage": {
       "notifications": {
