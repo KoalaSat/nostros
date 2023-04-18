@@ -395,7 +395,8 @@
         "desactive": "Relay desactivado.",
         "badFormat": "La URL del relay no tiene el formato adecuado.",
         "alreadyExists": "El relay ya existe.",
-        "listPushed": "Lista de relays subida."
+        "listPushed": "Lista de relays subida.",
+        "globalFeedActive": "Fuente global habilitada."
       },
       "connectContactRelays": "Reconectar a los relés de los contactos",
       "recommended": "Recomendado"
