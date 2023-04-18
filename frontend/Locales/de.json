@@ -101,7 +101,8 @@
       "searchContactsRelaysDescription": "You can add the relays used by your contacts to your list and connect to them to strengthen the network.",
       "contatcsRelays": "Contatcs Relays",
       "contatcsRelaysCount": "{{activeRelays}} lists found",
-      "connectAccess": "Connect and access"
+      "connectAccess": "Connect and access",
+      "skipTitle": "Resistente Anmeldung überspringen"
     },
     "qrReaderPage": {
       "emptyTitle": "Berechtigung nicht gewährt",
