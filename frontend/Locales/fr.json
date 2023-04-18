@@ -222,7 +222,8 @@
       "open": "Ouvrir le wallet",
       "anonTip": "Anonymous tip",
       "zap": "Zap",
-      "pay": "Pay"
+      "pay": "Pay",
+      "npub": "Clé publique"
     },
     "notificationsFeed": {
       "reposted": "Reposted",
