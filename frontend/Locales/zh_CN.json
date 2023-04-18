@@ -189,7 +189,8 @@
       "bookmark": "收藏",
       "mutedThread": "对话串已静音",
       "muteThread": "静音对话串",
-      "bitcoinBlock": "比特币区块"
+      "bitcoinBlock": "比特币区块",
+      "id": "ID"
     },
     "noteCard": {
       "notifications": {
