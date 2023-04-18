@@ -350,7 +350,8 @@
         "badFormat": "Die URL des Relays hat kein gültiges Format.",
         "alreadyExists": "Relay existiert bereits",
         "listPushed": "Relay Liste hochgeladen."
-      }
+      },
+      "connectContactRelays": "Verbinden Sie sich erneut mit den Relais der Kontakte"
     },
     "relayCard": {
       "pushDone": "Fertig",
