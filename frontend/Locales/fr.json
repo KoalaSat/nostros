@@ -359,7 +359,8 @@
         "contactCopied": "Contact copié.",
         "urlCopied": "URL copié.",
         "pushCompleted": "All your data has been pushed."
-      }
+      },
+      "pushHistoricTitle": "Poussez toutes mes données"
     },
     "relaysPage": {
       "connectContactRelays": "Reconnect to contacts' relays",
