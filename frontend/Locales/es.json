@@ -260,7 +260,8 @@
       "privateKey": "Clave privada",
       "publicKey": "Clave pública",
       "loginMethod": "Acceder con",
-      "mnemonic": "Mnemónico"
+      "mnemonic": "Mnemónico",
+      "mnemonicInput": "Escriba sus palabras mnemotécnicas en el orden correcto para iniciar sesión."
     },
     "contactsPage": {
       "notifications": {
