@@ -233,7 +233,8 @@
       "replied": "Replied",
       "emptyTitle": "Vous n'avez pas de notification.",
       "emptyDescription": "Écrivez une note pour obtenir des réponses et des réactions.",
-      "emptyButton": "Écrivez une note"
+      "emptyButton": "Écrivez une note",
+      "notificationsFeed": "Écrire un message."
     },
     "profileCreatePage": {
       "notifications": {
