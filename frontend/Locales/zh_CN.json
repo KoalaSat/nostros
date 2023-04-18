@@ -123,7 +123,8 @@
       "searchContactsRelaysDescription": "您可以将您的联系人使用的中继添加到您的列表中并连接到它们以加强网络",
       "contatcsRelays": "联系人中继",
       "contatcsRelaysCount": "找到{{activeRelays}}列表",
-      "connectAccess": "连接以访问"
+      "connectAccess": "连接以访问",
+      "skipTitle": "跳过弹性登录"
     },
     "sendPage": {
       "isContact": "正在关注",
