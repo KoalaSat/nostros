@@ -6,7 +6,7 @@ import es from './Locales/es.json'
 import ru from './Locales/ru.json'
 import fr from './Locales/fr.json'
 import de from './Locales/de.json'
-import zhCn from './Locales/zhCn.json'
+import zhCn from './Locales/zh_CN.json'
 /* eslint-disable import/no-duplicates */
 import setDefaultOptions from 'date-fns/setDefaultOptions'
 import {
