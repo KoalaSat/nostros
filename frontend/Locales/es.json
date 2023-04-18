@@ -227,7 +227,8 @@
       "replied": "Respuesta",
       "emptyTitle": "No tienes notificationes.",
       "emptyDescription": "Escribe una nota para tener respuestas y reacciones.",
-      "emptyButton": "Escribe una nota"
+      "emptyButton": "Escribe una nota",
+      "notificationsFeed": "Escribe un mensaje."
     },
     "profileCreatePage": {
       "notifications": {
