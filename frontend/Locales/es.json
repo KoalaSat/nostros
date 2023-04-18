@@ -189,7 +189,8 @@
       "bookmark": "Marcar",
       "mutedThread": "Hilo silenciado",
       "muteThread": "Silenciar hilo",
-      "bitcoinBlock": "bloque de bitcoins"
+      "bitcoinBlock": "bloque de bitcoins",
+      "id": "IDENTIFICACIÓN"
     },
     "noteCard": {
       "notifications": {
