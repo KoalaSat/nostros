@@ -210,7 +210,8 @@
       "userBlocked": "Utilisateur bloqué",
       "userMuted": "User muted",
       "contentWarning": "Contenu sensible",
-      "reposted": "Reposted"
+      "reposted": "Reposted",
+      "addRelay": "Ajouter un relais"
     },
     "lnPayment": {
       "monto": "Quantité (sats.)",
