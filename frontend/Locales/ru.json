@@ -257,7 +257,8 @@
       "privateKey": "Приватный ключ",
       "publicKey": "Публичный ключ",
       "loginMethod": "Login with",
-      "mnemonic": "Mnemonic"
+      "mnemonic": "Mnemonic",
+      "mnemonicInput": "Введите мнемонические слова в правильном порядке, чтобы войти в систему."
     },
     "contactsPage": {
       "notifications": {
