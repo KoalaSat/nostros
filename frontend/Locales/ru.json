@@ -386,7 +386,8 @@
         "badFormat": "Relay URL has a bad format.",
         "alreadyExists": "Relay already exists.",
         "listPushed": "Relay list pushed."
-      }
+      },
+      "recommended": "рекомендуемые"
     },
     "profileConfigPage": {
       "notifications": {
