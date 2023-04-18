@@ -266,7 +266,8 @@
       "privateKey": "Clé privée",
       "publicKey": "Clé publique",
       "loginMethod": "Login with",
-      "mnemonic": "Mnemonic"
+      "mnemonic": "Mnemonic",
+      "mnemonicInput": "Tapez vos mots mnémoniques dans le bon ordre pour vous connecter."
     },
     "contactsPage": {
       "notifications": {
