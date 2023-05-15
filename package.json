@@ -13,7 +13,7 @@
   "dependencies": {
     "@eva-design/eva": "^2.1.0",
     "@react-native-clipboard/clipboard": "^1.11.2",
-    "@react-native-community/cli-platform-android": "^10.2.0",
+    "@react-native-community/cli-platform-android": "^11.2.3",
     "@react-navigation/bottom-tabs": "^6.5.3",
     "@react-navigation/drawer": "^6.5.7",
     "@react-navigation/native": "^6.1.2",
