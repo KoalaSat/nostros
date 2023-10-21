@@ -134,8 +134,8 @@ export const ContactsPage: React.FC = () => {
       relayPool?.subscribe('muted', [
         {
           kinds: [10000],
-          authors: [publicKey],
           limit: 1,
+          authors: [publicKey],
         },
       ])
     }

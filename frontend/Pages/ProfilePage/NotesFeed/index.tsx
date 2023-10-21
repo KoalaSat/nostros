@@ -47,8 +47,8 @@ export const NotesFeed: React.FC<NotesFeedProps> = ({
     relayPool?.subscribe(`profile-user${publicKey.substring(0, 8)}`, [
       {
         kinds: [Kind.Text, Kind.RecommendRelay],
-        authors: [publicKey],
         limit: pageSize + initialPageSize,
+        authors: [publicKey],
       },
     ])
   }
@@ -61,8 +61,8 @@ export const NotesFeed: React.FC<NotesFeedProps> = ({
 
         const message: RelayFilters = {
           kinds: [Kind.Text, Kind.RecommendRelay],
-          authors: [publicKey],
           limit: pageSize + initialPageSize,
+          authors: [publicKey],
         }
         if (results.length === pageSize) {
           message.since = results[pageSize - 1].created_at

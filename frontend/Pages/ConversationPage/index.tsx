@@ -145,15 +145,15 @@ export const ConversationPage: React.FC<ConversationPageProps> = ({ route }) => 
       relayPool?.subscribe(`conversation${route.params.pubKey.substring(0, 8)}`, [
         {
           kinds: [Kind.EncryptedDirectMessage],
+          since: lastCreateAt ?? 0,
           authors: [publicKey],
           '#p': [otherPubKey],
-          since: lastCreateAt ?? 0,
         },
         {
           kinds: [Kind.EncryptedDirectMessage],
+          since: lastCreateAt ?? 0,
           authors: [otherPubKey],
           '#p': [publicKey],
-          since: lastCreateAt ?? 0,
         },
       ])
     }

@@ -56,31 +56,15 @@ export const ZapsFeed: React.FC<ZapsFeedProps> = ({
 
   useEffect(() => {
     if (relayPool && publicKey && activeTab === 'zaps') {
-      subscribe()
       loadNotes()
     }
   }, [lastEventId, lastConfirmationtId, relayPool, publicKey, activeTab])
 
   useEffect(() => {
     if (pageSize > initialPageSize) {
-      subscribe()
       loadNotes()
     }
   }, [pageSize])
-
-  const subscribe: () => Promise<void> = async () => {
-    if (database && publicKey) {
-      const users: User[] = await getUsers(database, { contacts: true, order: 'created_at DESC' })
-      const contacts: string[] = [...users.map((user) => user.id), publicKey]
-      relayPool?.subscribe(`homepage-zaps`, [
-        {
-          kinds: [9735],
-          '#p': contacts,
-          since: getUnixTime(new Date()) - 604800,
-        },
-      ])
-    }
-  }
 
   const onRefresh = useCallback(() => {
     setRefreshing(true)
@@ -95,13 +79,23 @@ export const ZapsFeed: React.FC<ZapsFeedProps> = ({
 
   const loadNotes: () => void = async () => {
     if (database && publicKey) {
+      const users: User[] = await getUsers(database, { contacts: true, order: 'created_at DESC' })
+      const contacts: string[] = [...users.map((user) => user.id), publicKey]
+      relayPool?.subscribe(`homepage-zaps-main${publicKey?.substring(0, 8)}`, [
+        {
+          kinds: [9735],
+          since: getUnixTime(new Date()) - 86400,
+          '#p': contacts,
+        },
+      ])
+
       getMostZapedNotesContacts(database, getUnixTime(new Date()) - 86400).then((zaps) => {
         const zappedEventIds = zaps
           .map((zap) => zap.zapped_event_id)
           .filter((id) => id !== '')
           .slice(0, pageSize)
         if (zaps.length > 0) {
-          relayPool?.subscribe('homepage-zapped-notes', [
+          relayPool?.subscribe(`homepage-zaps-notes${publicKey?.substring(0, 8)}`, [
             {
               kinds: [Kind.Text, Kind.RecommendRelay],
               ids: zappedEventIds,
@@ -135,9 +129,9 @@ export const ZapsFeed: React.FC<ZapsFeedProps> = ({
                   authors,
                 })
               }
-              relayPool?.subscribe('homepage-zapped-reactions', reactionFilters)
+              relayPool?.subscribe(`homepage-zaps-reactions${publicKey?.substring(0, 8)}`, reactionFilters)
               if (repostIds.length > 0) {
-                relayPool?.subscribe('homepage-zapped-reposts', [
+                relayPool?.subscribe(`homepage-zaps-reposts${publicKey?.substring(0, 8)}`, [
                   {
                     kinds: [Kind.Text],
                     ids: repostIds,

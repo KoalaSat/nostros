@@ -84,8 +84,8 @@ export const SearchPage: React.FC<SearchPageProps> = ({ route }) => {
         relayPool?.subscribe('search-hastags', [
           {
             kinds: [Kind.Text],
-            '#t': hastags,
             limit: pageSize,
+            '#t': hastags,
           },
         ])
       }, 600),

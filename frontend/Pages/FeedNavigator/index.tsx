@@ -11,7 +11,6 @@ import AboutPage from '../AboutPage'
 import FaqPage from '../FaqPage'
 import ProfileConfigPage from '../ProfileConfigPage'
 import ProfilePage from '../ProfilePage'
-import ProfileCard from '../../Components/ProfileCard'
 import NotePage from '../NotePage'
 import SendPage from '../SendPage'
 import ConversationPage from '../ConversationPage'
@@ -23,7 +22,6 @@ import { getUnixTime } from 'date-fns'
 import ContactsPage from '../ContactsPage'
 import GroupPage from '../GroupPage'
 import GroupHeaderIcon from '../../Components/GroupHeaderIcon'
-import NoteActions from '../../Components/NoteActions'
 import QrReaderPage from '../QrReaderPage'
 import DatabaseModule from '../../lib/Native/DatabaseModule'
 import ImageGalleryPage from '../ImageGalleryPage'
@@ -32,6 +30,8 @@ import SearchPage from '../SearchPage'
 import WalletPage from '../WalletPage'
 import { WalletContext } from '../../Contexts/WalletContext'
 import ExternalIdentitiesPage from '../ExternalIdentitiesPage'
+import NoteActionsPage from '../NoteActionsPage'
+import ProfileActionsPage from '../ProfileActionsPage'
 
 export const HomeNavigator: React.FC = () => {
   const theme = useTheme()
@@ -40,7 +40,6 @@ export const HomeNavigator: React.FC = () => {
   const { logoutWallet } = React.useContext(WalletContext)
   const {
     displayUserDrawer,
-    setDisplayNoteDrawer,
     displayNoteDrawer,
     setDisplayUserDrawer,
     setRefreshBottomBarAt,
@@ -192,6 +191,8 @@ export const HomeNavigator: React.FC = () => {
         <Stack.Group>
           <Stack.Screen name='Landing' component={HomePage} />
           <Stack.Screen name='Note' component={NotePage} />
+          <Stack.Screen name='ProfileActions' component={ProfileActionsPage} />
+          <Stack.Screen name='NoteActions' component={NoteActionsPage} />
           <Stack.Screen name='Send' component={SendPage} />
           <Stack.Screen name='Repost' component={SendPage} />
           <Stack.Screen name='Reply' component={SendPage} />
@@ -213,22 +214,6 @@ export const HomeNavigator: React.FC = () => {
           <Stack.Screen name='ExternalIdentities' component={ExternalIdentitiesPage} />
         </Stack.Group>
       </Stack.Navigator>
-      <RBSheet
-        ref={bottomSheetProfileRef}
-        closeOnDragDown={true}
-        customStyles={bottomSheetStyles}
-        onClose={() => setDisplayUserDrawer(undefined)}
-      >
-        <ProfileCard bottomSheetRef={bottomSheetProfileRef} />
-      </RBSheet>
-      <RBSheet
-        ref={bottomSheetNoteRef}
-        closeOnDragDown={true}
-        customStyles={bottomSheetStyles}
-        onClose={() => setDisplayNoteDrawer(undefined)}
-      >
-        <NoteActions bottomSheetRef={bottomSheetNoteRef} />
-      </RBSheet>
       <RBSheet
         ref={bottomSheetRelayRef}
         closeOnDragDown={true}

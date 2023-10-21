@@ -98,8 +98,7 @@ export const NotePage: React.FC<NotePageProps> = ({ route }) => {
     loadNote()
   }, [])
 
-  const subscribeNotes: (past?: boolean) => Promise<void> = async (past) => {
-    console.log(route.params)
+  const subscribeNotes: () => Promise<void> = async () => {
     if (database && route.params.noteId) {
       relayPool?.subscribe(`notepage${route.params.noteId.substring(0, 8)}`, [
         {

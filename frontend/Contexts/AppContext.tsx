@@ -48,7 +48,6 @@ export interface AppContextProps {
   displayUserDrawer?: string
   setDisplayUserDrawer: (displayUserDrawer: string | undefined) => void
   displayNoteDrawer?: string
-  setDisplayNoteDrawer: (displayNoteDrawer: string | undefined) => void
   refreshBottomBarAt?: number
   setRefreshBottomBarAt: (refreshBottomBarAt: number) => void
   longPressZap?: number | undefined
@@ -97,7 +96,6 @@ export const initialAppContext: AppContextProps = {
   getSatoshiSymbol: () => <></>,
   setClipboardNip21: () => {},
   setDisplayUserDrawer: () => {},
-  setDisplayNoteDrawer: () => {},
   longPressZap: undefined,
   setLongPressZap: () => {},
   signHeight: false,
@@ -128,7 +126,6 @@ export const AppContextProvider = ({ children }: AppContextProviderProps): JSX.E
   const [clipboardLoads, setClipboardLoads] = React.useState<string[]>([])
   const [clipboardNip21, setClipboardNip21] = React.useState<string>()
   const [displayUserDrawer, setDisplayUserDrawer] = React.useState<string>()
-  const [displayNoteDrawer, setDisplayNoteDrawer] = React.useState<string>()
   const [pushedTab, setPushedTab] = useState<string>()
   const [signHeight, setSignWithHeight] = useState<boolean>(initialAppContext.signHeight)
 
@@ -264,8 +261,6 @@ export const AppContextProvider = ({ children }: AppContextProviderProps): JSX.E
         setPushedTab,
         longPressZap,
         setLongPressZap,
-        displayNoteDrawer,
-        setDisplayNoteDrawer,
         qrReader,
         setQrReader,
         signHeight,

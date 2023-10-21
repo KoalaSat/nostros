@@ -99,18 +99,18 @@ export const ProfilePage: React.FC<ProfilePageProps> = ({ route }) => {
     relayPool?.subscribe(`profile-user${route.params.pubKey.substring(0, 8)}`, [
       {
         kinds: [Kind.Metadata],
-        authors: [route.params.pubKey],
         limit: 1,
+        authors: [route.params.pubKey],
       },
       {
         kinds: [Kind.Contacts],
-        authors: [route.params.pubKey],
         limit: 1,
+        authors: [route.params.pubKey],
       },
       {
         kinds: [10001],
-        authors: [route.params.pubKey],
         limit: 1,
+        authors: [route.params.pubKey],
       },
     ])
   }

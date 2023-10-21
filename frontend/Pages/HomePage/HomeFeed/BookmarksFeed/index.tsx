@@ -96,21 +96,7 @@ export const BookmarksFeed: React.FC<BookmarksFeedProps> = ({
 
   const loadNotes: () => void = async () => {
     if (database && publicKey) {
-      relayPool?.subscribe('homepage-bookmarks-main', [
-        {
-          kinds: [10000],
-          authors: [publicKey],
-          limit: 1,
-        },
-        {
-          kinds: [10001],
-          authors: [publicKey],
-          limit: 1,
-        },
-        {
-          kinds: [30001],
-          authors: [publicKey],
-        },
+      relayPool?.subscribe(`homepage-bookmarks-main${publicKey?.substring(0, 8)}`, [
         {
           kinds: [Kind.Text],
           authors: publicBookmarks,
@@ -142,9 +128,9 @@ export const BookmarksFeed: React.FC<BookmarksFeedProps> = ({
               authors,
             })
           }
-          relayPool?.subscribe('homepage-bookmarks-reactions', reactionFilters)
+          relayPool?.subscribe(`homepage-bookmarks-reactions${publicKey?.substring(0, 8)}`, reactionFilters)
           if (repostIds.length > 0) {
-            relayPool?.subscribe('homepage-bookmarks-reposts', [
+            relayPool?.subscribe(`homepage-bookmarks-reposts${publicKey?.substring(0, 8)}`, [
               {
                 kinds: [Kind.Text],
                 ids: repostIds,

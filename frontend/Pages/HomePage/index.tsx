@@ -1,35 +1,27 @@
-import React, { useContext, useEffect, useState } from 'react'
-import { Badge, Button, Text, TouchableRipple, useTheme } from 'react-native-paper'
+import React, { useContext, useEffect } from 'react'
+import { Button, Text, TouchableRipple, useTheme } from 'react-native-paper'
 import ConversationsFeed from './ConversationsFeed'
 import HomeFeed from './HomeFeed'
 import NotificationsFeed from './NotificationsFeed'
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs'
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'
 import { UserContext } from '../../Contexts/UserContext'
-import { RelayPoolContext } from '../../Contexts/RelayPoolContext'
-import { Kind, nip19 } from 'nostr-tools'
+import { nip19 } from 'nostr-tools'
 import { AppContext } from '../../Contexts/AppContext'
 import { StyleSheet } from 'react-native'
 import RBSheet from 'react-native-raw-bottom-sheet'
 import { useTranslation } from 'react-i18next'
 import { navigate } from '../../lib/Navigation'
-import { getDirectMessagesCount } from '../../Functions/DatabaseFunctions/DirectMessages'
 import GroupsFeed from './GroupsFeed'
-import { getUserGroupMessagesCount } from '../../Functions/DatabaseFunctions/Groups'
-import { getNotifications } from '../../Functions/DatabaseFunctions/Notifications'
-import { getTaggedEventIds } from '../../Functions/RelayFunctions/Events'
+import { RelayPoolContext } from '../../Contexts/RelayPoolContext'
 
 export const HomePage: React.FC = () => {
   const theme = useTheme()
   const { t } = useTranslation('common')
-  const { language, setPushedTab } = React.useContext(AppContext)
-  const { privateKey, publicKey, mutedEvents, mutedUsers } = React.useContext(UserContext)
-  const { database, notificationSeenAt, clipboardNip21, setClipboardNip21, refreshBottomBarAt } =
-    useContext(AppContext)
-  const { relayPool, lastEventId } = useContext(RelayPoolContext)
-  const [newNotifications, setNewNotifications] = useState<number>(0)
-  const [newdirectMessages, setNewdirectMessages] = useState<number>(0)
-  const [newGroupMessages, setNewGroupMessages] = useState<number>(0)
+  const { relayPool } = useContext(RelayPoolContext)
+  const { setPushedTab } = React.useContext(AppContext)
+  const { privateKey, publicKey } = React.useContext(UserContext)
+  const { clipboardNip21, setClipboardNip21 } = useContext(AppContext)
   const bottomSheetClipboardRef = React.useRef<RBSheet>(null)
 
   useEffect(() => {
@@ -39,46 +31,25 @@ export const HomePage: React.FC = () => {
   }, [clipboardNip21])
 
   useEffect(() => {
-    if (publicKey && database && relayPool) {
-      getNotifications(database, { since: notificationSeenAt }).then((results) => {
-        setNewNotifications(
-          results.filter((event) => {
-            const eTags = getTaggedEventIds(event)
-            return (
-              !mutedUsers.includes(event.pubkey) && !mutedEvents.some((id) => eTags.includes(id))
-            )
-          }).length,
-        )
-      })
-      getUserGroupMessagesCount(database, publicKey).then(setNewGroupMessages)
-      getDirectMessagesCount(database, publicKey).then(setNewdirectMessages)
-      subscribe()
-    }
-  }, [lastEventId, notificationSeenAt, refreshBottomBarAt, database, publicKey, relayPool])
-
-  const subscribe: () => void = () => {
-    if (publicKey && database) {
-      relayPool?.subscribe('notification-icon', [
+    if (publicKey && relayPool) {
+      relayPool?.subscribe(`lists-bookmarks${publicKey.substring(0, 8)}`, [
         {
-          kinds: [Kind.ChannelMessage],
-          '#p': [publicKey],
-          limit: 30,
+          kinds: [10000],
+          limit: 1,
+          authors: [publicKey],
         },
         {
-          kinds: [Kind.EncryptedDirectMessage],
-          '#p': [publicKey],
-          limit: 30,
+          kinds: [10001],
+          limit: 1,
+          authors: [publicKey],
         },
         {
-          kinds: [Kind.Text, Kind.Reaction, 9735],
-          '#p': [publicKey],
-          limit: 30,
+          kinds: [30001],
+          authors: [publicKey],
         },
       ])
     }
-  }
-
-  React.useEffect(() => {}, [language])
+  }, [publicKey, relayPool])
 
   const goToEvent: () => void = () => {
     if (clipboardNip21) {
@@ -163,9 +134,6 @@ export const HomePage: React.FC = () => {
                       size={size}
                       color={theme.colors.onPrimaryContainer}
                     />
-                    {newGroupMessages > 0 && (
-                      <Badge style={styles.notificationBadge}>{newGroupMessages}</Badge>
-                    )}
                   </>
                 ),
               }}
@@ -181,9 +149,6 @@ export const HomePage: React.FC = () => {
                       size={size}
                       color={theme.colors.onPrimaryContainer}
                     />
-                    {newdirectMessages > 0 && (
-                      <Badge style={styles.notificationBadge}>{newdirectMessages}</Badge>
-                    )}
                   </>
                 ),
               }}
@@ -201,9 +166,6 @@ export const HomePage: React.FC = () => {
                   size={size}
                   color={theme.colors.onPrimaryContainer}
                 />
-                {newNotifications > 0 && (
-                  <Badge style={styles.notificationBadge}>{newNotifications}</Badge>
-                )}
               </>
             ),
           }}

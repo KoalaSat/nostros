@@ -62,7 +62,10 @@ export const GroupsFeed: React.FC = () => {
     React.useCallback(() => {
       loadGroups()
 
-      return () => relayPool?.unsubscribe(['groups-user', 'groups-others', 'groups-messages'])
+      return () => relayPool?.unsubscribe([
+        `groups-user${publicKey?.substring(0, 8)}`, 
+        `groups-others${publicKey?.substring(0, 8)}`
+      ])
     }, []),
   )
 
@@ -70,7 +73,7 @@ export const GroupsFeed: React.FC = () => {
     loadGroups()
   }, [lastEventId, lastConfirmationtId, refreshBottomBarAt])
 
-  useEffect(() => {}, [newMessages, newMentions])
+  useEffect(() => { }, [newMessages, newMentions])
 
   useEffect(() => {
     if (qrReader) {
@@ -99,7 +102,7 @@ export const GroupsFeed: React.FC = () => {
             authors: [publicKey],
           },
         ]
-        relayPool?.subscribe('groups-user', filters)
+        relayPool?.subscribe(`groups-user${publicKey?.substring(0, 8)}`, filters)
         if (results.length > 0) {
           setGroups(results)
           results.forEach((group) => {
@@ -118,7 +121,7 @@ export const GroupsFeed: React.FC = () => {
               })
             }
           })
-          relayPool?.subscribe('groups-others', [
+          relayPool?.subscribe(`groups-others${publicKey?.substring(0, 8)}`, [
             {
               kinds: [Kind.ChannelCreation],
               ids: results.map((group) => group.id ?? ''),
@@ -129,8 +132,8 @@ export const GroupsFeed: React.FC = () => {
             },
             {
               kinds: [Kind.ChannelMessage],
-              '#e': results.map((group) => group.id ?? ''),
               limit: 30,
+              '#e': results.map((group) => group.id ?? ''),
             },
           ])
         }
@@ -376,17 +379,17 @@ export const GroupsFeed: React.FC = () => {
                 forceTextInputFocus={false}
               />
             }
-            // left={
-            //   <TextInput.Icon
-            //     icon='qrcode'
-            //     onPress={() => {
-            //       bottomSheetFabActionRef.current?.close()
-            //       bottomSheetSearchRef.current?.close()
-            //       navigate('QrReader')
-            //     }}
-            //     forceTextInputFocus={false}
-            //   />
-            // }
+          // left={
+          //   <TextInput.Icon
+          //     icon='qrcode'
+          //     onPress={() => {
+          //       bottomSheetFabActionRef.current?.close()
+          //       bottomSheetSearchRef.current?.close()
+          //       navigate('QrReader')
+          //     }}
+          //     forceTextInputFocus={false}
+          //   />
+          // }
           />
           <Button mode='contained' disabled={!searchGroup} onPress={onAddGroup}>
             {t('groupsFeed.add')}

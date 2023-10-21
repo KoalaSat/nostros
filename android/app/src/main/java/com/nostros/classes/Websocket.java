@@ -16,6 +16,7 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -25,11 +26,13 @@ public class Websocket {
     private String url;
     private String pubKey;
     private ReactApplicationContext context;
+    private ArrayList<String> createdEvents;
 
-    public Websocket(String serverUrl, Database databaseEntity, ReactApplicationContext reactContext) {
+    public Websocket(String serverUrl, Database databaseEntity, ReactApplicationContext reactContext, ArrayList<String> events) {
         database = databaseEntity;
         url = serverUrl;
         context = reactContext;
+        createdEvents = events;
     }
 
     public void send(String message) {
@@ -62,13 +65,19 @@ public class Websocket {
         webSocket.addListener(new WebSocketAdapter() {
             @Override
             public void onTextMessage(WebSocket websocket, String message) throws Exception {
-                Log.d("Websocket", "RECEIVE URL:" + url + " __ " + message);
                 JSONArray jsonArray = new JSONArray(message);
                 String messageType = jsonArray.get(0).toString();
                 if (messageType.equals("EVENT")) {
                     JSONObject data = jsonArray.getJSONObject(2);
-                    database.saveEvent(data, userPubKey, url);
-                    reactNativeEvent(data.getString("id"));
+                    String id = data.getString("id");
+                    if (!createdEvents.contains(id)) {
+                        Log.d("Websocket", "RECEIVE URL:" + url + " __NEW__ " + message);
+                        database.saveEvent(data, userPubKey, url);
+                        createdEvents.add(id);
+                        reactNativeEvent(data.getString("id"));
+                    } else {
+                        Log.d("Websocket", "RECEIVE URL:" + url + " __DUP__ " + message);
+                    }
                 } else if (messageType.equals("OK")) {
                     reactNativeConfirmation(jsonArray.get(1).toString());
                 }

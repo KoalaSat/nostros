@@ -90,13 +90,13 @@ export const MyFeed: React.FC<MyFeedProps> = ({
           setNotes(results)
           setRefreshing(false)
 
-          relayPool?.subscribe('homepage-myfeed-main', [
+          const mainFilters: RelayFilters[] = [
             {
               kinds: [Kind.Text, Kind.RecommendRelay],
-              authors: contacts,
               limit: pageSize,
+              authors: contacts,
             },
-          ])
+          ]
 
           if (results.length > 0) {
             const noteIds = results.map((note) => note.id ?? '')
@@ -105,21 +105,23 @@ export const MyFeed: React.FC<MyFeedProps> = ({
               .filter((note) => note.repost_id)
               .map((note) => note.repost_id ?? '')
 
-            const reactionFilters: RelayFilters[] = [
-              {
-                kinds: [Kind.Reaction, Kind.Text, 9735],
-                '#e': noteIds,
-              },
-            ]
+
             if (authors.length > 0) {
-              reactionFilters.push({
+              mainFilters.push({
                 kinds: [Kind.Metadata],
                 authors,
               })
             }
-            relayPool?.subscribe('homepage-contacts-reactions', reactionFilters)
+
+            relayPool?.subscribe(`homepage-myfeed-reactions${publicKey?.substring(0, 8)}`, [
+              {
+                kinds: [Kind.Reaction, Kind.Text, 9735],
+                '#e': noteIds,
+              },
+            ])
+
             if (repostIds.length > 0) {
-              relayPool?.subscribe('homepage-contacts-reposts', [
+              relayPool?.subscribe(`homepage-myfeed-reposts${publicKey?.substring(0, 8)}`, [
                 {
                   kinds: [Kind.Text],
                   ids: repostIds,
@@ -127,6 +129,8 @@ export const MyFeed: React.FC<MyFeedProps> = ({
               ])
             }
           }
+
+          relayPool?.subscribe(`homepage-myfeed-main${publicKey?.substring(0, 8)}`, mainFilters)
         },
       )
     }

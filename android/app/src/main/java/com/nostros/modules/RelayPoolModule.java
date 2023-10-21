@@ -10,6 +10,7 @@ import com.nostros.classes.Database;
 import com.nostros.classes.Relay;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.ListIterator;
 
@@ -18,10 +19,12 @@ public class RelayPoolModule extends ReactContextBaseJavaModule {
     private String userPubKey;
     private Database database;
     private ReactApplicationContext context;
+    private ArrayList<String> createdEvents;
 
     public RelayPoolModule(ReactApplicationContext reactContext, Database databaseEntity) {
         database = databaseEntity;
         context = reactContext;
+        createdEvents = new ArrayList<>();
     }
 
     @Override
@@ -31,7 +34,7 @@ public class RelayPoolModule extends ReactContextBaseJavaModule {
 
     private void add(String url, int resilient, int showGlobalFeed) {
         try {
-            Relay relay = new Relay(url, 1, showGlobalFeed, resilient, database, context);
+            Relay relay = new Relay(url, 1, showGlobalFeed, resilient, database, context, createdEvents);
             relay.connect(userPubKey);
             relays.add(relay);
             database.saveRelay(relay);
@@ -100,7 +103,7 @@ public class RelayPoolModule extends ReactContextBaseJavaModule {
     @ReactMethod
     public void connect(String pubKey, Callback callback) {
         userPubKey = pubKey;
-        relays = database.getRelays(context);
+        relays = database.getRelays(context, createdEvents);
         for (Relay relay : relays) {
             try {
                 if (relay.active() > 0) {

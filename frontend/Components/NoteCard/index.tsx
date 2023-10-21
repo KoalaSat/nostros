@@ -78,8 +78,6 @@ export const NoteCard: React.FC<NoteCardProps> = ({
   const {
     database,
     showSensitive,
-    setDisplayUserDrawer,
-    setDisplayNoteDrawer,
     relayColouring,
     longPressZap,
   } = useContext(AppContext)
@@ -195,7 +193,7 @@ export const NoteCard: React.FC<NoteCardProps> = ({
           ) : (
             <TextContent
               event={note}
-              onPressUser={(user) => setDisplayUserDrawer(user.id)}
+              onPressUser={(user) => push('ProfileActions', { userId: user.id, title: user.name})}
               showPreview={showPreview}
               numberOfLines={numberOfLines}
               hightlightText={hightlightText}
@@ -408,7 +406,7 @@ export const NoteCard: React.FC<NoteCardProps> = ({
     <Card mode={mode}>
       <Card.Content style={styles.title}>
         <View>
-          <TouchableRipple onPress={() => setDisplayUserDrawer(note.pubkey)}>
+          <TouchableRipple onPress={() => push('ProfileActions', { userId: note.pubkey, title: note?.name})}>
             <ProfileData
               username={note?.name}
               publicKey={note.pubkey}
@@ -426,7 +424,7 @@ export const NoteCard: React.FC<NoteCardProps> = ({
           <IconButton
             icon='dots-vertical'
             size={28}
-            onPress={() => setDisplayNoteDrawer(note.id)}
+            onPress={() => push('NoteActions', { note})}
           />
         </View>
       </Card.Content>
