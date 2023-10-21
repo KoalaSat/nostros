@@ -9,6 +9,7 @@ import com.facebook.react.bridge.ReactApplicationContext;
 import com.nostros.modules.DatabaseModule;
 
 import java.io.IOException;
+import java.util.ArrayList;
 
 public class Relay {
     private Websocket webSocket;
@@ -17,13 +18,15 @@ public class Relay {
     public int globalFeed;
     public int paid;
     public int resilient;
+    private ArrayList<String> createdEvents;
 
-    public Relay(String serverUrl, int isActive, int showGlobalFeed, int isResilient, Database database, ReactApplicationContext reactContext) throws IOException {
-        webSocket = new Websocket(serverUrl, database, reactContext);
+    public Relay(String serverUrl, int isActive, int showGlobalFeed, int isResilient, Database database, ReactApplicationContext reactContext, ArrayList<String> events) throws IOException {
         url = serverUrl;
         active = isActive;
         globalFeed = showGlobalFeed;
         resilient = isResilient;
+        createdEvents = events;
+        webSocket = new Websocket(serverUrl, database, reactContext, createdEvents);
     }
 
     public int active() {

@@ -60,28 +60,15 @@ export const GlobalFeed: React.FC<GlobalFeedProps> = ({
 
   useEffect(() => {
     if (relayPool && publicKey && activeTab === 'globalFeed') {
-      subscribeGlobal()
       loadNotes()
     }
   }, [lastEventId, lastConfirmationtId, lastLoadAt, relayPool, publicKey, activeTab])
 
   useEffect(() => {
     if (pageSize > initialPageSize) {
-      subscribeGlobal(true)
-      loadNotes()
+      loadNotes(true)
     }
   }, [pageSize])
-
-  const subscribeGlobal: (past?: boolean) => void = (past) => {
-    const message: RelayFilters = {
-      kinds: [Kind.Text, Kind.RecommendRelay],
-      limit: pageSize,
-    }
-
-    if (past) message.until = lastLoadAt
-
-    relayPool?.subscribe('homepage-global-main', [message])
-  }
 
   const onRefresh = useCallback(() => {
     setRefreshing(true)
@@ -96,7 +83,7 @@ export const GlobalFeed: React.FC<GlobalFeedProps> = ({
     }
   }
 
-  const loadNotes: () => void = () => {
+  const loadNotes: (subscrobePast?: boolean) => void = (subscrobePast) => {
     if (database && publicKey) {
       if (lastLoadAt > 0) {
         getMainNotesCount(database, lastLoadAt).then(setNewNotesCount)
@@ -105,18 +92,37 @@ export const GlobalFeed: React.FC<GlobalFeedProps> = ({
         until: lastLoadAt,
       }).then((results) => {
         setRefreshing(false)
+
+        const mainFilter: RelayFilters = {
+          kinds: [Kind.Text, Kind.RecommendRelay],
+          limit: pageSize,
+        }
+
+        if (subscrobePast) mainFilter.until = lastLoadAt
+
+        const mainFilters: RelayFilters[] = [mainFilter]
+
         if (results.length > 0) {
-          setNotes(results)
-          const message: RelayFilters[] = [
-            {
-              kinds: [Kind.Metadata],
-              authors: results.map((r) => r.pubkey),
-            },
-          ]
-          relayPool?.subscribe('homepage-global-meta', message)
+          const noteIds = results.map((note) => note.id ?? '')
+          const authors = results.map((note) => note.pubkey ?? '')
           const repostIds = notes
             .filter((note) => note.repost_id)
             .map((note) => note.repost_id ?? '')
+
+          setNotes(results)
+
+          mainFilters.push({
+            kinds: [Kind.Metadata],
+            authors,
+          })
+
+          relayPool?.subscribe(`homepage-global-reactions${publicKey?.substring(0, 8)}`, [
+            {
+              kinds: [Kind.Reaction, Kind.Text, 9735],
+              '#e': noteIds,
+            },
+          ])
+
           if (repostIds.length > 0) {
             const message: RelayFilters[] = [
               {
@@ -124,9 +130,11 @@ export const GlobalFeed: React.FC<GlobalFeedProps> = ({
                 ids: repostIds,
               },
             ]
-            relayPool?.subscribe('homepage-global-reposts', message)
+            relayPool?.subscribe(`homepage-global-reposts${publicKey?.substring(0, 8)}`, message)
           }
         }
+
+        relayPool?.subscribe(`homepage-global-main${publicKey?.substring(0, 8)}`, mainFilters)
       })
     }
   }
@@ -136,7 +144,6 @@ export const GlobalFeed: React.FC<GlobalFeedProps> = ({
       <View style={styles.noteCard} key={item.id}>
         <NoteCard
           note={item}
-          showActionCount={false}
           showAvatarImage={showPublicImages}
           showPreview={showPublicImages}
         />

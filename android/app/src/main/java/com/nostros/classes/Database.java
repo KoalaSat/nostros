@@ -256,6 +256,9 @@ public class Database {
                     "          );");
             instance.execSQL("CREATE INDEX nostros_notifications_index ON nostros_notifications(created_at);");
         } catch (SQLException e) { }
+        try {
+            instance.execSQL("ALTER TABLE nostros_notifications ADD COLUMN zapper_name TEXT;");
+        } catch (SQLException e) { }
     }
 
     public void saveEvent(JSONObject data, String userPubKey, String relayUrl) throws JSONException {
@@ -277,7 +280,7 @@ public class Database {
         instance.update ("nostros_relays", values, whereClause, whereArgs);
     }
 
-    public List<Relay> getRelays(ReactApplicationContext reactContext) {
+    public List<Relay> getRelays(ReactApplicationContext reactContext, ArrayList<String> createdEvents) {
         List<Relay> relayList = new ArrayList<>();
         String query = "SELECT url, active, global_feed FROM nostros_relays WHERE deleted_at = 0 AND active = 1;";
         @SuppressLint("Recycle") Cursor cursor = instance.rawQuery(query, new String[] {});
@@ -288,7 +291,7 @@ public class Database {
                     String relayUrl = cursor.getString(0);
                     int active = cursor.getInt(1);
                     int globalFeed = cursor.getInt(2);
-                    Relay relay = new Relay(relayUrl, active, globalFeed,0, this, reactContext);
+                    Relay relay = new Relay(relayUrl, active, globalFeed,0, this, reactContext, createdEvents);
                     relayList.add(relay);
                 } catch (IOException e) {
                     Log.d("WebSocket", e.toString());

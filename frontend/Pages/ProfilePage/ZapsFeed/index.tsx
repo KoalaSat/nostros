@@ -48,8 +48,8 @@ export const ZapsFeed: React.FC<ZapsFeedProps> = ({
     relayPool?.subscribe(`profile-zaps${publicKey}`, [
       {
         kinds: [9735],
-        '#p': [publicKey],
         since: getUnixTime(new Date()) - 604800,
+        '#p': [publicKey],
       },
     ])
   }

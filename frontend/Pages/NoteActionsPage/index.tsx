@@ -1,39 +1,26 @@
-import { t } from 'i18next'
-import * as React from 'react'
-import { FlatList, StyleSheet, TouchableNativeFeedback, View } from 'react-native'
-import { Divider, IconButton, List, Text, useTheme } from 'react-native-paper'
+import React from 'react'
 import { AppContext } from '../../Contexts/AppContext'
-import RBSheet from 'react-native-raw-bottom-sheet'
-import {
-  getNoteRelays,
-  getNotes,
-  type Note,
-  type NoteRelay,
-} from '../../Functions/DatabaseFunctions/Notes'
-import Clipboard from '@react-native-clipboard/clipboard'
-import NoteShare from '../NoteShare'
-import { navigate } from '../../lib/Navigation'
-import { relayToColor } from '../../Functions/NativeFunctions'
+import { type NoteRelay, type Note, getNoteRelays } from '../../Functions/DatabaseFunctions/Notes'
 import { RelayPoolContext } from '../../Contexts/RelayPoolContext'
-import { formatId } from '../../Functions/RelayFunctions/Users'
+import { Clipboard, FlatList, StyleSheet, TouchableNativeFeedback, View } from 'react-native'
+import { Divider, IconButton, List, Text, useTheme } from 'react-native-paper'
 import { UserContext } from '../../Contexts/UserContext'
-import {
-  addBookmarkList,
-  addList,
-  removeBookmarkList,
-  removeList,
-} from '../../Functions/RelayFunctions/Lists'
+import { goBack, navigate } from '../../lib/Navigation'
+import { formatId } from '../../Functions/RelayFunctions/Users'
+import RBSheet from 'react-native-raw-bottom-sheet'
 import { getBitcoinTag } from '../../Functions/RelayFunctions/Events'
+import { addBookmarkList, addList, removeBookmarkList, removeList } from '../../Functions/RelayFunctions/Lists'
+import { t } from 'i18next'
+import NoteShare from '../../Components/NoteShare'
+import { relayToColor } from '../../Functions/NativeFunctions'
 
-interface NoteActionsProps {
-  bottomSheetRef: React.RefObject<RBSheet>
+interface NoteActionsPageProps {
+  route: { params: { note: Note } }
 }
 
-export const NoteActions: React.FC<NoteActionsProps> = ({ bottomSheetRef }) => {
+export const NoteActionsPage: React.FC<NoteActionsPageProps> = ({ route: { params: { note } } }) => {
   const theme = useTheme()
   const {
-    reloadLists,
-    reloadBookmarks,
     publicBookmarks,
     publicKey,
     privateKey,
@@ -43,7 +30,6 @@ export const NoteActions: React.FC<NoteActionsProps> = ({ bottomSheetRef }) => {
   const { database, displayNoteDrawer, relayColouring } = React.useContext(AppContext)
   const { relayPool, setDisplayrelayDrawer, lastEventId, sendEvent } =
     React.useContext(RelayPoolContext)
-  const [note, setNote] = React.useState<Note>()
   const [relays, setRelays] = React.useState<NoteRelay[]>([])
   const [bookmarked, setBookmarked] = React.useState<boolean>(false)
   const [isMuted, setIsMuted] = React.useState<boolean>()
@@ -52,26 +38,7 @@ export const NoteActions: React.FC<NoteActionsProps> = ({ bottomSheetRef }) => {
   const bottomBookmarkRef = React.useRef<RBSheet>(null)
 
   React.useEffect(() => {
-    if (publicKey) {
-      relayPool?.unsubscribe(['lists-bookmarks'])
-      relayPool?.subscribe('lists-bookmarks', [
-        {
-          kinds: [10001],
-          authors: [publicKey],
-          limit: 1,
-        },
-        {
-          kinds: [30001],
-          authors: [publicKey],
-        },
-      ])
-    }
-  }, [])
-
-  React.useEffect(() => {
-    reloadLists()
-    reloadBookmarks()
-    loadNote()
+    loadNoteRelays()
   }, [displayNoteDrawer, lastEventId, bookmarked, isMuted])
 
   React.useEffect(() => {
@@ -84,14 +51,9 @@ export const NoteActions: React.FC<NoteActionsProps> = ({ bottomSheetRef }) => {
     }
   }, [publicBookmarks, privateBookmarks, note, mutedEvents])
 
-  const loadNote: () => void = () => {
-    if (database && displayNoteDrawer) {
-      getNotes(database, { filters: { id: [displayNoteDrawer] } }).then((results) => {
-        if (results.length > 0) {
-          setNote(results[0])
-        }
-      })
-      getNoteRelays(database, displayNoteDrawer).then(setRelays)
+  const loadNoteRelays: () => void = () => {
+    if (database && note.id) {
+      getNoteRelays(database, note.id).then(setRelays)
     }
   }
 
@@ -135,7 +97,6 @@ export const NoteActions: React.FC<NoteActionsProps> = ({ bottomSheetRef }) => {
 
   return (
     <View style={styles.container}>
-      <Text variant='titleMedium'>{t('noteActions.note')}</Text>
       <Text variant='titleSmall'>
         {t('noteActions.id')}
         {`: ${formatId(note?.id)}`}
@@ -161,7 +122,7 @@ export const NoteActions: React.FC<NoteActionsProps> = ({ bottomSheetRef }) => {
             size={28}
             onPress={() => {
               note?.content && Clipboard.setString(note?.content)
-              bottomSheetRef.current?.close()
+              goBack()
             }}
           />
           <Text>{t('noteActions.copy')}</Text>
@@ -192,7 +153,6 @@ export const NoteActions: React.FC<NoteActionsProps> = ({ bottomSheetRef }) => {
             icon='eye'
             size={28}
             onPress={() => {
-              bottomSheetRef.current?.close()
               navigate('Note', { noteId: note?.id })
             }}
           />
@@ -233,7 +193,6 @@ export const NoteActions: React.FC<NoteActionsProps> = ({ bottomSheetRef }) => {
             ref={bottomSheetShareRef}
             closeOnDragDown={true}
             customStyles={bottomSheetStyles}
-            onClose={() => bottomSheetRef.current?.close()}
           >
             <NoteShare note={note} />
           </RBSheet>
@@ -326,4 +285,4 @@ const styles = StyleSheet.create({
   },
 })
 
-export default NoteActions
+export default NoteActionsPage

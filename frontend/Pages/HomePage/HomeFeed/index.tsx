@@ -20,33 +20,41 @@ interface HomeFeedProps {
 export const HomeFeed: React.FC<HomeFeedProps> = ({ navigation }) => {
   const initialPageSize = 10
   const { database } = useContext(AppContext)
-  const { privateKey } = useContext(UserContext)
+  const { privateKey, publicKey } = useContext(UserContext)
   const { relayPool } = useContext(RelayPoolContext)
   const [activeTab, setActiveTab] = React.useState('myFeed')
+  const [prevTab, setPrevTab] = React.useState('')
   const [lastLoadAt, setLastLoadAt] = useState<number>(0)
   const [pageSize, setPageSize] = useState<number>(initialPageSize)
 
   const unsubscribe: () => void = () => {
-    if (activeTab !== 'zaps') {
+    if (prevTab === 'zaps') {
       relayPool?.unsubscribe([
-        'homepage-zapped-notes',
-        'homepage-zapped-reactions',
-        'homepage-zapped-reposts',
-        'homepage-zaps',
+        `homepage-zaps-notes${publicKey?.substring(0, 8)}`,
+        `homepage-zaps-reactions${publicKey?.substring(0, 8)}`,
+        `homepage-zaps-reposts${publicKey?.substring(0, 8)}`,
+        `homepage-zaps-main${publicKey?.substring(0, 8)}`,
       ])
     }
-    if (activeTab !== 'myFeed') {
+    if (prevTab === 'myFeed') {
       relayPool?.unsubscribe([
-        'homepage-myfeed-main',
-        'homepage-contacts-reactions',
-        'homepage-contacts-reposts',
+        `homepage-myfeed-main${publicKey?.substring(0, 8)}`,
+        `homepage-myfeed-reposts${publicKey?.substring(0, 8)}`,
+        `homepage-myfeed-reaction${publicKey?.substring(0, 8)}`
       ])
     }
-    if (activeTab !== 'globalFeed') {
+    if (prevTab === 'globalFeed') {
       relayPool?.unsubscribe([
-        'homepage-global-main',
-        'homepage-global-reposts',
-        'homepage-global-meta',
+        `homepage-global-main${publicKey?.substring(0, 8)}`,
+        `homepage-global-reposts${publicKey?.substring(0, 8)}`,
+        `homepage-global-reactions${publicKey?.substring(0, 8)}`
+      ])
+    }
+    if (prevTab === 'bookmarks') {
+      relayPool?.unsubscribe([
+        `homepage-bookmarks-main${publicKey?.substring(0, 8)}`,
+        `homepage-bookmarks-reactions${publicKey?.substring(0, 8)}`,
+        `homepage-bookmarks-reposts${publicKey?.substring(0, 8)}`,
       ])
     }
   }
@@ -59,7 +67,12 @@ export const HomeFeed: React.FC<HomeFeedProps> = ({ navigation }) => {
     }, []),
   )
 
-  useEffect(unsubscribe, [activeTab, database, relayPool])
+  useEffect(() => {
+    if (database && relayPool) {
+      if (prevTab !== '') unsubscribe()
+      setPrevTab(activeTab)
+    }
+  }, [activeTab, database, relayPool])
 
   useEffect(() => {
     if (pageSize > initialPageSize) {

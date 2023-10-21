@@ -61,9 +61,9 @@ export const ConversationsFeed: React.FC = () => {
 
       return () =>
         relayPool?.unsubscribe([
-          'directmessages-meta',
-          'directmessages-user',
-          'directmessages-others',
+          `directmessages-meta${publicKey?.substring(0, 8)}`,
+          `directmessages-user${publicKey?.substring(0, 8)}`,
+          `directmessages-others${publicKey?.substring(0, 8)}`,
         ])
     }, []),
   )
@@ -86,7 +86,7 @@ export const ConversationsFeed: React.FC = () => {
           settDirectMessages(results)
           const otherUsers = results.map((message) => getOtherPubKey(message, publicKey))
           getUsers(database, { includeIds: otherUsers }).then(setUsers)
-          relayPool?.subscribe('directmessages-meta', [
+          relayPool?.subscribe(`directmessages-meta${publicKey?.substring(0, 8)}`, [
             {
               kinds: [Kind.Metadata],
               authors: otherUsers,
@@ -105,18 +105,18 @@ export const ConversationsFeed: React.FC = () => {
   const subscribeDirectMessages: (lastCreateAt?: number) => void = async (lastCreateAt) => {
     if (publicKey && database) {
       getUserLastDirectMessages(database, publicKey).then((result) => {
-        relayPool?.subscribe('directmessages-user', [
+        relayPool?.subscribe(`directmessages-user${publicKey?.substring(0, 8)}`, [
           {
             kinds: [Kind.EncryptedDirectMessage],
-            authors: [publicKey],
             since: result?.created_at ?? 0,
+            authors: [publicKey],
           },
         ])
-        relayPool?.subscribe('directmessages-others', [
+        relayPool?.subscribe(`directmessages-others${publicKey?.substring(0, 8)}`, [
           {
             kinds: [Kind.EncryptedDirectMessage],
-            '#p': [publicKey],
             since: result?.created_at ?? 0,
+            '#p': [publicKey],
           },
         ])
       })

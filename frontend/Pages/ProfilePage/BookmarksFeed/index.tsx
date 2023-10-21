@@ -54,8 +54,8 @@ export const BookmarksFeed: React.FC<BookmarksFeedProps> = ({
       const filters: RelayFilters[] = [
         {
           kinds: [10001],
-          authors: [publicKey],
           limit: 1,
+          authors: [publicKey],
         },
       ]
       getList(database, 10001, publicKey).then((result) => {

@@ -49,8 +49,8 @@ export const RepliesFeed: React.FC<RepliesFeedProps> = ({
 
         const message: RelayFilters = {
           kinds: [Kind.Text, Kind.RecommendRelay],
-          authors: [publicKey],
           limit: pageSize + initialPageSize,
+          authors: [publicKey],
         }
         if (results.length === pageSize) {
           message.since = results[pageSize - 1].created_at

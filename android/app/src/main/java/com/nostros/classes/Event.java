@@ -258,7 +258,7 @@ public class Event {
         return "";
     }
 
-    protected void saveNotification(SQLiteDatabase database, String eventId, double amount) {
+    protected void saveNotification(SQLiteDatabase database, String eventId, double amount, String zapper_user_id) {
         String query = "SELECT id FROM nostros_notifications WHERE id = ?";
         @SuppressLint("Recycle") Cursor cursor = database.rawQuery(query, new String[] {id});
         if (cursor.getCount() == 0) {
@@ -271,6 +271,7 @@ public class Event {
             values.put("tags", tags.toString());
             values.put("amount", amount);
             values.put("event_id", eventId);
+            values.put("zapper_user_id", zapper_user_id);
             database.replace("nostros_notifications", null, values);
         }
     }
@@ -282,7 +283,7 @@ public class Event {
         int userMentioned = getUserMentioned(userPubKey);
         String repostId = getRepostId();
         if (userMentioned > 0 && !pubkey.equals(userPubKey)) {
-            saveNotification(database, repostId, 0);
+            saveNotification(database, repostId, 0, null);
         }
 
         if (cursor.getCount() == 0) {
@@ -521,7 +522,7 @@ public class Event {
             }
 
             if (!pubkey.equals(userPubKey) && reacted_user_id.equals(userPubKey)) {
-                saveNotification(database, reacted_event_id, 0);
+                saveNotification(database, reacted_event_id, 0, null);
             }
 
             ContentValues values = new ContentValues();
@@ -619,7 +620,7 @@ public class Event {
             }
 
             if (zapped_user_id.equals(userPubKey) && !pubkey.equals(userPubKey)) {
-                saveNotification(database, zapped_event_id, amount);
+                saveNotification(database, zapped_event_id, amount, zapper_user_id);
             }
 
             String userQuery = "SELECT created_at FROM nostros_users WHERE zap_pubkey = ? AND id = ?";

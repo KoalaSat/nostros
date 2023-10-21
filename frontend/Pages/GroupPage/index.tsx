@@ -67,7 +67,7 @@ export const GroupPage: React.FC<GroupPageProps> = ({ route }) => {
 
       return () =>
         relayPool?.unsubscribe([
-          `group${route.params.groupId}`,
+          `group-main${route.params.groupId.substring(0, 8)}`,
           `group-replies${route.params.groupId.substring(0, 8)}`,
         ])
     }, []),
@@ -118,8 +118,8 @@ export const GroupPage: React.FC<GroupPageProps> = ({ route }) => {
         },
         {
           kinds: [Kind.ChannelMessage],
-          '#e': [route.params.groupId],
           limit: pageSize,
+          '#e': [route.params.groupId],
         },
       ]
       if (pubKeys && pubKeys.length > 0) {
@@ -129,7 +129,7 @@ export const GroupPage: React.FC<GroupPageProps> = ({ route }) => {
         })
       }
 
-      relayPool?.subscribe(`group${route.params.groupId.substring(0, 8)}`, filters)
+      relayPool?.subscribe(`group-main${route.params.groupId.substring(0, 8)}`, filters)
 
       if (repliesIds && repliesIds.length > 0) {
         relayPool?.subscribe(`group-replies${route.params.groupId.substring(0, 8)}`, [

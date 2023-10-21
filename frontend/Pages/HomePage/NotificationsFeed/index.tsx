@@ -47,9 +47,8 @@ export const NotificationsFeed: React.FC = () => {
       updateLastSeen()
       return () => {
         relayPool?.unsubscribe([
-          'notification-feed',
-          'notification-reactions',
-          'notification-users',
+          `notification-feed${publicKey?.substring(0, 8)}`,
+          `notification-users${publicKey?.substring(0, 8)}`,
         ])
         updateLastSeen()
       }
@@ -84,16 +83,16 @@ export const NotificationsFeed: React.FC = () => {
 
   const subscribeNotes: () => void = async () => {
     if (!publicKey || !database) return
-    relayPool?.subscribe('notification-feed', [
+    relayPool?.subscribe(`notification-feed${publicKey?.substring(0, 8)}`, [
       {
         kinds: [Kind.Text],
-        '#p': [publicKey],
         limit: limitPage,
+        '#p': [publicKey],
       },
       {
         kinds: [Kind.Reaction, 9735],
-        '#p': [publicKey],
         limit: limitPage,
+        '#p': [publicKey],
       },
       {
         kinds: [30001],
@@ -114,7 +113,7 @@ export const NotificationsFeed: React.FC = () => {
           const pubKeys = filtered
             .map((n) => n.pubkey)
             .filter((key, index, array) => array.indexOf(key) === index)
-          relayPool?.subscribe('notification-users', [
+          relayPool?.subscribe(`notification-users${publicKey?.substring(0, 8)}`, [
             {
               kinds: [Kind.Metadata],
               authors: pubKeys,

@@ -1,44 +1,38 @@
-import { t } from 'i18next'
-import * as React from 'react'
-import { StyleSheet, View, type ListRenderItem, FlatList } from 'react-native'
-import { Button, IconButton, List, Snackbar, Text, useTheme } from 'react-native-paper'
+import React from 'react'
 import { AppContext } from '../../Contexts/AppContext'
 import { RelayPoolContext } from '../../Contexts/RelayPoolContext'
+import { FlatList, type ListRenderItem, ScrollView, StyleSheet, View } from 'react-native'
+import { Button, IconButton, List, Snackbar, Text, useTheme } from 'react-native-paper'
 import { UserContext } from '../../Contexts/UserContext'
-import { getUser, type User } from '../../Functions/DatabaseFunctions/Users'
+import { goBack, navigate } from '../../lib/Navigation'
 import { populatePets, username } from '../../Functions/RelayFunctions/Users'
-import LnPayment from '../LnPayment'
-import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'
-import { navigate } from '../../lib/Navigation'
 import RBSheet from 'react-native-raw-bottom-sheet'
-import { relayToColor } from '../../Functions/NativeFunctions'
-import ProfileShare from '../ProfileShare'
-import { ScrollView } from 'react-native-gesture-handler'
-import { Kind } from 'nostr-tools'
-import { getUnixTime } from 'date-fns'
-import DatabaseModule from '../../lib/Native/DatabaseModule'
 import { addMutedUsersList, removeMutedUsersList } from '../../Functions/RelayFunctions/Lists'
-import { getRelayMetadata } from '../../Functions/DatabaseFunctions/RelayMetadatas'
+import { t } from 'i18next'
+import { relayToColor } from '../../Functions/NativeFunctions'
+import { type User, getUser } from '../../Functions/DatabaseFunctions/Users'
+import { getUnixTime } from 'date-fns'
+import { Kind } from 'nostr-tools'
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'
+import LnPayment from '../../Components/LnPayment'
+import LnPreview from '../../Components/LnPreview'
+import ProfileShare from '../../Components/ProfileShare'
 import { getUserRelays } from '../../Functions/DatabaseFunctions/NotesRelays'
+import { getRelayMetadata } from '../../Functions/DatabaseFunctions/RelayMetadatas'
 import { lightningInvoice } from '../../Functions/ServicesFunctions/ZapInvoice'
-import LnPreview from '../LnPreview'
+import DatabaseModule from '../../lib/Native/DatabaseModule'
 
 interface ProfileActionsProps {
-  user: User
-  setUser: (user: User) => void
-  onActionDone?: () => void
+  route: { params: { userId: string } }
 }
 
-export const ProfileActions: React.FC<ProfileActionsProps> = ({
-  user,
-  setUser,
-  onActionDone = () => {},
-}) => {
+export const ProfileActionsPage: React.FC<ProfileActionsProps> = ({ route: { params: { userId } } }) => {
   const theme = useTheme()
   const { database, longPressZap } = React.useContext(AppContext)
-  const { publicKey, privateKey, mutedUsers, reloadLists } = React.useContext(UserContext)
+  const { publicKey, privateKey, mutedUsers } = React.useContext(UserContext)
   const { relayPool, addRelayItem, lastEventId, sendEvent, relays } =
     React.useContext(RelayPoolContext)
+  const [user, setUser] = React.useState<User>()
   const [isContact, setIsContact] = React.useState<boolean>()
   const [isMuted, setIsMuted] = React.useState<boolean>()
   const [isGroupHidden, setIsGroupHidden] = React.useState<boolean>()
@@ -54,41 +48,33 @@ export const ProfileActions: React.FC<ProfileActionsProps> = ({
   React.useEffect(() => {
     loadUser()
     loadRelays()
-    if (publicKey && user.id) {
-      relayPool?.subscribe('lists-muted-users', [
-        {
-          kinds: [10000],
-          authors: [publicKey],
-          limit: 1,
-        },
-      ])
-      relayPool?.subscribe(`card-user-${user.id.substring(0, 6)}`, [
+    if (publicKey && userId) {
+      relayPool?.subscribe(`card-user-${userId.substring(0, 6)}`, [
         {
           kinds: [10002],
-          authors: [user.id],
           limit: 1,
+          authors: [userId],
         },
       ])
     }
   }, [])
 
   React.useEffect(() => {
-    reloadLists()
     loadUser()
     loadRelays()
   }, [lastEventId, isMuted])
 
   const hideGroupsUser: () => void = () => {
-    if (publicKey && relayPool && database && user.id) {
+    if (publicKey && relayPool && database && userId) {
       sendEvent({
         content: '',
         created_at: getUnixTime(new Date()),
         kind: Kind.ChannelMuteUser,
         pubkey: publicKey,
-        tags: [['p', user.id]],
+        tags: [['p', userId]],
       }).then(() => {
         if (database) {
-          DatabaseModule.updateUserMutesGroups(user.id, true, () => {
+          DatabaseModule.updateUserMutesGroups(userId, true, () => {
             setIsGroupHidden(true)
             bottomSheetMuteRef.current?.close()
           })
@@ -99,11 +85,11 @@ export const ProfileActions: React.FC<ProfileActionsProps> = ({
 
   const loadRelays: () => void = () => {
     if (database) {
-      getRelayMetadata(database, user.id).then((resultMeta) => {
+      getRelayMetadata(database, userId).then((resultMeta) => {
         if (resultMeta) {
           setUserRelays(resultMeta.tags.map((relayMeta) => relayMeta[1]))
         } else {
-          getUserRelays(database, user.id).then((resultRelays) => {
+          getUserRelays(database, userId).then((resultRelays) => {
             setUserRelays(resultRelays.map((relay) => relay.url))
           })
         }
@@ -113,13 +99,13 @@ export const ProfileActions: React.FC<ProfileActionsProps> = ({
 
   const loadUser: () => void = () => {
     if (database) {
-      getUser(user.id, database).then((result) => {
+      getUser(userId, database).then((result) => {
         if (result) {
           setUser(result)
           setIsContact(result.contact)
-          setIsMuted(mutedUsers.find((e) => e === user.id) !== undefined)
+          setIsMuted(mutedUsers.find((e) => e === userId) !== undefined)
           setIsGroupHidden(result.muted_groups !== undefined && result.muted_groups > 0)
-        } else if (user.id === publicKey) {
+        } else if (userId === publicKey) {
           setUser({
             id: publicKey,
           })
@@ -130,15 +116,14 @@ export const ProfileActions: React.FC<ProfileActionsProps> = ({
 
   const onChangeMuteUser: () => void = () => {
     if (database && publicKey && privateKey && relayPool) {
-      DatabaseModule.addUser(user.id, () => {
+      DatabaseModule.addUser(userId, () => {
         if (isMuted) {
-          removeMutedUsersList(sendEvent, database, publicKey, user.id)
-          DatabaseModule.updateUserBlock(user.id, false, () => {})
+          removeMutedUsersList(sendEvent, database, publicKey, userId)
+          DatabaseModule.updateUserBlock(userId, false, () => {})
         } else {
-          addMutedUsersList(sendEvent, database, publicKey, user.id)
+          addMutedUsersList(sendEvent, database, publicKey, userId)
         }
         setIsMuted(!isMuted)
-        reloadLists()
         loadUser()
         setShowNotificationRelay(isMuted ? 'userUnmuted' : 'userMuted')
       })
@@ -147,7 +132,7 @@ export const ProfileActions: React.FC<ProfileActionsProps> = ({
 
   const removeContact: () => void = () => {
     if (relayPool && database && publicKey) {
-      DatabaseModule.updateUserContact(user.id, false, () => {
+      DatabaseModule.updateUserContact(userId, false, () => {
         populatePets(sendEvent, database, publicKey)
         setIsContact(false)
         setShowNotification('contactRemoved')
@@ -157,7 +142,7 @@ export const ProfileActions: React.FC<ProfileActionsProps> = ({
 
   const addContact: () => void = () => {
     if (relayPool && database && publicKey) {
-      DatabaseModule.updateUserContact(user.id, true, () => {
+      DatabaseModule.updateUserContact(userId, true, () => {
         populatePets(sendEvent, database, publicKey)
         setIsContact(true)
         setShowNotification('contactAdded')
@@ -240,7 +225,7 @@ export const ProfileActions: React.FC<ProfileActionsProps> = ({
             onPress={() => {
               isContact ? removeContact() : addContact()
             }}
-            disabled={user.id === publicKey}
+            disabled={userId === publicKey}
           />
           <Text>{isContact ? t('profileCard.unfollow') : t('profileCard.follow')}</Text>
         </View>
@@ -249,9 +234,8 @@ export const ProfileActions: React.FC<ProfileActionsProps> = ({
             icon='message-plus-outline'
             size={28}
             onPress={() => {
-              onActionDone()
               navigate('Conversation', {
-                pubKey: user.id,
+                pubKey: userId,
                 title: username(user),
               })
             }}
@@ -265,7 +249,7 @@ export const ProfileActions: React.FC<ProfileActionsProps> = ({
             onPress={() => setOpenLn(true)}
             onLongPress={longPressZap ? generateZapInvoice : undefined}
             disabled={
-              !user.lnurl && user.lnurl !== '' && !user?.ln_address && user.ln_address !== ''
+              !user?.lnurl && user?.lnurl !== '' && !user?.ln_address && user?.ln_address !== ''
             }
             iconColor='#F5D112'
           />
@@ -308,7 +292,7 @@ export const ProfileActions: React.FC<ProfileActionsProps> = ({
             iconColor={isGroupHidden ? theme.colors.error : theme.colors.onSecondaryContainer}
             size={28}
             onPress={() => !isGroupHidden && bottomSheetMuteRef.current?.open()}
-            disabled={user.id === publicKey}
+            disabled={userId === publicKey}
           />
           <Text style={isGroupHidden ? { color: theme.colors.error } : {}}>
             {t(isGroupHidden ? 'profileCard.hiddenChats' : 'profileCard.hideChats')}
@@ -320,7 +304,6 @@ export const ProfileActions: React.FC<ProfileActionsProps> = ({
         closeOnDragDown={true}
         customStyles={bottomSheetStyles}
         dragFromTopOnly={true}
-        onClose={() => onActionDone()}
       >
         <View>
           <Text variant='titleLarge'>{t('profileCard.relaysTitle')}</Text>
@@ -357,15 +340,15 @@ export const ProfileActions: React.FC<ProfileActionsProps> = ({
         ref={bottomSheetShareRef}
         closeOnDragDown={true}
         customStyles={bottomSheetStyles}
-        onClose={() => onActionDone()}
+        onClose={() => goBack()}
       >
-        <ProfileShare user={user} />
+        {user && <ProfileShare user={user} />}
       </RBSheet>
       <RBSheet
         ref={bottomSheetMuteRef}
         closeOnDragDown={true}
         customStyles={bottomSheetStyles}
-        onClose={() => onActionDone()}
+        onClose={() => goBack()}
       >
         <View style={styles.muteContainer}>
           <Text variant='titleLarge'>
@@ -410,6 +393,8 @@ export const ProfileActions: React.FC<ProfileActionsProps> = ({
 const styles = StyleSheet.create({
   container: {
     width: '100%',
+    paddingRight: 16,
+    paddingLeft: 16,
   },
   relayColor: {
     paddingTop: 9,
@@ -455,4 +440,4 @@ const styles = StyleSheet.create({
   },
 })
 
-export default ProfileActions
+export default ProfileActionsPage
