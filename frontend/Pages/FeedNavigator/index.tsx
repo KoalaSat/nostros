@@ -25,7 +25,7 @@ import GroupHeaderIcon from '../../Components/GroupHeaderIcon'
 import QrReaderPage from '../QrReaderPage'
 import DatabaseModule from '../../lib/Native/DatabaseModule'
 import ImageGalleryPage from '../ImageGalleryPage'
-import { navigate } from '../../lib/Navigation'
+import { navigate, push } from '../../lib/Navigation'
 import SearchPage from '../SearchPage'
 import WalletPage from '../WalletPage'
 import { WalletContext } from '../../Contexts/WalletContext'
@@ -143,7 +143,7 @@ export const HomeNavigator: React.FC = () => {
                         icon='dots-vertical'
                         onPress={() => {
                           const params = route?.params as { pubKey: string }
-                          setDisplayUserDrawer(params?.pubKey ?? '')
+                          push('ProfileActions', { unirId: params?.pubKey })
                         }}
                       />
                     )}
