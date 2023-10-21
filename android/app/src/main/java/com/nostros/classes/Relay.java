@@ -18,15 +18,13 @@ public class Relay {
     public int globalFeed;
     public int paid;
     public int resilient;
-    private ArrayList<String> createdEvents;
 
     public Relay(String serverUrl, int isActive, int showGlobalFeed, int isResilient, Database database, ReactApplicationContext reactContext, ArrayList<String> events) throws IOException {
         url = serverUrl;
         active = isActive;
         globalFeed = showGlobalFeed;
         resilient = isResilient;
-        createdEvents = events;
-        webSocket = new Websocket(serverUrl, database, reactContext, createdEvents);
+        webSocket = new Websocket(serverUrl, database, reactContext, events);
     }
 
     public int active() {
