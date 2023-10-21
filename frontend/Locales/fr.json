@@ -124,7 +124,8 @@
       "searchContactsRelaysDescription": "You can add the relays used by your contacts to your list and connect to them to strengthen the network.",
       "contatcsRelays": "Contatcs Relays",
       "contatcsRelaysCount": "{{activeRelays}} lists found",
-      "connectAccess": "Connect and access"
+      "connectAccess": "Connect and access",
+      "skipTitle": "Ignorer la connexion résiliente"
     },
     "sendPage": {
       "isContact": "Abonné",
@@ -183,7 +184,8 @@
       "longPressZapDescription": "Define a default amount to automatically generate invoices after a long press on the Zap button.",
       "defaultZapAmount": "Defaul Zap amount",
       "update": "Update",
-      "disable": "Disable"
+      "disable": "Disable",
+      "random": "Aléatoire"
     },
     "noteActions": {
       "publicBookmark": "Add to public bookmarks",
@@ -194,7 +196,9 @@
       "bookmarked": "Bookmarked",
       "bookmark": "Bookmark",
       "mutedThread": "Thread muted",
-      "muteThread": "Mute thread"
+      "muteThread": "Mute thread",
+      "bitcoinBlock": "Bloc Bitcoin",
+      "id": "IDENTIFIANT"
     },
     "noteCard": {
       "notifications": {
@@ -206,7 +210,8 @@
       "userBlocked": "Utilisateur bloqué",
       "userMuted": "User muted",
       "contentWarning": "Contenu sensible",
-      "reposted": "Reposted"
+      "reposted": "Reposted",
+      "addRelay": "Ajouter un relais"
     },
     "lnPayment": {
       "monto": "Quantité (sats.)",
@@ -217,7 +222,8 @@
       "open": "Ouvrir le wallet",
       "anonTip": "Anonymous tip",
       "zap": "Zap",
-      "pay": "Pay"
+      "pay": "Pay",
+      "npub": "Clé publique"
     },
     "notificationsFeed": {
       "reposted": "Reposted",
@@ -227,7 +233,8 @@
       "replied": "Replied",
       "emptyTitle": "Vous n'avez pas de notification.",
       "emptyDescription": "Écrivez une note pour obtenir des réponses et des réactions.",
-      "emptyButton": "Écrivez une note"
+      "emptyButton": "Écrivez une note",
+      "notificationsFeed": "Écrire un message."
     },
     "profileCreatePage": {
       "notifications": {
@@ -259,7 +266,8 @@
       "privateKey": "Clé privée",
       "publicKey": "Clé publique",
       "loginMethod": "Login with",
-      "mnemonic": "Mnemonic"
+      "mnemonic": "Mnemonic",
+      "mnemonicInput": "Tapez vos mots mnémoniques dans le bon ordre pour vous connecter."
     },
     "contactsPage": {
       "notifications": {
@@ -351,7 +359,8 @@
         "contactCopied": "Contact copié.",
         "urlCopied": "URL copié.",
         "pushCompleted": "All your data has been pushed."
-      }
+      },
+      "pushHistoricTitle": "Poussez toutes mes données"
     },
     "relaysPage": {
       "connectContactRelays": "Reconnect to contacts' relays",
@@ -385,8 +394,10 @@
         "desactive": "Relais desactivé.",
         "badFormat": "L'URL du relais n'est pas correctement formaté.",
         "alreadyExists": "Le relais existe déjà.",
-        "listPushed": "Relay list pushed."
-      }
+        "listPushed": "Relay list pushed.",
+        "globalFeedActive": "Flux global activé."
+      },
+      "recommended": "Recommandé"
     },
     "profileConfigPage": {
       "notifications": {
@@ -526,6 +537,12 @@
         "question": "Mise en œuvre des NIPs à Nostros",
         "answer": "NIP-01 Basic protocol flow description, NIP-02 Contact List and Petnames, NIP-04 Encrypted Direct Message, NIP-05 Mapping Nostr keys to DNS-based internet identifiers, NIP-06 Basic key derivation from mnemonic seed phrase, NIP-08 Handling Mentions, NIP-10 Conventions for clients' use of e and p tags in text events, NIP-11 Relay Information Document, NIP-12 Generic Tag Queries, NIP-19 bech32-encoded entities, NIP-21 nostr: URL scheme, NIP-25 Reactions, NIP-28 Public Chat, NIP-36 Sensitive Content, NIP-51 Lists, NIP-57 Lightning Zaps, y NIP-65 Relay List Metadata."
       }
+    },
+    "reactionsFeed": {
+      "emptyDescription": "Voir ici les notes auxquelles vous avez réagi."
+    },
+    "repostsFeed": {
+      "emptyDescription": "Voir ici les notes que vous avez repostées."
     }
   }
 }

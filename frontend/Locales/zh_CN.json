@@ -78,7 +78,8 @@
       "Config": "设置",
       "Send": "发送",
       "Relays": "中继",
-      "ProfileConfig": "简介设置"
+      "ProfileConfig": "简介设置",
+      "markAllRead": "标记为已读"
     },
     "groupHeaderIcon": {
       "delete": "退出",
@@ -123,7 +124,8 @@
       "searchContactsRelaysDescription": "您可以将您的联系人使用的中继添加到您的列表中并连接到它们以加强网络",
       "contatcsRelays": "联系人中继",
       "contatcsRelaysCount": "找到{{activeRelays}}列表",
-      "connectAccess": "连接以访问"
+      "connectAccess": "连接以访问",
+      "skipTitle": "跳过弹性登录"
     },
     "sendPage": {
       "isContact": "正在关注",
@@ -186,7 +188,9 @@
       "bookmarked": "已收藏",
       "bookmark": "收藏",
       "mutedThread": "对话串已静音",
-      "muteThread": "静音对话串"
+      "muteThread": "静音对话串",
+      "bitcoinBlock": "比特币区块",
+      "id": "ID"
     },
     "noteCard": {
       "notifications": {
@@ -221,7 +225,8 @@
       "replied": "已回复",
       "emptyTitle": "还没有新通知",
       "emptyDescription": "发布信息以获得回复和回应",
-      "emptyButton": "发布信息"
+      "emptyButton": "发布信息",
+      "notificationsFeed": "写一个信息。"
     },
     "profileCreatePage": {
       "notifications": {
@@ -251,7 +256,8 @@
       "privateKey": "您的私钥",
       "publicKey": "您的公钥",
       "loginMethod": "登录",
-      "mnemonic": "助记词"
+      "mnemonic": "助记词",
+      "mnemonicInput": "按正确顺序输入助记词即可登录。"
     },
     "contactsPage": {
       "notifications": {
@@ -391,7 +397,8 @@
         "contactCopied": "已复制联系人",
         "urlCopied": "已复制链接",
         "pushCompleted": "您的所有数据都已推送"
-      }
+      },
+      "pushHistoricTitle": "推送我所有的数据"
     },
     "profileConfigPage": {
       "notifications": {

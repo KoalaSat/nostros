@@ -76,7 +76,6 @@
       "emptyTitle": "Tip",
       "emptyDescription": "Tippe @ um jemanden zu finden\n\nTippe # um nach Themen zu suchen"
     },
-
     "conversationPage": {
       "unableDecypt": "{{username}} hat dich erwähnt",
       "typeMessage": "Nachricht schreiben",
@@ -102,7 +101,8 @@
       "searchContactsRelaysDescription": "You can add the relays used by your contacts to your list and connect to them to strengthen the network.",
       "contatcsRelays": "Contatcs Relays",
       "contatcsRelaysCount": "{{activeRelays}} lists found",
-      "connectAccess": "Connect and access"
+      "connectAccess": "Connect and access",
+      "skipTitle": "Resistente Anmeldung überspringen"
     },
     "qrReaderPage": {
       "emptyTitle": "Berechtigung nicht gewährt",
@@ -196,7 +196,8 @@
       "open": "Öffne Wallet",
       "anonTip": "Anonymer Tip",
       "zap": "Zap",
-      "pay": "Pay"
+      "pay": "Pay",
+      "npub": "Öffentlicher Schlüssel"
     },
     "notificationsFeed": {
       "connectContactRelays": "Reconnect to contacts' relays",
@@ -349,7 +350,8 @@
         "badFormat": "Die URL des Relays hat kein gültiges Format.",
         "alreadyExists": "Relay existiert bereits",
         "listPushed": "Relay Liste hochgeladen."
-      }
+      },
+      "connectContactRelays": "Verbinden Sie sich erneut mit den Relais der Kontakte"
     },
     "relayCard": {
       "pushDone": "Fertig",

@@ -106,7 +106,8 @@
       "searchContactsRelaysDescription": "Puedes añadir los relays donde se encuentran tus contactos para reforzar al red.",
       "contatcsRelays": "Relays de contactos",
       "contatcsRelaysCount": "{{activeRelays}} listas encontradas",
-      "connectAccess": "Connectar y acceder"
+      "connectAccess": "Connectar y acceder",
+      "skipTitle": "Omitir inicio de sesión resistente"
     },
     "sendPage": {
       "isContact": "Siguiendo",
@@ -187,7 +188,9 @@
       "bookmarked": "Marcado",
       "bookmark": "Marcar",
       "mutedThread": "Hilo silenciado",
-      "muteThread": "Silenciar hilo"
+      "muteThread": "Silenciar hilo",
+      "bitcoinBlock": "bloque de bitcoins",
+      "id": "IDENTIFICACIÓN"
     },
     "noteCard": {
       "notifications": {
@@ -212,7 +215,8 @@
       "open": "Abrir wallet",
       "anonTip": "Propina anónima",
       "zap": "Zap",
-      "pay": "Pagar"
+      "pay": "Pagar",
+      "npub": "Llave pública"
     },
     "notificationsFeed": {
       "reposted": "Reposteado",
@@ -223,7 +227,9 @@
       "replied": "Respuesta",
       "emptyTitle": "No tienes notificationes.",
       "emptyDescription": "Escribe una nota para tener respuestas y reacciones.",
-      "emptyButton": "Escribe una nota"
+      "emptyButton": "Escribe una nota",
+      "notificationsFeed": "Escribe un mensaje.",
+      "dislike": "Disgusto"
     },
     "profileCreatePage": {
       "notifications": {
@@ -254,7 +260,8 @@
       "privateKey": "Clave privada",
       "publicKey": "Clave pública",
       "loginMethod": "Acceder con",
-      "mnemonic": "Mnemónico"
+      "mnemonic": "Mnemónico",
+      "mnemonicInput": "Escriba sus palabras mnemotécnicas en el orden correcto para iniciar sesión."
     },
     "contactsPage": {
       "notifications": {
@@ -388,8 +395,11 @@
         "desactive": "Relay desactivado.",
         "badFormat": "La URL del relay no tiene el formato adecuado.",
         "alreadyExists": "El relay ya existe.",
-        "listPushed": "Lista de relays subida."
-      }
+        "listPushed": "Lista de relays subida.",
+        "globalFeedActive": "Fuente global habilitada."
+      },
+      "connectContactRelays": "Reconectar a los relés de los contactos",
+      "recommended": "Recomendado"
     },
     "profileConfigPage": {
       "notifications": {
@@ -543,6 +553,12 @@
         "question": "NIPs implementadas en Nostros",
         "answer": "NIP-01 Basic protocol flow description, NIP-02 Contact List and Petnames, NIP-04 Encrypted Direct Message, NIP-05 Mapping Nostr keys to DNS-based internet identifiers, NIP-06 Basic key derivation from mnemonic seed phrase, NIP-08 Handling Mentions, NIP-10 Conventions for clients' use of e and p tags in text events, NIP-11 Relay Information Document, NIP-12 Generic Tag Queries, NIP-19 bech32-encoded entities, NIP-21 nostr: URL scheme, NIP-25 Reactions, NIP-28 Public Chat, NIP-36 Sensitive Content, NIP-51 Lists, NIP-57 Lightning Zaps, y NIP-65 Relay List Metadata."
       }
+    },
+    "reactionsFeed": {
+      "emptyDescription": "Vea aquí las notas a las que reaccionó."
+    },
+    "repostsFeed": {
+      "emptyDescription": "Vea aquí las notas que volvió a publicar."
     }
   }
 }

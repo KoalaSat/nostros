@@ -74,7 +74,7 @@
       "Repost": "Поделиться",
       "Profile": "Профиль",
       "About": "О нас",
-      "Faq": "",
+      "Faq": "Часто задаваемые вопросы",
       "Config": "Настройки",
       "Send": "Отпраить",
       "Relays": "Реле",
@@ -124,7 +124,8 @@
       "searchContactsRelaysDescription": "You can add the relays used by your contacts to your list and connect to them to strengthen the network.",
       "contatcsRelays": "Contatcs Relays",
       "contatcsRelaysCount": "{{activeRelays}} lists found",
-      "connectAccess": "Connect and access"
+      "connectAccess": "Connect and access",
+      "skipTitle": "Пропустить отказоустойчивый вход"
     },
     "sendPage": {
       "isContact": "Подписаны",
@@ -155,7 +156,7 @@
       "followers": "{{followers}} followers",
       "configuration": "Настройки",
       "about": "Подроблее",
-      "faq": "",
+      "faq": "Часто задаваемые вопросы",
       "logout": "Выйти",
       "reportBug": "Report a bug",
       "imageHostingService": "Хостинг изображений"
@@ -187,7 +188,9 @@
       "bookmarked": "Bookmarked",
       "bookmark": "Bookmark",
       "mutedThread": "Thread muted",
-      "muteThread": "Mute thread"
+      "muteThread": "Mute thread",
+      "bitcoinBlock": "Биткойн-блок",
+      "id": "ИДЕНТИФИКАТОР"
     },
     "noteCard": {
       "notifications": {
@@ -223,7 +226,8 @@
       "replied": "Replied",
       "emptyTitle": "У Вас нет новых уведомлений",
       "emptyDescription": "Write a message to get replies and reactions.",
-      "emptyButton": "Write a message"
+      "emptyButton": "Write a message",
+      "notificationsFeed": "Напиши сообщение."
     },
     "profileCreatePage": {
       "notifications": {
@@ -253,7 +257,8 @@
       "privateKey": "Приватный ключ",
       "publicKey": "Публичный ключ",
       "loginMethod": "Login with",
-      "mnemonic": "Mnemonic"
+      "mnemonic": "Mnemonic",
+      "mnemonicInput": "Введите мнемонические слова в правильном порядке, чтобы войти в систему."
     },
     "contactsPage": {
       "notifications": {
@@ -346,7 +351,8 @@
         "contactCopied": "Контакт скопирован",
         "urlCopied": "URL скопирован",
         "pushCompleted": "All your data has been pushed."
-      }
+      },
+      "pushHistoricTitle": "Нажмите все мои данные"
     },
     "relaysPage": {
       "connectContactRelays": "Reconnect to contacts' relays",
@@ -380,8 +386,10 @@
         "desactive": "Relay desactivado.",
         "badFormat": "Relay URL has a bad format.",
         "alreadyExists": "Relay already exists.",
-        "listPushed": "Relay list pushed."
-      }
+        "listPushed": "Relay list pushed.",
+        "globalFeedActive": "Глобальный канал включен."
+      },
+      "recommended": "рекомендуемые"
     },
     "profileConfigPage": {
       "notifications": {
@@ -535,6 +543,12 @@
         "question": "NIPs, реализованные в Nostros",
         "answer": "NIP-01 Basic protocol flow description, NIP-02 Contact List and Petnames, NIP-04 Encrypted Direct Message, NIP-05 Mapping Nostr keys to DNS-based internet identifiers, NIP-06 Basic key derivation from mnemonic seed phrase, NIP-08 Handling Mentions, NIP-10 Conventions for clients' use of e and p tags in text events, NIP-11 Relay Information Document, NIP-12 Generic Tag Queries, NIP-19 bech32-encoded entities, NIP-21 nostr: URL scheme, NIP-25 Reactions, NIP-28 Public Chat, NIP-36 Sensitive Content, NIP-51 Lists, NIP-57 Lightning Zaps, y NIP-65 Relay List Metadata."
       }
+    },
+    "reactionsFeed": {
+      "emptyDescription": "Смотрите здесь заметки, на которые вы отреагировали."
+    },
+    "repostsFeed": {
+      "emptyDescription": "Смотрите здесь заметки, которые вы разместили."
     }
   }
 }
