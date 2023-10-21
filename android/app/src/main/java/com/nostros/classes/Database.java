@@ -256,6 +256,9 @@ public class Database {
                     "          );");
             instance.execSQL("CREATE INDEX nostros_notifications_index ON nostros_notifications(created_at);");
         } catch (SQLException e) { }
+        try {
+            instance.execSQL("ALTER TABLE nostros_notifications ADD COLUMN zapper_user_id TEXT;");
+        } catch (SQLException e) { }
     }
 
     public void saveEvent(JSONObject data, String userPubKey, String relayUrl) throws JSONException {
