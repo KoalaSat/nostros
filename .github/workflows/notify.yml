@@ -61,4 +61,5 @@ jobs:
           ~/go/bin/noscl relay add "wss://relay.dwadziesciajeden.pl"
           ~/go/bin/noscl relay add "wss://nostr-1.afarazit.eu"
           ~/go/bin/noscl relay add "wss://lbrygen.xyz"
+          ~/go/bin/noscl relay add "wss://soloco.nl"
           ~/go/bin/noscl publish "${{ github.event.release.body }}"

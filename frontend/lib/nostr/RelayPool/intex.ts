@@ -62,6 +62,7 @@ export const fallbackRelays = [
   'wss://relay.dwadziesciajeden.pl',
   'wss://nostr-1.afarazit.eu',
   'wss://lbrygen.xyz',
+  'wss://soloco.nl',
 ]
 
 class RelayPool {
