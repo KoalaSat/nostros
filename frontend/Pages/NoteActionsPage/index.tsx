@@ -150,6 +150,14 @@ export const NoteActionsPage: React.FC<NoteActionsPageProps> = ({ route: { param
       <View style={styles.mainLayout}>
         <View style={styles.actionButton}>
           <IconButton
+            icon='share-variant-outline'
+            size={28}
+            onPress={() => bottomSheetShareRef.current?.open()}
+          />
+          <Text>{t('noteActions.share')}</Text>
+        </View>
+        <View style={styles.actionButton}>
+          <IconButton
             icon='eye'
             size={28}
             onPress={() => {
@@ -157,14 +165,6 @@ export const NoteActionsPage: React.FC<NoteActionsPageProps> = ({ route: { param
             }}
           />
           <Text>{t('noteActions.view')}</Text>
-        </View>
-        <View style={styles.actionButton}>
-          <IconButton
-            icon='share-variant-outline'
-            size={28}
-            onPress={() => bottomSheetShareRef.current?.open()}
-          />
-          <Text>{t('noteActions.share')}</Text>
         </View>
       </View>
       <View style={styles.relayList}>

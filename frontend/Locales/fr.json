@@ -464,6 +464,7 @@
         "userUnblocked": "Profile unblocked",
         "userBlocked": "Profile unblocked"
       },
+      "view": "View",
       "addRelay": "Connect relay",
       "invoice": "Tip",
       "message": "Message",

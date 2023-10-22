@@ -480,6 +480,7 @@
         "userUnblocked": "Perfil desbloqueado",
         "userBlocked": "Perfil bloqueado"
       },
+      "view": "Ver",
       "addRelay": "Connectar a relay",
       "invoice": "Propina",
       "message": "Mensaje",

@@ -298,6 +298,16 @@ export const ProfileActionsPage: React.FC<ProfileActionsProps> = ({ route: { par
             {t(isGroupHidden ? 'profileCard.hiddenChats' : 'profileCard.hideChats')}
           </Text>
         </View>
+        <View style={styles.actionButton}>
+          <IconButton
+            icon='eye'
+            size={28}
+            onPress={() => {
+              navigate('Profile', { pubKey: userId })
+            }}
+          />
+          <Text>{t('profileCard.view')}</Text>
+        </View>
       </View>
       <RBSheet
         ref={bottomSheetRelaysRef}

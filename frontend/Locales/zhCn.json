@@ -473,6 +473,7 @@
         "userUnblocked": "已屏蔽",
         "userBlocked": "已取消屏蔽"
       },
+      "view": "查看",
       "addRelay": "连接中继",
       "invoice": "赞赏",
       "message": "私信",

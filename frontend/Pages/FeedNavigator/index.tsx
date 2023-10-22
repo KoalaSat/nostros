@@ -142,8 +142,8 @@ export const HomeNavigator: React.FC = () => {
                       <Appbar.Action
                         icon='dots-vertical'
                         onPress={() => {
-                          const params = route?.params as { pubKey: string }
-                          push('ProfileActions', { unirId: params?.pubKey })
+                          const params = route?.params as { pubKey: string, title: string }
+                          push('ProfileActions', { userId: params?.pubKey, title: params?.title })
                         }}
                       />
                     )}
