@@ -21,7 +21,7 @@
     "@scure/base": "^1.1.1",
     "@shopify/flash-list": "^1.4.1",
     "assert": "^2.0.0",
-    "axios": "^1.2.6",
+    "axios": "^1.6.1",
     "bip-schnorr": "^0.6.6",
     "buffer": "^6.0.3",
     "cipher-base": "https://github.com/KoalaSat/cipher-base#e1c6384",
