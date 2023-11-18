@@ -431,7 +431,9 @@ export const ConversationPage: React.FC<ConversationPageProps> = ({ route }) => 
           label={t('conversationPage.typeMessage') ?? ''}
           value={input}
           onChangeText={setInput}
-          onFocus={() => scrollViewRef.current?.scrollToEnd({ animated: true })}
+          onFocus={() => {
+            if (directMessages.length > 0) scrollViewRef.current?.scrollToEnd({ animated: true })}
+          }
           left={
             <TextInput.Icon
               icon={() => (

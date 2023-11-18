@@ -80,7 +80,8 @@
       "Send": "Send",
       "Relays": "Relays",
       "ProfileConfig": "Mi perfil",
-      "markAllRead": "Marcar todo como leído"
+      "markAllRead": "Marcar todo como leído",
+      "ProfileActions": "Acciones"
     },
     "conversationPage": {
       "unableDecypt": "{{username}} está hablando con otros sobre ti",

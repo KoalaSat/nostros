@@ -80,7 +80,8 @@
       "Send": "Envoyer",
       "Relays": "Relais",
       "ProfileConfig": "Mon profil",
-      "markAllRead": "Mark all as read"
+      "markAllRead": "Mark all as read",
+      "ProfileActions": "Actions"
     },
     "groupHeaderIcon": {
       "delete": "Leave group",

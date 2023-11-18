@@ -13,7 +13,7 @@ export const getContactsRelays: (
   userRelays: Relay[],
   relayMetadada: RelayMetadata[],
 ) => Promise<string[]> = async (userRelays, relayMetadada) => {
-  const localhostRegExp = /.*:4848\/?.*$/
+  const localhostRegExp = /.*192.168.*$/
   const pubKeys: string[] = []
   // Url => pubkey[]
   const relaysPresence: Record<string, string[]> = {}
@@ -29,17 +29,9 @@ export const getContactsRelays: (
     })
   })
 
-  // Median of users per relay
-  const medianUsage = median(
-    Object.keys(relaysPresence).map((relay) => relaysPresence[relay].length),
-  )
-
   // Sort relays by abs distance from the mediam
   const relaysByPresence = Object.keys(relaysPresence).sort((n1: string, n2: string) => {
-    return (
-      Math.abs(relaysPresence[n1].length - medianUsage) -
-      Math.abs(relaysPresence[n2].length - medianUsage)
-    )
+    return relaysPresence[n2].length - relaysPresence[n1].length
   })
 
   //  Set helpers

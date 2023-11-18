@@ -1,5 +1,5 @@
 import React, { useContext, useEffect } from 'react'
-import { Button, Text, TouchableRipple, useTheme } from 'react-native-paper'
+import { Badge, Button, Text, TouchableRipple, useTheme } from 'react-native-paper'
 import ConversationsFeed from './ConversationsFeed'
 import HomeFeed from './HomeFeed'
 import NotificationsFeed from './NotificationsFeed'
@@ -18,7 +18,7 @@ import { RelayPoolContext } from '../../Contexts/RelayPoolContext'
 export const HomePage: React.FC = () => {
   const theme = useTheme()
   const { t } = useTranslation('common')
-  const { relayPool } = useContext(RelayPoolContext)
+  const { relayPool, newNotifications, setNewNotifications, newDirectMessages, setNewDirectMessages, newGroupMessages, setNewGroupMessages } = useContext(RelayPoolContext)
   const { setPushedTab } = React.useContext(AppContext)
   const { privateKey, publicKey } = React.useContext(UserContext)
   const { clipboardNip21, setClipboardNip21 } = useContext(AppContext)
@@ -32,7 +32,7 @@ export const HomePage: React.FC = () => {
 
   useEffect(() => {
     if (publicKey && relayPool) {
-      relayPool?.subscribe(`lists-bookmarks${publicKey.substring(0, 8)}`, [
+      relayPool?.subscribe(`home${publicKey.substring(0, 8)}`, [
         {
           kinds: [10000],
           limit: 1,
@@ -46,6 +46,11 @@ export const HomePage: React.FC = () => {
         {
           kinds: [30001],
           authors: [publicKey],
+        },
+        {
+          kinds: [4, 1, 7, 9735, 42],
+          '#p': [publicKey],
+          limit: 40
         },
       ])
     }
@@ -134,8 +139,16 @@ export const HomePage: React.FC = () => {
                       size={size}
                       color={theme.colors.onPrimaryContainer}
                     />
+                    {newGroupMessages && (
+                      <Badge style={styles.notificationBadge} />
+                    )}
                   </>
                 ),
+              }}
+              listeners={{
+                tabPress: () => {
+                  setNewGroupMessages(false)
+                },
               }}
             />
             <Tab.Screen
@@ -149,8 +162,16 @@ export const HomePage: React.FC = () => {
                       size={size}
                       color={theme.colors.onPrimaryContainer}
                     />
+                    {newDirectMessages && (
+                      <Badge style={styles.notificationBadge} />
+                    )}
                   </>
                 ),
+              }}
+              listeners={{
+                tabPress: () => {
+                  setNewDirectMessages(false)
+                },
               }}
             />
           </>
@@ -166,11 +187,17 @@ export const HomePage: React.FC = () => {
                   size={size}
                   color={theme.colors.onPrimaryContainer}
                 />
+                {newNotifications && (
+                  <Badge style={styles.notificationBadge} />
+                )}
               </>
             ),
           }}
           listeners={{
-            tabPress: () => setPushedTab('Notifications'),
+            tabPress: () => {
+              setNewNotifications(false)
+              setPushedTab('Notifications')
+            },
           }}
         />
       </Tab.Navigator>

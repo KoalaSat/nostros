@@ -47,7 +47,7 @@ export const ConversationsFeed: React.FC = () => {
   const { database, refreshBottomBarAt, qrReader, setQrReader } = useContext(AppContext)
   const [pageSize, setPageSize] = useState<number>(initialPageSize)
   const { publicKey, privateKey } = useContext(UserContext)
-  const { relayPool, lastEventId } = useContext(RelayPoolContext)
+  const { relayPool, lastEventId, setNewDirectMessages } = useContext(RelayPoolContext)
   const [directMessages, settDirectMessages] = useState<DirectMessage[]>([])
   const [sendPubKeyInput, setSendPubKeyInput] = useState<string>('')
   const [users, setUsers] = useState<User[]>()
@@ -69,6 +69,7 @@ export const ConversationsFeed: React.FC = () => {
   )
 
   useEffect(() => {
+    setNewDirectMessages(false)
     loadDirectMessages(false)
   }, [lastEventId, refreshBottomBarAt])
 

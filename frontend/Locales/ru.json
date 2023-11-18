@@ -80,7 +80,8 @@
       "Send": "Отпраить",
       "Relays": "Реле",
       "ProfileConfig": "Мой профиль",
-      "markAllRead": "Mark all as read"
+      "markAllRead": "Mark all as read",
+      "ProfileActions": "Actions"
     },
     "groupHeaderIcon": {
       "delete": "Leave group",

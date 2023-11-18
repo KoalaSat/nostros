@@ -34,7 +34,7 @@ export const NotificationsFeed: React.FC = () => {
   const { t } = useTranslation('common')
   const { database, setNotificationSeenAt, pushedTab, getSatoshiSymbol } = useContext(AppContext)
   const { publicKey, reloadLists, mutedEvents, mutedUsers } = useContext(UserContext)
-  const { lastEventId, relayPool } = useContext(RelayPoolContext)
+  const { lastEventId, relayPool, setNewNotifications } = useContext(RelayPoolContext)
   const [notifications, setNotifications] = useState<Notification[]>([])
   const [refreshing, setRefreshing] = useState(true)
   const flashListRef = React.useRef<FlashList<Note>>(null)
@@ -59,6 +59,7 @@ export const NotificationsFeed: React.FC = () => {
     loadNotes()
     reloadLists()
     setRefreshing(false)
+    setNewNotifications(false)
   }, [lastEventId])
 
   useEffect(() => {

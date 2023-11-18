@@ -72,7 +72,10 @@ public class Websocket {
                     String id = data.getString("id");
                     if (!createdEvents.contains(id)) {
                         Log.d("Websocket", "RECEIVE URL:" + url + " __NEW__ " + message);
-                        database.saveEvent(data, userPubKey, url);
+                        boolean notify = database.saveEvent(data, userPubKey, url);
+                        if (notify) {
+                            reactNativeNotification(data.getString("id"), data.getString("kind"));
+                        }
                         createdEvents.add(id);
                         reactNativeEvent(data.getString("id"));
                     } else {
@@ -112,5 +115,15 @@ public class Websocket {
         context
                 .getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter.class)
                 .emit("WebsocketConfirmation", payload);
+    }
+
+    public void reactNativeNotification(String eventId, String kind) {
+        Log.d("Websocket", "reactNativeNotification");
+        WritableMap payload = Arguments.createMap();
+        payload.putString("eventId", eventId);
+        payload.putString("kind", kind);
+        context
+                .getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter.class)
+                .emit("WebsocketNotification", payload);
     }
 }
