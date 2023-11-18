@@ -26,10 +26,14 @@ export interface RelayPoolContextProps {
   loadRelays: () => Promise<Relay[]>
   createRandomRelays: () => Promise<void>
   sendEvent: (event: Event, relayUrl?: string) => Promise<Event | null | undefined>
+  newNotifications: boolean
+  newDirectMessages: boolean
+  newGroupMessages: boolean
 }
 
 export interface WebsocketEvent {
   eventId: string
+  kind?: string
 }
 
 export interface RelayPoolContextProviderProps {
@@ -49,6 +53,9 @@ export const initialRelayPoolContext: RelayPoolContextProps = {
   loadRelays: async () => [],
   createRandomRelays: async () => {},
   sendEvent: async () => null,
+  newNotifications: false,
+  newDirectMessages: false,
+  newGroupMessages: false
 }
 
 export const RelayPoolContextProvider = ({
@@ -63,6 +70,9 @@ export const RelayPoolContextProvider = ({
   const [lastConfirmationtId, setLastConfirmationId] = useState<string>('')
   const [relays, setRelays] = React.useState<Relay[]>([])
   const [displayRelayDrawer, setDisplayrelayDrawer] = React.useState<string>()
+  const [newNotifications, setNewNotifications] = useState<boolean>(false)
+  const [newDirectMessages, setNewDirectMessages] = useState<boolean>(false)
+  const [newGroupMessages, setNewGroupMessages] = useState<boolean>(false)
 
   const sendEvent: (event: Event, relayUrl?: string) => Promise<Event | null | undefined> = async (
     event,
@@ -113,6 +123,15 @@ export const RelayPoolContextProvider = ({
   }
   const changeConfirmationIdHandler: (event: WebsocketEvent) => void = (event) => {
     setLastConfirmationId(event.eventId)
+  }
+  const changeNotificationHandler: (event: WebsocketEvent) => void = (event) => {
+    if (event.kind === '4') {
+      setNewDirectMessages(true)
+    } else if (event.kind === '42') {
+      setNewGroupMessages(true)
+    } else {
+      setNewNotifications(true)
+    }
   }
 
   const debouncedEventIdHandler = useMemo(
@@ -213,6 +232,7 @@ export const RelayPoolContextProvider = ({
     if (publicKey && publicKey !== '') {
       DeviceEventEmitter.addListener('WebsocketEvent', debouncedEventIdHandler)
       DeviceEventEmitter.addListener('WebsocketConfirmation', debouncedConfirmationHandler)
+      DeviceEventEmitter.addListener('WebsocketNotification', changeNotificationHandler)
       loadRelayPool()
     }
   }, [publicKey])
@@ -241,6 +261,9 @@ export const RelayPoolContextProvider = ({
         loadRelays,
         createRandomRelays,
         sendEvent,
+        newNotifications,
+        newDirectMessages,
+        newGroupMessages
       }}
     >
       {children}

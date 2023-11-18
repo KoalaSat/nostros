@@ -1,5 +1,5 @@
 import React, { useContext, useEffect } from 'react'
-import { Button, Text, TouchableRipple, useTheme } from 'react-native-paper'
+import { Badge, Button, Text, TouchableRipple, useTheme } from 'react-native-paper'
 import ConversationsFeed from './ConversationsFeed'
 import HomeFeed from './HomeFeed'
 import NotificationsFeed from './NotificationsFeed'
@@ -18,7 +18,7 @@ import { RelayPoolContext } from '../../Contexts/RelayPoolContext'
 export const HomePage: React.FC = () => {
   const theme = useTheme()
   const { t } = useTranslation('common')
-  const { relayPool } = useContext(RelayPoolContext)
+  const { relayPool, newNotifications, newDirectMessages, newGroupMessages } = useContext(RelayPoolContext)
   const { setPushedTab } = React.useContext(AppContext)
   const { privateKey, publicKey } = React.useContext(UserContext)
   const { clipboardNip21, setClipboardNip21 } = useContext(AppContext)
@@ -134,6 +134,9 @@ export const HomePage: React.FC = () => {
                       size={size}
                       color={theme.colors.onPrimaryContainer}
                     />
+                    {newGroupMessages && (
+                      <Badge style={styles.notificationBadge} />
+                    )}
                   </>
                 ),
               }}
@@ -149,6 +152,9 @@ export const HomePage: React.FC = () => {
                       size={size}
                       color={theme.colors.onPrimaryContainer}
                     />
+                    {newDirectMessages && (
+                      <Badge style={styles.notificationBadge} />
+                    )}
                   </>
                 ),
               }}
@@ -166,6 +172,9 @@ export const HomePage: React.FC = () => {
                   size={size}
                   color={theme.colors.onPrimaryContainer}
                 />
+                {newNotifications && (
+                  <Badge style={styles.notificationBadge} />
+                )}
               </>
             ),
           }}
