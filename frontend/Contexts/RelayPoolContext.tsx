@@ -27,8 +27,11 @@ export interface RelayPoolContextProps {
   createRandomRelays: () => Promise<void>
   sendEvent: (event: Event, relayUrl?: string) => Promise<Event | null | undefined>
   newNotifications: boolean
+  setNewNotifications: (newNotifications: boolean) => void
   newDirectMessages: boolean
+  setNewDirectMessages: (newDirectMessages: boolean) => void
   newGroupMessages: boolean
+  setNewGroupMessages: (newGroupMessages: boolean) => void
 }
 
 export interface WebsocketEvent {
@@ -54,8 +57,11 @@ export const initialRelayPoolContext: RelayPoolContextProps = {
   createRandomRelays: async () => {},
   sendEvent: async () => null,
   newNotifications: false,
+  setNewNotifications: () => {},
   newDirectMessages: false,
-  newGroupMessages: false
+  setNewDirectMessages: () => {},
+  newGroupMessages: false,
+  setNewGroupMessages: () => {},
 }
 
 export const RelayPoolContextProvider = ({
@@ -262,8 +268,11 @@ export const RelayPoolContextProvider = ({
         createRandomRelays,
         sendEvent,
         newNotifications,
+        setNewNotifications,
         newDirectMessages,
-        newGroupMessages
+        setNewDirectMessages,
+        newGroupMessages,
+        setNewGroupMessages
       }}
     >
       {children}
