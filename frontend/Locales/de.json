@@ -70,7 +70,8 @@
       "Send": "Senden",
       "Relays": "Relays",
       "ProfileConfig": "Mein Profil",
-      "markAllRead": "Alle als gelesen markieren"
+      "markAllRead": "Alle als gelesen markieren",
+      "ProfileActions": "Actions"
     },
     "searchPage": {
       "placeholder": "Suche nach öffentlichen Schlüsseln, Notizen, hashtags...",

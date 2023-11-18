@@ -43,7 +43,7 @@ export const GroupsFeed: React.FC = () => {
   const theme = useTheme()
   const { database, qrReader, setQrReader, refreshBottomBarAt } = useContext(AppContext)
   const { publicKey } = useContext(UserContext)
-  const { relayPool, lastEventId, lastConfirmationtId, sendEvent } = useContext(RelayPoolContext)
+  const { relayPool, lastEventId, lastConfirmationtId, sendEvent, setNewGroupMessages } = useContext(RelayPoolContext)
   const bottomSheetSearchRef = React.useRef<RBSheet>(null)
   const bottomSheetCreateRef = React.useRef<RBSheet>(null)
   const bottomSheetFabActionRef = React.useRef<RBSheet>(null)
@@ -70,6 +70,7 @@ export const GroupsFeed: React.FC = () => {
   )
 
   useEffect(() => {
+    setNewGroupMessages(false)
     loadGroups()
   }, [lastEventId, lastConfirmationtId, refreshBottomBarAt])
 

@@ -61,7 +61,8 @@
       "Send": "Send",
       "Relays": "Relays",
       "ProfileConfig": "My profile",
-      "markAllRead": "Mark all as read"
+      "markAllRead": "Mark all as read",
+      "ProfileActions": "Actions"
     },
     "searchPage": {
       "placeholder": "Look for public keys, notes, hashtags...",

@@ -79,7 +79,8 @@
       "Config": "设置",
       "Send": "发送",
       "Relays": "中继",
-      "ProfileConfig": "简介设置"
+      "ProfileConfig": "简介设置",
+      "ProfileActions": "Actions"
     },
     "groupHeaderIcon": {
       "delete": "退出",

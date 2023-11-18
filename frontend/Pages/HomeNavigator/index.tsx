@@ -129,6 +129,7 @@ export const HomeNavigator: React.FC = () => {
         screenOptions={({ navigation }) => {
           return {
             detachPreviousScreen: !navigation.isFocused(),
+            navigationBarColor: '#405AA9',
             cardStyleInterpolator,
             header: ({ navigation, route, back }) => {
               const leftAction: () => JSX.Element = () => {
