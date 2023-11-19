@@ -12,6 +12,8 @@ export interface Notification {
   event_id?: string
   tags: string[][]
   name: string
+  zapper_user_id: string
+  zapper_name: string
 }
 const databaseToEntity: (object: any) => Notification = (object) => {
   object.tags = object.tags ? JSON.parse(object.tags) : []
@@ -27,11 +29,13 @@ export const getNotifications: (
 ) => Promise<Notification[]> = async (db, { limit, since }) => {
   let notificationsQuery = `
     SELECT
-      nostros_notifications.*, nostros_users.name
+      nostros_notifications.*, users1.name, users2.name as zapper_name
     FROM
       nostros_notifications
     LEFT JOIN
-      nostros_users ON nostros_users.id = nostros_notifications.pubkey
+      nostros_users users1 ON users1.id = nostros_notifications.pubkey
+    LEFT JOIN
+      nostros_users users2 ON users2.id = nostros_notifications.zapper_user_id
   `
   if (since) {
     notificationsQuery += `WHERE nostros_notifications.created_at > ${since} `

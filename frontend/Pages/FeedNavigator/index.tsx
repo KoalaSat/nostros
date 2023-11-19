@@ -41,7 +41,6 @@ export const HomeNavigator: React.FC = () => {
   const {
     displayUserDrawer,
     displayNoteDrawer,
-    setDisplayUserDrawer,
     setRefreshBottomBarAt,
     database,
   } = React.useContext(AppContext)

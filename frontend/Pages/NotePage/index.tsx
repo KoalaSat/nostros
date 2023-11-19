@@ -34,7 +34,6 @@ export const NotePage: React.FC<NotePageProps> = ({ route }) => {
     React.useCallback(() => {
       subscribeNotes()
       loadNote()
-
       return () =>
         relayPool?.unsubscribe([
           `meta-notepage${route.params.noteId.substring(0, 8)}`,

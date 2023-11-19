@@ -7,6 +7,7 @@ import { getUser, type User } from '../../Functions/DatabaseFunctions/Users'
 import { formatPubKey } from '../../Functions/RelayFunctions/Users'
 import getUnixTime from 'date-fns/getUnixTime'
 import { useTheme } from 'react-native-paper'
+import { nip19 } from 'nostr-tools'
 import { getNip19Key, getNpub } from '../../lib/nostr/Nip19'
 import { navigate } from '../../lib/Navigation'
 import {
@@ -38,7 +39,7 @@ export const TextContent: React.FC<TextContentProps> = ({
 }) => {
   const theme = useTheme()
   const { database } = useContext(AppContext)
-  const [userNames, setUserNames] = useState<Record<number, string>>({})
+  const [userNames, setUserNames] = useState<Record<string, string>>({})
   const [loadedUsers, setLoadedUsers] = useState<number>(0)
   const [urls, setUrls] = useState<Record<string, string>>({})
   const [lnUrl, setLnUrl] = useState<string>()
@@ -53,7 +54,7 @@ export const TextContent: React.FC<TextContentProps> = ({
     Linking.openURL(url)
   }
 
-  const handleNip05NotePress: (nip19: string) => void = (nip19) => {
+  const handleNotePress: (nip19: string) => void = (nip19) => {
     const noteId = getNip19Key(nip19)
 
     if (noteId) {
@@ -67,12 +68,17 @@ export const TextContent: React.FC<TextContentProps> = ({
     }
   }
 
-  const handleNip05ProfilePress: (nip19: string) => void = (nip19) => {
-    const pubKey = getNip19Key(nip19)
+  const handleProfilePress: (matchingString: string) => void = (matchingString) => {
+    const npub = matchingString.replace('nostr:', '')
+    const decoded = nip19.decode(npub)
 
-    if (pubKey) {
-      navigate('Profile', { pubKey })
+    let pubKey = decoded.data as string
+
+    if (decoded.type === 'nprofile') {
+      pubKey = (decoded.data as nip19.ProfilePointer).pubkey
     }
+
+    onPressUser({ id: pubKey, name: userNames[matchingString] ?? formatPubKey(npub) })
   }
 
   const handleMentionPress: (text: string) => void = (text) => {
@@ -102,31 +108,58 @@ export const TextContent: React.FC<TextContentProps> = ({
     const mentionIndex: number = parseInt(matches[1])
 
     if (userNames[mentionIndex]) {
-      return userNames[mentionIndex]
+      return `@${userNames[matchingString]}`
     } else if (event) {
       const tag = event.tags[mentionIndex]
 
       if (tag) {
         const kind = tag[0]
-        const pudKey = tag[1]
+        const pubKey = tag[1]
 
         if (kind === 'e') return ''
 
         if (database) {
-          getUser(pudKey, database).then((user) => {
+          getUser(pubKey, database).then((user) => {
             setLoadedUsers(getUnixTime(new Date()))
             setUserNames((prev) => {
-              if (user?.name) prev[mentionIndex] = `@${user.name}`
+              if (user?.name) prev[mentionIndex] = user.name
               return prev
             })
           })
         }
-        return `@${formatPubKey(getNpub(pudKey))}`
+        return `@${formatPubKey(getNpub(pubKey))}`
       } else {
         return matchingString
       }
     } else {
       return matchingString
+    }
+  }
+
+  const renderProfile: (matchingString: string, matches: string[]) => string = (
+    matchingString,
+  ) => {
+    const decoded = nip19.decode(matchingString.replace('nostr:', ''))
+
+    let pubKey = decoded.data as string
+
+    if (decoded.type === 'nprofile') {
+      pubKey = (decoded.data as nip19.ProfilePointer).pubkey
+    }
+
+    if (userNames[matchingString]) {
+      return `@${userNames[matchingString]}`
+    } else {
+      if (database) {
+        getUser(pubKey, database).then((user) => {
+          setLoadedUsers(getUnixTime(new Date()))
+          setUserNames((prev) => {
+            if (user?.name) prev[matchingString] = user.name
+            return prev
+          })
+        })
+      }
+      return `@${formatPubKey(pubKey)}`
     }
   }
 
@@ -155,6 +188,13 @@ export const TextContent: React.FC<TextContentProps> = ({
     })
 
     return matchingString
+  }
+
+  const renderNote: (matchingString: string, matches: string[]) => string = (
+    _matchingString,
+    _matches,
+  ) => {
+    return ''
   }
 
   const onLongPress: () => void = () => {
@@ -188,12 +228,13 @@ export const TextContent: React.FC<TextContentProps> = ({
                 style: styles.mention,
               },
           { pattern: /#(\w+)/, style: styles.hashTag, onPress: handleHashtagPress },
-          { pattern: /(lnbc)\S+/, style: styles.nip19, renderText: renderLnurl },
-          { pattern: /(nevent1)\S+/, style: styles.nip19, onPress: handleNip05NotePress },
+          { pattern: /\b(lnbc)\S+\b/, style: styles.nip19, renderText: renderLnurl },
+          { pattern: /\b(nostr:)?(nevent1|note1)\S+\b/, style: styles.nip19, onPress: handleNotePress, renderText: renderNote },
           {
-            pattern: /(npub1|nprofile1)\S+/,
+            pattern: /\b(nostr:)?(npub1|nprofile1)\S+\b/,
             style: styles.nip19,
-            onPress: handleNip05ProfilePress,
+            renderText: renderProfile,
+            onPress: handleProfilePress,
           },
           {
             pattern: getHightlightText(),

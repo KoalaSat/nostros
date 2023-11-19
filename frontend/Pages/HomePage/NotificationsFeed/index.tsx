@@ -18,7 +18,7 @@ import { navigate } from '../../../lib/Navigation'
 import { useFocusEffect } from '@react-navigation/native'
 import { format, fromUnixTime, getUnixTime } from 'date-fns'
 import { FlashList, type ListRenderItem } from '@shopify/flash-list'
-import { username } from '../../../Functions/RelayFunctions/Users'
+import { formatPubKey, username } from '../../../Functions/RelayFunctions/Users'
 import { TouchableWithoutFeedback } from 'react-native-gesture-handler'
 import { formatDate, handleInfinityScroll } from '../../../Functions/NativeFunctions'
 import { useTranslation } from 'react-i18next'
@@ -27,6 +27,9 @@ import {
   type Notification,
 } from '../../../Functions/DatabaseFunctions/Notifications'
 import { getTaggedEventIds } from '../../../Functions/RelayFunctions/Events'
+import ParsedText from 'react-native-parsed-text'
+import { getUser } from '../../../Functions/DatabaseFunctions/Users'
+import { getNpub } from '../../../lib/nostr/Nip19'
 
 export const NotificationsFeed: React.FC = () => {
   const initialLimitPage = React.useMemo(() => 20, [])
@@ -39,6 +42,8 @@ export const NotificationsFeed: React.FC = () => {
   const [refreshing, setRefreshing] = useState(true)
   const flashListRef = React.useRef<FlashList<Note>>(null)
   const [limitPage, setLimitPage] = useState<number>(initialLimitPage)
+  const [userNames, setUserNames] = useState<Record<string, string>>({})
+  const [loadedUsers, setLoadedUsers] = useState<number>(0)
 
   useFocusEffect(
     React.useCallback(() => {
@@ -59,12 +64,12 @@ export const NotificationsFeed: React.FC = () => {
     loadNotes()
     reloadLists()
     setRefreshing(false)
-    setNewNotifications(false)
+    setNewNotifications(0)
   }, [lastEventId])
 
   useEffect(() => {
-    if (mutedEvents.length > 0) loadNotes()
-  }, [mutedEvents])
+    loadNotes()
+  }, [mutedEvents, loadedUsers])
 
   useEffect(() => {
     if (pushedTab) {
@@ -112,7 +117,7 @@ export const NotificationsFeed: React.FC = () => {
         if (filtered.length > 0) {
           setNotifications(filtered)
           const pubKeys = filtered
-            .map((n) => n.pubkey)
+            .map((n) => n.zapper_user_id ?? n.pubkey)
             .filter((key, index, array) => array.indexOf(key) === index)
           relayPool?.subscribe(`notification-users${publicKey?.substring(0, 8)}`, [
             {
@@ -144,17 +149,23 @@ export const NotificationsFeed: React.FC = () => {
     icon: string
     iconColor: string
     description: string
+    name: string
+    pubkey: string
   } = (item) => {
     let noteId: string | undefined = item.event_id
     let content: string = item.content.replace(/nostr:\S*/, '').trim()
     let icon: string
     let iconColor: string
     let description: string
+    let name: string = item.name
+    let pubkey: string = item.pubkey
 
     if (item.kind === 9735) {
       icon = 'lightning-bolt'
       iconColor = '#F5D112'
       description = 'notificationsFeed.zap'
+      name = item.zapper_name ?? formatPubKey(getNpub(item.zapper_user_id))
+      pubkey = item.zapper_user_id
     } else if (item.kind === Kind.Reaction) {
       content = ''
       if (item.content === '-') {
@@ -167,6 +178,7 @@ export const NotificationsFeed: React.FC = () => {
         description = 'notificationsFeed.like'
       }
     } else if (item.event_id) {
+      noteId = item.id
       icon = 'cached'
       iconColor = '#7ADC70'
       description = 'notificationsFeed.reposted'
@@ -183,12 +195,49 @@ export const NotificationsFeed: React.FC = () => {
       icon,
       iconColor,
       description,
+      name,
+      pubkey
     }
   }
 
   const renderItem: ListRenderItem<Notification> = ({ item }) => {
     const date = fromUnixTime(item.created_at)
-    const { noteId, content, icon, iconColor, description } = generateItemVariables(item)
+    const { noteId, content, icon, iconColor, description, name, pubkey } = generateItemVariables(item)
+
+    const renderMentionText: (matchingString: string, matches: string[]) => string = (
+      matchingString,
+      matches,
+    ) => {
+      const mentionIndex: number = parseInt(matches[1])
+
+      if (userNames[mentionIndex]) {
+        return `@${userNames[mentionIndex]}`
+      } else if (item) {
+        const tag = item.tags[mentionIndex]
+
+        if (tag) {
+          const kind = tag[0]
+          const pubKey = tag[1]
+
+          if (kind === 'e') return ''
+
+          if (database) {
+            getUser(pubKey, database).then((user) => {
+              setLoadedUsers(getUnixTime(new Date()))
+              setUserNames((prev) => {
+                if (user?.name) prev[mentionIndex] = user.name
+                return prev
+              })
+            })
+          }
+          return `@${formatPubKey(getNpub(pubKey))}`
+        } else {
+          return matchingString
+        }
+      } else {
+        return matchingString
+      }
+    }
 
     return (
       <TouchableWithoutFeedback onPress={() => noteId && navigate('Note', { noteId })}>
@@ -198,21 +247,31 @@ export const NotificationsFeed: React.FC = () => {
           </View>
           <View style={styles.itemCardInfo}>
             <Text style={[styles.itemCardText, { color: theme.colors.onSurfaceVariant }]}>
-              {username({ name: item.name, id: item.pubkey })}
+              {username({ name, id: pubkey })}
             </Text>
             <Text style={styles.itemCardText}>
               {t(description, { amount: item.amount ?? '' })}
               {item.kind === 9735 && getSatoshiSymbol(16)}
             </Text>
             {content !== '' && (
-              <Text
+
+              <ParsedText
                 style={[styles.itemCardText, { color: theme.colors.onSurfaceVariant }]}
                 numberOfLines={
                   item.kind === 9735 || (item.kind === Kind.Text && !item.event_id) ? undefined : 1
                 }
+                parse={[
+                  {
+                    pattern: /#\[(\d+)\]/,
+                    renderText: renderMentionText,
+                  },
+                  // { pattern: /\b(nostr:)?(nevent1|note1)\S+\b/, renderText: renderNote },
+                  // { pattern: /\b(nostr:)?(npub1|nprofile1)\S+\b/, renderText: renderProfile },
+                ]}
+                childrenProps={{ allowFontScaling: false }}
               >
-                {content?.replace(/#\[\d\]/, '')}
-              </Text>
+                {content}
+              </ParsedText>
             )}
           </View>
           <View style={styles.itemCardDates}>

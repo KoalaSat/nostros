@@ -12,7 +12,7 @@ import { formatPubKey } from '../../Functions/RelayFunctions/Users'
 import { Button, IconButton, Switch, Text, TextInput, useTheme } from 'react-native-paper'
 import { UserContext } from '../../Contexts/UserContext'
 import { goBack } from '../../lib/Navigation'
-import { Kind } from 'nostr-tools'
+import { Kind, nip19 } from 'nostr-tools'
 import ProfileData from '../../Components/ProfileData'
 import NoteCard from '../../Components/NoteCard'
 import UploadImage from '../../Components/UploadImage'
@@ -80,7 +80,7 @@ export const SendPage: React.FC<SendPageProps> = ({ route }) => {
           tags.push(['e', note.id, '', eTags.length > 0 ? 'reply' : 'root'])
           tags.push(['p', note.pubkey, ''])
         } else if (route.params?.type === 'repost') {
-          rawContent = `#[${tags.length}] ${rawContent}`
+          rawContent = `${rawContent} nostr:${nip19.noteEncode(note.id)}`
           tags.push(['e', note.id, '', ''])
         }
       }
@@ -91,13 +91,13 @@ export const SendPage: React.FC<SendPageProps> = ({ route }) => {
         userMentions.forEach((user) => {
           const userText = mentionText(user)
           if (rawContent.includes(userText)) {
-            rawContent = rawContent.replace(userText, `#[${tags.length}]`)
+            rawContent = rawContent.replace(userText, `nostr:${nip19.npubEncode(user.id)}`)
             tags.push(['p', user.id, ''])
           }
         })
       }
 
-      ;[...rawContent.matchAll(/#([^#]\S+)/gi)].forEach((match) => {
+      [...rawContent.matchAll(/#([^#]\S+)/gi)].forEach((match) => {
         if (match[1]) tags.push(['t', match[1]])
       })
 
