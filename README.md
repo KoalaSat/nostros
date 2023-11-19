@@ -46,6 +46,7 @@ Nostros chat
 - [x] Zaps
 - [x] Bookmarks (public and private)
 - [x] Dynamicall connection to contacts' relays
+- [x] Authentication of clients to relays (NIP-42)
 
 # Kudos
 
