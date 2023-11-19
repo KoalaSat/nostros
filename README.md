@@ -45,7 +45,7 @@ Nostros chat
 - [x] Push events to private relay
 - [x] Zaps
 - [x] Bookmarks (public and private)
-- [x] Dynamicall connection to contacts' relays
+- [x] Gossip model
 - [x] Authentication of clients to relays (NIP-42)
 
 # Kudos
