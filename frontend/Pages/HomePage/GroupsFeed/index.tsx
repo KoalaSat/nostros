@@ -70,7 +70,7 @@ export const GroupsFeed: React.FC = () => {
   )
 
   useEffect(() => {
-    setNewGroupMessages(false)
+    setNewGroupMessages(0)
     loadGroups()
   }, [lastEventId, lastConfirmationtId, refreshBottomBarAt])
 

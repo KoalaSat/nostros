@@ -139,15 +139,17 @@ export const HomePage: React.FC = () => {
                       size={size}
                       color={theme.colors.onPrimaryContainer}
                     />
-                    {newGroupMessages && (
-                      <Badge style={styles.notificationBadge} />
+                    {newGroupMessages > 0 && (
+                      <Badge style={styles.notificationBadge}>
+                        {newGroupMessages}
+                      </Badge>
                     )}
                   </>
                 ),
               }}
               listeners={{
                 tabPress: () => {
-                  setNewGroupMessages(false)
+                  setNewGroupMessages(0)
                 },
               }}
             />
@@ -162,15 +164,17 @@ export const HomePage: React.FC = () => {
                       size={size}
                       color={theme.colors.onPrimaryContainer}
                     />
-                    {newDirectMessages && (
-                      <Badge style={styles.notificationBadge} />
+                    {newDirectMessages > 0 && (
+                      <Badge style={styles.notificationBadge}>
+                        {newDirectMessages}
+                      </Badge>
                     )}
                   </>
                 ),
               }}
               listeners={{
                 tabPress: () => {
-                  setNewDirectMessages(false)
+                  setNewDirectMessages(0)
                 },
               }}
             />
@@ -187,15 +191,17 @@ export const HomePage: React.FC = () => {
                   size={size}
                   color={theme.colors.onPrimaryContainer}
                 />
-                {newNotifications && (
-                  <Badge style={styles.notificationBadge} />
+                {newNotifications > 0 && (
+                  <Badge style={styles.notificationBadge}>
+                    {newNotifications}
+                  </Badge>
                 )}
               </>
             ),
           }}
           listeners={{
             tabPress: () => {
-              setNewNotifications(false)
+              setNewNotifications(0)
               setPushedTab('Notifications')
             },
           }}

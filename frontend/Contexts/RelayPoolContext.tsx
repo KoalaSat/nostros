@@ -26,12 +26,12 @@ export interface RelayPoolContextProps {
   loadRelays: () => Promise<Relay[]>
   createRandomRelays: () => Promise<void>
   sendEvent: (event: Event, relayUrl?: string) => Promise<Event | null | undefined>
-  newNotifications: boolean
-  setNewNotifications: (newNotifications: boolean) => void
-  newDirectMessages: boolean
-  setNewDirectMessages: (newDirectMessages: boolean) => void
-  newGroupMessages: boolean
-  setNewGroupMessages: (newGroupMessages: boolean) => void
+  newNotifications: number
+  setNewNotifications: (newNotifications: number) => void
+  newDirectMessages: number
+  setNewDirectMessages: (newDirectMessages: number) => void
+  newGroupMessages: number
+  setNewGroupMessages: (newGroupMessages: number) => void
 }
 
 export interface WebsocketEvent {
@@ -56,11 +56,11 @@ export const initialRelayPoolContext: RelayPoolContextProps = {
   loadRelays: async () => [],
   createRandomRelays: async () => {},
   sendEvent: async () => null,
-  newNotifications: false,
+  newNotifications: 0,
   setNewNotifications: () => {},
-  newDirectMessages: false,
+  newDirectMessages: 0,
   setNewDirectMessages: () => {},
-  newGroupMessages: false,
+  newGroupMessages: 0,
   setNewGroupMessages: () => {},
 }
 
@@ -76,9 +76,9 @@ export const RelayPoolContextProvider = ({
   const [lastConfirmationtId, setLastConfirmationId] = useState<string>('')
   const [relays, setRelays] = React.useState<Relay[]>([])
   const [displayRelayDrawer, setDisplayrelayDrawer] = React.useState<string>()
-  const [newNotifications, setNewNotifications] = useState<boolean>(false)
-  const [newDirectMessages, setNewDirectMessages] = useState<boolean>(false)
-  const [newGroupMessages, setNewGroupMessages] = useState<boolean>(false)
+  const [newNotifications, setNewNotifications] = useState<number>(0)
+  const [newDirectMessages, setNewDirectMessages] = useState<number>(0)
+  const [newGroupMessages, setNewGroupMessages] = useState<number>(0)
 
   const sendEvent: (event: Event, relayUrl?: string) => Promise<Event | null | undefined> = async (
     event,
@@ -132,11 +132,11 @@ export const RelayPoolContextProvider = ({
   }
   const changeNotificationHandler: (event: WebsocketEvent) => void = (event) => {
     if (event.kind === '4') {
-      setNewDirectMessages(true)
+      setNewDirectMessages((prev) => prev + 1)
     } else if (event.kind === '42') {
-      setNewGroupMessages(true)
+      setNewGroupMessages((prev) => prev + 1)
     } else {
-      setNewNotifications(true)
+      setNewNotifications((prev) => prev + 1)
     }
   }
 

@@ -83,7 +83,7 @@ export const validTubeUrl: (url: string | undefined) => boolean = (url) => {
 
 export const validBlueBirdUrl: (url: string | undefined) => boolean = (url) => {
   if (url) {
-    const serviceRegexp = /^(https?:\/\/.*\.?(twitter.com|t.co){1}.*)$/
+    const serviceRegexp = /^(https?:\/\/.*\.?(twitter.com|t.co|x.com){1}.*)$/
     return serviceRegexp.test(url)
   } else {
     return false

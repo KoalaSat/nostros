@@ -69,7 +69,7 @@ export const ConversationsFeed: React.FC = () => {
   )
 
   useEffect(() => {
-    setNewDirectMessages(false)
+    setNewDirectMessages(0)
     loadDirectMessages(false)
   }, [lastEventId, refreshBottomBarAt])
 

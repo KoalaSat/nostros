@@ -1,7 +1,5 @@
 import { type QuickSQLiteConnection } from 'react-native-quick-sqlite'
 import { getItems } from '..'
-import { median } from '../../NativeFunctions'
-import { getNoteRelaysUsage } from '../NotesRelays'
 
 export interface Relay {
   url: string
@@ -65,13 +63,4 @@ export const getRelay: (db: QuickSQLiteConnection, url: string) => Promise<Relay
   const items: object[] = getItems(resultSet)
   const relays: Relay[] = items.map((object) => databaseToEntity(object))
   return relays[0]
-}
-
-export const getResilientRelays: (db: QuickSQLiteConnection) => Promise<string[]> = async (db) => {
-  const relayUsage = await getNoteRelaysUsage(db)
-  const medianUsage = median(Object.values(relayUsage))
-  const resilientRelays = Object.keys(relayUsage).sort((n1: string, n2: string) => {
-    return Math.abs(relayUsage[n1] - medianUsage) - Math.abs(relayUsage[n2] - medianUsage)
-  })
-  return resilientRelays
 }
