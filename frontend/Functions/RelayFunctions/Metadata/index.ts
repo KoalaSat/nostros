@@ -1,6 +1,5 @@
 import { type RelayMetadata } from '../../DatabaseFunctions/RelayMetadatas'
 import { type Relay } from '../../DatabaseFunctions/Relays'
-import { median } from '../../NativeFunctions'
 import { getRTags } from '../Events'
 
 export interface ResilientAssignation {
@@ -24,6 +23,9 @@ export const getContactsRelays: (
     const urls = rTags.map((tags) => tags[1])
     urls.forEach((url) => {
       if (!localhostRegExp.test(url)) {
+        if (url.endsWith('/')) {
+          url = url.slice(0, -1);
+        }
         relaysPresence[url] = [...(relaysPresence[url] ?? []), metadata.pubkey]
       }
     })
