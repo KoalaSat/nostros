@@ -116,7 +116,7 @@ export const UserContextProvider = ({ children }: UserContextProviderProps): JSX
 
   const reloadBookmarks: () => void = () => {
     if (database && publicKey && privateKey) {
-      getList(database, 10001, publicKey).then((result) => {
+      getList(database, 10003, publicKey).then((result) => {
         if (result) {
           const eTags = getETags(result)
           setPublicBookmarks(eTags.map((tag) => tag[1]))

@@ -108,7 +108,7 @@ export const ProfilePage: React.FC<ProfilePageProps> = ({ route }) => {
         authors: [route.params.pubKey],
       },
       {
-        kinds: [10001],
+        kinds: [10003],
         limit: 1,
         authors: [route.params.pubKey],
       },

@@ -82,7 +82,7 @@ public class Event {
                     saveRelayMetadata(database);
                 } else if (kind.equals("9735")) {
                     return saveZap(database, userPubKey);
-                } else if (kind.equals("10000") || kind.equals("10001") || kind.equals("30001")) {
+                } else if (kind.equals("10000") || kind.equals("10003")) {
                     saveList(database);
                 }
             } catch (JSONException e) {

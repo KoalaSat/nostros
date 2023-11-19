@@ -14,7 +14,7 @@ export const addBookmarkList: (
 ) => void = async (sendEvent, database, privateKey, publicKey, eventId, publicBookmark) => {
   if (!eventId || eventId === '') return
 
-  const result = await getList(database, 10001, publicKey)
+  const result = await getList(database, 10003, publicKey)
   let tags: string[][] = result?.tags ?? []
   let content: string = result?.content ?? ''
   if (publicBookmark) {
@@ -34,7 +34,7 @@ export const addBookmarkList: (
   const event: Event = {
     content,
     created_at: getUnixTime(new Date()),
-    kind: 10001,
+    kind: 10003,
     pubkey: publicKey,
     tags,
   }
@@ -97,7 +97,7 @@ export const removeBookmarkList: (
 ) => void = async (sendEvent, database, privateKey, publicKey, eventId) => {
   if (!eventId || eventId === '') return
 
-  const result = await getList(database, 10001, publicKey)
+  const result = await getList(database, 10003, publicKey)
   if (result) {
     let content: string = result?.content ?? ''
     const tags = result.tags.filter((tag) => tag[1] !== eventId)
@@ -110,7 +110,7 @@ export const removeBookmarkList: (
     const event: Event = {
       content,
       created_at: getUnixTime(new Date()),
-      kind: 10001,
+      kind: 10003,
       pubkey: publicKey,
       tags,
     }
