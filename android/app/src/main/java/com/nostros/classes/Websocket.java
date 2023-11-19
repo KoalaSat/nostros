@@ -82,7 +82,11 @@ public class Websocket {
                         Log.d("Websocket", "RECEIVE URL:" + url + " __DUP__ " + message);
                     }
                 } else if (messageType.equals("OK")) {
+                    Log.d("Websocket", "RECEIVE OK:" + url + message);
                     reactNativeConfirmation(jsonArray.get(1).toString());
+                } else if (messageType.equals("AUTH")) {
+                    Log.d("Websocket", "RECEIVE AUTH:" + url + message);
+                    reactNativeAuth(jsonArray.get(1).toString());
                 }
             }
             @Override
@@ -125,5 +129,15 @@ public class Websocket {
         context
                 .getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter.class)
                 .emit("WebsocketNotification", payload);
+    }
+
+    public void reactNativeAuth(String challenge) {
+        Log.d("Websocket", "reactNativeNotification");
+        WritableMap payload = Arguments.createMap();
+        payload.putString("challenge", challenge);
+        payload.putString("url", url);
+        context
+                .getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter.class)
+                .emit("WebsocketAuth", payload);
     }
 }
