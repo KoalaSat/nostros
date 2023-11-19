@@ -53,12 +53,12 @@ export const BookmarksFeed: React.FC<BookmarksFeedProps> = ({
     if (database) {
       const filters: RelayFilters[] = [
         {
-          kinds: [10001],
+          kinds: [10003],
           limit: 1,
           authors: [publicKey],
         },
       ]
-      getList(database, 10001, publicKey).then((result) => {
+      getList(database, 10003, publicKey).then((result) => {
         if (result) {
           const eTags = getETags(result)
           if (eTags.length > 0) {
@@ -75,7 +75,7 @@ export const BookmarksFeed: React.FC<BookmarksFeedProps> = ({
 
   const loadNotes: () => void = async () => {
     if (database) {
-      const bookmarks = await getList(database, 10001, publicKey)
+      const bookmarks = await getList(database, 10003, publicKey)
       const eTags = getETags(bookmarks).map((tag) => tag[1])
       if (eTags.length > 0) {
         getNotes(database, { filters: { id: eTags } }).then((results) => {

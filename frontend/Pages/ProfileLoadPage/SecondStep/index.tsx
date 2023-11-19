@@ -49,7 +49,7 @@ export const SecondStep: React.FC<SecondStepProps> = ({ nextStep, skip }) => {
           authors: [publicKey],
         },
         {
-          kinds: [10001],
+          kinds: [10003],
           limit: 1,
           authors: [publicKey],
         },
