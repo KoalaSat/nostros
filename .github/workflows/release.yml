@@ -20,17 +20,17 @@ jobs:
         uses: softprops/action-gh-release@v1
         with:
           body: |
-            **New Nostros Release [${{ github.ref_name }}]**
+            **New Nostros Release [${{ github.ref_name }}]**            
+            
+            **Download**
 
-            **What's Changed**
+            https://github.com/KoalaSat/nostros/releases/download/${{ github.ref_name }}/nostros-${{ github.ref_name }}-universal.apk
 
             **Changelog**
 
             https://github.com/KoalaSat/nostros/releases/${{ github.ref_name }}
 
-            **Download**
-
-            https://github.com/KoalaSat/nostros/releases/download/${{ github.ref_name }}/nostros-${{ github.ref_name }}-universal.apk
+            **What's Changed**
       # Upload APK artifact asset
       - name: 'Download universal APK Artifact'
         uses: actions/download-artifact@v3

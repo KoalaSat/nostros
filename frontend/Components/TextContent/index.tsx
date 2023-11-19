@@ -105,11 +105,10 @@ export const TextContent: React.FC<TextContentProps> = ({
     matchingString,
     matches,
   ) => {
-    const mentionIndex: number = parseInt(matches[1])
-
-    if (userNames[mentionIndex]) {
+    if (userNames[matchingString]) {
       return `@${userNames[matchingString]}`
     } else if (event) {
+      const mentionIndex: number = parseInt(matches[1])
       const tag = event.tags[mentionIndex]
 
       if (tag) {
@@ -122,7 +121,7 @@ export const TextContent: React.FC<TextContentProps> = ({
           getUser(pubKey, database).then((user) => {
             setLoadedUsers(getUnixTime(new Date()))
             setUserNames((prev) => {
-              if (user?.name) prev[mentionIndex] = user.name
+              if (user?.name) prev[matchingString] = user.name
               return prev
             })
           })

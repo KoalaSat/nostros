@@ -142,6 +142,19 @@ class RelayPool {
     }
   }
 
+  public readonly sendAuth: (event: Event, relayUrl: string) => Promise<Event | null> = async (
+    event,
+    relayUrl,
+  ) => {
+    if (validateEvent(event)) {
+      this.sendRelay(['AUTH', event], relayUrl)
+      return event
+    } else {
+      console.log('Not valid event', event)
+      return null
+    }
+  }
+
   public readonly subscribe: (subId: string, filters?: RelayFilters[]) => void = async (
     subId,
     filters,

@@ -35,8 +35,10 @@ export interface RelayPoolContextProps {
 }
 
 export interface WebsocketEvent {
-  eventId: string
+  eventId?: string
   kind?: string
+  url?: string
+  challenge?: string
 }
 
 export interface RelayPoolContextProviderProps {
@@ -79,6 +81,7 @@ export const RelayPoolContextProvider = ({
   const [newNotifications, setNewNotifications] = useState<number>(0)
   const [newDirectMessages, setNewDirectMessages] = useState<number>(0)
   const [newGroupMessages, setNewGroupMessages] = useState<number>(0)
+  const [chalenges, setChallenges] = useState<WebsocketEvent[]>([])
 
   const sendEvent: (event: Event, relayUrl?: string) => Promise<Event | null | undefined> = async (
     event,
@@ -107,6 +110,27 @@ export const RelayPoolContextProvider = ({
     return await relayPool?.sendEvent(event, relayUrl)
   }
 
+  const sendAuth: (challenge: string, url: string) => Promise<void> = async (
+    challenge,
+    url,
+  ) => {
+    if (publicKey && privateKey) {
+      let nostrEvent: Event = {
+        content: '',
+        created_at: getUnixTime(new Date()),
+        kind: 22242,
+        pubkey: publicKey,
+        tags: [
+          ["relay", url],
+          ["challenge", challenge]
+        ],
+      }
+      nostrEvent = await signEvent(nostrEvent, privateKey)
+
+      await relayPool?.sendAuth(nostrEvent, url)
+    }
+  }
+
   const sendRelays: (url?: string) => Promise<void> = async (url) => {
     if (publicKey && database) {
       getActiveRelays(database).then((results) => {
@@ -125,11 +149,22 @@ export const RelayPoolContextProvider = ({
   }
 
   const changeEventIdHandler: (event: WebsocketEvent) => void = (event) => {
-    setLastEventId(event.eventId)
+    if (event.eventId) setLastEventId(event.eventId)
   }
+
   const changeConfirmationIdHandler: (event: WebsocketEvent) => void = (event) => {
-    setLastConfirmationId(event.eventId)
+   if (event.eventId) setLastConfirmationId(event.eventId)
   }
+
+  const authHandler: (event: WebsocketEvent) => Promise<void> = async (event) => {
+    if (event.url && event.challenge) {
+      setChallenges((prev) => {
+        prev.push(event)
+        return prev
+      })
+    }
+  }
+
   const changeNotificationHandler: (event: WebsocketEvent) => void = (event) => {
     if (event.kind === '4') {
       setNewDirectMessages((prev) => prev + 1)
@@ -140,6 +175,10 @@ export const RelayPoolContextProvider = ({
     }
   }
 
+  const debouncedAuthdHandler = useMemo(
+    () => debounce(authHandler, 250),
+    [relayPool],
+  )
   const debouncedEventIdHandler = useMemo(
     () => debounce(changeEventIdHandler, 250),
     [setLastEventId],
@@ -238,6 +277,7 @@ export const RelayPoolContextProvider = ({
     if (publicKey && publicKey !== '') {
       DeviceEventEmitter.addListener('WebsocketEvent', debouncedEventIdHandler)
       DeviceEventEmitter.addListener('WebsocketConfirmation', debouncedConfirmationHandler)
+      DeviceEventEmitter.addListener('WebsocketAuth', debouncedAuthdHandler)
       DeviceEventEmitter.addListener('WebsocketNotification', changeNotificationHandler)
       loadRelayPool()
     }
@@ -248,6 +288,18 @@ export const RelayPoolContextProvider = ({
       loadRelays().then(() => setRelayPoolReady(true))
     }
   }, [relayPool])
+
+  useEffect(() => {
+    if (relayPoolReady) {
+      setChallenges((prev) => {
+        prev.forEach((event) => {
+          if (event.challenge && event.url) sendAuth(event.challenge, event.url)
+        })
+
+        return []
+      })
+    }
+  }, [relayPoolReady, chalenges.length])
 
   return (
     <RelayPoolContext.Provider
