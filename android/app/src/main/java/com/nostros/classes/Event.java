@@ -65,7 +65,7 @@ public class Event {
                         saveFollower(database, userPubKey);
                     }
                 } else if (kind.equals("4")) {
-                    return saveDirectMessage(database);
+                    return saveDirectMessage(database, userPubKey);
                 } else if (kind.equals("7")) {
                     return saveReaction(database, userPubKey);
                 } else if (kind.equals("40")) {
@@ -483,13 +483,15 @@ public class Event {
 
             database.insert("nostros_group_messages", null, values);
 
-            return true;
+            if (!pubkey.equals(userPubKey)) {
+                return true;
+            }
         }
 
         return false;
     }
 
-    protected boolean saveDirectMessage(SQLiteDatabase database) throws JSONException {
+    protected boolean saveDirectMessage(SQLiteDatabase database, String userPubKey) throws JSONException {
         String query = "SELECT created_at FROM nostros_direct_messages WHERE id = ?";
         @SuppressLint("Recycle") Cursor cursor = database.rawQuery(query, new String[] {id});
 
@@ -514,7 +516,9 @@ public class Event {
 
             database.insert("nostros_direct_messages", null, values);
 
-            return true;
+            if (!pubkey.equals(userPubKey)) {
+                return true;
+            }
         }
 
         return false;

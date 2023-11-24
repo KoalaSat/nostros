@@ -11,15 +11,13 @@ import { WalletContext } from '../../Contexts/WalletContext'
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'
 
 interface LnPreviewProps {
-  setOpen?: (open: boolean) => void
   invoice?: string
   setInvoice: (invoice: string | undefined) => void
 }
 
 export const LnPreview: React.FC<LnPreviewProps> = ({
   invoice,
-  setInvoice,
-  setOpen = () => {},
+  setInvoice
 }) => {
   const theme = useTheme()
   const { t } = useTranslation('common')
@@ -78,10 +76,7 @@ export const LnPreview: React.FC<LnPreviewProps> = ({
       closeOnDragDown={true}
       // height={630}
       customStyles={rbSheetQrCustomStyles}
-      onClose={() => {
-        setInvoice(undefined)
-        setOpen(false)
-      }}
+      onClose={() => setInvoice(undefined)}
     >
       <Card style={styles.qrContainer}>
         <Card.Content>

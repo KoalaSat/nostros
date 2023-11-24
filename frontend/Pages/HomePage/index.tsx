@@ -48,7 +48,12 @@ export const HomePage: React.FC = () => {
           authors: [publicKey],
         },
         {
-          kinds: [4, 1, 7, 9735, 42],
+          kinds: [4, 1],
+          '#p': [publicKey],
+          limit: 20
+        },
+        {
+          kinds: [7, 9735, 42],
           '#p': [publicKey],
           limit: 40
         },

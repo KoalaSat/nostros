@@ -1,33 +1,30 @@
 import React, { useEffect, useMemo, useState } from 'react'
-import { type User } from '../../Functions/DatabaseFunctions/Users'
-import { type ListRenderItem, StyleSheet, View } from 'react-native'
-import { useTranslation } from 'react-i18next'
-import RBSheet from 'react-native-raw-bottom-sheet'
-import { Button, Divider, Text, TextInput, TouchableRipple, useTheme } from 'react-native-paper'
-import { AppContext } from '../../Contexts/AppContext'
-import LnPreview from '../LnPreview'
 import { type Note } from '../../Functions/DatabaseFunctions/Notes'
-import { getNpub } from '../../lib/nostr/Nip19'
-import { formatPubKey } from '../../Functions/RelayFunctions/Users'
-import { getZaps, type Zap } from '../../Functions/DatabaseFunctions/Zaps'
-import { FlatList, ScrollView } from 'react-native-gesture-handler'
-import ProfileData from '../ProfileData'
+import { Button, Text, TextInput, TouchableRipple } from 'react-native-paper'
+import { useTranslation } from 'react-i18next'
+import { open } from 'react-native-quick-sqlite'
+import type RBSheet from 'react-native-raw-bottom-sheet'
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'
+import ProfileData from '../../Components/ProfileData'
+import { AppContext } from '../../Contexts/AppContext'
 import { RelayPoolContext } from '../../Contexts/RelayPoolContext'
-import { Kind } from 'nostr-tools'
-import { getUnixTime } from 'date-fns'
 import { UserContext } from '../../Contexts/UserContext'
+import { type Zap, getZaps } from '../../Functions/DatabaseFunctions/Zaps'
+import { formatPubKey } from '../../Functions/RelayFunctions/Users'
 import { lightningInvoice } from '../../Functions/ServicesFunctions/ZapInvoice'
+import { getNpub } from '../../lib/nostr/Nip19'
+import { getUnixTime } from 'date-fns'
+import { Kind } from 'nostr-tools'
+import { type User } from '../../Functions/DatabaseFunctions/Users'
+import LnPreview from '../../Components/LnPreview'
+import { FlatList, type ListRenderItem, ScrollView, StyleSheet, View } from 'react-native'
+import { goBack } from '../../lib/Navigation'
 
-interface LnPaymentProps {
-  open: boolean
-  setOpen: (open: boolean) => void
-  note?: Note
-  user?: User
+interface ZapPageProps {
+  route: { params: { note: Note, user: User } }
 }
 
-export const LnPayment: React.FC<LnPaymentProps> = ({ open, setOpen, note, user }) => {
-  const theme = useTheme()
+export const ZapPage: React.FC<ZapPageProps> = ({ route: { params: { note, user } } }) => {
   const { t } = useTranslation('common')
   const { getSatoshiSymbol, database, setDisplayUserDrawer } = React.useContext(AppContext)
   const { relayPool, lastEventId } = React.useContext(RelayPoolContext)
@@ -48,23 +45,18 @@ export const LnPayment: React.FC<LnPaymentProps> = ({ open, setOpen, note, user 
 
   useEffect(() => {
     setMonto('')
-    if (open) {
-      if (database && note?.id) {
-        getZaps(database, { eventId: note?.id }).then((results) => {
-          relayPool?.subscribe('zappers-meta', [
-            {
-              kinds: [Kind.Metadata],
-              authors: results.filter((zap) => !zap.name).map((zap) => zap.zapper_user_id),
-            },
-          ])
-          setZaps(results)
-        })
-      }
-      bottomSheetLnPaymentRef.current?.open()
-    } else {
-      bottomSheetLnPaymentRef.current?.close()
+    if (database && note?.id) {
+      getZaps(database, { eventId: note?.id }).then((results) => {
+        relayPool?.subscribe('zappers-meta', [
+          {
+            kinds: [Kind.Metadata],
+            authors: results.filter((zap) => !zap.name).map((zap) => zap.zapper_user_id),
+          },
+        ])
+        setZaps(results)
+      })
     }
-  }, [open])
+  }, [])
 
   useEffect(() => {
     if (database && note?.id) {
@@ -102,7 +94,7 @@ export const LnPayment: React.FC<LnPaymentProps> = ({ open, setOpen, note, user 
           if (invoice) setInvoice(invoice)
           setLoading(false)
         })
-        .catch(() => {
+        .catch((e) => {
           setLoading(false)
         })
     }
@@ -142,102 +134,78 @@ export const LnPayment: React.FC<LnPaymentProps> = ({ open, setOpen, note, user 
     )
   }
 
-  const rbSheetCustomStyles = React.useMemo(() => {
-    return {
-      container: {
-        backgroundColor: theme.colors.background,
-        paddingTop: 16,
-        paddingRight: 16,
-        paddingBottom: 32,
-        paddingLeft: 16,
-        borderTopRightRadius: 28,
-        borderTopLeftRadius: 28,
-        height: 'auto',
-      },
-    }
-  }, [])
-
   return (
-    <>
-      <RBSheet
-        ref={bottomSheetLnPaymentRef}
-        closeOnDragDown={true}
-        customStyles={rbSheetCustomStyles}
-        onClose={() => {
-          relayPool?.unsubscribe(['zappers-meta'])
-          setOpen(false)
-        }}
-      >
-        <View style={styles.drawerBottom}>
-          {zaps.length > 0 && (
-            <View style={styles.zappers}>
-              <View style={styles.zappersList}>
-                <ScrollView>
-                  <FlatList data={zaps} renderItem={renderZapperItem} />
-                </ScrollView>
-              </View>
-              <Divider />
-            </View>
-          )}
-          <View style={[styles.montoSelection, styles.spacer]}>
-            <Button style={styles.montoButton} mode='outlined' onPress={() => setMonto('1000')}>
-              <Text>1k {getSatoshiSymbol(15)}</Text>
-            </Button>
-            <Button style={styles.montoButton} mode='outlined' onPress={() => setMonto('5000')}>
-              <Text>5k {getSatoshiSymbol(15)}</Text>
-            </Button>
-            <Button style={styles.montoButton} mode='outlined' onPress={() => setMonto('10000')}>
-              <Text>10k {getSatoshiSymbol(15)}</Text>
-            </Button>
+    <View style={styles.main}>
+      <View>
+        <View style={[styles.montoSelection, styles.spacer]}>
+          <Button style={styles.montoButton} mode='outlined' onPress={() => setMonto('1000')}>
+            <Text>1k {getSatoshiSymbol(15)}</Text>
+          </Button>
+          <Button style={styles.montoButton} mode='outlined' onPress={() => setMonto('5000')}>
+            <Text>5k {getSatoshiSymbol(15)}</Text>
+          </Button>
+          <Button style={styles.montoButton} mode='outlined' onPress={() => setMonto('10000')}>
+            <Text>10k {getSatoshiSymbol(15)}</Text>
+          </Button>
+        </View>
+        <TextInput
+          style={styles.spacer}
+          mode='outlined'
+          label={t('lnPayment.monto') ?? ''}
+          onChangeText={setMonto}
+          value={monto}
+          keyboardType='decimal-pad'
+        />
+        <TextInput
+          style={styles.spacer}
+          mode='outlined'
+          label={t('lnPayment.comment') ?? ''}
+          onChangeText={setComment}
+          value={comment}
+        />
+        {zaps.length > 0 && (
+          <View style={styles.zappers}>
+            <ScrollView>
+              <FlatList data={zaps} renderItem={renderZapperItem} />
+            </ScrollView>
           </View>
-          <TextInput
-            style={styles.spacer}
-            mode='outlined'
-            label={t('lnPayment.monto') ?? ''}
-            onChangeText={setMonto}
-            value={monto}
-            keyboardType='decimal-pad'
-          />
-          <TextInput
-            style={styles.spacer}
-            mode='outlined'
-            label={t('lnPayment.comment') ?? ''}
-            onChangeText={setComment}
-            value={comment}
-          />
+        )}
+      </View>
+      <View>
+        <Button
+          style={styles.spacer}
+          mode='contained'
+          disabled={loading || monto === ''}
+          onPress={() => generateInvoice(false)}
+          loading={loading && !isZap}
+        >
+          {t('lnPayment.anonTip')}
+        </Button>
+        {zapPubkey && (
           <Button
             style={styles.spacer}
             mode='contained'
             disabled={loading || monto === ''}
-            onPress={() => generateInvoice(false)}
-            loading={loading && !isZap}
+            onPress={() => generateInvoice(true)}
+            loading={loading && isZap}
           >
-            {t('lnPayment.anonTip')}
+            {t('lnPayment.zap')}
           </Button>
-          {zapPubkey && (
-            <Button
-              style={styles.spacer}
-              mode='contained'
-              disabled={loading || monto === ''}
-              onPress={() => generateInvoice(true)}
-              loading={loading && isZap}
-            >
-              {t('lnPayment.zap')}
-            </Button>
-          )}
-          <Button mode='outlined' onPress={() => setOpen(false)}>
-            {t('lnPayment.cancel')}
-          </Button>
-        </View>
-      </RBSheet>
-      <LnPreview invoice={invoice} setInvoice={setInvoice} setOpen={setOpen} />
-    </>
+        )}
+        <Button mode='outlined' onPress={() => goBack()}>
+          {t('lnPayment.cancel')}
+        </Button>
+      </View>
+      {invoice && <LnPreview invoice={invoice} setInvoice={setInvoice} />}
+    </View>
   )
 }
 
 const styles = StyleSheet.create({
-  drawerBottom: {
-    justifyContent: 'space-between',
+  main: {
+    flex: 1,
+    padding: 16,
+    justifyContent: "space-between"
   },
   spacer: {
     marginBottom: 16,
@@ -255,12 +223,9 @@ const styles = StyleSheet.create({
     fontFamily: 'Satoshi-Symbol',
     fontSize: 20,
   },
-  zappersList: {
-    maxHeight: 200,
-    marginBottom: 16,
-  },
   zappers: {
     marginBottom: 16,
+    marginTop: 16,
   },
   montoSelection: {
     flexDirection: 'row',
@@ -301,4 +266,4 @@ const styles = StyleSheet.create({
   },
 })
 
-export default LnPayment
+export default ZapPage
