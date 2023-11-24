@@ -39,7 +39,6 @@ import ProfileData from '../ProfileData'
 import { formatBigNumber, relayToColor } from '../../Functions/NativeFunctions'
 import { SvgXml } from 'react-native-svg'
 import { reactionIcon } from '../../Constants/Theme'
-import LnPayment from '../LnPayment'
 import { getZapsAmount } from '../../Functions/DatabaseFunctions/Zaps'
 import { lightningInvoice } from '../../Functions/ServicesFunctions/ZapInvoice'
 import LnPreview from '../LnPreview'
@@ -93,7 +92,6 @@ export const NoteCard: React.FC<NoteCardProps> = ({
   const [hide, setHide] = useState<boolean>(isContentWarning(note))
   const [userReposted, setUserReposted] = useState<boolean>()
   const [repost, setRepost] = useState<Note>()
-  const [openLn, setOpenLn] = React.useState<boolean>(false)
   const [showReactions, setShowReactions] = React.useState<boolean>(false)
   const [loadingZap, setLoadingZap] = React.useState<boolean>(false)
   const [mutedUser, setMutedUser] = React.useState<boolean>(false)
@@ -475,13 +473,12 @@ export const NoteCard: React.FC<NoteCardProps> = ({
                 color={!note?.lnurl && !note?.ln_address ? undefined : '#F5D112'}
               />
             )}
-            onPress={() => setOpenLn(true)}
+            onPress={() => navigate('Zap', { note })}
             onLongPress={longPressZap ? generateZapInvoice : undefined}
             loading={loadingZap}
           >
             {note.zap_pubkey?.length > 0 ? formatBigNumber(zapsAmount) : ''}
           </Button>
-          {openLn && <LnPayment open={openLn} setOpen={setOpenLn} note={note} />}
           {zapInvoice && <LnPreview invoice={zapInvoice} setInvoice={setZapInvoice} />}
         </Card.Content>
       )}

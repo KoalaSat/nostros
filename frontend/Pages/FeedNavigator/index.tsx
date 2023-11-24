@@ -32,6 +32,7 @@ import { WalletContext } from '../../Contexts/WalletContext'
 import ExternalIdentitiesPage from '../ExternalIdentitiesPage'
 import NoteActionsPage from '../NoteActionsPage'
 import ProfileActionsPage from '../ProfileActionsPage'
+import ZapPage from '../ZapPage'
 
 export const HomeNavigator: React.FC = () => {
   const theme = useTheme()
@@ -208,6 +209,7 @@ export const HomeNavigator: React.FC = () => {
           <Stack.Screen name='Config' component={ConfigPage} />
           <Stack.Screen name='ProfileConfig' component={ProfileConfigPage} />
           <Stack.Screen name='Profile' component={ProfilePage} />
+          <Stack.Screen name='Zap' component={ZapPage} />
           <Stack.Screen name='QrReader' component={QrReaderPage} />
           <Stack.Screen name='ImageGallery' component={ImageGalleryPage} />
           <Stack.Screen name='ExternalIdentities' component={ExternalIdentitiesPage} />

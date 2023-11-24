@@ -9,6 +9,7 @@ export interface Notification {
   kind: Kind | number
   pubkey: string
   amount: number
+  note_content?: string
   event_id?: string
   tags: string[][]
   name: string
@@ -29,9 +30,11 @@ export const getNotifications: (
 ) => Promise<Notification[]> = async (db, { limit, since }) => {
   let notificationsQuery = `
     SELECT
-      nostros_notifications.*, users1.name, users2.name as zapper_name
+      nostros_notifications.*, users1.name, users2.name as zapper_name, nostros_notes.content as note_content
     FROM
       nostros_notifications
+    LEFT JOIN
+      nostros_notes ON nostros_notes.id = nostros_notifications.event_id
     LEFT JOIN
       nostros_users users1 ON users1.id = nostros_notifications.pubkey
     LEFT JOIN

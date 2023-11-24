@@ -30,6 +30,7 @@ import { getTaggedEventIds } from '../../../Functions/RelayFunctions/Events'
 import ParsedText from 'react-native-parsed-text'
 import { getUser } from '../../../Functions/DatabaseFunctions/Users'
 import { getNpub } from '../../../lib/nostr/Nip19'
+import { RelayFilters } from '../../../lib/nostr/RelayPool/intex'
 
 export const NotificationsFeed: React.FC = () => {
   const initialLimitPage = React.useMemo(() => 20, [])
@@ -37,7 +38,7 @@ export const NotificationsFeed: React.FC = () => {
   const { t } = useTranslation('common')
   const { database, setNotificationSeenAt, pushedTab, getSatoshiSymbol } = useContext(AppContext)
   const { publicKey, reloadLists, mutedEvents, mutedUsers } = useContext(UserContext)
-  const { lastEventId, relayPool, setNewNotifications } = useContext(RelayPoolContext)
+  const { lastEventId, relayPool, setNewNotifications, newNotifications } = useContext(RelayPoolContext)
   const [notifications, setNotifications] = useState<Notification[]>([])
   const [refreshing, setRefreshing] = useState(true)
   const flashListRef = React.useRef<FlashList<Note>>(null)
@@ -66,6 +67,10 @@ export const NotificationsFeed: React.FC = () => {
     setRefreshing(false)
     setNewNotifications(0)
   }, [lastEventId])
+
+  useEffect(() => {
+    setNewNotifications(0)
+  }, [newNotifications])
 
   useEffect(() => {
     loadNotes()
@@ -116,15 +121,31 @@ export const NotificationsFeed: React.FC = () => {
         })
         if (filtered.length > 0) {
           setNotifications(filtered)
+          const subscriptions: RelayFilters[] = []
+
           const pubKeys = filtered
             .map((n) => n.zapper_user_id ?? n.pubkey)
             .filter((key, index, array) => array.indexOf(key) === index)
-          relayPool?.subscribe(`notification-users${publicKey?.substring(0, 8)}`, [
-            {
+          if (pubKeys.length > 0) {
+            subscriptions.push({
               kinds: [Kind.Metadata],
               authors: pubKeys,
-            },
-          ])
+            })
+          }
+
+          const eventIds: string[] = filtered
+            .map((n) => n.event_id ?? '')
+            .filter((value, index, array) => value !== '' && array.indexOf(value) === index)
+          if (eventIds.length > 0) {
+            subscriptions.push({
+              kinds: [Kind.Text, Kind.RecommendRelay],
+              '#e': eventIds
+            })
+          }
+
+          if (subscriptions.length > 0) {
+            relayPool?.subscribe(`notification-users${publicKey?.substring(0, 8)}`, subscriptions)
+          }
         }
       })
     }
@@ -167,7 +188,7 @@ export const NotificationsFeed: React.FC = () => {
       name = item.zapper_name ?? formatPubKey(getNpub(item.zapper_user_id))
       pubkey = item.zapper_user_id
     } else if (item.kind === Kind.Reaction) {
-      content = ''
+      content = item.note_content ?? ''
       if (item.content === '-') {
         icon = 'thumb-down'
         iconColor = theme.colors.error
