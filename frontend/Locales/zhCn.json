@@ -222,6 +222,16 @@
       "split": "Splits between {{count}}",
       "zappers": "Zappers"
     },
+    "splitZaps": {
+      "accept": "Split zaps",
+      "addPubKey": "Add public key",
+      "zapPubkeyTitle": "Add public key",
+      "zapPubkeyDescription": "Add any public key to be included into the split",
+      "zapPubkeyLabel": "Public key",
+      "addContact": "添加联系人",
+      "remove": "移除",
+      "split": "Splits between {{count}}"
+    },
     "notificationsFeed": {
       "reposted": "已转发",
       "zap": "已赞赏{{amount}}",

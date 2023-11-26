@@ -7,6 +7,7 @@ import {
   type ListRenderItem,
   StyleSheet,
   View,
+  Keyboard,
 } from 'react-native'
 import {
   AnimatedFAB,
@@ -26,6 +27,7 @@ import { AppContext } from '../../Contexts/AppContext'
 import { UserContext } from '../../Contexts/UserContext'
 import ProfileData from '../../Components/ProfileData'
 import { getNip19Key, getNpub } from '../../lib/nostr/Nip19'
+import { useFocusEffect } from '@react-navigation/native'
 
 interface SplitZapPageProps {
   route: { params: { splits?: string[] } }
@@ -52,9 +54,16 @@ export const SplitZapPage: React.FC<SplitZapPageProps> = ({
     loadUsers()
   }, [])
 
+  useFocusEffect(
+    React.useCallback(() => {
+      loadUsers()
+      return () => { }
+    }, []),
+  )
+
   const loadUsers: () => void = () => {
     if (database && publicKey) {
-      getUsers(database, {}).then(setUsers)
+      getUsers(database, { order: 'id ASC' }).then(setUsers)
     }
   }
 
@@ -184,10 +193,27 @@ export const SplitZapPage: React.FC<SplitZapPageProps> = ({
 
   return (
     <View style={styles.main}>
-      <View>{numberSplits > 0 && <FlatList data={splitZaps} renderItem={renderZappedItem} />}</View>
+      <View>
+        <View style={styles.tabsNavigator}>
+          <View
+            style={[
+              styles.tab,
+              { ...styles.tabActive, borderBottomColor: theme.colors.primary }
+            ]}
+          >
+            <TouchableRipple style={styles.textWrapper}>
+              <Text style={styles.tabText}>
+                {t('splitZaps.split', { count: splitZaps.length })}
+              </Text>
+            </TouchableRipple>
+          </View>
+        </View>
+        <View>{numberSplits > 0 && <FlatList data={splitZaps} renderItem={renderZappedItem} />}</View>
+      </View>
       <View>
         <Button
           mode='contained'
+          disabled={splitZaps.length < 1}
           style={styles.spacer}
           onPress={() => navigate('Send', { splits: splitZaps })}
         >
@@ -247,17 +273,17 @@ export const SplitZapPage: React.FC<SplitZapPageProps> = ({
                 forceTextInputFocus={false}
               />
             }
-            // left={
-            //   <TextInput.Icon
-            //     icon='qrcode'
-            //     onPress={() => {
-            //       bottomSheetCreateRef.current?.close()
-            //       bottomSheetPubKeyRef.current?.close()
-            //       navigate('QrReader')
-            //     }}
-            //     forceTextInputFocus={false}
-            //   />
-            // }
+          // left={
+          //   <TextInput.Icon
+          //     icon='qrcode'
+          //     onPress={() => {
+          //       bottomSheetCreateRef.current?.close()
+          //       bottomSheetPubKeyRef.current?.close()
+          //       navigate('QrReader')
+          //     }}
+          //     forceTextInputFocus={false}
+          //   />
+          // }
           />
           <Button
             mode='contained'
@@ -275,7 +301,7 @@ export const SplitZapPage: React.FC<SplitZapPageProps> = ({
               bottomSheetCreateRef.current?.close()
             }}
           >
-            {t('splitZaps.openMessage')}
+            {t('splitZaps.addPubKey')}
           </Button>
         </View>
       </RBSheet>
@@ -288,6 +314,28 @@ const styles = StyleSheet.create({
     flex: 1,
     padding: 16,
     justifyContent: 'space-between',
+  },
+  tabsNavigator: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    height: 48,
+  },
+  tab: {
+    flex: 1,
+    height: '100%',
+    justifyContent: 'center',
+    alignContent: 'center',
+  },
+  tabText: {
+    textAlign: 'center',
+  },
+  tabActive: {
+    borderBottomWidth: 3,
+  },
+  textWrapper: {
+    justifyContent: 'center',
+    height: '100%',
+    textAlign: 'center',
   },
   spacer: {
     marginBottom: 16,
