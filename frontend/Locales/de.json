@@ -72,7 +72,8 @@
       "Relays": "Relays",
       "ProfileConfig": "Mein Profil",
       "markAllRead": "Alle als gelesen markieren",
-      "ProfileActions": "Actions"
+      "ProfileActions": "Actions",
+      "SplitZap": "Split Zaps"
     },
     "searchPage": {
       "placeholder": "Suche nach öffentlichen Schlüsseln, Notizen, hashtags...",
@@ -115,7 +116,8 @@
     "sendPage": {
       "isContact": "Folge ich",
       "isNotContact": "ohne Abo",
-      "contentWarning": "Sensibler Inhalt!",
+      "contentWarning": "Sensibler",
+      "splitZap": "Split Zaps",
       "send": "Senden"
     },
     "uploadImage": {
@@ -199,7 +201,11 @@
       "open": "Öffne Wallet",
       "anonTip": "Anonymer Tip",
       "zap": "Zap",
-      "pay": "Pay"
+      "pay": "Pay",
+      "invoice": "Invoice",
+      "nextInvoice": "Next invoice",
+      "split": "Splits between {{count}}",
+      "zappers": "Zappers"
     },
     "notificationsFeed": {
       "connectContactRelays": "Reconnect to contacts' relays",

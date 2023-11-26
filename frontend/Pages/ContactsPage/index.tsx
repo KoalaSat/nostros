@@ -35,11 +35,11 @@ import { removeMutedUsersList } from '../../Functions/RelayFunctions/Lists'
 
 export const ContactsPage: React.FC = () => {
   const { t } = useTranslation('common')
+  const theme = useTheme()
   const initialPageSize = 20
   const { database, setDisplayUserDrawer, qrReader, setQrReader } = useContext(AppContext)
   const { privateKey, publicKey, nPub, mutedUsers, reloadLists } = React.useContext(UserContext)
   const { relayPool, lastEventId, sendEvent } = useContext(RelayPoolContext)
-  const theme = useTheme()
   const [pageSize, setPageSize] = useState<number>(initialPageSize)
   const bottomSheetAddContactRef = React.useRef<RBSheet>(null)
   const bottomSheetProfileRef = React.useRef<RBSheet>(null)

@@ -82,7 +82,8 @@
       "Relays": "Relays",
       "ProfileConfig": "Mi perfil",
       "markAllRead": "Marcar todo como leído",
-      "ProfileActions": "Acciones"
+      "ProfileActions": "Acciones",
+      "SplitZap": "Repartir Zaps"
     },
     "conversationPage": {
       "unableDecypt": "{{username}} está hablando con otros sobre ti",
@@ -114,7 +115,8 @@
     "sendPage": {
       "isContact": "Siguiendo",
       "isNotContact": "Sin seguir",
-      "contentWarning": "Contenido sensible",
+      "contentWarning": "Sensible",
+      "splitZap": "Repartir Zaps",
       "send": "Enviar"
     },
     "groupHeaderIcon": {
@@ -215,7 +217,11 @@
       "open": "Abrir wallet",
       "anonTip": "Propina anónima",
       "zap": "Zap",
-      "pay": "Pagar"
+      "pay": "Pagar",
+      "invoice": "Factura",
+      "nextInvoice": "Siguiente factura",
+      "split": "Se reparte entre {{count}}",
+      "zappers": "Zappers"
     },
     "notificationsFeed": {
       "reposted": "Reposteado",

@@ -82,7 +82,8 @@
       "Relays": "Реле",
       "ProfileConfig": "Мой профиль",
       "markAllRead": "Mark all as read",
-      "ProfileActions": "Actions"
+      "ProfileActions": "Actions",
+      "SplitZap": "Split Zaps"
     },
     "groupHeaderIcon": {
       "delete": "Leave group",
@@ -132,7 +133,8 @@
     "sendPage": {
       "isContact": "Подписаны",
       "isNotContact": "Подписаться",
-      "contentWarning": "Делекатный контент",
+      "contentWarning": "Делекатный",
+      "splitZap": "Split Zaps",
       "send": "Отправить"
     },
     "uploadImage": {
@@ -216,7 +218,11 @@
       "open": "Открыть кошелек",
       "anonTip": "Anonymous tip",
       "zap": "Zap",
-      "pay": "Pay"
+      "pay": "Pay",
+      "invoice": "Invoice",
+      "nextInvoice": "Next invoice",
+      "split": "Splits between {{count}}",
+      "zappers": "Zappers"
     },
     "notificationsFeed": {
       "reposted": "Reposted",

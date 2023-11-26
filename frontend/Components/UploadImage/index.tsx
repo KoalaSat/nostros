@@ -55,7 +55,6 @@ export const UploadImage: React.FC<UploadImageProps> = ({
       } else {
         onError()
         setUploadingFile(false)
-        setShowNotification('imageUploadErro')
       }
     })
   }

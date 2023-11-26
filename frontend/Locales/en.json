@@ -63,7 +63,8 @@
       "Relays": "Relays",
       "ProfileConfig": "My profile",
       "markAllRead": "Mark all as read",
-      "ProfileActions": "Actions"
+      "ProfileActions": "Actions",
+      "SplitZap": "Split Zaps"
     },
     "searchPage": {
       "placeholder": "Look for public keys, notes, hashtags...",
@@ -108,7 +109,8 @@
     "sendPage": {
       "isContact": "Following",
       "isNotContact": "Not following",
-      "contentWarning": "Sensitive content",
+      "contentWarning": "Sensitive",
+      "splitZap": "Split Zaps",
       "send": "Send"
     },
     "uploadImage": {
@@ -194,7 +196,11 @@
       "open": "Open wallet",
       "anonTip": "Anonymous tip",
       "zap": "Zap",
-      "pay": "Pay"
+      "pay": "Pay",
+      "invoice": "Invoice",
+      "nextInvoice": "Next invoice",
+      "split": "Splits between {{count}}",
+      "zappers": "Zappers"
     },
     "notificationsFeed": {
       "reposted": "Reposted",

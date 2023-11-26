@@ -7,16 +7,16 @@ import { getUnixTime } from 'date-fns'
 import { type Event, signEvent } from '../../../lib/nostr/Events'
 import { requestInvoiceWithServiceParams, requestPayServiceParams } from 'lnurl-pay'
 import axios from 'axios'
+import { Note } from '../../DatabaseFunctions/Notes'
 
-export const lightningInvoice: (
+export const lightningInvoices: (
   database: QuickSQLiteConnection,
   lud: string,
   tokens: number,
   privateKey: string,
   publicKey: string,
-  userId: string,
+  note: Note,
   zap?: boolean,
-  zapPubkey?: string,
   comment?: string,
   noteId?: string,
 ) => Promise<string | null> = async (
@@ -27,13 +27,36 @@ export const lightningInvoice: (
   publicKey,
   userId,
   zap,
-  zapPubkey,
+  comment,
+  noteId,
+) => {
+
+}
+
+export const lightningInvoice: (
+  database: QuickSQLiteConnection,
+  lud: string,
+  tokens: number,
+  privateKey: string,
+  publicKey: string,
+  userId: string,
+  zap?: boolean,
+  comment?: string,
+  noteId?: string,
+) => Promise<string | null> = async (
+  database,
+  lud,
+  tokens,
+  privateKey,
+  publicKey,
+  userId,
+  zap,
   comment,
   noteId,
 ) => {
   let nostr: string
 
-  if (zap && database && privateKey && publicKey && zapPubkey && userId) {
+  if (zap && database && privateKey && publicKey && userId) {
     const relays: Relay[] = await getRelays(database)
     const tags = [
       ['p', userId],
