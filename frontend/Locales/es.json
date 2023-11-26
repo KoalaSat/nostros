@@ -223,6 +223,16 @@
       "split": "Se reparte entre {{count}}",
       "zappers": "Zappers"
     },
+    "splitZaps": {
+      "accept": "Split zaps",
+      "addPubKey": "Add public key",
+      "zapPubkeyTitle": "Add public key",
+      "zapPubkeyDescription": "Add any public key to be included into the split",
+      "zapPubkeyLabel": "Public key",
+      "addContact": "Añadir contacto",
+      "remove": "Borrar",
+      "split": "Repartir entre {{count}}"
+    },
     "notificationsFeed": {
       "reposted": "Reposteado",
       "zap": "Zap {{amount}}",

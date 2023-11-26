@@ -243,64 +243,66 @@ export const ZapPage: React.FC<ZapPageProps> = ({ route: { params: { note, user 
         </View>
       </View>
       <View>
-        <View style={[styles.montoSelection, styles.spacer]}>
-          <Button style={styles.montoButton} mode='outlined' onPress={() => setMonto('1000')}>
-            <Text>1k {getSatoshiSymbol(15)}</Text>
-          </Button>
-          <Button style={styles.montoButton} mode='outlined' onPress={() => setMonto('5000')}>
-            <Text>5k {getSatoshiSymbol(15)}</Text>
-          </Button>
-          <Button style={styles.montoButton} mode='outlined' onPress={() => setMonto('10000')}>
-            <Text>10k {getSatoshiSymbol(15)}</Text>
-          </Button>
+        <View>
+          <View style={[styles.montoSelection, styles.spacer]}>
+            <Button style={styles.montoButton} mode='outlined' onPress={() => setMonto('1000')}>
+              <Text>1k {getSatoshiSymbol(15)}</Text>
+            </Button>
+            <Button style={styles.montoButton} mode='outlined' onPress={() => setMonto('5000')}>
+              <Text>5k {getSatoshiSymbol(15)}</Text>
+            </Button>
+            <Button style={styles.montoButton} mode='outlined' onPress={() => setMonto('10000')}>
+              <Text>10k {getSatoshiSymbol(15)}</Text>
+            </Button>
+          </View>
+          <TextInput
+            style={styles.spacer}
+            mode='outlined'
+            label={t('lnPayment.monto') ?? ''}
+            onChangeText={setMonto}
+            value={monto}
+            keyboardType='decimal-pad'
+          />
+          <TextInput
+            style={styles.spacer}
+            mode='outlined'
+            label={t('lnPayment.comment') ?? ''}
+            onChangeText={setComment}
+            value={comment}
+          />
         </View>
-        <TextInput
-          style={styles.spacer}
-          mode='outlined'
-          label={t('lnPayment.monto') ?? ''}
-          onChangeText={setMonto}
-          value={monto}
-          keyboardType='decimal-pad'
-        />
-        <TextInput
-          style={styles.spacer}
-          mode='outlined'
-          label={t('lnPayment.comment') ?? ''}
-          onChangeText={setComment}
-          value={comment}
-        />
-      </View>
-      <View>
-        <Button
-          style={styles.spacer}
-          mode='contained'
-          disabled={loading || monto === ''}
-          onPress={() => generateInvoice(false)}
-          loading={loading && !isZap}
-        >
-          {t('lnPayment.anonTip')}
-        </Button>
-        {zapPubkey && (
+        <View>
           <Button
             style={styles.spacer}
             mode='contained'
             disabled={loading || monto === ''}
-            onPress={() => generateInvoice(true)}
-            loading={loading && isZap}
+            onPress={() => generateInvoice(false)}
+            loading={loading && !isZap}
           >
-            {t('lnPayment.zap')}
+            {t('lnPayment.anonTip')}
           </Button>
+          {zapPubkey && (
+            <Button
+              style={styles.spacer}
+              mode='contained'
+              disabled={loading || monto === ''}
+              onPress={() => generateInvoice(true)}
+              loading={loading && isZap}
+            >
+              {t('lnPayment.zap')}
+            </Button>
+          )}
+          <Button mode='outlined' onPress={() => goBack()}>
+            {t('lnPayment.cancel')}
+          </Button>
+        </View>
+        {invoices.length > 0 && (
+          <LnPreview
+            invoices={invoices}
+            setInvoices={setInvoices}
+          />
         )}
-        <Button mode='outlined' onPress={() => goBack()}>
-          {t('lnPayment.cancel')}
-        </Button>
       </View>
-      {invoices.length > 0 && (
-        <LnPreview
-          invoices={invoices}
-          setInvoices={setInvoices}
-        />
-      )}
     </View>
   )
 }

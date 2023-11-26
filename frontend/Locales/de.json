@@ -207,6 +207,16 @@
       "split": "Splits between {{count}}",
       "zappers": "Zappers"
     },
+    "splitZaps": {
+      "accept": "Split zaps",
+      "addPubKey": "Add public key",
+      "zapPubkeyTitle": "Add public key",
+      "zapPubkeyDescription": "Add any public key to be included into the split",
+      "zapPubkeyLabel": "Public key",
+      "addContact": "Kontakt hinzufügen",
+      "remove": "Entfernen",
+      "split": "Splits between {{count}}"
+    },
     "notificationsFeed": {
       "connectContactRelays": "Reconnect to contacts' relays",
       "reposted": "Reposted",
