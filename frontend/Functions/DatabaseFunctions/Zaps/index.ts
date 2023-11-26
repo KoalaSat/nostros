@@ -3,7 +3,7 @@ import { getItems } from '..'
 import { type Event } from '../../../lib/nostr/Events'
 
 export interface Zap extends Event {
-  amount: boolean
+  amount: number
   zapped_event_id: string
   zapped_user_id: string
   zapper_user_id: string

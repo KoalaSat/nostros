@@ -4,20 +4,20 @@ import { Dimensions, Linking, StyleSheet, View } from 'react-native'
 import Clipboard from '@react-native-clipboard/clipboard'
 import { useTranslation } from 'react-i18next'
 import RBSheet from 'react-native-raw-bottom-sheet'
-import { Card, IconButton, Text, useTheme } from 'react-native-paper'
+import { Card, Chip, IconButton, Text, useTheme } from 'react-native-paper'
 import { AppContext } from '../../Contexts/AppContext'
 import { decode, type PaymentRequestObject, type TagsObject } from 'bolt11'
 import { WalletContext } from '../../Contexts/WalletContext'
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'
 
 interface LnPreviewProps {
-  invoice?: string
-  setInvoice: (invoice: string | undefined) => void
+  invoices: string[]
+  setInvoices: (invoices: string[]) => void
 }
 
 export const LnPreview: React.FC<LnPreviewProps> = ({
-  invoice,
-  setInvoice
+  invoices,
+  setInvoices
 }) => {
   const theme = useTheme()
   const { t } = useTranslation('common')
@@ -27,7 +27,14 @@ export const LnPreview: React.FC<LnPreviewProps> = ({
   const [decodedLnUrl, setDecodedLnUrl] = useState<
     PaymentRequestObject & { tagsObject: TagsObject }
   >()
+  const [invoice, setInvoice] = useState<string>(invoices[0])
+  const [index, setIndex] = useState<number>(0)
   const [paymentDone, setPaymentDone] = useState<boolean>()
+
+  useEffect(() => {
+    setPaymentDone(false)
+    setInvoice(invoices[index])
+  }, [index])
 
   useEffect(() => {
     if (invoice) {
@@ -76,19 +83,31 @@ export const LnPreview: React.FC<LnPreviewProps> = ({
       closeOnDragDown={true}
       // height={630}
       customStyles={rbSheetQrCustomStyles}
-      onClose={() => setInvoice(undefined)}
+      onClose={() => setInvoices([])}
     >
       <Card style={styles.qrContainer}>
         <Card.Content>
           <View style={styles.qr}>
-            {paymentDone === undefined ? (
+            {!paymentDone ? (
               <QRCode value={invoice} quietZone={8} size={Dimensions.get('window').width - 64} />
             ) : (
-              <MaterialCommunityIcons
-                name={paymentDone ? 'check-circle-outline' : 'close-circle-outline'}
-                size={120}
-                color={paymentDone ? '#7ADC70' : theme.colors.error}
-              />
+              <>
+                <MaterialCommunityIcons
+                  name={paymentDone ? 'check-circle-outline' : 'close-circle-outline'}
+                  size={120}
+                  color={paymentDone ? '#7ADC70' : theme.colors.error}
+                />
+                {index < invoices.length - 1 && (
+                  <Chip
+                    compact
+                    style={{ ...styles.chip, backgroundColor: theme.colors.secondaryContainer }}
+                    mode='outlined'
+                    onPress={() => setIndex(prev => prev + 1)}
+                  >
+                    {t('lnPayment.nextInvoice')}
+                  </Chip>
+                )}
+              </>
             )}
           </View>
           <View style={styles.qrText}>
@@ -97,6 +116,13 @@ export const LnPreview: React.FC<LnPreviewProps> = ({
           </View>
         </Card.Content>
       </Card>
+      {invoices.length > 1 && (
+        <View style={styles.counter}>
+          <Text>
+            {`${t('lnPayment.invoice')}: ${index + 1} / ${invoices.length}`}
+          </Text>
+        </View>
+      )}
       <View style={styles.cardActions}>
         <View style={styles.actionButton}>
           <IconButton icon='content-copy' size={28} onPress={copyInvoice} />
@@ -143,6 +169,10 @@ const styles = StyleSheet.create({
   montoButton: {
     flex: 2,
   },
+  chip: {
+    height: 40,
+    marginTop: 16
+  },
   actionButton: {
     justifyContent: 'center',
     alignItems: 'center',
@@ -151,6 +181,12 @@ const styles = StyleSheet.create({
   cardActions: {
     flexDirection: 'row',
     justifyContent: 'space-around',
+  },
+  counter: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    margin: 16
   },
   qr: {
     justifyContent: 'center',

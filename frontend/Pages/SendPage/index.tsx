@@ -9,9 +9,9 @@ import { type Note } from '../../Functions/DatabaseFunctions/Notes'
 import { getETags } from '../../Functions/RelayFunctions/Events'
 import { getUsers, type User } from '../../Functions/DatabaseFunctions/Users'
 import { formatPubKey } from '../../Functions/RelayFunctions/Users'
-import { Button, IconButton, Switch, Text, TextInput, useTheme } from 'react-native-paper'
+import { Button, Chip, IconButton, TextInput, useTheme } from 'react-native-paper'
 import { UserContext } from '../../Contexts/UserContext'
-import { goBack } from '../../lib/Navigation'
+import { goBack, navigate } from '../../lib/Navigation'
 import { Kind, nip19 } from 'nostr-tools'
 import ProfileData from '../../Components/ProfileData'
 import NoteCard from '../../Components/NoteCard'
@@ -20,7 +20,7 @@ import { useFocusEffect } from '@react-navigation/native'
 import { TouchableWithoutFeedback } from 'react-native-gesture-handler'
 
 interface SendPageProps {
-  route: { params: { note: Note; type?: 'reply' | 'repost' } | undefined }
+  route: { params: { note: Note; type?: 'reply' | 'repost', splits?: string[] } | undefined }
 }
 
 export const SendPage: React.FC<SendPageProps> = ({ route }) => {
@@ -43,7 +43,6 @@ export const SendPage: React.FC<SendPageProps> = ({ route }) => {
   useFocusEffect(
     React.useCallback(() => {
       if (database) getUsers(database, {}).then(setUsers)
-
       return () => {}
     }, []),
   )
@@ -86,6 +85,13 @@ export const SendPage: React.FC<SendPageProps> = ({ route }) => {
       }
 
       if (contentWarning) tags.push(['content-warning', ''])
+
+      if (route.params?.splits?.length) {
+        route.params?.splits.forEach((split) => {
+          const mainRelay = users.find(u => u.id === split)
+          tags.push(['zap', split, mainRelay?.main_relay ?? '', '1'])
+        })
+      }
 
       if (userMentions.length > 0) {
         userMentions.forEach((user) => {
@@ -190,8 +196,28 @@ export const SendPage: React.FC<SendPageProps> = ({ route }) => {
         <View style={{ backgroundColor: theme.colors.elevation.level1 }}>
           <View style={styles.contentWarning}>
             <View style={styles.switchWrapper}>
-              <Switch value={contentWarning} onValueChange={setContentWarning} />
-              <Text>{t('sendPage.contentWarning')}</Text>
+              <Chip
+                compact
+                style={contentWarning ? 
+                  { ...styles.chip, ...{ backgroundColor: theme.colors.secondaryContainer } } : 
+                  { ...styles.chip, ...{ backgroundColor: theme.colors.elevation.level1 } }
+                }
+                mode='outlined'
+                onPress={() => setContentWarning((prev) => !prev)}
+              >
+                {t('sendPage.contentWarning')}
+              </Chip>
+              <Chip
+                compact
+                style={(route.params?.splits?.length ?? 0) > 0 ? 
+                  { backgroundColor: theme.colors.secondaryContainer } : 
+                  { backgroundColor: theme.colors.elevation.level1 }
+                }
+                mode='outlined'
+                onPress={() => navigate('SplitZap', { splits: route.params?.splits })}
+              >
+                {t('sendPage.splitZap')}{route.params?.splits?.length && ` (${route.params?.splits?.length})`}
+              </Chip>
             </View>
             <IconButton
               icon='image-outline'
@@ -303,6 +329,9 @@ const styles = StyleSheet.create({
     marginTop: 16,
     marginBottom: 16,
   },
+  chip: {
+    marginRight: 16
+  }
 })
 
 export default SendPage

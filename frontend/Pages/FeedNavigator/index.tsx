@@ -33,6 +33,7 @@ import ExternalIdentitiesPage from '../ExternalIdentitiesPage'
 import NoteActionsPage from '../NoteActionsPage'
 import ProfileActionsPage from '../ProfileActionsPage'
 import ZapPage from '../ZapPage'
+import SplitZapPage from '../SplitZapPage'
 
 export const HomeNavigator: React.FC = () => {
   const theme = useTheme()
@@ -114,7 +115,7 @@ export const HomeNavigator: React.FC = () => {
               const historyKey = history[0]?.key
 
               return (
-                !['Search'].includes(route.name) && (
+                !['Search', 'SplitZap'].includes(route.name) && (
                   <Appbar.Header>
                     {back ? (
                       <Appbar.BackAction onPress={() => navigation.goBack()} />
@@ -194,6 +195,7 @@ export const HomeNavigator: React.FC = () => {
           <Stack.Screen name='ProfileActions' component={ProfileActionsPage} />
           <Stack.Screen name='NoteActions' component={NoteActionsPage} />
           <Stack.Screen name='Send' component={SendPage} />
+          <Stack.Screen name='SplitZap' component={SplitZapPage} />
           <Stack.Screen name='Repost' component={SendPage} />
           <Stack.Screen name='Reply' component={SendPage} />
           <Stack.Screen name='Conversation' component={ConversationPage} />

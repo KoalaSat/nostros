@@ -81,7 +81,8 @@
       "Send": "发送",
       "Relays": "中继",
       "ProfileConfig": "简介设置",
-      "ProfileActions": "Actions"
+      "ProfileActions": "Actions",
+      "SplitZap": "Split Zaps"
     },
     "groupHeaderIcon": {
       "delete": "退出",
@@ -132,6 +133,7 @@
       "isContact": "正在关注",
       "isNotContact": "关注",
       "contentWarning": "敏感内容",
+      "splitZap": "Split Zaps",
       "send": "发送"
     },
     "uploadImage": {
@@ -214,7 +216,11 @@
       "open": "打开钱包",
       "anonTip": "匿名赞赏",
       "zap": "赞赏",
-      "pay": "支付"
+      "pay": "支付",
+      "invoice": "Invoice",
+      "nextInvoice": "Next invoice",
+      "split": "Splits between {{count}}",
+      "zappers": "Zappers"
     },
     "notificationsFeed": {
       "reposted": "已转发",
