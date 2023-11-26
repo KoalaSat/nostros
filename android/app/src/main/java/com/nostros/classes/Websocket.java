@@ -72,12 +72,14 @@ public class Websocket {
                     String id = data.getString("id");
                     if (!createdEvents.contains(id)) {
                         Log.d("Websocket", "RECEIVE URL:" + url + " __NEW__ " + message);
-                        boolean notify = database.saveEvent(data, userPubKey, url);
-                        if (notify) {
+                        int action = database.saveEvent(data, userPubKey, url);
+                        if (action >= 2) {
                             reactNativeNotification(data.getString("id"), data.getString("kind"));
                         }
+                        if (action >= 1) {
+                            reactNativeEvent(data.getString("id"));
+                        }
                         createdEvents.add(id);
-                        reactNativeEvent(data.getString("id"));
                     } else {
                         Log.d("Websocket", "RECEIVE URL:" + url + " __DUP__ " + message);
                     }

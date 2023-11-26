@@ -34,7 +34,7 @@ import {
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'
 import { REGEX_SOCKET_LINK } from '../../Constants/Relay'
 import { navigate, push } from '../../lib/Navigation'
-import { Kind } from 'nostr-tools'
+import { Kind, nip19 } from 'nostr-tools'
 import ProfileData from '../ProfileData'
 import { formatBigNumber, relayToColor } from '../../Functions/NativeFunctions'
 import { SvgXml } from 'react-native-svg'

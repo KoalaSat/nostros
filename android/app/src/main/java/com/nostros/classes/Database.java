@@ -264,7 +264,7 @@ public class Database {
         } catch (SQLException e) { }
     }
 
-    public boolean saveEvent(JSONObject data, String userPubKey, String relayUrl) throws JSONException {
+    public int saveEvent(JSONObject data, String userPubKey, String relayUrl) throws JSONException {
         Event event = new Event(data);
         return event.save(instance, userPubKey, relayUrl);
     }
