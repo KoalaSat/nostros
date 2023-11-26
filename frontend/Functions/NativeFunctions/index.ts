@@ -58,7 +58,7 @@ export const pickRandomItems = <T>(arr: T[], n: number): T[] => {
 
 export const validImageUrl: (url: string | undefined) => boolean = (url) => {
   if (url) {
-    const regexp = /^(https?:\/\/.*\.?(png|jpg|jpeg|gif|webp){1}(\?.*)?)$/
+    const regexp = /^https?:\/\/.*\.(png|jpg|jpeg|gif|webp)$/
     return regexp.test(url)
   } else {
     return false
@@ -67,7 +67,7 @@ export const validImageUrl: (url: string | undefined) => boolean = (url) => {
 
 export const validMediaUrl: (url: string | undefined) => boolean = (url) => {
   if (url) {
-    return /^(https?:\/\/.*\.(mp4|mp3){1})$/.test(url)
+    return /^https?:\/\/.*\.(mp4|mp3)$/.test(url)
   } else {
     return false
   }
@@ -75,7 +75,7 @@ export const validMediaUrl: (url: string | undefined) => boolean = (url) => {
 
 export const validTubeUrl: (url: string | undefined) => boolean = (url) => {
   if (url) {
-    return /^(https?:\/\/.*\.?(youtube|youtu.be){1}.*)$/.test(url)
+    return /^(https?:\/\/.*?(youtube|youtu.be).*?)$/.test(url)
   } else {
     return false
   }
@@ -83,7 +83,7 @@ export const validTubeUrl: (url: string | undefined) => boolean = (url) => {
 
 export const validBlueBirdUrl: (url: string | undefined) => boolean = (url) => {
   if (url) {
-    const serviceRegexp = /^(https?:\/\/.*\.?(twitter.com|t.co|x.com){1}.*)$/
+    const serviceRegexp = /^(https?:\/\/.*?(twitter\.com|t\.co|x\.com).*?)$/
     return serviceRegexp.test(url)
   } else {
     return false

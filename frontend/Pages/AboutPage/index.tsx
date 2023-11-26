@@ -81,7 +81,7 @@ export const AboutPage: React.FC = () => {
             )}
           />
         ),
-        onPress: async () => await Linking.openURL('https://www.nostr.how'),
+        onPress: async () => await Linking.openURL('https://www.nostr.com'),
       },
       {
         key: 5,

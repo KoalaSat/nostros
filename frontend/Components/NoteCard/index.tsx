@@ -34,7 +34,7 @@ import {
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'
 import { REGEX_SOCKET_LINK } from '../../Constants/Relay'
 import { navigate, push } from '../../lib/Navigation'
-import { Kind } from 'nostr-tools'
+import { Kind, nip19 } from 'nostr-tools'
 import ProfileData from '../ProfileData'
 import { formatBigNumber, relayToColor } from '../../Functions/NativeFunctions'
 import { SvgXml } from 'react-native-svg'
@@ -198,7 +198,10 @@ export const NoteCard: React.FC<NoteCardProps> = ({
             />
           )}
           {note?.repost_id && (
-            <TouchableRipple onPress={() => navigate('Note', { noteId: note.repost_id })}>
+            <TouchableRipple onPress={() => {
+              console.log({ noteId: note.repost_id })
+              navigate('Note', { noteId: note.repost_id })
+            }}>
               {repost && showRepostPreview ? (
                 <NoteCard
                   note={repost}
