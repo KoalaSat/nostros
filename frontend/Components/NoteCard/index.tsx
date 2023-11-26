@@ -198,10 +198,7 @@ export const NoteCard: React.FC<NoteCardProps> = ({
             />
           )}
           {note?.repost_id && (
-            <TouchableRipple onPress={() => {
-              console.log({ noteId: note.repost_id })
-              navigate('Note', { noteId: note.repost_id })
-            }}>
+            <TouchableRipple onPress={() => navigate('Note', { noteId: note.repost_id })}>
               {repost && showRepostPreview ? (
                 <NoteCard
                   note={repost}
