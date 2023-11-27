@@ -107,8 +107,8 @@ android {
         applicationId "com.nostros"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 74
-        versionName "v0.3.2.8-alpha"
+        versionCode 76
+        versionName "v0.3.3.0-alpha"
     }
 
     splits {
@@ -169,6 +169,8 @@ dependencies {
     implementation 'com.github.KoalaSat.nostr-java:nostr-event:70e62e24ad'
 
     implementation 'com.facebook.fresco:animated-gif:2.6.0'
+
+    implementation project(':react-native-fs')
 
     implementation("androidx.swiperefreshlayout:swiperefreshlayout:1.0.0")
     debugImplementation("com.facebook.flipper:flipper:${FLIPPER_VERSION}")

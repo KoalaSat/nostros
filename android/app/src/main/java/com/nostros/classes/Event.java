@@ -13,6 +13,7 @@ import org.json.JSONObject;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
@@ -45,7 +46,7 @@ public class Event {
         tags = data.getJSONArray("tags");
     }
 
-    public boolean save(SQLiteDatabase database, String userPubKey, String relayUrl) {
+    public int save(SQLiteDatabase database, String userPubKey, String relayUrl) {
         if (isValid()) {
             try {
                 ContentValues relayValues = new ContentValues();
@@ -55,42 +56,42 @@ public class Event {
                 database.replace("nostros_notes_relays", null, relayValues);
 
                 if (kind.equals("0")) {
-                    saveUserMeta(database);
+                    return saveUserMeta(database);
                 } else if (kind.equals("1") || kind.equals("2")) {
                     return saveNote(database, userPubKey);
                 } else if (kind.equals("3")) {
                     if (pubkey.equals(userPubKey)) {
-                        savePets(database);
+                        return savePets(database);
                     } else {
-                        saveFollower(database, userPubKey);
+                        return saveFollower(database, userPubKey);
                     }
                 } else if (kind.equals("4")) {
-                    return saveDirectMessage(database);
+                    return saveDirectMessage(database, userPubKey);
                 } else if (kind.equals("7")) {
                     return saveReaction(database, userPubKey);
                 } else if (kind.equals("40")) {
-                    saveGroup(database);
+                    return saveGroup(database);
                 } else if (kind.equals("41")) {
-                    updateGroup(database);
+                    return updateGroup(database);
                 } else if (kind.equals("42")) {
                     return saveGroupMessage(database, userPubKey);
                 } else if (kind.equals("43")) {
-                    hideGroupMessage(database);
+                    return hideGroupMessage(database);
                 } else if (kind.equals("44")) {
-                    muteUser(database);
+                    return muteUser(database);
                 } else if (kind.equals("10002")) {
-                    saveRelayMetadata(database);
+                    return saveRelayMetadata(database);
                 } else if (kind.equals("9735")) {
                     return saveZap(database, userPubKey);
                 } else if (kind.equals("10000") || kind.equals("10003")) {
-                    saveList(database);
+                    return saveList(database);
                 }
             } catch (JSONException e) {
                 e.printStackTrace();
             }
         }
 
-        return false;
+        return 0;
     }
 
     protected boolean isValid() {
@@ -156,27 +157,9 @@ public class Event {
 
     protected String getRepostId() {
         String match = null;
-        Matcher matcherTag = Pattern.compile("#\\[(\\d+)\\]").matcher(content);
-        if (matcherTag.find()) {
-            int position = Integer.parseInt(matcherTag.group(1));
-            try {
-                JSONArray tag = tags.getJSONArray(position);
-                String tagKind = tag.getString(0);
-                if (tagKind.equals("e")) {
-                    match = tag.getString(1);
-                }
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-        }
         Matcher matcherBech = Pattern.compile("nostr:((nevent1|note1)\\S+)").matcher(content);
         if (matcherBech.find()) {
-            String bech32 = matcherBech.group(1);
-            try {
-                match = Bech32.fromBech32(bech32);
-            } catch (NostrException e) {
-                e.printStackTrace();
-            }
+            match = getReplyEventId();
         }
         return match;
     }
@@ -260,7 +243,7 @@ public class Event {
         return "";
     }
 
-    protected boolean saveNotification(SQLiteDatabase database, String eventId, double amount, String zapper_user_id) {
+    protected int saveNotification(SQLiteDatabase database, String eventId, double amount, String zapper_user_id) {
         String query = "SELECT id FROM nostros_notifications WHERE id = ?";
         @SuppressLint("Recycle") Cursor cursor = database.rawQuery(query, new String[] {id});
         if (cursor.getCount() == 0) {
@@ -275,13 +258,13 @@ public class Event {
             values.put("event_id", eventId);
             values.put("zapper_user_id", zapper_user_id);
             database.replace("nostros_notifications", null, values);
-            return true;
+            return 2;
         }
 
-        return false;
+        return 1;
     }
 
-    protected boolean saveNote(SQLiteDatabase database, String userPubKey) {
+    protected int saveNote(SQLiteDatabase database, String userPubKey) {
         String query = "SELECT id FROM nostros_notes WHERE id = ?";
         @SuppressLint("Recycle") Cursor cursor = database.rawQuery(query, new String[] {id});
 
@@ -302,16 +285,18 @@ public class Event {
             values.put("user_mentioned", userMentioned);
             values.put("repost_id", repostId);
             database.replace("nostros_notes", null, values);
+
+            if (userMentioned > 0 && !pubkey.equals(userPubKey)) {
+                return saveNotification(database, repostId, 0, null);
+            }
+
+            return 1;
         }
 
-        if (userMentioned > 0 && !pubkey.equals(userPubKey)) {
-            return saveNotification(database, repostId, 0, null);
-        }
-
-        return false;
+        return 0;
     }
 
-    protected void saveRelayMetadata(SQLiteDatabase database) {
+    protected int saveRelayMetadata(SQLiteDatabase database) {
         String query = "SELECT id FROM nostros_relay_metadata WHERE id = ?";
         @SuppressLint("Recycle") Cursor cursor = database.rawQuery(query, new String[] {id});
 
@@ -325,10 +310,13 @@ public class Event {
             values.put("sig", sig);
             values.put("tags", tags.toString());
             database.replace("nostros_relay_metadata", null, values);
+            return 1;
         }
+
+        return 0;
     }
 
-    protected void saveList(SQLiteDatabase database) {
+    protected int saveList(SQLiteDatabase database) {
         String query = "SELECT created_at FROM nostros_lists WHERE pubkey = ? AND kind = ?";
         @SuppressLint("Recycle") Cursor cursor = database.rawQuery(query, new String[] {pubkey, kind});
 
@@ -351,16 +339,20 @@ public class Event {
         values.put("list_tag", listTag);
         if (cursor.getCount() == 0) {
             database.insert("nostros_lists", null, values);
+            return 1;
         } else if (cursor.moveToFirst()) {
             if (created_at > cursor.getInt(0)) {
                 String whereClause = "pubkey = ? AND kind = ?";
                 String[] whereArgs = new String[]{pubkey, kind};
                 database.update("nostros_lists", values, whereClause, whereArgs);
+                return 1;
             }
         }
+
+        return 0;
     }
 
-    protected void muteUser(SQLiteDatabase database) throws JSONException {
+    protected int muteUser(SQLiteDatabase database) throws JSONException {
         JSONArray pTags = filterTags("p");
         String groupId = pTags.getJSONArray(0).getString(1);
         String query = "SELECT id FROM nostros_users WHERE id = ?";
@@ -374,10 +366,13 @@ public class Event {
                     groupId
             };
             database.update("nostros_users", values, whereClause, whereArgs);
+            return 1;
         }
+
+        return 0;
     }
 
-    protected void hideGroupMessage(SQLiteDatabase database) throws JSONException {
+    protected int hideGroupMessage(SQLiteDatabase database) throws JSONException {
         JSONArray eTags = filterTags("e");
         String groupId = eTags.getJSONArray(0).getString(1);
         String query = "SELECT id FROM nostros_group_messages WHERE id = ?";
@@ -391,10 +386,13 @@ public class Event {
                     groupId
             };
             database.update("nostros_group_messages", values, whereClause, whereArgs);
+            return 1;
         }
+
+        return 0;
     }
 
-    protected void saveGroup(SQLiteDatabase database) throws JSONException {
+    protected int saveGroup(SQLiteDatabase database) throws JSONException {
         JSONObject groupContent = new JSONObject(content);
         String query = "SELECT created_at, pubkey FROM nostros_group_meta WHERE id = ?";
         @SuppressLint("Recycle") Cursor cursor = database.rawQuery(query, new String[] {id});
@@ -413,6 +411,8 @@ public class Event {
             values.put("id", id);
             values.put("created_at", created_at);
             database.insert("nostros_group_meta", null, values);
+
+            return 1;
         } else if (cursor.moveToFirst()) {
             if (created_at > cursor.getInt(0)) {
                 values.put("name", groupContent.optString("name"));
@@ -425,10 +425,13 @@ public class Event {
                     id
             };
             database.update("nostros_group_meta", values, whereClause, whereArgs);
+            return 1;
         }
+
+        return 0;
     }
 
-    protected void updateGroup(SQLiteDatabase database) throws JSONException {
+    protected int updateGroup(SQLiteDatabase database) throws JSONException {
         JSONObject groupContent = new JSONObject(content);
         JSONArray eTags = filterTags("e");
         String groupId = eTags.getJSONArray(0).getString(1);
@@ -450,16 +453,20 @@ public class Event {
             values.put("tags", tags.toString());
             values.put("deleted", 0);
             database.insert("nostros_group_meta", null, values);
+            return 1;
         } else if (cursor.moveToFirst() && created_at > cursor.getInt(0)) {
             String whereClause = "id = ?";
             String[] whereArgs = new String[] {
                     groupId
             };
             database.update("nostros_group_meta", values, whereClause, whereArgs);
+            return 1;
         }
+
+        return 0;
     }
 
-    protected boolean saveGroupMessage(SQLiteDatabase database, String userPubKey) throws JSONException {
+    protected int saveGroupMessage(SQLiteDatabase database, String userPubKey) throws JSONException {
         String query = "SELECT created_at FROM nostros_group_messages WHERE id = ?";
         @SuppressLint("Recycle") Cursor cursor = database.rawQuery(query, new String[] {id});
 
@@ -483,13 +490,17 @@ public class Event {
 
             database.insert("nostros_group_messages", null, values);
 
-            return true;
+            if (!pubkey.equals(userPubKey)) {
+                return 2;
+            }
+
+            return 1;
         }
 
-        return false;
+        return 0;
     }
 
-    protected boolean saveDirectMessage(SQLiteDatabase database) throws JSONException {
+    protected int saveDirectMessage(SQLiteDatabase database, String userPubKey) throws JSONException {
         String query = "SELECT created_at FROM nostros_direct_messages WHERE id = ?";
         @SuppressLint("Recycle") Cursor cursor = database.rawQuery(query, new String[] {id});
 
@@ -514,13 +525,17 @@ public class Event {
 
             database.insert("nostros_direct_messages", null, values);
 
-            return true;
+            if (!pubkey.equals(userPubKey)) {
+                return 2;
+            }
+
+            return 1;
         }
 
-        return false;
+        return 0;
     }
 
-    protected boolean saveReaction(SQLiteDatabase database, String userPubKey) throws JSONException {
+    protected int saveReaction(SQLiteDatabase database, String userPubKey) throws JSONException {
         String query = "SELECT created_at FROM nostros_reactions WHERE id = ?";
         @SuppressLint("Recycle") Cursor cursor = database.rawQuery(query, new String[] {id});
 
@@ -554,12 +569,14 @@ public class Event {
             if (!pubkey.equals(userPubKey) && reacted_user_id.equals(userPubKey)) {
                 return saveNotification(database, reacted_event_id, 0, null);
             }
+
+            return 1;
         }
 
-        return false;
+        return 0;
     }
 
-    protected void saveUserMeta(SQLiteDatabase database) throws JSONException {
+    protected int saveUserMeta(SQLiteDatabase database) throws JSONException {
         JSONObject userContent = new JSONObject(content);
         String query = "SELECT created_at, name, tags FROM nostros_users WHERE id = ?";
         @SuppressLint("Recycle") Cursor cursor = database.rawQuery(query, new String[] {pubkey});
@@ -584,6 +601,8 @@ public class Event {
             values.put("id", pubkey);
             values.put("blocked", 0);
             database.insert("nostros_users", null, values);
+
+            return 1;
         } else if (cursor.moveToFirst()){
             String whereClause = "id = ?";
             String[] whereArgs = new String[]{
@@ -593,6 +612,7 @@ public class Event {
                 values.put("zap_pubkey", getZapPubkey(lnurl, ln_address));
                 values.put("valid_nip05", validateNip05(nip05) ? 1 : 0);
                 database.update("nostros_users", values, whereClause, whereArgs);
+                return 1;
             } else if (created_at == cursor.getInt(0)) {
                 ContentValues putValues = new ContentValues();
                 putValues.put("name", name);
@@ -600,9 +620,11 @@ public class Event {
                 database.update("nostros_users", putValues, whereClause, whereArgs);
             }
         }
+
+        return 0;
     }
 
-    protected boolean saveZap(SQLiteDatabase database, String userPubKey) throws JSONException {
+    protected int saveZap(SQLiteDatabase database, String userPubKey) throws JSONException {
         String query = "SELECT created_at FROM nostros_zaps WHERE id = ?";
         @SuppressLint("Recycle") Cursor cursor = database.rawQuery(query, new String[] {id});
 
@@ -661,12 +683,14 @@ public class Event {
             if (zapped_user_id.equals(userPubKey) && !pubkey.equals(userPubKey)) {
                 return saveNotification(database, zapped_event_id, amount, zapper_user_id);
             }
+
+            return 1;
         }
 
-        return false;
+        return 0;
     }
 
-    protected void savePets(SQLiteDatabase database) throws JSONException {
+    protected int savePets(SQLiteDatabase database) throws JSONException {
         String queryLast = "SELECT pet_at FROM nostros_users ORDER BY pet_at DESC LIMIT 1";
         Cursor cursorLast = database.rawQuery(queryLast, new String[] {});
         if (cursorLast.moveToFirst() && created_at > cursorLast.getInt(0)) {
@@ -696,10 +720,14 @@ public class Event {
                     database.update("nostros_users", values, whereClause, whereArgs);
                 }
             }
+
+            return 1;
         }
+
+        return 0;
     }
 
-    protected void saveFollower(SQLiteDatabase database, String userPubKey) throws JSONException {
+    protected int saveFollower(SQLiteDatabase database, String userPubKey) throws JSONException {
         JSONArray pTags = filterTags("p");
         for (int i = 0; i < pTags.length(); ++i) {
             JSONArray tag = pTags.getJSONArray(i);
@@ -724,6 +752,8 @@ public class Event {
                 }
             }
         }
+
+        return 1;
     }
 
     protected static JSONObject getJSONObjectFromURL(String urlString) throws JSONException, IOException {

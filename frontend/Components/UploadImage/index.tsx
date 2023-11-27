@@ -30,7 +30,7 @@ export const UploadImage: React.FC<UploadImageProps> = ({
   const [showNotification, setShowNotification] = useState<undefined | string>()
   const [imageUpload, setImageUpload] = useState<Asset>()
   const bottomSheetImageRef = React.useRef<RBSheet>(null)
-  const [imageHostingService] = useState<string>(getImageHostingService())
+  const [imageHostingService, setImageHostingService] = useState<string>(getImageHostingService())
 
   useEffect(() => {
     if (startUpload && !uploadingFile) {
@@ -55,7 +55,6 @@ export const UploadImage: React.FC<UploadImageProps> = ({
       } else {
         onError()
         setUploadingFile(false)
-        setShowNotification('imageUploadErro')
       }
     })
   }
@@ -77,6 +76,9 @@ export const UploadImage: React.FC<UploadImageProps> = ({
           setUploadingFile(false)
           setShowNotification('imageUploadErro')
           onError()
+        })
+        .finally(() => {
+          setImageHostingService(getImageHostingService())
         })
     }
   }

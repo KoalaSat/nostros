@@ -138,27 +138,31 @@ export const TextContent: React.FC<TextContentProps> = ({
   const renderProfile: (matchingString: string, matches: string[]) => string = (
     matchingString,
   ) => {
-    const decoded = nip19.decode(matchingString.replace('nostr:', ''))
+    try {
+      const decoded = nip19.decode(matchingString.replace('nostr:', ''))
+    
+      let pubKey = decoded.data as string
 
-    let pubKey = decoded.data as string
-
-    if (decoded.type === 'nprofile') {
-      pubKey = (decoded.data as nip19.ProfilePointer).pubkey
-    }
-
-    if (userNames[matchingString]) {
-      return `@${userNames[matchingString]}`
-    } else {
-      if (database) {
-        getUser(pubKey, database).then((user) => {
-          setLoadedUsers(getUnixTime(new Date()))
-          setUserNames((prev) => {
-            if (user?.name) prev[matchingString] = user.name
-            return prev
-          })
-        })
+      if (decoded.type === 'nprofile') {
+        pubKey = (decoded.data as nip19.ProfilePointer).pubkey
       }
-      return `@${formatPubKey(pubKey)}`
+
+      if (userNames[matchingString]) {
+        return `@${userNames[matchingString]}`
+      } else {
+        if (database) {
+          getUser(pubKey, database).then((user) => {
+            setLoadedUsers(getUnixTime(new Date()))
+            setUserNames((prev) => {
+              if (user?.name) prev[matchingString] = user.name
+              return prev
+            })
+          })
+        }
+        return `@${formatPubKey(pubKey)}`
+      }
+    } catch {
+      return '@[invalid nip19]'
     }
   }
 

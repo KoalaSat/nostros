@@ -72,12 +72,14 @@ public class Websocket {
                     String id = data.getString("id");
                     if (!createdEvents.contains(id)) {
                         Log.d("Websocket", "RECEIVE URL:" + url + " __NEW__ " + message);
-                        boolean notify = database.saveEvent(data, userPubKey, url);
-                        if (notify) {
+                        int action = database.saveEvent(data, userPubKey, url);
+                        if (action >= 2) {
                             reactNativeNotification(data.getString("id"), data.getString("kind"));
                         }
+                        if (action >= 1) {
+                            reactNativeEvent(data.getString("id"));
+                        }
                         createdEvents.add(id);
-                        reactNativeEvent(data.getString("id"));
                     } else {
                         Log.d("Websocket", "RECEIVE URL:" + url + " __DUP__ " + message);
                     }
@@ -87,6 +89,9 @@ public class Websocket {
                 } else if (messageType.equals("AUTH")) {
                     Log.d("Websocket", "RECEIVE AUTH:" + url + message);
                     reactNativeAuth(jsonArray.get(1).toString());
+                } else if (messageType.equals("PAY")) {
+                    Log.d("Websocket", "RECEIVE PAY:" + url + message);
+                    reactNativePay(jsonArray.get(1).toString(), jsonArray.get(2).toString(), jsonArray.get(3).toString());
                 }
             }
             @Override
@@ -134,10 +139,21 @@ public class Websocket {
     public void reactNativeAuth(String challenge) {
         Log.d("Websocket", "reactNativeNotification");
         WritableMap payload = Arguments.createMap();
-        payload.putString("challenge", challenge);
+        payload.putString("description", challenge);
         payload.putString("url", url);
         context
                 .getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter.class)
                 .emit("WebsocketAuth", payload);
+    }
+
+    public void reactNativePay(String invoice, String description, String url) {
+        Log.d("Websocket", "reactNativeNotification");
+        WritableMap payload = Arguments.createMap();
+        payload.putString("invoice", invoice);
+        payload.putString("description", description);
+        payload.putString("url", url);
+        context
+                .getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter.class)
+                .emit("WebsocketPay", payload);
     }
 }

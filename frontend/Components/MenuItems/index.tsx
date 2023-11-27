@@ -67,6 +67,8 @@ export const MenuItems: React.FC = () => {
       navigate('Contacts')
     } else if (key === 'wallet') {
       navigate('Wallet')
+    } else if (key === 'exports') {
+      navigate('Exports')
     }
   }
 
@@ -174,11 +176,19 @@ export const MenuItems: React.FC = () => {
             />
           )}
           <Drawer.Item
+            label={t('menuItems.exports')}
+            icon='file-import-outline'
+            key='exports'
+            active={drawerItemIndex === 2}
+            onPress={() => onPressItem('exports', 2)}
+            onTouchEnd={() => setDrawerItemIndex(-1)}
+          />
+          <Drawer.Item
             label={t('menuItems.configuration')}
             icon='cog'
             key='configuration'
             active={drawerItemIndex === 2}
-            onPress={() => onPressItem('config', 2)}
+            onPress={() => onPressItem('config', 3)}
             onTouchEnd={() => setDrawerItemIndex(-1)}
           />
         </Drawer.Section>
@@ -188,7 +198,7 @@ export const MenuItems: React.FC = () => {
             icon='information-outline'
             key='about'
             active={drawerItemIndex === 3}
-            onPress={() => onPressItem('about', 3)}
+            onPress={() => onPressItem('about', 4)}
             onTouchEnd={() => setDrawerItemIndex(-1)}
           />
           <Drawer.Item
@@ -196,7 +206,7 @@ export const MenuItems: React.FC = () => {
             icon='comment-question-outline'
             key='faq'
             active={drawerItemIndex === 4}
-            onPress={() => onPressItem('faq', 4)}
+            onPress={() => onPressItem('faq', 5)}
             onTouchEnd={() => setDrawerItemIndex(-1)}
           />
           <Drawer.Item

@@ -60,6 +60,7 @@
       "ExternalIdentities": "My identities",
       "Group": "",
       "QrReader": "",
+      "Zap": "Zap",
       "NoteActions": "Note",
       "ImageGallery": "",
       "Search": "",
@@ -80,7 +81,23 @@
       "Send": "发送",
       "Relays": "中继",
       "ProfileConfig": "简介设置",
-      "ProfileActions": "Actions"
+      "ProfileActions": "Actions",
+      "SplitZap": "Split Zaps",
+      "Exports": "Export"
+    },
+    "exportsPage": {
+      "notifications": {
+        "notesExport": "All your notes has been downloaded.",
+        "petsExport": "All your contacts has been downloaded.",
+        "relaysExport": "All your relays has been downloaded.",
+        "converationsExport": "All your direct messages has been downloaded.",
+        "exportError": "There was an error creating the export file."
+      },
+      "myNotes": "My notes",
+      "myContacts": "My contacts",
+      "myDirectMessages": "My direct messages",
+      "myRelays": "My relays",
+      "download": "Download"
     },
     "groupHeaderIcon": {
       "delete": "退出",
@@ -131,6 +148,7 @@
       "isContact": "正在关注",
       "isNotContact": "关注",
       "contentWarning": "敏感内容",
+      "splitZap": "Split Zaps",
       "send": "发送"
     },
     "uploadImage": {
@@ -158,7 +176,8 @@
       "about": "关于",
       "faq": "常见问题",
       "reportBug": "反馈问题",
-      "logout": "退出"
+      "logout": "退出",
+      "exports": "Export"
     },
     "configPage": {
       "signHeight": "用最新的比特币区块签署事件",
@@ -213,7 +232,22 @@
       "open": "打开钱包",
       "anonTip": "匿名赞赏",
       "zap": "赞赏",
-      "pay": "支付"
+      "pay": "支付",
+      "invoice": "Invoice",
+      "nextInvoice": "Next",
+      "prevInvoice": "Previous",
+      "split": "Splits between {{count}}",
+      "zappers": "Zappers"
+    },
+    "splitZaps": {
+      "accept": "Split zaps",
+      "addPubKey": "Add public key",
+      "zapPubkeyTitle": "Add public key",
+      "zapPubkeyDescription": "Add any public key to be included into the split",
+      "zapPubkeyLabel": "Public key",
+      "addContact": "添加联系人",
+      "remove": "移除",
+      "split": "Splits between {{count}}"
     },
     "notificationsFeed": {
       "reposted": "已转发",

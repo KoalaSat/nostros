@@ -14,7 +14,6 @@ import { type User, getUser } from '../../Functions/DatabaseFunctions/Users'
 import { getUnixTime } from 'date-fns'
 import { Kind } from 'nostr-tools'
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'
-import LnPayment from '../../Components/LnPayment'
 import LnPreview from '../../Components/LnPreview'
 import ProfileShare from '../../Components/ProfileShare'
 import { getUserRelays } from '../../Functions/DatabaseFunctions/NotesRelays'
@@ -42,7 +41,6 @@ export const ProfileActionsPage: React.FC<ProfileActionsProps> = ({ route: { par
   const bottomSheetShareRef = React.useRef<RBSheet>(null)
   const bottomSheetMuteRef = React.useRef<RBSheet>(null)
   const [userRelays, setUserRelays] = React.useState<string[]>()
-  const [openLn, setOpenLn] = React.useState<boolean>(false)
   const [zapInvoice, setZapInvoice] = React.useState<string>()
 
   React.useEffect(() => {
@@ -246,7 +244,7 @@ export const ProfileActionsPage: React.FC<ProfileActionsProps> = ({ route: { par
           <IconButton
             icon='lightning-bolt'
             size={28}
-            onPress={() => setOpenLn(true)}
+            onPress={() => navigate('Zap', { user })}
             onLongPress={longPressZap ? generateZapInvoice : undefined}
             disabled={
               !user?.lnurl && user?.lnurl !== '' && !user?.ln_address && user?.ln_address !== ''
@@ -383,8 +381,12 @@ export const ProfileActionsPage: React.FC<ProfileActionsProps> = ({ route: { par
           </Button>
         </View>
       </RBSheet>
-      <LnPayment setOpen={setOpenLn} open={openLn} user={user} />
-      {zapInvoice && <LnPreview invoice={zapInvoice} setInvoice={setZapInvoice} />}
+      {zapInvoice && (
+        <LnPreview 
+          invoices={[{ invoice: zapInvoice }]} 
+          setInvoices={(arr) => setZapInvoice(arr[0]?.invoice)}
+        />
+      )}
       {showNotification && (
         <Snackbar
           style={styles.snackbar}

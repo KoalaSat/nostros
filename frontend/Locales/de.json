@@ -58,6 +58,7 @@
       "ProfileLoad": "Login",
       "Landing": "",
       "QrReader": "",
+      "Zap": "Zap",
       "Contacts": "Kontakte",
       "Conversation": "Unterhaltung",
       "Reply": "Antworten",
@@ -71,14 +72,29 @@
       "Relays": "Relays",
       "ProfileConfig": "Mein Profil",
       "markAllRead": "Alle als gelesen markieren",
-      "ProfileActions": "Actions"
+      "ProfileActions": "Actions",
+      "SplitZap": "Split Zaps",
+      "Exports": "Export"
+    },
+    "exportsPage": {
+      "notifications": {
+        "notesExport": "All your notes has been downloaded.",
+        "petsExport": "All your contacts has been downloaded.",
+        "relaysExport": "All your relays has been downloaded.",
+        "converationsExport": "All your direct messages has been downloaded.",
+        "exportError": "There was an error creating the export file."
+      },
+      "myNotes": "My notes",
+      "myContacts": "My contacts",
+      "myDirectMessages": "My direct messages",
+      "myRelays": "My relays",
+      "download": "Download"
     },
     "searchPage": {
       "placeholder": "Suche nach öffentlichen Schlüsseln, Notizen, hashtags...",
       "emptyTitle": "Tip",
       "emptyDescription": "Tippe @ um jemanden zu finden\n\nTippe # um nach Themen zu suchen"
     },
-
     "conversationPage": {
       "unableDecypt": "{{username}} hat dich erwähnt",
       "typeMessage": "Nachricht schreiben",
@@ -114,7 +130,8 @@
     "sendPage": {
       "isContact": "Folge ich",
       "isNotContact": "ohne Abo",
-      "contentWarning": "Sensibler Inhalt!",
+      "contentWarning": "Sensibler",
+      "splitZap": "Split Zaps",
       "send": "Senden"
     },
     "uploadImage": {
@@ -139,7 +156,8 @@
       "about": "Über Nostros",
       "faq": "FAQ",
       "reportBug": "Bug melden",
-      "logout": "Abmelden"
+      "logout": "Abmelden",
+      "exports": "Export"
     },
     "configPage": {
       "signHeight": "Sign events with latest Bitcoin block",
@@ -198,7 +216,22 @@
       "open": "Öffne Wallet",
       "anonTip": "Anonymer Tip",
       "zap": "Zap",
-      "pay": "Pay"
+      "pay": "Pay",
+      "invoice": "Invoice",
+      "nextInvoice": "Next",
+      "prevInvoice": "Previous",
+      "split": "Splits between {{count}}",
+      "zappers": "Zappers"
+    },
+    "splitZaps": {
+      "accept": "Split zaps",
+      "addPubKey": "Add public key",
+      "zapPubkeyTitle": "Add public key",
+      "zapPubkeyDescription": "Add any public key to be included into the split",
+      "zapPubkeyLabel": "Public key",
+      "addContact": "Kontakt hinzufügen",
+      "remove": "Entfernen",
+      "split": "Splits between {{count}}"
     },
     "notificationsFeed": {
       "connectContactRelays": "Reconnect to contacts' relays",

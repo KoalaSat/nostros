@@ -60,6 +60,7 @@
       "ExternalIdentities": "Mis identidades",
       "Group": "",
       "QrReader": "",
+      "Zap": "Zap",
       "Search": "",
       "NoteActions": "Note",
       "Wallet": "Wallet",
@@ -81,7 +82,23 @@
       "Relays": "Relays",
       "ProfileConfig": "Mi perfil",
       "markAllRead": "Marcar todo como leído",
-      "ProfileActions": "Acciones"
+      "ProfileActions": "Acciones",
+      "SplitZap": "Repartir Zaps",
+      "Exports": "Export"
+    },
+    "exportsPage": {
+      "notifications": {
+        "notesExport": "Todas tus notas se han descargado.",
+        "petsExport": "Todos tus contactos se han descargado.",
+        "relaysExport": "Todos tus relays se han descargado.",
+        "converationsExport": "Todas tus mensages directos se han descargado.",
+        "exportError": "Se ha producido un error creato tu archivo."
+      },
+      "myNotes": "Mis notas",
+      "myContacts": "Mis contactos",
+      "myDirectMessages": "Mis mensages directos",
+      "myRelays": "Mis relays",
+      "download": "Download"
     },
     "conversationPage": {
       "unableDecypt": "{{username}} está hablando con otros sobre ti",
@@ -113,7 +130,8 @@
     "sendPage": {
       "isContact": "Siguiendo",
       "isNotContact": "Sin seguir",
-      "contentWarning": "Contenido sensible",
+      "contentWarning": "Sensible",
+      "splitZap": "Repartir Zaps",
       "send": "Enviar"
     },
     "groupHeaderIcon": {
@@ -159,7 +177,8 @@
       "about": "Sobre Nostros",
       "faq": "Preguntas frecuentes",
       "reportBug": "Reportar un bug",
-      "logout": "Salir"
+      "logout": "Salir",
+      "exports": "Exportar/Importar"
     },
     "configPage": {
       "signHeight": "Firmar con el último bloque bitcoin",
@@ -214,7 +233,22 @@
       "open": "Abrir wallet",
       "anonTip": "Propina anónima",
       "zap": "Zap",
-      "pay": "Pagar"
+      "pay": "Pagar",
+      "invoice": "Factura",
+      "nextInvoice": "Siguiente",
+      "prevInvoice": "Anterior",
+      "split": "Se reparte entre {{count}}",
+      "zappers": "Zappers"
+    },
+    "splitZaps": {
+      "accept": "Split zaps",
+      "addPubKey": "Add public key",
+      "zapPubkeyTitle": "Add public key",
+      "zapPubkeyDescription": "Add any public key to be included into the split",
+      "zapPubkeyLabel": "Public key",
+      "addContact": "Añadir contacto",
+      "remove": "Borrar",
+      "split": "Repartir entre {{count}}"
     },
     "notificationsFeed": {
       "reposted": "Reposteado",

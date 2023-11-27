@@ -32,6 +32,9 @@ import { WalletContext } from '../../Contexts/WalletContext'
 import ExternalIdentitiesPage from '../ExternalIdentitiesPage'
 import NoteActionsPage from '../NoteActionsPage'
 import ProfileActionsPage from '../ProfileActionsPage'
+import ZapPage from '../ZapPage'
+import SplitZapPage from '../SplitZapPage'
+import ExportsPage from '../ExportsPage'
 
 export const HomeNavigator: React.FC = () => {
   const theme = useTheme()
@@ -113,7 +116,7 @@ export const HomeNavigator: React.FC = () => {
               const historyKey = history[0]?.key
 
               return (
-                !['Search'].includes(route.name) && (
+                !['Search', 'SplitZap'].includes(route.name) && (
                   <Appbar.Header>
                     {back ? (
                       <Appbar.BackAction onPress={() => navigation.goBack()} />
@@ -193,6 +196,7 @@ export const HomeNavigator: React.FC = () => {
           <Stack.Screen name='ProfileActions' component={ProfileActionsPage} />
           <Stack.Screen name='NoteActions' component={NoteActionsPage} />
           <Stack.Screen name='Send' component={SendPage} />
+          <Stack.Screen name='SplitZap' component={SplitZapPage} />
           <Stack.Screen name='Repost' component={SendPage} />
           <Stack.Screen name='Reply' component={SendPage} />
           <Stack.Screen name='Conversation' component={ConversationPage} />
@@ -201,6 +205,7 @@ export const HomeNavigator: React.FC = () => {
         </Stack.Group>
         <Stack.Group>
           <Stack.Screen name='Wallet' component={WalletPage} />
+          <Stack.Screen name='Exports' component={ExportsPage} />
           <Stack.Screen name='Contacts' component={ContactsPage} />
           <Stack.Screen name='Relays' component={RelaysPage} />
           <Stack.Screen name='About' component={AboutPage} />
@@ -208,6 +213,7 @@ export const HomeNavigator: React.FC = () => {
           <Stack.Screen name='Config' component={ConfigPage} />
           <Stack.Screen name='ProfileConfig' component={ProfileConfigPage} />
           <Stack.Screen name='Profile' component={ProfilePage} />
+          <Stack.Screen name='Zap' component={ZapPage} />
           <Stack.Screen name='QrReader' component={QrReaderPage} />
           <Stack.Screen name='ImageGallery' component={ImageGalleryPage} />
           <Stack.Screen name='ExternalIdentities' component={ExternalIdentitiesPage} />

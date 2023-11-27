@@ -84,7 +84,6 @@ export const ZapsFeed: React.FC<ZapsFeedProps> = ({
       relayPool?.subscribe(`homepage-zaps-main${publicKey?.substring(0, 8)}`, [
         {
           kinds: [9735],
-          since: getUnixTime(new Date()) - 86400,
           '#p': contacts,
         },
       ])

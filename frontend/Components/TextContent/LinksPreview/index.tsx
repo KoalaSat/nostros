@@ -176,7 +176,12 @@ export const LinksPreview: React.FC<TextContentProps> = ({ urls, lnUrl }) => {
     <View>
       {decodedLnUrl && lnUrlPreview}
       {Object.keys(urls).length > 0 && <View style={styles.previewCard}>{preview()}</View>}
-      {invoice && <LnPreview invoice={invoice} setInvoice={setInvoice} />}
+      {invoice && (
+        <LnPreview 
+          invoices={[{ invoice }]} 
+          setInvoices={(arr) => setInvoice(arr[0]?.invoice)}
+        />
+      )}
     </View>
   )
 }

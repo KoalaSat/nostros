@@ -49,6 +49,7 @@
       "ProfileLoad": "Login",
       "Landing": "",
       "QrReader": "",
+      "Zap": "Zap",
       "Contacts": "Contacts",
       "Conversation": "Conversation",
       "Repost": "Repost note",
@@ -62,7 +63,23 @@
       "Relays": "Relays",
       "ProfileConfig": "My profile",
       "markAllRead": "Mark all as read",
-      "ProfileActions": "Actions"
+      "ProfileActions": "Actions",
+      "SplitZap": "Split Zaps",
+      "Exports": "Export"
+    },
+    "exportsPage": {
+      "notifications": {
+        "notesExport": "All your notes has been downloaded.",
+        "petsExport": "All your contacts has been downloaded.",
+        "relaysExport": "All your relays has been downloaded.",
+        "converationsExport": "All your direct messages has been downloaded.",
+        "exportError": "There was an error creating the export file."
+      },
+      "myNotes": "My notes",
+      "myContacts": "My contacts",
+      "myDirectMessages": "My direct messages",
+      "myRelays": "My relays",
+      "download": "Download"
     },
     "searchPage": {
       "placeholder": "Look for public keys, notes, hashtags...",
@@ -107,7 +124,8 @@
     "sendPage": {
       "isContact": "Following",
       "isNotContact": "Not following",
-      "contentWarning": "Sensitive content",
+      "contentWarning": "Sensitive",
+      "splitZap": "Split Zaps",
       "send": "Send"
     },
     "uploadImage": {
@@ -133,7 +151,8 @@
       "faq": "FAQ",
       "contacts": "Contacts",
       "reportBug": "Report a bug",
-      "logout": "Logout"
+      "logout": "Logout",
+      "exports": "Export"
     },
     "configPage": {
       "showPublicImages": "Show images on public feed",
@@ -193,7 +212,22 @@
       "open": "Open wallet",
       "anonTip": "Anonymous tip",
       "zap": "Zap",
-      "pay": "Pay"
+      "pay": "Pay",
+      "invoice": "Invoice",
+      "nextInvoice": "Next",
+      "prevInvoice": "Previous",
+      "split": "Splits between {{count}}",
+      "zappers": "Zappers"
+    },
+    "splitZaps": {
+      "accept": "Split zaps",
+      "addPubKey": "Add public key",
+      "zapPubkeyTitle": "Add public key",
+      "zapPubkeyDescription": "Add any public key to be included into the split",
+      "zapPubkeyLabel": "Public key",
+      "addContact": "Add contact",
+      "remove": "Remove",
+      "split": "Splits between {{count}}"
     },
     "notificationsFeed": {
       "reposted": "Reposted",

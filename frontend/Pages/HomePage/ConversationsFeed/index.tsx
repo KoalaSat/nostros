@@ -47,7 +47,7 @@ export const ConversationsFeed: React.FC = () => {
   const { database, refreshBottomBarAt, qrReader, setQrReader } = useContext(AppContext)
   const [pageSize, setPageSize] = useState<number>(initialPageSize)
   const { publicKey, privateKey } = useContext(UserContext)
-  const { relayPool, lastEventId, setNewDirectMessages } = useContext(RelayPoolContext)
+  const { relayPool, lastEventId, setNewDirectMessages, newDirectMessages } = useContext(RelayPoolContext)
   const [directMessages, settDirectMessages] = useState<DirectMessage[]>([])
   const [sendPubKeyInput, setSendPubKeyInput] = useState<string>('')
   const [users, setUsers] = useState<User[]>()
@@ -71,7 +71,7 @@ export const ConversationsFeed: React.FC = () => {
   useEffect(() => {
     setNewDirectMessages(0)
     loadDirectMessages(false)
-  }, [lastEventId, refreshBottomBarAt])
+  }, [lastEventId, refreshBottomBarAt, newDirectMessages])
 
   useEffect(() => {
     if (qrReader) {
@@ -109,14 +109,12 @@ export const ConversationsFeed: React.FC = () => {
         relayPool?.subscribe(`directmessages-user${publicKey?.substring(0, 8)}`, [
           {
             kinds: [Kind.EncryptedDirectMessage],
-            since: result?.created_at ?? 0,
             authors: [publicKey],
           },
         ])
         relayPool?.subscribe(`directmessages-others${publicKey?.substring(0, 8)}`, [
           {
             kinds: [Kind.EncryptedDirectMessage],
-            since: result?.created_at ?? 0,
             '#p': [publicKey],
           },
         ])

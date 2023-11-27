@@ -60,6 +60,7 @@
       "ExternalIdentities": "My identities",
       "Group": "",
       "QrReader": "",
+      "Zap": "Zap",
       "NoteActions": "Note",
       "ImageGallery": "",
       "Wallet": "Wallet",
@@ -81,7 +82,23 @@
       "Relays": "Relais",
       "ProfileConfig": "Mon profil",
       "markAllRead": "Mark all as read",
-      "ProfileActions": "Actions"
+      "ProfileActions": "Actions",
+      "SplitZap": "Split Zaps",
+      "Exports": "Export"
+    },
+    "exportsPage": {
+      "notifications": {
+        "notesExport": "All your notes has been downloaded.",
+        "petsExport": "All your contacts has been downloaded.",
+        "relaysExport": "All your relays has been downloaded.",
+        "converationsExport": "All your direct messages has been downloaded.",
+        "exportError": "There was an error creating the export file."
+      },
+      "myNotes": "My notes",
+      "myContacts": "My contacts",
+      "myDirectMessages": "My direct messages",
+      "myRelays": "My relays",
+      "download": "Download"
     },
     "groupHeaderIcon": {
       "delete": "Leave group",
@@ -131,7 +148,8 @@
     "sendPage": {
       "isContact": "Abonné",
       "isNotContact": "Sans abonné",
-      "contentWarning": "Contenu sensible",
+      "contentWarning": "Sensible",
+      "splitZap": "Split Zaps",
       "send": "Envoyer"
     },
     "uploadImage": {
@@ -159,7 +177,8 @@
       "about": "À propos de Nostros",
       "faq": "FAQ",
       "reportBug": "Report a bug",
-      "logout": "Sortir"
+      "logout": "Sortir",
+      "exports": "Export"
     },
     "language": {
       "en": "English",
@@ -219,7 +238,21 @@
       "open": "Ouvrir le wallet",
       "anonTip": "Anonymous tip",
       "zap": "Zap",
-      "pay": "Pay"
+      "pay": "Pay",
+      "invoice": "Invoice",
+      "nextInvoice": "Next invoice",
+      "split": "Splits between {{count}}",
+      "zappers": "Zappers"
+    },
+    "splitZaps": {
+      "accept": "Split zaps",
+      "addPubKey": "Add public key",
+      "zapPubkeyTitle": "Add public key",
+      "zapPubkeyDescription": "Add any public key to be included into the split",
+      "zapPubkeyLabel": "Public key",
+      "addContact": "Ajouter un contact",
+      "remove": "Supprimer",
+      "split": "Splits between {{count}}"
     },
     "notificationsFeed": {
       "reposted": "Reposted",

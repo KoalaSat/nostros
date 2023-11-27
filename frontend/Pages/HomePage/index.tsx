@@ -14,11 +14,12 @@ import { useTranslation } from 'react-i18next'
 import { navigate } from '../../lib/Navigation'
 import GroupsFeed from './GroupsFeed'
 import { RelayPoolContext } from '../../Contexts/RelayPoolContext'
+import LnPreview from '../../Components/LnPreview'
 
 export const HomePage: React.FC = () => {
   const theme = useTheme()
   const { t } = useTranslation('common')
-  const { relayPool, newNotifications, setNewNotifications, newDirectMessages, setNewDirectMessages, newGroupMessages, setNewGroupMessages } = useContext(RelayPoolContext)
+  const { relayPool, newNotifications, setNewNotifications, newDirectMessages, setNewDirectMessages, newGroupMessages, setNewGroupMessages, relayPay, setRelayPay } = useContext(RelayPoolContext)
   const { setPushedTab } = React.useContext(AppContext)
   const { privateKey, publicKey } = React.useContext(UserContext)
   const { clipboardNip21, setClipboardNip21 } = useContext(AppContext)
@@ -48,7 +49,12 @@ export const HomePage: React.FC = () => {
           authors: [publicKey],
         },
         {
-          kinds: [4, 1, 7, 9735, 42],
+          kinds: [4, 1],
+          '#p': [publicKey],
+          limit: 20
+        },
+        {
+          kinds: [7, 9735, 42],
           '#p': [publicKey],
           limit: 40
         },
@@ -207,6 +213,7 @@ export const HomePage: React.FC = () => {
           }}
         />
       </Tab.Navigator>
+      {relayPay.length > 0 ? <LnPreview invoices={relayPay} setInvoices={setRelayPay}/> : <></>}
       <RBSheet
         ref={bottomSheetClipboardRef}
         closeOnDragDown={true}
