@@ -298,7 +298,7 @@ export const RelayPoolContextProvider = ({
       DeviceEventEmitter.addListener('WebsocketConfirmation', debouncedConfirmationHandler)
       DeviceEventEmitter.addListener('WebsocketAuth', debouncedAuthdHandler)
       DeviceEventEmitter.addListener('WebsocketNotification', changeNotificationHandler)
-      DeviceEventEmitter.addListener('WebsocketPay', payHandler)
+      // DeviceEventEmitter.addListener('WebsocketPay', payHandler)
       loadRelayPool()
     }
   }, [publicKey])
