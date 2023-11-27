@@ -490,7 +490,14 @@ export const NoteCard: React.FC<NoteCardProps> = ({
           >
             {note.zap_pubkey?.length > 0 ? formatBigNumber(zapsAmount) : ''}
           </Button>
-          {zapInvoices.length > 0 && <LnPreview invoices={zapInvoices} setInvoices={setZapInvoices} />}
+          {zapInvoices.length > 0 && 
+            <LnPreview 
+              invoices={zapInvoices.map((e) => {
+                return { invoice: e }
+              })} 
+              setInvoices={(invoices) => setZapInvoices(invoices.map(i => i.invoice))} 
+            />
+          }
         </Card.Content>
       )}
       <Card.Content style={styles.relayList}>

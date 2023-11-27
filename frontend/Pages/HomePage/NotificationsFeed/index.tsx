@@ -291,7 +291,8 @@ export const NotificationsFeed: React.FC = () => {
                 ]}
                 childrenProps={{ allowFontScaling: false }}
               >
-                {content}
+                {content.substring(0, 300)}
+                {content.length > 300 && '...'}
               </ParsedText>
             )}
           </View>

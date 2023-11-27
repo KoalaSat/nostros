@@ -297,10 +297,12 @@ export const ZapPage: React.FC<ZapPageProps> = ({ route: { params: { note, user 
           </Button>
         </View>
         {invoices.length > 0 && (
-          <LnPreview
-            invoices={invoices}
-            setInvoices={setInvoices}
-          />
+          <LnPreview 
+              invoices={invoices.map((e) => {
+                return { invoice: e }
+              })} 
+              setInvoices={(invoices) => setInvoices(invoices.map(i => i.invoice))} 
+            />
         )}
       </View>
     </View>

@@ -42,6 +42,7 @@
     "react-native-bidirectional-infinite-scroll": "^0.3.3",
     "react-native-blob-util": "^0.17.3",
     "react-native-fast-image": "^8.6.3",
+    "react-native-fs": "^2.20.0",
     "react-native-gesture-handler": "^2.8.0",
     "react-native-image-picker": "^5.1.0",
     "react-native-pager-view": "^6.1.4",

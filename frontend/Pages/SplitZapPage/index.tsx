@@ -250,7 +250,9 @@ export const SplitZapPage: React.FC<SplitZapPageProps> = ({
       </RBSheet>
       <RBSheet ref={bottomSheetUserListRef} closeOnDragDown={true} customStyles={bottomSheetStyles}>
         <FlatList
-          data={users?.filter(u => u.contact)}
+          data={users?.filter((u) => {
+            return (u.contact ?? false) || (u.id === publicKey)
+          })}
           renderItem={renderUserItem}
           ItemSeparatorComponent={Divider}
           horizontal={false}

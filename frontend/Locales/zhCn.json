@@ -82,7 +82,22 @@
       "Relays": "中继",
       "ProfileConfig": "简介设置",
       "ProfileActions": "Actions",
-      "SplitZap": "Split Zaps"
+      "SplitZap": "Split Zaps",
+      "Exports": "Export"
+    },
+    "exportsPage": {
+      "notifications": {
+        "notesExport": "All your notes has been downloaded.",
+        "petsExport": "All your contacts has been downloaded.",
+        "relaysExport": "All your relays has been downloaded.",
+        "converationsExport": "All your direct messages has been downloaded.",
+        "exportError": "There was an error creating the export file."
+      },
+      "myNotes": "My notes",
+      "myContacts": "My contacts",
+      "myDirectMessages": "My direct messages",
+      "myRelays": "My relays",
+      "download": "Download"
     },
     "groupHeaderIcon": {
       "delete": "退出",
@@ -161,7 +176,8 @@
       "about": "关于",
       "faq": "常见问题",
       "reportBug": "反馈问题",
-      "logout": "退出"
+      "logout": "退出",
+      "exports": "Export"
     },
     "configPage": {
       "signHeight": "用最新的比特币区块签署事件",
@@ -218,7 +234,8 @@
       "zap": "赞赏",
       "pay": "支付",
       "invoice": "Invoice",
-      "nextInvoice": "Next invoice",
+      "nextInvoice": "Next",
+      "prevInvoice": "Previous",
       "split": "Splits between {{count}}",
       "zappers": "Zappers"
     },

@@ -83,7 +83,22 @@
       "ProfileConfig": "Mon profil",
       "markAllRead": "Mark all as read",
       "ProfileActions": "Actions",
-      "SplitZap": "Split Zaps"
+      "SplitZap": "Split Zaps",
+      "Exports": "Export"
+    },
+    "exportsPage": {
+      "notifications": {
+        "notesExport": "All your notes has been downloaded.",
+        "petsExport": "All your contacts has been downloaded.",
+        "relaysExport": "All your relays has been downloaded.",
+        "converationsExport": "All your direct messages has been downloaded.",
+        "exportError": "There was an error creating the export file."
+      },
+      "myNotes": "My notes",
+      "myContacts": "My contacts",
+      "myDirectMessages": "My direct messages",
+      "myRelays": "My relays",
+      "download": "Download"
     },
     "groupHeaderIcon": {
       "delete": "Leave group",
@@ -162,7 +177,8 @@
       "about": "À propos de Nostros",
       "faq": "FAQ",
       "reportBug": "Report a bug",
-      "logout": "Sortir"
+      "logout": "Sortir",
+      "exports": "Export"
     },
     "language": {
       "en": "English",

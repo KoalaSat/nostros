@@ -99,7 +99,7 @@ export const initialAppContext: AppContextProps = {
   longPressZap: undefined,
   setLongPressZap: () => {},
   signHeight: false,
-  setSignWithHeight: () => {},
+  setSignWithHeight: () => {}
 }
 
 export const AppContextProvider = ({ children }: AppContextProviderProps): JSX.Element => {
@@ -264,7 +264,7 @@ export const AppContextProvider = ({ children }: AppContextProviderProps): JSX.E
         qrReader,
         setQrReader,
         signHeight,
-        setSignWithHeight,
+        setSignWithHeight
       }}
     >
       {children}

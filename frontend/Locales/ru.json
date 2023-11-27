@@ -83,7 +83,22 @@
       "ProfileConfig": "Мой профиль",
       "markAllRead": "Mark all as read",
       "ProfileActions": "Actions",
-      "SplitZap": "Split Zaps"
+      "SplitZap": "Split Zaps",
+      "Exports": "Export"
+    },
+    "exportsPage": {
+      "notifications": {
+        "notesExport": "All your notes has been downloaded.",
+        "petsExport": "All your contacts has been downloaded.",
+        "relaysExport": "All your relays has been downloaded.",
+        "converationsExport": "All your direct messages has been downloaded.",
+        "exportError": "There was an error creating the export file."
+      },
+      "myNotes": "My notes",
+      "myContacts": "My contacts",
+      "myDirectMessages": "My direct messages",
+      "myRelays": "My relays",
+      "download": "Download"
     },
     "groupHeaderIcon": {
       "delete": "Leave group",
@@ -163,7 +178,8 @@
       "faq": "",
       "logout": "Выйти",
       "reportBug": "Report a bug",
-      "imageHostingService": "Хостинг изображений"
+      "imageHostingService": "Хостинг изображений",
+      "exports": "Export"
     },
     "configPage": {
       "signHeight": "Sign events with latest Bitcoin block",
@@ -220,7 +236,8 @@
       "zap": "Zap",
       "pay": "Pay",
       "invoice": "Invoice",
-      "nextInvoice": "Next invoice",
+      "nextInvoice": "Next",
+      "prevInvoice": "Previous",
       "split": "Splits between {{count}}",
       "zappers": "Zappers"
     },
