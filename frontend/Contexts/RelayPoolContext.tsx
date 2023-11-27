@@ -32,13 +32,21 @@ export interface RelayPoolContextProps {
   setNewDirectMessages: (newDirectMessages: number) => void
   newGroupMessages: number
   setNewGroupMessages: (newGroupMessages: number) => void
+  relayPay: PayEvent[]
+  setRelayPay: (invoices: PayEvent[]) => void
 }
 
 export interface WebsocketEvent {
   eventId?: string
   kind?: string
   url?: string
-  challenge?: string
+  description?: string
+  invoice?: string
+}
+export interface PayEvent {
+  invoice: string
+  url?: string
+  description?: string
 }
 
 export interface RelayPoolContextProviderProps {
@@ -64,6 +72,8 @@ export const initialRelayPoolContext: RelayPoolContextProps = {
   setNewDirectMessages: () => {},
   newGroupMessages: 0,
   setNewGroupMessages: () => {},
+  relayPay: [],
+  setRelayPay: () => {}
 }
 
 export const RelayPoolContextProvider = ({
@@ -82,6 +92,8 @@ export const RelayPoolContextProvider = ({
   const [newDirectMessages, setNewDirectMessages] = useState<number>(0)
   const [newGroupMessages, setNewGroupMessages] = useState<number>(0)
   const [chalenges, setChallenges] = useState<WebsocketEvent[]>([])
+  const [relayPay, setRelayPay] = React.useState<PayEvent[]>([])
+  const [receivedInvoices, setReceivedInvoices] = React.useState<string[]>([])
 
   const sendEvent: (event: Event, relayUrl?: string) => Promise<Event | null | undefined> = async (
     event,
@@ -110,8 +122,8 @@ export const RelayPoolContextProvider = ({
     return await relayPool?.sendEvent(event, relayUrl)
   }
 
-  const sendAuth: (challenge: string, url: string) => Promise<void> = async (
-    challenge,
+  const sendAuth: (description: string, url: string) => Promise<void> = async (
+    description,
     url,
   ) => {
     if (publicKey && privateKey) {
@@ -122,7 +134,7 @@ export const RelayPoolContextProvider = ({
         pubkey: publicKey,
         tags: [
           ["relay", url],
-          ["challenge", challenge]
+          ["challenge", description]
         ],
       }
       nostrEvent = await signEvent(nostrEvent, privateKey)
@@ -157,7 +169,7 @@ export const RelayPoolContextProvider = ({
   }
 
   const authHandler: (event: WebsocketEvent) => Promise<void> = async (event) => {
-    if (event.url && event.challenge) {
+    if (event.url && event.description) {
       setChallenges((prev) => {
         prev.push(event)
         return prev
@@ -172,6 +184,13 @@ export const RelayPoolContextProvider = ({
       setNewGroupMessages((prev) => prev + 1)
     } else {
       setNewNotifications((prev) => prev + 1)
+    }
+  }
+
+  const payHandler: (event: WebsocketEvent) => void = (event) => {
+    if (event.invoice && !receivedInvoices.includes(event.invoice)) {
+      setReceivedInvoices(prev => [...prev, event.invoice as string])
+      setRelayPay(prev => [...prev, event as PayEvent])
     }
   }
 
@@ -279,6 +298,7 @@ export const RelayPoolContextProvider = ({
       DeviceEventEmitter.addListener('WebsocketConfirmation', debouncedConfirmationHandler)
       DeviceEventEmitter.addListener('WebsocketAuth', debouncedAuthdHandler)
       DeviceEventEmitter.addListener('WebsocketNotification', changeNotificationHandler)
+      DeviceEventEmitter.addListener('WebsocketPay', payHandler)
       loadRelayPool()
     }
   }, [publicKey])
@@ -293,7 +313,7 @@ export const RelayPoolContextProvider = ({
     if (relayPoolReady) {
       setChallenges((prev) => {
         prev.forEach((event) => {
-          if (event.challenge && event.url) sendAuth(event.challenge, event.url)
+          if (event.description && event.url) sendAuth(event.description, event.url)
         })
 
         return []
@@ -324,7 +344,9 @@ export const RelayPoolContextProvider = ({
         newDirectMessages,
         setNewDirectMessages,
         newGroupMessages,
-        setNewGroupMessages
+        setNewGroupMessages,
+        relayPay,
+        setRelayPay
       }}
     >
       {children}

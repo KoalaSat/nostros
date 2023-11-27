@@ -9,15 +9,16 @@ import { AppContext } from '../../Contexts/AppContext'
 import { decode, type PaymentRequestObject, type TagsObject } from 'bolt11'
 import { WalletContext } from '../../Contexts/WalletContext'
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'
+import { type PayEvent } from '../../Contexts/RelayPoolContext'
 
 interface LnPreviewProps {
-  invoices: string[]
-  setInvoices: (invoices: string[]) => void
+  invoices: PayEvent[]
+  setInvoices: (invoices: PayEvent[]) => void
 }
 
 export const LnPreview: React.FC<LnPreviewProps> = ({
   invoices,
-  setInvoices
+  setInvoices,
 }) => {
   const theme = useTheme()
   const { t } = useTranslation('common')
@@ -27,13 +28,12 @@ export const LnPreview: React.FC<LnPreviewProps> = ({
   const [decodedLnUrl, setDecodedLnUrl] = useState<
     PaymentRequestObject & { tagsObject: TagsObject }
   >()
-  const [invoice, setInvoice] = useState<string>(invoices[0])
+  const [invoice, setInvoice] = useState<string>(invoices[0].invoice)
   const [index, setIndex] = useState<number>(0)
-  const [paymentDone, setPaymentDone] = useState<boolean>()
+  const [paymentDone, setPaymentDone] = useState<string[]>([])
 
   useEffect(() => {
-    setPaymentDone(false)
-    setInvoice(invoices[index])
+    setInvoice(invoices[index].invoice)
   }, [index])
 
   useEffect(() => {
@@ -54,7 +54,9 @@ export const LnPreview: React.FC<LnPreviewProps> = ({
 
   const payWithWallet: () => void = () => {
     if (invoice) {
-      payInvoice(invoice).then(setPaymentDone)
+      payInvoice(invoice).then((done) => {
+        if (done) setPaymentDone(prev => [...prev, invoice])
+      })
     }
   }
 
@@ -88,39 +90,70 @@ export const LnPreview: React.FC<LnPreviewProps> = ({
       <Card style={styles.qrContainer}>
         <Card.Content>
           <View style={styles.qr}>
-            {!paymentDone ? (
-              <QRCode value={invoice} quietZone={8} size={Dimensions.get('window').width - 64} />
-            ) : (
+            {paymentDone.includes(invoice) ? (
               <>
                 <MaterialCommunityIcons
                   name={paymentDone ? 'check-circle-outline' : 'close-circle-outline'}
                   size={120}
                   color={paymentDone ? '#7ADC70' : theme.colors.error}
                 />
-                {index < invoices.length - 1 && (
-                  <Chip
-                    compact
-                    style={{ ...styles.chip, backgroundColor: theme.colors.secondaryContainer }}
-                    mode='outlined'
-                    onPress={() => setIndex(prev => prev + 1)}
-                  >
-                    {t('lnPayment.nextInvoice')}
-                  </Chip>
-                )}
               </>
+            ) : (
+              <QRCode value={invoice} quietZone={8} size={Dimensions.get('window').width - 64} />
             )}
           </View>
           <View style={styles.qrText}>
             <Text>{decodedLnUrl?.satoshis} </Text>
             {getSatoshiSymbol(23)}
           </View>
+          {invoices[index].description ? (
+            <View style={styles.qrText}>
+              <Text>{invoices[index].description}</Text>
+            </View>
+          ) : <></>}
+          {invoices[index].url ? (
+            <View style={styles.qrText}>
+              <Text 
+                style={styles.link} 
+                onPress={async () =>
+                  await Linking.openURL(invoices[index]?.url ?? '')
+                }
+              >
+                {invoices[index].url}
+              </Text>
+            </View>
+          ) : <></>}
         </Card.Content>
       </Card>
       {invoices.length > 1 && (
         <View style={styles.counter}>
+          <Chip
+            compact
+            style={[
+              styles.chip,
+              { backgroundColor: theme.colors.secondaryContainer }
+            ]}
+            disabled={index === 0}
+            mode='outlined'
+            onPress={() => setIndex(prev => prev - 1)}
+          >
+            {t('lnPayment.prevInvoice')}
+          </Chip>
           <Text>
             {`${t('lnPayment.invoice')}: ${index + 1} / ${invoices.length}`}
           </Text>
+          <Chip
+            compact
+            style={[
+              styles.chip,
+              { backgroundColor: theme.colors.secondaryContainer }
+            ]}
+            disabled={index + 1 >= invoices.length}
+            mode='outlined'
+            onPress={() => setIndex(prev => prev + 1)}
+          >
+            {t('lnPayment.nextInvoice')}
+          </Chip>
         </View>
       )}
       <View style={styles.cardActions}>
@@ -159,6 +192,9 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'center',
   },
+  link: {
+    textDecorationLine: 'underline'
+  },
   satoshi: {
     fontFamily: 'Satoshi-Symbol',
     fontSize: 20,
@@ -171,7 +207,10 @@ const styles = StyleSheet.create({
   },
   chip: {
     height: 40,
-    marginTop: 16
+    width: 100,
+    marginTop: 16,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   actionButton: {
     justifyContent: 'center',
@@ -184,9 +223,10 @@ const styles = StyleSheet.create({
   },
   counter: {
     flexDirection: 'row',
-    justifyContent: 'center',
+    justifyContent: 'space-between',
     alignItems: 'center',
-    margin: 16
+    marginTop: 12,
+    marginBottom: 12
   },
   qr: {
     justifyContent: 'center',

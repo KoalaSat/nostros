@@ -83,7 +83,22 @@
       "ProfileConfig": "Mi perfil",
       "markAllRead": "Marcar todo como leído",
       "ProfileActions": "Acciones",
-      "SplitZap": "Repartir Zaps"
+      "SplitZap": "Repartir Zaps",
+      "Exports": "Export"
+    },
+    "exportsPage": {
+      "notifications": {
+        "notesExport": "Todas tus notas se han descargado.",
+        "petsExport": "Todos tus contactos se han descargado.",
+        "relaysExport": "Todos tus relays se han descargado.",
+        "converationsExport": "Todas tus mensages directos se han descargado.",
+        "exportError": "Se ha producido un error creato tu archivo."
+      },
+      "myNotes": "Mis notas",
+      "myContacts": "Mis contactos",
+      "myDirectMessages": "Mis mensages directos",
+      "myRelays": "Mis relays",
+      "download": "Download"
     },
     "conversationPage": {
       "unableDecypt": "{{username}} está hablando con otros sobre ti",
@@ -162,7 +177,8 @@
       "about": "Sobre Nostros",
       "faq": "Preguntas frecuentes",
       "reportBug": "Reportar un bug",
-      "logout": "Salir"
+      "logout": "Salir",
+      "exports": "Exportar/Importar"
     },
     "configPage": {
       "signHeight": "Firmar con el último bloque bitcoin",
@@ -219,7 +235,8 @@
       "zap": "Zap",
       "pay": "Pagar",
       "invoice": "Factura",
-      "nextInvoice": "Siguiente factura",
+      "nextInvoice": "Siguiente",
+      "prevInvoice": "Anterior",
       "split": "Se reparte entre {{count}}",
       "zappers": "Zappers"
     },

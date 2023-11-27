@@ -34,6 +34,7 @@ import NoteActionsPage from '../NoteActionsPage'
 import ProfileActionsPage from '../ProfileActionsPage'
 import ZapPage from '../ZapPage'
 import SplitZapPage from '../SplitZapPage'
+import ExportsPage from '../ExportsPage'
 
 export const HomeNavigator: React.FC = () => {
   const theme = useTheme()
@@ -204,6 +205,7 @@ export const HomeNavigator: React.FC = () => {
         </Stack.Group>
         <Stack.Group>
           <Stack.Screen name='Wallet' component={WalletPage} />
+          <Stack.Screen name='Exports' component={ExportsPage} />
           <Stack.Screen name='Contacts' component={ContactsPage} />
           <Stack.Screen name='Relays' component={RelaysPage} />
           <Stack.Screen name='About' component={AboutPage} />

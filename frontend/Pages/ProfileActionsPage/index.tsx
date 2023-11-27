@@ -381,7 +381,12 @@ export const ProfileActionsPage: React.FC<ProfileActionsProps> = ({ route: { par
           </Button>
         </View>
       </RBSheet>
-      {zapInvoice && <LnPreview invoices={[zapInvoice]} setInvoices={(arr) => setZapInvoice(arr[0])} />}
+      {zapInvoice && (
+        <LnPreview 
+          invoices={[{ invoice: zapInvoice }]} 
+          setInvoices={(arr) => setZapInvoice(arr[0]?.invoice)}
+        />
+      )}
       {showNotification && (
         <Snackbar
           style={styles.snackbar}
