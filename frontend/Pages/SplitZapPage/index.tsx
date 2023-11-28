@@ -6,8 +6,7 @@ import {
   FlatList,
   type ListRenderItem,
   StyleSheet,
-  View,
-  Keyboard,
+  View
 } from 'react-native'
 import {
   AnimatedFAB,

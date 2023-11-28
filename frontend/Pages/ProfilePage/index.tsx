@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useMemo, useState } from 'react'
-import { Linking, StyleSheet, View, Image, Dimensions, ImageBackground } from 'react-native'
+import { Linking, StyleSheet, View, Dimensions, ImageBackground } from 'react-native'
 import { Surface, Text, Snackbar, Button, useTheme } from 'react-native-paper'
 import { AppContext } from '../../Contexts/AppContext'
 import { UserContext } from '../../Contexts/UserContext'
