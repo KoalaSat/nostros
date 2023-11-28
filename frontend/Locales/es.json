@@ -180,7 +180,8 @@
       "logout": "Salir",
       "exports": "Exportar/Importar",
       "online": "Online",
-      "offline": "Offline"
+      "offline": "Offline",
+      "newVersion": "Update"
     },
     "configPage": {
       "signHeight": "Firmar con el último bloque bitcoin",

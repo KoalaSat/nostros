@@ -20,6 +20,8 @@ import { usernamePubKey } from '../../Functions/RelayFunctions/Users'
 import ProfileData from '../ProfileData'
 import { WalletContext } from '../../Contexts/WalletContext'
 import { AppContext } from '../../Contexts/AppContext'
+import VersionNumber from 'react-native-version-number'
+import axios from 'axios'
 
 export const MenuItems: React.FC = () => {
   const [drawerItemIndex, setDrawerItemIndex] = React.useState<number>(-1)
@@ -44,6 +46,7 @@ export const MenuItems: React.FC = () => {
 
   const [activerelays, setActiveRelays] = React.useState<number>(0)
   const [loadingConnection, setLoadingConnection] = React.useState<boolean>(false)
+  const [newVersion, setNewVerion] = React.useState<boolean>(false)
 
   React.useEffect(() => {
     setActiveRelays(relays.filter((relay) => relay.active).length)
@@ -81,6 +84,16 @@ export const MenuItems: React.FC = () => {
   React.useEffect(() => {
     setLoadingConnection(false)
   }, [online])
+
+  React.useEffect(() => {
+    axios.get('https://api.github.com/repos/KoalaSat/nostros/releases/latest')
+      .then((response) => {
+        if (response) {
+          const tag = response.data.tag_name
+          setNewVerion(online && Boolean(tag) && tag !== VersionNumber.appVersion)
+        }
+      })
+  }, [])
 
   return (
     <>
@@ -219,15 +232,24 @@ export const MenuItems: React.FC = () => {
             onPress={() => onPressItem('faq', 5)}
             onTouchEnd={() => setDrawerItemIndex(-1)}
           />
-          <Drawer.Item
-            label={t('menuItems.reportBug')}
-            icon='bug-outline'
-            key='bug'
-            active={drawerItemIndex === 2}
-            onPress={async () =>
-              await Linking.openURL('https://github.com/KoalaSat/nostros/issues/new/choose')
-            }
-          />
+          {newVersion && (
+            <Drawer.Item
+              label={t('menuItems.newVersion')}
+              icon='cellphone-arrow-down'
+              key='version'
+              active={drawerItemIndex === 2}
+              onPress={async () =>
+                await Linking.openURL('https://github.com/KoalaSat/nostros/releases/latest')
+              }
+              right={() =>
+                  <MaterialCommunityIcons
+                    name='exclamation-thick'
+                    size={25}
+                    color='#FFDCBB'
+                  />
+                }
+            />
+          )}
         </Drawer.Section>
       </DrawerContentScrollView>
       <Drawer.Section
@@ -335,7 +357,7 @@ const styles = StyleSheet.create({
   verifyIcon: {
     paddingTop: 6,
     paddingLeft: 5,
-  },
+  }
 })
 
 export default MenuItems

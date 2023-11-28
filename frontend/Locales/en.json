@@ -154,7 +154,8 @@
       "logout": "Logout",
       "exports": "Export",
       "online": "Online",
-      "offline": "Offline"
+      "offline": "Offline",
+      "newVersion": "Update"
     },
     "configPage": {
       "showPublicImages": "Show images on public feed",

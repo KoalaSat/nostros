@@ -180,7 +180,8 @@
       "logout": "Sortir",
       "exports": "Export",
       "online": "Online",
-      "offline": "Offline"
+      "offline": "Offline",
+      "newVersion": "Update"
     },
     "language": {
       "en": "English",

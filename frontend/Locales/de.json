@@ -159,7 +159,8 @@
       "logout": "Abmelden",
       "exports": "Export",
       "online": "Online",
-      "offline": "Offline"
+      "offline": "Offline",
+      "newVersion": "Update"
     },
     "configPage": {
       "signHeight": "Sign events with latest Bitcoin block",
