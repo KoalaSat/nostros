@@ -454,7 +454,7 @@
       "nip05Description": "链接接到域名",
       "nip05Title": "NIP-05",
       "directoryCancell": "取消",
-      "directoryContinue": "继续",
+      "continue": "继续",
       "directoryDescription": "Nostr 目录是一个与其他平台的官方用户账户相关的 Nostr 公钥数据库。在 Nostr 上找到您已经在其他平台上关注的人，并添加您的公钥，这样您的关注者就能找到您。 \n\n如果继续，您将在应用程序之外执行验证过程。",
       "directoryTitle": "Nostr 目录",
       "publishPicture": "发布",
@@ -469,7 +469,10 @@
       "lud06": "赞赏",
       "nip05": "NIP-05",
       "name": "用户名",
-      "about": "简介"
+      "about": "简介",
+      "banner": "Banner",
+      "bannerTitle": "Banner",
+      "bannerDescription": "Paste here the URL for the image you would like to display as background on your public profile."
     },
     "profilePage": {
       "bookmarkFeed": {

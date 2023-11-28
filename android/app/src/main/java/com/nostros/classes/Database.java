@@ -262,6 +262,9 @@ public class Database {
         try {
             instance.execSQL("UPDATE nostros_lists SET kind=10003 WHERE kind=10001;"); // FIXME Remove after including kind 10003
         } catch (SQLException e) { }
+        try {
+            instance.execSQL("ALTER TABLE nostros_users ADD COLUMN banner TEXT;");
+        } catch (SQLException e) { }
     }
 
     public int saveEvent(JSONObject data, String userPubKey, String relayUrl) throws JSONException {

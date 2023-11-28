@@ -8,6 +8,7 @@ export interface User {
   picture?: string
   about?: string
   contact?: boolean
+  banner?: string
   follower?: number
   lnurl?: string
   ln_address?: string

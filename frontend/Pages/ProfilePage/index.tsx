@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useMemo, useState } from 'react'
-import { Linking, StyleSheet, View } from 'react-native'
-import { Surface, Text, Snackbar, Button } from 'react-native-paper'
+import { Linking, StyleSheet, View, Dimensions, ImageBackground } from 'react-native'
+import { Surface, Text, Snackbar, Button, useTheme } from 'react-native-paper'
 import { AppContext } from '../../Contexts/AppContext'
 import { UserContext } from '../../Contexts/UserContext'
 import { RelayPoolContext } from '../../Contexts/RelayPoolContext'
@@ -15,12 +15,15 @@ import NotesFeed from './NotesFeed'
 import RepliesFeed from './RepliesFeed'
 import ZapsFeed from './ZapsFeed'
 import BookmarksFeed from './BookmarksFeed'
+import FastImage from 'react-native-fast-image'
+import LinearGradient from 'react-native-linear-gradient'
 
 interface ProfilePageProps {
   route: { params: { pubKey: string } }
 }
 
 export const ProfilePage: React.FC<ProfilePageProps> = ({ route }) => {
+  const theme = useTheme()
   const { database, online } = useContext(AppContext)
   const { publicKey } = useContext(UserContext)
   const { lastEventId, relayPool } = useContext(RelayPoolContext)
@@ -193,46 +196,67 @@ export const ProfilePage: React.FC<ProfilePageProps> = ({ route }) => {
 
   return (
     <View>
-      <Surface style={styles.container} elevation={1}>
-        <View style={styles.profileData}>
-          <View style={styles.profilePicture}>
-            <ProfileData
-              username={user?.name}
-              publicKey={route.params.pubKey}
-              validNip05={user?.valid_nip05}
-              nip05={user?.nip05}
-              lnurl={user?.lnurl}
-              lnAddress={user?.ln_address}
-              picture={user?.picture}
+      <Surface elevation={1}>
+        {styles.banner ? (
+          <ImageBackground
+            style={[
+              styles.banner,
+              { width: Dimensions.get('window').width }
+            ]}
+            source={{
+              uri: user?.banner
+            }}
+            resizeMode={FastImage.resizeMode.cover}
+          >
+            <LinearGradient
+              colors={['rgba(0, 0, 0, 0)', theme.colors.elevation.level1]}
+              style={styles.gradient}
             />
+          </ImageBackground>
+        ) : <></>}
+        <View style={styles.container}>
+          <View style={styles.profileData}>
+            <View style={styles.profilePicture}>
+              <ProfileData
+                username={user?.name}
+                publicKey={route.params.pubKey}
+                validNip05={user?.valid_nip05}
+                nip05={user?.nip05}
+                lnurl={user?.lnurl}
+                lnAddress={user?.ln_address}
+                picture={user?.picture}
+              />
+            </View>
           </View>
-          <View>
-            <Text>{user?.follower && user.follower > 0 ? t('profilePage.isFollower') : ''}</Text>
+          <View style={styles.profileDescription}>
+            <View style={styles.profileAbout}>
+              <TextContent content={user?.about} showPreview={false} numberOfLines={10} />
+            </View>
+            <View style={styles.profileFollow}>
+              <Text>{user?.follower && user.follower > 0 ? t('profilePage.isFollower') : ''}</Text>
+            </View>
           </View>
+          {user?.tags && user.tags?.length > 0 && (
+            <View style={styles.externalEntities}>
+              {getExternalIdentities().map((extEntity) => {
+                return (
+                  <View key={extEntity.service}>
+                    <Button
+                      onPress={async () =>
+                        await Linking.openURL(
+                          identitiesIcons[extEntity.service].url(extEntity.identity, extEntity.proof),
+                        )
+                      }
+                      labelStyle={styles.serviceButtonText}
+                    >
+                      {extEntity.service}
+                    </Button>
+                  </View>
+                )
+              })}
+            </View>
+          )}
         </View>
-        <View>
-          <TextContent content={user?.about} showPreview={false} numberOfLines={10} />
-        </View>
-        {user?.tags && user.tags?.length > 0 && (
-          <View style={styles.externalEntities}>
-            {getExternalIdentities().map((extEntity) => {
-              return (
-                <View key={extEntity.service}>
-                  <Button
-                    onPress={async () =>
-                      await Linking.openURL(
-                        identitiesIcons[extEntity.service].url(extEntity.identity, extEntity.proof),
-                      )
-                    }
-                    labelStyle={styles.serviceButtonText}
-                  >
-                    {extEntity.service}
-                  </Button>
-                </View>
-              )
-            })}
-          </View>
-        )}
       </Surface>
       <Tabs tabs={['notes', 'replies', 'zaps', 'bookmarks']} setActiveTab={setActiveTab} />
       <View style={styles.list}>{renderScene[activeTab]}</View>
@@ -254,6 +278,10 @@ export const ProfilePage: React.FC<ProfilePageProps> = ({ route }) => {
 const styles = StyleSheet.create({
   loading: {
     paddingTop: 16,
+  },
+  banner: {
+    height: 120,
+    marginBottom: -80
   },
   container: {
     padding: 16,
@@ -285,6 +313,18 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     paddingBottom: 16,
   },
+  profileDescription: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+  },
+  profileFollow: {
+    width: '20%',
+    justifyContent: 'flex-end'
+  },
+  profileAbout: {
+    width: '80%',
+    paddingRight: 10
+  },
   externalEntities: {
     flexDirection: 'row',
     justifyContent: 'flex-end',
@@ -293,6 +333,13 @@ const styles = StyleSheet.create({
   serviceButtonText: {
     textTransform: 'capitalize',
   },
+  gradient: {
+    position: 'absolute',
+    left: 0,
+    right: 0,
+    bottom: 0,
+    height: '50%', // Adjust the height of the gradient as needed
+  }
 })
 
 export default ProfilePage

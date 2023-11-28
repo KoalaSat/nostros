@@ -590,6 +590,7 @@ public class Event {
         values.put("name", name);
         values.put("picture", userContent.optString("picture"));
         values.put("about", userContent.optString("about"));
+        values.put("banner", userContent.optString("banner"));
         values.put("lnurl", lnurl);
         values.put("ln_address", ln_address);
         values.put("nip05", nip05);
@@ -615,8 +616,7 @@ public class Event {
                 return 1;
             } else if (created_at == cursor.getInt(0)) {
                 ContentValues putValues = new ContentValues();
-                putValues.put("name", name);
-                putValues.put("tags", tags.toString());
+                putValues.put("banner", userContent.optString("banner"));
                 database.update("nostros_users", putValues, whereClause, whereArgs);
             }
         }

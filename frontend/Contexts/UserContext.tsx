@@ -43,6 +43,8 @@ export interface UserContextProps {
   validNip05?: boolean
   setLnAddress: (value: string) => void
   lnAddress?: string
+  setBanner: (banner: string) => void
+  banner?: string
 }
 
 export interface UserContextProviderProps {
@@ -64,6 +66,7 @@ export const initialUserContext: UserContextProps = {
   setLnurl: () => {},
   setLnAddress: () => {},
   setNip05: () => {},
+  setBanner: () => {},
   publicBookmarks: [],
   privateBookmarks: [],
   mutedEvents: [],
@@ -89,6 +92,7 @@ export const UserContextProvider = ({ children }: UserContextProviderProps): JSX
   const [privateBookmarks, setPrivateBookmarks] = useState<string[]>([])
   const [mutedEvents, setMutedEvents] = useState<string[]>([])
   const [mutedUsers, setMutedUsers] = useState<string[]>([])
+  const [banner, setBanner] = useState<string>()
 
   const reloadUser: () => void = () => {
     if (database && publicKey) {
@@ -101,6 +105,7 @@ export const UserContextProvider = ({ children }: UserContextProviderProps): JSX
           setLnAddress(result.ln_address)
           setNip05(result.nip05)
           setValidNip05(result.valid_nip05)
+          setBanner(result.banner)
         }
       })
     }
@@ -254,6 +259,8 @@ export const UserContextProvider = ({ children }: UserContextProviderProps): JSX
         lnAddress,
         setLnAddress,
         mutedUsers,
+        banner,
+        setBanner
       }}
     >
       {children}

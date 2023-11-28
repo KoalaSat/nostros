@@ -15,7 +15,6 @@ import { type Event } from '../../lib/nostr/Events'
 import { getRawUserNotes } from '../../Functions/DatabaseFunctions/Notes'
 import { AppContext } from '../../Contexts/AppContext'
 import { UserContext } from '../../Contexts/UserContext'
-import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import { getUnixTime } from 'date-fns';
 import { usersToTags } from '../../Functions/RelayFunctions/Users';
 import { Kind } from 'nostr-tools';
