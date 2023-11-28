@@ -5,6 +5,7 @@ interface RelayPoolInterface {
   sendAll: (message: string, globalFeed: boolean) => void
   sendRelay: (message: string, relayUrl: string) => void
   connect: (pubKey: string, callback: (eventId: string) => void) => void
+  disconnect: (callback: () => void) => void
   add: (url: string, resilient: number, globalFeed: number, callback: () => void) => void
   remove: (url: string, callback: () => void) => void
   removeAll: (callback?: () => void) => void

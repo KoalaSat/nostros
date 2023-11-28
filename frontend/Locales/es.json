@@ -178,7 +178,9 @@
       "faq": "Preguntas frecuentes",
       "reportBug": "Reportar un bug",
       "logout": "Salir",
-      "exports": "Exportar/Importar"
+      "exports": "Exportar/Importar",
+      "online": "Online",
+      "offline": "Offline"
     },
     "configPage": {
       "signHeight": "Firmar con el último bloque bitcoin",

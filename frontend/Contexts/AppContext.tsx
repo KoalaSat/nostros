@@ -20,6 +20,7 @@ export interface Config {
   relay_coloruring: boolean
   long_press_zap: number | undefined
   sign_height: boolean
+  online: boolean
 }
 
 export interface AppContextProps {
@@ -58,6 +59,8 @@ export interface AppContextProps {
   setQrReader: (qrReader: string | undefined) => void
   signHeight: boolean
   setSignWithHeight: (signHeight: boolean) => void
+  online: boolean
+  setOnline: (online: boolean) => void
 }
 
 export interface AppContextProviderProps {
@@ -99,7 +102,9 @@ export const initialAppContext: AppContextProps = {
   longPressZap: undefined,
   setLongPressZap: () => {},
   signHeight: false,
-  setSignWithHeight: () => {}
+  setSignWithHeight: () => {},
+  online: true,
+  setOnline: () => {}
 }
 
 export const AppContextProvider = ({ children }: AppContextProviderProps): JSX.Element => {
@@ -128,6 +133,7 @@ export const AppContextProvider = ({ children }: AppContextProviderProps): JSX.E
   const [displayUserDrawer, setDisplayUserDrawer] = React.useState<string>()
   const [pushedTab, setPushedTab] = useState<string>()
   const [signHeight, setSignWithHeight] = useState<boolean>(initialAppContext.signHeight)
+  const [online, setOnline] = React.useState<boolean>(initialAppContext.online)
 
   useEffect(() => {
     if (pushedTab) setPushedTab(undefined)
@@ -176,6 +182,7 @@ export const AppContextProvider = ({ children }: AppContextProviderProps): JSX.E
         setLongPressZap(config.long_press_zap ?? initialAppContext.longPressZap)
         setRelayColouring(config.relay_coloruring ?? initialAppContext.relayColouring)
         setSignWithHeight(config.sign_height ?? initialAppContext.signHeight)
+        setOnline(config.online ?? initialAppContext.online)
       } else {
         const config: Config = {
           show_public_images: initialAppContext.showPublicImages,
@@ -188,6 +195,7 @@ export const AppContextProvider = ({ children }: AppContextProviderProps): JSX.E
           relay_coloruring: initialAppContext.relayColouring,
           long_press_zap: initialAppContext.longPressZap,
           sign_height: initialAppContext.signHeight,
+          online: initialAppContext.online,
         }
         SInfo.setItem('config', JSON.stringify(config), {})
       }
@@ -225,6 +233,14 @@ export const AppContextProvider = ({ children }: AppContextProviderProps): JSX.E
       })
     }
   }
+
+  useEffect(() => {
+    SInfo.getItem('config', {}).then((result) => {
+      const config: Config = JSON.parse(result)
+      config.online = online
+      SInfo.setItem('config', JSON.stringify(config), {})
+    })
+  }, [online])
 
   useEffect(init, [])
 
@@ -264,7 +280,9 @@ export const AppContextProvider = ({ children }: AppContextProviderProps): JSX.E
         qrReader,
         setQrReader,
         signHeight,
-        setSignWithHeight
+        setSignWithHeight,
+        online,
+        setOnline
       }}
     >
       {children}

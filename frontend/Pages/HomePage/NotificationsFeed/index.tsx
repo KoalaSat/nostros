@@ -30,13 +30,13 @@ import { getTaggedEventIds } from '../../../Functions/RelayFunctions/Events'
 import ParsedText from 'react-native-parsed-text'
 import { getUser } from '../../../Functions/DatabaseFunctions/Users'
 import { getNpub } from '../../../lib/nostr/Nip19'
-import { RelayFilters } from '../../../lib/nostr/RelayPool/intex'
+import { type RelayFilters } from '../../../lib/nostr/RelayPool/intex'
 
 export const NotificationsFeed: React.FC = () => {
   const initialLimitPage = React.useMemo(() => 20, [])
   const theme = useTheme()
   const { t } = useTranslation('common')
-  const { database, setNotificationSeenAt, pushedTab, getSatoshiSymbol } = useContext(AppContext)
+  const { database, setNotificationSeenAt, pushedTab, getSatoshiSymbol, online } = useContext(AppContext)
   const { publicKey, reloadLists, mutedEvents, mutedUsers } = useContext(UserContext)
   const { lastEventId, relayPool, setNewNotifications, newNotifications } = useContext(RelayPoolContext)
   const [notifications, setNotifications] = useState<Notification[]>([])
@@ -52,10 +52,7 @@ export const NotificationsFeed: React.FC = () => {
       loadNotes()
       updateLastSeen()
       return () => {
-        relayPool?.unsubscribe([
-          `notification-feed${publicKey?.substring(0, 8)}`,
-          `notification-users${publicKey?.substring(0, 8)}`,
-        ])
+        unsubscribe()
         updateLastSeen()
       }
     }, []),
@@ -66,7 +63,7 @@ export const NotificationsFeed: React.FC = () => {
     reloadLists()
     setRefreshing(false)
     setNewNotifications(0)
-  }, [lastEventId])
+  }, [lastEventId, online])
 
   useEffect(() => {
     setNewNotifications(0)
@@ -81,6 +78,13 @@ export const NotificationsFeed: React.FC = () => {
       flashListRef.current?.scrollToIndex({ animated: true, index: 0 })
     }
   }, [pushedTab])
+
+  const unsubscribe: () => void = () => {
+    relayPool?.unsubscribe([
+      `notification-feed${publicKey?.substring(0, 8)}`,
+      `notification-users${publicKey?.substring(0, 8)}`,
+    ])
+  }
 
   const updateLastSeen: () => void = () => {
     const unixtime = getUnixTime(new Date())
@@ -154,6 +158,7 @@ export const NotificationsFeed: React.FC = () => {
   const onRefresh = useCallback(() => {
     setRefreshing(true)
     if (relayPool && publicKey) {
+      unsubscribe()
       subscribeNotes()
     }
   }, [])

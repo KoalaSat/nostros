@@ -21,7 +21,7 @@ interface ProfilePageProps {
 }
 
 export const ProfilePage: React.FC<ProfilePageProps> = ({ route }) => {
-  const { database } = useContext(AppContext)
+  const { database, online } = useContext(AppContext)
   const { publicKey } = useContext(UserContext)
   const { lastEventId, relayPool } = useContext(RelayPoolContext)
   const { t } = useTranslation('common')
@@ -73,7 +73,7 @@ export const ProfilePage: React.FC<ProfilePageProps> = ({ route }) => {
     if (!firstLoad && !user?.name) {
       loadUser()
     }
-  }, [lastEventId])
+  }, [lastEventId, online])
 
   useEffect(() => {
     if (refreshing) {

@@ -41,7 +41,7 @@ import DatabaseModule from '../../../lib/Native/DatabaseModule'
 export const GroupsFeed: React.FC = () => {
   const { t } = useTranslation('common')
   const theme = useTheme()
-  const { database, qrReader, setQrReader, refreshBottomBarAt } = useContext(AppContext)
+  const { database, qrReader, setQrReader, refreshBottomBarAt, online } = useContext(AppContext)
   const { publicKey } = useContext(UserContext)
   const { relayPool, lastEventId, lastConfirmationtId, sendEvent, setNewGroupMessages, newGroupMessages } = useContext(RelayPoolContext)
   const bottomSheetSearchRef = React.useRef<RBSheet>(null)
@@ -72,7 +72,7 @@ export const GroupsFeed: React.FC = () => {
   useEffect(() => {
     setNewGroupMessages(0)
     loadGroups()
-  }, [lastEventId, lastConfirmationtId, refreshBottomBarAt])
+  }, [lastEventId, lastConfirmationtId, refreshBottomBarAt, online])
 
   useEffect(() => {
     setNewGroupMessages(0)

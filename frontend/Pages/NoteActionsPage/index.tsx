@@ -27,7 +27,7 @@ export const NoteActionsPage: React.FC<NoteActionsPageProps> = ({ route: { param
     privateBookmarks,
     mutedEvents,
   } = React.useContext(UserContext)
-  const { database, displayNoteDrawer, relayColouring } = React.useContext(AppContext)
+  const { database, displayNoteDrawer, relayColouring, online } = React.useContext(AppContext)
   const { relayPool, setDisplayrelayDrawer, lastEventId, sendEvent } =
     React.useContext(RelayPoolContext)
   const [relays, setRelays] = React.useState<NoteRelay[]>([])
@@ -39,7 +39,7 @@ export const NoteActionsPage: React.FC<NoteActionsPageProps> = ({ route: { param
 
   React.useEffect(() => {
     loadNoteRelays()
-  }, [displayNoteDrawer, lastEventId, bookmarked, isMuted])
+  }, [displayNoteDrawer, lastEventId, bookmarked, isMuted, online])
 
   React.useEffect(() => {
     if (note) {

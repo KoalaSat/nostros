@@ -35,7 +35,7 @@ interface GroupHeaderIconProps {
 
 export const GroupHeaderIcon: React.FC<GroupHeaderIconProps> = ({ groupId }) => {
   const { t } = useTranslation('common')
-  const { database } = useContext(AppContext)
+  const { database, online } = useContext(AppContext)
   const { publicKey } = useContext(UserContext)
   const { sendEvent, lastEventId } = useContext(RelayPoolContext)
   const theme = useTheme()
@@ -62,7 +62,7 @@ export const GroupHeaderIcon: React.FC<GroupHeaderIconProps> = ({ groupId }) => 
         setNewGroupPicture(result.picture)
       })
     }
-  }, [lastEventId])
+  }, [lastEventId, online])
 
   const pastePicture: () => void = () => {
     Clipboard.getString().then((value) => {

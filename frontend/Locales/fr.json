@@ -178,7 +178,9 @@
       "faq": "FAQ",
       "reportBug": "Report a bug",
       "logout": "Sortir",
-      "exports": "Export"
+      "exports": "Export",
+      "online": "Online",
+      "offline": "Offline"
     },
     "language": {
       "en": "English",

@@ -24,7 +24,7 @@ export const NotesFeed: React.FC<NotesFeedProps> = ({
   activeTab,
 }) => {
   const initialPageSize = 10
-  const { database } = useContext(AppContext)
+  const { database, online } = useContext(AppContext)
   const { lastEventId, relayPool } = useContext(RelayPoolContext)
   const [pageSize, setPageSize] = useState<number>(initialPageSize)
   const [notes, setNotes] = useState<Note[]>([])
@@ -41,7 +41,7 @@ export const NotesFeed: React.FC<NotesFeedProps> = ({
       subscribe()
       loadNotes()
     }
-  }, [pageSize, lastEventId, activeTab])
+  }, [pageSize, lastEventId, activeTab, online])
 
   const subscribe: () => Promise<void> = async () => {
     relayPool?.subscribe(`profile-user${publicKey.substring(0, 8)}`, [

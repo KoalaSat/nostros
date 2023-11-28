@@ -20,37 +20,45 @@ import { Kind } from 'nostr-tools'
 import { type RelayFilters } from '../../../../lib/nostr/RelayPool/intex'
 import { Chip, Button, Text } from 'react-native-paper'
 import NoteCard from '../../../../Components/NoteCard'
-import { useTheme } from '@react-navigation/native'
+import { useFocusEffect, useTheme } from '@react-navigation/native'
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'
 import { t } from 'i18next'
 import { FlashList, type ListRenderItem } from '@shopify/flash-list'
+import { getUnixTime } from 'date-fns'
 
 interface GlobalFeedProps {
   navigation: any
-  updateLastLoad: () => void
-  lastLoadAt: number
-  pageSize: number
-  setPageSize: (pageSize: number) => void
-  activeTab: string
 }
 
 export const GlobalFeed: React.FC<GlobalFeedProps> = ({
-  navigation,
-  updateLastLoad,
-  lastLoadAt,
-  pageSize,
-  setPageSize,
-  activeTab,
+  navigation
 }) => {
   const initialPageSize = 10
   const theme = useTheme()
-  const { database, showPublicImages, pushedTab } = useContext(AppContext)
+  const { database, showPublicImages, pushedTab, online } = useContext(AppContext)
   const { publicKey } = useContext(UserContext)
   const { lastEventId, relayPool, lastConfirmationtId } = useContext(RelayPoolContext)
   const [notes, setNotes] = useState<Note[]>([])
   const [newNotesCount, setNewNotesCount] = useState<number>(0)
   const [refreshing, setRefreshing] = useState(false)
   const flashListRef = React.useRef<FlashList<Note>>(null)
+  const [lastLoadAt, setLastLoadAt] = useState<number>(0)
+  const [pageSize, setPageSize] = useState<number>(initialPageSize)
+  
+  useFocusEffect(
+    React.useCallback(() => {
+      setPageSize(initialPageSize)
+
+      return () => {}
+    }, []),
+  )
+
+  useEffect(() => {
+    if (pageSize > initialPageSize) {
+      updateLastLoad()
+      loadNotes(true)
+    }
+  }, [pageSize, lastLoadAt])
 
   useEffect(() => {
     if (pushedTab) {
@@ -59,19 +67,18 @@ export const GlobalFeed: React.FC<GlobalFeedProps> = ({
   }, [pushedTab])
 
   useEffect(() => {
-    if (relayPool && publicKey && activeTab === 'globalFeed') {
+    if (relayPool && publicKey) {
       loadNotes()
     }
-  }, [lastEventId, lastConfirmationtId, lastLoadAt, relayPool, publicKey, activeTab])
+  }, [lastEventId, lastConfirmationtId, relayPool, publicKey, online])
 
-  useEffect(() => {
-    if (pageSize > initialPageSize) {
-      loadNotes(true)
-    }
-  }, [pageSize])
+  const updateLastLoad: () => void = () => {
+    setLastLoadAt(getUnixTime(new Date()) - 5)
+  }
 
   const onRefresh = useCallback(() => {
     setRefreshing(true)
+    loadNotes()
     setNewNotesCount(0)
     updateLastLoad()
     flashListRef.current?.scrollToIndex({ animated: true, index: 0 })
