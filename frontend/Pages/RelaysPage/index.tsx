@@ -50,7 +50,7 @@ export const RelaysPage: React.FC = () => {
     removeRelayItem,
   } = useContext(RelayPoolContext)
   const { publicKey } = useContext(UserContext)
-  const { database } = useContext(AppContext)
+  const { database, online } = useContext(AppContext)
   const { t } = useTranslation('common')
   const theme = useTheme()
   const bottomSheetAddRef = React.useRef<RBSheet>(null)
@@ -88,7 +88,7 @@ export const RelaysPage: React.FC = () => {
 
   React.useEffect(() => {
     loadRelays()
-  }, [lastEventId])
+  }, [lastEventId, online])
 
   const addRelay: (url: string) => void = (url) => {
     if (!relayList.find((relay) => relay.url === url)) {

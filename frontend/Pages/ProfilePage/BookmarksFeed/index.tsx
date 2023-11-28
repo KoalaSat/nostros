@@ -30,7 +30,7 @@ export const BookmarksFeed: React.FC<BookmarksFeedProps> = ({
   const initialPageSize = 10
   const theme = useTheme()
   const { t } = useTranslation('common')
-  const { database } = useContext(AppContext)
+  const { database, online } = useContext(AppContext)
   const { lastEventId, relayPool } = useContext(RelayPoolContext)
   const [pageSize, setPageSize] = useState<number>(initialPageSize)
   const [notes, setNotes] = useState<Note[]>([])
@@ -47,7 +47,7 @@ export const BookmarksFeed: React.FC<BookmarksFeedProps> = ({
       subscribe()
       loadNotes()
     }
-  }, [pageSize, lastEventId, activeTab])
+  }, [pageSize, lastEventId, activeTab, online])
 
   const subscribe: () => Promise<void> = async () => {
     if (database) {

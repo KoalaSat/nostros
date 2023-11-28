@@ -152,7 +152,9 @@
       "contacts": "Contacts",
       "reportBug": "Report a bug",
       "logout": "Logout",
-      "exports": "Export"
+      "exports": "Export",
+      "online": "Online",
+      "offline": "Offline"
     },
     "configPage": {
       "showPublicImages": "Show images on public feed",

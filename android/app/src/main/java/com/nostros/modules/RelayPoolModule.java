@@ -117,6 +117,15 @@ public class RelayPoolModule extends ReactContextBaseJavaModule {
     }
 
     @ReactMethod
+    public void disconnect(Callback callback) {
+        relays = database.getRelays(context, createdEvents);
+        for (Relay relay : relays) {
+            relay.disconnect();
+        }
+        callback.invoke();
+    }
+
+    @ReactMethod
     public void sendAll(String message, boolean isGlobalFeed) throws IOException {
         for (Relay relay : relays) {
             if (relay.active() > 0 && (!isGlobalFeed || relay.globalFeed > 0)) {

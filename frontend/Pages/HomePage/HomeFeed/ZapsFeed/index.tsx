@@ -15,7 +15,7 @@ import { Kind } from 'nostr-tools'
 import { type RelayFilters } from '../../../../lib/nostr/RelayPool/intex'
 import { ActivityIndicator, Button, Text } from 'react-native-paper'
 import NoteCard from '../../../../Components/NoteCard'
-import { useTheme } from '@react-navigation/native'
+import { useFocusEffect, useTheme } from '@react-navigation/native'
 import { FlashList, type ListRenderItem } from '@shopify/flash-list'
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'
 import { useTranslation } from 'react-i18next'
@@ -25,28 +25,29 @@ import { getUsers, type User } from '../../../../Functions/DatabaseFunctions/Use
 
 interface ZapsFeedProps {
   navigation: any
-  updateLastLoad: () => void
-  pageSize: number
-  setPageSize: (pageSize: number) => void
-  activeTab: string
 }
 
 export const ZapsFeed: React.FC<ZapsFeedProps> = ({
-  navigation,
-  updateLastLoad,
-  pageSize,
-  setPageSize,
-  activeTab,
+  navigation
 }) => {
+  const initialPageSize = 10
   const theme = useTheme()
   const { t } = useTranslation('common')
-  const { database, pushedTab } = useContext(AppContext)
+  const { database, pushedTab, online } = useContext(AppContext)
   const { publicKey } = useContext(UserContext)
   const { lastEventId, relayPool, lastConfirmationtId } = useContext(RelayPoolContext)
-  const initialPageSize = 10
   const [notes, setNotes] = useState<Note[]>()
   const [refreshing, setRefreshing] = useState(false)
   const flashListRef = React.useRef<FlashList<Note>>(null)
+  const [pageSize, setPageSize] = useState<number>(initialPageSize)
+
+  useFocusEffect(
+    React.useCallback(() => {
+      setPageSize(initialPageSize)
+
+      return () => {}
+    }, []),
+  )
 
   useEffect(() => {
     if (pushedTab) {
@@ -55,10 +56,10 @@ export const ZapsFeed: React.FC<ZapsFeedProps> = ({
   }, [pushedTab])
 
   useEffect(() => {
-    if (relayPool && publicKey && activeTab === 'zaps') {
+    if (relayPool && publicKey) {
       loadNotes()
     }
-  }, [lastEventId, lastConfirmationtId, relayPool, publicKey, activeTab])
+  }, [lastEventId, lastConfirmationtId, relayPool, publicKey, online])
 
   useEffect(() => {
     if (pageSize > initialPageSize) {
@@ -68,7 +69,7 @@ export const ZapsFeed: React.FC<ZapsFeedProps> = ({
 
   const onRefresh = useCallback(() => {
     setRefreshing(true)
-    updateLastLoad()
+    loadNotes()
   }, [])
 
   const onScroll: (event: NativeSyntheticEvent<NativeScrollEvent>) => void = (event) => {
@@ -85,6 +86,7 @@ export const ZapsFeed: React.FC<ZapsFeedProps> = ({
         {
           kinds: [9735],
           '#p': contacts,
+          since: getUnixTime(new Date()) - 86400
         },
       ])
 

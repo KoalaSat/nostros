@@ -10,6 +10,7 @@ import {
   TouchableRipple,
   useTheme,
 } from 'react-native-paper'
+import SInfo from 'react-native-sensitive-info'
 import Logo from '../Logo'
 import { useTranslation } from 'react-i18next'
 import { RelayPoolContext } from '../../Contexts/RelayPoolContext'
@@ -19,11 +20,11 @@ import { navigate } from '../../lib/Navigation'
 import { usernamePubKey } from '../../Functions/RelayFunctions/Users'
 import ProfileData from '../ProfileData'
 import { WalletContext } from '../../Contexts/WalletContext'
-import { AppContext } from '../../Contexts/AppContext'
+import { AppContext, type Config } from '../../Contexts/AppContext'
 
 export const MenuItems: React.FC = () => {
   const [drawerItemIndex, setDrawerItemIndex] = React.useState<number>(-1)
-  const { getSatoshiSymbol } = React.useContext(AppContext)
+  const { getSatoshiSymbol, online } = React.useContext(AppContext)
   const { relays } = React.useContext(RelayPoolContext)
   const { balance, type } = React.useContext(WalletContext)
   const {
@@ -40,12 +41,18 @@ export const MenuItems: React.FC = () => {
   } = React.useContext(UserContext)
   const { t } = useTranslation('common')
   const theme = useTheme()
+  const { switchLine } = React.useContext(RelayPoolContext)
 
   const [activerelays, setActiveRelays] = React.useState<number>(0)
+  const [loadingConnection, setLoadingConnection] = React.useState<boolean>(false)
 
   React.useEffect(() => {
     setActiveRelays(relays.filter((relay) => relay.active).length)
   }, [relays, balance])
+
+  React.useEffect(() => {
+    setLoadingConnection(false)
+  }, [online])
 
   const onPressLogout: () => void = () => {
     logout()
@@ -71,6 +78,10 @@ export const MenuItems: React.FC = () => {
       navigate('Exports')
     }
   }
+
+  React.useEffect(() => {
+    setLoadingConnection(false)
+  }, [online])
 
   return (
     <>
@@ -136,7 +147,7 @@ export const MenuItems: React.FC = () => {
               onPress={() => onPressItem('relays', 0)}
               onTouchEnd={() => setDrawerItemIndex(-1)}
               right={() =>
-                activerelays < 1 ? (
+                activerelays < 1 || !online ? (
                   <Text style={{ color: theme.colors.error }}>{t('menuItems.notConnected')}</Text>
                 ) : (
                   <Text style={{ color: '#7ADC70' }}>
@@ -220,9 +231,38 @@ export const MenuItems: React.FC = () => {
           />
         </Drawer.Section>
       </DrawerContentScrollView>
+      <Drawer.Section
+        style={[
+          styles.section,
+          {
+            backgroundColor: theme.colors.background,
+          },
+        ]}
+        showDivider={false}
+      >
+        <Button
+          mode='outlined'
+          onPress={() => {
+            setLoadingConnection(true)
+            switchLine()
+          }}
+          loading={loadingConnection}
+          textColor={theme.colors.onSurface}
+          icon={() => (
+            <MaterialCommunityIcons
+              name={online ? 'web' : 'web-off'}
+              size={20}
+              style={online ? { color: '#7ADC70' } : { color: theme.colors.error }}
+            />
+          )}
+        >
+          {t(online ? 'menuItems.online' : 'menuItems.offline')}
+        </Button>
+      </Drawer.Section>
       {publicKey && (
         <Drawer.Section
           style={[
+            styles.section,
             styles.bottomSection,
             {
               backgroundColor: theme.colors.background,
@@ -281,10 +321,14 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-end',
     flex: 1,
   },
-  bottomSection: {
+  section: {
     marginBottom: 0,
+    paddingBottom: 24,
+    paddingLeft: 24,
+    paddingRight: 24
+  },
+  bottomSection: {
     borderBottomRightRadius: 28,
-    padding: 24,
   },
   username: {
     flexDirection: 'row',

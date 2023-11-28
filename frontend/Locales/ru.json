@@ -179,7 +179,9 @@
       "logout": "Выйти",
       "reportBug": "Report a bug",
       "imageHostingService": "Хостинг изображений",
-      "exports": "Export"
+      "exports": "Export",
+      "online": "Online",
+      "offline": "Offline"
     },
     "configPage": {
       "signHeight": "Sign events with latest Bitcoin block",

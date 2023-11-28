@@ -37,7 +37,7 @@ export const ContactsPage: React.FC = () => {
   const { t } = useTranslation('common')
   const theme = useTheme()
   const initialPageSize = 20
-  const { database, setDisplayUserDrawer, qrReader, setQrReader } = useContext(AppContext)
+  const { database, setDisplayUserDrawer, qrReader, setQrReader, online } = useContext(AppContext)
   const { privateKey, publicKey, nPub, mutedUsers, reloadLists } = React.useContext(UserContext)
   const { relayPool, lastEventId, sendEvent } = useContext(RelayPoolContext)
   const [pageSize, setPageSize] = useState<number>(initialPageSize)
@@ -73,7 +73,7 @@ export const ContactsPage: React.FC = () => {
     reloadLists()
     loadUsers()
     subscribeContacts()
-  }, [lastEventId])
+  }, [lastEventId, online])
 
   useEffect(() => {
     loadUsers()

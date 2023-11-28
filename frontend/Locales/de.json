@@ -157,7 +157,9 @@
       "faq": "FAQ",
       "reportBug": "Bug melden",
       "logout": "Abmelden",
-      "exports": "Export"
+      "exports": "Export",
+      "online": "Online",
+      "offline": "Offline"
     },
     "configPage": {
       "signHeight": "Sign events with latest Bitcoin block",

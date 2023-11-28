@@ -46,7 +46,7 @@ interface GroupPageProps {
 export const GroupPage: React.FC<GroupPageProps> = ({ route }) => {
   const initialPageSize = 20
   const theme = useTheme()
-  const { database, setDisplayUserDrawer } = useContext(AppContext)
+  const { database, setDisplayUserDrawer, online } = useContext(AppContext)
   const { relayPool, lastEventId, sendEvent } = useContext(RelayPoolContext)
   const { publicKey, privateKey, name, picture, validNip05 } = useContext(UserContext)
   const [pageSize, setPageSize] = useState<number>(initialPageSize)
@@ -75,7 +75,7 @@ export const GroupPage: React.FC<GroupPageProps> = ({ route }) => {
 
   useEffect(() => {
     loadGroupMessages(false)
-  }, [lastEventId, pageSize])
+  }, [lastEventId, pageSize, online])
 
   const loadGroupMessages: (subscribe: boolean) => void = (subscribe) => {
     if (database && publicKey && route.params.groupId) {

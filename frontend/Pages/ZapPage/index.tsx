@@ -33,7 +33,7 @@ export const ZapPage: React.FC<ZapPageProps> = ({ route: { params: { note, user 
   const userId = user?.id ?? note?.pubkey
   const zapPubkey = user?.zap_pubkey ?? note?.zap_pubkey
   const zapSplitTags = getZapTag(note)
-  const { getSatoshiSymbol, database, setDisplayUserDrawer } = React.useContext(AppContext)
+  const { getSatoshiSymbol, database, setDisplayUserDrawer, online } = React.useContext(AppContext)
   const { relayPool, lastEventId } = React.useContext(RelayPoolContext)
   const { publicKey, privateKey } = React.useContext(UserContext)
   const bottomSheetLnPaymentRef = React.useRef<RBSheet>(null)
@@ -85,7 +85,7 @@ export const ZapPage: React.FC<ZapPageProps> = ({ route: { params: { note, user 
         setZapsUpdated(getUnixTime(new Date()))
       })
     }
-  }, [lastEventId])
+  }, [lastEventId, online])
 
   useEffect(() => {
     bottomSheetLnPaymentRef.current?.forceUpdate()

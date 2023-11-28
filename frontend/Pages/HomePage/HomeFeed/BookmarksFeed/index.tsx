@@ -15,43 +15,34 @@ import { Kind } from 'nostr-tools'
 import { type RelayFilters } from '../../../../lib/nostr/RelayPool/intex'
 import { ActivityIndicator, Button, Text } from 'react-native-paper'
 import NoteCard from '../../../../Components/NoteCard'
-import { useTheme } from '@react-navigation/native'
+import { useFocusEffect, useTheme } from '@react-navigation/native'
 import { FlashList, type ListRenderItem } from '@shopify/flash-list'
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'
 import { useTranslation } from 'react-i18next'
 import { getContactsCount } from '../../../../Functions/DatabaseFunctions/Users'
 import { ScrollView } from 'react-native-gesture-handler'
 
-interface BookmarksFeedProps {
-  navigation: any
-  updateLastLoad: () => void
-  pageSize: number
-  setPageSize: (pageSize: number) => void
-  activeTab: string
-}
-
-export const BookmarksFeed: React.FC<BookmarksFeedProps> = ({
-  navigation,
-  updateLastLoad,
-  pageSize,
-  setPageSize,
-  activeTab,
-}) => {
+export const BookmarksFeed: React.FC = () => {
+  const initialPageSize = 10
   const theme = useTheme()
   const { t } = useTranslation('common')
-  const { database, pushedTab } = useContext(AppContext)
+  const { database, pushedTab, online } = useContext(AppContext)
   const { publicKey, publicBookmarks, privateBookmarks, reloadBookmarks } = useContext(UserContext)
   const { lastEventId, relayPool, lastConfirmationtId } = useContext(RelayPoolContext)
-  const initialPageSize = 10
   const [notes, setNotes] = useState<Note[]>([])
   const [refreshing, setRefreshing] = useState<boolean>(false)
   const [contactsCount, setContactsCount] = useState<number>()
   const [filter, setFilter] = useState<'private' | 'public'>('private')
+  const [pageSize, setPageSize] = useState<number>(initialPageSize)
   const flashListRef = React.useRef<FlashList<Note>>(null)
 
-  useEffect(() => {
-    reloadBookmarks()
-  }, [])
+  useFocusEffect(
+    React.useCallback(() => {
+      setPageSize(initialPageSize)
+
+      return () => {}
+    }, []),
+  )
 
   useEffect(() => {
     if (pushedTab) {
@@ -60,7 +51,7 @@ export const BookmarksFeed: React.FC<BookmarksFeedProps> = ({
   }, [pushedTab])
 
   useEffect(() => {
-    if (relayPool && publicKey && database && activeTab === 'bookmarks') {
+    if (relayPool && publicKey && database) {
       if (!contactsCount) getContactsCount(database).then(setContactsCount)
       loadNotes()
     }
@@ -71,9 +62,9 @@ export const BookmarksFeed: React.FC<BookmarksFeedProps> = ({
     relayPool,
     publicKey,
     database,
-    activeTab,
     publicBookmarks,
     privateBookmarks,
+    online
   ])
 
   useEffect(() => {
@@ -85,7 +76,8 @@ export const BookmarksFeed: React.FC<BookmarksFeedProps> = ({
 
   const onRefresh = useCallback(() => {
     setRefreshing(true)
-    updateLastLoad()
+    loadNotes()
+    reloadBookmarks()
   }, [])
 
   const onScroll: (event: NativeSyntheticEvent<NativeScrollEvent>) => void = (event) => {

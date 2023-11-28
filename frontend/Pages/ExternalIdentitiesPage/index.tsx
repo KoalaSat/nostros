@@ -15,7 +15,7 @@ export const ExternalIdentitiesPage: React.FC = () => {
   const theme = useTheme()
   const { database } = React.useContext(AppContext)
   const { publicKey } = React.useContext(UserContext)
-  const { lastEventId, sendEvent } = React.useContext(RelayPoolContext)
+  const { lastEventId, sendEvent, online } = React.useContext(RelayPoolContext)
 
   const [user, setUser] = React.useState<User>()
   const [showNotification, setShowNotification] = React.useState<string>()
@@ -49,7 +49,7 @@ export const ExternalIdentitiesPage: React.FC = () => {
         }
       })
     }
-  }, [user, lastEventId])
+  }, [user, lastEventId, online])
 
   const services: Record<
     string,

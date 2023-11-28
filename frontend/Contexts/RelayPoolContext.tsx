@@ -34,6 +34,7 @@ export interface RelayPoolContextProps {
   setNewGroupMessages: (newGroupMessages: number) => void
   relayPay: PayEvent[]
   setRelayPay: (invoices: PayEvent[]) => void
+  switchLine: () => void
 }
 
 export interface WebsocketEvent {
@@ -73,14 +74,15 @@ export const initialRelayPoolContext: RelayPoolContextProps = {
   newGroupMessages: 0,
   setNewGroupMessages: () => {},
   relayPay: [],
-  setRelayPay: () => {}
+  setRelayPay: () => {},
+  switchLine: () => {}
 }
 
 export const RelayPoolContextProvider = ({
   children,
   images,
 }: RelayPoolContextProviderProps): JSX.Element => {
-  const { database, signHeight } = useContext(AppContext)
+  const { database, signHeight, online, setOnline } = useContext(AppContext)
   const { publicKey, privateKey } = React.useContext(UserContext)
   const [relayPool, setRelayPool] = useState<RelayPool>()
   const [relayPoolReady, setRelayPoolReady] = useState<boolean>(false)
@@ -209,8 +211,8 @@ export const RelayPoolContextProvider = ({
 
   const loadRelayPool: () => void = async () => {
     if (database && publicKey) {
-      const initRelayPool = new RelayPool(privateKey)
-      initRelayPool.connect(publicKey, () => {
+      const initRelayPool = new RelayPool(online, privateKey)
+      initRelayPool.switchLine(online, publicKey, () => {
         setRelayPool(initRelayPool)
       })
     }
@@ -292,6 +294,12 @@ export const RelayPoolContextProvider = ({
     randomrelays.forEach(async (url) => await addRelayItem({ url }))
   }
 
+  const switchLine: () => void = () => {
+    if (relayPool && publicKey) {
+      relayPool.switchLine(!online, publicKey, () => setOnline(!online))
+    }
+  }
+
   useEffect(() => {
     if (publicKey && publicKey !== '') {
       DeviceEventEmitter.addListener('WebsocketEvent', debouncedEventIdHandler)
@@ -346,7 +354,8 @@ export const RelayPoolContextProvider = ({
         newGroupMessages,
         setNewGroupMessages,
         relayPay,
-        setRelayPay
+        setRelayPay,
+        switchLine
       }}
     >
       {children}

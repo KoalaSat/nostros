@@ -22,7 +22,7 @@ interface NotePageProps {
 }
 
 export const NotePage: React.FC<NotePageProps> = ({ route }) => {
-  const { database } = useContext(AppContext)
+  const { database, online } = useContext(AppContext)
   const { publicKey, privateKey } = useContext(UserContext)
   const { relayPool, lastEventId } = useContext(RelayPoolContext)
   const [note, setNote] = useState<Note>()
@@ -46,7 +46,7 @@ export const NotePage: React.FC<NotePageProps> = ({ route }) => {
   useEffect(() => {
     loadNote()
     loadGroup()
-  }, [lastEventId])
+  }, [lastEventId, online])
 
   const loadGroup: () => void = async () => {
     if (database) {

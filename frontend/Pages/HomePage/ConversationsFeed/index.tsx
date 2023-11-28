@@ -44,7 +44,7 @@ export const ConversationsFeed: React.FC = () => {
   const initialPageSize = 14
   const theme = useTheme()
   const { t } = useTranslation('common')
-  const { database, refreshBottomBarAt, qrReader, setQrReader } = useContext(AppContext)
+  const { database, refreshBottomBarAt, qrReader, setQrReader, online } = useContext(AppContext)
   const [pageSize, setPageSize] = useState<number>(initialPageSize)
   const { publicKey, privateKey } = useContext(UserContext)
   const { relayPool, lastEventId, setNewDirectMessages, newDirectMessages } = useContext(RelayPoolContext)
@@ -71,7 +71,7 @@ export const ConversationsFeed: React.FC = () => {
   useEffect(() => {
     setNewDirectMessages(0)
     loadDirectMessages(false)
-  }, [lastEventId, refreshBottomBarAt, newDirectMessages])
+  }, [lastEventId, refreshBottomBarAt, newDirectMessages, online])
 
   useEffect(() => {
     if (qrReader) {

@@ -31,7 +31,7 @@ interface SearchPageProps {
 export const SearchPage: React.FC<SearchPageProps> = ({ route }) => {
   const pageSize = 30
   const theme = useTheme()
-  const { database } = React.useContext(AppContext)
+  const { database, online } = React.useContext(AppContext)
   const { relayPool, lastEventId } = React.useContext(RelayPoolContext)
   const [users, setUsers] = React.useState<User[]>([])
   const [resultsUsers, setResultsUsers] = React.useState<User[]>([])
@@ -76,7 +76,7 @@ export const SearchPage: React.FC<SearchPageProps> = ({ route }) => {
         }
       })
     }
-  }, [lastEventId])
+  }, [lastEventId, online])
 
   const subscribeHandler = React.useMemo(
     () =>

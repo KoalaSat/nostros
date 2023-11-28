@@ -32,7 +32,7 @@ export const ProfileConfigPage: React.FC = () => {
   const bottomSheetDirectoryRef = React.useRef<RBSheet>(null)
   const bottomSheetNip05Ref = React.useRef<RBSheet>(null)
   const bottomSheetLud06Ref = React.useRef<RBSheet>(null)
-  const { database } = useContext(AppContext)
+  const { database, online } = useContext(AppContext)
   const { relayPool, lastEventId, lastConfirmationtId, sendEvent } = useContext(RelayPoolContext)
   const {
     publicKey,
@@ -83,7 +83,7 @@ export const ProfileConfigPage: React.FC = () => {
       bottomSheetNip05Ref.current?.close()
       bottomSheetLud06Ref.current?.close()
     }
-  }, [lastEventId, lastConfirmationtId])
+  }, [lastEventId, lastConfirmationtId, online])
 
   const publishUser: () => Promise<void> = async () => {
     return await new Promise<void>((resolve) => {

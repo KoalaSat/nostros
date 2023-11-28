@@ -66,18 +66,22 @@ export const fallbackRelays = [
 ]
 
 class RelayPool {
-  constructor(privateKey?: string) {
+  constructor(online: boolean, privateKey?: string) {
     this.privateKey = privateKey
     this.subscriptions = {}
+    this.online = online
   }
 
   private readonly privateKey?: string
   private subscriptions: Record<string, string[]>
 
+  public online: boolean
+
   private readonly sendAll: (message: object, globalFeed?: boolean) => void = async (
     message,
     globalFeed,
   ) => {
+    if (!this.online) return
     const tosend = JSON.stringify(message)
     RelayPoolModule.sendAll(tosend, globalFeed ?? false)
   }
@@ -86,14 +90,10 @@ class RelayPool {
     message,
     relayUrl,
   ) => {
+    if (!this.online) return
     const tosend = JSON.stringify(message)
     RelayPoolModule.sendRelay(tosend, relayUrl)
   }
-
-  public readonly connect: (publicKey: string, onEventId: (eventId: string) => void) => void =
-    async (publicKey, onEventId) => {
-      RelayPoolModule.connect(publicKey, onEventId)
-    }
 
   public readonly add: (
     relayUrl: string,
@@ -125,10 +125,29 @@ class RelayPool {
     RelayPoolModule.update(relayUrl, active, globalfeed, paid, callback)
   }
 
+  public readonly switchLine: (online: boolean, publicKey: string, callback?: () => void) => void = async (
+    online,
+    publicKey,
+    callback = () => {}
+  ) => {
+    if (online) {
+      RelayPoolModule.connect(publicKey, () => {
+        this.online = true
+        callback()
+      })
+    } else {
+      RelayPoolModule.disconnect(() => {
+        this.online = false
+        callback()
+      })
+    }
+  }
+
   public readonly sendEvent: (event: Event, relayUrl?: string) => Promise<Event | null> = async (
     event,
     relayUrl,
   ) => {
+    if (!this.online) return null
     if (validateEvent(event)) {
       if (relayUrl) {
         this.sendRelay(['EVENT', event], relayUrl)
@@ -146,6 +165,7 @@ class RelayPool {
     event,
     relayUrl,
   ) => {
+    if (!this.online) return null
     if (validateEvent(event)) {
       this.sendRelay(['AUTH', event], relayUrl)
       return event
@@ -159,6 +179,7 @@ class RelayPool {
     subId,
     filters,
   ) => {
+    if (!this.online) return
     const id = `${subId}${JSON.stringify(filters)}`
     if (this.subscriptions[subId]?.includes(id)) {
       console.log('Subscription already done!', subId)
@@ -170,6 +191,7 @@ class RelayPool {
   }
 
   public readonly unsubscribe: (subIds: string[]) => void = async (subIds) => {
+    if (!this.online) return
     subIds.forEach((subId: string) => {
       this.sendAll(['CLOSE', subId])
       delete this.subscriptions[subId]
@@ -177,6 +199,7 @@ class RelayPool {
   }
 
   public readonly unsubscribeAll: () => void = async () => {
+    if (!this.online) return
     this.unsubscribe(Object.keys(this.subscriptions))
     this.subscriptions = {}
   }

@@ -177,7 +177,9 @@
       "faq": "常见问题",
       "reportBug": "反馈问题",
       "logout": "退出",
-      "exports": "Export"
+      "exports": "Export",
+      "online": "Online",
+      "offline": "Offline"
     },
     "configPage": {
       "signHeight": "用最新的比特币区块签署事件",

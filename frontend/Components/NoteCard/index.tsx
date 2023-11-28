@@ -79,6 +79,7 @@ export const NoteCard: React.FC<NoteCardProps> = ({
     showSensitive,
     relayColouring,
     longPressZap,
+    online
   } = useContext(AppContext)
   const [relayAdded, setRelayAdded] = useState<boolean>(false)
   const [positiveReactions, setPositiveReactions] = useState<number>(0)
@@ -127,7 +128,7 @@ export const NoteCard: React.FC<NoteCardProps> = ({
       const bTags = getBitcoinTag(note)
       setBitcoinTag(bTags[bTags.length - 1] ?? undefined)
     }
-  }, [lastEventId])
+  }, [lastEventId, online])
 
   useEffect(() => {
     if (database && note) {

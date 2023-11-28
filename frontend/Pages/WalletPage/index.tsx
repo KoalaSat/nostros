@@ -28,7 +28,7 @@ import { navigate } from '../../lib/Navigation'
 
 export const WalletPage: React.FC = () => {
   const theme = useTheme()
-  const { getSatoshiSymbol, database, setDisplayUserDrawer } = React.useContext(AppContext)
+  const { getSatoshiSymbol, database, setDisplayUserDrawer, online } = React.useContext(AppContext)
   const { publicKey } = React.useContext(UserContext)
   const { relayPool, lastEventId } = React.useContext(RelayPoolContext)
   const { refreshWallet, updateWallet, type, balance, transactions, invoices, updatedAt } =
@@ -73,7 +73,7 @@ export const WalletPage: React.FC = () => {
         },
       ])
     }
-  }, [lastEventId])
+  }, [lastEventId, online])
 
   useEffect(() => {
     const array = [...transactions, ...invoices]

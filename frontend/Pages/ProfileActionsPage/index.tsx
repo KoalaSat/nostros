@@ -27,7 +27,7 @@ interface ProfileActionsProps {
 
 export const ProfileActionsPage: React.FC<ProfileActionsProps> = ({ route: { params: { userId } } }) => {
   const theme = useTheme()
-  const { database, longPressZap } = React.useContext(AppContext)
+  const { database, longPressZap, online } = React.useContext(AppContext)
   const { publicKey, privateKey, mutedUsers } = React.useContext(UserContext)
   const { relayPool, addRelayItem, lastEventId, sendEvent, relays } =
     React.useContext(RelayPoolContext)
@@ -60,7 +60,7 @@ export const ProfileActionsPage: React.FC<ProfileActionsProps> = ({ route: { par
   React.useEffect(() => {
     loadUser()
     loadRelays()
-  }, [lastEventId, isMuted])
+  }, [lastEventId, isMuted, online])
 
   const hideGroupsUser: () => void = () => {
     if (publicKey && relayPool && database && userId) {

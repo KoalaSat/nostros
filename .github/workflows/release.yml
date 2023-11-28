@@ -30,7 +30,6 @@ jobs:
 
             https://github.com/KoalaSat/nostros/releases/${{ github.ref_name }}
 
-            **What's Changed**
       # Upload APK artifact asset
       - name: 'Download universal APK Artifact'
         uses: actions/download-artifact@v3
