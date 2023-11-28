@@ -32,7 +32,8 @@ export const voidCatUpload: (
           reject(new Error('Error uploading image'))
         }
       })
-      .catch(() => {
+      .catch((e) => {
+        console.log(e)
         reject(new Error('Error uploading image'))
       })
   })

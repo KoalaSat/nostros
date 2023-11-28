@@ -27,7 +27,8 @@ export const nostrcheckUpload: (
         const imageUrl: string = response.data.URL
         resolve(imageUrl)
       })
-      .catch(() => {
+      .catch((e) => {
+        console.log(e)
         reject(new Error('Error uploading image'))
       })
   })

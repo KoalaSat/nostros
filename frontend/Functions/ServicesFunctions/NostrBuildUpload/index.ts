@@ -26,7 +26,8 @@ export const nostrBuildUpload: (
         const imageUrl: string = response.data.match(regExp)[0].slice(0, -4)
         resolve(imageUrl)
       })
-      .catch(() => {
+      .catch((e) => {
+        console.log(e)
         reject(new Error('Error uploading image'))
       })
   })

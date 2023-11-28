@@ -11,18 +11,18 @@ export const imageHostingServices: Record<
     sendFunction: (fileUri: string, fileType: string, filename: string) => Promise<string | null>
   }
 > = {
-  voidCat: {
-    uri: 'https://void.cat',
-    uploadUrl: 'https://void.cat/upload',
-    donation: 'https://void.cat/donate',
-    sendFunction: voidCatUpload,
-  },
-  nostrBuild: {
-    uri: 'https://nostr.build',
-    uploadUrl: 'https://nostr.build/upload.php',
-    donation: 'https://nostr.build',
-    sendFunction: nostrBuildUpload,
-  },
+  // voidCat: {
+  //   uri: 'https://void.cat',
+  //   uploadUrl: 'https://void.cat/upload',
+  //   donation: 'https://void.cat/donate',
+  //   sendFunction: voidCatUpload,
+  // },
+  // nostrBuild: {
+  //   uri: 'https://nostr.build',
+  //   uploadUrl: 'https://nostr.build/upload.php',
+  //   donation: 'https://nostr.build',
+  //   sendFunction: nostrBuildUpload,
+  // },
   nostrcheck: {
     uri: 'https://nostrcheck.me',
     uploadUrl: 'https://nostrcheck.me/api/media.php',
