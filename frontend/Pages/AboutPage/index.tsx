@@ -52,6 +52,22 @@ export const AboutPage: React.FC = () => {
         onPress: async () => await Linking.openURL('https://github.com/KoalaSat/nostros'),
       },
       {
+        key: 2,
+        title: t('menuItems.reportBug'),
+        left: (
+          <List.Icon
+            icon={() => (
+              <MaterialCommunityIcons
+                name='bug-outline'
+                size={25}
+                color={theme.colors.onPrimaryContainer}
+              />
+            )}
+          />
+        ),
+        onPress: async () => await Linking.openURL('https://github.com/KoalaSat/nostros/issues/new/choose'),
+      },
+      {
         key: 3,
         title: t('aboutPage.telegram'),
         left: (

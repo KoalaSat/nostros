@@ -22,6 +22,7 @@ export const HomeNavigator: React.FC = () => {
   const bottomSheetRelaysRef = React.useRef<RBSheet>(null)
   const bottomSheetLoginRef = React.useRef<RBSheet>(null)
   const Stack = React.useMemo(() => createStackNavigator(), [])
+
   const cardStyleInterpolator = React.useMemo(
     () =>
       Platform.OS === 'android'
