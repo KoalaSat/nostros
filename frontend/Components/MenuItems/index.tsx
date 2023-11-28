@@ -10,7 +10,6 @@ import {
   TouchableRipple,
   useTheme,
 } from 'react-native-paper'
-import SInfo from 'react-native-sensitive-info'
 import Logo from '../Logo'
 import { useTranslation } from 'react-i18next'
 import { RelayPoolContext } from '../../Contexts/RelayPoolContext'
@@ -20,7 +19,7 @@ import { navigate } from '../../lib/Navigation'
 import { usernamePubKey } from '../../Functions/RelayFunctions/Users'
 import ProfileData from '../ProfileData'
 import { WalletContext } from '../../Contexts/WalletContext'
-import { AppContext, type Config } from '../../Contexts/AppContext'
+import { AppContext } from '../../Contexts/AppContext'
 
 export const MenuItems: React.FC = () => {
   const [drawerItemIndex, setDrawerItemIndex] = React.useState<number>(-1)

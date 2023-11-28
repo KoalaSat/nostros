@@ -450,7 +450,7 @@
       "nip05Description": "Link your identity with a domain.",
       "nip05Title": "NIP-05",
       "directoryCancell": "Cancel",
-      "directoryContinue": "Continue",
+      "continue": "Continue",
       "directoryDescription": "Nostr Directory is a database of nostr public keys associated with official user accounts on other platforms. Find the people you already follow on other platforms on nostr and add your public key so that your followers can find you.\n\nIf you continue you will have to perform the verification process outside the application.",
       "directoryTitle": "Nostr Directory",
       "publishPicture": "Publish",
@@ -465,7 +465,10 @@
       "lud06": "Zaps",
       "nip05": "NIP-05",
       "name": "Name",
-      "about": "Description"
+      "about": "Description",
+      "banner": "Banner",
+      "bannerTitle": "Banner",
+      "bannerDescription": "Paste here the URL for the image you would like to display as background on your public profile."
     },
     "textContent": {
       "invoice": "Lightning Network invoice"

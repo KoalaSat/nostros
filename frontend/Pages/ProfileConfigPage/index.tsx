@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState } from 'react'
-import { Linking, ScrollView, StyleSheet, View } from 'react-native'
+import { Dimensions, ImageBackground, Linking, ScrollView, StyleSheet, View } from 'react-native'
 import Clipboard from '@react-native-clipboard/clipboard'
 import { AppContext } from '../../Contexts/AppContext'
 import { useTranslation } from 'react-i18next'
@@ -24,6 +24,8 @@ import { useFocusEffect } from '@react-navigation/native'
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'
 import UploadImage from '../../Components/UploadImage'
 import { navigate } from '../../lib/Navigation'
+import LinearGradient from 'react-native-linear-gradient'
+import FastImage from 'react-native-fast-image'
 
 export const ProfileConfigPage: React.FC = () => {
   const { t } = useTranslation('common')
@@ -32,6 +34,7 @@ export const ProfileConfigPage: React.FC = () => {
   const bottomSheetDirectoryRef = React.useRef<RBSheet>(null)
   const bottomSheetNip05Ref = React.useRef<RBSheet>(null)
   const bottomSheetLud06Ref = React.useRef<RBSheet>(null)
+  const bottomSheetBannerRef = React.useRef<RBSheet>(null)
   const { database, online } = useContext(AppContext)
   const { relayPool, lastEventId, lastConfirmationtId, sendEvent } = useContext(RelayPoolContext)
   const {
@@ -51,6 +54,8 @@ export const ProfileConfigPage: React.FC = () => {
     nip05,
     setNip05,
     reloadUser,
+    banner,
+    setBanner
   } = useContext(UserContext)
   // State
   const [showNotification, setShowNotification] = useState<undefined | string>()
@@ -82,6 +87,7 @@ export const ProfileConfigPage: React.FC = () => {
       bottomSheetPictureRef.current?.close()
       bottomSheetNip05Ref.current?.close()
       bottomSheetLud06Ref.current?.close()
+      bottomSheetBannerRef.current?.close()
     }
   }, [lastEventId, lastConfirmationtId, online])
 
@@ -96,6 +102,7 @@ export const ProfileConfigPage: React.FC = () => {
             lud16: lnAddress,
             nip05,
             picture,
+            banner
           }),
           created_at: getUnixTime(new Date()),
           kind: Kind.Metadata,
@@ -157,10 +164,36 @@ export const ProfileConfigPage: React.FC = () => {
     })
   }
 
+  const pasteBanner: () => void = () => {
+    Clipboard.getString().then((value) => {
+      setBanner(value ?? '')
+    })
+  }
+
   return (
     <View style={styles.container}>
       <ScrollView horizontal={false} showsVerticalScrollIndicator={false}>
         <Card style={styles.cardContainer}>
+          <ImageBackground
+            style={[
+              styles.banner,
+              { width: Dimensions.get('window').width }
+            ]}
+            source={{ uri: banner }}
+            resizeMode={FastImage.resizeMode.cover}
+          >
+            <LinearGradient
+              colors={['rgba(0, 0, 0, 0)', theme.colors.elevation.level1]}
+              style={styles.gradient}
+            />
+          </ImageBackground>
+          <View style={styles.editBanner}>
+            <IconButton
+              icon='pencil-outline'
+              size={20}
+              onPress={() => bottomSheetBannerRef.current?.open()}
+            />
+          </View>
           <Card.Content>
             <View style={styles.cardPicture}>
               <TouchableRipple onPress={() => bottomSheetPictureRef.current?.open()}>
@@ -353,10 +386,44 @@ export const ProfileConfigPage: React.FC = () => {
             onPress={async () => await Linking.openURL('https://www.nostr.directory')}
             loading={isPublishingProfile !== undefined}
           >
-            {t('profileConfigPage.directoryContinue')}
+            {t('profileConfigPage.continue')}
           </Button>
           <Button mode='outlined' onPress={() => bottomSheetDirectoryRef.current?.close()}>
             {t('profileConfigPage.directoryCancell')}
+          </Button>
+        </View>
+      </RBSheet>
+      <RBSheet
+        ref={bottomSheetBannerRef}
+        closeOnDragDown={true}
+        customStyles={rbSheetCustomStyles}
+      >
+        <View>
+          <Text variant='titleLarge'>{t('profileConfigPage.bannerTitle')}</Text>
+          <Text style={styles.spacer} variant='bodyMedium'>
+            {t('profileConfigPage.bannerDescription')}
+          </Text>
+          <TextInput
+            style={styles.spacer}
+            mode='outlined'
+            label={t('profileConfigPage.banner') ?? ''}
+            onChangeText={setBanner}
+            value={banner}
+            right={
+              <TextInput.Icon
+                icon='content-paste'
+                onPress={pasteBanner}
+                forceTextInputFocus={false}
+              />
+            }
+          />
+          <Button
+            style={styles.spacer}
+            mode='contained'
+            onPress={() => onPublishUser('profilePublished')}
+            loading={isPublishingProfile !== undefined}
+          >
+            {t('profileConfigPage.publish')}
           </Button>
         </View>
       </RBSheet>
@@ -489,7 +556,7 @@ const styles = StyleSheet.create({
   cardContainer: {
     width: '100%',
     justifyContent: 'center',
-    alignContent: 'center',
+    alignContent: 'center'
   },
   cardActions: {
     flexDirection: 'row',
@@ -517,6 +584,25 @@ const styles = StyleSheet.create({
     marginTop: 16,
     marginBottom: 16,
   },
+  gradient: {
+    position: 'absolute',
+    left: 0,
+    right: 0,
+    bottom: 0,
+    height: '30%',
+  },
+  banner: {
+    height: 120,
+    marginBottom: -80,
+    borderTopRightRadius: 28
+  },
+  editBanner: {
+    width: '100%',
+    justifyContent: 'flex-end',
+    flexDirection: 'row',
+    paddingRight: 6,
+    marginTop: -40
+  }
 })
 
 export default ProfileConfigPage

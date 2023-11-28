@@ -257,10 +257,10 @@ public class Database {
             instance.execSQL("CREATE INDEX nostros_notifications_index ON nostros_notifications(created_at);");
         } catch (SQLException e) { }
         try {
-            instance.execSQL("ALTER TABLE nostros_notifications ADD COLUMN zapper_user_id TEXT;");
+            instance.execSQL("UPDATE nostros_lists SET kind=10003 WHERE kind=10001;"); // FIXME Remove after including kind 10003
         } catch (SQLException e) { }
         try {
-            instance.execSQL("UPDATE nostros_lists SET kind=10003 WHERE kind=10001;"); // FIXME Remove after including kind 10003
+            instance.execSQL("ALTER TABLE nostros_users ADD COLUMN banner TEXT;");
         } catch (SQLException e) { }
     }
 
