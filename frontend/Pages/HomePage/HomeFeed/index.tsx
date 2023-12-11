@@ -9,12 +9,14 @@ import Tabs from '../../../Components/Tabs'
 import ZapsFeed from './ZapsFeed'
 import BookmarksFeed from './BookmarksFeed'
 import { RelayPoolContext } from '../../../Contexts/RelayPoolContext'
+import { AppContext } from '../../../Contexts/AppContext'
 
 interface HomeFeedProps {
   navigation: any
 }
 
 export const HomeFeed: React.FC<HomeFeedProps> = ({ navigation }) => {
+  const { online } = useContext(AppContext)
   const { privateKey, publicKey } = useContext(UserContext)
   const { relayPool } = useContext(RelayPoolContext)
   const [activeTab, setActiveTab] = React.useState('myFeed')
@@ -80,7 +82,7 @@ export const HomeFeed: React.FC<HomeFeedProps> = ({ navigation }) => {
         defaultTab='myFeed'
       />
       <View style={styles.feed}>{renderScene[activeTab]}</View>
-      {privateKey && (
+      {privateKey && online && (
         <AnimatedFAB
           style={[styles.fab, { top: Dimensions.get('window').height - 191 }]}
           icon='pencil-outline'

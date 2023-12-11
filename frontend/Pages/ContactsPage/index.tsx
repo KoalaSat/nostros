@@ -32,17 +32,17 @@ import ProfileData from '../../Components/ProfileData'
 import { handleInfinityScroll } from '../../Functions/NativeFunctions'
 import DatabaseModule from '../../lib/Native/DatabaseModule'
 import { removeMutedUsersList } from '../../Functions/RelayFunctions/Lists'
+import { push } from '../../lib/Navigation'
 
 export const ContactsPage: React.FC = () => {
   const { t } = useTranslation('common')
   const theme = useTheme()
   const initialPageSize = 20
-  const { database, setDisplayUserDrawer, qrReader, setQrReader, online } = useContext(AppContext)
+  const { database, qrReader, setQrReader, online } = useContext(AppContext)
   const { privateKey, publicKey, nPub, mutedUsers, reloadLists } = React.useContext(UserContext)
   const { relayPool, lastEventId, sendEvent } = useContext(RelayPoolContext)
   const [pageSize, setPageSize] = useState<number>(initialPageSize)
   const bottomSheetAddContactRef = React.useRef<RBSheet>(null)
-  const bottomSheetProfileRef = React.useRef<RBSheet>(null)
   // State
   const [followers, setFollowers] = useState<User[]>([])
   const [following, setFollowing] = useState<User[]>([])
@@ -208,10 +208,7 @@ export const ContactsPage: React.FC = () => {
   const renderContactItem: ListRenderItem<User> = ({ index, item }) => {
     return (
       <TouchableRipple
-        onPress={() => {
-          setDisplayUserDrawer(item.id)
-          bottomSheetProfileRef.current?.open()
-        }}
+        onPress={() => push('ProfileActions', { userId: item.id, title: item?.name })}
       >
         <View key={item.id} style={styles.contactRow}>
           <View style={styles.profileData}>
@@ -238,10 +235,7 @@ export const ContactsPage: React.FC = () => {
   const renderMutedItem: ListRenderItem<User> = ({ index, item }) => {
     return (
       <TouchableRipple
-        onPress={() => {
-          setDisplayUserDrawer(item.id)
-          bottomSheetProfileRef.current?.open()
-        }}
+        onPress={() => push('ProfileActions', { userId: item.id, title: item?.name })}
       >
         <View key={item.id} style={styles.contactRow}>
           <View style={styles.profileData}>

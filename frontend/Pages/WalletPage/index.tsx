@@ -24,11 +24,11 @@ import { UserContext } from '../../Contexts/UserContext'
 import { WalletContext } from '../../Contexts/WalletContext'
 import { getZaps, type Zap } from '../../Functions/DatabaseFunctions/Zaps'
 import type WalletAction from '../../lib/Lightning'
-import { navigate } from '../../lib/Navigation'
+import { navigate, push } from '../../lib/Navigation'
 
 export const WalletPage: React.FC = () => {
   const theme = useTheme()
-  const { getSatoshiSymbol, database, setDisplayUserDrawer, online } = React.useContext(AppContext)
+  const { getSatoshiSymbol, database, online } = React.useContext(AppContext)
   const { publicKey } = React.useContext(UserContext)
   const { relayPool, lastEventId } = React.useContext(RelayPoolContext)
   const { refreshWallet, updateWallet, type, balance, transactions, invoices, updatedAt } =
@@ -171,7 +171,7 @@ export const WalletPage: React.FC = () => {
               if (zap.zapped_event_id) {
                 navigate('Note', { noteId: zap.zapped_event_id })
               } else if (zap.zapper_user_id) {
-                setDisplayUserDrawer(zap.zapper_user_id)
+                push('ProfileActions', { userId: zap.zapper_user_id, title: zap.name })
               }
             }
           }}

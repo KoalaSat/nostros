@@ -282,15 +282,17 @@ export const ConversationsFeed: React.FC = () => {
           </Button>
         </View>
       )}
-      <AnimatedFAB
-        style={[styles.fab, { top: Dimensions.get('window').height - 191 }]}
-        icon='pencil-outline'
-        label='Label'
-        onPress={() => bottomSheetCreateRef.current?.open()}
-        animateFrom='right'
-        iconMode='static'
-        extended={false}
-      />
+      {privateKey && online && (
+        <AnimatedFAB
+          style={[styles.fab, { top: Dimensions.get('window').height - 191 }]}
+          icon='pencil-outline'
+          label='Label'
+          onPress={() => bottomSheetCreateRef.current?.open()}
+          animateFrom='right'
+          iconMode='static'
+          extended={false}
+        />
+      )}
       <RBSheet ref={bottomSheetCreateRef} closeOnDragDown={true} customStyles={bottomSheetStyles}>
         <FlatList
           data={createOptions}

@@ -350,27 +350,31 @@ export const RelaysPage: React.FC = () => {
           ItemSeparatorComponent={Divider}
         />
       </ScrollView>
-      <AnimatedFAB
-        style={styles.fabContacts}
-        icon='cached'
-        label='push'
-        onPress={() => {
-          calculateContactsRelays()
-          bottomSheetContactsRef.current?.open()
-        }}
-        animateFrom='right'
-        iconMode='static'
-        extended={false}
-      />
-      <AnimatedFAB
-        style={styles.fabPush}
-        icon='upload-multiple'
-        label='push'
-        onPress={() => bottomSheetPushRef.current?.open()}
-        animateFrom='right'
-        iconMode='static'
-        extended={false}
-      />
+      {online && (
+        <>
+          <AnimatedFAB
+            style={styles.fabContacts}
+            icon='cached'
+            label='push'
+            onPress={() => {
+              calculateContactsRelays()
+              bottomSheetContactsRef.current?.open()
+            }}
+            animateFrom='right'
+            iconMode='static'
+            extended={false}
+          />
+          <AnimatedFAB
+            style={styles.fabPush}
+            icon='upload-multiple'
+            label='push'
+            onPress={() => bottomSheetPushRef.current?.open()}
+            animateFrom='right'
+            iconMode='static'
+            extended={false}
+          />
+        </>
+      )}
       <AnimatedFAB
         style={styles.fabAdd}
         icon='plus'

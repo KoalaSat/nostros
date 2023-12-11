@@ -1,7 +1,7 @@
 import React, { useContext, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { type ListRenderItem, StyleSheet, View, FlatList } from 'react-native'
-import { Button, Card, Divider, List, Text, useTheme } from 'react-native-paper'
+import { ActivityIndicator, Button, Card, Divider, List, Text, useTheme } from 'react-native-paper'
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'
 import { AppContext } from '../../../Contexts/AppContext'
 import { RelayPoolContext } from '../../../Contexts/RelayPoolContext'
@@ -121,6 +121,7 @@ export const ThirdStep: React.FC<ThirdStepProps> = ({ nextStep, skip }) => {
           <Card.Content>
             <View style={styles.loadingProfile}>
               <Text>{t('profileLoadPage.contatcsRelays')}</Text>
+              <ActivityIndicator animating={true} size={20} />
               <Text style={{ color: '#7ADC70' }}>
                 {t('profileLoadPage.contatcsRelaysCount', { activeRelays: contactsRelays.length })}
               </Text>
