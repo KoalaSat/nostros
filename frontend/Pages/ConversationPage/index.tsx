@@ -41,6 +41,7 @@ import UploadImage from '../../Components/UploadImage'
 import { Swipeable } from 'react-native-gesture-handler'
 import { getETags } from '../../Functions/RelayFunctions/Events'
 import DatabaseModule from '../../lib/Native/DatabaseModule'
+import { push } from '../../lib/Navigation'
 
 interface ConversationPageProps {
   route: { params: { pubKey: string; conversationId: string } }
@@ -50,8 +51,8 @@ export const ConversationPage: React.FC<ConversationPageProps> = ({ route }) => 
   const initialPageSize = 10
   const theme = useTheme()
   const scrollViewRef = useRef<ScrollView>()
-  const { database, setRefreshBottomBarAt, setDisplayUserDrawer } = useContext(AppContext)
-  const { relayPool, lastEventId, sendEvent, online } = useContext(RelayPoolContext)
+  const { database, setRefreshBottomBarAt, online } = useContext(AppContext)
+  const { relayPool, lastEventId, sendEvent } = useContext(RelayPoolContext)
   const { publicKey, privateKey, name, picture, validNip05 } = useContext(UserContext)
   const otherPubKey = useMemo(() => route.params.pubKey, [])
   const [pageSize, setPageSize] = useState<number>(initialPageSize)
@@ -254,7 +255,7 @@ export const ConversationPage: React.FC<ConversationPageProps> = ({ route }) => 
           <TextContent
             content={message?.content}
             event={message}
-            onPressUser={(user) => setDisplayUserDrawer(user.id)}
+            onPressUser={(user) => push('ProfileActions', { userId: user.id, title: user?.name })}
             copyText
           />
         ) : (
@@ -292,7 +293,7 @@ export const ConversationPage: React.FC<ConversationPageProps> = ({ route }) => 
           {publicKey !== item.pubkey && (
             <View style={styles.pictureSpaceLeft}>
               {showAvatar && (
-                <TouchableRipple onPress={() => setDisplayUserDrawer(otherPubKey)}>
+                <TouchableRipple onPress={() => push('ProfileActions', { userId: otherUser.id, title: otherUser.name })}>
                   <NostrosAvatar
                     name={otherUser.name}
                     pubKey={otherPubKey}
@@ -334,7 +335,7 @@ export const ConversationPage: React.FC<ConversationPageProps> = ({ route }) => 
           {publicKey === item.pubkey && (
             <View style={styles.pictureSpaceRight}>
               {showAvatar && (
-                <TouchableRipple onPress={() => setDisplayUserDrawer(publicKey)}>
+                <TouchableRipple onPress={() => push('ProfileActions', { userId: publicKey, title: name })}>
                   <NostrosAvatar name={name} pubKey={publicKey} src={picture} size={40} />
                 </TouchableRipple>
               )}
@@ -400,7 +401,7 @@ export const ConversationPage: React.FC<ConversationPageProps> = ({ route }) => 
             <TextContent
               content={reply.content}
               event={reply}
-              onPressUser={(user) => setDisplayUserDrawer(user.id)}
+              onPressUser={(user) => push('ProfileActions', { userId: user.id, title: user?.name })}
               showPreview={false}
               numberOfLines={3}
             />

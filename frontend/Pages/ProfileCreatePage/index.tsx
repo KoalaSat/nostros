@@ -18,8 +18,7 @@ interface ProfileCreatePageProps {
 export const ProfileCreatePage: React.FC<ProfileCreatePageProps> = ({ navigation }) => {
   const { t } = useTranslation('common')
   const { setPrivateKey, setUserState, publicKey } = useContext(UserContext)
-  const { createRandomRelays, sendEvent, relays } = useContext(RelayPoolContext)
-  const [key, setKey] = useState<string>()
+  const { createRandomRelays, sendEvent, relays, relayPoolReady } = useContext(RelayPoolContext)
   const [inputValue, setInputValue] = useState<string>()
   const [keyboardShow, setKeyboardShow] = useState<boolean>(false)
   const [step, setStep] = useState<number>(0)
@@ -35,12 +34,15 @@ export const ProfileCreatePage: React.FC<ProfileCreatePageProps> = ({ navigation
     generateRandomMnemonic().then((words) => {
       setMnemonicWords(words)
       const privateKey = nip06.privateKeyFromSeedWords(Object.values(words).join(' '))
-      setKey(privateKey)
+      setPrivateKey(privateKey)
       const nsec = nip19.nsecEncode(privateKey)
       setInputValue(nsec)
     })
-    createRandomRelays()
   }, [])
+
+  React.useEffect(() => {
+    if (relayPoolReady) createRandomRelays()
+  }, [relayPoolReady])
 
   useEffect(() => {
     if (inputValue) setLoading(false)
@@ -92,7 +94,6 @@ export const ProfileCreatePage: React.FC<ProfileCreatePageProps> = ({ navigation
         sendEvent(event)
       }
       if (validConfirmation()) {
-        setPrivateKey(key)
         publishRelays()
         setUserState('ready')
       } else {
@@ -104,7 +105,6 @@ export const ProfileCreatePage: React.FC<ProfileCreatePageProps> = ({ navigation
   }
 
   const onPressSkip: () => void = () => {
-    setPrivateKey(key)
     publishRelays()
     setUserState('ready')
   }

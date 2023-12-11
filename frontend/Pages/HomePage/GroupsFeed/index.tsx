@@ -42,7 +42,7 @@ export const GroupsFeed: React.FC = () => {
   const { t } = useTranslation('common')
   const theme = useTheme()
   const { database, qrReader, setQrReader, refreshBottomBarAt, online } = useContext(AppContext)
-  const { publicKey } = useContext(UserContext)
+  const { publicKey, privateKey } = useContext(UserContext)
   const { relayPool, lastEventId, lastConfirmationtId, sendEvent, setNewGroupMessages, newGroupMessages } = useContext(RelayPoolContext)
   const bottomSheetSearchRef = React.useRef<RBSheet>(null)
   const bottomSheetCreateRef = React.useRef<RBSheet>(null)
@@ -297,15 +297,17 @@ export const GroupsFeed: React.FC = () => {
         horizontal={false}
         estimatedItemSize={76}
       />
-      <AnimatedFAB
-        style={[styles.fab, { top: Dimensions.get('window').height - 191 }]}
-        icon='plus'
-        label='Label'
-        onPress={() => bottomSheetFabActionRef.current?.open()}
-        animateFrom='right'
-        iconMode='static'
-        extended={false}
-      />
+      {privateKey && online && (
+        <AnimatedFAB
+          style={[styles.fab, { top: Dimensions.get('window').height - 191 }]}
+          icon='plus'
+          label='Label'
+          onPress={() => bottomSheetFabActionRef.current?.open()}
+          animateFrom='right'
+          iconMode='static'
+          extended={false}
+        />
+      )}
       <RBSheet ref={bottomSheetCreateRef} closeOnDragDown={true} customStyles={bottomSheetStyles}>
         <View>
           <Text style={styles.input} variant='titleLarge'>

@@ -26,6 +26,10 @@ jobs:
 
             https://github.com/KoalaSat/nostros/releases/download/${{ github.ref_name }}/nostros-${{ github.ref_name }}-universal.apk
 
+            **Torrent**
+
+            https://github.com/KoalaSat/nostros/releases/download/${{ github.ref_name }}/nostros-${{ github.ref_name }}-universal.torrent
+
             **Changelog**
 
             https://github.com/KoalaSat/nostros/releases/${{ github.ref_name }}
@@ -75,4 +79,13 @@ jobs:
           upload_url: ${{ steps.create-release.outputs.upload_url }}
           asset_path: app-armeabi-v7a-release.apk
           asset_name: nostros-${{ github.ref_name }}-armeabi-v7a.apk
-          asset_content_type: application/apk
+          asset_content_type: application/apk      
+      - name: Install torf-cli
+        run: sudo pip3 install torf-cli
+      - name: Create torrent using torf-cli
+        run: torf "nostros-${{ github.ref_name }}-universal.apk" -o "nostros-${{ github.ref_name }}-universal.torrent" -w "https://github.com/KoalaSat/nostros/releases/download/${{ github.ref_name }}/nostros-${{ github.ref_name }}-universal.apk" -s "torrent-webseed-creator"
+      - name: Upload torrent file
+        uses: actions/upload-artifact@v3
+        with:
+          name: Torrent
+          path: nostros-${{ github.ref_name }}-universal.torrent

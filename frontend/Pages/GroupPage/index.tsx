@@ -38,6 +38,7 @@ import ProfileData from '../../Components/ProfileData'
 import { ScrollView, Swipeable } from 'react-native-gesture-handler'
 import { getETags } from '../../Functions/RelayFunctions/Events'
 import DatabaseModule from '../../lib/Native/DatabaseModule'
+import { push } from '../../lib/Navigation'
 
 interface GroupPageProps {
   route: { params: { groupId: string } }
@@ -46,7 +47,7 @@ interface GroupPageProps {
 export const GroupPage: React.FC<GroupPageProps> = ({ route }) => {
   const initialPageSize = 20
   const theme = useTheme()
-  const { database, setDisplayUserDrawer, online } = useContext(AppContext)
+  const { database, online } = useContext(AppContext)
   const { relayPool, lastEventId, sendEvent } = useContext(RelayPoolContext)
   const { publicKey, privateKey, name, picture, validNip05 } = useContext(UserContext)
   const [pageSize, setPageSize] = useState<number>(initialPageSize)
@@ -308,7 +309,7 @@ export const GroupPage: React.FC<GroupPageProps> = ({ route }) => {
             <TextContent
               content={message?.content}
               event={message}
-              onPressUser={(user) => setDisplayUserDrawer(user.id)}
+              onPressUser={(user) => push('ProfileActions', { userId: user.id, title: user?.name })}
               copyText
             />
           ) : (
@@ -335,7 +336,7 @@ export const GroupPage: React.FC<GroupPageProps> = ({ route }) => {
           {publicKey !== item.pubkey && (
             <View style={styles.pictureSpaceLeft}>
               {showAvatar && (
-                <TouchableRipple onPress={() => setDisplayUserDrawer(item.pubkey)}>
+                <TouchableRipple onPress={() => push('ProfileActions', { userId: item.id, title: item?.name })}>
                   <NostrosAvatar
                     name={displayName(item)}
                     pubKey={item.pubkey}
@@ -379,7 +380,7 @@ export const GroupPage: React.FC<GroupPageProps> = ({ route }) => {
           {publicKey === item.pubkey && (
             <View style={styles.pictureSpaceRight}>
               {showAvatar && (
-                <TouchableRipple onPress={() => setDisplayUserDrawer(publicKey)}>
+                <TouchableRipple onPress={() => push('ProfileActions', { userId: publicKey, title: name })}>
                   <NostrosAvatar name={name} pubKey={publicKey} src={picture} size={40} />
                 </TouchableRipple>
               )}
@@ -435,7 +436,7 @@ export const GroupPage: React.FC<GroupPageProps> = ({ route }) => {
             <TextContent
               content={reply.content}
               event={reply}
-              onPressUser={(user) => setDisplayUserDrawer(user.id)}
+              onPressUser={(user) => push('ProfileActions', { userId: user.id, title: user?.name })}
               showPreview={false}
               numberOfLines={3}
             />

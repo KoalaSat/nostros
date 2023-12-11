@@ -18,7 +18,7 @@ import { Kind } from 'nostr-tools'
 import { getUsers, type User } from '../../Functions/DatabaseFunctions/Users'
 import LnPreview from '../../Components/LnPreview'
 import { FlatList, type ListRenderItem, ScrollView, StyleSheet, View, Dimensions } from 'react-native'
-import { goBack } from '../../lib/Navigation'
+import { goBack, push } from '../../lib/Navigation'
 import { getZapTag } from '../../Functions/RelayFunctions/Events'
 
 interface ZapPageProps {
@@ -33,7 +33,7 @@ export const ZapPage: React.FC<ZapPageProps> = ({ route: { params: { note, user 
   const userId = user?.id ?? note?.pubkey
   const zapPubkey = user?.zap_pubkey ?? note?.zap_pubkey
   const zapSplitTags = getZapTag(note)
-  const { getSatoshiSymbol, database, setDisplayUserDrawer, online } = React.useContext(AppContext)
+  const { getSatoshiSymbol, database, online } = React.useContext(AppContext)
   const { relayPool, lastEventId } = React.useContext(RelayPoolContext)
   const { publicKey, privateKey } = React.useContext(UserContext)
   const bottomSheetLnPaymentRef = React.useRef<RBSheet>(null)
@@ -135,7 +135,7 @@ export const ZapPage: React.FC<ZapPageProps> = ({ route: { params: { note, user 
     const zapDescription = item.tags?.find((tag) => tag[0] === 'description')
     const content = zapDescription ? JSON.parse(zapDescription[1])?.content : undefined
     return (
-      <TouchableRipple onPress={() => setDisplayUserDrawer(item.user_id)}>
+      <TouchableRipple onPress={() => push('ProfileActions', { userId: item?.user_id, title: item?.name })}>
         <View key={item.id} style={styles.zapperRow}>
           <View style={styles.zapperData}>
             <ProfileData
@@ -171,7 +171,7 @@ export const ZapPage: React.FC<ZapPageProps> = ({ route: { params: { note, user 
     const totalWeight = zapSplitTags.reduce((acc, tag) => acc + parseInt(tag[3] ?? '0', 10), 0)
     const weightedAllocation = allocationTag ? (parseInt(allocationTag[3] ?? '0', 10) * 100) / totalWeight : 0
     return (
-      <TouchableRipple onPress={() => setDisplayUserDrawer(item)}>
+      <TouchableRipple onPress={() => push('ProfileActions', { userId: user?.id, title: user?.name })}>
         <View key={item} style={styles.zapperRow}>
           <View style={styles.zapperData}>
             <ProfileData

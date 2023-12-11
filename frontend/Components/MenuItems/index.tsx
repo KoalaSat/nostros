@@ -132,7 +132,7 @@ export const MenuItems: React.FC = () => {
                 />
               </TouchableRipple>
               <View style={styles.cardEdit}>
-                {privateKey && (
+                {privateKey && online && (
                   <IconButton
                     icon='pencil-outline'
                     size={20}

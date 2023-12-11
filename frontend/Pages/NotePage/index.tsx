@@ -143,7 +143,7 @@ export const NotePage: React.FC<NotePageProps> = ({ route }) => {
           />
         </View>
       </ScrollView>
-      {privateKey && (
+      {privateKey && online && (
         <AnimatedFAB
           style={[styles.fabSend, { top: Dimensions.get('window').height - 136 }]}
           icon='message-plus-outline'

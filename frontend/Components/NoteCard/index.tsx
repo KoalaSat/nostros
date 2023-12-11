@@ -306,7 +306,7 @@ export const NoteCard: React.FC<NoteCardProps> = ({
       <View style={styles.reactionsPopupContent}>
         <Button
           onPress={() => {
-            if (!userDownvoted && privateKey) {
+            if (!userDownvoted && privateKey && online) {
               setUserDownvoted(true)
               setNegativeReactions((prev) => prev + 1)
               publishReaction(false)
@@ -325,7 +325,7 @@ export const NoteCard: React.FC<NoteCardProps> = ({
         </Button>
         <Button
           onPress={() => {
-            if (!userUpvoted && privateKey) {
+            if (!userUpvoted && privateKey && online) {
               setUserUpvoted(true)
               setPositiveReactions((prev) => prev + 1)
               publishReaction(true)

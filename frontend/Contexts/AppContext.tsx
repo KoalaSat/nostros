@@ -47,7 +47,6 @@ export interface AppContextProps {
   setClipboardNip21: (clipboardNip21: string | undefined) => void
   checkClipboard: () => void
   displayUserDrawer?: string
-  setDisplayUserDrawer: (displayUserDrawer: string | undefined) => void
   displayNoteDrawer?: string
   refreshBottomBarAt?: number
   setRefreshBottomBarAt: (refreshBottomBarAt: number) => void
@@ -98,7 +97,6 @@ export const initialAppContext: AppContextProps = {
   getImageHostingService: () => '',
   getSatoshiSymbol: () => <></>,
   setClipboardNip21: () => {},
-  setDisplayUserDrawer: () => {},
   longPressZap: undefined,
   setLongPressZap: () => {},
   signHeight: false,
@@ -130,7 +128,6 @@ export const AppContextProvider = ({ children }: AppContextProviderProps): JSX.E
   const [loadingDb, setLoadingDb] = useState<boolean>(initialAppContext.loadingDb)
   const [clipboardLoads, setClipboardLoads] = React.useState<string[]>([])
   const [clipboardNip21, setClipboardNip21] = React.useState<string>()
-  const [displayUserDrawer, setDisplayUserDrawer] = React.useState<string>()
   const [pushedTab, setPushedTab] = useState<string>()
   const [signHeight, setSignWithHeight] = useState<boolean>(initialAppContext.signHeight)
   const [online, setOnline] = React.useState<boolean>(initialAppContext.online)
@@ -249,8 +246,6 @@ export const AppContextProvider = ({ children }: AppContextProviderProps): JSX.E
       value={{
         relayColouring,
         setRelayColouring,
-        displayUserDrawer,
-        setDisplayUserDrawer,
         language,
         setLanguage,
         checkClipboard,
