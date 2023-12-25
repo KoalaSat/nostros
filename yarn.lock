@@ -1268,27 +1268,39 @@
   dependencies:
     eslint-scope "5.1.1"
 
-"@noble/curves@~0.8.3":
-  version "0.8.3"
-  resolved "https://registry.yarnpkg.com/@noble/curves/-/curves-0.8.3.tgz#ad6d48baf2599cf1d58dcb734c14d5225c8996e0"
-  integrity sha512-OqaOf4RWDaCRuBKJLDURrgVxjLmneGsiCXGuzYB5y95YithZMA6w4uk34DHSm0rKMrrYiaeZj48/81EvaAScLQ==
+"@noble/ciphers@0.2.0":
+  version "0.2.0"
+  resolved "https://registry.yarnpkg.com/@noble/ciphers/-/ciphers-0.2.0.tgz#a12cda60f3cf1ab5d7c77068c3711d2366649ed7"
+  integrity sha512-6YBxJDAapHSdd3bLDv6x2wRPwq4QFMUaB3HvljNBUTThDd12eSm7/3F+2lnfzx2jvM+S6Nsy0jEt9QbPqSwqRw==
+
+"@noble/curves@1.2.0":
+  version "1.2.0"
+  resolved "https://registry.yarnpkg.com/@noble/curves/-/curves-1.2.0.tgz#92d7e12e4e49b23105a2555c6984d41733d65c35"
+  integrity sha512-oYclrNgRaM9SsBUBVbb8M6DTV7ZHRTKugureoYEncY5c65HOmRzvSiTE3y5CYaPYJA/GVkrhXEoF0M3Ya9PMnw==
   dependencies:
-    "@noble/hashes" "1.3.0"
+    "@noble/hashes" "1.3.2"
 
-"@noble/hashes@1.0.0":
-  version "1.0.0"
-  resolved "https://registry.yarnpkg.com/@noble/hashes/-/hashes-1.0.0.tgz#d5e38bfbdaba174805a4e649f13be9a9ed3351ae"
-  integrity sha512-DZVbtY62kc3kkBtMHqwCOfXrT/hnoORy5BJ4+HU1IR59X0KWAOqsfzQPcUl/lQLlG7qXbe/fZ3r/emxtAl+sqg==
+"@noble/curves@~1.1.0":
+  version "1.1.0"
+  resolved "https://registry.yarnpkg.com/@noble/curves/-/curves-1.1.0.tgz#f13fc667c89184bc04cccb9b11e8e7bae27d8c3d"
+  integrity sha512-091oBExgENk/kGj3AZmtBDMpxQPDtxQABR2B9lb1JbVTs6ytdzZNwvhxQ4MWasRNEzlbEH8jCWFCwhF/Obj5AA==
+  dependencies:
+    "@noble/hashes" "1.3.1"
 
-"@noble/hashes@1.3.0", "@noble/hashes@~1.3.0":
-  version "1.3.0"
-  resolved "https://registry.yarnpkg.com/@noble/hashes/-/hashes-1.3.0.tgz#085fd70f6d7d9d109671090ccae1d3bec62554a1"
-  integrity sha512-ilHEACi9DwqJB0pw7kv+Apvh50jiiSyR/cQ3y4W7lOR5mhvn/50FLUfsnfJz0BDZtl/RR16kXvptiv6q1msYZg==
+"@noble/hashes@1.3.1":
+  version "1.3.1"
+  resolved "https://registry.yarnpkg.com/@noble/hashes/-/hashes-1.3.1.tgz#8831ef002114670c603c458ab8b11328406953a9"
+  integrity sha512-EbqwksQwz9xDRGfDST86whPBgM65E0OH/pCgqW0GBVzO22bNE+NuIbeTb714+IfSjU3aRk47EUvXIb5bTsenKA==
 
-"@noble/secp256k1@^1.7.1":
-  version "1.7.1"
-  resolved "https://registry.yarnpkg.com/@noble/secp256k1/-/secp256k1-1.7.1.tgz#b251c70f824ce3ca7f8dc3df08d58f005cc0507c"
-  integrity sha512-hOUk6AyBFmqVrv7k5WAw/LpszxVbj9gGN4JRkIX52fdFAj1UA61KXmZDvqVEm+pOyec3+fIeZB02LYa/pWOArw==
+"@noble/hashes@1.3.2":
+  version "1.3.2"
+  resolved "https://registry.yarnpkg.com/@noble/hashes/-/hashes-1.3.2.tgz#6f26dbc8fbc7205873ce3cee2f690eba0d421b39"
+  integrity sha512-MVC8EAQp7MvEcm30KWENFjgR+Mkmf+D189XJTkFIlwohU5hcBbn1ZkKq7KVTi2Hme3PMGF390DaL52beVrIihQ==
+
+"@noble/hashes@~1.3.0", "@noble/hashes@~1.3.1":
+  version "1.3.3"
+  resolved "https://registry.yarnpkg.com/@noble/hashes/-/hashes-1.3.3.tgz#39908da56a4adc270147bb07968bf3b16cfe1699"
+  integrity sha512-V7/fPHgl+jsVPXqqeOzT8egNj2iBIVt+ECeMMG8TdcnTikP3oaBtUVqpT/gYCR68aEBJSF+XbYUxStjbFMqIIA==
 
 "@nodelib/fs.scandir@2.1.5":
   version "2.1.5"
@@ -1602,24 +1614,24 @@
     color "^4.2.3"
     warn-once "^0.1.0"
 
-"@scure/base@^1.1.1", "@scure/base@~1.1.0":
+"@scure/base@1.1.1", "@scure/base@^1.1.1", "@scure/base@~1.1.0":
   version "1.1.1"
   resolved "https://registry.yarnpkg.com/@scure/base/-/base-1.1.1.tgz#ebb651ee52ff84f420097055f4bf46cfba403938"
   integrity sha512-ZxOhsSyxYwLJj3pLZCefNitxsj093tb2vq90mp2txoYeBqbcjDjqFhyM8eUjq/uFm6zJ+mUuqxlS2FkuSY1MTA==
 
-"@scure/bip32@^1.1.5":
-  version "1.2.0"
-  resolved "https://registry.yarnpkg.com/@scure/bip32/-/bip32-1.2.0.tgz#35692d8f8cc3207200239fc119f9e038e5f465df"
-  integrity sha512-O+vT/hBVk+ag2i6j2CDemwd1E1MtGt+7O1KzrPNsaNvSsiEK55MyPIxJIMI2PS8Ijj464B2VbQlpRoQXxw1uHg==
+"@scure/bip32@1.3.1":
+  version "1.3.1"
+  resolved "https://registry.yarnpkg.com/@scure/bip32/-/bip32-1.3.1.tgz#7248aea723667f98160f593d621c47e208ccbb10"
+  integrity sha512-osvveYtyzdEVbt3OfwwXFr4P2iVBL5u1Q3q4ONBfDY/UpOuXmOlbgwc1xECEboY8wIays8Yt6onaWMUdUbfl0A==
   dependencies:
-    "@noble/curves" "~0.8.3"
-    "@noble/hashes" "~1.3.0"
+    "@noble/curves" "~1.1.0"
+    "@noble/hashes" "~1.3.1"
     "@scure/base" "~1.1.0"
 
-"@scure/bip39@^1.1.1":
-  version "1.2.0"
-  resolved "https://registry.yarnpkg.com/@scure/bip39/-/bip39-1.2.0.tgz#a207e2ef96de354de7d0002292ba1503538fc77b"
-  integrity sha512-SX/uKq52cuxm4YFXWFaVByaSHJh2w3BnokVSeUJVCv6K7WulT9u2BuNRBhuFl8vAuYnzx9bEu9WgpcNYTrYieg==
+"@scure/bip39@1.2.1":
+  version "1.2.1"
+  resolved "https://registry.yarnpkg.com/@scure/bip39/-/bip39-1.2.1.tgz#5cee8978656b272a917b7871c981e0541ad6ac2a"
+  integrity sha512-Z3/Fsz1yr904dduJD0NpiyRHhRYHdcnyh73FZWiV+/qhWi83wNJ3NWolYqCEN+ZWsUz2TWwajJggcRE9r1zUYg==
   dependencies:
     "@noble/hashes" "~1.3.0"
     "@scure/base" "~1.1.0"
@@ -6208,6 +6220,11 @@ minimist@^1.2.0, minimist@^1.2.6:
   resolved "https://registry.yarnpkg.com/minimist/-/minimist-1.2.8.tgz#c1a464e7693302e082a075cee0c057741ac4772c"
   integrity sha512-2yyAR8qBkN3YuheJanUpWC5U3bb5osDywNB8RzDVlDwDHbocAJveqqj1u8+SVD7jkWT4yvsHCpWqqWqAxb0zCA==
 
+mitata@^0.1.6:
+  version "0.1.6"
+  resolved "https://registry.yarnpkg.com/mitata/-/mitata-0.1.6.tgz#0d25f0dd105d6c50ec8d9047ee21bed1552fbffd"
+  integrity sha512-VKQ0r3jriTOU9E2Z+mwbZrUmbg4Li4QyFfi7kfHKl6reZhGzL0AYlu3wE0VPXzIwA5xnFzmEQoBwCcNT8stUkA==
+
 mixin-deep@^1.2.0:
   version "1.3.2"
   resolved "https://registry.yarnpkg.com/mixin-deep/-/mixin-deep-1.3.2.tgz#1120b43dc359a785dce65b55b82e257ccf479566"
@@ -6334,17 +6351,24 @@ normalize-path@^3.0.0:
   resolved "https://registry.yarnpkg.com/normalize-path/-/normalize-path-3.0.0.tgz#0dcd69ff23a1c9b11fd0978316644a0388216a65"
   integrity sha512-6eZs5Ls3WtCisHWp9S2GUy8dqkpGi4BVSz3GaqiE6ezub0512ESztXUwUB6C6IKbQkY2Pnb/mD4WYojCRwcwLA==
 
-nostr-tools@^1.7.5:
-  version "1.8.2"
-  resolved "https://registry.yarnpkg.com/nostr-tools/-/nostr-tools-1.8.2.tgz#bca3955d9bbb4a4bfe122b71af75c383b2d07d35"
-  integrity sha512-r9erqxO96E2BqvOvR/5W0usY7GlcO9fVLKc1Q8b/LCBgISVaMWD2VFmjdSUcHSGPMWHLvB6k4Jui+FTi5KAprw==
+nostr-tools@^2.1.0:
+  version "2.1.0"
+  resolved "https://registry.yarnpkg.com/nostr-tools/-/nostr-tools-2.1.0.tgz#74e655c31fd03457352cd319a7404048ca9bc674"
+  integrity sha512-LY5y3/BWaqtfySOhG+NSY3mAt+vUw4vQVFjqvawtO6SdEHqvWdNsb2uUqYdyBztFcIKFxoAbGMntbXQ9QO22oA==
   dependencies:
-    "@noble/hashes" "1.0.0"
-    "@noble/secp256k1" "^1.7.1"
-    "@scure/base" "^1.1.1"
-    "@scure/bip32" "^1.1.5"
-    "@scure/bip39" "^1.1.1"
-    prettier "^2.8.4"
+    "@noble/ciphers" "0.2.0"
+    "@noble/curves" "1.2.0"
+    "@noble/hashes" "1.3.1"
+    "@scure/base" "1.1.1"
+    "@scure/bip32" "1.3.1"
+    "@scure/bip39" "1.2.1"
+    mitata "^0.1.6"
+    nostr-wasm v0.1.0
+
+nostr-wasm@v0.1.0:
+  version "0.1.0"
+  resolved "https://registry.yarnpkg.com/nostr-wasm/-/nostr-wasm-0.1.0.tgz#17af486745feb2b7dd29503fdd81613a24058d94"
+  integrity sha512-78BTryCLcLYv96ONU8Ws3Q1JzjlAt+43pWQhIl86xZmWeegYCNLPml7yQ+gG3vR6V5h4XGj+TxO+SS5dsThQIA==
 
 npm-run-path@^2.0.0:
   version "2.0.2"
