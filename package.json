@@ -30,7 +30,7 @@
     "cryptr": "^6.1.0",
     "date-fns": "^2.29.3",
     "events": "^3.3.0",
-    "i18next": "^22.4.14",
+    "i18next": "^23.7.16",
     "lnurl-pay": "^2.2.0",
     "lodash.debounce": "^4.0.8",
     "nostr-tools": "^1.7.5",
