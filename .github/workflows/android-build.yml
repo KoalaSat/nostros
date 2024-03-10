@@ -28,9 +28,10 @@ jobs:
 
       - name: Decode Keystore
         id: decode_keystore
-        uses: timheuer/base64-to-file@v1
+        uses: timheuer/base64-to-file@v1.2
         with:
-          fileName: 'keystore/nostros_keystore.jks'
+          fileName: 'nostros_keystore.jks'
+          fileDir: './'
           encodedString: ${{ secrets.KEYSTORE }}
 
       - name: 'Build Android Release'

@@ -128,15 +128,7 @@ android {
         }
 
         release {
-            def tmpFilePath = System.getProperty("user.home") + "/work/_temp/keystore/"
-            def allFilesFromDir = new File(tmpFilePath).listFiles()
-
-            if (allFilesFromDir != null) {
-                def keystoreFile = allFilesFromDir.first()
-                keystoreFile.renameTo("keystore/nostros_keystore.jks")
-            }
-
-            storeFile = file("keystore/nostros_keystore.jks")
+            storeFile = file("../../nostros_keystore.jks")
             keyAlias System.getenv("KEY_ALIAS")
             storePassword System.getenv("KEY_STORE_PASS")
             keyPassword System.getenv("KEY_PASS")
