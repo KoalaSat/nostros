@@ -37,7 +37,7 @@ jobs:
       - name: 'Build Android Release'
         run: |
           cd android
-          ./gradlew app:bundleRelease
+          ./gradlew assembleRelease
         env:
           KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
           KEY_PASS: ${{ secrets.KEY_PASS }}
