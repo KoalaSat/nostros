@@ -26,6 +26,9 @@ jobs:
       - name: Setup Gradle
         uses: gradle/gradle-build-action@v2
 
+      - name: Generating one-time APK signature key
+        run: keytool -genkey -v -keystore keystore.jks -alias Nostros -keyalg RSA -keysize 2048 -validity 10000 -storepass public_password -keypass public_password -dname "cn=Nostros, ou=Actions, o=Nostros, c=GitHub"
+
       - name: 'Build Android Release'
         run: |
           cd android
