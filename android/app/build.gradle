@@ -128,19 +128,18 @@ android {
         }
 
         release {
-            // We can leave these in environment variables
-            storeFile file('../../keystore.jks')
-            keyAlias System.getenv("KEY_ALIAS")
+            def tmpFilePath = System.getProperty("user.home") + "/work/_temp/keystore/"
+            def allFilesFromDir = new File(tmpFilePath).listFiles()
 
-            // These two lines make gradle believe that the signingConfigs
-            // section is complete. Without them, tasks like installRelease
-            // will not be available!
+            if (allFilesFromDir != null) {
+                def keystoreFile = allFilesFromDir.first()
+                keystoreFile.renameTo("keystore/nostros_keystore.jks")
+            }
+
+            storeFile = file("keystore/nostros_keystore.jks")
+            keyAlias System.getenv("KEY_ALIAS")
             storePassword System.getenv("KEY_STORE_PASS")
             keyPassword System.getenv("KEY_PASS")
-
-            enableV1Signing true
-            enableV2Signing true
-            enableV3Signing true
         }
     }
     buildTypes {
