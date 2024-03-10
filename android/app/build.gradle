@@ -142,6 +142,7 @@ android {
             enableV2Signing true
             enableV3Signing true
         }
+    }
     buildTypes {
         debug {
             signingConfig signingConfigs.debug
