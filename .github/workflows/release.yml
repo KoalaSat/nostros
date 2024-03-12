@@ -15,8 +15,6 @@ env:
 jobs:
   android-build:
     uses: KoalaSat/nostros/.github/workflows/android-build.yml@main
-    with:
-      keystore: ${{ secrets.KEYSTORE }}
   release:
     needs: [android-build]
     runs-on: ubuntu-latest
