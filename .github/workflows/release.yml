@@ -10,6 +10,7 @@ env:
   KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
   KEY_PASS: ${{ secrets.KEY_PASS }}
   KEY_STORE_PASS: ${{ secrets.KEY_STORE_PASS }}
+  KEYSTORE: ${{ secrets.KEYSTORE }}
 
 jobs:
   android-build:
