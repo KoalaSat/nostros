@@ -9,11 +9,6 @@ on:
 jobs:
   android-build:
     uses: KoalaSat/nostros/.github/workflows/android-build.yml@main
-    with:
-      env:
-        KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
-        KEY_PASS: ${{ secrets.KEY_PASS }}
-        KEY_STORE_PASS: ${{ secrets.KEY_STORE_PASS }}
   release:
     needs: [android-build]
     runs-on: ubuntu-latest
