@@ -6,15 +6,14 @@ on:
     tags:
       - "v*.*.*"
 
-env:
-  KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
-  KEY_PASS: ${{ secrets.KEY_PASS }}
-  KEY_STORE_PASS: ${{ secrets.KEY_STORE_PASS }}
-  KEYSTORE: ${{ secrets.KEYSTORE }}
-
 jobs:
   android-build:
     uses: KoalaSat/nostros/.github/workflows/android-build.yml@main
+    env:
+      KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
+      KEY_PASS: ${{ secrets.KEY_PASS }}
+      KEY_STORE_PASS: ${{ secrets.KEY_STORE_PASS }}
+      KEYSTORE: ${{ secrets.KEYSTORE }}
   release:
     needs: [android-build]
     runs-on: ubuntu-latest
