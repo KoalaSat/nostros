@@ -7,6 +7,11 @@ on:
   pull_request:
     branches: [ "main" ]
 
+env:
+  KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
+  KEY_PASS: ${{ secrets.KEY_PASS }}
+  KEY_STORE_PASS: ${{ secrets.KEY_STORE_PASS }}
+
 jobs:
   build-android:
     runs-on: ubuntu-latest
@@ -38,10 +43,6 @@ jobs:
         run: |
           cd android
           ./gradlew assembleRelease
-        env:
-          KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
-          KEY_PASS: ${{ secrets.KEY_PASS }}
-          KEY_STORE_PASS: ${{ secrets.KEY_STORE_PASS }}
 
       - name: 'Check for non-FOSS libraries'
         run: |
