@@ -1,20 +1,10 @@
 name: "Build: Android"
 on:
-  workflow_dispatch:
-    keystore:
-      type: string
-      description: base64 keystore
   workflow_call:
   push:
     branches: [ "main" ]
   pull_request:
     branches: [ "main" ]
-
-env:
-  KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
-  KEY_PASS: ${{ secrets.KEY_PASS }}
-  KEY_STORE_PASS: ${{ secrets.KEY_STORE_PASS }}
-  KEYSTORE: ${{ secrets.KEYSTORE }}
 
 jobs:
   build-android:
@@ -41,12 +31,16 @@ jobs:
         with:
           fileName: 'keystore.jks'
           fileDir: './'
-          encodedString: ${{ env.KEYSTORE }}
+          encodedString: ${{ secrets.KEYSTORE }}
 
       - name: 'Build Android Release'
         run: |
           cd android
           ./gradlew assembleRelease
+        env:
+          KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
+          KEY_PASS: ${{ secrets.KEY_PASS }}
+          KEY_STORE_PASS: ${{ secrets.KEY_STORE_PASS }}
 
       - name: 'Check for non-FOSS libraries'
         run: |
