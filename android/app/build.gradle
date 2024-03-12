@@ -128,7 +128,7 @@ android {
         }
 
         release {
-            storeFile file("../../nostros_keystore.jks")
+            storeFile file("nostros_keystore.jks")
             keyAlias System.getenv("KEY_ALIAS")
             storePassword System.getenv("KEY_STORE_PASS")
             keyPassword System.getenv("KEY_PASS")
