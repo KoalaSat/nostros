@@ -1,6 +1,9 @@
 name: "Build: Android"
 on:
   workflow_dispatch:
+    keystore:
+      type: string
+      description: base64 keystore
   workflow_call:
   push:
     branches: [ "main" ]
@@ -37,7 +40,7 @@ jobs:
         with:
           fileName: 'keystore.jks'
           fileDir: './'
-          encodedString: ${{ secrets.KEYSTORE }}
+          encodedString: ${{ github.event.inputs.keystore || secrets.KEYSTORE }}
 
       - name: 'Build Android Release'
         run: |
