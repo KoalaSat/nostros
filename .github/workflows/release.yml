@@ -84,9 +84,9 @@ jobs:
       - name: Install torf-cli
         run: sudo pip3 install torf-cli
       - name: Create torrent using torf-cli
-        run: torf "nostros-${{ github.ref_name }}-universal.apk" -o "nostros-${{ github.ref_name }}-universal.torrent" -w "https://github.com/KoalaSat/nostros/releases/download/${{ github.ref_name }}/nostros-${{ github.ref_name }}-universal.apk" -s "torrent-webseed-creator"
+        run: torf "./nostros-${{ github.ref_name }}-universal.apk" -o "nostros-${{ github.ref_name }}-universal.torrent" -w "https://github.com/KoalaSat/nostros/releases/download/${{ github.ref_name }}/nostros-${{ github.ref_name }}-universal.apk" -s "torrent-webseed-creator"
       - name: Upload torrent file
         uses: actions/upload-artifact@v3
         with:
-          name: Torrent
-          path: nostros-${{ github.ref_name }}-universal.torrent
+          name: nostros-${{ github.ref_name }}-universal.torrent
+          path: .
